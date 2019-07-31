@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -24,7 +23,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.Deque;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -37,6 +35,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -56,13 +55,13 @@ public class NettyRedeliveryTest extends CamelTestSupport {
 
     private ExecutorService listener = Executors.newSingleThreadExecutor();
 
-    @EndpointInject(uri = "mock:exception")
+    @EndpointInject("mock:exception")
     private MockEndpoint exception;
 
-    @EndpointInject(uri = "mock:downstream")
+    @EndpointInject("mock:downstream")
     private MockEndpoint downstream;
 
-    private Deque<Callable<?>> tasks = new LinkedBlockingDeque<Callable<?>>();
+    private Deque<Object> tasks = new LinkedBlockingDeque<>();
     private int port;
     private boolean alive = true;
 
@@ -83,6 +82,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
                         .retriesExhaustedLogLevel(LoggingLevel.ERROR)
                         // lets have a little delay so we do async redelivery
                         .redeliveryDelay(10)
+                        .asyncDelayedRedelivery()
                         .to("mock:exception")
                         .handled(true);
 
@@ -96,6 +96,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         alive = false;
@@ -148,7 +149,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if ("submit".equals(method.getName()) || "schedule".equals(method.getName())) {
-                    tasks.add((Callable<?>) args[0]);
+                    tasks.add(args[0]);
                 }
                 return method.invoke(delegate, args);
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,23 +18,24 @@ package org.apache.camel.dataformat.rss;
 
 import java.io.StringReader;
 
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.SyndFeedOutput;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.FeedException;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.SyndFeedOutput;
+
 import org.apache.camel.Converter;
 
-@Converter
+@Converter(loader = true)
 public final class RssConverter {
     private RssConverter() {
     }
-    
+
     @Converter
     public static String feedToXml(SyndFeed feed) throws FeedException {
         SyndFeedOutput out = new SyndFeedOutput();
         return out.outputString(feed);
-    }   
-    
+    }
+
     @Converter
     public static SyndFeed xmlToFeed(String xml) throws FeedException {
         SyndFeedInput input = new SyndFeedInput();

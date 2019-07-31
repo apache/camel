@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.smpp;
-
 import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.RegisteredDelivery;
@@ -34,13 +33,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.aryEq;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isNull;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class SmppReplaceSmCommandTest {
     
@@ -66,7 +63,7 @@ public class SmppReplaceSmCommandTest {
     
     @Before
     public void setUp() {
-        session = createMock(SMPPSession.class);
+        session = mock(SMPPSession.class);
         config = new SmppConfiguration();
         
         command = new SmppReplaceSmCommand(session, config);
@@ -78,14 +75,11 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
         exchange.getIn().setHeader(SmppConstants.ID, "1");
         exchange.getIn().setBody("new short message body");
-        session.replaceShortMessage(eq("1"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"), (String) isNull(), (String) isNull(),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq((byte) 0), aryEq("new short message body".getBytes()));
-        
-        replay(session);
         
         command.execute(exchange);
         
-        verify(session);
+        verify(session).replaceShortMessage(eq("1"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"), (String) isNull(), (String) isNull(),
+                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq((byte) 0), eq("new short message body".getBytes()));
         
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
     }
@@ -102,14 +96,11 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, new Date(2222222));
         exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setBody("new short message body");
-        session.replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100+"), eq("-300101003702200+"),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)), eq((byte) 0), aryEq("new short message body".getBytes()));
-        
-        replay(session);
         
         command.execute(exchange);
         
-        verify(session);
+        verify(session).replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100+"), eq("-300101003702200+"),
+                eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)), eq((byte) 0), eq("new short message body".getBytes()));
         
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
     }
@@ -126,14 +117,11 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, "000003000000000R"); // three days
         exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setBody("new short message body");
-        session.replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100+"), eq("000003000000000R"),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)), eq((byte) 0), aryEq("new short message body".getBytes()));
-        
-        replay(session);
         
         command.execute(exchange);
         
-        verify(session);
+        verify(session).replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100+"), eq("000003000000000R"),
+                eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)), eq((byte) 0), eq("new short message body".getBytes()));
         
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
     }
@@ -149,21 +137,17 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, dataCoding);
         exchange.getIn().setBody(body);
 
-        session.replaceShortMessage((String) isNull(),
-                                    eq(TypeOfNumber.UNKNOWN),
-                                    eq(NumberingPlanIndicator.UNKNOWN),
-                                    eq("1616"),
-                                    (String) isNull(),
-                                    (String) isNull(),
-                                    eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                                    eq((byte) 0),
-                                    aryEq(bodyNarrowed));
-
-        replay(session);
-        
         command.execute(exchange);
         
-        verify(session);
+        verify(session).replaceShortMessage((String) isNull(),
+                                            eq(TypeOfNumber.UNKNOWN),
+                                            eq(NumberingPlanIndicator.UNKNOWN),
+                                            eq("1616"),
+                                            (String) isNull(),
+                                            (String) isNull(),
+                                            eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                                            eq((byte) 0),
+                                            eq(bodyNarrowed));
     }
 
     @Test
@@ -177,21 +161,17 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, dataCoding);
         exchange.getIn().setBody(body);
 
-        session.replaceShortMessage((String) isNull(),
-                                    eq(TypeOfNumber.UNKNOWN),
-                                    eq(NumberingPlanIndicator.UNKNOWN),
-                                    eq("1616"),
-                                    (String) isNull(),
-                                    (String) isNull(),
-                                    eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                                    eq((byte) 0),
-                                    aryEq(bodyNarrowed));
-
-        replay(session);
-        
         command.execute(exchange);
         
-        verify(session);
+        verify(session).replaceShortMessage((String) isNull(),
+                                            eq(TypeOfNumber.UNKNOWN),
+                                            eq(NumberingPlanIndicator.UNKNOWN),
+                                            eq("1616"),
+                                            (String) isNull(),
+                                            (String) isNull(),
+                                            eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                                            eq((byte) 0),
+                                            eq(bodyNarrowed));
     }
 
     @Test
@@ -204,21 +184,18 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, dataCoding);
         exchange.getIn().setBody(body);
 
-        session.replaceShortMessage((String) isNull(),
-                                    eq(TypeOfNumber.UNKNOWN),
-                                    eq(NumberingPlanIndicator.UNKNOWN),
-                                    eq("1616"),
-                                    (String) isNull(),
-                                    (String) isNull(),
-                                    eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                                    eq((byte) 0),
-                                    aryEq(body));
-
-        replay(session);
-        
         command.execute(exchange);
         
-        verify(session);
+        verify(session).replaceShortMessage((String) isNull(),
+                                            eq(TypeOfNumber.UNKNOWN),
+                                            eq(NumberingPlanIndicator.UNKNOWN),
+                                            eq("1616"),
+                                            (String) isNull(),
+                                            (String) isNull(),
+                                            eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                                            eq((byte) 0),
+                                            eq(body));
+
     }
 
     @Test
@@ -231,21 +208,17 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, dataCoding);
         exchange.getIn().setBody(body);
 
-        session.replaceShortMessage((String) isNull(),
-                                    eq(TypeOfNumber.UNKNOWN),
-                                    eq(NumberingPlanIndicator.UNKNOWN),
-                                    eq("1616"),
-                                    (String) isNull(),
-                                    (String) isNull(),
-                                    eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                                    eq((byte) 0),
-                                    aryEq(body));
-
-        replay(session);
-        
         command.execute(exchange);
         
-        verify(session);
+        verify(session).replaceShortMessage((String) isNull(),
+                                            eq(TypeOfNumber.UNKNOWN),
+                                            eq(NumberingPlanIndicator.UNKNOWN),
+                                            eq("1616"),
+                                            (String) isNull(),
+                                            (String) isNull(),
+                                            eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                                            eq((byte) 0),
+                                            eq(body));
     }
 
     @Test
@@ -259,21 +232,17 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, binDataCoding);
         exchange.getIn().setBody(body);
 
-        session.replaceShortMessage((String) isNull(),
-                                    eq(TypeOfNumber.UNKNOWN),
-                                    eq(NumberingPlanIndicator.UNKNOWN),
-                                    eq("1616"),
-                                    (String) isNull(),
-                                    (String) isNull(),
-                                    eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                                    eq((byte) 0),
-                                    aryEq(body));
-
-        replay(session);
-        
         command.execute(exchange);
         
-        verify(session);
+        verify(session).replaceShortMessage((String) isNull(),
+                                            eq(TypeOfNumber.UNKNOWN),
+                                            eq(NumberingPlanIndicator.UNKNOWN),
+                                            eq("1616"),
+                                            (String) isNull(),
+                                            (String) isNull(),
+                                            eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                                            eq((byte) 0),
+                                            eq(body));
     }
 
     @Test
@@ -289,20 +258,16 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, latin1DataCoding);
         exchange.getIn().setBody(body);
 
-        session.replaceShortMessage((String) isNull(),
-                                    eq(TypeOfNumber.UNKNOWN),
-                                    eq(NumberingPlanIndicator.UNKNOWN),
-                                    eq("1616"),
-                                    (String) isNull(),
-                                    (String) isNull(),
-                                    eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                                    eq((byte) 0),
-                                    aryEq(bodyNarrowed));
-
-        replay(session);
-        
         command.execute(exchange);
         
-        verify(session);
+        verify(session).replaceShortMessage((String) isNull(),
+                                            eq(TypeOfNumber.UNKNOWN),
+                                            eq(NumberingPlanIndicator.UNKNOWN),
+                                            eq("1616"),
+                                            (String) isNull(),
+                                            (String) isNull(),
+                                            eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                                            eq((byte) 0),
+                                            eq(bodyNarrowed));
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,6 +28,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsDiscardedException;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsHelper;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -41,20 +43,24 @@ public class CamelSubscription implements Subscription {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelSubscription.class);
 
+    private String id;
+
     private ExecutorService workerPool;
+
+    private String streamName;
 
     private CamelPublisher publisher;
 
     private ReactiveStreamsBackpressureStrategy backpressureStrategy;
 
-    private Subscriber<? super StreamPayload<Exchange>> subscriber;
+    private Subscriber<? super Exchange> subscriber;
 
     /**
      * The lock is used just for the time necessary to read/write shared variables.
      */
-    private Lock mutex = new ReentrantLock(true);
+    private final Lock mutex = new ReentrantLock(true);
 
-    private LinkedList<StreamPayload<Exchange>> buffer = new LinkedList<>();
+    private final LinkedList<Exchange> buffer = new LinkedList<>();
 
     /**
      * The current number of exchanges requested by the subscriber.
@@ -78,9 +84,12 @@ public class CamelSubscription implements Subscription {
     private boolean sending;
 
 
-    public CamelSubscription(ExecutorService workerPool, CamelPublisher publisher, ReactiveStreamsBackpressureStrategy backpressureStrategy, Subscriber<? super StreamPayload<Exchange>> subscriber) {
+    public CamelSubscription(String id, ExecutorService workerPool, CamelPublisher publisher, String streamName,
+                             ReactiveStreamsBackpressureStrategy backpressureStrategy, Subscriber<? super Exchange> subscriber) {
+        this.id = id;
         this.workerPool = workerPool;
         this.publisher = publisher;
+        this.streamName = streamName;
         this.backpressureStrategy = backpressureStrategy;
         this.subscriber = subscriber;
     }
@@ -142,7 +151,7 @@ public class CamelSubscription implements Subscription {
     }
 
     protected void flush() {
-        LinkedList<StreamPayload<Exchange>> sendingQueue = null;
+        LinkedList<Exchange> sendingQueue = null;
         try {
             mutex.lock();
 
@@ -150,7 +159,7 @@ public class CamelSubscription implements Subscription {
                 return;
             }
 
-            int amount = (int) Math.min(requested, (long) buffer.size());
+            int amount = (int) Math.min(requested, buffer.size());
             if (amount > 0) {
                 this.requested -= amount;
                 sendingQueue = new LinkedList<>();
@@ -166,7 +175,7 @@ public class CamelSubscription implements Subscription {
 
         if (sendingQueue != null) {
             LOG.debug("Sending {} events to the subscriber", sendingQueue.size());
-            for (StreamPayload<Exchange> data : sendingQueue) {
+            for (Exchange data : sendingQueue) {
                 // TODO what if the subscriber throws an exception?
                 this.subscriber.onNext(data);
 
@@ -195,34 +204,37 @@ public class CamelSubscription implements Subscription {
 
         mutex.lock();
         this.terminated = true;
-        List<StreamPayload<Exchange>> bufferCopy = new LinkedList<>(buffer);
+        List<Exchange> bufferCopy = new LinkedList<>(buffer);
         this.buffer.clear();
         mutex.unlock();
 
         discardBuffer(bufferCopy);
     }
 
-    protected void discardBuffer(List<StreamPayload<Exchange>> remaining) {
-        for (StreamPayload<Exchange> data : remaining) {
-            data.getCallback().processed(data.getItem(), new IllegalStateException("Cannot process the exchange " + data.getItem() + ": subscription cancelled"));
+    protected void discardBuffer(List<Exchange> remaining) {
+        for (Exchange data : remaining) {
+            ReactiveStreamsHelper.invokeDispatchCallback(
+                data,
+                new IllegalStateException("Cannot process the exchange " + data + ": subscription cancelled")
+            );
         }
     }
 
-    public void publish(StreamPayload<Exchange> message) {
-        Map<StreamPayload<Exchange>, String> discardedMessages = null;
+    public void publish(Exchange message) {
+        Map<Exchange, String> discardedMessages = null;
         try {
             mutex.lock();
             if (!this.terminating && !this.terminated) {
-                Collection<StreamPayload<Exchange>> discarded = this.backpressureStrategy.update(buffer, message);
-                if (discarded.iterator().hasNext()) {
+                Collection<Exchange> discarded = this.backpressureStrategy.update(buffer, message);
+                if (!discarded.isEmpty()) {
                     discardedMessages = new HashMap<>();
-                    for (StreamPayload<Exchange> ex : discarded) {
-                        discardedMessages.put(ex, "Exchange " + ex.getItem() + " discarded by backpressure strategy " + this.backpressureStrategy);
+                    for (Exchange ex : discarded) {
+                        discardedMessages.put(ex, "Exchange " + ex + " discarded by backpressure strategy " + this.backpressureStrategy);
                     }
                 }
             } else {
                 // acknowledge
-                discardedMessages = Collections.singletonMap(message, "Exchange " + message.getItem() + " discarded: subscription closed");
+                discardedMessages = Collections.singletonMap(message, "Exchange " + message + " discarded: subscription closed");
             }
         } finally {
             mutex.unlock();
@@ -230,9 +242,11 @@ public class CamelSubscription implements Subscription {
 
         // discarding outside of mutex scope
         if (discardedMessages != null) {
-            for (Map.Entry<StreamPayload<Exchange>, String> discarded : discardedMessages.entrySet()) {
-                StreamPayload<Exchange> m = discarded.getKey();
-                m.getCallback().processed(m.getItem(), new IllegalStateException(discarded.getValue()));
+            for (Exchange exchange: discardedMessages.keySet()) {
+                ReactiveStreamsHelper.invokeDispatchCallback(
+                    exchange,
+                    new ReactiveStreamsDiscardedException("Discarded by backpressure strategy", exchange, streamName)
+                );
             }
         }
 
@@ -243,5 +257,17 @@ public class CamelSubscription implements Subscription {
         mutex.lock();
         this.backpressureStrategy = backpressureStrategy;
         mutex.unlock();
+    }
+
+    public long getBufferSize() {
+        return buffer.size();
+    }
+
+    public ReactiveStreamsBackpressureStrategy getBackpressureStrategy() {
+        return backpressureStrategy;
+    }
+
+    public String getId() {
+        return id;
     }
 }

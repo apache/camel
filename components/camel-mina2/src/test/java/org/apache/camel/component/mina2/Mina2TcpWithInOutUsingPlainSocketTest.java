@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,8 +30,6 @@ import org.junit.Test;
 
 /**
  * To test camel-mina2 component using a TCP client that communicates using TCP socket communication.
- *
- * @version 
  */
 public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
 

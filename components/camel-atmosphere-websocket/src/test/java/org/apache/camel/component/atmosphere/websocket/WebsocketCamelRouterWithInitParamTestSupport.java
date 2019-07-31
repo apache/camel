@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,16 +42,16 @@ public class WebsocketCamelRouterWithInitParamTestSupport extends CamelTestSuppo
         context.setContextPath("/");
         server.setHandler(context);
 
+        if (startCamelContext) {
+            super.setUp();
+        }
+
         servletHolder = new ServletHolder(new CamelWebSocketServlet());
         servletHolder.setName("CamelWsServlet");
         servletHolder.setInitParameter("events", "true");
         context.addServlet(servletHolder, "/*");
-        
+
         server.start();
-        
-        if (startCamelContext) {        
-            super.setUp();
-        }
     }
     
     @After

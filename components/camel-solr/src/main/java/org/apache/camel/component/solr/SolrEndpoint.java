@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,11 +23,11 @@ import java.net.URLDecoder;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -41,7 +41,7 @@ public class SolrEndpoint extends DefaultEndpoint {
     private String scheme = "http://";
 
     @UriPath(description = "Hostname and port for the solr server")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String url;
     @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)
     private int streamingQueueSize = SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE;
@@ -67,6 +67,10 @@ public class SolrEndpoint extends DefaultEndpoint {
     private String collection;
     @UriParam
     private String requestHandler;
+    @UriParam(label = "security", secret = true)
+    private String username;
+    @UriParam(label = "security", secret = true)
+    private String password;
 
     public SolrEndpoint(String endpointUri, SolrComponent component, String address) throws Exception {
         super(endpointUri, component);
@@ -108,7 +112,7 @@ public class SolrEndpoint extends DefaultEndpoint {
     private CloudSolrClient getCloudServer() {
         CloudSolrClient rVal = null;
         if (this.getZkHost() != null && this.getCollection() != null) {
-            rVal = new CloudSolrClient(zkHost);
+            rVal = new CloudSolrClient.Builder().withZkHost(zkHost).build();
             rVal.setDefaultCollection(this.getCollection());
         }
         return rVal;
@@ -123,31 +127,19 @@ public class SolrEndpoint extends DefaultEndpoint {
             ref = new SolrComponent.SolrServerReference();
             CloudSolrClient cloudServer = getCloudServer();
             if (cloudServer == null) {
-                HttpSolrClient solrServer = new HttpSolrClient(url);
-                ConcurrentUpdateSolrClient solrStreamingServer = new ConcurrentUpdateSolrClient(url, streamingQueueSize, streamingThreadCount);
-
-                // set the properties on the solr server
-                if (maxRetries != null) {
-                    solrServer.setMaxRetries(maxRetries);
-                }
+                HttpSolrClient solrServer = new HttpSolrClient.Builder(url).build();                
+                ConcurrentUpdateSolrClient solrStreamingServer = new ConcurrentUpdateSolrClient.Builder(url).withQueueSize(streamingQueueSize).withThreadCount(streamingThreadCount).build();
+                
+                // set the properties on the solr server               
                 if (soTimeout != null) {
                     solrServer.setSoTimeout(soTimeout);
                 }
                 if (connectionTimeout != null) {
                     solrServer.setConnectionTimeout(connectionTimeout);
-                }
-                if (defaultMaxConnectionsPerHost != null) {
-                    solrServer.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
-                }
-                if (maxTotalConnections != null) {
-                    solrServer.setMaxTotalConnections(maxTotalConnections);
-                }
+                }                
                 if (followRedirects != null) {
                     solrServer.setFollowRedirects(followRedirects);
-                }
-                if (allowCompression != null) {
-                    solrServer.setAllowCompression(allowCompression);
-                }
+                }                
                 ref.setSolrServer(solrServer);
                 ref.setUpdateSolrServer(solrStreamingServer);
             }
@@ -173,11 +165,6 @@ public class SolrEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported for Solr endpoint.");
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     /**
@@ -288,6 +275,28 @@ public class SolrEndpoint extends DefaultEndpoint {
      */
     public void setAllowCompression(Boolean allowCompression) {
         this.allowCompression = allowCompression;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Sets username for basic auth plugin enabled servers
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Sets password for basic auth plugin enabled servers
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }

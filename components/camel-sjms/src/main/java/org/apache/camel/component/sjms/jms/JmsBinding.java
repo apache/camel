@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,6 +28,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -47,10 +48,10 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
-import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,8 +96,8 @@ public class JmsBinding {
             // is a custom message converter configured on endpoint then use it instead of doing the extraction
             // based on message type
 /*            if (endpoint != null && endpoint.getMessageConverter() != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Extracting body using a custom MessageConverter: {} from JMS message: {}", endpoint.getMessageConverter(), message);
+                if (log.isTraceEnabled()) {
+                    log.trace("Extracting body using a custom MessageConverter: {} from JMS message: {}", endpoint.getMessageConverter(), message);
                 }
                 return endpoint.getMessageConverter().fromMessage(message);
             }
@@ -140,7 +141,7 @@ public class JmsBinding {
     }
 
     public Map<String, Object> extractHeadersFromJms(Message jmsMessage, Exchange exchange) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         if (jmsMessage != null) {
             // lets populate the standard JMS message headers
             try {
@@ -432,7 +433,7 @@ public class JmsBinding {
 
 /*        // special for transferExchange
         if (endpoint != null && endpoint.isTransferExchange()) {
-            LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
+            log.trace("Option transferExchange=true so we use JmsMessageType: Object");
             Serializable holder = DefaultExchangeHolder.marshal(exchange);
             Message answer = session.createObjectMessage(holder);
             // ensure default delivery mode is used by default
@@ -442,8 +443,8 @@ public class JmsBinding {
 
         // use a custom message converter
         if (endpoint != null && endpoint.getMessageConverter() != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Creating JmsMessage using a custom MessageConverter: {} with body: {}", endpoint.getMessageConverter(), body);
+            if (log.isTraceEnabled()) {
+                log.trace("Creating JmsMessage using a custom MessageConverter: {} with body: {}", endpoint.getMessageConverter(), body);
             }
             return endpoint.getMessageConverter().toMessage(body, session);
         }
@@ -585,7 +586,7 @@ public class JmsBinding {
      * Extracts a {@link Map} from a {@link MapMessage}
      */
     public Map<String, Object> createMapFromMapMessage(MapMessage message) throws JMSException {
-        Map<String, Object> answer = new HashMap<String, Object>();
+        Map<String, Object> answer = new HashMap<>();
         Enumeration<?> names = message.getMapNames();
         while (names.hasMoreElements()) {
             String name = names.nextElement().toString();

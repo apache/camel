@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,102 +17,68 @@
 package org.apache.camel.component.jmx;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.builder.Input;
+import org.xmlunit.diff.Diff;
 
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.Difference;
-import org.custommonkey.xmlunit.DifferenceConstants;
-import org.custommonkey.xmlunit.DifferenceListener;
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
-
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertFalse;
 
 public final class XmlFixture {
 
     private XmlFixture() {
     }
 
-    public static Document toDoc(String aXmlString) throws Exception {
-        return XMLUnit.buildControlDocument(aXmlString);
+    public static Source toSource(String aXmlString) throws Exception {
+        return Input.fromString(aXmlString).build();
     }
 
-    public static Document toDoc(File aFile) throws Exception {
-        return XMLUnit.buildControlDocument(new InputSource(aFile.toString()));
+    public static Source toSource(File aFile) throws Exception {
+        return Input.fromFile(aFile).build();
     }
 
-    public static void assertXMLIgnorePrefix(String aMessage, Document aExpected, Document aActual) throws Exception {
-        XMLUnit.setIgnoreComments(true);
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLUnit.setIgnoreAttributeOrder(true);
-
-        Diff diff = new Diff(aExpected, aActual);
-        diff.overrideDifferenceListener(new DifferenceListener() {
-
-            public void skippedComparison(Node aArg0, Node aArg1) {
-            }
-
-            public int differenceFound(Difference aDifference) {
-                if (aDifference.getId() == DifferenceConstants.NAMESPACE_PREFIX_ID) {
-                    return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL;
-                }
-                return DifferenceListener.RETURN_ACCEPT_DIFFERENCE;
-            }
-        });
+    public static void assertXMLIgnorePrefix(String aMessage, Source aExpected, Source aActual) throws Exception {
+        Diff diff = DiffBuilder.compare(aExpected).withTest(aActual)
+                .ignoreComments().ignoreWhitespace()
+                .checkForSimilar().build();
         try {
-            XMLAssert.assertXMLEqual(diff, true);
+            assertFalse(aMessage + ":\n" + diff.toString(), diff.hasDifferences());
         } catch (Throwable t) {
             dump(aActual);
-            StringWriter sw = new StringWriter();
-            t.printStackTrace(new PrintWriter(sw));
-            fail(sw.toString());
+            throw t;
         }
     }
 
-    public static void dump(Document aActual) throws TransformerConfigurationException,
+    public static void dump(Source aActual) throws TransformerConfigurationException,
             TransformerException {
-        TransformerFactory tf = XMLUnit.getTransformerFactory();
+        TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.transform(new DOMSource(aActual), new StreamResult(System.out));
+        transformer.transform(aActual, new StreamResult(System.out));
     }
 
-    public static Document stripTimestamp(Document aDocument) throws Exception {
+    public static Source stripTimestamp(Source aSource) throws Exception {
         String resourcePath = "/stripTimestamp.xsl";
-        return transform(aDocument, resourcePath);
+        return transform(aSource, resourcePath);
     }
 
-    public static Document stripUUID(Document aDocument) throws Exception {
+    public static Source stripUUID(Source aSource) throws Exception {
         String resourcePath = "/stripUUID.xsl";
-        return transform(aDocument, resourcePath);
+        return transform(aSource, resourcePath);
     }
 
-    protected static Document transform(Document aDocument, String aResourcePath) throws Exception {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        InputStream in = XmlFixture.class.getResourceAsStream(aResourcePath);
-        Source src = new StreamSource(in);
-        src.setSystemId(XmlFixture.class.getResource(aResourcePath).toExternalForm());
-        Transformer t = tf.newTransformer(src);
-        DOMResult result = new DOMResult();
-        t.transform(new DOMSource(aDocument), result);
-        return (Document) result.getNode();
+    protected static Source transform(Source aSource, String aResourcePath) throws Exception {
+        Source stylesheet = new StreamSource(XmlFixture.class.getResourceAsStream(aResourcePath));
+        stylesheet.setSystemId(XmlFixture.class.getResource(aResourcePath).toExternalForm());
+        return Input.byTransforming(aSource).withStylesheet(stylesheet).build();
     }
 
 }

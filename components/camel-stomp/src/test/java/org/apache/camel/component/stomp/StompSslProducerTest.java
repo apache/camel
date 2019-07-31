@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ public class StompSslProducerTest extends StompProducerTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:foo")
-                    .toF("stomp:queue:test?brokerURL=ssl://localhost:%d&sslContextParameters=#sslContextParameters", getPort());
+                    .toF("stomp:test?brokerURL=ssl://localhost:%d&sslContextParameters=#sslContextParameters", getPort());
             }
         };
     }

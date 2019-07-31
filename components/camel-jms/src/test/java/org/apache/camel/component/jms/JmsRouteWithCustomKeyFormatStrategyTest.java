@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,26 +16,20 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * With the passthrough option
- *
- * @version 
  */
 public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefaultKeyFormatStrategyTest {
 
+    @BindToRegistry("myJmsKeyStrategy")
+    private MyCustomKeyFormatStrategy strategy = new MyCustomKeyFormatStrategy();
+
     protected String getUri() {
         return "activemq:queue:foo?jmsKeyFormatStrategy=#myJmsKeyStrategy";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myJmsKeyStrategy", new MyCustomKeyFormatStrategy());
-        return jndi;
     }
 
     @Override
@@ -57,7 +51,7 @@ public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefault
         }
 
         public String decodeKey(String key) {
-            return ObjectHelper.between(key, "FOO", "BAR");
+            return StringHelper.between(key, "FOO", "BAR");
         }
     }
 }

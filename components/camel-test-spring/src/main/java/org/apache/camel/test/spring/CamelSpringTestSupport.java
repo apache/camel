@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,46 +21,35 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spring.CamelBeanPostProcessor;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
 /**
- * @version 
+ * Base test-class for classic Spring application such as standalone, web applications.
+ * Do <tt>not</tt> use this class for Spring Boot testing, instead use <code>@RunWith(CamelSpringBootRunner.class)</code>.
  */
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
-    protected static ThreadLocal<AbstractApplicationContext> threadAppContext = new ThreadLocal<AbstractApplicationContext>();
+    protected static ThreadLocal<AbstractApplicationContext> threadAppContext = new ThreadLocal<>();
     protected static Object lock = new Object();
     
     protected AbstractApplicationContext applicationContext;
     protected abstract AbstractApplicationContext createApplicationContext();
 
-    /**
-     * Lets post process this test instance to process any Camel annotations.
-     * Note that using Spring Test or Guice is a more powerful approach.
-     */
     @Override
     public void postProcessTest() throws Exception {
-        super.postProcessTest();
         if (isCreateCamelContextPerClass()) {
             applicationContext = threadAppContext.get();
         }
-
-        // use the bean post processor from camel-spring
-        CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
-        processor.setApplicationContext(applicationContext);
-        processor.setCamelContext(context);
-        processor.postProcessBeforeInitialization(this, getClass().getName());
-        processor.postProcessAfterInitialization(this, getClass().getName());
+        super.postProcessTest();
     }
 
     @Override
@@ -120,8 +109,10 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         }
     }
 
-    @AfterClass
-    public static void tearSpringDownAfterClass() throws Exception {
+    @Override
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
+
         if (threadAppContext.get() != null) {
             IOHelper.close(threadAppContext.get());
             threadAppContext.remove();
@@ -157,7 +148,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
         ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
         List<Class<?>> excluded = Arrays.asList(excludeRoutes());
-        excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
+        excludingResolver.setExcludedClasses(new HashSet<>(excluded));
 
         return routeExcludingContext;
     }

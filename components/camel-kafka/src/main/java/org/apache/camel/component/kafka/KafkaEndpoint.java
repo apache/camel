@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,18 +20,17 @@ import java.lang.reflect.Field;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.CastUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -39,20 +38,15 @@ import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic", consumerClass = KafkaConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic", label = "messaging")
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);
 
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
-    @UriParam(label = "producer")
-    private boolean bridgeEndpoint;
 
     public KafkaEndpoint() {
     }
@@ -89,11 +83,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         } else {
             return producer;
         }
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override
@@ -153,7 +142,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
             }
         } catch (Throwable t) {
             //can ignore and Kafka itself might be able to handle it, if not, it will throw an exception
-            LOG.debug("Problem loading classes for Serializers", t);
+            log.debug("Problem loading classes for Serializers", t);
         }
     }
 
@@ -167,6 +156,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return getCamelContext().getExecutorServiceManager().newThreadPool(this, "KafkaProducer[" + configuration.getTopic() + "]", core, max);
     }
 
+    @SuppressWarnings("rawtypes")
     public Exchange createKafkaExchange(ConsumerRecord record) {
         Exchange exchange = super.createExchange();
 
@@ -174,6 +164,8 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         message.setHeader(KafkaConstants.PARTITION, record.partition());
         message.setHeader(KafkaConstants.TOPIC, record.topic());
         message.setHeader(KafkaConstants.OFFSET, record.offset());
+        message.setHeader(KafkaConstants.HEADERS, record.headers());
+        message.setHeader(KafkaConstants.TIMESTAMP, record.timestamp());
         if (record.key() != null) {
             message.setHeader(KafkaConstants.KEY, record.key());
         }
@@ -186,14 +178,4 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return new KafkaProducer(endpoint);
     }
 
-    public boolean isBridgeEndpoint() {
-        return bridgeEndpoint;
-    }
-
-    /**
-     * If the option is true, then KafkaProducer will ignore the KafkaConstants.TOPIC header setting of the inbound message.
-     */
-    public void setBridgeEndpoint(boolean bridgeEndpoint) {
-        this.bridgeEndpoint = bridgeEndpoint;
-    }
 }

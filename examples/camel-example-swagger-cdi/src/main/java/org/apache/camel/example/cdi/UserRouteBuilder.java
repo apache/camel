@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +16,9 @@
  */
 package org.apache.camel.example.cdi;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.model.rest.RestBindingMode;
 
 import static org.apache.camel.model.rest.RestParamType.body;
@@ -26,7 +27,7 @@ import static org.apache.camel.model.rest.RestParamType.path;
 /**
  * Define REST services using the Camel REST DSL
  */
-@ContextName("myCamel")
+@ApplicationScoped
 public class UserRouteBuilder extends RouteBuilder {
 
     @Override
@@ -61,7 +62,7 @@ public class UserRouteBuilder extends RouteBuilder {
                 .responseMessage().code(200).message("User created or updated").endResponseMessage()
                 .to("bean:userService?method=updateUser")
 
-            .get("/findAll").description("Find all users").outTypeList(User.class)
+            .get("/findAll").description("Find all users").outType(User[].class)
                 .responseMessage().code(200).message("All users").endResponseMessage()
                 .to("bean:userService?method=listUsers");
     }

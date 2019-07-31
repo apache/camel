@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.BodyPart;
@@ -43,19 +44,22 @@ import javax.mail.internet.MimeUtility;
 import javax.mail.internet.ParseException;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.impl.DefaultAttachment;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.attachment.Attachment;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.attachment.DefaultAttachment;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.DefaultDataFormat;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MimeMultipartDataFormat implements DataFormat {
+@Dataformat("mime-multipart")
+public class MimeMultipartDataFormat extends DefaultDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(MimeMultipartDataFormat.class);
     private static final String MIME_VERSION = "MIME-Version";
     private static final String CONTENT_TYPE = "Content-Type";
@@ -91,7 +95,7 @@ public class MimeMultipartDataFormat implements DataFormat {
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream)
             throws NoTypeConversionAvailableException, MessagingException, IOException {
-        if (multipartWithoutAttachment || headersInline || exchange.getIn().hasAttachments()) {
+        if (multipartWithoutAttachment || headersInline || exchange.getIn(AttachmentMessage.class).hasAttachments()) {
             ContentType contentType = getContentType(exchange);
             // remove the Content-Type header. This will be wrong afterwards...
             exchange.getOut().removeHeader(Exchange.CONTENT_TYPE);
@@ -102,27 +106,29 @@ public class MimeMultipartDataFormat implements DataFormat {
             BodyPart part = new MimeBodyPart();
             writeBodyPart(bodyContent, part, contentType);
             mp.addBodyPart(part);
-            for (Map.Entry<String, Attachment> entry : exchange.getIn().getAttachmentObjects().entrySet()) {
-                String attachmentFilename = entry.getKey();
-                Attachment attachment = entry.getValue();
-                part = new MimeBodyPart();
-                part.setDataHandler(attachment.getDataHandler());
-                part.setFileName(MimeUtility.encodeText(attachmentFilename, "UTF-8", null));
-                String ct = attachment.getDataHandler().getContentType();
-                contentType = new ContentType(ct);
-                part.setHeader(CONTENT_TYPE, ct);
-                if (!contentType.match("text/*") && binaryContent) {
-                    part.setHeader(CONTENT_TRANSFER_ENCODING, "binary");
-                }
-                // Set headers to the attachment
-                for (String headerName : attachment.getHeaderNames()) {
-                    List<String> values = attachment.getHeaderAsList(headerName);
-                    for (String value : values) {
-                        part.setHeader(headerName, value);
+            if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
+                for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
+                    String attachmentFilename = entry.getKey();
+                    Attachment attachment = entry.getValue();
+                    part = new MimeBodyPart();
+                    part.setDataHandler(attachment.getDataHandler());
+                    part.setFileName(MimeUtility.encodeText(attachmentFilename, "UTF-8", null));
+                    String ct = attachment.getDataHandler().getContentType();
+                    contentType = new ContentType(ct);
+                    part.setHeader(CONTENT_TYPE, ct);
+                    if (!contentType.match("text/*") && binaryContent) {
+                        part.setHeader(CONTENT_TRANSFER_ENCODING, "binary");
                     }
+                    // Set headers to the attachment
+                    for (String headerName : attachment.getHeaderNames()) {
+                        List<String> values = attachment.getHeaderAsList(headerName);
+                        for (String value : values) {
+                            part.setHeader(headerName, value);
+                        }
+                    }
+                    mp.addBodyPart(part);
+                    exchange.getOut(AttachmentMessage.class).removeAttachment(attachmentFilename);
                 }
-                mp.addBodyPart(part);
-                exchange.getOut().removeAttachment(attachmentFilename);
             }
             mm.setContent(mp);
             // copy headers if required and if the content can be converted into
@@ -139,7 +145,7 @@ public class MimeMultipartDataFormat implements DataFormat {
             }
             mm.saveChanges();
             Enumeration<?> hl = mm.getAllHeaders();
-            List<String> headers = new ArrayList<String>();
+            List<String> headers = new ArrayList<>();
             if (!headersInline) {
                 while (hl.hasMoreElements()) {
                     Object ho = hl.nextElement();
@@ -218,7 +224,7 @@ public class MimeMultipartDataFormat implements DataFormat {
                     return stream;
                 }
             } catch (ParseException e) {
-                LOG.warn("Invalid Content-Type " + contentType + " ignored");
+                LOG.warn("Invalid Content-Type {} ignored", contentType);
                 return stream;
             }
             camelMessage = exchange.getOut();
@@ -253,7 +259,7 @@ public class MimeMultipartDataFormat implements DataFormat {
                     Header header = headers.nextElement();
                     camelAttachment.addHeader(header.getName(), header.getValue());
                 }
-                camelMessage.addAttachmentObject(getAttachmentKey(bp), camelAttachment);
+                camelMessage.getExchange().getOut(AttachmentMessage.class).addAttachmentObject(getAttachmentKey(bp), camelAttachment);
             }
         }
         if (content instanceof BodyPart) {

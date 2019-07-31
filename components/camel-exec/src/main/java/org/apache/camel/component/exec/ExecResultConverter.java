@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,13 +30,15 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.TypeConverter.MISS_VALUE;
+
 /**
  * Default converters for {@link ExecResult}. For details how to extend the
  * converters check out <a
  * href="http://camel.apache.org/type-converter.html">the Camel docs for type
  * converters.</a>
  */
-@Converter
+@Converter(loader = true)
 public final class ExecResultConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExecResultConverter.class);
@@ -96,7 +98,7 @@ public final class ExecResultConverter {
         } else {
             // use Void to indicate we cannot convert it
             // (prevents Camel from using a fallback converter which may convert a String from the instance name)  
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
     }
 
@@ -145,7 +147,7 @@ public final class ExecResultConverter {
      * Resets the stream, only if it's a ByteArrayInputStream.
      */
     private static void resetIfByteArrayInputStream(InputStream stream) {
-        if (stream != null && stream instanceof ByteArrayInputStream) {
+        if (stream instanceof ByteArrayInputStream) {
             try {
                 stream.reset();
             } catch (IOException ioe) {

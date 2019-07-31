@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -104,23 +104,25 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 });
                 return null;
             }
-            if (continuation.isResumed()) {
+            if (!continuation.isTimeout() && continuation.isResumed()) {
                 cxfExchange.put(SUSPENED, Boolean.FALSE);
                 org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                 try {
                     return returnResponse(cxfExchange, camelExchange);
-                } finally {
+                } catch (Exception ex) {
                     cxfRsConsumer.doneUoW(camelExchange);
+                    throw ex;
                 }
             } else {
-                if (!continuation.isPending()) {
+                if (continuation.isTimeout() || !continuation.isPending()) {
                     cxfExchange.put(SUSPENED, Boolean.FALSE);
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                     camelExchange.setException(new ExchangeTimedOutException(camelExchange, endpoint.getContinuationTimeout()));
                     try {
                         return returnResponse(cxfExchange, camelExchange);
-                    } finally {
+                    } catch (Exception ex) {
                         cxfRsConsumer.doneUoW(camelExchange);
+                        throw ex;
                     }
                 }
             }
@@ -143,8 +145,9 @@ public class CxfRsInvoker extends JAXRSInvoker {
 
         try {
             return returnResponse(cxfExchange, camelExchange);
-        } finally {
+        } catch (Exception ex) {
             cxfRsConsumer.doneUoW(camelExchange);
+            throw  ex;
         }
     }
     
@@ -155,6 +158,9 @@ public class CxfRsInvoker extends JAXRSInvoker {
             ep = ExchangePattern.InOnly;
         } 
         final org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
+        //needs access in MessageObserver/Interceptor to close the UnitOfWork
+        cxfExchange.put(org.apache.camel.Exchange.class, camelExchange);
+
         if (response != null) {
             camelExchange.getOut().setBody(response);
         }

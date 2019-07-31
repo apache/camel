@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,52 +15,56 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
+import static org.awaitility.Awaitility.await;
+
 public class TransactionalClientDataSourceTransactedWithFileTest extends TransactionClientDataSourceSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/transacted");
         super.setUp();
     }
 
+    @Test
     public void testTransactionSuccess() throws Exception {
         template.sendBodyAndHeader("file://target/transacted/okay", "Hello World", Exchange.FILE_NAME, "okay.txt");
 
-        // wait for route to complete
-        Thread.sleep(3000);
-
-        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 3, count);
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
+            // wait for route to complete
+            int count = jdbc.queryForObject("select count(*) from books", Integer.class);
+            assertEquals("Number of books", 3, count);
+        });
     }
 
+    @Test
     public void testTransactionRollback() throws Exception {
         template.sendBodyAndHeader("file://target/transacted/fail", "Hello World", Exchange.FILE_NAME, "fail.txt");
 
-        // wait for route to complete
-        Thread.sleep(3000);
-
-        // should not be able to process the file so we still got 1 book as we did from the start
-        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 1, count);
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
+            // should not be able to process the file so we still got 1 book as we did from the start
+            int count = jdbc.queryForObject("select count(*) from books", Integer.class);
+            assertEquals("Number of books", 1, count);
+        });
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/transacted/okay")
+                from("file://target/transacted/okay?initialDelay=0&delay=10")
                     .transacted()
                     .setBody(constant("Tiger in Action")).bean("bookService")
                     .setBody(constant("Elephant in Action")).bean("bookService");
 
-                from("file://target/transacted/fail?delay=1000")
+                from("file://target/transacted/fail?initialDelay=0&delay=10")
                     .transacted()
                     .setBody(constant("Tiger in Action")).bean("bookService")
                     .setBody(constant("Donkey in Action")).bean("bookService");

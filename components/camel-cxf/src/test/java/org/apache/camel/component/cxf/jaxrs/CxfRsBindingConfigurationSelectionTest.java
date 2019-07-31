@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,11 +22,11 @@ import java.util.Map;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -42,6 +42,9 @@ public class CxfRsBindingConfigurationSelectionTest extends CamelTestSupport {
             + RESOURCE_CLASS;
     private static final String CXF_RS_ENDPOINT_URI_DEFAULT = String.format("cxfrs://http://localhost:%s/CxfRsConsumerTest/rest?bindingStyle=Default&", CXFTestSupport.getPort3()) + RESOURCE_CLASS;
     private static final String CXF_RS_ENDPOINT_URI_NONE = String.format("cxfrs://http://localhost:%s/CxfRsConsumerTest/rest?", CXFTestSupport.getPort4()) + RESOURCE_CLASS;
+    
+    @BindToRegistry("binding")
+    private DummyCxfRsBindingImplementation dummyCxfRsBindingImplementation = new DummyCxfRsBindingImplementation();
     
     @Test
     public void testCxfRsBindingConfiguration() {
@@ -60,13 +63,6 @@ public class CxfRsBindingConfigurationSelectionTest extends CamelTestSupport {
     
     private CxfRsEndpoint endpointForRouteId(String routeId) {
         return (CxfRsEndpoint) context.getRoute(routeId).getConsumer().getEndpoint();
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry answer = super.createRegistry();
-        answer.bind("binding", new DummyCxfRsBindingImplementation());
-        return answer;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

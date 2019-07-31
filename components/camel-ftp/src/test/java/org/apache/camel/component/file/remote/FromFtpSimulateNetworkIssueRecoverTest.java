@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,33 +16,27 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 /**
  * Simulate network issues by using a custom poll strategy to force exceptions
  * occurring during poll.
- *
- * @version 
  */
 public class FromFtpSimulateNetworkIssueRecoverTest extends FtpServerTestSupport {
 
     private static int counter;
     private static int rollback;
-
+    
+    @BindToRegistry("myPoll")
+    private MyPollStrategy strategy = new MyPollStrategy();
+    
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/recover?password=admin&pollStrategy=#myPoll";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myPoll", new MyPollStrategy());
-        return jndi;
     }
 
     @Test

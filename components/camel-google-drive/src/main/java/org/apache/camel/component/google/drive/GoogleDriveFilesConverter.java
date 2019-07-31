@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,14 +25,13 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Converter
+@Converter(loader = true)
 public final class GoogleDriveFilesConverter {
     private static final Logger LOG = LoggerFactory.getLogger(GoogleDriveFilesConverter.class);
     
@@ -93,6 +92,16 @@ public final class GoogleDriveFilesConverter {
         InputStream is = download(fileMetadata, exchange);
         if (is != null) {
             return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, is);
+        }
+        return null;
+    }
+    
+    @Converter
+    public static com.google.api.services.drive.model.ChildReference genericStringToChildReference(String payload, Exchange exchange) throws Exception {       
+        if (payload != null) {
+            com.google.api.services.drive.model.ChildReference childReference = new com.google.api.services.drive.model.ChildReference();
+            childReference.setId(payload);
+            return childReference;
         }
         return null;
     }

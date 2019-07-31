@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,9 +47,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
         // No direct access to native CXF Message but we can verify the 
         // request context from the Camel exchange
         assertNotNull(exchange);
-        Map<String, Object> requestContext = CastUtils.cast((Map<?, ?>)exchange.getProperty(Client.REQUEST_CONTEXT));
-        assertNotNull(requestContext);
-        String actualValue = (String)requestContext.get(TEST_KEY);
+        String actualValue = (String)exchange.getProperties().get(TEST_KEY);
         assertEquals("exchange property should get propagated to the request context", TEST_VALUE, actualValue);
     }
 
@@ -67,9 +65,9 @@ public class CxfProducerContextTest extends CxfProducerTest {
     protected Exchange sendSimpleMessage() {
         Exchange exchange = template.send(getSimpleEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
+                final List<String> params = new ArrayList<>();
                 params.add(TEST_MESSAGE);
-                Map<String, Object> requestContext = new HashMap<String, Object>();
+                Map<String, Object> requestContext = new HashMap<>();
                 requestContext.put(Message.ENDPOINT_ADDRESS, getSimpleServerAddress());
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
@@ -87,9 +85,9 @@ public class CxfProducerContextTest extends CxfProducerTest {
     protected Exchange sendJaxWsMessage() {
         Exchange exchange = template.send(getJaxwsEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
+                final List<String> params = new ArrayList<>();
                 params.add(TEST_MESSAGE);
-                Map<String, Object> requestContext = new HashMap<String, Object>();
+                Map<String, Object> requestContext = new HashMap<>();
                 requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getJaxWsServerAddress());
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);

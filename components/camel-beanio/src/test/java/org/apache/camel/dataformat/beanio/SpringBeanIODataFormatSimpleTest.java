@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -63,7 +63,7 @@ public class SpringBeanIODataFormatSimpleTest extends CamelSpringTestSupport {
     }
 
     private List<Employee> getEmployees() throws ParseException {
-        List<Employee> employees = new ArrayList<Employee>();
+        List<Employee> employees = new ArrayList<>();
         Employee one = new Employee();
         one.setFirstName("Joe");
         one.setLastName("Smith");

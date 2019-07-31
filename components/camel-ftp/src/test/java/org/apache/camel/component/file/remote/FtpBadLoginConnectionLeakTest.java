@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,11 +22,12 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.SocketFactory;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class FtpBadLoginConnectionLeakTest extends FtpServerTestSupport {
@@ -34,20 +35,14 @@ public class FtpBadLoginConnectionLeakTest extends FtpServerTestSupport {
     /**
      * Mapping of socket hashcode to two element tab ([connect() called, close() called])
      */
-    private Map<Integer, boolean[]> socketAudits = new HashMap<Integer, boolean[]>();
+    private Map<Integer, boolean[]> socketAudits = new HashMap<>();
+    
+    @BindToRegistry("sf")
+    private SocketFactory sf = new AuditingSocketFactory();
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber" 
             + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        SocketFactory sf = new AuditingSocketFactory();
-        jndi.bind("sf", sf);
-        return jndi;
     }
 
     @Test

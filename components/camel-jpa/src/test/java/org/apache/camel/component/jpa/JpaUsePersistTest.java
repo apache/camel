@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,43 +16,49 @@
  */
 package org.apache.camel.component.jpa;
 
-import org.apache.camel.examples.Address;
-import org.apache.camel.examples.Customer;
-import org.junit.Test;
+import javax.persistence.PersistenceException;
 
-/**
- * @version 
- */
+import org.apache.camel.examples.Order;
+import org.hamcrest.CoreMatchers;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
 public class JpaUsePersistTest extends AbstractJpaMethodTest {
-    
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     public boolean usePersist() {
         return true;
     }
     
     @Test
     public void produceExistingEntityShouldThrowAnException() throws Exception {
-        setUp("jpa://" + Customer.class.getName() + "?usePersist=true");
+        setUp("jpa://" + Order.class.getName() + "?usePersist=true");
         
-        Customer customer = createDefaultCustomer();
-        save(customer);
-        long id = customer.getId();
+        Order order = createOrder();
+        save(order);
 
         // and adjust some values
-        customer = createDefaultCustomer();
-        customer.setId(id);
-        customer.setName("Max Mustermann");
-        customer.getAddress().setAddressLine1("Musterstr. 1");
-        customer.getAddress().setAddressLine2("11111 Enterhausen");
+        order = createOrder();
+        order.setProductName("Cheese");
+        order.setProductSku("54321");
+        order.setQuantity(2);
 
-        try {
-            // we cannot store the 2nd customer as its using the same id as the 1st
-            template.requestBody(endpoint, customer);
-            fail("Should throw exception");
-        } catch (Exception e) {
-            // expected
-        }
-        
-        assertEntitiesInDatabase(1, Customer.class.getName());
-        assertEntitiesInDatabase(1, Address.class.getName());
+        // we cannot store the 2nd order as its using the same id as the 1st
+        expectedException.expectCause(CoreMatchers.instanceOf(PersistenceException.class));
+        template.requestBody(endpoint, order);
+
+        assertEntitiesInDatabase(1, Order.class.getName());
+    }
+
+    private Order createOrder() {
+        Order order = new Order();
+        order.setId(1L);
+        order.setProductName("Beer");
+        order.setProductSku("12345");
+        order.setQuantity(5);
+        return order;
     }
 }

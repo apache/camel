@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.zookeeper-master.enabled",
+      "description": "Enable zookeeper-master component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

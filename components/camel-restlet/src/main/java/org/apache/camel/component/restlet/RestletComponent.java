@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,62 +16,55 @@
  */
 package org.apache.camel.component.restlet;
 
-import java.io.IOException;
 import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.restlet.converter.RestletConverter;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.RestProducerFactoryHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.Component;
 import org.restlet.Restlet;
-import org.restlet.Server;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Method;
-import org.restlet.data.Parameter;
-import org.restlet.data.Protocol;
 import org.restlet.engine.Engine;
 import org.restlet.security.ChallengeAuthenticator;
 import org.restlet.security.MapVerifier;
-import org.restlet.util.Series;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Camel component embedded Restlet that produces and consumes exchanges.
- *
- * @version
  */
-public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
+@org.apache.camel.spi.annotations.Component("restlet")
+public class RestletComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware, HeaderFilterStrategyAware {
+
     private static final Object LOCK = new Object();
 
-    private final Map<String, Server> servers = new HashMap<String, Server>();
-    private final Map<String, MethodBasedRouter> routers = new HashMap<String, MethodBasedRouter>();
+    private final Map<String, RestletHost> restletHostRegistry = new HashMap<>();
+    private final Map<String, MethodBasedRouter> routers = new HashMap<>();
     private final Component component;
 
     // options that can be set on the restlet server
@@ -113,6 +106,11 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     private Boolean synchronous;
     @Metadata(label = "advanced")
     private List<String> enabledConverters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
+    @Metadata(label = "filter", description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
+    private SSLContextParameters sslContextParameters;
 
     public RestletComponent() {
         this(new Component());
@@ -121,33 +119,62 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     public RestletComponent(Component component) {
         // Allow the Component to be injected, so that the RestletServlet may be
         // configured within a webapp
-        super(RestletEndpoint.class);
+        super();
         this.component = component;
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String remainingRaw = URISupport.extractRemainderPath(new URI(uri), true);
-        RestletEndpoint result = new RestletEndpoint(this, remainingRaw);
+
+        // grab uri and remove all query parameters as we need to rebuild it a bit special
+        String endpointUri = uri;
+        if (endpointUri.indexOf('?') > 0) {
+            endpointUri = endpointUri.substring(0, endpointUri.indexOf('?'));
+        }
+        // normalize so the uri is as expected
+        endpointUri = URISupport.normalizeUri(endpointUri);
+
+        // decode %7B -> {
+        // decode %7D -> }
+        endpointUri = endpointUri.replaceAll("%7B", "{").replaceAll("%7D", "}");
+
+        // include restlet methods in the uri (use GET as default)
+        String restletMethods = getAndRemoveParameter(parameters, "restletMethods", String.class);
+        if (restletMethods != null) {
+            endpointUri = endpointUri + "?restletMethods=" + restletMethods.toUpperCase();
+        }
+        String restletMethod = null;
+        if (restletMethods == null) {
+            restletMethod = getAndRemoveParameter(parameters, "restletMethod", String.class, "GET");
+            endpointUri = endpointUri + "?restletMethod=" + restletMethod.toUpperCase();
+        }
+
+        RestletEndpoint result = new RestletEndpoint(this, endpointUri);
         if (synchronous != null) {
             result.setSynchronous(synchronous);
         }
         result.setDisableStreamCache(isDisableStreamCache());
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
-        // set the endpoint uri according to the parameter
-        result.updateEndpointUri();
+        if (restletMethods != null) {
+            result.setRestletMethods(RestletConverter.toMethods(restletMethods));
+        } else {
+            result.setRestletMethod(RestletConverter.toMethod(restletMethod));
+        }
 
         // construct URI so we can use it to get the splitted information
+        // use raw values to support paths that has spaces
+        String remainingRaw = URISupport.extractRemainderPath(new URI(uri), true);
         URI u = new URI(remainingRaw);
         String protocol = u.getScheme();
 
-        String uriPattern = u.getRawPath();
-        if (parameters.size() > 0) {
-            uriPattern = uriPattern + "?" + URISupport.createQueryString(parameters);
-        }
+        String uriPattern = URISupport.createRemainingURI(u, parameters).getRawPath();
+        // must decode back to use {} style as that is what the restlet router expect to match in its uri pattern
+        // decode %7B -> {
+        // decode %7D -> }
+        uriPattern = uriPattern.replaceAll("%7B", "{").replaceAll("%7D", "}");
 
-        int port = 0;
+        int port;
         String host = u.getHost();
         if (u.getPort() > 0) {
             port = u.getPort();
@@ -160,6 +187,21 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         result.setHost(host);
         if (port > 0) {
             result.setPort(port);
+        }
+
+        if (result.getSslContextParameters() == null) {
+            if (sslContextParameters == null) {
+                result.setSslContextParameters(retrieveGlobalSslContextParameters());
+            } else {
+                result.setSslContextParameters(sslContextParameters);
+            }
+        }
+
+        // any additional query parameters from parameters then we need to include them as well
+        if (!parameters.isEmpty()) {
+            result.setQueryParameters(parameters);
+            endpointUri = URISupport.appendParametersToURI(endpointUri, parameters);
+            result.setCompleteEndpointUri(endpointUri);
         }
 
         return result;
@@ -185,7 +227,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     protected void doStop() throws Exception {
         component.stop();
         // component stop will stop servers so we should clear our list as well
-        servers.clear();
+        restletHostRegistry.clear();
         // routers map entries are removed as consumer stops and servers map
         // is not touch so to keep in sync with component's servers
         super.doStop();
@@ -210,20 +252,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
             attachUriPatternToRestlet(offsetPath, endpoint.getUriPattern(), endpoint, consumer.getRestlet());
         }
-
-        if (endpoint.getRestletUriPatterns() != null) {
-            for (String uriPattern : endpoint.getRestletUriPatterns()) {
-                attachUriPatternToRestlet(offsetPath, uriPattern, endpoint, consumer.getRestlet());
-            }
-        }
     }
 
     public void disconnect(RestletConsumer consumer) throws Exception {
         RestletEndpoint endpoint = consumer.getEndpoint();
 
-        List<MethodBasedRouter> routesToRemove = new ArrayList<MethodBasedRouter>();
+        List<MethodBasedRouter> routesToRemove = new ArrayList<>();
 
-        String pattern = decodePattern(endpoint.getUriPattern());
+        String pattern = endpoint.getUriPattern();
         if (pattern != null && !pattern.isEmpty()) {
             MethodBasedRouter methodRouter = getMethodRouter(pattern, false);
             if (methodRouter != null) {
@@ -231,33 +267,27 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             }
         }
 
-        if (endpoint.getRestletUriPatterns() != null) {
-            for (String uriPattern : endpoint.getRestletUriPatterns()) {
-                MethodBasedRouter methodRouter = getMethodRouter(uriPattern, false);
-                if (methodRouter != null) {
-                    routesToRemove.add(methodRouter);
-                }
-            }
-        }
-
         for (MethodBasedRouter router : routesToRemove) {
+
+            List<Method> methods = new ArrayList<>();
+            Collections.addAll(methods, Method.OPTIONS);
             if (endpoint.getRestletMethods() != null) {
-                Method[] methods = endpoint.getRestletMethods();
-                for (Method method : methods) {
-                    router.removeRoute(method);
-                }
+                Collections.addAll(methods, endpoint.getRestletMethods());
             } else {
-                router.removeRoute(endpoint.getRestletMethod());
+                Collections.addAll(methods, endpoint.getRestletMethod());
+            }
+            for (Method method : methods) {
+                router.removeRoute(method);
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Detached restlet uriPattern: {} method: {}", router.getUriPattern(),
+            if (log.isDebugEnabled()) {
+                log.debug("Detached restlet uriPattern: {} method: {}", router.getUriPattern(),
                           endpoint.getRestletMethod());
             }
 
             // remove router if its no longer in use
             if (!router.hasRoutes()) {
-                deattachUriPatternFrimRestlet(router.getUriPattern(), endpoint, router);
+                deAttachUriPatternFromRestlet(router.getUriPattern(), endpoint, router);
                 if (!router.isStopped()) {
                     router.stop();
                 }
@@ -271,158 +301,79 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             MethodBasedRouter result = routers.get(uriPattern);
             if (result == null && addIfEmpty) {
                 result = new MethodBasedRouter(uriPattern);
-                LOG.debug("Added method based router: {}", result);
+                log.debug("Added method based router: {}", result);
                 routers.put(uriPattern, result);
             }
             return result;
         }
     }
 
-    protected Server createServer(RestletEndpoint endpoint) {
-        // Consider hostname if provided. This is useful when loopback interface is required for security reasons.
-        if (endpoint.getHost() != null) {
-            return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getHost(), endpoint.getPort(), null);
-        } else {
-            return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
-        }
-    }
-
-
-    protected String stringArrayToString(String[] strings) {
-        StringBuffer result = new StringBuffer();
-        for (String str : strings) {
-            result.append(str);
-            result.append(" ");
-        }
-        return result.toString();
-    }
-
-    protected void setupServerWithSSLContext(Series<Parameter> params, SSLContextParameters scp) throws GeneralSecurityException, IOException {
-        // set the SSLContext parameters
-        params.add("sslContextFactory",
-            "org.restlet.engine.ssl.DefaultSslContextFactory");
-
-        SSLContext context = scp.createSSLContext(getCamelContext());
-        SSLEngine engine = context.createSSLEngine();
-
-        params.add("enabledProtocols", stringArrayToString(engine.getEnabledProtocols()));
-        params.add("enabledCipherSuites", stringArrayToString(engine.getEnabledCipherSuites()));
-
-        if (scp.getSecureSocketProtocol() != null) {
-            params.add("protocol", scp.getSecureSocketProtocol());
-        }
-        if (scp.getServerParameters() != null && scp.getServerParameters().getClientAuthentication() != null) {
-            boolean b = !scp.getServerParameters().getClientAuthentication().equals("NONE");
-            params.add("needClientAuthentication", String.valueOf(b));
-        }
-        if (scp.getKeyManagers() != null) {
-            if (scp.getKeyManagers().getAlgorithm() != null) {
-                params.add("keyManagerAlgorithm", scp.getKeyManagers().getAlgorithm());
-            }
-            if (scp.getKeyManagers().getKeyPassword() != null) {
-                params.add("keyPassword", scp.getKeyManagers().getKeyPassword());
-            }
-            if (scp.getKeyManagers().getKeyStore().getResource() != null) {
-                params.add("keyStorePath", scp.getKeyManagers().getKeyStore().getResource());
-            }
-            if (scp.getKeyManagers().getKeyStore().getPassword() != null) {
-                params.add("keyStorePassword", scp.getKeyManagers().getKeyStore().getPassword());
-            }
-            if (scp.getKeyManagers().getKeyStore().getType() != null) {
-                params.add("keyStoreType", scp.getKeyManagers().getKeyStore().getType());
-            }
-        }
-
-        if (scp.getTrustManagers() != null) {
-            if (scp.getTrustManagers().getAlgorithm() != null) {
-                params.add("trustManagerAlgorithm", scp.getKeyManagers().getAlgorithm());
-            }
-            if (scp.getTrustManagers().getKeyStore().getResource() != null) {
-                params.add("trustStorePath", scp.getTrustManagers().getKeyStore().getResource());
-            }
-            if (scp.getTrustManagers().getKeyStore().getPassword() != null) {
-                params.add("trustStorePassword", scp.getTrustManagers().getKeyStore().getPassword());
-            }
-            if (scp.getTrustManagers().getKeyStore().getType() != null) {
-                params.add("trustStoreType", scp.getTrustManagers().getKeyStore().getType());
-            }
-        }
-    }
-
     protected void addServerIfNecessary(RestletEndpoint endpoint) throws Exception {
         String key = buildKey(endpoint);
-        Server server;
-        synchronized (servers) {
-            server = servers.get(key);
-            if (server == null) {
-                server = createServer(endpoint);
-                component.getServers().add(server);
+        RestletHost host;
+        synchronized (restletHostRegistry) {
+            host = restletHostRegistry.get(key);
+            if (host == null) {
+                host = createRestletHost();
+                host.configure(endpoint, component);
 
-                // Add any Restlet server parameters that were included
-                Series<Parameter> params = server.getContext().getParameters();
-
-                if ("https".equals(endpoint.getProtocol())) {
-                    SSLContextParameters scp = endpoint.getSslContextParameters();
-                    if (endpoint.getSslContextParameters() == null) {
-                        throw new InvalidParameterException("Need to specify the SSLContextParameters option here!");
-                    }
-                    setupServerWithSSLContext(params, scp);
-                }
-
-                if (getControllerDaemon() != null) {
-                    params.add("controllerDaemon", getControllerDaemon().toString());
-                }
-                if (getControllerSleepTimeMs() != null) {
-                    params.add("controllerSleepTimeMs", getControllerSleepTimeMs().toString());
-                }
-                if (getInboundBufferSize() != null) {
-                    params.add("inboundBufferSize", getInboundBufferSize().toString());
-                }
-                if (getMinThreads() != null) {
-                    params.add("minThreads", getMinThreads().toString());
-                }
-                if (getMaxThreads() != null) {
-                    params.add("maxThreads", getMaxThreads().toString());
-                }
-                if (getLowThreads() != null) {
-                    params.add("lowThreads", getLowThreads().toString());
-                }
-                if (getMaxQueued() != null) {
-                    params.add("maxQueued", getMaxQueued().toString());
-                }
-                if (getMaxConnectionsPerHost() != null) {
-                    params.add("maxConnectionsPerHost", getMaxConnectionsPerHost().toString());
-                }
-                if (getMaxTotalConnections() != null) {
-                    params.add("maxTotalConnections", getMaxTotalConnections().toString());
-                }
-                if (getOutboundBufferSize() != null) {
-                    params.add("outboundBufferSize", getOutboundBufferSize().toString());
-                }
-                if (getPersistingConnections() != null) {
-                    params.add("persistingConnections", getPersistingConnections().toString());
-                }
-                if (getPipeliningConnections() != null) {
-                    params.add("pipeliningConnections", getPipeliningConnections().toString());
-                }
-                if (getThreadMaxIdleTimeMs() != null) {
-                    params.add("threadMaxIdleTimeMs", getThreadMaxIdleTimeMs().toString());
-                }
-                if (getUseForwardedForHeader() != null) {
-                    params.add("useForwardedForHeader", getUseForwardedForHeader().toString());
-                }
-                if (getReuseAddress() != null) {
-                    params.add("reuseAddress", getReuseAddress().toString());
-                }
-
-                LOG.debug("Setting parameters: {} to server: {}", params, server);
-                server.getContext().setParameters(params);
-
-                servers.put(key, server);
-                LOG.debug("Added server: {}", key);
-                server.start();
+                restletHostRegistry.put(key, host);
+                log.debug("Added host: {}", key);
+                host.start();
             }
         }
+    }
+
+    protected RestletHost createRestletHost() {
+        RestletHostOptions options = new RestletHostOptions();
+
+        if (getControllerDaemon() != null) {
+            options.setControllerDaemon(getControllerDaemon());
+        }
+        if (getControllerSleepTimeMs() != null) {
+            options.setControllerSleepTimeMs(getControllerSleepTimeMs());
+        }
+        if (getInboundBufferSize() != null) {
+            options.setInboundBufferSize(getInboundBufferSize());
+        }
+        if (getMinThreads() != null) {
+            options.setMinThreads(getMinThreads());
+        }
+        if (getMaxThreads() != null) {
+            options.setMaxThreads(getMaxThreads());
+        }
+        if (getLowThreads() != null) {
+            options.setLowThreads(getLowThreads());
+        }
+        if (getMaxQueued() != null) {
+            options.setMaxQueued(getMaxQueued());
+        }
+        if (getMaxConnectionsPerHost() != null) {
+            options.setMaxConnectionsPerHost(getMaxConnectionsPerHost());
+        }
+        if (getMaxTotalConnections() != null) {
+            options.setMaxTotalConnections(getMaxTotalConnections());
+        }
+        if (getOutboundBufferSize() != null) {
+            options.setOutboundBufferSize(getOutboundBufferSize());
+        }
+        if (getPersistingConnections() != null) {
+            options.setPersistingConnections(getPersistingConnections());
+        }
+        if (getPipeliningConnections() != null) {
+            options.setPipeliningConnections(getPipeliningConnections());
+        }
+        if (getThreadMaxIdleTimeMs() != null) {
+            options.setThreadMaxIdleTimeMs(getThreadMaxIdleTimeMs());
+        }
+        if (getUseForwardedForHeader() != null) {
+            options.setUseForwardedForHeader(getUseForwardedForHeader());
+        }
+        if (getReuseAddress() != null) {
+            options.setReuseAddress(getReuseAddress());
+        }
+
+        return new DefaultRestletHost(options);
     }
 
     private static String buildKey(RestletEndpoint endpoint) {
@@ -430,7 +381,6 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     }
 
     private void attachUriPatternToRestlet(String offsetPath, String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
-        uriPattern = decodePattern(uriPattern);
         MethodBasedRouter router = getMethodRouter(uriPattern, true);
 
         Map<String, String> realm = endpoint.getRestletRealm();
@@ -444,47 +394,36 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             guard.setVerifier(verifier);
             guard.setNext(target);
             target = guard;
-            LOG.debug("Target has been set to guard: {}", guard);
+            log.debug("Target has been set to guard: {}", guard);
         }
 
+        List<Method> methods = new ArrayList<>();
+        Collections.addAll(methods, Method.OPTIONS);
         if (endpoint.getRestletMethods() != null) {
-            Method[] methods = endpoint.getRestletMethods();
-            for (Method method : methods) {
-                router.addRoute(method, target);
-                LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
-            }
+            Collections.addAll(methods, endpoint.getRestletMethods());
         } else {
-            Method method = endpoint.getRestletMethod();
+            Collections.addAll(methods, endpoint.getRestletMethod());
+        }
+        for (Method method : methods) {
             router.addRoute(method, target);
-            LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
+            log.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
         }
 
         if (!router.hasBeenAttached()) {
             component.getDefaultHost().attach(
                     offsetPath == null ? uriPattern : offsetPath + uriPattern, router);
-            LOG.debug("Attached methodRouter uriPattern: {}", uriPattern);
+            log.debug("Attached methodRouter uriPattern: {}", uriPattern);
         }
 
         if (!router.isStarted()) {
             router.start();
-            LOG.debug("Started methodRouter uriPattern: {}", uriPattern);
+            log.debug("Started methodRouter uriPattern: {}", uriPattern);
         }
     }
 
-    private void deattachUriPatternFrimRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
+    private void deAttachUriPatternFromRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
         component.getDefaultHost().detach(target);
-        LOG.debug("Deattached methodRouter uriPattern: {}", uriPattern);
-    }
-
-    @Deprecated
-    protected String preProcessUri(String uri) {
-        // If the URI was not valid (i.e. contains '{' and '}'
-        // it was most likely encoded by normalizeEndpointUri in DefaultCamelContext.getEndpoint(String)
-        return UnsafeUriCharactersEncoder.encode(uri.replaceAll("%7B", "(").replaceAll("%7D", ")"));
-    }
-
-    private static String decodePattern(String pattern) {
-        return pattern == null ? null : pattern.replaceAll("\\(", "{").replaceAll("\\)", "}");
+        log.debug("De-attached methodRouter uriPattern: {}", uriPattern);
     }
 
     public Boolean getControllerDaemon() {
@@ -501,12 +440,23 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     public Integer getControllerSleepTimeMs() {
         return controllerSleepTimeMs;
     }
-
+    
     /**
      * Time for the controller thread to sleep between each control.
      */
     public void setControllerSleepTimeMs(Integer controllerSleepTimeMs) {
         this.controllerSleepTimeMs = controllerSleepTimeMs;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return this.headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        this.headerFilterStrategy = strategy;
     }
 
     public Integer getInboundBufferSize() {
@@ -724,6 +674,24 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     }
 
     @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    @Metadata(description = "To configure security using SSLContextParameters", label = "security")
+    public void setSslContextParameters(final SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
@@ -771,16 +739,16 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+            if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                 host = "0.0.0.0";
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                 host = HostUtils.getLocalHostName();
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                 host = HostUtils.getLocalIp();
             }
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
         if (config.getComponent() == null || config.getComponent().equals("restlet")) {
             // setup endpoint options
@@ -816,6 +784,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
 
+        // the endpoint must be started before creating the consumer
+        ServiceHelper.startService(endpoint);
+
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
@@ -835,7 +806,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
                                    String verb, String basePath, String uriTemplate, String queryParameters,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         // avoid leading slash
         basePath = FileUtil.stripLeadingSeparator(basePath);
@@ -845,12 +816,40 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         String restletMethod = verb.toUpperCase(Locale.US);
 
         // get the endpoint
-        String url;
-        if (uriTemplate != null) {
-            url = String.format("restlet:%s/%s/%s?restletMethods=%s", host, basePath, uriTemplate, restletMethod);
-        } else {
-            url = String.format("restlet:%s/%s?restletMethods=%s", host, basePath, restletMethod);
+        String url = "restlet:" + host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
         }
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
+        }
+                
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = camelContext.getRestConfiguration("restlet", true);
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        // build query string, and append any endpoint configuration properties
+        if (config.getComponent() == null || config.getComponent().equals("restlet")) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
+        }
+
+        // get the endpoint
+        String query = URISupport.createQueryString(map);
+        if (!query.isEmpty()) {
+            url = url + "?" + query;
+        } else {
+            url += "?restletMethod=" + restletMethod;
+        }
+
+        // there are cases where we might end up here without component being created beforehand
+        // we need to abide by the component properties specified in the parameters when creating
+        // the component
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
 
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {
@@ -876,6 +875,12 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
                         && !converters.contains(converter.getClass().getSimpleName())
                 );
             }
+        }
+    }
+
+    public void setEndpointHeaderFilterStrategy(Endpoint endpoint) {
+        if (this.headerFilterStrategy != null && endpoint instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware)endpoint).setHeaderFilterStrategy(this.headerFilterStrategy);
         }
     }
 }

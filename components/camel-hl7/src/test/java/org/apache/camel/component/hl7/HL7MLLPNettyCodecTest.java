@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,10 +21,11 @@ import ca.uhn.hl7v2.model.v24.message.ADR_A19;
 import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 /**
@@ -32,41 +33,39 @@ import org.junit.Test;
  */
 public class HL7MLLPNettyCodecTest extends HL7TestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("hl7decoder")
+    public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
 
-        // START SNIPPET: e1
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
         decoder.setConvertLFtoCR(true);
-        jndi.bind("hl7decoder", decoder);
+        return decoder;
+    }
+
+    @BindToRegistry("hl7encoder")
+    public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
 
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
-        decoder.setCharset("iso-8859-1");
-        decoder.setConvertLFtoCR(true);
-        jndi.bind("hl7encoder", encoder);
-        // END SNIPPET: e1
-
-        return jndi;
+        encoder.setCharset("iso-8859-1");
+        encoder.setConvertLFtoCR(true);
+        return encoder;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            Message input = exchange.getIn().getBody(Message.class);
+                from("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Message input = exchange.getIn().getBody(Message.class);
 
-                            assertEquals("2.4", input.getVersion());
-                            QRD qrd = (QRD)input.get("QRD");
-                            assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
+                        assertEquals("2.4", input.getVersion());
+                        QRD qrd = (QRD)input.get("QRD");
+                        assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
 
-                            Message response = createHL7AsMessage();
-                            exchange.getOut().setBody(response);
-                        }
-                    })
-                    .to("mock:result");
+                        Message response = createHL7AsMessage();
+                        exchange.getOut().setBody(response);
+                    }
+                }).to("mock:result");
             }
         };
     }

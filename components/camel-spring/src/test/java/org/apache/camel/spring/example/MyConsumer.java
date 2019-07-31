@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,15 +25,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An example POJO which is injected with a CamelTemplate
- *
- * @version 
  */
 public class MyConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(MyConsumer.class);
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private ProducerTemplate destination;
 
-    @Consume(uri = "direct:start")
+    @Consume("direct:start")
     public void doSomething(String body) {
         ObjectHelper.notNull(destination, "destination");
 

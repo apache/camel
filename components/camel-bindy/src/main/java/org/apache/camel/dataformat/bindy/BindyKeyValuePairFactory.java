@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.dataformat.bindy.annotation.BindyConverter;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
@@ -48,9 +49,9 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
     private static final Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairFactory.class);
 
-    private Map<Integer, KeyValuePairField> keyValuePairFields = new LinkedHashMap<Integer, KeyValuePairField>();
-    private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();
-    private Map<String, Integer> sections = new HashMap<String, Integer>();
+    private Map<Integer, KeyValuePairField> keyValuePairFields = new LinkedHashMap<>();
+    private Map<Integer, Field> annotatedFields = new LinkedHashMap<>();
+    private Map<String, Integer> sections = new HashMap<>();
     private String keyValuePairSeparator;
     private String pairSeparator;
     private boolean messageOrdered;
@@ -86,13 +87,13 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         for (Class<?> cl : models) {
 
-            List<Field> linkFields = new ArrayList<Field>();
+            List<Field> linkFields = new ArrayList<>();
 
             for (Field field : cl.getDeclaredFields()) {
                 KeyValuePairField keyValuePairField = field.getAnnotation(KeyValuePairField.class);
                 if (keyValuePairField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key declared in the class : {}, key : {}, Field : {}", new Object[]{cl.getName(), keyValuePairField.tag(), keyValuePairField});
+                        LOG.debug("Key declared in the class : {}, key : {}, Field : {}", cl.getName(), keyValuePairField.tag(), keyValuePairField);
                     }
                     keyValuePairFields.put(keyValuePairField.tag(), keyValuePairField);
                     annotatedFields.put(keyValuePairField.tag(), field);
@@ -116,17 +117,17 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     }
 
     @Override
-    public void bind(List<String> data, Map<String, Object> model, int line) throws Exception {
+    public void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line) throws Exception {
 
         // Map to hold the model @OneToMany classes while binding
-        Map<String, List<Object>> lists = new HashMap<String, List<Object>>();
+        Map<String, List<Object>> lists = new HashMap<>();
 
-        bind(data, model, line, lists);
+        bind(camelContext, data, model, line, lists);
     }
 
-    public void bind(List<String> data, Map<String, Object> model, int line, Map<String, List<Object>> lists) throws Exception {
+    public void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line, Map<String, List<Object>> lists) throws Exception {
 
-        Map<Integer, List<String>> results = new HashMap<Integer, List<String>>();
+        Map<Integer, List<String>> results = new HashMap<>();
 
         LOG.debug("Key value pairs data : {}", data);
 
@@ -154,7 +155,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                 // Add value to the Map using key value as key
                 if (!results.containsKey(key)) {
-                    List<String> list = new LinkedList<String>();
+                    List<String> list = new LinkedList<>();
                     list.add(value);
                     results.put(key, list);
                 } else {
@@ -390,7 +391,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     }
 
                     if (!lists.containsKey(cl.getName())) {
-                        lists.put(cl.getName(), new ArrayList<Object>());
+                        lists.put(cl.getName(), new ArrayList<>());
                     }
 
                     generateModelFromKeyValueMap(cl, null, results, line, lists);
@@ -412,17 +413,17 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      *
      */
     @Override
-    public String unbind(Map<String, Object> model) throws Exception {
+    public String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception {
 
         StringBuilder builder = new StringBuilder();
 
-        Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<Integer, KeyValuePairField>(keyValuePairFields);
+        Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<>(keyValuePairFields);
         Iterator<Integer> it = keyValuePairFieldsSorted.keySet().iterator();
 
         // Map containing the OUT position of the field
         // The key is double and is created using the position of the field and
         // location of the class in the message (using section)
-        Map<Integer, String> positions = new TreeMap<Integer, String>();
+        Map<Integer, String> positions = new TreeMap<>();
 
         // Check if separator exists
         ObjectHelper.notNull(this.pairSeparator, "The pair separator has not been instantiated or property not defined in the @Message annotation");
@@ -444,11 +445,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             field.setAccessible(true);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Tag: {}, Field type: {}, class: {}", new Object[]{keyValuePairField.tag(), field.getType(), field.getDeclaringClass().getName()});
+                LOG.debug("Tag: {}, Field type: {}, class: {}", keyValuePairField.tag(), field.getType(), field.getDeclaringClass().getName());
             }
-
-            // Retrieve the format, pattern and precision associated to the type
-            Class<?> type = field.getType();
 
             // Create format
             FormattingOptions formattingOptions = ConverterUtils.convert(keyValuePairField,
@@ -495,7 +493,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         String value = keyValuePairField.tag() + this.getKeyValuePairSeparator() + valueFormatted;
 
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Value to be formatted: {}, for the tag: {}, and its formatted value: {}", new Object[]{keyValue, keyValuePairField.tag(), valueFormatted});
+                            LOG.debug("Value to be formatted: {}, for the tag: {}, and its formatted value: {}", keyValue, keyValuePairField.tag(), valueFormatted);
                         }
 
                         // Add the content to the TreeMap according to the
@@ -527,7 +525,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         builder.append(value);
 
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Value added: {}{}{}{}", new Object[]{keyValuePairField.tag(), this.getKeyValuePairSeparator(), valueFormatted, separator});
+                            LOG.debug("Value added: {}{}{}{}", keyValuePairField.tag(), this.getKeyValuePairSeparator(), valueFormatted, separator);
                         }
                     }
                 }
@@ -544,7 +542,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 String value = positions.get(posit.next());
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Value added at the position ({}) : {}{}", new Object[]{posit, value, separator});
+                    LOG.debug("Value added at the position ({}) : {}{}", posit, value, separator);
                 }
 
                 builder.append(value + separator);

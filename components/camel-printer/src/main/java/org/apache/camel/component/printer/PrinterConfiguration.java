@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 @UriParams
@@ -38,7 +38,7 @@ public class PrinterConfiguration {
     private Sides internalSides;
     private OrientationRequested internalOrientation;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String hostname;
     @UriPath
     private int port;
@@ -85,8 +85,8 @@ public class PrinterConfiguration {
 
         // use path as printer name, but without any leading slashes
         String path = uri.getPath();
-        path = ObjectHelper.removeStartingCharacters(path, '/');
-        path = ObjectHelper.removeStartingCharacters(path, '\\');
+        path = StringHelper.removeStartingCharacters(path, '/');
+        path = StringHelper.removeStartingCharacters(path, '\\');
         setPrintername(path);
 
         Map<String, Object> printSettings = URISupport.parseParameters(uri);

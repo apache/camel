@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,50 +21,56 @@ import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.PersistentVolume;
+import io.fabric8.kubernetes.api.model.PersistentVolumeListBuilder;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSupport {
 
+    @Rule
+    public KubernetesServer server = new KubernetesServer();
+
+    @BindToRegistry("kubernetesClient")
+    public KubernetesClient getClient() throws Exception {
+        return server.getClient();
+    }
+
     @Test
     public void listTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        List<PersistentVolume> result = template.requestBody("direct:list", "",
-                List.class);
+        server.expect().withPath("/api/v1/persistentvolumes").andReturn(200, new PersistentVolumeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+            .once();
+        List<PersistentVolume> result = template.requestBody("direct:list", "", List.class);
 
-        assertTrue(result.size() == 1);
+        assertEquals(3, result.size());
     }
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+        server.expect().withPath("/api/v1/persistentvolumes?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
+            .andReturn(200, new PersistentVolumeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("component", "elasticsearch");
-                exchange.getIn()
-                        .setHeader(
-                                KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS,
-                                labels);
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, labels);
             }
         });
 
         List<PersistentVolume> result = ex.getOut().getBody(List.class);
+
+        assertEquals(3, result.size());
     }
 
     @Override
@@ -72,12 +78,8 @@ public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumes&operation=listPersistentVolumes",
-                                host, authToken);
-                from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumes&operation=listPersistentVolumesByLabels",
-                                host, authToken);
+                from("direct:list").to("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumes");
+                from("direct:listByLabels").to("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesByLabels");
             }
         };
     }

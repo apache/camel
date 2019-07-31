@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,8 +19,8 @@ package org.apache.camel.component.shiro.security;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.shiro.SecurityUtils;
@@ -55,8 +55,8 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
         this.passPhrase = bits128;
         // Set up AES encryption based cipher service, by default 
         cipherService = new AesCipherService();
-        permissionsList = new ArrayList<Permission>();
-        rolesList = new ArrayList<String>();
+        permissionsList = new ArrayList<>();
+        rolesList = new ArrayList<>();
         alwaysReauthenticate = true;
     }   
     
@@ -104,13 +104,13 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
         this.setPermissionsList(permissionsList);
     }
 
-    public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {  
+    public void beforeWrap(RouteContext routeContext, NamedNode definition) {
         // noop
     }
     
     public Processor wrap(RouteContext routeContext, final Processor processor) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Securing route {} using Shiro policy {}", routeContext.getRoute().getId(), this);
+            LOG.debug("Securing route {} using Shiro policy {}", routeContext.getRouteId(), this);
         }
         return new ShiroSecurityProcessor(processor, this);
     }

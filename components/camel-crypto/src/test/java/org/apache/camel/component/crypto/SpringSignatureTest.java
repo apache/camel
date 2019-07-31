@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,17 +25,16 @@ import java.security.cert.Certificate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spring.SpringCamelContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
-public class SpringSignatureTest extends SignatureTests {
+public class SpringSignatureTest extends SignatureTest {
 
     private static KeyPair rsaPair;
 
     protected CamelContext createCamelContext() throws Exception {
         rsaPair = getKeyPair("RSA");
-        return SpringCamelContext.springCamelContext("org/apache/camel/component/crypto/SpringSignatureTests.xml");
+        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/component/crypto/SpringSignatureTest.xml"), true);
     }
 
     public static KeyStore keystore() throws Exception {
@@ -43,7 +42,7 @@ public class SpringSignatureTest extends SignatureTests {
     }
 
     public static PrivateKey privateKeyFromKeystore() throws Exception {
-        return new SignatureTests().getKeyFromKeystore();
+        return new SignatureTest().getKeyFromKeystore();
     }
 
     public static Certificate certificateFromKeystore() throws Exception {
@@ -72,11 +71,6 @@ public class SpringSignatureTest extends SignatureTests {
 
     public static SecureRandom random() throws Exception {
         return new SecureRandom();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        return super.createRegistry();
     }
 
     @Override

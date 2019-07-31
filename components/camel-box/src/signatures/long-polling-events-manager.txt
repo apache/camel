@@ -1,1 +1,0 @@
-void poll(long streamPosition, final String streamType, final int limit, final org.apache.camel.component.box.internal.EventCallback callback);

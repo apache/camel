@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,30 +18,28 @@ package org.apache.camel.component.reactive.streams.engine;
 
 import java.util.Objects;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsHelper;
+import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A publisher that extracts the item from the payload as soon as it is delivered to the subscriber.
  * It calls the dispatch callback if defined.
  */
-public class UnwrappingPublisher<R> implements Publisher<R> {
+public class UnwrappingPublisher implements Publisher<Exchange> {
+    private Publisher<Exchange> delegate;
 
-    private static final Logger LOG = LoggerFactory.getLogger(UnwrappingPublisher.class);
-
-    private Publisher<StreamPayload<R>> delegate;
-
-    public UnwrappingPublisher(Publisher<StreamPayload<R>> delegate) {
+    public UnwrappingPublisher(Publisher<Exchange> delegate) {
         Objects.requireNonNull(delegate, "delegate publisher cannot be null");
         this.delegate = delegate;
     }
 
     @Override
-    public void subscribe(Subscriber<? super R> subscriber) {
-        delegate.subscribe(new Subscriber<StreamPayload<R>>() {
+    public void subscribe(Subscriber<? super Exchange> subscriber) {
+        delegate.subscribe(new Subscriber<Exchange>() {
 
             private Subscription subscription;
 
@@ -62,16 +60,17 @@ public class UnwrappingPublisher<R> implements Publisher<R> {
             }
 
             @Override
-            public void onNext(StreamPayload<R> payload) {
+            public void onNext(Exchange payload) {
                 Throwable error = null;
                 try {
-                    subscriber.onNext(payload.getItem());
+                    subscriber.onNext(payload);
                 } catch (Throwable t) {
                     error = t;
                 }
 
-                if (payload.getCallback() != null) {
-                    payload.getCallback().processed(payload.getItem(), error);
+                DispatchCallback<Exchange> callback = ReactiveStreamsHelper.getCallback(payload);
+                if (callback != null) {
+                    callback.processed(payload, error);
                 }
             }
 

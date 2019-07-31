@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,7 +36,7 @@ public class StreamHeaderTest extends CamelTestSupport {
     public void testStringContent() {
         template.sendBody("direct:in", "Hello");
         // StreamProducer appends \n in text mode
-        assertEquals("Hello\n", sb.toString());
+        assertEquals("Hello" + LS, sb.toString());
     }
 
     @Test

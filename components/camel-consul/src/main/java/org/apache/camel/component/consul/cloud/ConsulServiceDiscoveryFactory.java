@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,8 +20,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.component.consul.ConsulConfiguration;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.spi.annotations.CloudServiceFactory;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
+@CloudServiceFactory("consul-service-discovery")
 public class ConsulServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private final ConsulConfiguration configuration;
 
@@ -45,12 +47,29 @@ public class ConsulServiceDiscoveryFactory implements ServiceDiscoveryFactory {
         configuration.setUrl(url);
     }
 
+    /**
+     * @deprecated, @deprecated replaced by {@link #getDatacenter()} ()}
+     * @return
+     */
+    @Deprecated
     public String getDc() {
-        return configuration.getDc();
+        return configuration.getDatacenter();
     }
 
+    /**
+     * @deprecated, @deprecated replaced by {@link #setDatacenter(String)}} ()}
+     */
+    @Deprecated
     public void setDc(String dc) {
         configuration.setDc(dc);
+    }
+
+    public void setDatacenter(String dc) {
+        configuration.setDatacenter(dc);
+    }
+
+    public String getDatacenter() {
+        return configuration.getDatacenter();
     }
 
     public SSLContextParameters getSslContextParameters() {

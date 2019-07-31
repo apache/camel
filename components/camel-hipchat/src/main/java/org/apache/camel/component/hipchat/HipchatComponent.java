@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,11 +21,9 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link HipchatEndpoint}. Hipchat is an Atlassian software for team chat.
@@ -35,16 +33,14 @@ import org.slf4j.LoggerFactory;
  * at @see <a href="https://www.hipchat.com/account/api">Hipchat Auth Token</a>. The messages produced and consumed
  * would be from/to owner of the provided auth token.
  */
-public class HipchatComponent extends UriEndpointComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HipchatComponent.class);
+@Component("hipchat")
+public class HipchatComponent extends DefaultComponent {
 
     public HipchatComponent() {
-        super(HipchatEndpoint.class);
     }
 
     public HipchatComponent(CamelContext context) {
-        super(context, HipchatEndpoint.class);
+        super(context);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -53,15 +49,13 @@ public class HipchatComponent extends UriEndpointComponent {
         if (endpoint.getConfiguration().getAuthToken() == null) {
             throw new HipchatException("OAuth 2 auth token must be specified");
         }
-        parseUri(uri, endpoint);
-        LOG.debug("Using Hipchat API URL: {}", endpoint.getConfiguration().hipChatUrl());
+        parseUri(remaining, endpoint);
+        log.debug("Using Hipchat API URL: {}", endpoint.getConfiguration().hipChatUrl());
         return endpoint;
     }
 
-    private void parseUri(String uri, HipchatEndpoint endpoint) throws Exception {
-        // strip scheme
-        uri = ObjectHelper.after(uri, ":");
-        uri = URISupport.normalizeUri(uri);
+    private void parseUri(String remaining, HipchatEndpoint endpoint) throws Exception {
+        String uri = URISupport.normalizeUri(remaining);
 
         URI hipChatUri = new URI(uri);
         if (hipChatUri.getHost() != null) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ public class SplunkConfiguration {
 
     private SplunkConnectionFactory connectionFactory;
 
-    @UriPath(description = "Name has no purpose") @Metadata(required = "true")
+    @UriPath(description = "Name has no purpose") @Metadata(required = true)
     private String name;
     @UriParam(defaultValue = "https")
     private String scheme = Service.DEFAULT_SCHEME;

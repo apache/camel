@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,10 +29,10 @@ import org.junit.Test;
 
 public class ShiroRolesAuthorizationTest extends CamelTestSupport {
     
-    @EndpointInject(uri = "mock:success")
+    @EndpointInject("mock:success")
     protected MockEndpoint successEndpoint;
 
-    @EndpointInject(uri = "mock:authorizationException")
+    @EndpointInject("mock:authorizationException")
     protected MockEndpoint failureEndpoint;
     
     private byte[] passPhrase = {
@@ -123,7 +123,7 @@ public class ShiroRolesAuthorizationTest extends CamelTestSupport {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() {
                 
-                List<String> rolesList = new ArrayList<String>();
+                List<String> rolesList = new ArrayList<>();
                 rolesList.add("sec-level2");
                 rolesList.add("sec-level3");
                 
@@ -142,7 +142,7 @@ public class ShiroRolesAuthorizationTest extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() {
                 
-                List<String> rolesList = new ArrayList<String>();
+                List<String> rolesList = new ArrayList<>();
                 rolesList.add("sec-level2");
                 rolesList.add("sec-level3");
                 

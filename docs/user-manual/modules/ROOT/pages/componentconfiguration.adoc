@@ -1,0 +1,44 @@
+[[ComponentConfiguration-ComponentConfigurationAPI]]
+= ComponentConfiguration API
+
+As of *Camel 2.12* the new ComponentConfiguration API provides a
+mechanism for tools (command line, IDE, web based) to introspect the
+available Camel components and introspect what configuration parameters
+are available on the components to create new endpoints, edit existing
+endpoints or create/edit URIs for endpoints (if the aim is to allow UI
+editting of Camel routes for example).
+
+To get an idea for the kinds of things you can do with the
+ComponentConfiguration API
+https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/camel/impl/ComponentConfigurationTest.java#L72[check
+out the test case].
+
+For example given a Component object you can create a new configuration;
+then introspect the available properties...
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+Component component = camelContext.getComponent("seda");
+ComponentConfiguration configuration = component.createComponentConfiguration();
+
+// now lets introspect the available parameters...
+SortedMap<String, ParameterConfiguration> parameterMap = configuration.getParameterConfigurationMap();
+
+// or lets look up a named parameter
+ParameterConfiguration config = configuration.getParameterConfiguration("foo");
+
+
+// lets get or set the parameter values...
+configuration.setParameter("concurrentConsumers", 5);
+configuration.setParameter("size", 1000);
+
+// or lets set the base URI and parameters from a URI string
+configuration.setUriString("foo?concurrentConsumers=5&size=1000");
+
+
+// now lets convert the configuration to a URI string
+String uriString = configuration.getUriString();
+
+// now lets convert the configuration to an Endpoint
+Endpoint newEndpoint = configuration.createEndpoint();
+------------------------------------------------------------------------------------------------------

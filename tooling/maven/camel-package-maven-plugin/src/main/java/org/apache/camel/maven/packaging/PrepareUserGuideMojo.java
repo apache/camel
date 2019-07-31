@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,13 +21,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
@@ -35,6 +35,9 @@ import org.apache.camel.maven.packaging.model.OtherModel;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
@@ -43,61 +46,50 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
 /**
  * Prepares the user guide to keep the table of content up to date with the components, data formats, and languages.
- *
- * @goal prepare-user-guide
  */
+@Mojo(name = "prepare-user-guide", threadSafe = true)
 public class PrepareUserGuideMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The directory for components catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/components")
     protected File componentsDir;
 
     /**
      * The directory for data formats catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/dataformats"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/dataformats")
     protected File dataFormatsDir;
 
     /**
      * The directory for languages catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/languages"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/languages")
     protected File languagesDir;
 
     /**
      * The directory for others catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/others"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/others")
     protected File othersDir;
 
     /**
      * The directory for the user guide
-     *
-     * @parameter default-value="${project.directory}/../../../docs/user-manual/en"
      */
+    @Parameter(defaultValue = "${project.directory}/../../../docs/user-manual/en")
     protected File userGuideDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
@@ -560,6 +552,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         component.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        component.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         component.setConsumerOnly(JSonSchemaHelper.getSafeValue("consumerOnly", rows));
         component.setProducerOnly(JSonSchemaHelper.getSafeValue("producerOnly", rows));
         component.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
@@ -580,6 +573,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         other.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         other.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         other.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        other.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         other.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
         other.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
         other.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
@@ -598,6 +592,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         dataFormat.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        dataFormat.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         dataFormat.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
         dataFormat.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
         dataFormat.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
@@ -617,6 +612,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         language.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        language.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         language.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
         language.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
         language.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));

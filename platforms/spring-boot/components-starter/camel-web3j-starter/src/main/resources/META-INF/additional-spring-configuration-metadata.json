@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.web3j.enabled",
+      "description": "Enable web3j component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

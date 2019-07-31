@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,17 +18,17 @@ package org.apache.camel.component.mina2;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.naming.Context;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.spi.Registry;
 import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.filterchain.IoFilterAdapter;
 import org.apache.mina.core.session.IoSession;
+import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -47,6 +47,7 @@ public class Mina2FiltersTest extends BaseMina2Test {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         TestFilter.called = 0;
         super.tearDown();
@@ -80,15 +81,13 @@ public class Mina2FiltersTest extends BaseMina2Test {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected void bindToRegistry(Registry registry) throws Exception {
         IoFilter myFilter = new TestFilter();
-        List<IoFilter> myFilters = new ArrayList<IoFilter>();
+        List<IoFilter> myFilters = new ArrayList<>();
         myFilters.add(myFilter);
 
-        answer.bind("myFilters", myFilters);
-        answer.bind("myFilter", myFilter);
-        return answer;
+        registry.bind("myFilters", myFilters);
+        registry.bind("myFilter", myFilter);
     }
 
     public static final class TestFilter extends IoFilterAdapter {

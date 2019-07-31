@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,10 +30,10 @@ import org.junit.Test;
 public class BasicDisruptorComponentTest extends CamelTestSupport {
     private static final Integer VALUE = 42;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
-    @Produce(uri = "disruptor:test")
+    @Produce("disruptor:test")
     private ProducerTemplate template;
 
     @Test

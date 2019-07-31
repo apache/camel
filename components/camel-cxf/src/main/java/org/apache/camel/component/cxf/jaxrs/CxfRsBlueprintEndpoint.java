@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,26 +26,13 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.springframework.util.ReflectionUtils;
 
 public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
     private AbstractJAXRSFactoryBean bean;
     private BlueprintContainer blueprintContainer;
     private BundleContext bundleContext;
     private BlueprintCamelContext blueprintCamelContext;
-    
-    @Deprecated 
-    /**
-     * It will be removed in Camel 3.0
-     * @param comp
-     * @param bean
-     */
-    public CxfRsBlueprintEndpoint(Component comp, AbstractJAXRSFactoryBean bean) {
-        super(bean.getAddress(), comp);
-        this.bean = bean;
-        BlueprintSupport support = (BlueprintSupport)bean;
-        setBlueprintContainer(support.getBlueprintContainer());
-        setBundleContext(support.getBundleContext());
-    }
 
     public CxfRsBlueprintEndpoint(Component comp, String uri, AbstractJAXRSFactoryBean bean) {
         super(uri, comp);
@@ -91,8 +78,17 @@ public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
     @Override
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
         checkBeanType(bean, JAXRSClientFactoryBean.class);
-        return (RsClientBlueprintBean)bean;
+        return (RsClientBlueprintBean)newInstanceWithCommonProperties();
     }
-    
+
+    private RsClientBlueprintBean newInstanceWithCommonProperties() {
+        RsClientBlueprintBean cfb = new RsClientBlueprintBean();
+
+        if (bean instanceof RsClientBlueprintBean) {
+            ReflectionUtils.shallowCopyFieldState(bean, cfb);
+        }
+
+        return cfb;
+    }
 
 }

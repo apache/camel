@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,7 +40,7 @@ public class JettyRestRedirectTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                restConfiguration().component("jetty").host("localhost").scheme("http").port(port);
+                restConfiguration().component("jetty").host("localhost").scheme("http").port(port).producerComponent("http4");
                 rest("/metadata/profile")
                     .get("/{id}").to("direct:profileLookup")
                     .post("/tag").to("direct:tag");

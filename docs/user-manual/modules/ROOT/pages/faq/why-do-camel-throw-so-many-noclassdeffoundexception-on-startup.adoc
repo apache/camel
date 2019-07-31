@@ -1,0 +1,17 @@
+[[WhydoCamelthrowsomanyNoClassDefFoundExceptiononstartup-WhydoCamelthrowsomanyNoClassDefFoundExceptiononstartup]]
+= Why do Camel throw so many `NoClassDefFoundException` on startup?
+
+Camel uses a runtime strategy to discover features while it starts up.
+This is used to register components, languages, type converters, etc.
+
+If you are using the uber .jar (the big camel.jar) with all the Camel
+components in a single .jar filen, the this problem can typically
+occur.
+Especially the type converters is know to cause `NoClassDefFoundException`
+in the log during startup. The reasons is that some of these type
+converters rely on 3rd. party .jar files.
+
+To remedy this either add the missing .jars to the classpath, or stop
+using the big .jar and use the fine grained jars.
+
+See also xref:faq/how-do-i-use-a-big-uber-jar.adoc[How do I use a big (uber) JAR?]

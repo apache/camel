@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <!-- START SNIPPET: basic -->
+        <route>
+            <from uri="direct:keypair"/>
+            <to uri="crypto:sign:basic?privateKey=#myPrivateKey" />
+            <to uri="crypto:verify:basic?publicKey=#myPublicKey" />
+            <to uri="mock:result"/>
+        </route>
+        <!-- END SNIPPET: basic -->
+        
+        <!-- START SNIPPET: algorithm -->
+        <route>
+            <from uri="direct:algorithm"/>
+            <to uri="crypto:sign:rsa?algorithm=MD5withRSA&amp;privateKey=#rsaPrivateKey" />
+            <to uri="crypto:verify:rsa?algorithm=MD5withRSA&amp;publicKey=#rsaPublicKey" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: algorithm -->
+        
+        <!-- START SNIPPET: rsa-sha1 -->
+        <route>
+            <from uri="direct:rsa-sha1"/>
+            <to uri="crypto:sign:rsa?algorithm=SHA1withRSA&amp;privateKey=#rsaPrivateKey" />
+            <to uri="crypto:verify:rsa?algorithm=SHA1withRSA&amp;publicKey=#rsaPublicKey" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: rsa-sha1 -->
+        
+        <!-- START SNIPPET: rsa-sha256 -->
+        <route>
+            <from uri="direct:rsa-sha256"/>
+            <to uri="crypto:sign:rsa?algorithm=SHA256withRSA&amp;privateKey=#rsaPrivateKey" />
+            <to uri="crypto:verify:rsa?algorithm=SHA256withRSA&amp;publicKey=#rsaPublicKey" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: rsa-sha256 -->
+        
+        <!-- START SNIPPET: buffersize -->
+        <route>
+            <from uri="direct:buffersize" />
+            <to uri="crypto:sign:buffer?privateKey=#myPrivateKey&amp;bufferSize=1024" />
+            <to uri="crypto:verify:buffer?publicKey=#myPublicKey&amp;bufferSize=1024" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: buffersize -->
+        
+        <!-- START SNIPPET: random -->
+        <route>
+            <from uri="direct:random" />
+            <to uri="crypto:sign:random?privateKey=#myPrivateKey&amp;secureRandom=#someRandom" />
+            <to uri="crypto:verify:random?publicKey=#myPublicKey" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: random -->
+        
+        <!-- START SNIPPET: provider -->
+        <route>
+            <from uri="direct:provider"/>
+            <to uri="crypto:sign:provider?privateKey=#myPrivateKey&amp;provider=SUN" />
+            <to uri="crypto:verify:provider?publicKey=#myPublicKey&amp;provider=SUN" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: provider -->
+        
+        <!-- START SNIPPET: certificate -->
+        <route>
+            <from uri="direct:certificate"/>
+            <to uri="crypto:sign:withcert?privateKey=#myPrivateKey" />
+            <to uri="crypto:verify:withcert?certificate=#myCert" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: certificate -->
+        
+        <!-- START SNIPPET: keystore -->
+        <route>
+            <from uri="direct:keystore"/>
+            <to uri="crypto:sign:keystore?keystore=#keystore&amp;alias=bob&amp;password=letmein" />
+            <to uri="crypto:verify:keystore?keystore=#keystore&amp;alias=bob" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: keystore -->
+        
+        <!-- START SNIPPET: keystoreParameters -->
+        <route>
+            <from uri="direct:keystoreParameters"/>
+            <to uri="crypto:sign:keystoreParameters?keyStoreParameters=#signatureParams&amp;alias=bob&amp;password=letmein" />
+            <to uri="crypto:verify:keystoreParameters?keyStoreParameters=#signatureParams&amp;alias=bob" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: keystoreParameters -->
+        
+         <!-- START SNIPPET: signature-header -->
+        <route>
+            <from uri="direct:signature-header"/>
+            <to uri="crypto:sign:another?privateKey=#myPrivateKey&amp;signatureHeaderName=AnotherDigitalSignature" />
+            <to uri="crypto:verify:another?publicKey=#myPublicKey&amp;signatureHeaderName=AnotherDigitalSignature" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: signature-header -->
+        
+        <!-- START SNIPPET: alias -->
+        <route>
+            <from uri="direct:alias-sign"/>
+            <to uri="crypto:sign:alias?keystore=#keystore" />
+        </route>       
+        <route>
+            <from uri="direct:alias-verify"/>
+            <to uri="crypto:verify:alias?keystore=#keystore" />
+            <to uri="mock:result"/>
+        </route>    
+        <!-- END SNIPPET: alias -->
+        
+        <!-- START SNIPPET: headerkey -->
+        <route>
+            <from uri="direct:headerkey-sign"/>
+            <to uri="crypto:sign:headerkey" />
+        </route>       
+        <route>
+            <from uri="direct:headerkey-verify"/>
+            <to uri="crypto:verify:headerkey" />
+            <to uri="mock:result"/>
+        </route>    
+        <!-- END SNIPPET: headerkey -->
+        <!-- START SNIPPET: clearheaders -->
+        <route>
+            <from uri="direct:headers"/>
+            <to uri="crypto:sign:headers?privateKey=#myPrivateKey" />
+            <to uri="crypto:verify:headers?publicKey=#myPublicKey&amp;clearHeaders=false" />
+            <to uri="mock:result"/>
+        </route>
+        <!-- END SNIPPET: clearheaders -->
+    </camelContext>
+
+    <bean id="keystore" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="keystore"/>
+    <bean id="myPrivateKey" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="privateKeyFromKeystore"/>
+    <bean id="myCert" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="certificateFromKeystore"/>
+    <bean id="myPublicKey" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="publicKey"/>
+    <bean id="rsaPrivateKey" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="privateRSAKey"/>
+    <bean id="rsaPublicKey" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="publicRSAKey"/>
+    <bean id="someRandom" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="random"/>
+
+    <keyStoreParameters xmlns="http://camel.apache.org/schema/spring" id="signatureParams" 
+           resource="./ks.keystore" password="letmein" />
+           
+</beans>

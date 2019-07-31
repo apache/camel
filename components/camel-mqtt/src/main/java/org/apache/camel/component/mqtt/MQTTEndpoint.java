@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,11 +26,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
 import org.fusesource.hawtdispatch.Task;
@@ -55,23 +55,20 @@ import org.fusesource.mqtt.codec.PUBREL;
 import org.fusesource.mqtt.codec.SUBACK;
 import org.fusesource.mqtt.codec.SUBSCRIBE;
 import org.fusesource.mqtt.codec.UNSUBSCRIBE;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging,iot")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", label = "messaging,iot")
 public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
 
     private static final int PUBLISH_MAX_RECONNECT_ATTEMPTS = 3;
 
     private CallbackConnection connection;
     private volatile boolean connected;
-    private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<MQTTConsumer>();
+    private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<>();
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
 
     @UriParam
@@ -80,11 +77,11 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     public MQTTEndpoint(final String uri, MQTTComponent component, MQTTConfiguration properties) {
         super(uri, component);
         this.configuration = properties;
-        if (LOG.isTraceEnabled()) {
+        if (log.isTraceEnabled()) {
             configuration.setTracer(new Tracer() {
                 @Override
                 public void debug(String message, Object...args) {
-                    LOG.trace("tracer.debug() " + this + ": uri=" + uri + ", message=" + String.format(message, args));
+                    log.trace("tracer.debug() " + this + ": uri=" + uri + ", message=" + String.format(message, args));
                 }
 
                 @Override
@@ -137,7 +134,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                     } catch (Throwable e) {
                         decoded = frame.toString();
                     }
-                    LOG.trace("tracer.onSend() " + this + ":  uri=" + uri + ", frame=" + decoded);
+                    log.trace("tracer.onSend() " + this + ":  uri=" + uri + ", frame=" + decoded);
                 }
 
                 @Override
@@ -190,7 +187,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                     } catch (Throwable e) {
                         decoded = frame.toString();
                     }
-                    LOG.trace("tracer.onReceive() " + this + ":  uri=" + uri + ", frame=" + decoded);
+                    log.trace("tracer.onReceive() " + this + ":  uri=" + uri + ", frame=" + decoded);
                 }
             });
         }
@@ -228,15 +225,22 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         super.doStart();
 
         createConnection();
+        connect();
     }
 
     protected void createConnection() {
+        if (connection != null) {
+            // In connect(), in the connection.connect() callback, onFailure() doesn't seem to ever be called, so forcing the disconnect here.
+            // Without this, the fusesource MQTT client seems to be holding the old connection object, and connection contention can ensue.
+            connection.disconnect(null);
+        }
+
         connection = configuration.callbackConnection();
 
         connection.listener(new Listener() {
             public void onConnected() {
                 connected = true;
-                LOG.info("MQTT Connection connected to {}", configuration.getHost());
+                log.info("MQTT Connection connected to {}", configuration.getHost());
             }
 
             public void onDisconnected() {
@@ -245,7 +249,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                 // one is still reconnecting, likely leading to duplicate messages as observed in CAMEL-9092;
                 // if retries are exhausted and it desists, we should get a callback on onFailure, and then we can set
                 // connected = false safely
-                LOG.debug("MQTT Connection disconnected from {}", configuration.getHost());
+                log.debug("MQTT Connection disconnected from {}", configuration.getHost());
             }
 
             public void onPublish(UTF8Buffer topic, Buffer body, Runnable ack) {
@@ -265,13 +269,13 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
             public void onFailure(Throwable value) {
                 // mark this connection as disconnected so we force re-connect
                 connected = false;
-                LOG.warn("Connection to " + configuration.getHost() + " failure due " + value.getMessage() + ". Forcing a disconnect to re-connect on next attempt.");
+                log.warn("Connection to " + configuration.getHost() + " failure due " + value.getMessage() + ". Forcing a disconnect to re-connect on next attempt.");
                 connection.disconnect(new Callback<Void>() {
                     public void onSuccess(Void value) {
                     }
 
                     public void onFailure(Throwable e) {
-                        LOG.debug("Failed to disconnect from " + configuration.getHost() + ". This exception is ignored.", e);
+                        log.debug("Failed to disconnect from " + configuration.getHost() + ". This exception is ignored.", e);
                     }
                 });
             }
@@ -304,10 +308,10 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     void connect() throws Exception {
-        final Promise<Object> promise = new Promise<Object>();
+        final Promise<Object> promise = new Promise<>();
         connection.connect(new Callback<Void>() {
             public void onSuccess(Void value) {
-                LOG.debug("Connected to {}", configuration.getHost());
+                log.debug("Connected to {}", configuration.getHost());
 
                 Topic[] topics = createSubscribeTopics();
                 if (topics != null && topics.length > 0) {
@@ -318,7 +322,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                         }
 
                         public void onFailure(Throwable value) {
-                            LOG.debug("Failed to subscribe", value);
+                            log.debug("Failed to subscribe", value);
                             promise.onFailure(value);
                             connection.disconnect(null);
                             connected = false;
@@ -331,14 +335,14 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
             }
 
-            public void onFailure(Throwable value) {
-                LOG.warn("Failed to connect to " + configuration.getHost() + " due " + value.getMessage());
+            public void onFailure(Throwable value) {  // this doesn't appear to ever be called
+                log.warn("Failed to connect to " + configuration.getHost() + " due " + value.getMessage());
                 promise.onFailure(value);
                 connection.disconnect(null);
                 connected = false;
             }
         });
-        LOG.info("Connecting to {} using {} seconds timeout", configuration.getHost(), configuration.getConnectWaitInSeconds());
+        log.info("Connecting to {} using {} seconds timeout", configuration.getHost(), configuration.getConnectWaitInSeconds());
         promise.await(configuration.getConnectWaitInSeconds(), TimeUnit.SECONDS);
     }
 
@@ -359,7 +363,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                 return topics;
             }
         }
-        LOG.warn("No topic subscriptions were specified in configuration");
+        log.warn("No topic subscriptions were specified in configuration");
         return null;
     }
 
@@ -375,12 +379,12 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         while (!done && attempt <= PUBLISH_MAX_RECONNECT_ATTEMPTS) {
             attempt++;
             try {
-                LOG.warn("#{} attempt to re-create connection to {} before publishing", attempt, configuration.getHost());
+                log.warn("#{} attempt to re-create connection to {} before publishing", attempt, configuration.getHost());
                 createConnection();
                 connect();
             } catch (TimeoutException e) {
                 timeout = e;
-                LOG.debug("Timed out after {} seconds after {} attempt to re-create connection to {}",
+                log.debug("Timed out after {} seconds after {} attempt to re-create connection to {}",
                         new Object[]{configuration.getConnectWaitInSeconds(), attempt, configuration.getHost()});
             } catch (Throwable e) {
                 // other kind of error then exit asap
@@ -392,7 +396,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         }
 
         if (attempt > 3 && !isConnected()) {
-            LOG.warn("Cannot re-connect to {} after {} attempts", configuration.getHost(), attempt);
+            log.warn("Cannot re-connect to {} after {} attempts", configuration.getHost(), attempt);
             callback.onFailure(timeout);
             return;
         }
@@ -400,7 +404,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         connection.getDispatchQueue().execute(new Task() {
             @Override
             public void run() {
-                LOG.debug("Publishing to {}", configuration.getHost());
+                log.debug("Publishing to {}", configuration.getHost());
                 connection.publish(topic, payload, qoS, retain, callback);
             }
         });
@@ -414,7 +418,4 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         consumers.remove(consumer);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }

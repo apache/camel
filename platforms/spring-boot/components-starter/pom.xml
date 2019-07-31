@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-starter-parent</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <relativePath>../../../platforms/spring-boot/spring-boot-dm/camel-starter-parent</relativePath>
   </parent>
   <artifactId>components-starter</artifactId>
   <packaging>pom</packaging>
-  <name>Camel :: Components :: Starter</name>
+  <name>Camel :: Platforms :: Spring-Boot :: Components Starter</name>
   <description>Camel Components Starter</description>
   <!-- to support spring-boot auto configuration in the Camel components -->
   <dependencies>
@@ -40,6 +42,12 @@
       <artifactId>spring-boot-autoconfigure</artifactId>
       <version>${spring-boot-version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure-processor</artifactId>
+      <version>${spring-boot-version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -69,24 +77,65 @@
           <failIfNoTests>false</failIfNoTests>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <!-- set to true to make build fail fast if missing documentation in docs files -->
+          <failFast>false</failFast>
+          <!-- set to true to make build fail if an option has no description -->
+          <failOnMissingDescription>false</failOnMissingDescription>
+        </configuration>
+        <executions>
+          <execution>
+            <id>readme</id>
+            <goals>
+              <goal>update-spring-boot-auto-configuration-readme</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <!-- WARNING: do not edit the modules section, it is update automatically by the camel-package plugin -->
   <modules>
+    <module>camel-activemq-starter</module>
     <module>camel-ahc-starter</module>
     <module>camel-ahc-ws-starter</module>
     <module>camel-amqp-starter</module>
     <module>camel-apns-starter</module>
+    <module>camel-as2-starter</module>
+    <module>camel-asn1-starter</module>
     <module>camel-asterisk-starter</module>
     <module>camel-atmos-starter</module>
     <module>camel-atmosphere-websocket-starter</module>
     <module>camel-atom-starter</module>
+    <module>camel-atomix-starter</module>
     <module>camel-avro-starter</module>
-    <module>camel-aws-starter</module>
+    <module>camel-aws-cw-starter</module>
+    <module>camel-aws-ddb-starter</module>
+    <module>camel-aws-ec2-starter</module>
+    <module>camel-aws-ecs-starter</module>
+    <module>camel-aws-eks-starter</module>
+    <module>camel-aws-iam-starter</module>
+    <module>camel-aws-kinesis-starter</module>
+    <module>camel-aws-kms-starter</module>
+    <module>camel-aws-lambda-starter</module>
+    <module>camel-aws-mq-starter</module>
+    <module>camel-aws-msk-starter</module>
+    <module>camel-aws-s3-starter</module>
+    <module>camel-aws-sdb-starter</module>
+    <module>camel-aws-ses-starter</module>
+    <module>camel-aws-sns-starter</module>
+    <module>camel-aws-sqs-starter</module>
+    <module>camel-aws-swf-starter</module>
+    <module>camel-aws-xray-starter</module>
     <module>camel-azure-starter</module>
-    <module>camel-bam-starter</module>
     <module>camel-barcode-starter</module>
     <module>camel-base64-starter</module>
+    <module>camel-bean-starter</module>
     <module>camel-bean-validator-starter</module>
     <module>camel-beanio-starter</module>
     <module>camel-beanstalk-starter</module>
@@ -95,39 +144,48 @@
     <module>camel-boon-starter</module>
     <module>camel-box-starter</module>
     <module>camel-braintree-starter</module>
-    <module>camel-cache-starter</module>
+    <module>camel-browse-starter</module>
+    <module>camel-caffeine-starter</module>
     <module>camel-cassandraql-starter</module>
-    <module>camel-castor-starter</module>
-    <module>camel-chronicle-starter</module>
+    <module>camel-cbor-starter</module>
+    <module>camel-chatscript-starter</module>
     <module>camel-chunk-starter</module>
     <module>camel-cm-sms-starter</module>
     <module>camel-cmis-starter</module>
     <module>camel-coap-starter</module>
     <module>camel-cometd-starter</module>
     <module>camel-consul-starter</module>
-    <module>camel-context-starter</module>
+    <module>camel-controlbus-starter</module>
+    <module>camel-corda-starter</module>
     <module>camel-core-starter</module>
-    <module>camel-core-xml-starter</module>
     <module>camel-couchbase-starter</module>
     <module>camel-couchdb-starter</module>
+    <module>camel-crypto-cms-starter</module>
     <module>camel-crypto-starter</module>
     <module>camel-csv-starter</module>
     <module>camel-cxf-starter</module>
     <module>camel-cxf-transport-starter</module>
+    <module>camel-dataformat-starter</module>
+    <module>camel-dataset-starter</module>
+    <module>camel-digitalocean-starter</module>
+    <module>camel-direct-starter</module>
+    <module>camel-directvm-starter</module>
     <module>camel-disruptor-starter</module>
     <module>camel-dns-starter</module>
     <module>camel-docker-starter</module>
     <module>camel-dozer-starter</module>
     <module>camel-drill-starter</module>
     <module>camel-dropbox-starter</module>
-    <module>camel-eclipse-starter</module>
     <module>camel-ehcache-starter</module>
-    <module>camel-elasticsearch-starter</module>
-    <module>camel-elasticsearch5-starter</module>
+    <module>camel-elasticsearch-rest-starter</module>
     <module>camel-elsql-starter</module>
     <module>camel-etcd-starter</module>
     <module>camel-exec-starter</module>
     <module>camel-facebook-starter</module>
+    <module>camel-fastjson-starter</module>
+    <module>camel-fhir-starter</module>
+    <module>camel-file-starter</module>
+    <module>camel-file-watch-starter</module>
     <module>camel-flatpack-starter</module>
     <module>camel-flink-starter</module>
     <module>camel-fop-starter</module>
@@ -137,78 +195,85 @@
     <module>camel-geocoder-starter</module>
     <module>camel-git-starter</module>
     <module>camel-github-starter</module>
+    <module>camel-google-bigquery-starter</module>
     <module>camel-google-calendar-starter</module>
     <module>camel-google-drive-starter</module>
     <module>camel-google-mail-starter</module>
     <module>camel-google-pubsub-starter</module>
+    <module>camel-google-sheets-starter</module>
     <module>camel-gora-starter</module>
     <module>camel-grape-starter</module>
+    <module>camel-grok-starter</module>
     <module>camel-groovy-starter</module>
+    <module>camel-grpc-starter</module>
     <module>camel-gson-starter</module>
     <module>camel-guava-eventbus-starter</module>
-    <module>camel-guice-starter</module>
-    <module>camel-hawtdb-starter</module>
     <module>camel-hazelcast-starter</module>
     <module>camel-hbase-starter</module>
-    <module>camel-hdfs-starter</module>
     <module>camel-hdfs2-starter</module>
-    <module>camel-hessian-starter</module>
     <module>camel-hipchat-starter</module>
     <module>camel-hl7-starter</module>
     <module>camel-http-common-starter</module>
-    <module>camel-http-starter</module>
     <module>camel-http4-starter</module>
     <module>camel-hystrix-starter</module>
     <module>camel-ical-starter</module>
+    <module>camel-iec60870-starter</module>
     <module>camel-ignite-starter</module>
     <module>camel-infinispan-starter</module>
     <module>camel-influxdb-starter</module>
+    <module>camel-iota-starter</module>
+    <module>camel-ipfs-starter</module>
     <module>camel-irc-starter</module>
     <module>camel-ironmq-starter</module>
     <module>camel-jackson-starter</module>
     <module>camel-jacksonxml-starter</module>
     <module>camel-jasypt-starter</module>
-    <module>camel-javaspace-starter</module>
     <module>camel-jaxb-starter</module>
+    <module>camel-jaxp-starter</module>
     <module>camel-jbpm-starter</module>
     <module>camel-jcache-starter</module>
+    <module>camel-jclouds-starter</module>
     <module>camel-jcr-starter</module>
     <module>camel-jdbc-starter</module>
     <module>camel-jetty-common-starter</module>
     <module>camel-jetty-starter</module>
-    <module>camel-jetty9-starter</module>
+    <module>camel-jgroups-raft-starter</module>
     <module>camel-jgroups-starter</module>
-    <module>camel-jibx-starter</module>
     <module>camel-jing-starter</module>
     <module>camel-jira-starter</module>
     <module>camel-jms-starter</module>
     <module>camel-jmx-starter</module>
     <module>camel-johnzon-starter</module>
     <module>camel-jolt-starter</module>
-    <module>camel-josql-starter</module>
+    <module>camel-jooq-starter</module>
     <module>camel-jpa-starter</module>
     <module>camel-jsch-starter</module>
+    <module>camel-json-validator-starter</module>
+    <module>camel-jsonapi-starter</module>
     <module>camel-jsonpath-starter</module>
     <module>camel-jt400-starter</module>
-    <module>camel-juel-starter</module>
-    <module>camel-jxpath-starter</module>
     <module>camel-kafka-starter</module>
-    <module>camel-kestrel-starter</module>
-    <module>camel-krati-starter</module>
     <module>camel-kubernetes-starter</module>
     <module>camel-kura-starter</module>
+    <module>camel-language-starter</module>
     <module>camel-ldap-starter</module>
+    <module>camel-ldif-starter</module>
     <module>camel-leveldb-starter</module>
     <module>camel-linkedin-starter</module>
+    <module>camel-log-starter</module>
+    <module>camel-lra-starter</module>
     <module>camel-lucene-starter</module>
     <module>camel-lumberjack-starter</module>
     <module>camel-lzf-starter</module>
     <module>camel-mail-starter</module>
+    <module>camel-master-starter</module>
     <module>camel-metrics-starter</module>
+    <module>camel-micrometer-starter</module>
+    <module>camel-milo-starter</module>
     <module>camel-mina2-starter</module>
     <module>camel-mllp-starter</module>
+    <module>camel-mock-starter</module>
     <module>camel-mongodb-gridfs-starter</module>
-    <module>camel-mongodb-starter</module>
     <module>camel-mongodb3-starter</module>
     <module>camel-mqtt-starter</module>
     <module>camel-msv-starter</module>
@@ -217,57 +282,66 @@
     <module>camel-mybatis-starter</module>
     <module>camel-nagios-starter</module>
     <module>camel-nats-starter</module>
-    <module>camel-netty-http-starter</module>
-    <module>camel-netty-starter</module>
     <module>camel-netty4-http-starter</module>
     <module>camel-netty4-starter</module>
+    <module>camel-nsq-starter</module>
     <module>camel-ognl-starter</module>
     <module>camel-olingo2-starter</module>
-    <module>camel-openshift-starter</module>
+    <module>camel-olingo4-starter</module>
     <module>camel-openstack-starter</module>
     <module>camel-opentracing-starter</module>
     <module>camel-optaplanner-starter</module>
     <module>camel-paho-starter</module>
     <module>camel-pdf-starter</module>
+    <module>camel-pg-replication-slot-starter</module>
     <module>camel-pgevent-starter</module>
     <module>camel-printer-starter</module>
+    <module>camel-properties-starter</module>
     <module>camel-protobuf-starter</module>
+    <module>camel-pubnub-starter</module>
+    <module>camel-pulsar-starter</module>
     <module>camel-quartz2-starter</module>
     <module>camel-quickfix-starter</module>
     <module>camel-rabbitmq-starter</module>
+    <module>camel-reactive-executor-vertx-starter</module>
     <module>camel-reactive-streams-starter</module>
+    <module>camel-reactor-starter</module>
+    <module>camel-ref-starter</module>
+    <module>camel-rest-starter</module>
+    <module>camel-rest-swagger-starter</module>
     <module>camel-restlet-starter</module>
     <module>camel-ribbon-starter</module>
-    <module>camel-rmi-starter</module>
-    <module>camel-routebox-starter</module>
     <module>camel-rss-starter</module>
-    <module>camel-ruby-starter</module>
-    <module>camel-rx-starter</module>
+    <module>camel-rxjava2-starter</module>
+    <module>camel-saga-starter</module>
     <module>camel-salesforce-starter</module>
     <module>camel-sap-netweaver-starter</module>
     <module>camel-saxon-starter</module>
-    <module>camel-scala-starter</module>
+    <module>camel-scheduler-starter</module>
     <module>camel-schematron-starter</module>
-    <module>camel-scr-starter</module>
-    <module>camel-script-starter</module>
+    <module>camel-seda-starter</module>
+    <module>camel-service-starter</module>
     <module>camel-servicenow-starter</module>
     <module>camel-servlet-starter</module>
-    <module>camel-servletlistener-starter</module>
     <module>camel-shiro-starter</module>
     <module>camel-sip-starter</module>
     <module>camel-sjms-starter</module>
+    <module>camel-sjms2-starter</module>
     <module>camel-slack-starter</module>
     <module>camel-smpp-starter</module>
     <module>camel-snakeyaml-starter</module>
     <module>camel-snmp-starter</module>
     <module>camel-soap-starter</module>
     <module>camel-solr-starter</module>
+    <module>camel-soroush-starter</module>
     <module>camel-spark-starter</module>
     <module>camel-splunk-starter</module>
     <module>camel-spring-batch-starter</module>
     <module>camel-spring-boot-starter</module>
+    <module>camel-spring-cloud-consul-starter</module>
+    <module>camel-spring-cloud-netflix-starter</module>
     <module>camel-spring-cloud-starter</module>
-    <module>camel-spring-dm-starter</module>
+    <module>camel-spring-cloud-zookeeper-starter</module>
     <module>camel-spring-integration-starter</module>
     <module>camel-spring-javaconfig-starter</module>
     <module>camel-spring-ldap-starter</module>
@@ -281,29 +355,41 @@
     <module>camel-stomp-starter</module>
     <module>camel-stream-starter</module>
     <module>camel-stringtemplate-starter</module>
+    <module>camel-stub-starter</module>
     <module>camel-swagger-java-starter</module>
     <module>camel-syslog-starter</module>
     <module>camel-tagsoup-starter</module>
     <module>camel-tarfile-starter</module>
     <module>camel-telegram-starter</module>
+    <module>camel-thrift-starter</module>
     <module>camel-tika-starter</module>
+    <module>camel-timer-starter</module>
+    <module>camel-twilio-starter</module>
     <module>camel-twitter-starter</module>
     <module>camel-undertow-starter</module>
     <module>camel-univocity-parsers-starter</module>
-    <module>camel-urlrewrite-starter</module>
+    <module>camel-validator-starter</module>
     <module>camel-velocity-starter</module>
     <module>camel-vertx-starter</module>
+    <module>camel-vm-starter</module>
     <module>camel-weather-starter</module>
+    <module>camel-web3j-starter</module>
+    <module>camel-webhook-starter</module>
+    <module>camel-websocket-jsr356-starter</module>
     <module>camel-websocket-starter</module>
-    <module>camel-xmlbeans-starter</module>
-    <module>camel-xmljson-starter</module>
-    <module>camel-xmlrpc-starter</module>
+    <module>camel-wordpress-starter</module>
+    <module>camel-xchange-starter</module>
     <module>camel-xmlsecurity-starter</module>
     <module>camel-xmpp-starter</module>
+    <module>camel-xpath-starter</module>
+    <module>camel-xslt-starter</module>
     <module>camel-xstream-starter</module>
     <module>camel-yammer-starter</module>
+    <module>camel-zendesk-starter</module>
+    <module>camel-zip-deflater-starter</module>
     <module>camel-zipfile-starter</module>
     <module>camel-zipkin-starter</module>
+    <module>camel-zookeeper-master-starter</module>
     <module>camel-zookeeper-starter</module>
   </modules>
 </project>

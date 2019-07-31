@@ -1,0 +1,44 @@
+= Tracer
+
+Camel's tracer is used for logging message details during routing, where
+you can see the route path of each message as they happens. Details of the message is also logged such as the message body.
+
+== Formatting
+
+The tracer formats the execution of exchanges to log lines. They are
+logged at *`INFO`* level in the log category:
+*`org.apache.camel.Tracing`*. 
+
+The message information from the Exchange is formatted using `ExchangeFormatter` and the default implementation has many options you can configure. See the source code/javadoc of the `org.apache.camel.support.processor.DefaultExchangeFormatter` class.
+
+== Enabling
+
+In Java you set tracing on `CamelContext`:
+
+[source,java]
+----
+context.setTracing(true);
+----
+
+And in XML DSL:
+
+[source,xml]
+----
+<camelContext trace="true" xmlns="http://activemq.apache.org/camel/schema/spring">
+...
+</camelContext>
+----
+
+And in Spring Boot
+
+[source,text]
+----
+camel.springboot.tracing = true
+----
+
+
+== See Also
+
+* xref:debugger.adoc[Debugger]
+* xref:delay-interceptor.adoc[Delay Interceptor]
+* xref:log-eip.adoc[Log]

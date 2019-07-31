@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.spring.integration.SpringIntegrationBinding;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageDeliveryException;
@@ -33,8 +33,6 @@ import org.springframework.messaging.MessageHeaders;
  * CamelTargetAdapter will redirect the Spring Integration message to the Camel context.
  * When we inject the camel context into it, we need also specify the Camel endpoint url
  * we will route the Spring Integration message to the Camel context
- *
- * @version 
  */
 public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageHandler {
     private ProducerTemplate camelTemplate;
@@ -73,10 +71,6 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
         Exchange inExchange = new DefaultExchange(getCamelContext(), pattern);
         SpringIntegrationBinding.storeToCamelMessage(message, inExchange.getIn());
         Exchange outExchange = getCamelTemplate().send(getCamelEndpointUri(), inExchange);
-        org.apache.camel.Message camelMsg = outExchange.hasOut() ? outExchange.getOut() : outExchange.getIn();
-        if (camelMsg.isFault()) {
-            result = true;
-        }
 
         Message<?> response;
         if (isExpectReply()) {

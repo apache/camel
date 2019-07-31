@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,13 @@ package org.apache.camel.component.rest;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class RestRefTest extends SpringTestSupport {
 
+    @Test
     public void testRestRefTest() throws Exception {
         assertEquals(2 + 3, context.getRoutes().size());
 
@@ -59,6 +58,7 @@ public class RestRefTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        System.setProperty("CamelSedaPollTimeout", "10");
         return new ClassPathXmlApplicationContext("org/apache/camel/component/rest/RestRefTest.xml");
     }
 }

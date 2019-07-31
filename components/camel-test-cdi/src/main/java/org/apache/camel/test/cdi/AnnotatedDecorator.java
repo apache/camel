@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -70,9 +70,14 @@ class AnnotatedDecorator implements Annotated {
     private <T extends Annotation> T getDecoratingAnnotation(Class<T> annotationType) {
         for (Annotation annotation : annotations) {
             if (annotationType.isAssignableFrom(annotation.annotationType())) {
-                return (T) annotation;
+                return (T)annotation;
             }
         }
         return null;
+    }
+
+    @Override
+    public <T extends Annotation> Set<T> getAnnotations(Class<T> annotationType) {
+        return decorated.getAnnotations(annotationType);
     }
 }

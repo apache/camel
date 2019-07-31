@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,6 +26,7 @@ import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 import org.apache.camel.util.ObjectHelper;
 
 public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
@@ -47,35 +48,35 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
             expectedValue = (long) headers.get(HazelcastConstants.EXPECTED_VALUE);
         }
         
-        int operation = lookupOperationNumber(exchange);
+        HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
 
-        case HazelcastConstants.INCREMENT_OPERATION:
+        case INCREMENT:
             this.increment(exchange);
             break;
 
-        case HazelcastConstants.DECREMENT_OPERATION:
+        case DECREMENT:
             this.decrement(exchange);
             break;
             
-        case HazelcastConstants.COMPARE_AND_SET_OPERATION:
+        case COMPARE_AND_SET:
             this.compare(expectedValue, exchange);
             break;
             
-        case HazelcastConstants.GET_AND_ADD_OPERATION:
+        case GET_AND_ADD:
             this.getAndAdd(exchange);
             break;
 
-        case HazelcastConstants.SETVALUE_OPERATION:
+        case SET_VALUE:
             this.set(exchange);
             break;
 
-        case HazelcastConstants.GET_OPERATION:
+        case GET:
             this.get(exchange);
             break;
 
-        case HazelcastConstants.DESTROY_OPERATION:
+        case DESTROY:
             this.destroy();
             break;
 

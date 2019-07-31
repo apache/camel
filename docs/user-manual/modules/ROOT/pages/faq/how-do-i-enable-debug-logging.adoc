@@ -1,0 +1,33 @@
+[[HowdoIenabledebuglogging-HowdoIenabledebuglogging]]
+= How do I enable debug logging?
+
+Camel uses convention over configuration so sometimes it's useful to turn
+on debug logging to see how Camel is operating and to try and diagnose
+issues.
+
+Camel uses http://www.slf4j.org/[sfl4j] which allows you to configure
+logging via, among others:
+
+* http://logging.apache.org/log4j/[Log4j]
+* http://logback.qos.ch/[Logback]
+* https://docs.oracle.com/javase/8/docs/api/java/util/logging/package-summary.html[JDK Util Logging logging]
+
+To enable debug logging we recommend you
+xref:faq/how-do-i-use-log4j.adoc[use log4j for logging] then make sure your
+log4j.properties file enables DEBUG level logging for the
+`org.apache.camel` package.
+
+For example here is a `log4j.properties` file with debug Camel logging:
+enabled
+
+[source,java]
+----
+log4j.rootLogger=INFO, out
+
+log4j.logger.org.apache.camel=DEBUG
+
+log4j.appender.out=org.apache.log4j.ConsoleAppender
+log4j.appender.out.layout=org.apache.log4j.PatternLayout
+log4j.appender.out.layout.ConversionPattern=[%30.30t] %-30.30c{1} %-5p %m%n
+#log4j.appender.out.layout.ConversionPattern=%d [%-15.15t] %-5p %-30.30c{1} - %m%n
+----

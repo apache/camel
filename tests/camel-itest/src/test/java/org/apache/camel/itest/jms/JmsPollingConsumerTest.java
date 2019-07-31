@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,22 +30,19 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-/**
- * @version 
- */
 @ContextConfiguration
 public class JmsPollingConsumerTest extends AbstractJUnit4SpringContextTests {
 
-    @Produce(uri = "activemq:startConsumer")
+    @Produce("activemq:startConsumer")
     protected ProducerTemplate startConsumer;
 
-    @Produce(uri = "direct:startConsumer")
+    @Produce("direct:startConsumer")
     protected ProducerTemplate startDirectConsumer;
 
-    @Produce(uri = "activemq:queue")
+    @Produce("activemq:queue")
     protected ProducerTemplate queue;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
     /**

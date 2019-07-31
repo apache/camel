@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,9 +21,10 @@ import java.util.Map;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
-import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +33,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * A transactional error handler that supports leveraging Spring TransactionManager.
- *
- * @version 
  */
 public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
+
+    static {
+        ErrorHandlerReifier.registerReifier(TransactionErrorHandlerBuilder.class, TransactionErrorHandlerReifier::new);
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerBuilder.class);
     private static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
@@ -62,14 +65,14 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
             Map<String, TransactedPolicy> mapPolicy = routeContext.lookupByType(TransactedPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
                 TransactedPolicy policy = mapPolicy.values().iterator().next();
-                if (policy != null && policy instanceof SpringTransactionPolicy) {
+                if (policy instanceof SpringTransactionPolicy) {
                     transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
                 }
             }
 
             if (transactionTemplate == null) {
                 TransactedPolicy policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
-                if (policy != null && policy instanceof SpringTransactionPolicy) {
+                if (policy instanceof SpringTransactionPolicy) {
                     transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
                 }
             }
@@ -99,7 +102,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
             }
 
             if (transactionTemplate != null) {
-                LOG.debug("Found TransactionTemplate in registry to use: " + transactionTemplate);
+                LOG.debug("Found TransactionTemplate in registry to use: {}", transactionTemplate);
             }
         }
 

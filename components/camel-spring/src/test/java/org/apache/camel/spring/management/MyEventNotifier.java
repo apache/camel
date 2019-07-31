@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,35 +17,21 @@
 package org.apache.camel.spring.management;
 
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
-/**
- * @version 
- */
 public class MyEventNotifier extends EventNotifierSupport {
 
-    private List<EventObject> events = new ArrayList<EventObject>();
+    private List<CamelEvent> events = new ArrayList<>();
 
-    public void notify(EventObject event) throws Exception {
+    public void notify(CamelEvent event) throws Exception {
         events.add(event);
     }
 
-    public boolean isEnabled(EventObject event) {
-        return true;
-    }
-
-    public List<EventObject> getEvents() {
+    public List<CamelEvent> getEvents() {
         return events;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,6 +25,11 @@ public final class PahoConstants {
      * Header indicating a topic of a MQTT message.
      */
     public static final String MQTT_TOPIC = "CamelMqttTopic";
+    /**
+     * Header indicating a QoS of a MQTT message.
+     */
+    public static final String MQTT_QOS = "CamelMqttQoS";
+
     public static final String DEFAULT_BROKER_URL = "tcp://localhost:1883";
     public static final int DEFAULT_QOS = 2;
 
@@ -33,7 +38,7 @@ public final class PahoConstants {
     public static final String CAMEL_PAHO = "CamelPaho";
     public static final String CAMEL_PAHO_MSG_QOS = CAMEL_PAHO + "Qos";
     public static final String CAMEL_PAHO_MSG_RETAINED = CAMEL_PAHO + "Retained";
-
+    public static final String CAMEL_PAHO_OVERRIDE_TOPIC = CAMEL_PAHO + "OverrideTopic";
 
     private PahoConstants() {
     }

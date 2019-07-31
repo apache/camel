@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,12 +18,13 @@ package org.apache.camel.component.yammer;
 
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.yammer.model.Messages;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * A Yammer consumer that periodically polls messages from Yammer's message API.
@@ -75,7 +76,7 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
             args.append(limit);
         }        
 
-        int olderThan = endpoint.getConfig().getOlderThan();
+        long olderThan = endpoint.getConfig().getOlderThan();
         if (olderThan > 0) {
             if (args.length() > 0) {
                 args.append("&");
@@ -84,7 +85,7 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
             args.append(olderThan);
         }        
 
-        int newerThan = endpoint.getConfig().getNewerThan();
+        long newerThan = endpoint.getConfig().getNewerThan();
         if (newerThan > 0) {
             if (args.length() > 0) {
                 args.append("&");

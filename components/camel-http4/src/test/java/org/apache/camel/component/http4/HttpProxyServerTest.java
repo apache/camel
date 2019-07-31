@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -48,10 +48,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class HttpProxyServerTest extends BaseHttpTest {
 
     private HttpServer proxy;
@@ -85,9 +81,9 @@ public class HttpProxyServerTest extends BaseHttpTest {
 
     @Override
     protected HttpProcessor getBasicHttpProcessor() {
-        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<HttpRequestInterceptor>();
+        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<>();
         requestInterceptors.add(new RequestProxyBasicAuth());
-        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<HttpResponseInterceptor>();
+        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
         responseInterceptors.add(new ResponseContent());
         responseInterceptors.add(new ResponseProxyBasicUnauthorized());
         ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);

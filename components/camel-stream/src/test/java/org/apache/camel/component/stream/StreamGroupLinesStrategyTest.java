@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,7 +38,7 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
             StringBuilder buffer = new StringBuilder();
             for (String line : lines) {
                 buffer.append(line);
-                buffer.append(System.lineSeparator());
+                buffer.append(LS);
             }
             return buffer.toString();
         }
@@ -57,10 +57,10 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
         assertMockEndpointsSatisfied();
 
         Object result = mock.getExchanges().get(0).getIn().getBody();
-        assertEquals("Get a wrong result.", "A\nB\nC\n", result);
+        assertEquals("Get a wrong result.", "A" + LS + "B" + LS + "C" + LS, result);
 
         Object result2 = mock.getExchanges().get(1).getIn().getBody();
-        assertEquals("Get a wrong result.", "D\nE\nF\n", result2);
+        assertEquals("Get a wrong result.", "D" + LS + "E" + LS + "F" + LS, result2);
     }
 
     @Override

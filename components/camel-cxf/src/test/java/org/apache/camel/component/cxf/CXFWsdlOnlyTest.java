@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
-
 import java.net.URL;
 
 import javax.xml.namespace.QName;
@@ -94,16 +93,16 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         ((BindingProvider)client).getRequestContext()
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                  "http://localhost:" + port3 + "/CXFWsdlOnlyTest/PersonService/");
-        Holder<String> personId = new Holder<String>();
+        Holder<String> personId = new Holder<>();
         personId.value = "hello";
-        Holder<String> ssn = new Holder<String>();
-        Holder<String> name = new Holder<String>();
+        Holder<String> ssn = new Holder<>();
+        Holder<String> name = new Holder<>();
         client.getPerson(personId, ssn, name);
         assertEquals("Bonjour", name.value);
         
         personId.value = "";
-        ssn = new Holder<String>();
-        name = new Holder<String>();
+        ssn = new Holder<>();
+        name = new Holder<>();
         Throwable t = null;
         try {
             client.getPerson(personId, ssn, name);
@@ -117,16 +116,16 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         ((BindingProvider)client2).getRequestContext()
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                  "http://localhost:" + port4 + "/CXFWsdlOnlyTest/PersonService/");
-        Holder<String> personId2 = new Holder<String>();
+        Holder<String> personId2 = new Holder<>();
         personId2.value = "hello";
-        Holder<String> ssn2 = new Holder<String>();
-        Holder<String> name2 = new Holder<String>();
+        Holder<String> ssn2 = new Holder<>();
+        Holder<String> name2 = new Holder<>();
         client2.getPerson(personId2, ssn2, name2);
         assertEquals("Bonjour", name2.value);
         
         personId2.value = "";
-        ssn2 = new Holder<String>();
-        name2 = new Holder<String>();
+        ssn2 = new Holder<>();
+        name2 = new Holder<>();
         try {
             client2.getPerson(personId2, ssn2, name2);
             fail("Expect exception");

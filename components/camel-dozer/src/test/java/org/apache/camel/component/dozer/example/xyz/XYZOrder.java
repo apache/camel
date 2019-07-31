@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,9 @@ package org.apache.camel.component.dozer.example.xyz;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.Generated;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -27,7 +29,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 /**
  * XYZOrder
  * <p>
- * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -47,7 +48,7 @@ public class XYZOrder {
     @JsonProperty("orderId")
     private String orderId;
     @JsonProperty("lineItems")
-    private List<LineItem> lineItems = new ArrayList<LineItem>();
+    private List<LineItem> lineItems = new ArrayList<>();
 
     /**
      * 

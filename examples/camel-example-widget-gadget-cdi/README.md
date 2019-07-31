@@ -15,7 +15,7 @@ but you can run the application in any CDI compliant container.
 
 * camel-core
 * camel-jms
-* activemq-camel
+* camel-activemq
 
 ### Build 
 

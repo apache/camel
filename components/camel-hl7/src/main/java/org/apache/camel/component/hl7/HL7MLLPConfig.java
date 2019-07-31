@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.hl7;
 
 import java.nio.charset.Charset;
+import java.nio.charset.CodingErrorAction;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
@@ -40,6 +41,10 @@ public class HL7MLLPConfig {
     private Parser parser = hapiContext.getGenericParser();
 
     private boolean produceString = true;
+
+    private CodingErrorAction malformedInputErrorAction = CodingErrorAction.REPORT;
+
+    private CodingErrorAction unmappableCharacterErrorAction = CodingErrorAction.REPORT;
 
     public Charset getCharset() {
         return charset;
@@ -112,5 +117,21 @@ public class HL7MLLPConfig {
 
     public void setProduceString(boolean produceString) {
         this.produceString = produceString;
+    }
+
+    public CodingErrorAction getMalformedInputErrorAction() {
+        return malformedInputErrorAction;
+    }
+
+    public void setMalformedInputErrorAction(CodingErrorAction malformedInputErrorAction) {
+        this.malformedInputErrorAction = malformedInputErrorAction;
+    }
+
+    public CodingErrorAction getUnmappableCharacterErrorAction() {
+        return unmappableCharacterErrorAction;
+    }
+
+    public void setUnmappableCharacterErrorAction(CodingErrorAction unmappableCharacterErrorAction) {
+        this.unmappableCharacterErrorAction = unmappableCharacterErrorAction;
     }
 }

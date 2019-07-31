@@ -1,0 +1,72 @@
+[[MailingLists-MailingLists]]
+= Mailing Lists
+
+The following mailing lists are available. Before posting you might want
+to read the xref:support.adoc[Support] page before posting to the
+mailing list.
+
+[IMPORTANT]
+====
+**Use Camel User List**
+
+You should post and subscriber to the *Camel User List* for all your
+questions on using Camel, or how to do X with Camel, etc. If in doubt use
+this list.
+The other list Camel Developer List, is for the Camel team to discuss
+development of the actual Camel project; do *not* use this list for
+question on using Camel.
+Again to re-iterate, use the *Camel User List*, for you Camel questions.
+This is the correct mailing list, and have the most people there ready
+for helping you.
+====
+
+[WARNING]
+====
+**Post plain text mails**
+
+When posting to the mailing lists, use plain text mails. Do *not* use
+HTML mails. HTML mails is more likely to be targeted as spam mails and
+will be rejected; as well it's not easily readable by others.
+====
+
+[width="99%",cols="16%,14%,14%,14%,14%,14%,14%",options="header",]
+|=======================================================================
+|List Name |Address |Subscribe |Unsubscribe |Archive |Nabble footnote:[Online
+Forums] |Comment
+|Camel User List |users@camel.apache.org
+|mailto:users-subscribe@camel.apache.org[Subscribe]
+|mailto:users-unsubscribe@camel.apache.org[Unsubscribe]
+|http://mail-archives.apache.org/mod_mbox/camel-users/[Archive]
+|http://camel.465427.n5.nabble.com/Camel-Users-f465428.html[Nabble] |Use
+this list for your Camel questions.
+
+|Camel Developer List |dev@camel.apache.org
+|mailto:dev-subscribe@camel.apache.org[Subscribe]
+|mailto:dev-unsubscribe@camel.apache.org[Unsubscribe]
+|http://mail-archives.apache.org/mod_mbox/camel-dev/[Archive]
+|http://camel.465427.n5.nabble.com/Camel-Development-f479097.html[Nabble] |
+
+|Camel Commits List |commits@camel.apache.org
+|mailto:commits-subscribe@camel.apache.org[Subscribe]
+|mailto:commits-unsubscribe@camel.apache.org[Unsubscribe]
+|http://mail-archives.apache.org/mod_mbox/camel-commits/[Archive]
+|http://camel.465427.n5.nabble.com/Camel-Commits-f498405.html[Nabble] |
+
+|Camel Issues List |issues@camel.apache.org
+|mailto:issues-subscribe@camel.apache.org[Subscribe]
+|mailto:issues-unsubscribe@camel.apache.org[Unsubscribe]
+|http://mail-archives.apache.org/mod_mbox/camel-issues/[Archive] | |
+|=======================================================================
+
+There were various discussions before these mailing lists were setup on
+the http://camel.apache.org/mailing-lists.html[ActiveMQ Mailing Lists]
+such as
+http://www.nabble.com/forum/Search.jtp?forum=2354&local=y&query=%5Bcamel%5D[these
+threads].
+
+[[MailingLists-DiscussionForums]]
+== Discussion Forums
+
+If you prefer you could use our
+http://camel.465427.n5.nabble.com/[Discussion Forums]
+which are sync'd with the above mailing lists.

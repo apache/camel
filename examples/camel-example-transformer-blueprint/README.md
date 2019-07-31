@@ -29,12 +29,12 @@ To run the example on the karaf container
 
 #### Step 2: Deploy
 
-    feature:repo-add mvn:org.apache.camel/camel-example-transformer-blueprint/${version}/xml/features
+    feature:repo-add mvn:org.apache.camel.example/camel-example-transformer-blueprint/${version}/xml/features
     feature:install camel-example-transformer-blueprint
 
 #### Step 3: Check the output
 
-You will see the output in ${karaf}/data/karaf.log
+You will see the output by log:tail or in ${karaf}/data/karaf.log
 
 You can see the routing rules by looking at the Blueprint XML configuration lives in
 `src/main/resources/OSGI-INF/blueprint`

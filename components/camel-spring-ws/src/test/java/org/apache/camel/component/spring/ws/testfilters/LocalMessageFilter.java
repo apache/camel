@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.ws.testfilters;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Message;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.spring.ws.filter.impl.BasicMessageFilter;
 import org.springframework.ws.soap.SoapMessage;
 
@@ -28,7 +29,7 @@ public class LocalMessageFilter extends BasicMessageFilter {
      * Add a test marker so the test method is aware which filter we are using.
      */
     @Override
-    protected void doProcessSoapAttachments(Message inOrOut, SoapMessage response) {
+    protected void doProcessSoapAttachments(AttachmentMessage inOrOut, SoapMessage response) {
         super.doProcessSoapAttachments(inOrOut, response);
         response.getEnvelope().getHeader().addHeaderElement(new QName("http://virtualCheck/", "localFilter"));
     }

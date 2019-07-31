@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.language;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -41,6 +42,7 @@ public class SpringSimplePropertyPlaceholderClashTest extends SpringTestSupport 
         };
     }
 
+    @Test
     public void testReplaceSimpleExpression() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.FILE_NAME, "/root/dir/test.txt");
 

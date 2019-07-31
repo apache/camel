@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ import org.junit.Test;
  */
 public class EchoProduceTest extends CamelTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private Echo echo;
 
     @Test

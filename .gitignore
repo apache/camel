@@ -17,4 +17,11 @@ components/camel-solr/data
 *.epoch
 .factorypath
 .pmd
-
+.sts4-cache
+log-camel-lsp.out
+.vscode
+*.code-workspace
+components/camel-cxf/activemq-data
+*.swp
+.flattened-pom.xml
+.java-version

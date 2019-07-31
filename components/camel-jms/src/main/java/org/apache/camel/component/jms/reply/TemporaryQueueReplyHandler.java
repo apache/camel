@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,8 +24,6 @@ import org.apache.camel.Exchange;
 
 /**
  * {@link ReplyHandler} to handle processing replies when using temporary queues.
- *
- * @version 
  */
 public class TemporaryQueueReplyHandler implements ReplyHandler {
 
@@ -49,7 +47,7 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
     }
 
     public void onReply(String correlationId, Message reply, Session session) {
-        // create holder object with the the reply
+        // create holder object with the reply
         ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, reply, session);
         // process the reply
         replyManager.processReply(holder);

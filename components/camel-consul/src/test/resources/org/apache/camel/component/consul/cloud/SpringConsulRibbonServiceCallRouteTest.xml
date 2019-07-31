@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Licensed to the Apache Software Foundation (ASF) under one or more
-  ~ contributor license agreements.  See the NOTICE file distributed with
-  ~ this work for additional information regarding copyright ownership.
-  ~ The ASF licenses this file to You under the Apache License, Version 2.0
-  ~ (the "License"); you may not use this file except in compliance with
-  ~ the License.  You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
@@ -24,27 +26,46 @@
          http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <!--
-    <serviceCallConfiguration id="service-2">
-      <consulServiceDiscovery"/>
-    </serviceCallConfiguration>
-    -->
 
-    <route>
+    <!-- ************************************* -->
+    <!-- ServiceCall                           -->
+    <!-- ************************************* -->
+
+    <defaultServiceCallConfiguration id="default" component="http">
+      <!-- service discovery -->
+      <consulServiceDiscovery url="http://{{container:host:consul}}:{{container:port:8500@consul}}"/>
+
+      <!-- service filter -->
+      <blacklistServiceFilter>
+        <servers>http-service-1@127.0.0.1:9011</servers>
+        <servers>http-service-2@127.0.0.1:9021</servers>
+      </blacklistServiceFilter>
+    </defaultServiceCallConfiguration>
+
+    <serviceCallConfiguration id="service-2" component="http">
+      <!-- service filter -->
+      <blacklistServiceFilter>
+        <servers>http-service-2@127.0.0.1:9022</servers>
+      </blacklistServiceFilter>
+    </serviceCallConfiguration>
+
+    <!-- ************************************* -->
+    <!-- Routes                                -->
+    <!-- ************************************* -->
+
+    <route id="scall">
       <from uri="direct:start"/>
       <choice>
         <when>
           <simple>${body} == 'service-1'</simple>
           <serviceCall name="http-service-1">
-            <consulServiceDiscovery readTimeoutMillis="1222" url="http://localhost:8500"/>
             <ribbonLoadBalancer/>
           </serviceCall>
           <to uri="mock:result-1"/>
         </when>
         <when>
           <simple>${body} == 'service-2'</simple>
-          <serviceCall name="http-service-2">
-            <consulServiceDiscovery readTimeoutMillis="1333" url="http://localhost:8500"/>
+          <serviceCall name="http-service-2" configurationRef="service-2">
             <ribbonLoadBalancer/>
           </serviceCall>
           <to uri="mock:result-2"/>
@@ -52,33 +73,58 @@
       </choice>
     </route>
 
+    <!-- ************************************* -->
+    <!-- http-service-1                        -->
+    <!-- ************************************* -->
+
     <route>
-      <from uri="jetty:http://localhost:9091"/>
+      <from uri="jetty:http://localhost:9011"/>
       <transform>
-        <simple>${body} 9091</simple>
+        <simple>${body} 9011</simple>
       </transform>
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9092"/>
+      <from uri="jetty:http://localhost:9012"/>
       <transform>
-        <simple>${body} 9092</simple>
+        <simple>${body} 9012</simple>
       </transform>
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9093"/>
+      <from uri="jetty:http://localhost:9013"/>
       <transform>
-        <simple>${body} 9093</simple>
+        <simple>${body} 9013</simple>
+      </transform>
+    </route>
+
+    <!-- ************************************* -->
+    <!-- http-service-2                        -->
+    <!-- ************************************* -->
+
+    <route>
+      <from uri="jetty:http://localhost:9021"/>
+      <transform>
+        <simple>${body} 9021</simple>
       </transform>
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9094"/>
+      <from uri="jetty:http://localhost:9022"/>
       <transform>
-        <simple>${body} 9094</simple>
+        <simple>${body} 9022</simple>
       </transform>
     </route>
+
+    <route>
+      <from uri="jetty:http://localhost:9023"/>
+      <transform>
+        <simple>${body} 9023</simple>
+      </transform>
+    </route>
+
+
+
   </camelContext>
 
 </beans>

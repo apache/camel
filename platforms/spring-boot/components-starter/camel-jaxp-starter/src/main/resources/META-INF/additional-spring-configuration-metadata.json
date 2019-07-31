@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.language.xtokenize.enabled",
+      "description": "Enable xtokenize language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

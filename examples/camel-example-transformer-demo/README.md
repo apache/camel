@@ -1,9 +1,9 @@
-# Declarative Transformer Demo using Spring XML
+# Declarative Transformer and Validator Demo using Spring XML
 
 
 ### Introduction
 
-This example shows how to work with declarative transformation by declaring data types.
+This example shows how to work with declarative transformation and validation by declaring data types.
 
 ### Build
 
@@ -19,6 +19,10 @@ To run the example type
 
 You can see the routing rules by looking at the Spring XML configuration lives in
 `src/main/resources/META-INF/spring`
+
+If you enable DEBUG level log for org.apache.camel.processor, you can see the details
+of when/which transformers & validators are applied. Check the
+`src/main/resources/log4j2.properties`
 
 
 ### Forum, Help, etc

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -70,7 +70,8 @@ public enum OperationName {
 
     // Composite API
     COMPOSITE_TREE("composite-tree"),
-    COMPOSITE_BATCH("composite-batch");
+    COMPOSITE_BATCH("composite-batch"),
+    COMPOSITE("composite");
 
     private final String value;
 

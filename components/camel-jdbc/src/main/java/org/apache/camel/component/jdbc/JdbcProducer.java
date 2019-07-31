@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,17 +32,14 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.util.IntrospectionSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.PropertyBindingSupport;
 
-/**
- * @version
- */
+import org.springframework.jdbc.datasource.DataSourceUtils;
+
 public class JdbcProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(JdbcProducer.class);
+
     private DataSource dataSource;
     private int readSize;
     private Map<String, Object> parameters;
@@ -77,7 +74,7 @@ public class JdbcProducer extends DefaultProducer {
         boolean shouldCloseResources = true;
 
         try {
-            conn = dataSource.getConnection();
+            conn = DataSourceUtils.getConnection(dataSource);
             autoCommit = conn.getAutoCommit();
             if (autoCommit) {
                 conn.setAutoCommit(false);
@@ -92,7 +89,7 @@ public class JdbcProducer extends DefaultProducer {
                     conn.rollback();
                 }
             } catch (Throwable sqle) {
-                LOG.warn("Error occurred during jdbc rollback. This exception will be ignored.", sqle);
+                log.warn("Error occurred during jdbc rollback. This exception will be ignored.", sqle);
             }
             throw e;
         } finally {
@@ -109,10 +106,10 @@ public class JdbcProducer extends DefaultProducer {
         boolean shouldCloseResources = true;
 
         try {
-            conn = dataSource.getConnection();
+            conn = DataSourceUtils.getConnection(dataSource);
             shouldCloseResources = createAndExecuteSqlStatement(exchange, sql, conn);
         } finally {
-            if (shouldCloseResources) {
+            if (shouldCloseResources && !DataSourceUtils.isConnectionTransactional(conn, dataSource)) {
                 closeQuietly(conn);
             }
         }
@@ -160,7 +157,7 @@ public class JdbcProducer extends DefaultProducer {
                 getEndpoint().getPrepareStatementStrategy().populateStatement(ps, it, expectedCount);
             }
 
-            LOG.debug("Executing JDBC PreparedStatement: {}", sql);
+            log.debug("Executing JDBC PreparedStatement: {}", sql);
 
             boolean stmtExecutionResult = ps.execute();
             if (stmtExecutionResult) {
@@ -195,11 +192,11 @@ public class JdbcProducer extends DefaultProducer {
             stmt = conn.createStatement();
 
             if (parameters != null && !parameters.isEmpty()) {
-                Map<String, Object> copy = new HashMap<String, Object>(parameters);
-                IntrospectionSupport.setProperties(stmt, copy);
+                Map<String, Object> copy = new HashMap<>(parameters);
+                PropertyBindingSupport.bindProperties(exchange.getContext(), stmt, copy);
             }
 
-            LOG.debug("Executing JDBC Statement: {}", sql);
+            log.debug("Executing JDBC Statement: {}", sql);
 
             Boolean shouldRetrieveGeneratedKeys = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
@@ -250,7 +247,7 @@ public class JdbcProducer extends DefaultProducer {
                     rs.close();
                 }
             } catch (Throwable sqle) {
-                LOG.debug("Error by closing result set", sqle);
+                log.debug("Error by closing result set", sqle);
             }
         }
     }
@@ -262,7 +259,7 @@ public class JdbcProducer extends DefaultProducer {
                     stmt.close();
                 }
             } catch (Throwable sqle) {
-                LOG.debug("Error by closing statement", sqle);
+                log.debug("Error by closing statement", sqle);
             }
         }
     }
@@ -272,7 +269,7 @@ public class JdbcProducer extends DefaultProducer {
             try {
                 con.setAutoCommit(autoCommit);
             } catch (Throwable sqle) {
-                LOG.debug("Error by resetting auto commit to its original value", sqle);
+                log.debug("Error by resetting auto commit to its original value", sqle);
             }
         }
     }
@@ -284,7 +281,7 @@ public class JdbcProducer extends DefaultProducer {
                     con.close();
                 }
             } catch (Throwable sqle) {
-                LOG.debug("Error by closing connection", sqle);
+                log.debug("Error by closing connection", sqle);
             }
         }
     }
@@ -377,7 +374,7 @@ public class JdbcProducer extends DefaultProducer {
         Class<?> outputClass = getEndpoint().getCamelContext().getClassResolver().resolveClass(getEndpoint().getOutputClass());
         Object answer = getEndpoint().getCamelContext().getInjector().newInstance(outputClass);
 
-        Map<String, Object> properties = new LinkedHashMap<String, Object>();
+        Map<String, Object> properties = new LinkedHashMap<>();
 
         // map row names using the bean row mapper
         for (Map.Entry<String, Object> entry : row.entrySet()) {
@@ -386,7 +383,7 @@ public class JdbcProducer extends DefaultProducer {
             properties.put(name, value);
         }
         try {
-            IntrospectionSupport.setProperties(answer, properties);
+            PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), answer, properties);
         } catch (Exception e) {
             throw new SQLException("Error setting properties on output class " + outputClass, e);
         }

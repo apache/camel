@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,6 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Producer does not receive a HL7 acknowledgement within the configured timespan
  */
 public class MllpAcknowledgementTimeoutException extends MllpAcknowledgementException {
-
     static final String EXCEPTION_MESSAGE = "Timeout receiving HL7 Acknowledgement";
 
     public MllpAcknowledgementTimeoutException(byte[] hl7Message) {
@@ -58,13 +57,12 @@ public class MllpAcknowledgementTimeoutException extends MllpAcknowledgementExce
     /**
      * Get the HL7 acknowledgement payload associated with this exception, if any.
      *
-     * @return If the timeout occurred while attempting to receive an HL7 Message, this will be null.  If the timeout
-     * occurred while attempting to receive an HL7 Acknowledgement, this will be the HL7 Message.  If the timeout occurred
-     * while attempting to complete the read of an HL7 message (i.e. part of the message has already been read), this
-     * will be the partial acknowledgement payload that was read before the timeout.
+     * @return If the timeout occurred while attempting to receive an HL7 Message, this will be null.  If the timeout occurred while attempting to receive an HL7 Acknowledgement, this will be the HL7
+     * Message.  If the timeout occurred while attempting to complete the read of an HL7 message (i.e. part of the message has already been read), this will be the partial acknowledgement payload that
+     * was read before the timeout.
      */
     public byte[] getHl7Acknowledgement() {
-        return super.getHl7Acknowledgement();
+        return super.getHl7AcknowledgementBytes();
     }
 
 }

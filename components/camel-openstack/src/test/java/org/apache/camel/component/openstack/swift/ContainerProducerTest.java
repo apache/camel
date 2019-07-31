@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,12 @@ import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.swift.producer.ContainerProducer;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openstack4j.api.storage.ObjectStorageContainerService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.storage.object.SwiftContainer;
 import org.openstack4j.model.storage.object.options.ContainerListOptions;
@@ -36,12 +40,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ContainerProducerTest extends SwiftProducerTestSupport {
 
     private static final String CONTAINER_NAME = "containerName";
@@ -49,61 +55,71 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
     @Mock
     private SwiftContainer mockOsContainer;
 
+    @Mock
+    private ObjectStorageContainerService containerService;
+
+    @Captor
+    private ArgumentCaptor<String> nameCaptor;
+
+    @Captor
+    private ArgumentCaptor<Map<String, String>> dataCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> containerNameCaptor;
+
+    @Captor
+    private ArgumentCaptor<CreateUpdateContainerOptions> optionsCaptor;
+
+    @Captor
+    private ArgumentCaptor<ContainerListOptions> containerListOptionsCaptor;
+
     @Before
     public void setUp() {
+        when(objectStorageService.containers()).thenReturn(containerService);
+
         producer = new ContainerProducer(endpoint, client);
     }
 
     @Test
     public void createTestWithoutOptions() throws Exception {
-        when(containerService.create(anyString(), any(CreateUpdateContainerOptions.class))).thenReturn(ActionResponse.actionSuccess());
+        when(containerService.create(anyString(), isNull())).thenReturn(ActionResponse.actionSuccess());
         msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> containerNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<CreateUpdateContainerOptions> optionsCaptor = ArgumentCaptor.forClass(CreateUpdateContainerOptions.class);
-
         verify(containerService).create(containerNameCaptor.capture(), optionsCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
         assertNull(optionsCaptor.getValue());
-
-        assertFalse(msg.isFault());
     }
 
     @Test
     public void createTestWithOptions() throws Exception {
-        when(containerService.create(anyString(), any(CreateUpdateContainerOptions.class))).thenReturn(ActionResponse.actionSuccess());
+        when(containerService.create(anyString(), any())).thenReturn(ActionResponse.actionSuccess());
         msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
         final CreateUpdateContainerOptions options = CreateUpdateContainerOptions.create().accessAnybodyRead();
         msg.setBody(options);
         producer.process(exchange);
 
-        ArgumentCaptor<String> containerNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<CreateUpdateContainerOptions> optionsCaptor = ArgumentCaptor.forClass(CreateUpdateContainerOptions.class);
-
         verify(containerService).create(containerNameCaptor.capture(), optionsCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
         assertEquals(options, optionsCaptor.getValue());
-        assertFalse(msg.isFault());
     }
 
     @Test
     public void getTest() throws Exception {
         List<SwiftContainer> list = new ArrayList<>();
         list.add(mockOsContainer);
-        doReturn(list).when(containerService).list(any(ContainerListOptions.class));
+        doReturn(list).when(containerService).list(any());
         when(endpoint.getOperation()).thenReturn(OpenstackConstants.GET);
 
         msg.setHeader(SwiftConstants.LIMIT, 10);
         msg.setHeader(SwiftConstants.DELIMITER, 'x');
 
         producer.process(exchange);
-        ArgumentCaptor<ContainerListOptions> optionsCaptor = ArgumentCaptor.forClass(ContainerListOptions.class);
-        verify(containerService).list(optionsCaptor.capture());
-        Map<String, String> options = optionsCaptor.getValue().getOptions();
+        verify(containerService).list(containerListOptionsCaptor.capture());
+        Map<String, String> options = containerListOptionsCaptor.getValue().getOptions();
         assertEquals(String.valueOf(10), options.get(SwiftConstants.LIMIT));
         assertEquals("x", options.get(SwiftConstants.DELIMITER));
         assertEquals(list, msg.getBody(List.class));
@@ -131,24 +147,8 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> containerNameCaptor = ArgumentCaptor.forClass(String.class);
         verify(containerService).delete(containerNameCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
-
-        assertFalse(msg.isFault());
-    }
-
-    @Test
-    public void deleteObjectFailTest() throws Exception {
-        final String failMessage = "fail";
-        when(containerService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failMessage, 401));
-        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
-        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
-
-        producer.process(exchange);
-
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failMessage));
     }
 
     @Test
@@ -162,8 +162,6 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Map> dataCaptor = ArgumentCaptor.forClass(Map.class);
         verify(containerService).updateMetadata(nameCaptor.capture(), dataCaptor.capture());
 
         assertEquals(CONTAINER_NAME, nameCaptor.getValue());

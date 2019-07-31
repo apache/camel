@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,6 @@ package org.apache.camel.itest.jms;
 
 import java.util.List;
 import javax.jms.ConnectionFactory;
-import javax.naming.Context;
 
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
@@ -29,8 +28,8 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.model.config.BatchResequencerConfig;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -161,19 +160,16 @@ public class JmsResequencerTest extends CamelTestSupport  {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-
+    protected void bindToRegistry(Registry registry) throws Exception {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
         amq.setCamelContext(context);
-        answer.bind("activemq", amq);
+        registry.bind("activemq", amq);
 
-        answer.bind("myBean1", b1);
-        answer.bind("myBean2", b2);
-        answer.bind("myBean3", b3);
-        return answer;
+        registry.bind("myBean1", b1);
+        registry.bind("myBean2", b2);
+        registry.bind("myBean3", b3);
     }
 
 }

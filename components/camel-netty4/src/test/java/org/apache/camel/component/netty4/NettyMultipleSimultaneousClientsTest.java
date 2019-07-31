@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,11 +25,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  *
  */
+@Ignore("TODO: investigate for Camel 3.0")
 public class NettyMultipleSimultaneousClientsTest extends BaseNettyTest {
 
     private String uri = "netty4:tcp://localhost:{{port}}?sync=true&reuseAddress=true&synchronous=false";

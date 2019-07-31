@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 
 import io.undertow.server.HttpHandler;
+import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 
 /**
  * An undertow host abstraction
@@ -32,12 +33,27 @@ public interface UndertowHost {
     void validateEndpointURI(URI httpURI);
 
     /**
-     * Register a handler with the given {@link HttpHandlerRegistrationInfo}
+     * Register a handler with the given {@link HttpHandlerRegistrationInfo}. Note that for some kinds of handlers (most
+     * notably {@link CamelWebSocketHandler}), it is legal to call this method multiple times with equal
+     * {@link HttpHandlerRegistrationInfo} and {@link HttpHandler}. In such cases the returned {@link HttpHandler} may
+     * differ from the passed {@link HttpHandler} and the returned instance is the effectively registered one for the
+     * given {@link HttpHandlerRegistrationInfo}.
+     *
+     * @param registrationInfo
+     *            the {@link HttpHandlerRegistrationInfo} related to {@code handler}
+     * @param handler
+     *            the {@link HttpHandler} to register
+     * @return the given {@code handler} or a different {@link HttpHandler} that has been registered with the given
+     *         {@link HttpHandlerRegistrationInfo} earlier.
      */
-    void registerHandler(HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler);
+    HttpHandler registerHandler(HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler);
 
     /**
-     * Unregister a handler with the given {@link HttpHandlerRegistrationInfo}
+     * Unregister a handler with the given {@link HttpHandlerRegistrationInfo}. Note that if
+     * {@link #registerHandler(HttpHandlerRegistrationInfo, HttpHandler)} was successfully invoked multiple times for an
+     * equivalent {@link HttpHandlerRegistrationInfo} then {@link #unregisterHandler(HttpHandlerRegistrationInfo)} must
+     * be called the same number of times to unregister the associated handler completely.
      */
     void unregisterHandler(HttpHandlerRegistrationInfo registrationInfo);
+
 }

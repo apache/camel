@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,5 +25,8 @@ public interface JaxbConstants {
      * Key to identify custom marshaller properties in the exchange specific to JAX-RI implementation
      */
     String JAXB_PROVIDER_PROPERTIES = "CamelJaxbProviderProperties";
+    
+    String JAXB_PART_CLASS = "CamelJaxbPartClass";
+    String JAXB_PART_NAMESPACE = "CamelJaxbPartNamespace";
 
 }

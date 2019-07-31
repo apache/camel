@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
+import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -35,6 +36,11 @@ public class CamelJpaTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelJpaTest.class))
+                .dependency("org.apache.openjpa:openjpa:" + DependencyResolver.resolveParentProperty("${openjpa-version}"))
+                .dependency("org.apache.openjpa:openjpa-persistence-jdbc")
+                .exclusion("org.apache.geronimo.specs:geronimo-jpa_2.0_spec")
+                // Exclude tests which require build time enhancement of @Entity annotated classes
+                .unitTestExclusionPattern(".*(.*Idempotent.*Test$|JpaUsePersistTest$|JpaTraceEventMessageTest$)")
                 .build();
     }
 

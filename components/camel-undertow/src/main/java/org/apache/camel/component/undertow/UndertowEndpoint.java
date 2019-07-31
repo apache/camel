@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,58 +17,71 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.accesslog.AccessLogReceiver;
+
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.cloud.DiscoverableService;
+import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.component.undertow.UndertowConstants.EventType;
+import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.CollectionHelper;
 import org.xnio.Option;
 import org.xnio.OptionMap;
 import org.xnio.Options;
 
 /**
- * The undertow component provides HTTP-based endpoints for consuming and producing HTTP requests.
+ * The undertow component provides HTTP and WebSocket based endpoints for consuming and producing HTTP/WebSocket requests.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
-        consumerClass = UndertowConsumer.class, label = "http", lenientProperties = true)
-public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
+        label = "http,websocket", lenientProperties = true)
+public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
     private UndertowComponent component;
     private SSLContext sslContext;
     private OptionMap optionMap;
+    private HttpHandlerRegistrationInfo registrationInfo;
+    private CamelWebSocketHandler webSocketHttpHandler;
+    private boolean isWebSocket;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private URI httpURI;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean useStreaming;
     @UriParam(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
+    @UriParam(label = "advanced")
+    private AccessLogReceiver accessLogReceiver;
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new UndertowHeaderFilterStrategy();
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
     private String httpMethodRestrict;
-    @UriParam(label = "consumer", defaultValue = "true")
-    private Boolean matchOnUriPrefix = true;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private Boolean matchOnUriPrefix = Boolean.FALSE;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private Boolean accessLog = Boolean.FALSE;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "false")
@@ -81,13 +94,18 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private Boolean reuseAddresses = Boolean.TRUE;
     @UriParam(label = "producer", prefix = "option.", multiValue = true)
     private Map<String, Object> options;
-    @UriParam(label = "consumer",
-            description = "Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.")
+    @UriParam(label = "consumer")
     private boolean optionsEnabled;
     @UriParam(label = "producer")
     private CookieHandler cookieHandler;
+    @UriParam(label = "producer,websocket")
+    private Boolean sendToAll;
+    @UriParam(label = "producer,websocket", defaultValue = "30000")
+    private Integer sendTimeout = 30000;
+    @UriParam(label = "consumer,websocket", defaultValue = "false")
+    private boolean fireWebSocketChannelEvents;
 
-    public UndertowEndpoint(String uri, UndertowComponent component) throws URISyntaxException {
+    public UndertowEndpoint(String uri, UndertowComponent component) {
         super(uri, component);
         this.component = component;
     }
@@ -109,13 +127,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        //throw exception as polling consumer is not supported
         throw new UnsupportedOperationException("This component does not support polling consumer");
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override
@@ -124,8 +136,20 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return true;
     }
 
+    // Service Registration
+    //-------------------------------------------------------------------------
+
+    @Override
+    public Map<String, String> getServiceProperties() {
+        return CollectionHelper.immutableMapOf(
+            ServiceDefinition.SERVICE_META_PORT, Integer.toString(httpURI.getPort()),
+            ServiceDefinition.SERVICE_META_PATH, httpURI.getPath(),
+            ServiceDefinition.SERVICE_META_PROTOCOL, httpURI.getScheme()
+        );
+    }
+
     public Exchange createExchange(HttpServerExchange httpExchange) throws Exception {
-        Exchange exchange = createExchange();
+        Exchange exchange = createExchange(ExchangePattern.InOut);
 
         Message in = getUndertowHttpBinding().toCamelMessage(httpExchange, exchange);
 
@@ -148,7 +172,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
      * The url of the HTTP endpoint to use.
      */
     public void setHttpURI(URI httpURI) {
-        this.httpURI = httpURI;
+        this.httpURI = UndertowHelper.makeHttpURI(httpURI);
     }
 
     public String getHttpMethodRestrict() {
@@ -200,8 +224,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     }
 
     /**
-     * If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request.
-     * You may also set the option throwExceptionOnFailure to be false to let the producer send all the fault response back.
+     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
+     * This allows you to get all responses regardless of the HTTP status code.
      */
     public void setThrowExceptionOnFailure(Boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
@@ -212,8 +236,12 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     }
 
     /**
-     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
-     * This allows you to get all responses regardless of the HTTP status code.
+     * If enabled and an Exchange failed processing on the consumer side and if the caused Exception 
+     * was send back serialized in the response as a application/x-java-serialized-object content type. 
+     * On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. 
+     * This is by default turned off. If you enable this 
+     * then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+     * 
      */
     public void setTransferException(Boolean transferException) {
         this.transferException = transferException;
@@ -222,7 +250,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     public UndertowHttpBinding getUndertowHttpBinding() {
         if (undertowHttpBinding == null) {
             // create a new binding and use the options from this endpoint
-            undertowHttpBinding = new DefaultUndertowHttpBinding();
+            undertowHttpBinding = new DefaultUndertowHttpBinding(useStreaming);
             undertowHttpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             undertowHttpBinding.setTransferException(getTransferException());
         }
@@ -303,9 +331,70 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         this.cookieHandler = cookieHandler;
     }
 
+    public Boolean getSendToAll() {
+        return sendToAll;
+    }
+
+    /**
+     * To send to all websocket subscribers. Can be used to configure on endpoint level, instead of having to use the
+     * {@code UndertowConstants.SEND_TO_ALL} header on the message.
+     */
+    public void setSendToAll(Boolean sendToAll) {
+        this.sendToAll = sendToAll;
+    }
+
+    public Integer getSendTimeout() {
+        return sendTimeout;
+    }
+
+    /**
+     * Timeout in milliseconds when sending to a websocket channel.
+     * The default timeout is 30000 (30 seconds).
+     */
+    public void setSendTimeout(Integer sendTimeout) {
+        this.sendTimeout = sendTimeout;
+    }
+
+    public boolean isUseStreaming() {
+        return useStreaming;
+    }
+
+    /**
+     * <p>
+     * For HTTP endpoint:
+     * if {@code true}, text and binary messages will be wrapped as {@link java.io.InputStream}
+     * before they are passed to an {@link Exchange}; otherwise they will be passed as byte[].
+     * </p>
+     *
+     * <p>
+     * For WebSocket endpoint:
+     * if {@code true}, text and binary messages will be wrapped as {@link java.io.Reader} and
+     * {@link java.io.InputStream} respectively before they are passed to an {@link Exchange};
+     * otherwise they will be passed as String and byte[] respectively.
+     * </p>
+     */
+    public void setUseStreaming(boolean useStreaming) {
+        this.useStreaming = useStreaming;
+    }
+
+    public boolean isFireWebSocketChannelEvents() {
+        return fireWebSocketChannelEvents;
+    }
+
+    /**
+     * if {@code true}, the consumer will post notifications to the route when a new WebSocket peer connects,
+     * disconnects, etc. See {@code UndertowConstants.EVENT_TYPE} and {@link EventType}.
+     */
+    public void setFireWebSocketChannelEvents(boolean fireWebSocketChannelEvents) {
+        this.fireWebSocketChannelEvents = fireWebSocketChannelEvents;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        final String scheme = httpURI.getScheme();
+        this.isWebSocket = UndertowConstants.WS_PROTOCOL.equalsIgnoreCase(scheme) || UndertowConstants.WSS_PROTOCOL.equalsIgnoreCase(scheme);
 
         if (sslContextParameters != null) {
             sslContext = sslContextParameters.createSSLContext(getCamelContext());
@@ -331,7 +420,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
                     key = Options.class.getName() + "." + key;
                     Option option = Option.fromString(key, cl);
                     value = option.parseValue(value.toString(), cl);
-                    LOG.trace("Parsed option {}={}", option.getName(), value);
+                    log.trace("Parsed option {}={}", option.getName(), value);
                     builder.set(option, value);
                 }
             }
@@ -357,9 +446,53 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         if (reuseAddresses != null && !optionMap.contains(Options.REUSE_ADDRESSES)) {
             // rebuild map
             OptionMap.Builder builder = OptionMap.builder();
-            builder.addAll(optionMap).set(Options.REUSE_ADDRESSES, tcpNoDelay);
+            builder.addAll(optionMap).set(Options.REUSE_ADDRESSES, reuseAddresses);
             optionMap = builder.getMap();
         }
+    }
+
+    /**
+     * @return {@code true} if {@link #getHttpURI()}'s scheme is {@code ws} or {@code wss}
+     */
+    public boolean isWebSocket() {
+        return isWebSocket;
+    }
+
+    public HttpHandlerRegistrationInfo getHttpHandlerRegistrationInfo() {
+        if (registrationInfo == null) {
+            registrationInfo = new HttpHandlerRegistrationInfo(getHttpURI(), getHttpMethodRestrict(), getMatchOnUriPrefix());
+        }
+        return registrationInfo;
+    }
+
+    public CamelWebSocketHandler getWebSocketHttpHandler() {
+        if (webSocketHttpHandler == null) {
+            webSocketHttpHandler = new CamelWebSocketHandler();
+        }
+        return webSocketHttpHandler;
+    }
+
+    public Boolean getAccessLog() {
+        return accessLog;
+    }
+
+    /**
+     * Whether or not the consumer should write access log
+     */
+    public void setAccessLog(Boolean accessLog) {
+        this.accessLog = accessLog;
+    }
+
+    public AccessLogReceiver getAccessLogReceiver() {
+        return accessLogReceiver;
+    }
+
+    /**
+     * Which Undertow AccessLogReciever should be used
+     * Will use JBossLoggingAccessLogReceiver if not specifid
+     */
+    public void setAccessLogReceiver(AccessLogReceiver accessLogReceiver) {
+        this.accessLogReceiver = accessLogReceiver;
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -33,18 +34,16 @@ import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 /**
  * Base class for {@link ReplyManager} implementations.
- *
- * @version 
  */
 public abstract class ReplyManagerSupport extends ServiceSupport implements ReplyManager {
 
@@ -171,7 +170,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 } else {
                     Message message = holder.getMessage();
                     Session session = holder.getSession();
-                    JmsMessage response = new JmsMessage(message, session, endpoint.getBinding());
+                    JmsMessage response = new JmsMessage(exchange, message, session, endpoint.getBinding());
                     // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
                     // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access 
                     // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).
@@ -185,17 +184,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                         exchange.setException((Exception) body);
                     } else {
                         log.debug("Reply received. OUT message body set to reply payload: {}", body);
-                    }
-                    if (endpoint.isTransferFault()) {
-                        // remove the header as we do not want to keep it on the Camel Message either
-                        Object faultHeader = response.removeHeader(JmsConstants.JMS_TRANSFER_FAULT);
-                        if (faultHeader != null) {
-                            boolean isFault = exchange.getContext().getTypeConverter().tryConvertTo(boolean.class, faultHeader);
-                            log.debug("Transfer fault on OUT message: {}", isFault);
-                            if (isFault) {
-                                exchange.getOut().setFault(true);
-                            }
-                        }
                     }
 
                     // restore correlation id in case the remote server messed with it

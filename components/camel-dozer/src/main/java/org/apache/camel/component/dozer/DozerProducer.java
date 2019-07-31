@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,21 +18,16 @@ package org.apache.camel.component.dozer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.processor.MarshalProcessor;
-import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.processor.MarshalProcessor;
+import org.apache.camel.support.processor.UnmarshalProcessor;
 
 /**
  * Producer class for Dozer endpoints.
  */
 public class DozerProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DozerProducer.class);
-    
     private DozerEndpoint endpoint;
     private UnmarshalProcessor unmarshaller;
     private MarshalProcessor marshaller;
@@ -51,7 +46,7 @@ public class DozerProducer extends DefaultProducer {
         // Unmarshal the source content only if an unmarshaller is configured.
         String unmarshalId = endpoint.getConfiguration().getUnmarshalId();
         if (unmarshalId != null) {
-            LOG.debug("Unmarshalling input data using data format '{}'.", unmarshalId);
+            log.debug("Unmarshalling input data using data format '{}'.", unmarshalId);
             resolveUnmarshaller(exchange, unmarshalId).process(exchange);
             if (exchange.getException() != null) {
                 throw exchange.getException();
@@ -63,12 +58,12 @@ public class DozerProducer extends DefaultProducer {
                 endpoint.getConfiguration().getTargetModel());
         
         // If an unmarshaller was used, the unmarshalled message is the OUT message.
-        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message msg = exchange.getMessage();
         
         // Convert to source model, if specified
         String sourceType = endpoint.getConfiguration().getSourceModel();
         if (sourceType != null) {
-            LOG.debug("Converting to source model {}.", sourceType);
+            log.debug("Converting to source model {}.", sourceType);
             Class<?> sourceModel = endpoint.getCamelContext()
                     .getClassResolver().resolveClass(sourceType);
             if (sourceModel == null) {
@@ -78,7 +73,7 @@ public class DozerProducer extends DefaultProducer {
         }
         
         // Perform mappings
-        LOG.debug("Mapping to target model {}.", targetModel.getName());
+        log.debug("Mapping to target model {}.", targetModel.getName());
         Object targetObject = endpoint.getMapper().map(msg.getBody(), targetModel);
         // Second pass to process literal mappings
         endpoint.getMapper().map(endpoint.getVariableMapper(), targetObject);
@@ -96,7 +91,7 @@ public class DozerProducer extends DefaultProducer {
         // Marshal the source content only if a marshaller is configured.
         String marshalId = endpoint.getConfiguration().getMarshalId();
         if (marshalId != null) {
-            LOG.debug("Marshalling output data using data format '{}'.", marshalId);
+            log.debug("Marshalling output data using data format '{}'.", marshalId);
             resolveMarshaller(exchange, marshalId).process(exchange);
             if (exchange.getException() != null) {
                 throw exchange.getException();
@@ -133,8 +128,7 @@ public class DozerProducer extends DefaultProducer {
             Exchange exchange, String dataFormatId) throws Exception {
         
         if (unmarshaller == null) {
-            DataFormat dataFormat = DataFormatDefinition.getDataFormat(
-                    exchange.getUnitOfWork().getRouteContext(), null, dataFormatId);
+            DataFormat dataFormat = exchange.getContext().resolveDataFormat(dataFormatId);
             if (dataFormat == null) {
                 throw new Exception("Unable to resolve data format for unmarshalling: " + dataFormatId);
             }
@@ -156,8 +150,7 @@ public class DozerProducer extends DefaultProducer {
             Exchange exchange, String dataFormatId) throws Exception {
         
         if (marshaller == null) {
-            DataFormat dataFormat = DataFormatDefinition.getDataFormat(
-                    exchange.getUnitOfWork().getRouteContext(), null, dataFormatId);
+            DataFormat dataFormat = exchange.getContext().resolveDataFormat(dataFormatId);
             if (dataFormat == null) {
                 throw new Exception("Unable to resolve data format for marshalling: " + dataFormatId);
             }

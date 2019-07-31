@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.mina2;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
@@ -35,6 +35,12 @@ import org.junit.Test;
  * Unit test with custom codec.
  */
 public class Mina2CustomCodecTest extends BaseMina2Test {
+
+    @BindToRegistry("myCodec")
+    private MyCodec codec1 = new MyCodec();
+
+    @BindToRegistry("failingCodec")
+    private MyCodec codec2 = new MyCodec(true);
 
     @Test
     public void testMyCodec() throws Exception {
@@ -102,14 +108,6 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myCodec", new MyCodec());
-        jndi.bind("failingCodec", new MyCodec(true));
-        return jndi;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 
@@ -137,10 +135,9 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
             return new ProtocolEncoder() {
 
                 @Override
-                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out)
-                    throws Exception {
+                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) throws Exception {
                     IoBuffer bb = IoBuffer.allocate(32).setAutoExpand(true);
-                    String s = (String) message;
+                    String s = (String)message;
                     bb.put(s.getBytes("US-ASCII"));
                     bb.flip();
                     out.write(bb);

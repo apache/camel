@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,15 @@
  */
 package org.apache.camel.blueprint;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 
@@ -30,8 +32,8 @@ public class BlueprintComponentResolverTest extends TestSupport {
 
     @Test
     public void testOsgiResolverFindComponentFallbackTest() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("allstar-component", new SampleComponent(true));
+        Registry registry = new DefaultRegistry();
+        registry.bind("allstar-component", new SampleComponent(true));
 
         CamelContext camelContext = new DefaultCamelContext(registry);
 
@@ -43,9 +45,9 @@ public class BlueprintComponentResolverTest extends TestSupport {
 
     @Test
     public void testOsgiResolverFindLanguageDoubleFallbackTest() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("allstar", new SampleComponent(false));
-        registry.put("allstar-component", new SampleComponent(true));
+        Registry registry = new DefaultRegistry();
+        registry.bind("allstar", new SampleComponent(false));
+        registry.bind("allstar-component", new SampleComponent(true));
 
         CamelContext camelContext = new DefaultCamelContext(registry);
 
@@ -56,7 +58,7 @@ public class BlueprintComponentResolverTest extends TestSupport {
         assertFalse("We should NOT find the fallback component", ((SampleComponent) component).isFallback());
     }
 
-    private static class SampleComponent implements Component {
+    private static class SampleComponent extends ServiceSupport implements Component {
 
         private boolean fallback;
 
@@ -80,17 +82,12 @@ public class BlueprintComponentResolverTest extends TestSupport {
         }
 
         @Override
+        public Endpoint createEndpoint(String uri, Map<String, Object> parameters) throws Exception {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        @Override
         public boolean useRawUri() {
-            throw new UnsupportedOperationException("Should not be called");
-        }
-
-        @Override
-        public EndpointConfiguration createConfiguration(String uri) throws Exception {
-            throw new UnsupportedOperationException("Should not be called");
-        }
-
-        @Override
-        public ComponentConfiguration createComponentConfiguration() {
             throw new UnsupportedOperationException("Should not be called");
         }
 
@@ -100,6 +97,16 @@ public class BlueprintComponentResolverTest extends TestSupport {
 
         public void setFallback(boolean fallback) {
             this.fallback = fallback;
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            // noop
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            // noop
         }
     }
 

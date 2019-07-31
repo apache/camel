@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import static java.util.Optional.ofNullable;
 
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
@@ -50,7 +51,7 @@ public class SalesforceHttpClient extends HttpClient {
     private int maxContentLength = DEFAULT_MAX_CONTENT_LENGTH;
     private long timeout = DEFAULT_TIMEOUT;
 
-    private final Method addSecuirtyHandlerMethod;
+    private final Method addProtocolHandlerMethod;
 
     private final Method getProtocolHandlersMethod;
 
@@ -73,9 +74,9 @@ public class SalesforceHttpClient extends HttpClient {
             final Class<?> getProtocolHandlersType = HttpClient.class.getMethod("getProtocolHandlers").getReturnType();
             final boolean isJetty92 = List.class.equals(getProtocolHandlersType);
             if (isJetty92) {
-                addSecuirtyHandlerMethod = List.class.getMethod("add", Object.class);
+                addProtocolHandlerMethod = List.class.getMethod("add", Object.class);
             } else {
-                addSecuirtyHandlerMethod = getProtocolHandlersType.getMethod("put", ProtocolHandler.class);
+                addProtocolHandlerMethod = getProtocolHandlersType.getMethod("put", ProtocolHandler.class);
             }
 
             getProtocolHandlersMethod = HttpClient.class.getMethod("getProtocolHandlers");
@@ -104,7 +105,7 @@ public class SalesforceHttpClient extends HttpClient {
 
         // compensate for Jetty 9.2 vs 9.3 API change
         final Object protocolHandlers = getProtocolHandlersMethod.invoke(this);
-        addSecuirtyHandlerMethod.invoke(protocolHandlers, new SalesforceSecurityHandler(this));
+        addProtocolHandlerMethod.invoke(protocolHandlers, new SalesforceSecurityHandler(this));
 
         super.doStart();
     }

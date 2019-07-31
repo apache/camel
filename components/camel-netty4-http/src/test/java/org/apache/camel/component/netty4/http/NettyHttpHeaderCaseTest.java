@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -53,7 +53,7 @@ public class NettyHttpHeaderCaseTest extends BaseNettyTest {
                     public void process(Exchange exchange) throws Exception {
 
                         // headers received should be in case as well
-                        Map<String, Object> map = new LinkedHashMap<String, Object>();
+                        Map<String, Object> map = new LinkedHashMap<>();
                         map.putAll(exchange.getIn().getHeaders());
 
                         assertEquals("123", map.get("OTHER"));

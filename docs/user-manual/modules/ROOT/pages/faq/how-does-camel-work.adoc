@@ -1,0 +1,5 @@
+[[HowdoesCamelwork-HowdoesCamelwork]]
+= How does Camel work?
+
+Please see the xref:architecture.adoc[Architecture] for details of how
+things work.

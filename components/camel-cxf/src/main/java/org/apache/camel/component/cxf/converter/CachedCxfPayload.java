@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,30 +21,38 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.apache.camel.converter.stream.StreamSourceCache;
+import org.apache.camel.support.builder.xml.StAX2SAXSource;
+import org.apache.camel.support.builder.xml.XMLConverterHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.xml.StreamSourceCache;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     private static final Logger LOG = LoggerFactory.getLogger(CachedCxfPayload.class);
+    private static String defaultCharset = ObjectHelper.getSystemProperty("org.apache.camel.default.charset", "UTF-8");
 
-    public CachedCxfPayload(CxfPayload<T> orig, Exchange exchange, XmlConverter xml) {
-        super(orig.getHeaders(), new ArrayList<Source>(orig.getBodySources()), orig.getNsMap());
+    public CachedCxfPayload(CxfPayload<T> orig, Exchange exchange) {
+        super(orig.getHeaders(), new ArrayList<>(orig.getBodySources()), orig.getNsMap());
         ListIterator<Source> li = getBodySources().listIterator();
         while (li.hasNext()) {
             Source source = li.next();
@@ -69,28 +77,61 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
                 try {
                     StaxUtils.copy(reader, cos);
                     li.set(new StreamSourceCache(cos.newStreamCache()));
-                } catch (XMLStreamException e) {
-                    LOG.error("Transformation failed ", e);
-                } catch (IOException e) {
-                    LOG.error("Cannot Create StreamSourceCache ", e);
-                }
-
-            } else if (!(source instanceof DOMSource)) {
-                DOMSource document = exchange.getContext().getTypeConverter().convertTo(DOMSource.class, exchange, source);
-                if (document != null) {
-                    li.set(document);
+                    // this worked so continue
+                    continue;
+                } catch (Exception e) {
+                    // fallback to trying to read the reader using another way
+                    StreamResult sr = new StreamResult(cos);
+                    try {
+                        toResult(source, sr);
+                        li.set(new StreamSourceCache(cos.newStreamCache()));
+                        // this worked so continue
+                        continue;
+                    } catch (Exception e2) {
+                        // ignore did not work so we will fallback to DOM mode
+                        // this can happens in some rare cases such as reported by CAMEL-11681
+                        LOG.debug("Error during parsing XMLStreamReader from StaxSource/StAXSource. Will fallback to using DOM mode. This exception is ignored", e2);
+                    }
                 }
             }
+            // fallback to using DOM
+            DOMSource document = exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, source);
+            if (document != null) {
+                li.set(document);
+            }
         }
+        orig.setBodySources(getBodySources());
     }
 
     private CachedCxfPayload(CachedCxfPayload<T> orig, Exchange exchange) throws IOException {
-        super(orig.getHeaders(), new ArrayList<Source>(orig.getBodySources()), orig.getNsMap());
+        super(orig.getHeaders(), new ArrayList<>(orig.getBodySources()), orig.getNsMap());
         ListIterator<Source> li = getBodySources().listIterator();
         while (li.hasNext()) {
             Source source = li.next();
             if (source instanceof StreamCache) {
                 li.set((Source) (((StreamCache) source)).copy(exchange));
+            }
+        }
+    }
+
+    private static void toResult(Source source, Result result) throws TransformerException {
+        if (source != null) {
+            XMLConverterHelper xml = new XMLConverterHelper();
+            TransformerFactory factory = xml.getTransformerFactory();
+            Transformer transformer = factory.newTransformer();
+            if (transformer == null) {
+                throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
+            } else {
+                Properties outputProperties = new Properties();
+                outputProperties.put("encoding", defaultCharset);
+                outputProperties.put("omit-xml-declaration", "yes");
+
+                transformer.setOutputProperties(outputProperties);
+                if (factory.getClass().getName().equals("org.apache.xalan.processor.TransformerFactoryImpl") && source instanceof StAXSource) {
+                    source = new StAX2SAXSource(((StAXSource)source).getXMLStreamReader());
+                }
+
+                transformer.transform(source, result);
             }
         }
     }
@@ -140,6 +181,6 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
 
     @Override
     public StreamCache copy(Exchange exchange) throws IOException {
-        return new CachedCxfPayload<T>(this, exchange);
+        return new CachedCxfPayload<>(this, exchange);
     }
 }

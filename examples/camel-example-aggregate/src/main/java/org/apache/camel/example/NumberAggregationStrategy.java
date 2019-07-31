@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,11 @@
  */
 package org.apache.camel.example;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
  * Aggregate two numbers
- *
- * @version 
  */
 // START SNIPPET: e1
 public class NumberAggregationStrategy implements AggregationStrategy {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,35 +27,57 @@ import org.apache.ignite.events.EventType;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.TcpDiscoveryIpFinder;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
+import org.junit.Rule;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
-public class AbstractIgniteTest extends CamelTestSupport {
-    
+public abstract class AbstractIgniteTest extends CamelTestSupport {
+
     /** Ip finder for TCP discovery. */
-    private static final TcpDiscoveryIpFinder LOCAL_IP_FINDER = new TcpDiscoveryVmIpFinder(false) { {
+    private static final TcpDiscoveryIpFinder LOCAL_IP_FINDER = new TcpDiscoveryVmIpFinder(false) {
+        {
             setAddresses(Collections.singleton("127.0.0.1:47500..47509"));
-        } };
-    
+        }
+    };
+
+    /**
+     * A unique identifier for the ignite resource (cache, queue, set...) being
+     * tested.
+     */
+    protected String resourceUid;
+
     private Ignite ignite;
+
+    @Rule
+    public TestRule watcher = new TestWatcher() {
+        protected void starting(Description description) {
+            resourceUid = description.getMethodName() + UUID.randomUUID().toString();
+        }
+    };
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.addComponent("ignite", buildComponent());
+        context.addComponent(getScheme(), createComponent());
         return context;
     }
 
-    protected IgniteComponent buildComponent() {
+    protected IgniteConfiguration createConfiguration() {
         IgniteConfiguration config = new IgniteConfiguration();
-        config.setGridName(UUID.randomUUID().toString());
+        config.setIgniteInstanceName(UUID.randomUUID().toString());
         config.setIncludeEventTypes(EventType.EVT_JOB_FINISHED, EventType.EVT_JOB_RESULTED);
         config.setDiscoverySpi(new TcpDiscoverySpi().setIpFinder(LOCAL_IP_FINDER));
-        
-        return IgniteComponent.fromConfiguration(config);
+        return config;
     }
+
+    protected abstract String getScheme();
+
+    protected abstract AbstractIgniteComponent createComponent();
 
     protected Ignite ignite() {
         if (ignite == null) {
-            ignite = context.getComponent("ignite", IgniteComponent.class).getIgnite();
+            ignite = context.getComponent(getScheme(), AbstractIgniteComponent.class).getIgnite();
         }
         return ignite;
     }

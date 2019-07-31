@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.stringtemplate.v4.NoIndentWriter;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -47,11 +47,6 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
 
     public StringTemplateEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override
@@ -105,6 +100,5 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         out.setBody(buffer.toString());
         out.setHeaders(exchange.getIn().getHeaders());
         out.setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI, getResourceUri());
-        out.setAttachments(exchange.getIn().getAttachments());
     }
 }

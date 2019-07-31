@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,6 +31,7 @@ import javax.xml.ws.Service;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.Before;
 
@@ -134,6 +135,19 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
     
     public Endpoint publishSampleWS(String camelEndpoint) {
         return Endpoint.publish("camel://" + camelEndpoint, new SampleWSImpl());
+        
+    }
+    
+    /**
+     * Create a SampleWS Server with Gzip enabled to a specified route
+     * @param camelEndpoint
+     */
+    
+    public Endpoint publishSampleWSWithGzipEnabled(String camelEndpoint) {
+        EndpointImpl endpoint = (EndpointImpl)Endpoint.publish("camel://" + camelEndpoint, new SampleWSImpl());
+        endpoint.getInInterceptors().add(new org.apache.cxf.transport.common.gzip.GZIPInInterceptor());
+        endpoint.getOutInterceptors().add(new org.apache.cxf.transport.common.gzip.GZIPOutInterceptor(0));
+        return endpoint;
         
     }
 

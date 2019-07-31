@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,14 +23,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.zipkin")
 public class ZipkinConfigurationProperties {
+    /**
+     * Sets the POST URL for zipkin's <a href="http://zipkin.io/zipkin-api/#/">v2 api</a>, usually
+     * "http://zipkinhost:9411/api/v2/spans"
+     */
+    private String endpoint;
 
     /**
-     * Sets a hostname for the remote zipkin server to use.
+     * Sets the hostname if sending spans to a remote zipkin scribe (thrift RPC) collector.
      */
     private String hostName;
 
     /**
-     * Sets the port number for the remote zipkin server to use.
+     * Sets the port if sending spans to a remote zipkin scribe (thrift RPC) collector.
      */
     private int port;
 
@@ -79,6 +84,14 @@ public class ZipkinConfigurationProperties {
     private Map<String, String> serverServiceMappings;
 
     // Getters & setters
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
 
     public String getHostName() {
         return hostName;

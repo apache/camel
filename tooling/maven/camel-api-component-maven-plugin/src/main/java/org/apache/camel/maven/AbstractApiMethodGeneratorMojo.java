@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,9 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.camel.util.component.ApiMethodArg;
-import org.apache.camel.util.component.ApiMethodParser;
-import org.apache.camel.util.component.ArgumentSubstitutionParser;
+import org.apache.camel.support.component.ApiMethodArg;
+import org.apache.camel.support.component.ApiMethodParser;
+import org.apache.camel.support.component.ArgumentSubstitutionParser;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -50,7 +50,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private Pattern propertyTypePattern;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void executeInternal() throws MojoExecutionException {
 
         setCompileSourceRoots();
 
@@ -154,7 +154,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         context.put("componentPackage", componentPackage);
 
         // generate parameter names and types for configuration, sorted by parameter name
-        Map<String, ApiMethodArg> parameters = new TreeMap<String, ApiMethodArg>();
+        Map<String, ApiMethodArg> parameters = new TreeMap<>();
         for (ApiMethodParser.ApiMethodModel model : models) {
             for (ApiMethodArg argument : model.getArguments()) {
 
@@ -272,7 +272,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     }
 
     static {
-        PRIMITIVE_VALUES = new HashMap<Class<?>, String>();
+        PRIMITIVE_VALUES = new HashMap<>();
         PRIMITIVE_VALUES.put(Boolean.TYPE, "Boolean.FALSE");
         PRIMITIVE_VALUES.put(Byte.TYPE, "(byte) 0");
         PRIMITIVE_VALUES.put(Character.TYPE, "(char) 0");

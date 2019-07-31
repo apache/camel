@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,11 +19,11 @@ package org.apache.camel.jaxb;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.Address;
 import org.apache.camel.example.Order;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -33,15 +33,13 @@ import org.junit.Test;
  */
 public class JaxbMarshalNamespacePrefixMapperTest extends CamelTestSupport {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+    @BindToRegistry("myPrefix")
+    public Map<String, String> addMap() throws Exception {
+        Map<String, String> map = new HashMap<>();
         map.put("http://www.camel.apache.org/jaxb/example/order/1", "o");
         map.put("http://www.camel.apache.org/jaxb/example/address/1", "a");
-
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myPrefix", map);
-        return jndi;
+        
+        return map;
     }
 
     @Test

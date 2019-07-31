@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,7 +42,7 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE);
         if (service != null) {
-            LOG.debug("Using PullRequestService found in registry " + service.getClass().getCanonicalName());
+            LOG.debug("Using PullRequestService found in registry {}", service.getClass().getCanonicalName());
             pullRequestService = (PullRequestService) service;
         } else {
             pullRequestService = new PullRequestService();
@@ -61,7 +61,7 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
     protected int poll() throws Exception {
         List<PullRequest> openPullRequests = pullRequestService.getPullRequests(getRepository(), "open");
         // In the end, we want PRs oldest to newest.
-        Stack<PullRequest> newPullRequests = new Stack<PullRequest>();
+        Stack<PullRequest> newPullRequests = new Stack<>();
         for (PullRequest pullRequest : openPullRequests) {
             if (pullRequest.getNumber() > lastOpenPullRequest) {
                 newPullRequests.push(pullRequest);

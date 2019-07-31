@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,10 +19,10 @@ package org.apache.camel.component.elsql;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Test;
@@ -35,20 +35,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
  */
 public class ElSqlConsumerTest extends CamelTestSupport {
 
-    private EmbeddedDatabase db;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        // this is the database we create with some initial data for our unit test
-        db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-
-        jndi.bind("dataSource", db);
-
-        return jndi;
-    }
+    @BindToRegistry("dataSource")
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
     @After
     public void tearDown() throws Exception {
@@ -80,8 +68,7 @@ public class ElSqlConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("elsql:allProjects:elsql/projects.elsql?dataSource=#dataSource")
-                        .to("mock:result");
+                from("elsql:allProjects:elsql/projects.elsql?dataSource=#dataSource").to("mock:result");
             }
         };
     }

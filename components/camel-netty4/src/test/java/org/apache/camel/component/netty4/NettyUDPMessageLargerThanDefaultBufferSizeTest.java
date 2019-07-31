@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,8 +18,9 @@ package org.apache.camel.component.netty4;
 
 import io.netty.channel.ChannelOption;
 import io.netty.channel.FixedRecvByteBufAllocator;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTest {
@@ -45,16 +46,14 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
 
     @Test
     public void testSend2048Message() throws Exception {
-        //Will fail unless the buffer was increased correctly
+        // Will fail unless the buffer was increased correctly
         sendMessage(2048);
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("RCVBUF_ALLOCATOR")
+    public FixedRecvByteBufAllocator loadRecv() throws Exception {
         FixedRecvByteBufAllocator fixedRecvByteBufAllocator = new FixedRecvByteBufAllocator(4096);
-        jndi.bind(ChannelOption.RCVBUF_ALLOCATOR.name(), fixedRecvByteBufAllocator);
-        return jndi;
+        return fixedRecvByteBufAllocator;
     }
 
     @Override
@@ -62,8 +61,7 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4:udp://localhost:{{port}}?option." + ChannelOption.RCVBUF_ALLOCATOR.name() + "=#" + ChannelOption.RCVBUF_ALLOCATOR.name())
-                    .to("mock:result");
+                from("netty4:udp://localhost:{{port}}?option." + ChannelOption.RCVBUF_ALLOCATOR.name() + "=#" + ChannelOption.RCVBUF_ALLOCATOR.name()).to("mock:result");
             }
         };
     }

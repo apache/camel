@@ -1,497 +1,506 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>components</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>components</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-cxf</artifactId>
-  <packaging>jar</packaging>
-  <name>Camel :: CXF</name>
-  <description>Camel CXF support</description>
+    <artifactId>camel-cxf</artifactId>
+    <packaging>jar</packaging>
 
-  <properties>
-    <camel.osgi.import>
-      !org.springframework.boot.*,
-      !org.springframework.context.annotation.*;resolution:=optional,
-      !org.apache.camel.component.cxf,
-      !org.apache.camel.component.cxf.blueprint,
-      !org.apache.camel.component.cxf.converter,
-      !org.apache.camel.component.cxf.cxfbean,
-      !org.apache.camel.component.cxf.feature,
-      !org.apache.camel.component.cxf.interceptors,
-      !org.apache.camel.component.cxf.jaxrs,
-      !org.apache.camel.component.cxf.spring,
-      !org.apache.camel.component.cxf.util,
-      !org.apache.camel.blueprint,
-      javax.activation*;version="[0.0,2)",
-      javax.annotation*;version="[0.0,2)",
-      javax.jws*;version="[0.0,3)",
-      javax.ws.rs*;version="[0.0,3)",
-      javax.xml.stream*;version="[0.0,2)",
-      javax.xml.ws*;version="[0.0,3.0)",
-      org.apache.camel.*;${camel.osgi.import.camel.version},
-      org.apache.camel.spring.*;${camel.osgi.import.camel.version};resolution:=optional,
-      org.springframework*;version="${spring-version-range}";resolution:=optional,
-      ${camel.osgi.import.defaults},
-      ${camel.osgi.import.additional},
-      org.osgi.service.blueprint;resolution:=optional,
-      org.osgi.service.blueprint.container;resolution:=optional,
-      org.osgi.service.blueprint.reflect;resolution:=optional,
-      org.apache.aries.blueprint;version="[1.0,2.0)";resolution:=optional,
-      org.apache.aries.blueprint.reflect;version="[1.0,2.0)";resolution:=optional,
-      org.apache.aries.blueprint.mutable;version="[1.0,2.0)";resolution:=optional,
-      org.apache.camel.blueprint;resolution:=optional,
-      *
-    </camel.osgi.import>
-    <camel.osgi.export>
-      org.apache.camel.component.cxf;${camel.osgi.version},
-      org.apache.camel.component.cxf.blueprint;${camel.osgi.version},
-      org.apache.camel.component.cxf.converter;${camel.osgi.version},
-      org.apache.camel.component.cxf.cxfbean;${camel.osgi.version},
-      org.apache.camel.component.cxf.feature;${camel.osgi.version},
-      org.apache.camel.component.cxf.interceptors;${camel.osgi.version},
-      org.apache.camel.component.cxf.jaxrs;${camel.osgi.version},
-      org.apache.camel.component.cxf.spring;${camel.osgi.version},
-      org.apache.camel.component.cxf.util;${camel.osgi.version}
-    </camel.osgi.export>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=cxf,
-      org.apache.camel.spi.ComponentResolver;component=cxfrs,
-      org.apache.camel.spi.ComponentResolver;component=cxfbean
-    </camel.osgi.export.service>
-    <camel.osgi.failok>true</camel.osgi.failok>
+    <name>Camel :: CXF</name>
+    <description>Camel CXF support</description>
 
-  </properties>
+    <properties>
+        <camel.osgi.import.defaults/>
+        <camel.osgi.import>
+            !org.springframework.boot.*,
+            !org.springframework.context.annotation.*;resolution:=optional,
+            !org.apache.camel.component.cxf,
+            !org.apache.camel.component.cxf.blueprint,
+            !org.apache.camel.component.cxf.converter,
+            !org.apache.camel.component.cxf.feature,
+            !org.apache.camel.component.cxf.interceptors,
+            !org.apache.camel.component.cxf.jaxrs,
+            !org.apache.camel.component.cxf.spring,
+            !org.apache.camel.component.cxf.util,
+            !org.apache.camel.blueprint,
+            javax.activation.*;version="${javax-activation-version-range}",
+            javax.jws*;version="[0.0,3)",
+            javax.ws.rs*;version="[0.0,3)",
+            javax.xml.soap*;version="[1.3,2)",
+            javax.xml.stream*;version="[0.0,2)",
+            javax.xml.ws*;version="[0.0,3.0)",
+            org.apache.camel.*;${camel.osgi.import.camel.version},
+            org.springframework*;version="${spring-version-range}";resolution:=optional,
+            org.apache.cxf.*;version="${cxf-version-range}",
+            ${camel.osgi.import.defaults},
+            ${camel.osgi.import.additional},
+            org.osgi.service.blueprint;resolution:=optional,
+            org.osgi.service.blueprint.container;resolution:=optional,
+            org.osgi.service.blueprint.reflect;resolution:=optional,
+            org.apache.aries.blueprint;version="[1.0,2.0)";resolution:=optional,
+            org.apache.aries.blueprint.reflect;version="[1.0,2.0)";resolution:=optional,
+            org.apache.aries.blueprint.mutable;version="[1.0,2.0)";resolution:=optional,
+            org.apache.camel.blueprint;resolution:=optional,
+            *
+        </camel.osgi.import>
+        <camel.osgi.failok>true</camel.osgi.failok>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-cxf-transport</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http-common</artifactId>
-    </dependency>
+    </properties>
 
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-    </dependency>
-
-    <!-- OSGi, Blueprint -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-blueprint</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.aries.blueprint</groupId>
-      <artifactId>org.apache.aries.blueprint.core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!--  Test Dependencies -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-xml</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Try to test convert PayLoad into POJO -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jaxb</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- http client tests -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- test for the cxf jms transport -->
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- test for cxf failover feature -->
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-features-clustering</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-kahadb-store</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-jms</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http-jetty</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-server</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-util</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-io</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-security</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-continuation</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-http</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty9</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-bindings-soap</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpmime</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-testutils</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- this dependency is just for testing -->
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-rm</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-security</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib-nodep</artifactId>
-      <version>${cglib-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.jettison</groupId>
-      <artifactId>jettison</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
-
-  <build>
-    <defaultGoal>install</defaultGoal>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <childDelegation>false</childDelegation>
-          <forkCount>1</forkCount>
-          <reuseForks>true</reuseForks>
-          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-          <reportFormat>brief</reportFormat>
-          <useFile>false</useFile>
-          <runOrder>alphabetical</runOrder>
-          <!--parallel>classes</parallel>
-          <perCoreThreadCount>true</perCoreThreadCount>
-          <threadCount>2</threadCount-->
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>./src/main/resources/schema/cxfEndpoint.xsd</file>
-                  <classifier>spring</classifier>
-                  <type>xsd</type>
-                </artifact>
-                <artifact>
-                  <file>./src/main/resources/schema/blueprint/camel-cxf.xsd</file>
-                  <classifier>blueprint</classifier>
-                  <type>xsd</type>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-codegen-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
-            <configuration>
-              <fork>${cxf.codegenplugin.forkmode}</fork>
-              <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
-              <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
-              <defaultOptions>
-                <frontEnd>jaxws21</frontEnd>
-              </defaultOptions>
-              <wsdlOptions>
-                <wsdlOption>
-                  <wsdl>${basedir}/src/test/resources/mtom.wsdl</wsdl>
-                </wsdlOption>
-                <wsdlOption>
-                  <wsdl>${basedir}/src/test/resources/hello_world_wssec.wsdl</wsdl>
-                </wsdlOption>
-                <wsdlOption>
-                  <wsdl>${basedir}/src/test/resources/MultiPartTest.wsdl</wsdl>
-                </wsdlOption>
-                <wsdlOption>
-                  <wsdl>${basedir}/src/test/resources/person.wsdl</wsdl>
-                </wsdlOption>
-                <wsdlOption>
-                  <wsdl>${basedir}/src/test/resources/order.wsdl</wsdl>
-                </wsdlOption>
-                <wsdlOption>
-                  <wsdl>${basedir}/src/test/resources/person-non-wrapper.wsdl</wsdl>
-                  <extraargs>
-                    <extraarg>-b</extraarg>
-                    <extraarg>${basedir}/src/test/resources/person-non-wrapper-binding.xml</extraarg>
-                  </extraargs>
-                </wsdlOption>
-                <wsdlOption>
-                  <wsdl>${basedir}/src/test/resources/soap_header.wsdl</wsdl>
-                  <extraargs>
-                    <extraarg>-verbose</extraarg>
-                  </extraargs>
-                </wsdlOption>
-                <wsdlOption>
-                  <wsdl>${basedir}/src/test/resources/pizza_service.wsdl</wsdl>
-                  <extraargs>
-                    <extraarg>-exsh</extraarg>
-                    <extraarg>true</extraarg>
-                  </extraargs>
-                </wsdlOption>
-              </wsdlOptions>
-            </configuration>
-            <goals>
-              <goal>wsdl2java</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
-  <profiles>
-    <profile>
-      <id>ibm-jdk</id>
-      <activation>
-        <property>
-          <name>java.vendor</name>
-          <value>IBM Corporation</value>
-        </property>
-      </activation>
-      <!--
-        Add the Sun jaxp-ri as a dependency when using the ibm jdk, so that
-        cxf's dependency on the Sun saaj can work with the ibm jdk.
-      -->
-      <dependencies>
+    <dependencies>
         <dependency>
-          <groupId>com.sun.xml.parsers</groupId>
-          <artifactId>jaxp-ri</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
         </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-attachments</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cxf-transport</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-http-common</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet-api-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-features-logging</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <!-- OSGi, Blueprint -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-blueprint</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>org.apache.aries.blueprint.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--  Test Dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-xml</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Try to test convert PayLoad into POJO -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jaxb</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- http client tests -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-http4</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- test for the cxf jms transport -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- test for cxf failover feature -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-features-clustering</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-kahadb-store</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-jms</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http-jetty</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-util</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-security</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-continuation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-http</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jetty</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-bindings-soap</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-testutils</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- this dependency is just for testing -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-rm</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>${cglib-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-extension-providers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <excludes>
+                    <exclude>META-INF/spring.*</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <childDelegation>false</childDelegation>
+                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                    <reportFormat>brief</reportFormat>
+                    <useFile>false</useFile>
+                    <runOrder>alphabetical</runOrder>
+                    <!--parallel>classes</parallel>
+                    <perCoreThreadCount>true</perCoreThreadCount>
+                    <threadCount>2</threadCount-->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>./src/main/resources/schema/cxfEndpoint.xsd</file>
+                                    <classifier>spring</classifier>
+                                    <type>xsd</type>
+                                </artifact>
+                                <artifact>
+                                    <file>./src/main/resources/schema/blueprint/camel-cxf.xsd</file>
+                                    <classifier>blueprint</classifier>
+                                    <type>xsd</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <fork>${cxf.codegenplugin.forkmode}</fork>
+                            <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
+                            <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
+                            <defaultOptions>
+                                <frontEnd>jaxws21</frontEnd>
+                            </defaultOptions>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/test/resources/mtom.wsdl</wsdl>
+                                </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/test/resources/hello_world_wssec.wsdl</wsdl>
+                                </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/test/resources/MultiPartTest.wsdl</wsdl>
+                                </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/test/resources/person.wsdl</wsdl>
+                                </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/test/resources/order.wsdl</wsdl>
+                                </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/test/resources/person-non-wrapper.wsdl</wsdl>
+                                    <extraargs>
+                                        <extraarg>-b</extraarg>
+                                        <extraarg>${basedir}/src/test/resources/person-non-wrapper-binding.xml
+                                        </extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/test/resources/soap_header.wsdl</wsdl>
+                                    <extraargs>
+                                        <extraarg>-verbose</extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/test/resources/pizza_service.wsdl</wsdl>
+                                    <extraargs>
+                                        <extraarg>-exsh</extraarg>
+                                        <extraarg>true</extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-spring-meta-filter</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <target>
+                                <echo>Copying spring meta files</echo>
+                                <copy todir="${project.build.directory}/spring-meta" preservelastmodified="true">
+                                    <fileset dir="${project.basedir}/src/main/resources">
+                                        <include name="**/spring.*"/>
+                                    </fileset>
+                                </copy>
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers"
+                                         token="\\${project.version}" value="${project.version}"
+                                         preservelastmodified="true"/>
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas"
+                                         token="\\${project.version}" value="${project.version}"
+                                         preservelastmodified="true"/>
+                                <copy todir="${project.build.directory}/classes" preservelastmodified="true">
+                                    <fileset dir="${project.build.directory}/spring-meta"/>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>ibm-jdk</id>
+            <activation>
+                <property>
+                    <name>java.vendor</name>
+                    <value>IBM Corporation</value>
+                </property>
+            </activation>
+            <!--
+              Add the Sun jaxp-ri as a dependency when using the ibm jdk, so that
+              cxf's dependency on the Sun saaj can work with the ibm jdk.
+            -->
+            <dependencies>
+                <dependency>
+                    <groupId>com.sun.xml.parsers</groupId>
+                    <artifactId>jaxp-ri</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

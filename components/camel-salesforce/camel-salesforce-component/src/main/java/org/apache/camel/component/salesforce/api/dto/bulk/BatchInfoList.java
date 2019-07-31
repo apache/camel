@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -70,7 +70,7 @@ public class BatchInfoList {
      */
     public List<BatchInfo> getBatchInfo() {
         if (batchInfo == null) {
-            batchInfo = new ArrayList<BatchInfo>();
+            batchInfo = new ArrayList<>();
         }
         return this.batchInfo;
     }

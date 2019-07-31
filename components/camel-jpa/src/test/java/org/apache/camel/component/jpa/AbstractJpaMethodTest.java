@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,9 +34,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * @version 
- */
 public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     
     protected JpaEndpoint endpoint;
@@ -81,7 +78,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     public void produceNewEntitiesFromList() throws Exception {
         setUp("jpa://" + List.class.getName() + "?usePersist=" + (usePersist() ? "true" : "false"));
         
-        List<Customer> customers = new ArrayList<Customer>();
+        List<Customer> customers = new ArrayList<>();
         customers.add(createDefaultCustomer());
         customers.add(createDefaultCustomer());
         List<?> returnedCustomers = template.requestBody(endpoint, customers, List.class);
@@ -112,13 +109,16 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     
         final Customer customer = createDefaultCustomer();
         save(customer);
-        
+
+        assertEntitiesInDatabase(1, Customer.class.getName());
+        assertEntitiesInDatabase(1, Address.class.getName());
+
         final CountDownLatch latch = new CountDownLatch(1);
         
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
                 receivedExchange = e;
-                assertNotNull(e.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class));
+                assertNotNull(e.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class));
                 latch.countDown();
             }
         });
@@ -162,18 +162,15 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
         assertEntitiesInDatabase(0, Address.class.getName());
     }
     
-    protected void save(final Customer customer) {
+    protected void save(final Object persistable) {
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
                 entityManager.joinTransaction();
-                entityManager.persist(customer);
+                entityManager.persist(persistable);
                 entityManager.flush();
                 return null;
             }
         });
-
-        assertEntitiesInDatabase(1, Customer.class.getName());
-        assertEntitiesInDatabase(1, Address.class.getName());
     }
     
     protected void assertEntitiesInDatabase(int count, String entity) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,8 +26,8 @@ public class TwitterSalesforceRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("twitter:timeline/mentions")
-            .log("Mention ${body}")
+        from("twitter-timeline:mentions")
+            .log("Tweet id ${body.id} mention: ${body}")
             .process(exchange -> {
                 Status status = exchange.getIn().getBody(Status.class);
                 User user = status.getUser();

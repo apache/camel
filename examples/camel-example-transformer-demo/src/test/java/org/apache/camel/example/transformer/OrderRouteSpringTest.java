@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,6 +25,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.transformer.demo.Order;
 import org.apache.camel.example.transformer.demo.OrderResponse;
+import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
 import org.apache.camel.test.spring.CamelSpringRunner;
 import org.apache.camel.test.spring.MockEndpointsAndSkip;
@@ -40,16 +42,16 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(value = "/META-INF/spring/camel-context.xml", loader = CamelSpringDelegatingTestContextLoader.class)
 @MockEndpointsAndSkip("direct:csv")
 public class OrderRouteSpringTest {
-    @Produce(uri = "direct:java")
+    @Produce("direct:java")
     protected ProducerTemplate javaProducer;
 
-    @Produce(uri = "direct:xml")
+    @Produce("direct:xml")
     protected ProducerTemplate xmlProducer;
 
-    @Produce(uri = "direct:json")
+    @Produce("direct:json")
     protected ProducerTemplate jsonProducer;
 
-    @EndpointInject(uri = "mock:direct:csv")
+    @EndpointInject("mock:direct:csv")
     private MockEndpoint mockCsv;
 
     @Before
@@ -100,8 +102,10 @@ public class OrderRouteSpringTest {
 
         String order = "<order orderId=\"Order-XML-0001\" itemId=\"MIKAN\" quantity=\"365\"/>";
         String expectedAnswer = "<orderResponse orderId=\"Order-XML-0001\" accepted=\"true\" description=\"Order accepted:[item='MIKAN' quantity='365']\"/>";
-        String answer = xmlProducer.requestBody("direct:xml", order, String.class);
-        XMLUnit.compareXML(expectedAnswer, answer);
+        Exchange answer = xmlProducer.send("direct:xml", ex -> {
+            ((DataTypeAware)ex.getIn()).setBody(order, new DataType("xml:XMLOrder"));
+        });
+        XMLUnit.compareXML(expectedAnswer, answer.getOut().getBody(String.class));
         mockCsv.assertIsSatisfied();
     }
 
@@ -126,8 +130,10 @@ public class OrderRouteSpringTest {
             .setDescription("Order accepted:[item='MIZUYO-KAN' quantity='16350']");
         ObjectMapper jsonMapper = new ObjectMapper();
         String expectedJson = jsonMapper.writeValueAsString(expected);
-        String answer = jsonProducer.requestBody("direct:json", order, String.class);
-        assertEquals(expectedJson, answer);
+        Exchange answer = jsonProducer.send("direct:json", ex -> {
+            ((DataTypeAware)ex.getIn()).setBody(order, new DataType("json"));
+        });
+        assertEquals(expectedJson, answer.getOut().getBody(String.class));
         mockCsv.assertIsSatisfied();
     }
 }

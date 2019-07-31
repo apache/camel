@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,27 +17,22 @@
 package org.apache.camel.component.jmx;
 
 import java.io.File;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
+import javax.xml.transform.Source;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.xmlunit.xpath.JAXPXPathEngine;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
  * Waits for messages to arrive on the mock endpoint and performs assertions on the message bodies.
- * 
  */
 public class MockEndpointFixture {
     MockEndpoint mMockEndpoint;
@@ -67,38 +62,26 @@ public class MockEndpointFixture {
      * Assert that we've received the message and resets the mock endpoint
      */
     protected void assertMessageReceived(File aExpectedFile) throws Exception {
-        Document expectedDoc = XmlFixture.toDoc(aExpectedFile);
+        Source expectedDoc = XmlFixture.toSource(aExpectedFile);
         assertMessageReceived(expectedDoc);
     }
 
-    protected void assertMessageReceived(Document aExpectedDoc) throws Exception {
-        Document actual = XmlFixture.toDoc(getBody(0, String.class));
+    protected void assertMessageReceived(Source aExpectedDoc) throws Exception {
+        Source actual = XmlFixture.toSource(getBody(0, String.class));
         assertMessageReceived(aExpectedDoc, actual);
     }
 
-    protected void assertMessageReceived(Document aExpectedDoc, Document aActual) throws Exception,
-            XPathExpressionException {
-        Document noTime = XmlFixture.stripTimestamp(aActual);
-        Document noUUID = XmlFixture.stripUUID(noTime);
+    protected void assertMessageReceived(Source aExpectedDoc, Source aActual) throws Exception {
+        Source noTime = XmlFixture.stripTimestamp(aActual);
+        Source noUUID = XmlFixture.stripUUID(noTime);
         XmlFixture.assertXMLIgnorePrefix("failed to match",
                 aExpectedDoc,
                 noUUID);
         // assert that we have a timestamp and datetime
         // can't rely on the datetime being the same due to timezone differences
         // instead, we'll assert that the values exist.
-        XPathFactory xpf = XPathFactory.newInstance();
-        XPath xp = xpf.newXPath();
-        xp.setNamespaceContext(new NamespaceContext() {
-            public String getNamespaceURI(String aArg0) {
-                return "urn:org.apache.camel.component:jmx";
-            }
-            public String getPrefix(String aArg0) {
-                return "jmx";
-            }
-            public Iterator<Object> getPrefixes(String aArg0) {
-                return null;
-            }
-        });
+        JAXPXPathEngine xp = new JAXPXPathEngine();
+        xp.setNamespaceContext(Collections.singletonMap("jmx", "urn:org.apache.camel.component:jmx"));
         assertEquals("1", xp.evaluate("count(//jmx:timestamp)", aActual));
         assertEquals("1", xp.evaluate("count(//jmx:dateTime)", aActual));
         resetMockEndpoint();

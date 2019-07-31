@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,12 +24,11 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.AbstractCamelRedeliveryPolicyFactoryBean;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
 /**
- * A factory which instantiates {@link org.apache.camel.processor.RedeliveryPolicy} objects
- *
- * @version 
+ * A factory which instantiates {@link RedeliveryPolicy} objects
  */
 @XmlRootElement(name = "redeliveryPolicyProfile")
 @XmlAccessorType(XmlAccessType.FIELD)

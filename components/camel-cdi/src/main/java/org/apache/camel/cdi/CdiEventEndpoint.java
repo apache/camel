@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,7 +40,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * A Camel {@link Endpoint} that bridges the CDI events facility with Camel routes so that CDI events
@@ -75,24 +75,6 @@ import org.apache.camel.impl.DefaultEndpoint;
  *      logger.info("CDI event: {}", event);
  *  }
  * </code></pre>
- *
- * When multiple Camel contexts exist in the CDI container, the {@code @ContextName} qualifier can be used
- * to qualify the {@code CdiEventEndpoint<T>} injection points, e.g.:
- * <pre><code>
- * {@literal @}Inject
- * {@literal @}ContextName("foo")
- *  CdiEventEndpoint{@literal <}List{@literal <}String{@literal >}{@literal >} cdiEventEndpoint;
- *
- *  // Only observe / consume events having the {@literal @}ContextName("foo") qualifier
- *  from(cdiEventEndpoint).log("Camel context 'foo'{@literal >} CDI event received: ${body}");
- *
- *  // Produce / fire events with the {@literal @}ContextName("foo") qualifier
- *  from("...").to(cdiEventEndpoint);
- *
- *  void observeCdiEvents({@literal @}Observes {@literal @}ContextName("foo") List{@literal <}String{@literal >} event) {
- *      logger.info("Camel context 'foo'{@literal >} CDI event: {}", event);
- *  }
- * </code></pre>
  */
 public final class CdiEventEndpoint<T> extends DefaultEndpoint {
 
@@ -105,7 +87,7 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
     private final BeanManager manager;
 
     CdiEventEndpoint(String endpointUri, Type type, Set<Annotation> qualifiers, BeanManager manager) {
-        super(endpointUri);
+        super(endpointUri, null);
         this.type = type;
         this.qualifiers = qualifiers;
         this.manager = manager;
@@ -165,7 +147,7 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
         AnyEvent instance = target.produce(ctx);
         target.inject(instance, ctx);
         return new CdiEventProducer<>(this, instance.event
-            .select(literal, qualifiers.stream().toArray(Annotation[]::new)));
+            .select(literal, qualifiers.toArray(new Annotation[0])));
     }
 
     @Vetoed
@@ -174,11 +156,6 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
         @Any
         @Inject
         private Event<Object> event;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     void addConsumer(CdiEventConsumer<T> consumer) {

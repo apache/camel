@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -53,6 +53,18 @@ public class FtpProducerMoveExistingTest extends FtpServerTestSupport {
     }
 
     @Test
+    public void testExistingFileExistsTempFilename() throws Exception {
+        template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World", Exchange.FILE_NAME, "hello.txt");
+
+        assertFileExists(FTP_ROOT_DIR + "/move/hello.txt");
+        assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/hello.txt")));
+
+        assertFileExists(FTP_ROOT_DIR + "/move/renamed-hello.txt");
+        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/renamed-hello.txt")));
+    }
+
+    @Test
     public void testExistingFileExistsMoveSubDir() throws Exception {
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=backup", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=backup", "Bye World", Exchange.FILE_NAME, "hello.txt");
@@ -92,7 +104,7 @@ public class FtpProducerMoveExistingTest extends FtpServerTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Cannot moved existing file"));
+            assertTrue(cause.getMessage().startsWith("Cannot move existing file"));
         }
 
         // we could not write the new file so the previous context should be there
@@ -102,10 +114,5 @@ public class FtpProducerMoveExistingTest extends FtpServerTestSupport {
         // and the renamed file should be untouched
         assertFileExists(FTP_ROOT_DIR + "/move/renamed-hello.txt");
         assertEquals("Old file", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/renamed-hello.txt")));
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 }

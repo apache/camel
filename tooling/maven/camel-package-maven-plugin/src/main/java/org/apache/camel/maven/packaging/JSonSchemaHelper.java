@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,14 +20,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 public final class JSonSchemaHelper {
-
-    // 0 = text, 1 = enum, 2 = boolean, 3 = integer or number
-    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]|(true|false)|(\\d+\\.?\\d*)");
-    private static final String QUOT = "&quot;";
 
     private JSonSchemaHelper() {
     }
@@ -40,92 +38,77 @@ public final class JSonSchemaHelper {
      * @return a list of all the rows, where each row is a set of key value pairs with metadata
      */
     public static List<Map<String, String>> parseJsonSchema(String group, String json, boolean parseProperties) {
-        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> answer = new ArrayList<>();
         if (json == null) {
             return answer;
         }
 
-        boolean found = false;
+        // convert into a List<Map<String, String>> structure which is expected as output from this parser
+        try {
+            JsonObject output = (JsonObject) Jsoner.deserialize(json);
+            for (String key : output.keySet()) {
+                Map<?, ?> row = output.getMap(key);
+                if (key.equals(group)) {
+                    if (parseProperties) {
+                        // flattern each entry in the row with name as they key, and its value as the content (its a map also)
+                        for (Object obj : row.entrySet()) {
+                            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+                            Map<String, String> newRow = new LinkedHashMap<>();
+                            newRow.put("name", entry.getKey().toString());
 
-        // parse line by line
-        String[] lines = json.split("\n");
-        for (String line : lines) {
-            // we need to find the group first
-            if (!found) {
-                String s = line.trim();
-                found = s.startsWith("\"" + group + "\":") && s.endsWith("{");
-                continue;
-            }
-
-            // we should stop when we end the group
-            if (line.equals("  },") || line.equals("  }")) {
-                break;
-            }
-
-            // need to safe encode \" so we can parse the line
-            line = line.replaceAll("\"\\\\\"\"", '"' + QUOT + '"');
-
-            Map<String, String> row = new LinkedHashMap<String, String>();
-            Matcher matcher = PATTERN.matcher(line);
-
-            String key;
-            if (parseProperties) {
-                // when parsing properties the first key is given as name, so the first parsed token is the value of the name
-                key = "name";
-            } else {
-                key = null;
-            }
-            while (matcher.find()) {
-                if (key == null) {
-                    key = matcher.group(1);
-                } else {
-                    String value = matcher.group(1);
-                    if (value != null) {
-                        // its text based
-                        value = value.trim();
-                        // decode
-                        value = value.replaceAll(QUOT, "\"");
-                        value = decodeJson(value);
-                    }
-                    if (value == null) {
-                        // not text then its maybe an enum?
-                        value = matcher.group(2);
-                        if (value != null) {
-                            // its an enum so strip out " and trim spaces after comma
-                            value = value.replaceAll("\"", "");
-                            value = value.replaceAll(", ", ",");
-                            value = value.trim();
+                            Map<String, String> newData = transformMap((Map<?, ?>) entry.getValue());
+                            newRow.putAll(newData);
+                            answer.add(newRow);
+                        }
+                    } else {
+                        // flattern each entry in the row as a list of single Map<key, value> elements
+                        Map<?, ?> newData = transformMap(row);
+                        for (Object obj : newData.entrySet()) {
+                            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+                            Map<String, String> newRow = new LinkedHashMap<>();
+                            newRow.put(entry.getKey().toString(), entry.getValue().toString());
+                            answer.add(newRow);
                         }
                     }
-                    if (value == null) {
-                        // not text then its maybe a boolean?
-                        value = matcher.group(3);
-                    }
-                    if (value == null) {
-                        // not text then its maybe a integer?
-                        value = matcher.group(4);
-                    }
-                    if (value != null) {
-                        row.put(key, value);
-                    }
-                    // reset
-                    key = null;
                 }
             }
-            if (!row.isEmpty()) {
-                answer.add(row);
-            }
+        } catch (Exception e) {
+            // wrap parsing exceptions as runtime
+            throw new RuntimeException("Cannot parse json", e);
         }
 
         return answer;
     }
 
-    private static String decodeJson(String value) {
-        // json encodes a \ as \\ so we need to decode from \\ back to \
-        if ("\\\\".equals(value)) {
-            value = "\\";
+    private static Map<String, String> transformMap(Map<?, ?> jsonMap) {
+        Map<String, String> answer = new LinkedHashMap<>();
+
+        for (Object rowObj : jsonMap.entrySet()) {
+            Map.Entry<?, ?> rowEntry = (Map.Entry<?, ?>) rowObj;
+            // if its a list type then its an enum, and we need to parse it as a single line separated with comma
+            // to be backwards compatible
+            Object newValue = rowEntry.getValue();
+            if (newValue instanceof List) {
+                List<?> list = (List<?>) newValue;
+                newValue = list.stream().map(Object::toString)
+                        .collect(Collectors.joining(","));
+            }
+            // ensure value is escaped
+            String value = escapeJson(newValue.toString());
+            answer.put(rowEntry.getKey().toString(), value);
         }
-        return value;
+
+        return answer;
+    }
+
+    private static String escapeJson(String value) {
+        // need to safe encode \r as \\r so its escaped
+        // need to safe encode \n as \\n so its escaped
+        // need to safe encode \t as \\t so its escaped
+        return value
+            .replaceAll("\\\\r", "\\\\\\r")
+            .replaceAll("\\\\n", "\\\\\\n")
+            .replaceAll("\\\\t", "\\\\\\t");
     }
 
     /**
@@ -150,6 +133,74 @@ public final class JSonSchemaHelper {
             return value;
         }
         return "";
+    }
+
+    public static String getPropertyDefaultValue(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String defaultValue = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("defaultValue")) {
+                defaultValue = row.get("defaultValue");
+            }
+            if (found) {
+                return defaultValue;
+            }
+        }
+        return null;
+    }
+
+    public static String getPropertyDescriptionValue(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String description = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("description")) {
+                description = row.get("description");
+            }
+            if (found) {
+                return description;
+            }
+        }
+        return null;
+    }
+
+    public static String getPropertyJavaType(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String javaType = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("javaType")) {
+                javaType = row.get("javaType");
+            }
+            if (found) {
+                return javaType;
+            }
+        }
+        return null;
+    }
+
+    public static String getPropertyType(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return type;
+            }
+        }
+        return null;
     }
 
 }

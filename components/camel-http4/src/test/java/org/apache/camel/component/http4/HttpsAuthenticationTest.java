@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,13 +19,14 @@ package org.apache.camel.component.http4;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.AuthenticationValidationHandler;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.localserver.RequestBasicAuth;
@@ -37,15 +38,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class HttpsAuthenticationTest extends BaseHttpsTest {
 
     private String user = "camel";
     private String password = "password";
     private HttpServer localServer;
+    
+    @BindToRegistry("x509HostnameVerifier")
+    private NoopHostnameVerifier hostnameVerifier = new NoopHostnameVerifier();
+    
+    @BindToRegistry("sslContextParameters")
+    private SSLContextParameters sslContextParameters = new SSLContextParameters();
     
     @Before
     @Override
@@ -71,20 +74,12 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
             localServer.stop();
         }
     }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("x509HostnameVerifier", new AllowAllHostnameVerifier());
-
-        return registry;
-    }
 
     @Test
     public void httpsGetWithAuthentication() throws Exception {
 
         Exchange exchange = template.request("https4://127.0.0.1:" + localServer.getLocalPort() 
-            + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=x509HostnameVerifier", new Processor() {
+            + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -94,9 +89,9 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
 
     @Override
     protected HttpProcessor getBasicHttpProcessor() {
-        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<HttpRequestInterceptor>();
+        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<>();
         requestInterceptors.add(new RequestBasicAuth());
-        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<HttpResponseInterceptor>();
+        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
         responseInterceptors.add(new ResponseContent());
         responseInterceptors.add(new ResponseBasicUnauthorized());
         ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);

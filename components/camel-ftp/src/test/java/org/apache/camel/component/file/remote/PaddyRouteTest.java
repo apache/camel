@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.interceptor.Tracer;
+
 import org.junit.Test;
 
 /**
@@ -37,7 +37,7 @@ public class PaddyRouteTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        sendFile(getFtpUrl() + "/?password=admin", "Hello World", "incoming/hello.txt");
+        sendFile(getFtpUrl(), "Hello World", "incoming/hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,8 +47,6 @@ public class PaddyRouteTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                getContext().addInterceptStrategy(new Tracer());
-
                 from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertNotNull(exchange.getIn().getHeader(Exchange.FILE_NAME));

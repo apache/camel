@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.spring.ws;
 
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.support.DefaultMessage;
 import org.springframework.ws.WebServiceMessage;
 
 public class SpringWebserviceMessage extends DefaultMessage {
     private WebServiceMessage webServiceMessage;
 
-    public SpringWebserviceMessage(WebServiceMessage webServiceMessage) {
+    public SpringWebserviceMessage(CamelContext camelContext, WebServiceMessage webServiceMessage) {
+        super(camelContext);
         this.webServiceMessage = webServiceMessage;
     }
 
@@ -40,6 +43,11 @@ public class SpringWebserviceMessage extends DefaultMessage {
 
     public void setWebServiceMessage(WebServiceMessage webServiceMessage) {
         this.webServiceMessage = webServiceMessage;
+    }
+
+    @Override
+    public DefaultMessage newInstance() {
+        return new SpringWebserviceMessage(getCamelContext(), webServiceMessage);
     }
 
     @Override

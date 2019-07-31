@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,6 @@ package org.apache.camel.component.quickfixj;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -28,43 +27,33 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultEndpoint;
 import quickfix.Message;
 import quickfix.SessionID;
 
 /**
  * The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName", consumerClass = QuickfixjConsumer.class, label = "engine,messaging")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName", label = "messaging")
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
     public static final String EVENT_CATEGORY_KEY = "EventCategory";
     public static final String SESSION_ID_KEY = "SessionID";
     public static final String MESSAGE_TYPE_KEY = "MessageType";
     public static final String DATA_DICTIONARY_KEY = "DataDictionary";
 
-    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEndpoint.class);
-
     private final QuickfixjEngine engine;
-    private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<QuickfixjConsumer>();
+    private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<>();
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String configurationName;
     @UriParam
     private SessionID sessionID;
     @UriParam
     private boolean lazyCreateEngine;
-
-    @Deprecated
-    public QuickfixjEndpoint(QuickfixjEngine engine, String uri, CamelContext context) {
-        super(uri, context);
-        this.engine = engine;
-    }
 
     public QuickfixjEndpoint(QuickfixjEngine engine, String uri, Component component) {
         super(uri, component);
@@ -110,7 +99,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session", getExchangePattern());
+        log.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session", getExchangePattern());
         QuickfixjConsumer consumer = new QuickfixjConsumer(this, processor);
         configureConsumer(consumer);
         consumers.add(consumer);
@@ -119,16 +108,11 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     @Override
     public Producer createProducer() throws Exception {
-        LOG.info("Creating QuickFIX/J producer: {}", sessionID != null ? sessionID : "No Session");
+        log.info("Creating QuickFIX/J producer: {}", sessionID != null ? sessionID : "No Session");
         if (isWildcarded()) {
             throw new ResolveEndpointFailedException("Cannot create consumer on wildcarded session identifier: " + sessionID);
         }
         return new QuickfixjProducer(this);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override

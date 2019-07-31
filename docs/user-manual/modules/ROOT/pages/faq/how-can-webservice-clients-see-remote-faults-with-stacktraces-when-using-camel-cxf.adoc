@@ -1,0 +1,6 @@
+[[Howcanwebserviceclientsseeremotefaultswithstacktraceswhenusingcamel-cxf-Howcanwebserviceclientsseeremotefaultswithstacktraceswhenusingcamel-cxf]]
+= How can webservice clients see remote faults with stacktraces when using camel-cxf?
+
+See Apache CXF documentation about
+http://cxf.apache.org/docs/debugging-and-logging.html#DebuggingandLogging-SOAPFaultfordebugging[SOAP
+fault for debugging].

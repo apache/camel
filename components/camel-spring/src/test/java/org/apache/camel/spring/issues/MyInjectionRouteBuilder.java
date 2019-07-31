@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,9 +19,6 @@ package org.apache.camel.spring.issues;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class MyInjectionRouteBuilder extends RouteBuilder {
     
     private String startEndpointUri;

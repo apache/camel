@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,6 +21,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
@@ -35,19 +36,18 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
 
-@Converter
+import static org.apache.camel.TypeConverter.MISS_VALUE;
+
+@Converter(loader = true)
 public final class CxfPayloadConverter {
-    private static XmlConverter xml = new XmlConverter();
 
     private CxfPayloadConverter() {
         // Helper class
@@ -60,16 +60,16 @@ public final class CxfPayloadConverter {
 
     @Converter
     public static <T> CxfPayload<T> elementToCxfPayload(Element element, Exchange exchange) {
-        List<T> headers = new ArrayList<T>();
-        List<Element> body = new ArrayList<Element>();
+        List<T> headers = new ArrayList<>();
+        List<Element> body = new ArrayList<>();
         body.add(element);
-        return new CxfPayload<T>(headers, body);
+        return new CxfPayload<>(headers, body);
     }
 
     @Converter
     public static <T> CxfPayload<T> nodeListToCxfPayload(NodeList nodeList, Exchange exchange) {
-        List<T> headers = new ArrayList<T>();
-        List<Element> body = new ArrayList<Element>();
+        List<T> headers = new ArrayList<>();
+        List<Element> body = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             // add all nodes to the body that are elements
@@ -77,15 +77,15 @@ public final class CxfPayloadConverter {
                 body.add((Element) node);
             }
         }
-        return new CxfPayload<T>(headers, body);
+        return new CxfPayload<>(headers, body);
     }
 
     @Converter
     public static <T> CxfPayload<T> sourceToCxfPayload(Source src, Exchange exchange) {
-        List<T> headers = new ArrayList<T>();
-        List<Source> body = new ArrayList<Source>();
+        List<T> headers = new ArrayList<>();
+        List<Source> body = new ArrayList<>();
         body.add(src);
-        return new CxfPayload<T>(headers, body, null);
+        return new CxfPayload<>(headers, body, null);
     }
 
     @Converter
@@ -115,11 +115,11 @@ public final class CxfPayloadConverter {
 
     @Converter
     public static <T> StreamCache cxfPayLoadToStreamCache(CxfPayload<T> payload, Exchange exchange) {
-        return new CachedCxfPayload<T>(payload, exchange, xml);
+        return new CachedCxfPayload<>(payload, exchange);
     }
 
     @SuppressWarnings("unchecked")
-    @FallbackConverter
+    @Converter(fallback = true)
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // use fallback type converter, so we can probably convert into
         // CxfPayloads from other types
@@ -178,10 +178,10 @@ public final class CxfPayloadConverter {
                 }
             } catch (RuntimeCamelException e) {
                 // the internal conversion to XML can throw an exception if the content is not XML
-                // ignore this and return Void.TYPE to indicate that we cannot convert this
+                // ignore this and return MISS_VALUE to indicate that we cannot convert this
             }
             // no we could not do it currently
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
         // Convert a CxfPayload into something else
         if (CxfPayload.class.isAssignableFrom(value.getClass())) {
@@ -233,7 +233,7 @@ public final class CxfPayloadConverter {
                 Object result = tc.convertTo(type, exchange, cxfPayloadToNodeList((CxfPayload<?>) value, exchange));
                 if (result == null) {
                     // no we could not do it currently, and we just abort the convert here
-                    return (T) Void.TYPE;
+                    return (T) MISS_VALUE;
                 } else {
                     return (T) result;
                 }
@@ -248,12 +248,12 @@ public final class CxfPayloadConverter {
                     return tc.convertTo(type, exchange, nodeList.item(0));
                 } else {
                     // no we could not do it currently
-                    return (T) Void.TYPE;
+                    return (T) MISS_VALUE;
                 }
             } else {
                 if (size == 0) {
                     // empty size so we cannot convert
-                    return (T) Void.TYPE;
+                    return (T) MISS_VALUE;
                 }
             }
         }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.olingo2;
 
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.RuntimeCamelException;
@@ -58,10 +59,10 @@ public class Olingo2AppWrapper {
 
                     final CountDownLatch latch = new CountDownLatch(1);
                     final Exception[] error = new Exception[1];
-                    olingo2App.read(null, "$metadata", null, new Olingo2ResponseHandler<Edm>() {
+                    olingo2App.read(null, "$metadata", null, null, new Olingo2ResponseHandler<Edm>() {
 
                         @Override
-                        public void onResponse(Edm response) {
+                        public void onResponse(Edm response, Map<String, String> responseHeaders) {
                             edm = response;
                             latch.countDown();
                         }

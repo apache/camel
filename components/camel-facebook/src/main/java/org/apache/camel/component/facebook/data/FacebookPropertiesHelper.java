@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.facebook.FacebookConstants;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +39,11 @@ import org.slf4j.LoggerFactory;
 public final class FacebookPropertiesHelper {
 
     // set of field names which are specific to Facebook4J api, to be excluded from method argument considerations
-    private static final Set<String> COMPONENT_CONFIG_FIELDS = new HashSet<String>();
+    private static final Set<String> COMPONENT_CONFIG_FIELDS = new HashSet<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookPropertiesHelper.class);
 
-    private static final Set<String> ENDPOINT_CONFIG_FIELDS = new HashSet<String>();
+    private static final Set<String> ENDPOINT_CONFIG_FIELDS = new HashSet<>();
 
     static {
         for (Field field : FacebookConfiguration.class.getDeclaredFields()) {
@@ -129,7 +129,7 @@ public final class FacebookPropertiesHelper {
     }
 
     public static Set<String> getEndpointPropertyNames(FacebookEndpointConfiguration configuration) {
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         getEndpointProperties(configuration, properties);
         return Collections.unmodifiableSet(properties.keySet());
     }

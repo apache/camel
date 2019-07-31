@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,11 +34,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,16 +49,16 @@ import org.slf4j.LoggerFactory;
  * instead of a BlockingQueue utilized by the standard SEDA.
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
-@UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", consumerClass = DisruptorConsumer.class, label = "endpoint")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", label = "endpoint")
 public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
 
-    private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<DisruptorProducer>();
-    private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<DisruptorConsumer>();
+    private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<>();
+    private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<>();
     private final DisruptorReference disruptorReference;
 
-    @UriPath(description = "Name of queue") @Metadata(required = "true")
+    @UriPath(description = "Name of queue") @Metadata(required = true)
     private String name;
     @UriParam(label = "consumer", defaultValue = "1")
     private final int concurrentConsumers;
@@ -231,11 +231,6 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public Producer createProducer() throws Exception {
         if (getProducers().size() == 1 && getDisruptor().getProducerType() == DisruptorProducerType.Single) {
             throw new IllegalStateException(
@@ -315,8 +310,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> createConsumerEventHandlers() {
-        Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> result =
-                new HashMap<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>>();
+        Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> result = new HashMap<>();
 
         for (final DisruptorConsumer consumer : consumers) {
             result.put(consumer, consumer.createEventHandlers(concurrentConsumers));

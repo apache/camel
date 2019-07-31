@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,9 +36,6 @@ import org.restlet.representation.StringRepresentation;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assume.assumeThat;
 
-/**
- * @version
- */
 public class RestletSetBodyTest extends RestletTestSupport {
     protected static int portNum2 =  AvailablePortFinder.getNextAvailable(4000);
 

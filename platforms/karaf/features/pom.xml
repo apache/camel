@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,221 +8,224 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>karaf</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>karaf</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <groupId>org.apache.camel.karaf</groupId>
-  <artifactId>apache-camel</artifactId>
-  <packaging>pom</packaging>
-  <name>Camel :: Platforms :: Apache Karaf :: Features</name>
+    <groupId>org.apache.camel.karaf</groupId>
+    <artifactId>apache-camel</artifactId>
+    <packaging>pom</packaging>
+    <name>Camel :: Platforms :: Apache Karaf :: Features</name>
 
-  <properties>
-    <features.file>features.xml</features.file>
-  </properties>
+    <properties>
+        <features.file>features.xml</features.file>
+    </properties>
 
-  <!-- The validate plugin will export these provided dependencies bundles export packages first -->
-  <!-- some of the bundles is located at: http://repo1.maven.org/maven2/org/apache/servicemix/bundles/ -->
-  <dependencies>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.logging</groupId>
-      <artifactId>pax-logging-api</artifactId>
-      <version>${pax-logging-version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.logging</groupId>
-      <artifactId>pax-logging-service</artifactId>
-      <version>${pax-logging-version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.apache.felix.framework</artifactId>
-      <version>${felix-framework-version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.apache.felix.configadmin</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.aries.blueprint</groupId>
-      <artifactId>org.apache.aries.blueprint.api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.aries.blueprint</groupId>
-      <artifactId>org.apache.aries.blueprint.core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.karaf.shell</groupId>
-      <artifactId>org.apache.karaf.shell.core</artifactId>
-      <version>${karaf4-version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.karaf.features</groupId>
-      <artifactId>framework</artifactId>
-      <version>${karaf4-version}</version>
-      <type>kar</type>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>${maven-resources-plugin-version}</version>
-        <executions>
-          <execution>
-            <id>filter</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>resources</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>target/classes/features.xml</file>
-                  <type>xml</type>
-                  <classifier>features</classifier>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
-  <profiles>
-    <profile>
-      <id>snapshot</id>
-      <repositories>
-        <repository>
-          <id>pax.snapshot.repo</id>
-          <name>PAX SNAPSHOT Deploy Repository</name>
-          <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots/</url>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </repository>
-      </repositories>
-    </profile>
-
-    <!-- validating using karaf 4.x -->
-    <profile>
-      <id>validate</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.karaf.tooling</groupId>
-            <artifactId>karaf-maven-plugin</artifactId>
+    <!-- The validate plugin will export these provided dependencies bundles export packages first -->
+    <!-- some of the bundles is located at: http://repo1.maven.org/maven2/org/apache/servicemix/bundles/ -->
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-api</artifactId>
+            <version>${pax-logging-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-service</artifactId>
+            <version>${pax-logging-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+            <version>${felix-framework-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.configadmin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>org.apache.aries.blueprint.api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>org.apache.aries.blueprint.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.shell</groupId>
+            <artifactId>org.apache.karaf.shell.core</artifactId>
             <version>${karaf4-version}</version>
-            <configuration>
-              <descriptors>
-                <descriptor>file://${project.build.directory}/classes/${features.file}</descriptor>
-                <!-- ideally, those profiles should be referenced in the features file -->
-                <descriptor>mvn:org.apache.karaf.features/framework/${karaf4-version}/xml/features</descriptor>
-                <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf4-version}/xml/features</descriptor>
-                <descriptor>mvn:org.apache.karaf.features/spring/${karaf4-version}/xml/features</descriptor>
-              </descriptors>
-              <distribution>org.apache.karaf.features:framework</distribution>
-              <javase>1.8</javase>
-              <framework>
-                <feature>framework</feature>
-              </framework>
-              <features>
-                <!-- camel-blueprint uses blueprint but its feature name is different in karaf 3.x vs 4.x -->
-                <!-- camel-cdi requires to install a cdi provider first -->
-                <!-- camel-cxf uses blueprint but its feature name is different in karaf 3.x vs 4.x -->
-                <!-- camel-ignite requires to install apache ignite first -->
-                <!-- camel-guice does not work in OSGi currently -->
-                <!-- camel-leveldb uses some wrap magic to install which validator fails but it works -->
-                <!-- camel-spring-dm cannot be validated -->
-                <feature>camel|camel-(?!(blueprint|cdi|cxf|ignite|guice|leveldb|spring-dm))*</feature>
-              </features>
-			        <configuration>file://${project.build.directory}/classes/config.properties</configuration>
-            </configuration>
-            <executions>
-              <execution>
-                <id>validate</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>verify</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-http-lightweight</artifactId>
-                <version>2.10</version>
-              </dependency>
-            </dependencies>
-          </plugin>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>framework</artifactId>
+            <version>${karaf4-version}</version>
+            <type>kar</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>filter</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <version>${karaf4-version}</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>file://${project.build.directory}/classes/${features.file}</descriptor>
+                        <!-- ideally, those profiles should be referenced in the features file -->
+                        <descriptor>mvn:org.apache.karaf.features/framework/${karaf4-version}/xml/features</descriptor>
+                        <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf4-version}/xml/features</descriptor>
+                        <descriptor>mvn:org.apache.karaf.features/spring/${karaf4-version}/xml/features</descriptor>
+                    </descriptors>
+                    <distribution>org.apache.karaf.features:framework</distribution>
+                    <javase>9</javase>
+                    <framework>
+                        <feature>framework</feature>
+                    </framework>
+                    <features>
+                        <!-- camel-ignite requires to install apache ignite first -->
+                        <feature>camel|camel-(?!(ignite|nats|pgevent|script-groovy|spring-redis|spring-security|cdi))*</feature>
+                    </features>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.wagon</groupId>
+                        <artifactId>wagon-http-lightweight</artifactId>
+                        <version>3.0.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>biz.aQute.bnd</groupId>
+                        <artifactId>biz.aQute.bndlib</artifactId>
+                        <version>3.5.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>target/classes/features.xml</file>
+                                    <type>xml</type>
+                                    <classifier>features</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-      </build>
-    </profile>
+    </build>
 
-  </profiles>
+    <profiles>
+        <profile>
+            <id>snapshot</id>
+            <repositories>
+                <repository>
+                    <id>pax.snapshot.repo</id>
+                    <name>PAX SNAPSHOT Deploy Repository</name>
+                    <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots/</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
 
-  <repositories>
-    <repository>
-      <id>com.springsource.repository.bundles.release</id>
-      <name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
-      <url>http://repository.springsource.com/maven/bundles/release</url>
-    </repository>
-    <repository>
-      <id>com.springsource.repository.bundles.external</id>
-      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
-      <url>http://repository.springsource.com/maven/bundles/external</url>
-    </repository>
-  </repositories>
+        <!-- validating using karaf 4.x -->
+        <profile>
+            <id>fastinstall</id>
+            <properties>
+                <features.verify.skip>true</features.verify.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>release</id>
+            <properties>
+                <features.verify.skip>true</features.verify.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>skipTests</id>
+            <activation>
+                <property>
+                    <name>skipTests</name>
+                </property>
+            </activation>
+            <properties>
+                <features.verify.skip>true</features.verify.skip>
+            </properties>
+        </profile>
+
+    </profiles>
+
 </project>

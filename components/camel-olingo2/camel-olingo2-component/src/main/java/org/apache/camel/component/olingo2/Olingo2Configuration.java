@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.http.HttpHost;
 import org.apache.http.entity.ContentType;
@@ -40,9 +40,9 @@ public class Olingo2Configuration {
     private static final int DEFAULT_TIMEOUT = 30 * 1000;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private Olingo2ApiName apiName;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String methodName;
     @UriParam
     private String serviceUri;
@@ -62,6 +62,8 @@ public class Olingo2Configuration {
     private HttpAsyncClientBuilder httpAsyncClientBuilder;
     @UriParam
     private HttpClientBuilder httpClientBuilder;
+    @UriParam
+    private boolean filterAlreadySeen;
 
     public Olingo2ApiName getApiName() {
         return apiName;
@@ -184,6 +186,21 @@ public class Olingo2Configuration {
      */
     public void setHttpClientBuilder(HttpClientBuilder httpClientBuilder) {
         this.httpClientBuilder = httpClientBuilder;
+    }
+
+    /**
+     * Filter flag for filtering out already seen results
+     */
+    public boolean getFilterAlreadySeen() {
+        return filterAlreadySeen;
+    }
+
+    /**
+     * Set this to true to filter out results that have already been communicated by this component.
+     * @param filterAlreadySeen
+     */
+    public void setFilterAlreadySeen(boolean filterAlreadySeen) {
+        this.filterAlreadySeen = filterAlreadySeen;
     }
 
     @Override

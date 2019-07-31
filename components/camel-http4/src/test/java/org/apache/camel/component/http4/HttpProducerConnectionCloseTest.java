@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.common.HttpHeaderFilterStrategy;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.protocol.HTTP;
@@ -31,12 +31,10 @@ import org.junit.Test;
 
 /**
  * Unit test that show custom header filter useful to send Connection Close header
- *
- * @version 
  */
 public class HttpProducerConnectionCloseTest extends BaseHttpTest {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
     
     private HttpServer localServer;
@@ -84,13 +82,11 @@ public class HttpProducerConnectionCloseTest extends BaseHttpTest {
         assertEquals(HTTP.CONN_CLOSE, exchange.getOut().getHeader("connection"));
         assertExchange(exchange);
     }
-    
+
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = new JndiRegistry(createJndiContext());
+    protected void bindToRegistry(Registry registry) throws Exception {
         ConnectionCloseHeaderFilter connectionCloseFilterStrategy = new ConnectionCloseHeaderFilter();
-        jndi.bind("myFilter", connectionCloseFilterStrategy);
-        return jndi;
+        registry.bind("myFilter", connectionCloseFilterStrategy);
     }
     
     class ConnectionCloseHeaderFilter extends HttpHeaderFilterStrategy {

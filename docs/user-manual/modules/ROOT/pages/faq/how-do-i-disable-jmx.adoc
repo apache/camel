@@ -1,0 +1,30 @@
+[[HowdoIdisableJMX-HowdoIdisableJMX]]
+= How do I disable JMX?
+
+You can disable JMX instrumentation agent by setting Java VM system
+property as follow. The property value is treated as boolean.
+
+[source,java]
+----
+-Dorg.apache.camel.jmx.disabled=true
+----
+
+Or, by adding a jmxAgent element inside the camelContext element in
+Spring configuration:
+
+[source,xml]
+----
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <jmxAgent id="agent" disabled="true"/>
+    ...
+</camelContext>
+----
+
+Or in Camel 2.1 its a bit easier (not having to use JVM system property)
+if using pure Java as you can disable it as follows:
+
+[source,java]
+----
+CamelContext camel = new DefaultCamelContext();
+camel.disableJMX();
+----

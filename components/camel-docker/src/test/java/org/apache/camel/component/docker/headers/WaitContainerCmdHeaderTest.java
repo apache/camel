@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,12 @@ import com.github.dockerjava.core.command.WaitContainerResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Wait Container Request headers are applied properly
@@ -55,9 +58,9 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.waitContainerCmd(Matchers.anyString())).thenReturn(mockObject);
-        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
-        Mockito.when(callback.awaitStatusCode()).thenReturn(Matchers.anyInt());
+        Mockito.when(dockerClient.waitContainerCmd(anyString())).thenReturn(mockObject);
+        Mockito.when(mockObject.exec(any())).thenReturn(callback);
+        Mockito.when(callback.awaitStatusCode()).thenReturn(anyInt());
     }
 
     @Override

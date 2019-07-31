@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -230,7 +230,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                IdempotentRepository<?> repository = context.getRegistry().lookupByNameAndType("messageIdRepository", IdempotentRepository.class);
+                IdempotentRepository repository = context.getRegistry().lookupByNameAndType("messageIdRepository", IdempotentRepository.class);
 
                 from("activemq2:queue:inbox")
                     .transacted("required")

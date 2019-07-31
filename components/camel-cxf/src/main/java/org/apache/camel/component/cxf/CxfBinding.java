@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,6 @@ import org.apache.cxf.message.Exchange;
  * {@link org.apache.cxf.service.model.BindingOperationInfo} 
  * in Camel Exchange property before calling into these methods.  
  * 
- * @version 
  * @since 2.0
  */
 public interface CxfBinding {

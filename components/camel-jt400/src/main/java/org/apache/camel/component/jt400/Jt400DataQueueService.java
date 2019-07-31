@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.BaseDataQueue;
 import com.ibm.as400.access.DataQueue;
 import com.ibm.as400.access.KeyedDataQueue;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -58,7 +59,7 @@ class Jt400DataQueueService implements Service {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         if (queue == null) {
             AS400 system = endpoint.getSystem();
             if (endpoint.isKeyed()) {
@@ -69,12 +70,16 @@ class Jt400DataQueueService implements Service {
         }
         if (!queue.getSystem().isConnected(AS400.DATAQUEUE)) {
             LOG.info("Connecting to {}", endpoint);
-            queue.getSystem().connectService(AS400.DATAQUEUE);
+            try {
+                queue.getSystem().connectService(AS400.DATAQUEUE);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
         }
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         if (queue != null) {
             LOG.info("Releasing connection to {}", endpoint);
             AS400 system = queue.getSystem();

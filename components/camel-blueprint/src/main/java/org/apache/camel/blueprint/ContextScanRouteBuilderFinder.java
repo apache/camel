@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances in the
  *  {@link org.osgi.service.blueprint.container.BlueprintContainer}.
- *
- * @version 
  */
 public class ContextScanRouteBuilderFinder {
     private static final Logger LOG = LoggerFactory.getLogger(ContextScanRouteBuilderFinder.class);
@@ -48,7 +46,7 @@ public class ContextScanRouteBuilderFinder {
      * Appends all the {@link org.apache.camel.builder.RouteBuilder} instances that can be found in the context
      */
     public void appendBuilders(List<RoutesBuilder> list) {
-        Map<String, RoutesBuilder> beans = BlueprintContainerRegistry.lookupByType(blueprintContainer, RoutesBuilder.class, includeNonSingletons);
+        Map<String, RoutesBuilder> beans = BlueprintContainerBeanRepository.lookupByType(blueprintContainer, RoutesBuilder.class, includeNonSingletons);
 
         for (Entry<String, RoutesBuilder> entry : beans.entrySet()) {
             String key = entry.getKey();

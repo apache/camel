@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,23 +18,21 @@ package org.apache.camel.component.influxdb;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
+import org.influxdb.dto.Pong;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Producer for the InfluxDB components
  *
  */
 public class InfluxDbProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(InfluxDbProducer.class);
 
     InfluxDbEndpoint endpoint;
     InfluxDB connection;
@@ -68,6 +66,9 @@ public class InfluxDbProducer extends DefaultProducer {
         case InfluxDbOperations.QUERY:
             doQuery(exchange, dataBaseName, retentionPolicy);
             break;
+        case InfluxDbOperations.PING:
+            doPing(exchange);
+            break;
         default:
             throw new IllegalArgumentException("The operation " + endpoint.getOperation() + " is not supported");
         }
@@ -78,8 +79,12 @@ public class InfluxDbProducer extends DefaultProducer {
             Point p = exchange.getIn().getMandatoryBody(Point.class);
 
             try {
-                LOG.debug("Writing point {}", p.lineProtocol());
-
+                log.debug("Writing point {}", p.lineProtocol());
+                
+                if (!connection.databaseExists(dataBaseName)) {
+                    log.debug("Database {} doesn't exist. Creating it...", dataBaseName);
+                    connection.createDatabase(dataBaseName);
+                }
                 connection.write(dataBaseName, retentionPolicy, p);
             } catch (Exception ex) {
                 exchange.setException(new CamelInfluxDbException(ex));
@@ -88,7 +93,7 @@ public class InfluxDbProducer extends DefaultProducer {
             BatchPoints batchPoints = exchange.getIn().getMandatoryBody(BatchPoints.class);
 
             try {
-                LOG.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
+                log.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
 
                 connection.write(batchPoints);
             } catch (Exception ex) {
@@ -101,7 +106,14 @@ public class InfluxDbProducer extends DefaultProducer {
         String query = calculateQuery(exchange);
         Query influxdbQuery = new Query(query, dataBaseName);
         QueryResult resultSet = connection.query(influxdbQuery);
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resultSet);
+    }
+    
+    private void doPing(Exchange exchange) {
+        Pong result = connection.ping();
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
+        exchange.getOut().setBody(result);
     }
 
     private String calculateRetentionPolicy(Exchange exchange) {

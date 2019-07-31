@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Flowable;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
@@ -69,7 +68,7 @@ public class BackpressureStrategyTest extends CamelTestSupport {
     public void testBackpressureDropStrategy() throws Exception {
 
         ReactiveStreamsComponent comp = (ReactiveStreamsComponent) context().getComponent("reactive-streams");
-        comp.setBackpressureStrategy(ReactiveStreamsBackpressureStrategy.DROP);
+        comp.setBackpressureStrategy(ReactiveStreamsBackpressureStrategy.OLDEST);
 
         new RouteBuilder() {
             @Override
@@ -164,7 +163,7 @@ public class BackpressureStrategyTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("timer:gen?period=20&repeatCount=20")
                         .setBody().header(Exchange.TIMER_COUNTER)
-                        .to("reactive-streams:integers?backpressureStrategy=DROP");
+                        .to("reactive-streams:integers?backpressureStrategy=OLDEST");
             }
         }.addRoutesToCamelContext(context);
 
@@ -197,10 +196,5 @@ public class BackpressureStrategyTest extends CamelTestSupport {
         assertEquals(3, sum); // 1 + 2 = 3
 
         subscriber.cancel();
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 }

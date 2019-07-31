@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +23,7 @@ import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.http.common.HttpRestServletResolveConsumerStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,14 +45,16 @@ public class CamelHttpTransportServlet extends CamelServlet {
         this.setServletResolveConsumerStrategy(new HttpRestServletResolveConsumerStrategy());
 
         String ignore = config.getInitParameter("ignoreDuplicateServletName");
-        Boolean bool = ObjectConverter.toBoolean(ignore);
-        if (bool != null) {
-            ignoreDuplicateServletName = bool;
-        } else {
-            // always log so people can see it easier
-            String msg = "Invalid parameter value for init-parameter ignoreDuplicateServletName with value: " + ignore;
-            LOG.error(msg);
-            throw new ServletException(msg);
+        if (ObjectHelper.isNotEmpty(ignore)) {
+            Boolean bool = ObjectConverter.toBoolean(ignore);
+            if (bool != null) {
+                ignoreDuplicateServletName = bool;
+            } else {
+                // always log so people can see it easier
+                String msg = "Invalid parameter value for init-parameter ignoreDuplicateServletName with value: " + ignore;
+                LOG.error(msg);
+                throw new ServletException(msg);
+            }
         }
 
         String name = config.getServletName();

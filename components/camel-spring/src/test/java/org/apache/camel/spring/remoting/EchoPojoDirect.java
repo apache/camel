@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,15 +19,12 @@ package org.apache.camel.spring.remoting;
 import org.apache.camel.Consume;
 import org.apache.camel.Produce;
 
-/**
- * @version 
- */
 public class EchoPojoDirect {
 
-    @Produce(uri = "direct:echo")
+    @Produce("direct:echo")
     private Echo service;
 
-    @Consume(uri = "direct:start")
+    @Consume("direct:start")
     public String onEcho(String name) {
         return service.echo(name);
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,21 +21,26 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RedisListTest extends RedisTestSupport {
-    private RedisTemplate redisTemplate;
-    private ListOperations listOperations;
+
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
+    @Mock
+    private ListOperations<String, String> listOperations;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -44,13 +49,6 @@ public class RedisListTest extends RedisTestSupport {
         JndiRegistry registry = super.createRegistry();
         registry.bind("redisTemplate", redisTemplate);
         return registry;
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        redisTemplate = mock(RedisTemplate.class);
-        listOperations = mock(ListOperations.class);
-        super.setUp();
     }
 
     @Test

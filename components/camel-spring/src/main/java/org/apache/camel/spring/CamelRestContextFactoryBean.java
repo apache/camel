@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.spring;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,8 +31,6 @@ import org.springframework.beans.factory.FactoryBean;
 
 /**
  * Configuration of REST services using rest-dsl using XML
- *
- * @version 
  */
 @Metadata(label = "spring,configuration,rest")
 @XmlRootElement(name = "restContext")
@@ -39,7 +38,7 @@ import org.springframework.beans.factory.FactoryBean;
 public class CamelRestContextFactoryBean extends IdentifiedType implements FactoryBean<List<RestDefinition>> {
 
     @XmlElement(name = "rest", required = true)
-    private List<RestDefinition> rests = new ArrayList<RestDefinition>();
+    private List<RestDefinition> rests = new ArrayList<>();
 
     public List<RestDefinition> getObject() throws Exception {
         return rests;

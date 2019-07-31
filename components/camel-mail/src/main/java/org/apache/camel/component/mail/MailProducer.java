@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,15 +22,13 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultProducer;
 
 /**
  * A Producer to send messages using JavaMail.
  */
 public class MailProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(MailProducer.class);
+
     private final JavaMailSender sender;
 
     public MailProducer(MailEndpoint endpoint, JavaMailSender sender) {
@@ -57,15 +55,13 @@ public class MailProducer extends DefaultProducer {
                 mimeMessage = new MimeMessage(sender.getSession());
                 getEndpoint().getBinding().populateMailMessage(getEndpoint(), mimeMessage, exchange);
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
+            if (log.isDebugEnabled()) {
+                log.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
             }
             sender.send(mimeMessage);
             // set the message ID for further processing
             exchange.getIn().setHeader(MailConstants.MAIL_MESSAGE_ID, mimeMessage.getMessageID());
-        } catch (MessagingException e) {
-            exchange.setException(e);
-        } catch (IOException e) {
+        } catch (MessagingException | IOException e) {
             exchange.setException(e);
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);

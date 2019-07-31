@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -49,6 +49,8 @@ public class DockerClientProfile {
     private Boolean tlsVerify;
 
     private Boolean socket;
+
+    private String cmdExecFactory;
 
     public String getHost() {
         return host;
@@ -140,9 +142,13 @@ public class DockerClientProfile {
 
     public String toUrl() throws DockerException {
         ObjectHelper.notNull(this.host, "host");
-        ObjectHelper.notNull(this.port, "port");
 
-        return ((this.socket) ? "unix" : "tcp") + "://" + host + ":" + port;
+        if (this.socket != null && this.socket) {
+            return String.format("unix://%s", host);
+        }
+
+        ObjectHelper.notNull(this.port, "port");
+        return String.format("tcp://%s:%d", host, port);
     }
 
     public Boolean isTlsVerify() {
@@ -159,6 +165,14 @@ public class DockerClientProfile {
 
     public void setSocket(Boolean socket) {
         this.socket = socket;
+    }
+
+    public String getCmdExecFactory() {
+        return cmdExecFactory;
+    }
+
+    public void setCmdExecFactory(String cmdExecFactory) {
+        this.cmdExecFactory = cmdExecFactory;
     }
 
     @Override
@@ -178,6 +192,7 @@ public class DockerClientProfile {
         result = prime * result + ((secure == null) ? 0 : secure.hashCode());
         result = prime * result + ((serverAddress == null) ? 0 : serverAddress.hashCode());
         result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((cmdExecFactory == null) ? 0 : cmdExecFactory.hashCode());
         return result;
     }
 
@@ -282,6 +297,13 @@ public class DockerClientProfile {
                 return false;
             }
         } else if (!username.equals(other.username)) {
+            return false;
+        }
+        if (cmdExecFactory == null) {
+            if (other.cmdExecFactory != null) {
+                return false;
+            }
+        } else if (!cmdExecFactory.equals(other.cmdExecFactory)) {
             return false;
         }
         return true;

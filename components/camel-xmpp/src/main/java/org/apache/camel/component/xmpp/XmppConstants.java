@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,14 @@ public interface XmppConstants {
     String SUBJECT = "CamelXmppSubject";
     String THREAD_ID = "CamelXmppThreadID";
     String FROM = "CamelXmppFrom";
+
+    /**
+     * @deprecated use {@link #STANZA_ID} instead.
+     */
+    @Deprecated
     String PACKET_ID = "CamelXmppPacketID";
+
+    String STANZA_ID = "CamelXmppStanzaID";
     String TO = "CamelXmppTo";
     String DOC_HEADER = "CamelXmppDoc";
 }

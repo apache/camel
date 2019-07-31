@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <camel:camelContext id="camel-client">
+        <camel:template id="camelTemplate"/>
+    </camel:camelContext>
+
+    <!-- spring property placeholder, ignore resource not found as the file resource is for unit testing -->
+    <context:property-placeholder location="classpath:camel.properties,file:target/custom.properties"
+                                  ignore-resource-not-found="true"/>
+
+    <!-- pulsar configurations -->
+    <util:set id="clusters" value-type="java.lang.String">
+        <value>standalone</value>
+    </util:set>
+    <bean id="pulsarAdminHost" class="java.lang.String">
+        <constructor-arg value="http://localhost:8080"/>
+    </bean>
+    <bean id="pulsarAdminConfig" class="org.apache.pulsar.client.impl.conf.ClientConfigurationData">
+        <property name="serviceUrl" ref="pulsarAdminHost"/>
+    </bean>
+    <bean id="pulsarAdmin" class="org.apache.pulsar.client.admin.PulsarAdmin">
+        <constructor-arg ref="pulsarAdminHost"/>
+        <constructor-arg ref="pulsarAdminConfig"/>
+    </bean>
+    <bean id="autoconfig" class="org.apache.camel.component.pulsar.utils.AutoConfiguration">
+        <constructor-arg ref="pulsarAdmin"/>
+        <constructor-arg ref="clusters"/>
+    </bean>
+    <bean id="pulsarClientConfig" class="org.apache.pulsar.client.impl.conf.ClientConfigurationData">
+        <property name="serviceUrl" value="pulsar://localhost:6650"/>
+    </bean>
+    <bean id="pulsarClientBuilder" class="org.apache.pulsar.client.impl.ClientBuilderImpl">
+        <constructor-arg ref="pulsarClientConfig"/>
+    </bean>
+    <bean id="pulsarClient" factory-bean="pulsarClientBuilder" factory-method="build"/>
+
+    <!-- pulsar component -->
+    <bean id="pulsar" class="org.apache.camel.component.pulsar.PulsarComponent">
+        <constructor-arg ref="camel-client"/>
+        <property name="autoConfiguration" ref="autoconfig"/>
+        <property name="pulsarClient" ref="pulsarClient"/>
+    </bean>
+
+</beans>

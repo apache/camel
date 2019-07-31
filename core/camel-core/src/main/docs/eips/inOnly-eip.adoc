@@ -1,0 +1,16 @@
+[[inOnly-eip]]
+= In Only EIP
+
+The *inOnly:* EIP define an InOnly ExchangePattern.
+
+== EIP options
+
+// eip options: START
+The In Only EIP supports 1 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uri* | *Required* Sets the uri of the endpoint to send to. |  | String
+|===
+// eip options: END

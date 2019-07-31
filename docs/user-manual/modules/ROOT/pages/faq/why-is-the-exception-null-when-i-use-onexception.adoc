@@ -1,0 +1,37 @@
+[[WhyistheexceptionnullwhenIuseonException-WhyistheexceptionnullwhenIuseonException]]
+= Why is the exception null when I use onException?
+
+If you use `onException` to handle exceptions, such as shown below:
+
+[source,java]
+----
+.onException(Exception.class).handled(true)
+  .process(new Processor() {
+    @Override
+    public void process(Exchange exchange) throws Exception {
+      Exception cause = exchange.getException());
+      // why cause exception is null ???
+    }
+  })
+.end()
+----
+
+Then make notice that because you use `handled(true)`, then the caused
+exception is no longer available from `exchange.getException()`, because
+we told Camel that we will handle the exception.
+
+Instead you can access the caused exception from a property on the
+exchange with the key `Exchange.EXCEPTION_CAUGHT`, as shown below:
+
+[source,java]
+----
+.onException(Exception.class).handled(true)
+  .process(new Processor() {
+    @Override
+    public void process(Exchange exchange) throws Exception {
+      Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+      // we now have the caused exception
+    }
+  })
+.end()
+----

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,11 +22,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.support.RoutePolicySupport;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants, NonManagedService {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledRoutePolicy.class);
-    protected Map<String, ScheduledRouteDetails> scheduledRouteDetailsMap = new LinkedHashMap<String, ScheduledRouteDetails>();
+    protected Map<String, ScheduledRouteDetails> scheduledRouteDetailsMap = new LinkedHashMap<>();
     private Scheduler scheduler;
     private int routeStopGracePeriod;
     private TimeUnit timeUnit;
@@ -60,13 +60,13 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
     protected void onJobExecute(Action action, Route route) throws Exception {
         LOG.debug("Scheduled Event notification received. Performing action: {} on route: {}", action, route.getId());
 
-        ServiceStatus routeStatus = route.getRouteContext().getCamelContext().getRouteStatus(route.getId());
+        ServiceStatus routeStatus = route.getCamelContext().getRouteController().getRouteStatus(route.getId());
         if (action == Action.START) {
             if (routeStatus == ServiceStatus.Stopped) {
                 startRoute(route);
                 // here we just check the states of the Consumer
             } else if (ServiceHelper.isSuspended(route.getConsumer())) {
-                startConsumer(route.getConsumer());
+                resumeOrStartConsumer(route.getConsumer());
             }
         } else if (action == Action.STOP) {
             if ((routeStatus == ServiceStatus.Started) || (routeStatus == ServiceStatus.Suspended)) {
@@ -76,14 +76,14 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
             }
         } else if (action == Action.SUSPEND) {
             if (routeStatus == ServiceStatus.Started) {
-                stopConsumer(route.getConsumer());
+                suspendOrStopConsumer(route.getConsumer());
             } else {
                 LOG.warn("Route is not in a started state and cannot be suspended. The current route state is {}", routeStatus);
             }
         } else if (action == Action.RESUME) {
             if (routeStatus == ServiceStatus.Started) {
                 if (ServiceHelper.isSuspended(route.getConsumer())) {
-                    startConsumer(route.getConsumer());
+                    resumeOrStartConsumer(route.getConsumer());
                 } else {
                     LOG.warn("The Consumer {} is not suspended and cannot be resumed.", route.getConsumer());
                 }
@@ -99,7 +99,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
             // stop and un-schedule jobs
             doStop();
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -110,7 +110,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         
         loadCallbackDataIntoSchedulerContext(jobDetail, action, route);
 
-        boolean isClustered = route.getRouteContext().getCamelContext().getComponent("quartz2", QuartzComponent.class).isClustered();
+        boolean isClustered = route.getCamelContext().getComponent("quartz2", QuartzComponent.class).isClustered();
         if (isClustered) {
             // check to see if the same job has already been setup through another node of the cluster
             JobDetail existingJobDetail = getScheduler().getJobDetail(jobDetail.getKey());
@@ -128,7 +128,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         getScheduler().scheduleJob(jobDetail, trigger);
 
         if (LOG.isInfoEnabled()) {
-            LOG.info("Scheduled trigger: {} for action: {} on route {}", new Object[]{trigger.getKey(), action, route.getId()});
+            LOG.info("Scheduled trigger: {} for action: {} on route {}", trigger.getKey(), action, route.getId());
         }
     }
 

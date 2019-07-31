@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ribbon;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -29,7 +30,7 @@ public class RibbonConfiguration {
     private IRule rule;
     private IPing ping;
     private String clientName;
-    private Map<String, String> clientConfig;
+    private Map<String, String> properties;
 
     public String getNamespace() {
         return namespace;
@@ -87,11 +88,19 @@ public class RibbonConfiguration {
         this.clientName = clientName;
     }
 
-    public Map<String, String> getClientConfig() {
-        return clientConfig;
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
-    public void setClientConfig(Map<String, String> clientConfig) {
-        this.clientConfig = clientConfig;
+    public void setProperties(Map<String, String> clientConfig) {
+        this.properties = clientConfig;
+    }
+
+    public void addProperty(String key, String value) {
+        if (this.properties == null) {
+            this.properties = new HashMap<>();
+        }
+
+        this.properties.put(key, value);
     }
 }

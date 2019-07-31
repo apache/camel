@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,9 +22,9 @@ import java.net.URL;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.openstack.nova.NovaConstants;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payload;
@@ -69,14 +69,13 @@ public abstract class AbstractOpenstackProducer extends DefaultProducer {
 
     protected String getOperation(Exchange exchange) {
         final String operation = exchange.getIn().getHeader(OpenstackConstants.OPERATION, endpoint.getOperation(), String.class);
-        ObjectHelper.notEmpty(operation, "Operation");
+        StringHelper.notEmpty(operation, "Operation");
         return operation;
     }
 
-    protected void checkFailure(ActionResponse response, Message msg, String operation) {
-        msg.setFault(!response.isSuccess());
+    protected void checkFailure(ActionResponse response, Exchange exchange, String operation) {
         if (!response.isSuccess()) {
-            msg.setBody(String.format(" %s was not successful: %s", operation, response.getFault()));
+            exchange.setException(new OpenstackOperationException(operation, response.getFault(), response.getCode()));
         }
     }
 }

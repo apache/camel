@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,30 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.cxf.CxfEndpoint.CamelCxfClientImpl;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+
 /**
  * A unit test for spring configured cxf endpoint.
- *
- * @version
  */
 public class CxfEndpointTest extends Assert {
     private int port1 = CXFTestSupport.getPort1();
@@ -98,31 +100,25 @@ public class CxfEndpointTest extends Assert {
     @Test
     public void testCxfEndpointConfigurer() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        CxfEndpointConfigurer configurer = EasyMock.createMock(CxfEndpointConfigurer.class);
-        Processor processor = EasyMock.createMock(Processor.class);
-        registry.put("myConfigurer", configurer);
+        CxfEndpointConfigurer configurer = mock(CxfEndpointConfigurer.class);
+        Processor processor = mock(Processor.class);
+        registry.bind("myConfigurer", configurer);
         CamelContext camelContext = new DefaultCamelContext(registry);
         CxfComponent cxfComponent = new CxfComponent(camelContext);
         CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI + "&cxfEndpointConfigurer=#myConfigurer");
 
-        configurer.configure(EasyMock.isA(AbstractWSDLBasedEndpointFactory.class));
-        EasyMock.expectLastCall();
-        configurer.configureServer(EasyMock.isA(Server.class));
-        EasyMock.expectLastCall();
-        EasyMock.replay(configurer);
-        endpoint.createConsumer(processor);
-        EasyMock.verify(configurer);
+        Consumer consumer = endpoint.createConsumer(processor);
+        consumer.start();
 
-        EasyMock.reset(configurer);
-        configurer.configure(EasyMock.isA(AbstractWSDLBasedEndpointFactory.class));
-        EasyMock.expectLastCall();
-        configurer.configureClient(EasyMock.isA(Client.class));
-        EasyMock.expectLastCall();
-        EasyMock.replay(configurer);
+        verify(configurer).configure(isA(AbstractWSDLBasedEndpointFactory.class));
+        verify(configurer).configureServer(isA(Server.class));
+        
+        reset(configurer);
         Producer producer = endpoint.createProducer();
         producer.start();
-        EasyMock.verify(configurer);
-
+        
+        verify(configurer).configure(isA(AbstractWSDLBasedEndpointFactory.class));
+        verify(configurer).configureClient(isA(Client.class));
     }
 
 }

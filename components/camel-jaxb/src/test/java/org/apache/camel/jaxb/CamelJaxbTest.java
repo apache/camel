@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -114,6 +114,19 @@ public class CamelJaxbTest extends CamelTestSupport {
     }
 
     @Test
+    public void testMarshalWithoutContentType() throws Exception {
+        PersonType person = new PersonType();
+        person.setFirstName("foo");
+        person.setLastName("bar");
+
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedHeaderReceived(Exchange.CONTENT_TYPE, null);
+        template.sendBody("direct:marshalWithoutContentType", person);
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
     public void testCustomXmlStreamWriter() throws InterruptedException {
         PersonType person = new PersonType();
         person.setFirstName("foo");
@@ -179,6 +192,10 @@ public class CamelJaxbTest extends CamelTestSupport {
                 dataFormat.setSchemaLocation("person.xsd");
                 dataFormat.setIgnoreJAXBElement(false);
 
+                JaxbDataFormat dataFormatWithoutContentType = new JaxbDataFormat("org.apache.camel.foo.bar");
+                dataFormat.setIgnoreJAXBElement(false);
+                dataFormatWithoutContentType.setContentTypeHeader(false);
+
                 JaxbDataFormat filterEnabledFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
                 filterEnabledFormat.setFilterNonXmlChars(true);
 
@@ -203,6 +220,10 @@ public class CamelJaxbTest extends CamelTestSupport {
 
                 from("direct:marshal")
                     .marshal(dataFormat)
+                    .to("mock:result");
+
+                from("direct:marshalWithoutContentType")
+                    .marshal(dataFormatWithoutContentType)
                     .to("mock:result");
 
                 from("direct:marshalFilteringEnabled")

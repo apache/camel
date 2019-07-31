@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,6 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -28,9 +27,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
 
     @Test
@@ -45,7 +41,7 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
         try {
             context.start();
             fail("Should have thrown an exception");
-        } catch (FailedToCreateConsumerException e) {
+        } catch (Exception e) {
             assertEquals("Failed to create Consumer for endpoint: activemq://queue:foo?testConnectionOnStartup=true. "
                 + "Reason: Cannot get JMS Connection on startup for destination foo", e.getMessage());
         }
@@ -63,7 +59,8 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
         try {
             context.start();
             fail("Should have thrown an exception");
-        } catch (FailedToCreateProducerException e) {
+        } catch (Exception ex) {
+            FailedToCreateProducerException e = assertIsInstanceOf(FailedToCreateProducerException.class, ex.getCause());
             assertTrue(e.getMessage().startsWith("Failed to create Producer for endpoint: activemq://queue:foo?testConnectionOnStartup=true."));
             assertTrue(e.getMessage().contains("java.net.ConnectException"));
         }

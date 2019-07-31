@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.loanbroker.bank;
+
+import java.util.Random;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -33,7 +35,8 @@ public class BankProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
         Integer historyLength = exchange.getIn().getHeader(Constants.PROPERTY_HISTORYLENGTH, Integer.class);
-        double rate = primeRate + (double) (historyLength / 12) / 10 + (Math.random() * 10) / 10;
+        Random rand = new Random();
+        double rate = primeRate + (double) (historyLength / 12) / 10 + (rand.nextDouble()  * 10) / 10;
 
         // set reply details as headers
         exchange.getOut().setHeader(Constants.PROPERTY_BANK, bankName);

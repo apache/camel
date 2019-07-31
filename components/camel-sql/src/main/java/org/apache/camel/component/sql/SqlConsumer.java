@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.component.sql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -28,7 +29,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
-import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.dao.DataAccessException;
@@ -56,6 +58,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     private boolean routeEmptyResultSet;
     private int expectedUpdateCount = -1;
     private boolean breakBatchOnConsumeFail;
+    private int parametersCount;
+    private boolean alwaysPopulateStatement;
 
     private static final class DataHolder {
         private Exchange exchange;
@@ -106,13 +110,22 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(resolvedQuery, getEndpoint().isAllowNamedParameters(), null);
+        final Exchange dummy = getEndpoint().createExchange();
+        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(resolvedQuery, getEndpoint().isAllowNamedParameters(), dummy);
 
         log.trace("poll: {}", preparedQuery);
         final PreparedStatementCallback<Integer> callback = new PreparedStatementCallback<Integer>() {
             @Override
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
-                Queue<DataHolder> answer = new LinkedList<DataHolder>();
+                Queue<DataHolder> answer = new LinkedList<>();
+
+                int expected = parametersCount > 0 ? parametersCount : ps.getParameterMetaData().getParameterCount();
+
+                // only populate if really needed
+                if (alwaysPopulateStatement || expected > 0) {
+                    Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(resolvedQuery, preparedQuery, expected, dummy, null);
+                    sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
+                }
 
                 log.debug("Executing query: {}", preparedQuery);
                 ResultSet rs = ps.executeQuery();
@@ -154,7 +167,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                         return rows;
                     }
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 } finally {
                     closeResultSet(rs);
                 }
@@ -377,5 +390,13 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         if (jdbcTemplate != null) {
             jdbcTemplate.setMaxRows(maxMessagesPerPoll);
         }
+    }
+
+    public void setParametersCount(int parametersCount) {
+        this.parametersCount = parametersCount;
+    }
+
+    public void setAlwaysPopulateStatement(boolean alwaysPopulateStatement) {
+        this.alwaysPopulateStatement = alwaysPopulateStatement;
     }
 }

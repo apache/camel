@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,9 @@ import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(Standalone.class)
 public class RecentIntegrationTest extends AbstractSalesforceTestBase {
 
     public static class Accounts extends AbstractQueryRecordsBase {
@@ -48,20 +50,6 @@ public class RecentIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final Object NOT_USED = null;
 
-    static Account account(final int ord) {
-        final Account account = new Account();
-        account.setName("recent-" + ord);
-
-        return account;
-    }
-
-    static void assertRecentItemsSize(final List<RecentItem> items, final int expected) {
-        final List<RecentItem> recentItems = items.stream().filter(i -> i.getName().startsWith("recent-"))
-                .collect(Collectors.toList());
-
-        assertListSize("Expected " + expected + " items named `recent-N` in recent items", recentItems, expected);
-    }
-
     @After
     public void deleteRecords() {
         template.sendBody("direct:delete-recent", NOT_USED);
@@ -70,7 +58,7 @@ public class RecentIntegrationTest extends AbstractSalesforceTestBase {
     @Before
     public void setupTenRecentItems() {
         final List<Account> accounts = IntStream.range(0, 10).mapToObj(RecentIntegrationTest::account)
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
         template.sendBody("direct:create-recent", accounts);
     }
@@ -87,7 +75,7 @@ public class RecentIntegrationTest extends AbstractSalesforceTestBase {
     public void shouldFetchRecentItemsLimitingByHeaderParam() {
         @SuppressWarnings("unchecked")
         final List<RecentItem> items = template.requestBody("direct:test-recent-with-header-limit-param", NOT_USED,
-                List.class);
+            List.class);
 
         assertRecentItemsSize(items, 5);
     }
@@ -96,7 +84,7 @@ public class RecentIntegrationTest extends AbstractSalesforceTestBase {
     public void shouldFetchRecentItemsLimitingByParamInBody() {
         @SuppressWarnings("unchecked")
         final List<RecentItem> items = template.requestBody("direct:test-recent-with-body-limit-param", NOT_USED,
-                List.class);
+            List.class);
 
         assertRecentItemsSize(items, 5);
     }
@@ -105,7 +93,7 @@ public class RecentIntegrationTest extends AbstractSalesforceTestBase {
     public void shouldFetchRecentItemsLimitingByUriParam() {
         @SuppressWarnings("unchecked")
         final List<RecentItem> items = template.requestBody("direct:test-recent-with-limit-uri-param", NOT_USED,
-                List.class);
+            List.class);
 
         assertRecentItemsSize(items, 5);
     }
@@ -116,25 +104,38 @@ public class RecentIntegrationTest extends AbstractSalesforceTestBase {
             @Override
             public void configure() throws Exception {
                 from("direct:create-recent").split().body().to("salesforce:createSObject?sObjectName=Account").end()
-                        .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
-                                + "&sObjectQuery=SELECT Id FROM Account WHERE Name LIKE 'recent-%' FOR VIEW");
+                    .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
+                        + "&sObjectQuery=SELECT Id FROM Account WHERE Name LIKE 'recent-%' FOR VIEW");
 
                 from("direct:delete-recent")
-                        .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
-                                + "&sObjectQuery=SELECT Id FROM Account WHERE Name LIKE 'recent-%'")
-                        .transform(simple("${body.records}")).split().body()
-                        .setHeader(SalesforceEndpointConfig.SOBJECT_ID).simple("${body.id}")
-                        .to("salesforce:deleteSObject?sObjectName=Account");
+                    .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
+                        + "&sObjectQuery=SELECT Id FROM Account WHERE Name LIKE 'recent-%'")
+                    .transform(simple("${body.records}")).split().body().setHeader(SalesforceEndpointConfig.SOBJECT_ID)
+                    .simple("${body.id}").to("salesforce:deleteSObject?sObjectName=Account");
 
                 from("direct:test-recent").to("salesforce:recent");
 
                 from("direct:test-recent-with-limit-uri-param").to("salesforce:recent?limit=5");
 
                 from("direct:test-recent-with-header-limit-param").setHeader(SalesforceEndpointConfig.LIMIT).constant(5)
-                        .to("salesforce:recent");
+                    .to("salesforce:recent");
 
                 from("direct:test-recent-with-body-limit-param").setBody(constant(5)).to("salesforce:recent");
             }
         };
+    }
+
+    static Account account(final int ord) {
+        final Account account = new Account();
+        account.setName("recent-" + ord);
+
+        return account;
+    }
+
+    static void assertRecentItemsSize(final List<RecentItem> items, final int expected) {
+        final List<RecentItem> recentItems = items.stream().filter(i -> i.getName().startsWith("recent-"))
+            .collect(Collectors.toList());
+
+        assertListSize("Expected " + expected + " items named `recent-N` in recent items", recentItems, expected);
     }
 }

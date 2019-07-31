@@ -1,0 +1,50 @@
+[[HowcanIgetthesourcecode-HowcanIgetthesourcecode]]
+= How can I get the source code?
+
+[WARNING]
+====
+Apache Camel code repository was moved to git. The old svn repo will not
+be updated.
+====
+
+[[HowcanIgetthesourcecode-WebBrowsingofgit]]
+== Web Browsing of git
+
+To browse via the web:
+
+https://git-wip-us.apache.org/repos/asf?p=camel.git
+
+[[HowcanIgetthesourcecode-WebBrowingUsingFishEye]]
+== Web Browing Using FishEye
+
+A hearty thanks to http://atlassian.com/[Atlassian] for providing
+http://cenqua.com/fisheye/[FishEye] hosting for Camel. Below is the URL
+to browse the Subversion repo via FishEye:
+
+https://fisheye6.atlassian.com/browse/camel-git
+
+[[HowcanIgetthesourcecode-Checkingoutfromgit]]
+== Checking out from git
+
+----
+git clone https://git-wip-us.apache.org/repos/asf/camel.git
+----
+
+Only project developers can commit to the git via this method. SSH must
+be installed on your client machine. Enter your site password when
+prompted.
+
+[[HowcanIgetthesourcecode-UsingGitHub]]
+== Using GitHub
+
+The source code is https://github.com/apache/camel/[mirrored to GitHub],
+so you can also checkout the source code from GitHub, if you are
+familiar with using GitHub. By using GitHub you can submit pull requests
+to the project using the standard GitHub way.
+
+https://github.com/apache/camel/
+
+[[HowcanIgetthesourcecode-Buildingthecode]]
+== Building the code
+
+To then build the code see xref:building.adoc[Building].

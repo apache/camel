@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -52,7 +52,7 @@ public class CamelGroovyTest extends AbstractFeatureTest {
 
     @Configuration
     public Option[] configure() {
-        return CamelKarafTestSupport.configure("camel-test-karaf", "camel-script-groovy");
+        return CamelKarafTestSupport.configure("camel-test-karaf", "camel-groovy");
     }
 
 }

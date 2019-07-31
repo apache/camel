@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,31 +23,28 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging,iot", syntax = "paho:topic")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", label = "messaging,iot", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
 
     // Configuration members
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String topic;
     @UriParam
     private String clientId = "camel-" + System.nanoTime();
@@ -61,6 +58,14 @@ public class PahoEndpoint extends DefaultEndpoint {
     private PahoPersistence persistence = PahoPersistence.MEMORY;
     @UriParam(description = "Base directory used by file persistence. Will by default use current directory.")
     private String filePersistenceDirectory;
+    @UriParam(defaultValue = "true")
+    private boolean autoReconnect = true;
+    @UriParam @Metadata(secret = true)
+    private String userName;
+    @UriParam @Metadata(secret = true)
+    private String password;
+    @UriParam(defaultValue = "true")
+    private boolean resolveMqttConnectOptions = true;
 
     // Collaboration members
     @UriParam
@@ -101,17 +106,11 @@ public class PahoEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public PahoComponent getComponent() {
         return (PahoComponent)super.getComponent();
     }
 
     // Resolvers
-
     protected MqttClientPersistence resolvePersistence() {
         if (persistence ==  PahoPersistence.MEMORY) {
             return new MemoryPersistence();
@@ -128,24 +127,36 @@ public class PahoEndpoint extends DefaultEndpoint {
         if (connectOptions != null) {
             return connectOptions;
         }
-        Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
-        if (connectOptions.size() == 1) {
-            LOG.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
-            return connectOptions.iterator().next();
-        } else if (connectOptions.size() > 1) {
-            LOG.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
-                     + "Please use 'connectOptions' endpoint option to select one.", connectOptions.size());
+
+        if (resolveMqttConnectOptions) {
+            Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
+            if (connectOptions.size() == 1) {
+                log.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
+                return connectOptions.iterator().next();
+            } else if (connectOptions.size() > 1) {
+                log.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
+                         + "Please use 'connectOptions' endpoint option to select one.", connectOptions.size());
+            }
         }
-        return new MqttConnectOptions();
+
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setAutomaticReconnect(autoReconnect);
+
+        if (ObjectHelper.isNotEmpty(userName) && ObjectHelper.isNotEmpty(password)) {
+            options.setUserName(userName);
+            options.setPassword(password.toCharArray());
+        }
+        return options;
     }
 
     public Exchange createExchange(MqttMessage mqttMessage, String topic) {
-        PahoMessage paho = new PahoMessage();
-        paho.setMqttMessage(mqttMessage);
+        Exchange exchange = createExchange();
+
+        PahoMessage paho = new PahoMessage(exchange.getContext(), mqttMessage);
         paho.setBody(mqttMessage.getPayload());
         paho.setHeader(PahoConstants.MQTT_TOPIC, topic);
+        paho.setHeader(PahoConstants.MQTT_QOS, mqttMessage.getQos());
 
-        Exchange exchange = createExchange();
         exchange.setIn(paho);
         return exchange;
     }
@@ -202,7 +213,7 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     /**
      * Retain option
-     * 
+     *
      * @param retained true/false
      */
     public void setRetained(boolean retained) {
@@ -253,6 +264,54 @@ public class PahoEndpoint extends DefaultEndpoint {
      */
     public void setConnectOptions(MqttConnectOptions connOpts) {
         this.connectOptions = connOpts;
+    }
+
+    public synchronized boolean isAutoReconnect() {
+        return autoReconnect;
+    }
+
+    /**
+     * Client will automatically attempt to reconnect to the server if the connection is lost
+     * @param autoReconnect
+     */
+    public synchronized void setAutoReconnect(boolean autoReconnect) {
+        this.autoReconnect = autoReconnect;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Username to be used for authentication against the MQTT broker
+     * @param userName
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Password to be used for authentication against the MQTT broker
+     * @param password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public synchronized boolean isResolveMqttConnectOptions() {
+        return resolveMqttConnectOptions;
+    }
+
+    /**
+     * Define if you don't want to resolve the MQTT Connect Options from registry
+     * @param resolveMqttConnectOptions
+     */
+    public synchronized void setResolveMqttConnectOptions(boolean resolveMqttConnectOptions) {
+        this.resolveMqttConnectOptions = resolveMqttConnectOptions;
     }
 
 }

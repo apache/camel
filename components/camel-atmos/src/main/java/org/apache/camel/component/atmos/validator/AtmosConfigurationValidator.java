@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -65,7 +65,7 @@ public final class AtmosConfigurationValidator {
             throw new AtmosException("option <uri> is not present!");
         } else {
             try {
-                URI uri = new URI(configuration.getUri());
+                new URI(configuration.getUri());
             } catch (URISyntaxException use) {
                 throw new AtmosException("option <uri> is not valid!", use);
             }

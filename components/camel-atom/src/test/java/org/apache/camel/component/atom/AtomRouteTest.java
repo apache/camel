@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,9 +27,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version
- */
 public class AtomRouteTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AtomRouteTest.class);
 
@@ -57,7 +54,7 @@ public class AtomRouteTest extends CamelTestSupport {
             String title = entry.getTitle();
             assertEquals("Title of message " + counter, expectedTitle, title);
 
-            LOG.debug("<<<< " + entry);
+            LOG.debug("<<<< {}", entry);
 
             counter++;
         }

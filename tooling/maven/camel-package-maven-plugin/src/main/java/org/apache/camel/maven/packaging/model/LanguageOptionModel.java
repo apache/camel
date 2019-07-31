@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import org.apache.camel.maven.packaging.StringHelper;
+
 public class LanguageOptionModel {
 
     private String name;
@@ -24,6 +26,7 @@ public class LanguageOptionModel {
     private String type;
     private String javaType;
     private String deprecated;
+    private String deprecationNote;
     private String description;
     private String defaultValue;
     private String enumValues;
@@ -76,6 +79,14 @@ public class LanguageOptionModel {
         this.deprecated = deprecated;
     }
 
+    public String getDeprecationNote() {
+        return deprecationNote;
+    }
+
+    public void setDeprecationNote(String deprecationNote) {
+        this.deprecationNote = deprecationNote;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -101,19 +112,7 @@ public class LanguageOptionModel {
     }
 
     public String getShortJavaType() {
-        if (javaType.startsWith("java.util.Map")) {
-            return "Map";
-        } else if (javaType.startsWith("java.util.Set")) {
-            return "Set";
-        } else if (javaType.startsWith("java.util.List")) {
-            return "List";
-        }
-        int pos = javaType.lastIndexOf(".");
-        if (pos != -1) {
-            return javaType.substring(pos + 1);
-        } else {
-            return javaType;
-        }
+        return StringHelper.getClassShortName(javaType);
     }
 
 }

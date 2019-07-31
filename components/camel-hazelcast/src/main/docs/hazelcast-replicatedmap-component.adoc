@@ -1,0 +1,252 @@
+[[hazelcast-replicatedmap-component]]
+= Hazelcast Replicated Map Component
+
+*Available as of Camel version 2.16*
+
+The http://www.hazelcast.com/[Hazelcast] instance component is one of Camel Hazelcast Components which allows you to consume join/leave events of the cache instance in the cluster.
+A replicated map is a weakly consistent, distributed key-value data structure with no data partition.
+ 
+ 
+== Options
+ 
+// component options: START
+The Hazelcast Replicated Map component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hazelcastInstance* (advanced) | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. |  | HazelcastInstance
+| *hazelcastMode* (advanced) | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+// endpoint options: START
+The Hazelcast Replicated Map endpoint is configured using URI syntax:
+
+----
+hazelcast-replicatedmap:cacheName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cacheName* | *Required* The name of the cache |  | String
+|===
+
+
+=== Query Parameters (18 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *defaultOperation* (common) | To specify a default operation to use, if no operation header has been provided. |  | HazelcastOperation
+| *hazelcastInstance* (common) | The hazelcast instance reference which can be used for hazelcast endpoint. |  | HazelcastInstance
+| *hazelcastInstanceName* (common) | The hazelcast instance reference name which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. |  | String
+| *reliable* (common) | Define if the endpoint will use a reliable Topic struct or not. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *pollingTimeout* (consumer) | Define the polling timeout of the Queue consumer in Poll mode | 10000 | long
+| *poolSize* (consumer) | Define the Pool size for Queue Consumer Executor | 1 | int
+| *queueConsumerMode* (consumer) | Define the Queue Consumer mode: Listen or Poll | Listen | HazelcastQueueConsumer Mode
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *concurrentConsumers* (seda) | To use concurrent consumers polling from the SEDA queue. | 1 | int
+| *onErrorDelay* (seda) | Milliseconds before consumer continues polling after an error has occurred. | 1000 | int
+| *pollTimeout* (seda) | The timeout used when consuming from the SEDA queue. When a timeout occurs, the consumer can check whether it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown. | 1000 | int
+| *transacted* (seda) | If set to true then the consumer runs in transaction mode, where the messages in the seda queue will only be removed if the transaction commits, which happens when the processing is complete. | false | boolean
+| *transferExchange* (seda) | If set to true the whole Exchange will be transfered. If header or body contains not serializable objects, they will be skipped. | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hazelcast-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.hazelcast-replicatedmap.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.hazelcast-replicatedmap.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-replicatedmap.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-replicatedmap.enabled* | Enable hazelcast-replicatedmap component | true | Boolean
+| *camel.component.hazelcast-replicatedmap.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. The option is a com.hazelcast.core.HazelcastInstance type. |  | String
+| *camel.component.hazelcast-replicatedmap.hazelcast-mode* | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
+| *camel.component.hazelcast-replicatedmap.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== replicatedmap cache producer
+
+The replicatedmap producer provides 4 operations:
+* put
+* get
+* delete
+* clear
+
+Header Variables for the request message:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+
+|`CamelHazelcastOperationType` |`String` | valid values are: put, get, removevalue, delete
+
+|`CamelHazelcastObjectId` |`String` | the object id to store / find your object inside the cache
+|=======================================================================
+
+=== Sample for *put*:
+
+Java DSL:
+
+[source,java]
+------------------------------------------------------------------------------------
+from("direct:put")
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
+.to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
+------------------------------------------------------------------------------------
+
+Spring DSL:
+
+[source,java]
+-----------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:put" />
+    <log message="put.."/>
+    <setHeader name="hazelcast.operation.type">
+        <constant>put</constant>
+    </setHeader>
+    <to uri="hazelcast-replicatedmap:foo" />
+</route>
+-----------------------------------------------------------------------------------------------
+
+=== Sample for *get*:
+
+Java DSL:
+
+[source,java]
+------------------------------------------------------------------------------------
+from("direct:get")
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
+.toF("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX)
+.to("seda:out");
+------------------------------------------------------------------------------------
+
+Spring DSL:
+
+[source,java]
+-----------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:get" />
+    <log message="get.."/>
+    <setHeader name="hazelcast.operation.type">
+        <constant>get</constant>
+    </setHeader>
+    <to uri="hazelcast-replicatedmap:foo" />
+    <to uri="seda:out" />
+</route>
+-----------------------------------------------------------------------------------------------
+
+=== Sample for *delete*:
+
+Java DSL:
+
+[source,java]
+---------------------------------------------------------------------------------------
+from("direct:delete")
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
+.toF("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX);
+---------------------------------------------------------------------------------------
+
+Spring DSL:
+
+[source,java]
+-----------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:delete" />
+    <log message="delete.."/>
+    <setHeader name="hazelcast.operation.type">
+        <constant>delete</constant>
+    </setHeader>
+    <to uri="hazelcast-replicatedmap:foo" />
+</route>
+-----------------------------------------------------------------------------------------------
+
+you can call them in your test class with:
+
+[source,java]
+------------------------------------------------------------------------------------------------------------
+template.sendBodyAndHeader("direct:[put|get|delete|clear]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
+------------------------------------------------------------------------------------------------------------
+
+== replicatedmap cache consumer
+
+For the multimap cache this component provides the same listeners /
+variables as for the map cache consumer (except the update and enviction
+listener). The only difference is the *multimap* prefix inside the URI.
+Here is a sample:
+
+[source,java]
+--------------------------------------------------------------------------------------------------
+fromF("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX)
+.log("object...")
+.choice()
+    .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
+        .log("...added")
+                .to("mock:added")
+        //.when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ENVICTED))
+        //        .log("...envicted")
+        //        .to("mock:envicted")
+        .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED))
+                .log("...removed")
+                .to("mock:removed")
+        .otherwise()
+                .log("fail!");
+--------------------------------------------------------------------------------------------------
+
+Header Variables inside the response message:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+
+|`CamelHazelcastListenerTime` |`Long` |time of the event in millis
+
+|`CamelHazelcastListenerType` |`String` |the map consumer sets here "cachelistener"
+
+|`CamelHazelcastListenerAction` |`String` |type of event - here *added* and *removed* (and soon *envicted*)
+
+|`CamelHazelcastObjectId` |`String` | the oid of the object
+
+|`CamelHazelcastCacheName` |`String` |the name of the cache - e.g. "foo"
+
+|`CamelHazelcastCacheType` |`String` |the type of the cache - here replicatedmap
+|=======================================================================

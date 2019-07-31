@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ import java.time.ZonedDateTime;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 //CHECKSTYLE:OFF
-public class AbstractSObjectBase extends AbstractDTOBase {
+public abstract class AbstractSObjectBase extends AbstractDTOBase {
 
     // WARNING: these fields have case sensitive names,
     // the field name MUST match the field name used by Salesforce
@@ -48,7 +48,6 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     public final void clearBaseFields() {
         attributes = null;
         Id = null;
-        OwnerId = null;
         IsDeleted = null;
         CreatedDate = null;
         CreatedById = null;

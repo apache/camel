@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,31 +23,23 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
 import ca.uhn.hl7v2.model.v25.segment.MSH;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
-
 import org.junit.Test;
-
 
 /**
  * Unit test for the HL7MLLP Codec.
  */
 public class HL7MLLPCodecLongTest extends HL7TestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        // START SNIPPET: e1
+    @BindToRegistry("hl7codec")
+    public HL7MLLPCodec addHl7MllpCodec() throws Exception {
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
-
-        jndi.bind("hl7codec", codec);
-        // END SNIPPET: e1
-
-        return jndi;
+        return codec;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

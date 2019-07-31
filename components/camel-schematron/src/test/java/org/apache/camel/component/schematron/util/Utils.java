@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.schematron.util;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.schematron.constant.Constants;
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.XpathEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xmlunit.builder.Input;
+import org.xmlunit.xpath.JAXPXPathEngine;
 
 /**
  * Utility Class.
@@ -40,19 +38,12 @@ public final class Utils {
 
     /**
      * Evaluate an XPATH expression.
-     *
-     * @param xpath
-     * @param xml
-     * @return
      */
     public static String evaluate(final String xpath, final String xml) {
-        Map<String, Object> m = new HashMap<String, Object>();
-        m.put("svrl", Constants.HTTP_PURL_OCLC_ORG_DSDL_SVRL);
-        XpathEngine xpathEngine = XMLUnit.newXpathEngine();
-        xpathEngine.setNamespaceContext(new SimpleNamespaceContext(m));
+        JAXPXPathEngine xpathEngine = new JAXPXPathEngine();
+        xpathEngine.setNamespaceContext(Collections.singletonMap("svrl", Constants.HTTP_PURL_OCLC_ORG_DSDL_SVRL));
         try {
-            return xpathEngine.evaluate(xpath, XMLUnit.buildControlDocument(xml));
-
+            return xpathEngine.evaluate(xpath, Input.fromString(xml).build());
         } catch (Exception e) {
             LOG.error("Failed to apply xpath {} on xml {}", xpath, xml);
             throw new RuntimeCamelException(e);

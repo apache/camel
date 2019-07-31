@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,41 +25,43 @@ import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class MultipleCodecsTest extends BaseNettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    @BindToRegistry("length-decoder")
+    private ChannelHandlerFactory lengthDecoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 
-        // START SNIPPET: registry-beans
-        ChannelHandlerFactory lengthDecoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+    @BindToRegistry("string-decoder")
+    private StringDecoder stringDecoder = new StringDecoder();
 
-        StringDecoder stringDecoder = new StringDecoder();
-        registry.bind("length-decoder", lengthDecoder);
-        registry.bind("string-decoder", stringDecoder);
+    @BindToRegistry("length-decoder")
+    private LengthFieldPrepender lengthEncoder = new LengthFieldPrepender(4);
 
-        LengthFieldPrepender lengthEncoder = new LengthFieldPrepender(4);
-        StringEncoder stringEncoder = new StringEncoder();
-        registry.bind("length-encoder", lengthEncoder);
-        registry.bind("string-encoder", stringEncoder);
+    @BindToRegistry("string-encoder")
+    private StringEncoder stringEncoder = new StringEncoder();
 
-        List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
-        decoders.add(lengthDecoder);
-        decoders.add(stringDecoder);
+    @BindToRegistry("encoders")
+    public List<ChannelHandler> addEncoders() throws Exception {
 
-        List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
+        List<ChannelHandler> encoders = new ArrayList<>();
         encoders.add(lengthEncoder);
         encoders.add(stringEncoder);
 
-        registry.bind("encoders", encoders);
-        registry.bind("decoders", decoders);
-        // END SNIPPET: registry-beans
-        return registry;
+        return encoders;
+    }
+
+    @BindToRegistry("decoders")
+    public List<ChannelHandler> addDecoders() throws Exception {
+
+        List<ChannelHandler> decoders = new ArrayList<>();
+        decoders.add(lengthDecoder);
+        decoders.add(stringDecoder);
+
+        return decoders;
     }
 
     @Test
@@ -78,7 +80,7 @@ public class MultipleCodecsTest extends BaseNettyTest {
             public void configure() throws Exception {
                 // START SNIPPET: routes
                 from("direct:multiple-codec").to("netty4:tcp://localhost:{{port}}?encoders=#encoders&sync=false");
-                
+
                 from("netty4:tcp://localhost:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
                 // START SNIPPET: routes
             }

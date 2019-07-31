@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hdfs2;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,7 +61,7 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
         });
         context.start();
 
-        List<String> expectedResults = new ArrayList<String>();
+        List<String> expectedResults = new ArrayList<>();
         for (int i = 0; i < 10; ++i) {
             template.sendBody("direct:start", "CIAO" + i);
             expectedResults.add("CIAO" + i);
@@ -78,6 +78,7 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         if (!canTest()) {
             return;

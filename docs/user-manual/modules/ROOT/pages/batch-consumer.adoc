@@ -1,0 +1,66 @@
+[[BatchConsumer-BatchConsumer]]
+= Batch Consumer
+
+*Available as of Camel 2.0*
+
+Batch Consumer is basically a xref:polling-consumer.adoc[Polling
+Consumer] that is capable of polling multiple
+Exchanges in a pool. What we have done in Camel 2.0
+is to standardize this into a `org.apache.camel.BatchConsumer` interface
+that a consumer can implement to indicate it support batching as well.
+
+The following components supports xref:batch-consumer.adoc[Batch
+Consumer] by its consumer:
+
+* xref:components::atom-component.adoc[Atom]
+* File
+* FTP
+* xref:components::hbase-component.adoc[hbase]
+* xref:components::jpa-component.adoc[JPA]
+* xref:components::jclouds-component.adoc[JCLOUDS]
+* xref:components::mail-component.adoc[Mail]
+* xref:components::mybatis-component.adoc[MyBatis]
+* xref:components::snmp-component.adoc[SNMP]
+* xref:components::sql-component.adoc[SQL]
+* xref:components::aws-sqs-component.adoc[SQS]
+* xref:components::aws-s3-component.adoc[S3]
+
+[[BatchConsumer-ConsumerOptions]]
+== Consumer Options
+
+The Batch Consumer supports the following options:
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Option |Description
+
+|maxMessagesPerPoll |An integer to define a maximum messages to gather per poll. By default
+no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when
+starting up the server that there are thousands of files. Set a value of
+0 or negative to disabled it.
+|=======================================================================
+
+[[BatchConsumer-ExchangeProperties]]
+== Exchange Properties
+
+The following properties is set on the Exchange for
+each Exchange polled in the same batch.
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Property |Description
+
+|CamelBatchSize |The total number of Exchanges that was polled in
+this batch.
+
+|CamelBatchIndex |The current index of the batch. Starts from 0.
+
+|CamelBatchComplete |A boolean indicating the last Exchange in the batch.
+Is only `true` for the last entry.
+|=======================================================================
+
+[[BatchConsumer-SeeAlso]]
+== See Also
+
+* Polling Consumer
+

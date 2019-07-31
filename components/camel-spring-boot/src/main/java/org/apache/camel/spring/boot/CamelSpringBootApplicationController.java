@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,8 @@
  */
 package org.apache.camel.spring.boot;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.PreDestroy;
 
 import org.apache.camel.CamelContext;
@@ -34,17 +33,21 @@ public class CamelSpringBootApplicationController {
 
     private final Main main;
     private final CountDownLatch latch = new CountDownLatch(1);
+    private final AtomicBoolean completed = new AtomicBoolean();
 
-    public CamelSpringBootApplicationController(final ApplicationContext applicationContext, final CamelContext camelContext) {
+    public CamelSpringBootApplicationController(final ApplicationContext applicationContext, final CamelContext context) {
         this.main = new Main() {
+
+            { this.camelContext = context; }
+
             @Override
             protected ProducerTemplate findOrCreateCamelTemplate() {
                 return applicationContext.getBean(ProducerTemplate.class);
             }
 
             @Override
-            protected Map<String, CamelContext> getCamelContextMap() {
-                return Collections.singletonMap("camelContext", camelContext);
+            protected CamelContext createCamelContext() {
+                return context;
             }
 
             @Override
@@ -53,11 +56,20 @@ public class CamelSpringBootApplicationController {
                 try {
                     super.doStop();
                 } finally {
+                    completed.set(true);
                     // should use the latch on this instance
                     CamelSpringBootApplicationController.this.latch.countDown();
                 }
             }
         };
+    }
+
+    public CountDownLatch getLatch() {
+        return this.latch;
+    }
+
+    public AtomicBoolean getCompleted() {
+        return completed;
     }
 
     /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,11 +21,13 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
+import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
+import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.Validator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +52,9 @@ public class AbstractLocalCamelControllerTest {
                     .fromType("xml:foo")
                     .toType("json:bar")
                     .withJava(DummyTransformer.class);
+                validator()
+                    .type("xml:foo")
+                    .withJava(DummyValidator.class);
                 from("direct:start1").id("route1").delay(100).to("mock:result1");
                 from("direct:start2").id("route2").delay(100).to("mock:result2");
                 from("direct:start3").id("route3").delay(100).to("mock:result3");
@@ -117,7 +122,6 @@ public class AbstractLocalCamelControllerTest {
 
     @Test
     public void testTransformer() throws Exception {
-        context.resolveTransformer(new DataType("xml:foo"), new DataType("json:bar"));
         List<Map<String, String>> transformers = localCamelController.getTransformers("context1");
         assertEquals(1, transformers.size());
         Map<String, String> dummyTransformer = transformers.get(0);
@@ -129,9 +133,26 @@ public class AbstractLocalCamelControllerTest {
         assertEquals("Started", dummyTransformer.get("state"));
     }
 
+    @Test
+    public void testValidator() throws Exception {
+        List<Map<String, String>> validators = localCamelController.getValidators("context1");
+        assertEquals(1, validators.size());
+        Map<String, String> dummyValidator = validators.get(0);
+        assertEquals("context1", dummyValidator.get("camelContextName"));
+        assertEquals("DummyValidator[type='xml:foo']", dummyValidator.get("description"));
+        assertEquals("xml:foo", dummyValidator.get("type"));
+        assertEquals("Started", dummyValidator.get("state"));
+    }
+
     public static class DummyTransformer extends Transformer {
         @Override
         public void transform(Message message, DataType from, DataType to) throws Exception {
+        }
+    }
+
+    public static class DummyValidator extends Validator {
+        @Override
+        public void validate(Message message, DataType type) throws ValidationException {
         }
     }
 }

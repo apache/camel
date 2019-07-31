@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,10 +29,10 @@ import org.junit.Test;
 
 public class VelocitySupplementalContextTest extends CamelTestSupport {
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     protected ProducerTemplate inputEndpoint;
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint outputEndpoint;
 
     @Test
@@ -42,7 +42,7 @@ public class VelocitySupplementalContextTest extends CamelTestSupport {
         outputEndpoint.expectedHeaderReceived("in.body", "old_body");
         outputEndpoint.expectedBodiesReceived("bar");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(VelocityConstants.VELOCITY_TEMPLATE,
                 "#set( $headers.body = ${body} )\n#set( $headers['in.body'] = $in.body )\n" + "bar");
         inputEndpoint.sendBodyAndHeaders("old_body", headers);

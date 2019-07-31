@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,10 +37,10 @@ public class CustomizedJdbcMessageIdRepositoryTest extends CamelSpringTestSuppor
     protected JdbcTemplate jdbcTemplate;
     protected DataSource dataSource;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     protected MockEndpoint errorEndpoint;
     
     @Override

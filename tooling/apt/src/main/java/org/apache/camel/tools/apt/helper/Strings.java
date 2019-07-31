@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -129,7 +129,11 @@ public final class Strings {
             if (first) {
                 sb.append(Character.toUpperCase(c));
             } else if (upper) {
-                sb.append(' ');
+                char prev = sb.charAt(sb.length() - 1);
+                if (!Character.isUpperCase(prev)) {
+                    // append space if previous is not upper
+                    sb.append(' ');
+                }
                 sb.append(c);
             } else {
                 sb.append(Character.toLowerCase(c));

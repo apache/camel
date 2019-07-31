@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,10 +23,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class RestletValidUriQueryTest extends RestletTestSupport {
     private static final String QUERY_STRING = "foo=bar&test=123";
 
@@ -35,8 +31,8 @@ public class RestletValidUriQueryTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://localhost:" + portNum + "/users/(username)").process(new SetUserProcessor());
-                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/(username)");
+                from("restlet:http://localhost:" + portNum + "/users/{username}").process(new SetUserProcessor());
+                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/{username}");
             }
         };
     }
@@ -50,10 +46,10 @@ public class RestletValidUriQueryTest extends RestletTestSupport {
     }
     
     @Test
-    public void testPostBody() throws Exception {
+    public void testGet() throws Exception {
         HttpResponse response = doExecute(new HttpGet("http://localhost:" + portNum + "/users/homer?" + QUERY_STRING));
 
-        assertHttpResponse(response, 200, "text/plain");
+        assertHttpResponse(response, 204, "text/plain");
     }
     
     
@@ -67,6 +63,6 @@ public class RestletValidUriQueryTest extends RestletTestSupport {
                 
             }
         });
-        assertEquals(200, ex.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));   
+        assertEquals(204, ex.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 }

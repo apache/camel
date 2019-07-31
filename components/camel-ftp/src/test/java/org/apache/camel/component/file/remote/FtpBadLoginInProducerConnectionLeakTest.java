@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,9 +22,10 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.SocketFactory;
 
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.BindToRegistry;
 import org.junit.Test;
 
 public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSupport {
@@ -32,20 +33,14 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
     /**
      * Mapping of socket hashcode to two element tab ([connect() called, close() called])
      */
-    private Map<Integer, boolean[]> socketAudits = new HashMap<Integer, boolean[]>();
+    private Map<Integer, boolean[]> socketAudits = new HashMap<>();
 
+    @BindToRegistry("sf")
+    private SocketFactory sf = new AuditingSocketFactory();
+    
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3"
             + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        SocketFactory sf = new AuditingSocketFactory();
-        jndi.bind("sf", sf);
-        return jndi;
     }
 
     @Test
@@ -58,9 +53,7 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
             }
         }
 
-        // maximumReconnectAttempts is related to TCP connects, not to FTP login attempts
-        // but having this parameter > 0 leads to two connection attempts
-        assertEquals("Expected 4 socket connections to be created", 4, socketAudits.size());
+        assertEquals("Expected 2 socket connections to be created", 2, socketAudits.size());
 
         for (Map.Entry<Integer, boolean[]> socketStats : socketAudits.entrySet()) {
             assertTrue("Socket should be connected", socketStats.getValue()[0]);

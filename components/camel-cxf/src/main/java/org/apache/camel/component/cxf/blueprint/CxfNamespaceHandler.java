@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf.blueprint;
 
 import java.net.URL;
@@ -25,8 +24,8 @@ import java.util.Set;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import org.apache.aries.blueprint.NamespaceHandler;
 import org.apache.aries.blueprint.ParserContext;
+import org.apache.cxf.helpers.BaseNamespaceHandler;
 import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
 import org.slf4j.Logger;
@@ -34,16 +33,19 @@ import org.slf4j.LoggerFactory;
 
 
 
-public class CxfNamespaceHandler implements NamespaceHandler {
+public class CxfNamespaceHandler extends BaseNamespaceHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CxfNamespaceHandler.class);
 
     public URL getSchemaLocation(String s) {
-        return getClass().getClassLoader().getResource("schema/blueprint/camel-cxf.xsd");
+        if ("http://camel.apache.org/schema/blueprint/cxf".equals(s)) {
+            return getClass().getClassLoader().getResource("schema/blueprint/camel-cxf.xsd");
+        }
+        return super.findCoreSchemaLocation(s);
     }
 
     @SuppressWarnings({"rawtypes"})
     public Set<Class> getManagedClasses() {
-        return new HashSet<Class>(Arrays.asList(CxfNamespaceHandler.class));
+        return new HashSet<>(Arrays.asList(CxfNamespaceHandler.class));
     }
 
     public Metadata parse(Element element, ParserContext context) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,7 +43,7 @@ public class Mina2ReverseProtocolHandler extends IoHandlerAdapter {
 
         if (TestSupport.isPlatform("windows")) {
             // seems to be only required on windows to make it work!
-            buf.append(System.getProperty("line.separator"));
+            buf.append(System.lineSeparator());
         }
 
         // and write it back.

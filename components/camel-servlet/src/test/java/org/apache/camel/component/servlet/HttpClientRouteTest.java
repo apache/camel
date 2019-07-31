@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -122,7 +122,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                 }
             });
             fail("Excepts exception here");
-        } catch (FailedToCreateRouteException ex) {
+        } catch (Exception ex) {
             assertTrue("Get a wrong exception.", ex.getCause() instanceof FailedToCreateProducerException);
             assertTrue("Get a wrong cause of exception.", ex.getCause().getCause() instanceof UnsupportedOperationException);
         }

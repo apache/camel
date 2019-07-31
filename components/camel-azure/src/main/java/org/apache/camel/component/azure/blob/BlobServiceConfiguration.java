@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,8 @@ package org.apache.camel.component.azure.blob;
 import java.util.Map;
 
 import com.microsoft.azure.storage.blob.CloudBlob;
+
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.azure.common.AbstractConfiguration;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -247,5 +249,17 @@ public class BlobServiceConfiguration extends AbstractConfiguration {
      */
     public void setUseFlatListing(boolean useFlatListing) {
         this.useFlatListing = useFlatListing;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public BlobServiceConfiguration copy() {
+        try {
+            return (BlobServiceConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

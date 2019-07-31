@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,6 @@ import org.junit.Test;
 
 /**
  * Unit test for testing CXF bus injection.
- *
- * @version 
  */
 public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
     static int port1 = CXFTestSupport.getPort1();

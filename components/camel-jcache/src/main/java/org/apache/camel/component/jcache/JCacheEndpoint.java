@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,31 +19,31 @@ package org.apache.camel.component.jcache;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The jcache component enables you to perform caching operations using JSR107/JCache as cache implementation.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "jcache", title = "JCache", syntax = "jcache:cacheName", consumerClass = JCacheConsumer.class, label = "cache,datagrid,clustering")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "jcache", title = "JCache", syntax = "jcache:cacheName", label = "cache,datagrid,clustering")
 public class JCacheEndpoint extends DefaultEndpoint {
-    @UriPath(description = "the cache name")
-    @Metadata(required = "true")
+
+    @UriPath(description = "The name of the cache")
+    @Metadata(required = true)
     private final String cacheName;
-    
     @UriParam
     private final JCacheConfiguration cacheConfiguration;
-    private final JCacheManager<Object, Object> cacheManager;
+
+    private volatile JCacheManager<Object, Object> cacheManager;
 
     public JCacheEndpoint(String uri, JCacheComponent component, JCacheConfiguration configuration) {
         super(uri, component);
 
         this.cacheName = configuration.getCacheName();
         this.cacheConfiguration = configuration;
-        this.cacheManager = JCacheHelper.createManager(configuration);
     }
 
     @Override
@@ -57,13 +57,15 @@ public class JCacheEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
+    protected void doStart() throws Exception {
+        cacheManager = JCacheHelper.createManager(cacheConfiguration);
     }
 
     @Override
     protected void doStop() throws Exception {
-        cacheManager.close();
+        if (cacheManager != null) {
+            cacheManager.close();
+        }
     }
 
     JCacheManager getManager() {

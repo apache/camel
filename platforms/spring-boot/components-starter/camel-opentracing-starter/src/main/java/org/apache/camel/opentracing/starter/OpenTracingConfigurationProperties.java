@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,37 @@
  */
 package org.apache.camel.opentracing.starter;
 
+import java.util.Set;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.opentracing")
 public class OpenTracingConfigurationProperties {
 
-    // Placeholder for configuration properties
+    /**
+     * Sets exclude pattern(s) that will disable tracing for Camel messages that
+     * matches the pattern.
+     */
+    private Set<String> excludePatterns;
+    /**
+     * Activate or deactivate dash encoding in headers (required by JMS) for
+     * messaging
+     */
+    private Boolean encoding;
 
+    public Set<String> getExcludePatterns() {
+        return excludePatterns;
+    }
+
+    public void setExcludePatterns(Set<String> excludePatterns) {
+        this.excludePatterns = excludePatterns;
+    }
+
+    public Boolean getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(Boolean encoding) {
+        this.encoding = encoding;
+    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,16 +32,13 @@ import org.w3c.dom.Document;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufInputStream;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 
 /**
  * A set of converter methods for working with Netty types
- *
- * @version 
  */
-@Converter
+@Converter(loader = true)
 public final class NettyConverter {
 
     private NettyConverter() {

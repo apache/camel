@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,19 +16,22 @@
  */
 package org.apache.camel.component.metrics.messagehistory;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -39,6 +42,8 @@ public class MetricsMessageHistoryFactory extends ServiceSupport implements Came
     private CamelContext camelContext;
     private MetricsMessageHistoryService messageHistoryService;
     private MetricRegistry metricsRegistry;
+    private boolean copyMessage;
+    private String nodePattern;
     private boolean useJmx;
     private String jmxDomain = "org.apache.camel.metrics";
     private boolean prettyPrint;
@@ -125,9 +130,45 @@ public class MetricsMessageHistoryFactory extends ServiceSupport implements Came
     }
 
     @Override
-    public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, Date date) {
-        Timer timer = metricsRegistry.timer(createName("history", routeId, namedNode.getId()));
-        return new MetricsMessageHistory(routeId, namedNode, timer);
+    public boolean isCopyMessage() {
+        return copyMessage;
+    }
+
+    @Override
+    public void setCopyMessage(boolean copyMessage) {
+        this.copyMessage = copyMessage;
+    }
+
+    @Override
+    public String getNodePattern() {
+        return nodePattern;
+    }
+
+    @Override
+    public void setNodePattern(String nodePattern) {
+        this.nodePattern = nodePattern;
+    }
+
+    @Override
+    public MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp, Exchange exchange) {
+        if (nodePattern != null) {
+            String name = node.getShortName();
+            String[] parts = nodePattern.split(",");
+            for (String part : parts) {
+                boolean match = PatternHelper.matchPattern(name, part);
+                if (!match) {
+                    return null;
+                }
+            }
+        }
+
+        Message msg = null;
+        if (copyMessage) {
+            msg = exchange.getMessage().copy();
+        }
+
+        Timer timer = metricsRegistry.timer(createName("history", routeId, node.getId()));
+        return new MetricsMessageHistory(routeId, node, timer, timestamp, msg);
     }
 
     private String createName(String type, String routeId, String id) {
@@ -156,7 +197,7 @@ public class MetricsMessageHistoryFactory extends ServiceSupport implements Came
                 camelContext.addService(messageHistoryService);
             }
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         // use metrics registry from service if not explicit configured

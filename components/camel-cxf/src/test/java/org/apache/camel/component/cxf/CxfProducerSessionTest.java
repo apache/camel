@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,10 +19,11 @@ package org.apache.camel.component.cxf;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.common.cookie.InstanceCookieHandler;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -39,6 +40,12 @@ public class CxfProducerSessionTest extends CamelTestSupport {
     private static final String REQUEST_MESSAGE_EXPRESSION = "<ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\"><arg0>${in.body}</arg0></ns1:echo>";
     private static final Map<String, String> NAMESPACES = Collections.singletonMap("ns1", "http://cxf.component.camel.apache.org/");
     private static final String PARAMETER_XPATH = "/ns1:echoResponse/return/text()";
+    
+    @BindToRegistry("instanceCookieHandler")
+    private InstanceCookieHandler ich = new InstanceCookieHandler();
+    
+    @BindToRegistry("exchangeCookieHandler")
+    private ExchangeCookieHandler ech = new ExchangeCookieHandler();
 
     private String url = "cxf://" + SIMPLE_SERVER_ADDRESS + "?serviceClass=org.apache.camel.component.cxf.EchoService&dataFormat=PAYLOAD&synchronous=true";
 
@@ -101,6 +108,18 @@ public class CxfProducerSessionTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testSessionWithInvalidPayload() throws Throwable {
+        try {
+            template.requestBody("direct:invalid", "World", String.class);
+        } catch (CamelExecutionException e) {
+            if (e.getCause() != null) {
+                throw e.getCause();
+            }
+            throw e;
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -128,15 +147,9 @@ public class CxfProducerSessionTest extends CamelTestSupport {
                     .to(url + "&cookieHandler=#exchangeCookieHandler")
                     .setBody().xpath(PARAMETER_XPATH, String.class, NAMESPACES)
                     .to("mock:result");
+                from("direct:invalid")
+                    .to(url + "&cookieHandler=#exchangeCookieHandler");
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndiRegistry = super.createRegistry();
-        jndiRegistry.bind("instanceCookieHandler", new InstanceCookieHandler());
-        jndiRegistry.bind("exchangeCookieHandler", new ExchangeCookieHandler());
-        return jndiRegistry;
     }
 }

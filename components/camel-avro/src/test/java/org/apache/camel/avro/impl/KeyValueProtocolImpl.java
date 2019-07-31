@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,21 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.avro.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.avro.AvroRemoteException;
-
 import org.apache.camel.avro.generated.Key;
 import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.avro.generated.Value;
 
 public class KeyValueProtocolImpl implements KeyValueProtocol {
 
-    private Map<Key, Value> store = new HashMap<Key, Value>();
+    private Map<Key, Value> store = new HashMap<>();
 
     @Override
     public Void put(Key key, Value value) throws AvroRemoteException {

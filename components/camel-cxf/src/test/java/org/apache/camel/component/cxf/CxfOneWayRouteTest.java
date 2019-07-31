@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf;
 
 import java.io.ByteArrayOutputStream;
@@ -26,11 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -46,11 +45,13 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
 
     private static Exception bindingException;
     private static boolean bindingDone;
-    
+    private static boolean onCompeletedCalled;
+
     @Before
     public void setup() {
         bindingException = null;
         bindingDone = false;
+        onCompeletedCalled = false;
     }
     
     @Override
@@ -82,6 +83,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        assertTrue("UnitOfWork done should be called", onCompeletedCalled);
         assertNull("exception occured: " + bindingException, bindingException);
     }
     
@@ -97,10 +99,23 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
             bos.write(MAGIC);
             bos.write(msg.getBytes());
             exchange.getIn().setBody(bos.toByteArray());
+            // add compliation
+            exchange.getUnitOfWork().addSynchronization(new Synchronization() {
+                @Override
+                public void onComplete(Exchange exchange) {
+                    onCompeletedCalled = true;
+                }
+
+                @Override
+                public void onFailure(Exchange exchange) {
+                    // do nothing here
+                }
+            });
         }
     }
     
     public static class TestCxfBinding extends DefaultCxfBinding {
+
         @Override
         public void populateCxfResponseFromExchange(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
             try {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,9 +30,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-/**
- * @version 
- */
 public class SqlProducerInsertNullTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
@@ -54,7 +51,7 @@ public class SqlProducerInsertNullTest extends CamelTestSupport {
 
     @Test
     public void testInsertNull() throws Exception {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("id", 4);
         map.put("project", "Foo");
         map.put("lic", "ASF");

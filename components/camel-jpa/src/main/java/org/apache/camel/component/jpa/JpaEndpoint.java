@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,14 +29,14 @@ import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
@@ -48,22 +48,22 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * The jpa component enables you to store and retrieve Java objects from databases using JPA.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType", consumerClass = JpaConsumer.class, label = "database,sql")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType", label = "database,sql")
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
     private Expression producerExpression;
 
-    @UriPath(description = "Entity class name") @Metadata(required = "true")
+    @UriPath(description = "Entity class name") @Metadata(required = true)
     private Class<?> entityType;
-    @UriParam(defaultValue = "camel") @Metadata(required = "true")
+    @UriParam(defaultValue = "camel") @Metadata(required = true)
     private String persistenceUnit = "camel";
     @UriParam(defaultValue = "true")
     private boolean joinTransaction = true;
     @UriParam
     private boolean sharedEntityManager;
-    @UriParam(label = "consumer", defaultValue = "-1")
+    @UriParam(defaultValue = "-1")
     private int maximumResults = -1;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean consumeDelete = true;
@@ -72,17 +72,17 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
 
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(optionalPrefix = "consumer.")
     private String query;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(optionalPrefix = "consumer.")
     private String namedQuery;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(optionalPrefix = "consumer.")
     private String nativeQuery;
     @UriParam(label = "consumer", optionalPrefix = "consumer.", defaultValue = "PESSIMISTIC_WRITE")
     private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.", multiValue = true)
+    @UriParam(optionalPrefix = "consumer.", multiValue = true)
     private Map<String, Object> parameters;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(optionalPrefix = "consumer.")
     private Class<?> resultClass;
     @UriParam(label = "consumer", optionalPrefix = "consumer.")
     private boolean transacted;
@@ -101,6 +101,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean usePassedInEntityManager;
     @UriParam(label = "producer")
     private boolean remove;
+    @UriParam(label = "producer")
+    private Boolean useExecuteUpdate;
 
     @UriParam(label = "advanced", prefix = "emf.", multiValue = true)
     private Map<String, Object> entityManagerProperties;
@@ -109,37 +111,12 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     public JpaEndpoint() {
     }
 
-    /**
-     * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
-     */
-    @Deprecated
-    public JpaEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
-        entityManagerFactory = component.getEntityManagerFactory();
-        transactionManager = component.getTransactionManager();
-    }
-
-    /**
-     * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
-     */
-    @Deprecated
-    public JpaEndpoint(String endpointUri, EntityManagerFactory entityManagerFactory) {
-        super(endpointUri);
-        this.entityManagerFactory = entityManagerFactory;
-    }
-
-    /**
-     * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
-     */
-    @Deprecated
-    public JpaEndpoint(String endpointUri, EntityManagerFactory entityManagerFactory, PlatformTransactionManager transactionManager) {
-        super(endpointUri);
-        this.entityManagerFactory = entityManagerFactory;
-        this.transactionManager = transactionManager;
+        if (component != null) {
+            entityManagerFactory = component.getEntityManagerFactory();
+            transactionManager = component.getTransactionManager();
+        }
     }
 
     @Override
@@ -149,7 +126,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     public Producer createProducer() throws Exception {
         validate();
-        return new JpaProducer(this, getProducerExpression());
+        JpaProducer producer = new JpaProducer(this, getProducerExpression());
+        producer.setQuery(getQuery());
+        producer.setNamedQuery(getNamedQuery());
+        producer.setNativeQuery(getNativeQuery());
+        producer.setParameters(getParameters());
+        producer.setResultClass(getResultClass());
+        producer.setUseExecuteUpdate(isUseExecuteUpdate());
+        return producer;
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -189,10 +173,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         if (emProperties != null) {
             setEntityManagerProperties(emProperties);
         }
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override
@@ -379,7 +359,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     /**
      * If set to true, then Camel will use the EntityManager from the header
-     * JpaConstants.ENTITYMANAGER instead of the configured entity manager on the component/endpoint.
+     * JpaConstants.ENTITY_MANAGER instead of the configured entity manager on the component/endpoint.
      * This allows end users to control which entity manager will be in use.
      */
     public void setUsePassedInEntityManager(boolean usePassedIn) {
@@ -403,7 +383,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To use a custom query when consuming data.
+     * To use a custom query.
      */
     public void setQuery(String query) {
         this.query = query;
@@ -414,7 +394,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To use a named query when consuming data.
+     * To use a named query.
      */
     public void setNamedQuery(String namedQuery) {
         this.namedQuery = namedQuery;
@@ -425,7 +405,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To use a custom native query when consuming data. You may want to use the option consumer.resultClass also when using native queries.
+     * To use a custom native query. You may want to use the option resultClass also when using native queries.
      */
     public void setNativeQuery(String nativeQuery) {
         this.nativeQuery = nativeQuery;
@@ -447,9 +427,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * This key/value mapping is used for building the query parameters.
-     * It's is expected to be of the generic type java.util.Map<String, Object> where the keys are the named parameters
-     * of a given JPA query and the values are their corresponding effective values you want to select for.
+     * <p>This key/value mapping is used for building the query parameters.
+     * It is expected to be of the generic type java.util.Map<String, Object> where the keys are the named parameters
+     * of a given JPA query and the values are their corresponding effective values you want to select for.</p>
+     * <p>When it's used for producer, Simple expression can be used as a parameter value. It allows you to
+     * retrieve parameter values from the message body, header and etc.</p>
      */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
@@ -512,6 +494,19 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setPreDeleteHandler(DeleteHandler<Object> preDeleteHandler) {
         this.preDeleteHandler = preDeleteHandler;
+    }
+
+    public Boolean isUseExecuteUpdate() {
+        return useExecuteUpdate;
+    }
+
+    /**
+     * To configure whether to use executeUpdate() when producer executes a query.
+     * When you use INSERT, UPDATE or DELETE statement as a named query, you need to specify
+     * this option to 'true'.
+     */
+    public void setUseExecuteUpdate(Boolean useExecuteUpdate) {
+        this.useExecuteUpdate = useExecuteUpdate;
     }
 
     // Implementation methods

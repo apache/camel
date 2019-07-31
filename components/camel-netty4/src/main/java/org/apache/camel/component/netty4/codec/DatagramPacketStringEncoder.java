@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.netty4.codec;
 
 import java.net.InetSocketAddress;
@@ -28,10 +27,14 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.DefaultAddressedEnvelope;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Sharable
 public class DatagramPacketStringEncoder extends
     MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketStringEncoder.class);
 
     private final Charset charset;
 
@@ -61,8 +64,10 @@ public class DatagramPacketStringEncoder extends
                 return;
             }
             AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = 
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(ByteBufUtil.encodeString(ctx.alloc(), CharBuffer.wrap(payload), charset), msg.recipient(), msg.sender());
+                new DefaultAddressedEnvelope<>(ByteBufUtil.encodeString(ctx.alloc(), CharBuffer.wrap(payload), charset), msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
+        } else {
+            LOG.debug("Ignoring message content as it is not a java.lang.CharSequence instance.");
         }
     }
 

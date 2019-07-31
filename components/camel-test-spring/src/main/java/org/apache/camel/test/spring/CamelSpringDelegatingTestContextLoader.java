@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,9 @@
  */
 package org.apache.camel.test.spring;
 
-import org.apache.camel.management.JmxSystemPropertyKeys;
+import java.lang.reflect.Method;
+
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.spring.SpringCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,10 @@ import org.springframework.test.context.support.DelegatingSmartContextLoader;
  * <em>This loader can handle either classes or locations for configuring the context.</em>
  * <br>
  * NOTE: This TestContextLoader doesn't support the annotation of ExcludeRoutes now.
+ *
+ * @deprecated use {@link CamelSpringRunner} or {@link CamelSpringBootRunner} instead.
  */
+@Deprecated
 public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartContextLoader {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -77,6 +82,7 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
         AnnotationConfigUtils.registerAnnotationConfigProcessors((BeanDefinitionRegistry) context);
 
         // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
+        CamelAnnotationsHandler.handleRouteCoverage(context, testClass, s -> getTestMethod().getName());
         CamelAnnotationsHandler.handleProvidesBreakpoint(context, testClass);
         CamelAnnotationsHandler.handleShutdownTimeout(context, testClass);
         CamelAnnotationsHandler.handleMockEndpoints(context, testClass);
@@ -117,6 +123,16 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
      */
     protected Class<?> getTestClass() {
         return CamelSpringTestHelper.getTestClass();
+    }
+
+    /**
+     * Returns the test method under test.
+     *
+     * @return the method that is being executed
+     * @see CamelSpringTestHelper
+     */
+    protected Method getTestMethod() {
+        return CamelSpringTestHelper.getTestMethod();
     }
 
 }

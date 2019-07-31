@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.reactive.streams;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -31,22 +30,28 @@ public enum ReactiveStreamsBackpressureStrategy {
      */
     BUFFER {
         @Override
-        public <T> Collection<T> update(Deque<T> buffer, T element) {
-            buffer.addLast(element);
+        public <T> Collection<T> update(Deque<T> buffer, T newItem) {
+            // always buffer
+            buffer.addLast(newItem);
+            // never discard
             return Collections.emptySet();
         }
     },
 
     /**
-     * Drops the most recent onNext value if the downstream can't keep up.
+     * Keeps only the oldest onNext value, discarding any future value
+     * until it's consumed by the downstream subscriber.
      */
-    DROP {
+    OLDEST {
         @Override
-        public <T> Collection<T> update(Deque<T> buffer, T element) {
+        public <T> Collection<T> update(Deque<T> buffer, T newItem) {
             if (buffer.size() > 0) {
-                return Arrays.asList(element);
+                // the buffer has another item, so discarding the incoming one
+                return Collections.singletonList(newItem);
             } else {
-                buffer.addLast(element);
+                // add the new item to the buffer, since it was empty
+                buffer.addLast(newItem);
+                // nothing is discarded
                 return Collections.emptySet();
             }
         }
@@ -58,26 +63,28 @@ public enum ReactiveStreamsBackpressureStrategy {
      */
     LATEST {
         @Override
-        public <T> Collection<T> update(Deque<T> buffer, T element) {
+        public <T> Collection<T> update(Deque<T> buffer, T newItem) {
             Collection<T> discarded = Collections.emptySet();
             if (buffer.size() > 0) {
-                discarded = Arrays.asList(buffer.removeFirst());
+                // there should be an item in the buffer,
+                // so removing it to overwrite
+                discarded = Collections.singletonList(buffer.removeFirst());
             }
-
-            buffer.addLast(element);
+            // add the new item to the buffer
+            // (it should be the only item in the buffer now)
+            buffer.addLast(newItem);
             return discarded;
         }
     };
-
 
     /**
      * Updates the buffer and returns a list of discarded elements (if any).
      *
      * @param buffer the buffer to update
-     * @param element the elment that should possibly be inserted
+     * @param newItem the elment that should possibly be inserted
      * @param <T> the generic type of the element
      * @return the list of discarded elements
      */
-    public abstract <T> Collection<T> update(Deque<T> buffer, T element);
+    public abstract <T> Collection<T> update(Deque<T> buffer, T newItem);
 
 }

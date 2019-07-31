@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,10 +22,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.management.JmxSystemPropertyKeys;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
+import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -33,22 +36,21 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
-/**
- * @version 
- */
 public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
 
     private AbstractApplicationContext applicationContext;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // disable JMX
         System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
         super.setUp();
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         // enable JMX
         System.clearProperty(JmxSystemPropertyKeys.DISABLED);
@@ -57,6 +59,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         IOHelper.close(applicationContext);
     }
 
+    @Test
     public void testClassPathRouteLoading() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
@@ -64,6 +67,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         assertValidContext(context);
     }
 
+    @Test
     public void testClassPathRouteLoadingUsingNamespaces() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
@@ -71,6 +75,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         assertValidContext(context);
     }
 
+    @Test
     public void testGenericApplicationContextUsingNamespaces() throws Exception {
         applicationContext = new GenericApplicationContext();
         XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader((BeanDefinitionRegistry) applicationContext);
@@ -83,6 +88,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         assertValidContext(context);
     }    
     
+    @Test
     public void testXMLRouteLoading() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
@@ -105,6 +111,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         }
     }
     
+    @Test
     public void testRouteBuilderRef() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextRouteBuilderRef.xml");
 
@@ -114,6 +121,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         assertValidContext(context);
     }
 
+    @Test
     public void testAutoStartup() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 

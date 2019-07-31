@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ import java.io.InputStream;
 import org.apache.camel.Converter;
 import org.springframework.core.io.Resource;
 
-@Converter
+@Converter(loader = true)
 public final class ResourceConverter {
 
     private ResourceConverter() {

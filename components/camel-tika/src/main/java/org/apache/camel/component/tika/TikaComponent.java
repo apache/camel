@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,16 +20,14 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.tika.config.TikaConfig;
 
-public class TikaComponent extends UriEndpointComponent {
+@Component("tika")
+public class TikaComponent extends DefaultComponent {
 
     private static final String TIKA_CONFIG = "tikaConfig";
-
-    public TikaComponent() {
-        super(TikaEndpoint.class);
-    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

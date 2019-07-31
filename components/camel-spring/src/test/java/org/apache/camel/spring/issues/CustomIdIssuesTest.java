@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,12 +22,10 @@ import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class CustomIdIssuesTest extends SpringTestSupport {
 
     @Override
@@ -35,12 +33,13 @@ public class CustomIdIssuesTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/CustomIdIssueTest.xml");
     }
 
+    @Test
     public void testCustomId() {
         RouteDefinition route = context.getRouteDefinition("myRoute");
         assertNotNull(route);
         assertTrue(route.hasCustomIdAssigned());
 
-        FromDefinition from = route.getInputs().get(0);
+        FromDefinition from = route.getInput();
         assertEquals("fromFile", from.getId());
         assertTrue(from.hasCustomIdAssigned());
 

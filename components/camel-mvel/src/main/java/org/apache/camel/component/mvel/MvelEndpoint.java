@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,10 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.mvel2.ParserContext;
 import org.mvel2.templates.CompiledTemplate;
@@ -47,11 +47,6 @@ public class MvelEndpoint extends ResourceEndpoint {
 
     public MvelEndpoint(String uri, MvelComponent component, String resourceUri) {
         super(uri, component, resourceUri);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override
@@ -105,11 +100,11 @@ public class MvelEndpoint extends ResourceEndpoint {
             compiled = TemplateCompiler.compileTemplate(content, mvelContext);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Mvel content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{getResourceUri(), path, getEndpointUri()});
+                log.debug("Mvel content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
             }
             // getResourceAsInputStream also considers the content cache
             Reader reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());
-            String template = IOConverter.toString(reader);
+            String template = IOHelper.toString(reader);
             if (!template.equals(this.template)) {
                 this.template = template;
                 this.compiled = TemplateCompiler.compileTemplate(template, mvelContext);
@@ -125,7 +120,6 @@ public class MvelEndpoint extends ResourceEndpoint {
         Message out = exchange.getOut();
         out.setBody(result.toString());
         out.setHeaders(exchange.getIn().getHeaders());
-        out.setAttachments(exchange.getIn().getAttachments());
     }
 
     public MvelEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {

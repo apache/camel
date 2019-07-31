@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,11 +21,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultShutdownStrategy;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
+import org.testng.annotations.AfterTest;
 
 public class CamelPublisherVerificationTest extends PublisherVerification<Exchange> {
+
+    private CamelContext context;
 
     public CamelPublisherVerificationTest() {
         super(new TestEnvironment(2000L));
@@ -33,8 +37,8 @@ public class CamelPublisherVerificationTest extends PublisherVerification<Exchan
 
     @Override
     public Publisher<Exchange> createPublisher(long l) {
+        init();
 
-        CamelContext context = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -64,5 +68,25 @@ public class CamelPublisherVerificationTest extends PublisherVerification<Exchan
     @Override
     public Publisher<Exchange> createFailedPublisher() {
         return null;
+    }
+
+    protected void init() {
+        tearDown();
+        this.context = new DefaultCamelContext();
+        DefaultShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy();
+        shutdownStrategy.setShutdownNowOnTimeout(true);
+        shutdownStrategy.setTimeout(1);
+        this.context.setShutdownStrategy(shutdownStrategy);
+    }
+
+    @AfterTest
+    protected void tearDown() {
+        try {
+            if (this.context != null) {
+                this.context.stop();
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

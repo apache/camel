@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,10 +43,10 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
     protected JdbcTemplate jdbcTemplate;
     protected DataSource dataSource;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     protected MockEndpoint errorEndpoint;
     
     @Override
@@ -98,7 +99,7 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
             }
         };
         RouteDefinition routeDefinition = context.getRouteDefinition("JdbcMessageIdRepositoryTest");
-        routeDefinition.adviceWith(context, interceptor);
+        RouteReifier.adviceWith(routeDefinition, context, interceptor);
 
         // we send in 2 messages with id 2 that fails
         errorEndpoint.expectedMessageCount(2);

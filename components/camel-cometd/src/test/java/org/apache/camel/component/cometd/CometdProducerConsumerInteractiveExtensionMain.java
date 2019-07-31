@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -75,7 +75,7 @@ public class CometdProducerConsumerInteractiveExtensionMain {
 
     public static final class Censor implements BayeuxServer.Extension, ServerSession.RemoveListener {
 
-        private HashSet<String> forbidden = new HashSet<String>(Arrays.asList("one", "two"));
+        private HashSet<String> forbidden = new HashSet<>(Arrays.asList("one", "two"));
 
         public void removed(ServerSession session, boolean timeout) {
             // called on remove of client

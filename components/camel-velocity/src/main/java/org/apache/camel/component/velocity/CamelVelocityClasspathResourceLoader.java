@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,14 @@
 package org.apache.camel.component.velocity;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.collections.ExtendedProperties;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.apache.velocity.util.ExtProperties;
 
 /**
  * Camel specific {@link ClasspathResourceLoader} that loads resources using the
@@ -33,19 +35,19 @@ public class CamelVelocityClasspathResourceLoader extends ClasspathResourceLoade
     private ClassResolver resolver;
 
     @Override
-    public void init(ExtendedProperties configuration) {
+    public void init(ExtProperties configuration) {
         super.init(configuration);
         resolver = (ClassResolver) this.rsvc.getProperty("CamelClassResolver");
         ObjectHelper.notNull(resolver, "ClassResolver");
     }
 
     @Override
-    public InputStream getResourceStream(String name) throws ResourceNotFoundException {
+    public Reader getResourceReader(String name, String encoding) throws ResourceNotFoundException {
         InputStream is = resolver.loadResourceAsStream(name);
         if (is == null) {
-            return super.getResourceStream(name);
+            return super.getResourceReader(name, encoding);
         } else {
-            return is;
+            return new InputStreamReader(is);
         }
     }
 

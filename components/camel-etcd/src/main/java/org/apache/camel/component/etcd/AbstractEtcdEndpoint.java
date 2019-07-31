@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,7 @@
 package org.apache.camel.component.etcd;
 
 import mousio.etcd4j.EtcdClient;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The camel etcd component allows you to work with <a href="https://coreos.com/etcd">Etcd</a>, a distributed reliable key-value store.
@@ -34,11 +34,6 @@ public abstract class AbstractEtcdEndpoint extends DefaultEndpoint implements Et
         this.configuration = configuration;
         this.namespace = namespace;
         this.path = path;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override

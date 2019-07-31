@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,13 +31,13 @@ public class HazelcastAggregationRepositoryRoutesTest extends HazelcastAggregati
     private static final String DIRECT_ONE = "direct:one";
     private static final String DIRECT_TWO = "direct:two";
 
-    @EndpointInject(uri = MOCK_GOTCHA)
+    @EndpointInject(MOCK_GOTCHA)
     private MockEndpoint mock;
 
-    @Produce(uri = DIRECT_ONE)
+    @Produce(DIRECT_ONE)
     private ProducerTemplate produceOne;
 
-    @Produce(uri = DIRECT_TWO)
+    @Produce(DIRECT_TWO)
     private ProducerTemplate produceTwo;
 
 

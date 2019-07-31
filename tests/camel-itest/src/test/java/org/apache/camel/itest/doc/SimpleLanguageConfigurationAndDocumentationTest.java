@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -31,13 +32,14 @@ public class SimpleLanguageConfigurationAndDocumentationTest extends CamelTestSu
     @Test
     public void testLanguageJsonSchema() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String json = context.getLanguageParameterJsonSchema("simple");
+        String json = context.adapt(CatalogCamelContext.class).getLanguageParameterJsonSchema("simple");
         assertNotNull("Should have found some auto-generated JSON", json);
         log.info(json);
 
         assertTrue(json.contains("\"name\": \"simple\""));
         assertTrue(json.contains("\"modelName\": \"simple\""));
-        assertTrue(json.contains("\"resultType\": { \"kind\": \"attribute\", \"displayName\": \"Result Type\", \"required\": false, \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": false"));
+        assertTrue(json.contains("\"resultType\": { \"kind\": \"attribute\", \"displayName\": \"Result Type\", \"required\": false, \"type\": \"string\""
+            + ", \"javaType\": \"java.lang.String\", \"deprecated\": false"));
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,27 +30,30 @@ import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.BraintreePropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.component.AbstractApiEndpoint;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.AbstractApiEndpoint;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * The braintree component is used for integrating with the Braintree Payment System.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName", consumerClass = BraintreeConsumer.class, label = "api,cloud,payment")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName", label = "api,cloud,payment")
 public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, BraintreeConfiguration> {
 
     @UriParam
     private final BraintreeConfiguration configuration;
 
     private Object apiProxy;
-    private final BraintreeGateway gateway;
 
-    public BraintreeEndpoint(String uri, BraintreeComponent component,
-                         BraintreeApiName apiName, String methodName, BraintreeConfiguration configuration, BraintreeGateway gateway) {
+    public BraintreeEndpoint(
+            String uri,
+            BraintreeComponent component,
+            BraintreeApiName apiName,
+            String methodName,
+            BraintreeConfiguration configuration
+    ) {
         super(uri, component, apiName, methodName, BraintreeApiCollection.getCollection().getHelper(apiName), configuration);
         this.configuration = configuration;
-        this.gateway = gateway;
     }
 
     @Override
@@ -67,6 +70,11 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
     }
 
     @Override
+    public BraintreeComponent getComponent() {
+        return (BraintreeComponent) super.getComponent();
+    }
+
+    @Override
     protected ApiMethodPropertiesHelper<BraintreeConfiguration> getPropertiesHelper() {
         return BraintreePropertiesHelper.getHelper();
     }
@@ -78,6 +86,7 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
 
     @Override
     protected void afterConfigureProperties() {
+        BraintreeGateway gateway = getComponent().getGateway(this.configuration);
         try {
             Method method = gateway.getClass().getMethod(apiName.getName());
             if (method != null) {

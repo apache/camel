@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,8 +32,6 @@ import org.junit.Test;
 
 /**
  * Restlet producer concurrent test
- * 
- * @version 
  */
 public class RestletProducerConcurrentTest extends RestletTestSupport {
 
@@ -53,12 +51,12 @@ public class RestletProducerConcurrentTest extends RestletTestSupport {
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         // we access the responses Map below only inside the main thread,
         // so no need for a thread-safe Map implementation
-        Map<Integer, Future<String>> responses = new HashMap<Integer, Future<String>>();
+        Map<Integer, Future<String>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() throws Exception {
-                    Map<String, Object> headers = new HashMap<String, Object>();
+                    Map<String, Object> headers = new HashMap<>();
                     headers.put("username", "davsclaus");
                     headers.put("id", index);
                     return template
@@ -73,7 +71,7 @@ public class RestletProducerConcurrentTest extends RestletTestSupport {
         assertEquals(files, responses.size());
 
         // get all responses
-        Set<String> unique = new HashSet<String>();
+        Set<String> unique = new HashSet<>();
         for (Future<String> future : responses.values()) {
             unique.add(future.get());
         }

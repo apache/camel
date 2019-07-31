@@ -1,0 +1,122 @@
+[[Howtoavoidsendingsomeorallmessageheaders-Howtoavoidsendingsomeorallmessageheaders]]
+= How to avoid sending some or all message headers?
+
+When I send a message to a Camel endpoint such as the
+xref:components::mail-component.adoc[Mail] component, then the mail include some message
+headers I do not want. How can I avoid this?
+
+[[Howtoavoidsendingsomeorallmessageheaders-UseremoveHeadersintheroute]]
+== Use removeHeaders in the route
+
+This is a gotcha more people encounter. However it's very easy to solve.
+To remove all headers use a wildcard expression:
+
+[source,java]
+----
+from(...).removeHeaders("*").to("smtp://....")
+----
+
+Similarly to remove all headers except some of your own (`myheader1` and
+`myheader2`) use a wildcard with a vararg:
+
+[source,java]
+----
+from(...).removeHeaders("*", "myheader1", "myheader2").to("smtp://....")
+----
+
+To do (a similar thing) in XML DSL you simply do:
+
+[source,xml]
+----
+<route>
+  <from uri="..."/>
+  <removeHeaders pattern="*" excludePattern="header1|header2"/>
+  <to uri="smtp://..."/>
+</route>
+----
+
+At present, the `excludePattern` only supports one header name (which
+can be include wild cards or regular expressions). We tackle this
+limitation with
+https://issues.apache.org/jira/browse/CAMEL-6445[CAMEL-6445].
+
+Again to remove only Camel headers but no other transport headers:
+
+[source,java]
+----
+from(...).removeHeaders("Camel*").to("smtp://....")
+----
+
+To do this in XML DSL you simply do:
+
+[source,xml]
+----
+<route>
+  <from uri="..."/>
+  <removeHeaders pattern="Camel*"/>
+  <to uri="smtp://..."/>
+</route>
+----
+
+There is also a removeHeader in the DSL to remove a single header. But
+it does not support patterns, so you can only remove a single header by
+its name.
+
+[[Howtoavoidsendingsomeorallmessageheaders-UseHeaderFilterStrategy]]
+== Use HeaderFilterStrategy
+
+An alternative is that some of the Camel
+xref:component.adoc[Components] supports configuring a custom header
+filter strategy.
+This allows you to implement the
+`org.apache.camel.spi.HeaderFilterStrategy` interface, where one can
+filter unwanted headers from the communication while not removing them from the
+Exchange. Though it's often easier to use the `removeHeaders` in the Camel route
+as shown above.
+
+Camel core offers a default filter strategy implementation, the
+DefaultHeaderFilterStrategy class, to which one can provide a regular expression
+pattern or a set of header names to be filtered out.
+
+[source,xml]
+----
+<bean class="org.apache.camel.impl.DefaultHeaderFilterStrategy" id="myFilter">
+    <property name="outFilter">
+        <set>
+            <value>unwantedHeaderName</value>
+        </set>
+    </property>
+</bean>
+...
+<setHeader name="allowedHeaderName"><constant>some metadata</constant></setHeader>
+<setHeader name="unwantedHeaderName"><constant>some private data</constant></setHeader>
+<to id="publish" uri="activemq:queue:destinationName?headerFilterStrategy=#myFilter"/>
+<log message="${header.unwantedHeaderName}"/>
+----
+
+The destination queue would receive a JMS message with the allowedHeaderName as
+JMS property. If the queue messages are consumed by a Camel route, then the
+exchange will have the allowedHeaderName as a header. The log would print "some
+private data" since the header has only been filtered out from the producer
+endpoint, but not removed from the Exchange.
+
+[[Howtoavoidsendingsomeorallmessageheaders-SelectingTheAcceptedHeaders]]
+== Selecting the accepted headers
+
+The more steps a route has, more headers tend to be present in the exchange.
+When the number of headers is large, undetermined, or one can't know in advance
+which headers must be filtered out, it is desirable not to deliver by default
+the headers to the destination endpoint.
+
+In this case, one can filter out everything and selectively send only certain
+headers to the destination endpoint. The DefaultHeaderFilterStrategy behavior
+can be reversed so only certain headers are accepted through the filterOnMatch
+property.
+
+[source,xml]
+----
+<bean class="org.apache.camel.impl.DefaultHeaderFilterStrategy" id="myFilter">
+    <property name="filterOnMatch" value="false" />
+    ...
+</bean>
+----

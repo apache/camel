@@ -1,0 +1,20 @@
+[[HowdoIuseJava14logging-HowdoIuseJava14logging]]
+= How do I use Java 1.4 logging?
+
+Camel uses http://www.slf4j.org/[sfl4j] which allows you to configure
+logging via, among others:
+
+* http://logging.apache.org/log4j/[Log4j]
+* http://logback.qos.ch/[Logback]
+* https://docs.oracle.com/javase/8/docs/api/java/util/logging/package-summary.html[JDK Util Logging logging]
+
+The quick way to enable Java 1.4 logging is to create a
+`commons-logging.properties` file on the classpath with this entry...
+
+[source,java]
+----
+org.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger
+#org.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger
+----
+
+Many thanks to Glen Mazza for figuring this out :smile:

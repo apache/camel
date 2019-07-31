@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
  */
 public class StopWatchTestExecutionListener extends AbstractTestExecutionListener {
     
-    protected static ThreadLocal<StopWatch> threadStopWatch = new ThreadLocal<StopWatch>();
+    protected static ThreadLocal<StopWatch> threadStopWatch = new ThreadLocal<>();
     
     /**
      * Exists primarily for testing purposes, but allows for access to the underlying stop watch instance for a test.
@@ -47,7 +47,7 @@ public class StopWatchTestExecutionListener extends AbstractTestExecutionListene
     public void afterTestMethod(TestContext testContext) throws Exception {
         StopWatch watch = threadStopWatch.get();
         if (watch != null) {
-            long time = watch.stop();
+            long time = watch.taken();
             Logger log = LoggerFactory.getLogger(testContext.getTestClass());
 
             log.info("********************************************************************************");

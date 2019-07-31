@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,7 +40,7 @@ public class HystrixTimeoutTest extends CamelTestSupport {
         // this calls the slow route and therefore causes a timeout which triggers an exception
         try {
             template.requestBody("direct:start", "slow");
-            fail("Should fail due timeout");
+            fail("Should fail due to timeout");
         } catch (Exception e) {
             // expected a timeout
             assertIsInstanceOf(TimeoutException.class, e.getCause().getCause());
@@ -54,7 +54,7 @@ public class HystrixTimeoutTest extends CamelTestSupport {
             try {
                 log.info(">>> test run " + i + " <<<");
                 template.requestBody("direct:start", "slow");
-                fail("Should fail due timeout");
+                fail("Should fail due to timeout");
             } catch (Exception e) {
                 // expected a timeout
                 assertIsInstanceOf(TimeoutException.class, e.getCause().getCause());

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,6 @@ import java.util.Set;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
-import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
@@ -35,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
-import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByType;
 import static org.apache.deltaspike.cdise.api.CdiContainerLoader.getCdiContainer;
 
 /**
@@ -75,19 +73,24 @@ public class Main extends MainSupport {
 
     @Override
     protected ProducerTemplate findOrCreateCamelTemplate() {
-        return getReferenceByType(cdiContainer.getBeanManager(), CamelContext.class)
-            .orElseThrow(
-                () -> new UnsatisfiedResolutionException("No default Camel context is deployed, "
-                    + "cannot create default ProducerTemplate!"))
-            .createProducerTemplate();
+        if (getCamelContext() == null) {
+            throw new IllegalArgumentException("No CamelContext are available so cannot create a ProducerTemplate!");
+        }
+        return getCamelContext().createProducerTemplate();
     }
 
     @Override
-    protected Map<String, CamelContext> getCamelContextMap() {
+    protected CamelContext createCamelContext() {
         BeanManager manager = cdiContainer.getBeanManager();
-        return manager.getBeans(CamelContext.class, ANY).stream()
+        Map<String, CamelContext> camels = manager.getBeans(CamelContext.class, ANY).stream()
             .map(bean -> getReference(manager, CamelContext.class, bean))
             .collect(toMap(CamelContext::getName, identity()));
+        if (camels.size() > 1) {
+            throw new IllegalArgumentException("Multiple CamelContext detected. This Main class only supports single CamelContext");
+        } else if (camels.size() == 1) {
+            return camels.values().iterator().next();
+        }
+        return null;
     }
 
     @Override
@@ -98,7 +101,7 @@ public class Main extends MainSupport {
         container.getContextControl().startContexts();
         cdiContainer = container;
         super.doStart();
-        postProcessContext();
+        initCamelContext();
         warnIfNoCamelFound();
     }
 

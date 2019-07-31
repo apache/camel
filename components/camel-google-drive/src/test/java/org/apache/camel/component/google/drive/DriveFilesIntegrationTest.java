@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,6 @@ import com.google.api.client.http.FileContent;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
@@ -50,7 +49,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         File toFile = new File();
         toFile.setTitle(UPLOAD_FILE.getName() + "_copy");
         
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fromFileId);
         // parameter type is com.google.api.services.drive.model.File
@@ -121,7 +120,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         
         File testFile2 = uploadTestFile();
         
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("CamelGoogleDrive.maxResults", 1);
         
         result = requestBodyAndHeaders("direct://LIST", null, headers);
@@ -129,7 +128,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         assertTrue(result.getItems().size() == 1);
         
         // test paging the list
-        List<File> resultList = new ArrayList<File>();
+        List<File> resultList = new ArrayList<>();
         String pageToken;
         int i = 0;
         do {
@@ -155,7 +154,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         // lets update the filename
         file.setTitle(UPLOAD_FILE.getName() + "PATCHED");
         
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", file.getId());
         // parameter type is String
@@ -195,7 +194,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
     public void testUpdate() throws Exception {
         File theTestFile = uploadTestFile();
         
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", theTestFile.getId());
         // parameter type is com.google.api.services.drive.model.File
@@ -226,7 +225,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
         // Send the request to the API.
         
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is com.google.api.services.drive.model.File
@@ -244,7 +243,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
     @Ignore
     @Test
     public void testWatch() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", null);
         // parameter type is com.google.api.services.drive.model.Channel

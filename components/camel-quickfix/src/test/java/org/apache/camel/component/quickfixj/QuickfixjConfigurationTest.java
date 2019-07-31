@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,17 +32,17 @@ public class QuickfixjConfigurationTest {
     public void testConfiguration() throws Exception {
         QuickfixjConfiguration factory = new QuickfixjConfiguration();
 
-        Map<Object, Object> defaultSettings = new HashMap<Object, Object>();
+        Map<Object, Object> defaultSettings = new HashMap<>();
         defaultSettings.put("value1", 1);
         defaultSettings.put("value2", 2);
 
         factory.setDefaultSettings(defaultSettings);
 
-        Map<Object, Object> session1Settings = new HashMap<Object, Object>();
+        Map<Object, Object> session1Settings = new HashMap<>();
         session1Settings.put("value1", 10);
         session1Settings.put("value3", 30);
 
-        Map<SessionID, Map<Object, Object>> sessionSettings = new HashMap<SessionID, Map<Object, Object>>();
+        Map<SessionID, Map<Object, Object>> sessionSettings = new HashMap<>();
 
         SessionID sessionID = new SessionID("FIX.4.2:SENDER->TARGET");
         sessionSettings.put(sessionID, session1Settings);

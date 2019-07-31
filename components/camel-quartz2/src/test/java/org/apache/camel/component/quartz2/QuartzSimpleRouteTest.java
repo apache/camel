@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,7 +27,6 @@ import org.quartz.Trigger;
 
 /**
  * This not only set SimpleTrigger as a timer endpoint in a route, and also test the trigger.XXX properties setter.
- * @version 
  */
 public class QuartzSimpleRouteTest extends BaseQuartzTest {
 

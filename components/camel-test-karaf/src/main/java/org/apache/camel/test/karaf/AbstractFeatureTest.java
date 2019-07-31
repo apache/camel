@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.test.karaf;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -30,6 +31,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.function.Consumer;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
@@ -43,9 +45,11 @@ import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.karaf.container.internal.JavaVersionUtil;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.UrlReference;
+import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Bundle;
@@ -57,6 +61,8 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +70,9 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.vmOption;
+import static org.ops4j.pax.exam.CoreOptions.when;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
@@ -103,12 +111,19 @@ public abstract class AbstractFeatureTest {
     }
 
     protected Bundle installBlueprintAsBundle(String name, URL url, boolean start) throws BundleException {
+        return installBlueprintAsBundle(name, url, start, bundle -> { });
+    }
+
+    protected Bundle installBlueprintAsBundle(String name, URL url, boolean start, Consumer<Object> consumer) throws BundleException {
+        // TODO Type Consumer<TinyBundle> cannot be used for this method signature to avoid bundle dependency to pax tinybundles
         TinyBundle bundle = TinyBundles.bundle();
         bundle.add("OSGI-INF/blueprint/blueprint-" + name.toLowerCase(Locale.ENGLISH) + ".xml", url);
         bundle.set("Manifest-Version", "2")
                 .set("Bundle-ManifestVersion", "2")
                 .set("Bundle-SymbolicName", name)
-                .set("Bundle-Version", "1.0.0");
+                .set("Bundle-Version", "1.0.0")
+                .set(Constants.DYNAMICIMPORT_PACKAGE, "*");
+        consumer.accept(bundle);
         Bundle answer = bundleContext.installBundle(name, bundle.build());
 
         if (start) {
@@ -118,12 +133,18 @@ public abstract class AbstractFeatureTest {
     }
 
     protected Bundle installSpringAsBundle(String name, URL url, boolean start) throws BundleException {
+        return installSpringAsBundle(name, url, start, bundle -> { });
+    }
+
+    protected Bundle installSpringAsBundle(String name, URL url, boolean start, Consumer<Object> consumer) throws BundleException {
+        // TODO Type Consumer<TinyBundle> cannot be used for this method signature to avoid bundle dependency to pax tinybundles
         TinyBundle bundle = TinyBundles.bundle();
         bundle.add("META-INF/spring/spring-" + name.toLowerCase(Locale.ENGLISH) + ".xml", url);
         bundle.set("Manifest-Version", "2")
                 .set("Bundle-ManifestVersion", "2")
                 .set("Bundle-SymbolicName", name)
                 .set("Bundle-Version", "1.0.0");
+        consumer.accept(bundle);
         Bundle answer = bundleContext.installBundle(name, bundle.build());
 
         if (start) {
@@ -140,6 +161,32 @@ public abstract class AbstractFeatureTest {
         // do not refresh bundles causing out bundle context to be invalid
         // TODO: see if we can find a way maybe to install camel.xml as bundle/feature instead of part of unit test (see src/test/resources/OSGI-INF/blueprint)
         featuresService.installFeature(mainFeature, EnumSet.of(FeaturesService.Option.NoAutoRefreshBundles));
+    }
+
+    protected void overridePropertiesWithConfigAdmin(String pid, Properties props) throws IOException {
+        ConfigurationAdmin configAdmin = getOsgiService(bundleContext, ConfigurationAdmin.class);
+        // passing null as second argument ties the configuration to correct bundle.
+        Configuration config = configAdmin.getConfiguration(pid, null);
+        if (config == null) {
+            throw new IllegalArgumentException("Cannot find configuration with pid " + pid + " in OSGi ConfigurationAdmin service.");
+        }
+
+        // let's merge configurations
+        Dictionary<String, Object> currentProperties = config.getProperties();
+        Dictionary newProps = new Properties();
+        if (currentProperties == null) {
+            currentProperties = newProps;
+        }
+        for (Enumeration<String> ek = currentProperties.keys(); ek.hasMoreElements();) {
+            String k = ek.nextElement();
+            newProps.put(k, currentProperties.get(k));
+        }
+        for (String p : props.stringPropertyNames()) {
+            newProps.put(p, props.getProperty(p));
+        }
+
+        LOG.info("Updating ConfigAdmin {} by overriding properties {}", config, newProps);
+        config.update(newProps);
     }
 
     protected void testComponent(String component) throws Exception {
@@ -256,7 +303,7 @@ public abstract class AbstractFeatureTest {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "4.0.8";
+            karafVersion = "4.1.0";
         }
         return karafVersion;
     }
@@ -278,8 +325,8 @@ public abstract class AbstractFeatureTest {
 
         Option[] options = new Option[]{
             // for remote debugging
-            //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
-            //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
+//            new VMOption("-Xdebug"),
+//            new VMOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
 
             KarafDistributionOption.karafDistributionConfiguration()
                     .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
@@ -302,6 +349,9 @@ public abstract class AbstractFeatureTest {
             // Disable the Karaf shutdown port
             editConfigurationFilePut("etc/custom.properties", "karaf.shutdown.port", "-1"),
 
+            // log config
+            editConfigurationFilePut("etc/custom.properties", "karaf.log", "${karaf.data}/log"),
+
             // Assign unique ports for Karaf
 //            editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", Integer.toString(AvailablePortFinder.getNextAvailable())),
 //            editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
@@ -314,7 +364,38 @@ public abstract class AbstractFeatureTest {
             features(getCamelKarafFeatureUrl(), camelFeatures),
 
             // install camel-test-karaf as bundle (not feature as the feature causes a bundle refresh that invalidates the @Inject bundleContext)
-            mavenBundle().groupId("org.apache.camel").artifactId("camel-test-karaf").versionAsInProject()
+            mavenBundle().groupId("org.apache.camel").artifactId("camel-test-karaf").versionAsInProject(),
+            when(JavaVersionUtil.getMajorVersion() >= 9)
+                    .useOptions(
+                    systemProperty("pax.exam.osgi.`unresolved.fail").value("true"),
+                    systemProperty("java.awt.headless").value("true"),
+                    new VMOption("--add-reads=java.xml=java.logging"),
+                    new VMOption("--add-exports=java.base/org.apache.karaf.specs.locator=java.xml,ALL-UNNAMED"),
+                    new VMOption("--patch-module"),
+                    new VMOption("java.base=lib/endorsed/org.apache.karaf.specs.locator-"
+                            + System.getProperty("karafVersion", "4.2.4") + ".jar"),
+                    new VMOption("--patch-module"),
+                    new VMOption("java.xml=lib/endorsed/org.apache.karaf.specs.java.xml-"
+                            + System.getProperty("karafVersion", "4.2.4") + ".jar"),
+                    new VMOption("--add-opens"),
+                    new VMOption("java.base/java.security=ALL-UNNAMED"),
+                    new VMOption("--add-opens"),
+                    new VMOption("java.base/java.net=ALL-UNNAMED"),
+                    new VMOption("--add-opens"),
+                    new VMOption("java.base/java.lang=ALL-UNNAMED"),
+                    new VMOption("--add-opens"),
+                    new VMOption("java.base/java.util=ALL-UNNAMED"),
+                    new VMOption("--add-opens"),
+                    new VMOption("java.naming/javax.naming.spi=ALL-UNNAMED"),
+                    new VMOption("--add-opens"),
+                    new VMOption("java.rmi/sun.rmi.transport.tcp=ALL-UNNAMED"),
+                    new VMOption("--add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED"),
+                    new VMOption("--add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED"),
+                    new VMOption("--add-exports=java.base/sun.net.www.protocol.jar=ALL-UNNAMED"),
+                    new VMOption("--add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED"),
+                    new VMOption("-classpath"),
+                    new VMOption("lib/jdk9plus/*" + File.pathSeparator + "lib/boot/*")
+            )
         };
 
         return options;
@@ -391,7 +472,7 @@ public abstract class AbstractFeatureTest {
      * Provides an iterable collection of references, even if the original array is <code>null</code>.
      */
     private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
-        return references == null ? new ArrayList<ServiceReference>(0) : Arrays.asList(references);
+        return references == null ? new ArrayList<>(0) : Arrays.asList(references);
     }
 
 }

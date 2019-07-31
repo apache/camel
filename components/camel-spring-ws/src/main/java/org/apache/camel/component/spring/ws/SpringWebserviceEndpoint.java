@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,16 +20,16 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The spring-ws component is used for SOAP WebServices using Spring WebServices.
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "spring-ws", title = "Spring WebService",
         syntax = "spring-ws:type:lookupKey:webServiceEndpointUri",
-        consumerClass = SpringWebserviceConsumer.class, label = "soap,webservice")
+        label = "spring,soap,webservice")
 public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -51,10 +51,6 @@ public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
     public Producer createProducer() throws Exception {
         return new SpringWebserviceProducer(this);
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     public SpringWebserviceConfiguration getConfiguration() {

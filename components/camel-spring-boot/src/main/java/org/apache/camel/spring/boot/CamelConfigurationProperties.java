@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,91 @@
  */
 package org.apache.camel.spring.boot;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.main.DefaultConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.springboot")
-public class CamelConfigurationProperties {
+public class CamelConfigurationProperties extends DefaultConfigurationProperties<CamelConfigurationProperties> {
 
-    // Properties
+    // Spring Boot only Properties
+    // ---------------------------
+
+    /**
+     * Whether to use the main run controller to ensure the Spring-Boot application
+     * keeps running until being stopped or the JVM terminated.
+     * You typically only need this if you run Spring-Boot standalone.
+     * If you run Spring-Boot with spring-boot-starter-web then the web container keeps the JVM running.
+     */
+    private boolean mainRunController;
+
+    /**
+     * Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances.
+     * By default only singleton beans is included in the context scan.
+     */
+    private boolean includeNonSingletons;
+
+    /**
+     * Whether to log a WARN if Camel on Spring Boot was immediately shutdown after starting which
+     * very likely is because there is no JVM thread to keep the application running.
+     */
+    private boolean warnOnEarlyShutdown = true;
+
+    /**
+     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     *
+     * Multiple patterns can be specified separated by comma.
+     * For example to include all classes starting with Foo use: &#42;&#42;/Foo*
+     * To include all routes form a specific package use: com/mycompany/foo/&#42;
+     * To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42;
+     * And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42;
+     */
+    private String javaRoutesIncludePattern;
+
+    /**
+     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     * Multiple patterns can be specified separated by comma.
+     *
+     * For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42;
+     * To exclude all routes form a specific package use: com/mycompany/bar/&#42;
+     * To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42;
+     * And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42;
+     */
+    private String javaRoutesExcludePattern;
+
+    /**
+     * Directory to scan for adding additional XML routes.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    private String xmlRoutes = "classpath:camel/*.xml";
+
+    /**
+     * Directory to scan for adding additional XML rests.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    private String xmlRests = "classpath:camel-rest/*.xml";
+
+    // Default Properties via camel-main
+    // ---------------------------------
+
+    // IMPORTANT: Must include the options from DefaultConfigurationProperties as spring boot apt compiler
+    //            needs to grab the documentation from the javadoc on the field.
 
     /**
      * Sets the name of the CamelContext.
@@ -39,19 +116,17 @@ public class CamelConfigurationProperties {
      * Whether Camel should try to suppress logging during shutdown and timeout was triggered,
      * meaning forced shutdown is happening. And during forced shutdown we want to avoid logging
      * errors/warnings et all in the logs as a side-effect of the forced timeout.
-     * <p/>
-     * By default this is <tt>false</tt>
-     * <p/>
-     * Notice the suppress is a <i>best effort</i> as there may still be some logs coming
+     * Notice the suppress is a best effort as there may still be some logs coming
      * from 3rd party libraries and whatnot, which Camel cannot control.
+     * This option is default false.
      */
     private boolean shutdownSuppressLoggingOnTimeout;
 
     /**
      * Sets whether to force shutdown of all consumers when a timeout occurred and thus
      * not all consumers was shutdown within that period.
-     * <p/>
-     * You should have good reasons to set this option to <tt>false</tt> as it means that the routes
+     *
+     * You should have good reasons to set this option to false as it means that the routes
      * keep running and is halted abruptly when CamelContext has been shutdown.
      */
     private boolean shutdownNowOnTimeout = true;
@@ -83,73 +158,84 @@ public class CamelConfigurationProperties {
     private int consumerTemplateCacheSize = 1000;
 
     /**
-     * Enables enhanced Camel/Spring type conversion.
+     * Whether to load custom type converters by scanning classpath.
+     * This is used for backwards compatibility with Camel 2.x.
+     * Its recommended to migrate to use fast type converter loading
+     * by setting <tt>@Converter(loader = true)</tt> on your custom
+     * type converter classes.
      */
-    private boolean typeConversion = true;
-
-    /**
-     * Directory to scan for adding additional XML routes.
-     * You can turn this off by setting the value to false.
-     */
-    private String xmlRoutes = "classpath:camel/*.xml";
-
-    /**
-     * Directory to scan for adding additional XML rests.
-     * You can turn this off by setting the value to false.
-     */
-    private String xmlRests = "classpath:camel-rest/*.xml";
-
-    /**
-     * To watch the directory for file changes which triggers
-     * a live reload of the Camel routes on-the-fly.
-     * <p/>
-     * For example configure this to point to the source code where the Camel XML files are located
-     * such as: src/main/resources/camel/
-     */
-    private String xmlRoutesReloadDirectory;
+    private boolean loadTypeConverters = true;
 
     /**
      * Directory to load additional configuration files that contains
      * configuration values that takes precedence over any other configuration.
      * This can be used to refer to files that may have secret configuration that
      * has been mounted on the file system for containers.
-     * <p/>
-     * You must use either <tt>file:</tt> or <tt>classpath:</tt> as prefix to load
+     *
+     * You must use either file: or classpath: as prefix to load
      * from file system or classpath. Then you can specify a pattern to load
-     * from sub directories and a name pattern such as <tt>file:/var/app/secret/*.properties</tt>
+     * from sub directories and a name pattern such as file:/var/app/secret/*.properties
      */
     private String fileConfigurations;
 
     /**
-     * Whether to use the main run controller to ensure the Spring-Boot application
-     * keeps running until being stopped or the JVM terminated.
-     * You typically only need this if you run Spring-Boot standalone.
-     * If you run Spring-Boot with spring-boot-starter-web then the web container keeps the JVM running.
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
      */
-    private boolean mainRunController;
+    private String routeFilterIncludePattern;
 
     /**
-     * Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances.
-     * By default only singleton beans is included in the context scan.
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
      */
-    private boolean includeNonSingletons;
+    private String routeFilterExcludePattern;
+
+    /**
+     * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
+     */
+    private int durationMaxSeconds;
+
+    /**
+     * To specify for how long time in seconds Camel can be idle before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
+     */
+    private int durationMaxIdleSeconds;
+
+    /**
+     * To specify how many messages to process by Camel before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
+     */
+    private int durationMaxMessages;
 
     /**
      * Is used to limit the maximum length of the logging Camel message bodies. If the message body
-     * is longer than the limit, the log message is clipped. Use a value of 0 or negative to have unlimited length.
-     * Use for example 1000 to log at at most 1000 chars.
+     * is longer than the limit, the log message is clipped. Use -1 to have unlimited length.
+     * Use for example 1000 to log at most 1000 characters.
      */
     private int logDebugMaxChars;
-
-    /**
-     * Sets whether stream caching is enabled or not.
-     *
-     * Default is false.
-     *
-     * @deprecated use {@link #streamCachingEnabled}
-     */
-    @Deprecated
-    private boolean streamCaching;
 
     /**
      * Sets whether stream caching is enabled or not.
@@ -160,24 +246,22 @@ public class CamelConfigurationProperties {
 
     /**
      * Sets the stream caching spool (temporary) directory to use for overflow and spooling to disk.
-     * <p/>
+     *
      * If no spool directory has been explicit configured, then a temporary directory
-     * is created in the <tt>java.io.tmpdir</tt> directory.
+     * is created in the java.io.tmpdir directory.
      */
     private String streamCachingSpoolDirectory;
 
     /**
-     * Sets a stream caching chiper name to use when spooling to disk to write with encryption.
-     * <p/>
+     * Sets a stream caching cipher name to use when spooling to disk to write with encryption.
      * By default the data is not encrypted.
      */
-    private String streamCachingSpoolChiper;
+    private String streamCachingSpoolCipher;
 
     /**
      * Stream caching threshold in bytes when overflow to disk is activated.
-     * <p/>
-     * The default threshold is {@link org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes (eg 128kb).
-     * Use <tt>-1</tt> to disable overflow to disk.
+     * The default threshold is 128kb.
+     * Use -1 to disable overflow to disk.
      */
     private long streamCachingSpoolThreshold;
 
@@ -192,26 +276,25 @@ public class CamelConfigurationProperties {
     private String streamCachingSpoolUsedHeapMemoryLimit;
 
     /**
-     * Sets whether if just any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules
-     * returns <tt>true</tt> then shouldSpoolCache(long) returns <tt>true</tt>.
-     * If this option is <tt>false</tt>, then <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must
-     * return <tt>true</tt>.
-     * <p/>
-     * The default value is <tt>false</tt> which means that all the rules must return <tt>true</tt>.
+     * Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules
+     * returns true then shouldSpoolCache(long) returns true, to allow spooling to disk.
+     * If this option is false, then all the org.apache.camel.spi.StreamCachingStrategy.SpoolRule must
+     * return true.
+     *
+     * The default value is false which means that all the rules must return true.
      */
     private boolean streamCachingAnySpoolRules;
 
     /**
      * Sets the stream caching buffer size to use when allocating in-memory buffers used for in-memory stream caches.
-     * <p/>
-     * The default size is {@link org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE}
+     *
+     * The default size is 4096.
      */
     private int streamCachingBufferSize;
 
     /**
      * Whether to remove stream caching temporary directory when stopping.
-     * <p/>
-     * This option is default <tt>true</tt>
+     * This option is default true.
      */
     private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
 
@@ -221,11 +304,26 @@ public class CamelConfigurationProperties {
     private boolean streamCachingStatisticsEnabled;
 
     /**
+     * Sets whether backlog tracing is enabled or not.
+     *
+     * Default is false.
+     */
+    private boolean backlogTracing;
+
+    /**
      * Sets whether tracing is enabled or not.
      *
      * Default is false.
      */
     private boolean tracing;
+
+    /**
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
+     * Multiple patterns can be separated by comma.
+     */
+    private String tracingPattern;
 
     /**
      * Sets whether message history is enabled or not.
@@ -235,6 +333,13 @@ public class CamelConfigurationProperties {
     private boolean messageHistory = true;
 
     /**
+     * Sets whether log mask is enabled or not.
+     *
+     * Default is false.
+     */
+    private boolean logMask;
+
+    /**
      * Sets whether to log exhausted message body with message history.
      *
      * Default is false.
@@ -242,19 +347,12 @@ public class CamelConfigurationProperties {
     private boolean logExhaustedMessageBody;
 
     /**
-     * Sets whether fault handling is enabled or not.
-     *
-     * Default is false.
-     */
-    private boolean handleFault;
-
-    /**
      * Sets whether the object should automatically start when Camel starts.
      * Important: Currently only routes can be disabled, as CamelContext's are always started.
      * Note: When setting auto startup false on CamelContext then that takes precedence
      * and no routes is started. You would need to start CamelContext explicit using
      * the org.apache.camel.CamelContext.start() method, to start the context, and then
-     * you would need to start the routes manually using CamelContext.startRoute(String).
+     * you would need to start the routes manually using Camelcontext.getRouteController().startRoute(String).
      *
      * Default is true to always start up.
      */
@@ -265,16 +363,30 @@ public class CamelConfigurationProperties {
      * or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage().
      * Turning this off can optimize performance, as defensive copy of the original message is not needed.
      *
-     * Default is true.
+     * Default is false.
      */
-    private boolean allowUseOriginalMessage = true;
+    private boolean allowUseOriginalMessage;
 
     /**
      * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints).
      *
-     * The default value is true.
+     * The default value is false.
      */
-    private boolean endpointRuntimeStatisticsEnabled = true;
+    private boolean endpointRuntimeStatisticsEnabled;
+
+    /**
+     * Whether to enable using data type on Camel messages.
+     *
+     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output types.
+     * Otherwise data type is default off.
+     */
+    private boolean useDataType;
+
+    /**
+     * Set whether breadcrumb is enabled.
+     * The default value is false.
+     */
+    private boolean useBreadcrumb;
 
     /**
      * Sets the JMX statistics level
@@ -299,155 +411,64 @@ public class CamelConfigurationProperties {
     private boolean jmxCreateConnector;
 
     /**
-     * Tracer should output message body
+     * To turn on MDC logging
      */
-    private boolean traceFormatterShowBody = true;
+    private boolean useMdcLogging;
 
     /**
-     * Tracer should output message body type
+     * Sets the thread name pattern used for creating the full thread name.
+     *
+     * The default pattern is: Camel (#camelId#) thread ##counter# - #name#
+     *
+     * Where #camelId# is the name of the CamelContext.
+     * and #counter# is a unique incrementing counter.
+     * and #name# is the regular thread name.
+     *
+     * You can also use #longName# which is the long thread name which can includes endpoint parameters etc.
      */
-    private boolean tracerFormatterShowBodyType = true;
-
-    /**
-     * Tracer should output breadcrumb
-     */
-    private boolean traceFormatterShowBreadCrumb = true;
-
-    /**
-     * Tracer should output exchange id
-     */
-    private boolean traceFormatterShowExchangeId;
-
-    /**
-     * Tracer should output message headers
-     */
-    private boolean traceFormatterShowHeaders = true;
-
-    /**
-     * Tracer should output exchange properties
-     */
-    private boolean traceFormatterShowProperties;
-
-    /**
-     * Tracer should output EIP node
-     */
-    private boolean traceFormatterShowNode = true;
-
-    /**
-     * Tracer should output message exchange pattern (MEP)
-     */
-    private boolean traceFormatterShowExchangePattern = true;
-
-    /**
-     * Tracer should output exception
-     */
-    private boolean traceFormatterShowException = true;
-
-    /**
-     * Tracer should output route id
-     */
-    private boolean traceFormatterShowRouteId = true;
-
-    /**
-     * Tracer maximum length of breadcrumb ids
-     */
-    private Integer tracerFormatterBreadCrumbLength;
-
-    /**
-     * Tracer should output short exchange id
-     */
-    private boolean traceFormatterShowShortExchangeId;
-
-    /**
-     * Tracer maximum length of node
-     */
-    private Integer tracerFormatterNodeLength;
-
-    /**
-     * Tracer maximum characters in total
-     */
-    private Integer tracerFormatterMaxChars = 10000;
+    private String threadNamePattern;
 
     // Getters & setters
+    // -----------------
 
-    public String getName() {
-        return name;
+    public boolean isMainRunController() {
+        return mainRunController;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMainRunController(boolean mainRunController) {
+        this.mainRunController = mainRunController;
     }
 
-    public int getShutdownTimeout() {
-        return shutdownTimeout;
+    public boolean isIncludeNonSingletons() {
+        return includeNonSingletons;
     }
 
-    public void setShutdownTimeout(int shutdownTimeout) {
-        this.shutdownTimeout = shutdownTimeout;
+    public void setIncludeNonSingletons(boolean includeNonSingletons) {
+        this.includeNonSingletons = includeNonSingletons;
     }
 
-    public boolean isShutdownSuppressLoggingOnTimeout() {
-        return shutdownSuppressLoggingOnTimeout;
+    public boolean isWarnOnEarlyShutdown() {
+        return warnOnEarlyShutdown;
     }
 
-    public void setShutdownSuppressLoggingOnTimeout(boolean shutdownSuppressLoggingOnTimeout) {
-        this.shutdownSuppressLoggingOnTimeout = shutdownSuppressLoggingOnTimeout;
+    public void setWarnOnEarlyShutdown(boolean warnOnEarlyShutdown) {
+        this.warnOnEarlyShutdown = warnOnEarlyShutdown;
     }
 
-    public boolean isShutdownNowOnTimeout() {
-        return shutdownNowOnTimeout;
+    public String getJavaRoutesIncludePattern() {
+        return javaRoutesIncludePattern;
     }
 
-    public void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout) {
-        this.shutdownNowOnTimeout = shutdownNowOnTimeout;
+    public void setJavaRoutesIncludePattern(String javaRoutesIncludePattern) {
+        this.javaRoutesIncludePattern = javaRoutesIncludePattern;
     }
 
-    public boolean isShutdownRoutesInReverseOrder() {
-        return shutdownRoutesInReverseOrder;
+    public String getJavaRoutesExcludePattern() {
+        return javaRoutesExcludePattern;
     }
 
-    public void setShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder) {
-        this.shutdownRoutesInReverseOrder = shutdownRoutesInReverseOrder;
-    }
-
-    public boolean isShutdownLogInflightExchangesOnTimeout() {
-        return shutdownLogInflightExchangesOnTimeout;
-    }
-
-    public void setShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
-        this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
-    }
-
-    public boolean isJmxEnabled() {
-        return jmxEnabled;
-    }
-
-    public void setJmxEnabled(boolean jmxEnabled) {
-        this.jmxEnabled = jmxEnabled;
-    }
-
-    public int getProducerTemplateCacheSize() {
-        return producerTemplateCacheSize;
-    }
-
-    public void setProducerTemplateCacheSize(int producerTemplateCacheSize) {
-        this.producerTemplateCacheSize = producerTemplateCacheSize;
-    }
-
-    public int getConsumerTemplateCacheSize() {
-        return consumerTemplateCacheSize;
-    }
-
-    public void setConsumerTemplateCacheSize(int consumerTemplateCacheSize) {
-        this.consumerTemplateCacheSize = consumerTemplateCacheSize;
-    }
-
-    public boolean isTypeConversion() {
-        return typeConversion;
-    }
-
-    public void setTypeConversion(boolean typeConversion) {
-        this.typeConversion = typeConversion;
+    public void setJavaRoutesExcludePattern(String javaRoutesExcludePattern) {
+        this.javaRoutesExcludePattern = javaRoutesExcludePattern;
     }
 
     public String getXmlRoutes() {
@@ -464,327 +485,5 @@ public class CamelConfigurationProperties {
 
     public void setXmlRests(String xmlRests) {
         this.xmlRests = xmlRests;
-    }
-
-    public String getXmlRoutesReloadDirectory() {
-        return xmlRoutesReloadDirectory;
-    }
-
-    public void setXmlRoutesReloadDirectory(String xmlRoutesReloadDirectory) {
-        this.xmlRoutesReloadDirectory = xmlRoutesReloadDirectory;
-    }
-
-    public boolean isMainRunController() {
-        return mainRunController;
-    }
-
-    public void setMainRunController(boolean mainRunController) {
-        this.mainRunController = mainRunController;
-    }
-
-    public int getLogDebugMaxChars() {
-        return logDebugMaxChars;
-    }
-
-    public void setLogDebugMaxChars(int logDebugMaxChars) {
-        this.logDebugMaxChars = logDebugMaxChars;
-    }
-
-    @Deprecated
-    public boolean isStreamCaching() {
-        return streamCachingEnabled;
-    }
-
-    @Deprecated
-    public void setStreamCaching(boolean streamCaching) {
-        this.streamCachingEnabled = streamCaching;
-    }
-
-    public boolean isStreamCachingEnabled() {
-        return streamCachingEnabled;
-    }
-
-    public void setStreamCachingEnabled(boolean streamCachingEnabled) {
-        this.streamCachingEnabled = streamCachingEnabled;
-    }
-
-    public String getStreamCachingSpoolDirectory() {
-        return streamCachingSpoolDirectory;
-    }
-
-    public void setStreamCachingSpoolDirectory(String streamCachingSpoolDirectory) {
-        this.streamCachingSpoolDirectory = streamCachingSpoolDirectory;
-    }
-
-    public String getStreamCachingSpoolChiper() {
-        return streamCachingSpoolChiper;
-    }
-
-    public void setStreamCachingSpoolChiper(String streamCachingSpoolChiper) {
-        this.streamCachingSpoolChiper = streamCachingSpoolChiper;
-    }
-
-    public long getStreamCachingSpoolThreshold() {
-        return streamCachingSpoolThreshold;
-    }
-
-    public void setStreamCachingSpoolThreshold(long streamCachingSpoolThreshold) {
-        this.streamCachingSpoolThreshold = streamCachingSpoolThreshold;
-    }
-
-    public int getStreamCachingSpoolUsedHeapMemoryThreshold() {
-        return streamCachingSpoolUsedHeapMemoryThreshold;
-    }
-
-    public void setStreamCachingSpoolUsedHeapMemoryThreshold(int streamCachingSpoolUsedHeapMemoryThreshold) {
-        this.streamCachingSpoolUsedHeapMemoryThreshold = streamCachingSpoolUsedHeapMemoryThreshold;
-    }
-
-    public String getStreamCachingSpoolUsedHeapMemoryLimit() {
-        return streamCachingSpoolUsedHeapMemoryLimit;
-    }
-
-    public void setStreamCachingSpoolUsedHeapMemoryLimit(String streamCachingSpoolUsedHeapMemoryLimit) {
-        this.streamCachingSpoolUsedHeapMemoryLimit = streamCachingSpoolUsedHeapMemoryLimit;
-    }
-
-    public boolean isStreamCachingAnySpoolRules() {
-        return streamCachingAnySpoolRules;
-    }
-
-    public void setStreamCachingAnySpoolRules(boolean streamCachingAnySpoolRules) {
-        this.streamCachingAnySpoolRules = streamCachingAnySpoolRules;
-    }
-
-    public int getStreamCachingBufferSize() {
-        return streamCachingBufferSize;
-    }
-
-    public void setStreamCachingBufferSize(int streamCachingBufferSize) {
-        this.streamCachingBufferSize = streamCachingBufferSize;
-    }
-
-    public boolean isStreamCachingRemoveSpoolDirectoryWhenStopping() {
-        return streamCachingRemoveSpoolDirectoryWhenStopping;
-    }
-
-    public void setStreamCachingRemoveSpoolDirectoryWhenStopping(boolean streamCachingRemoveSpoolDirectoryWhenStopping) {
-        this.streamCachingRemoveSpoolDirectoryWhenStopping = streamCachingRemoveSpoolDirectoryWhenStopping;
-    }
-
-    public boolean isStreamCachingStatisticsEnabled() {
-        return streamCachingStatisticsEnabled;
-    }
-
-    public void setStreamCachingStatisticsEnabled(boolean streamCachingStatisticsEnabled) {
-        this.streamCachingStatisticsEnabled = streamCachingStatisticsEnabled;
-    }
-
-    public boolean isTracing() {
-        return tracing;
-    }
-
-    public void setTracing(boolean tracing) {
-        this.tracing = tracing;
-    }
-
-    public boolean isMessageHistory() {
-        return messageHistory;
-    }
-
-    public void setMessageHistory(boolean messageHistory) {
-        this.messageHistory = messageHistory;
-    }
-
-    public boolean isLogExhaustedMessageBody() {
-        return logExhaustedMessageBody;
-    }
-
-    public void setLogExhaustedMessageBody(boolean logExhaustedMessageBody) {
-        this.logExhaustedMessageBody = logExhaustedMessageBody;
-    }
-
-    public boolean isHandleFault() {
-        return handleFault;
-    }
-
-    public void setHandleFault(boolean handleFault) {
-        this.handleFault = handleFault;
-    }
-
-    public boolean isAutoStartup() {
-        return autoStartup;
-    }
-
-    public void setAutoStartup(boolean autoStartup) {
-        this.autoStartup = autoStartup;
-    }
-
-    public boolean isAllowUseOriginalMessage() {
-        return allowUseOriginalMessage;
-    }
-
-    public void setAllowUseOriginalMessage(boolean allowUseOriginalMessage) {
-        this.allowUseOriginalMessage = allowUseOriginalMessage;
-    }
-
-    public boolean isEndpointRuntimeStatisticsEnabled() {
-        return endpointRuntimeStatisticsEnabled;
-    }
-
-    public void setEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
-        this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
-    }
-
-    public ManagementStatisticsLevel getJmxManagementStatisticsLevel() {
-        return jmxManagementStatisticsLevel;
-    }
-
-    public void setJmxManagementStatisticsLevel(ManagementStatisticsLevel jmxManagementStatisticsLevel) {
-        this.jmxManagementStatisticsLevel = jmxManagementStatisticsLevel;
-    }
-
-    public String getJmxManagementNamePattern() {
-        return jmxManagementNamePattern;
-    }
-
-    public void setJmxManagementNamePattern(String jmxManagementNamePattern) {
-        this.jmxManagementNamePattern = jmxManagementNamePattern;
-    }
-
-    public boolean isJmxCreateConnector() {
-        return jmxCreateConnector;
-    }
-
-    public void setJmxCreateConnector(boolean jmxCreateConnector) {
-        this.jmxCreateConnector = jmxCreateConnector;
-    }
-
-    public String getFileConfigurations() {
-        return fileConfigurations;
-    }
-
-    public void setFileConfigurations(String fileConfigurations) {
-        this.fileConfigurations = fileConfigurations;
-    }
-
-    public boolean isTraceFormatterShowBody() {
-        return traceFormatterShowBody;
-    }
-
-    public void setTraceFormatterShowBody(boolean traceFormatterShowBody) {
-        this.traceFormatterShowBody = traceFormatterShowBody;
-    }
-
-    public boolean isTracerFormatterShowBodyType() {
-        return tracerFormatterShowBodyType;
-    }
-
-    public void setTracerFormatterShowBodyType(boolean tracerFormatterShowBodyType) {
-        this.tracerFormatterShowBodyType = tracerFormatterShowBodyType;
-    }
-
-    public boolean isTraceFormatterShowBreadCrumb() {
-        return traceFormatterShowBreadCrumb;
-    }
-
-    public void setTraceFormatterShowBreadCrumb(boolean traceFormatterShowBreadCrumb) {
-        this.traceFormatterShowBreadCrumb = traceFormatterShowBreadCrumb;
-    }
-
-    public boolean isTraceFormatterShowExchangeId() {
-        return traceFormatterShowExchangeId;
-    }
-
-    public void setTraceFormatterShowExchangeId(boolean traceFormatterShowExchangeId) {
-        this.traceFormatterShowExchangeId = traceFormatterShowExchangeId;
-    }
-
-    public boolean isTraceFormatterShowHeaders() {
-        return traceFormatterShowHeaders;
-    }
-
-    public void setTraceFormatterShowHeaders(boolean traceFormatterShowHeaders) {
-        this.traceFormatterShowHeaders = traceFormatterShowHeaders;
-    }
-
-    public boolean isTraceFormatterShowProperties() {
-        return traceFormatterShowProperties;
-    }
-
-    public void setTraceFormatterShowProperties(boolean traceFormatterShowProperties) {
-        this.traceFormatterShowProperties = traceFormatterShowProperties;
-    }
-
-    public boolean isTraceFormatterShowNode() {
-        return traceFormatterShowNode;
-    }
-
-    public void setTraceFormatterShowNode(boolean traceFormatterShowNode) {
-        this.traceFormatterShowNode = traceFormatterShowNode;
-    }
-
-    public boolean isTraceFormatterShowExchangePattern() {
-        return traceFormatterShowExchangePattern;
-    }
-
-    public void setTraceFormatterShowExchangePattern(boolean traceFormatterShowExchangePattern) {
-        this.traceFormatterShowExchangePattern = traceFormatterShowExchangePattern;
-    }
-
-    public boolean isTraceFormatterShowException() {
-        return traceFormatterShowException;
-    }
-
-    public void setTraceFormatterShowException(boolean traceFormatterShowException) {
-        this.traceFormatterShowException = traceFormatterShowException;
-    }
-
-    public boolean isTraceFormatterShowRouteId() {
-        return traceFormatterShowRouteId;
-    }
-
-    public void setTraceFormatterShowRouteId(boolean traceFormatterShowRouteId) {
-        this.traceFormatterShowRouteId = traceFormatterShowRouteId;
-    }
-
-    public Integer getTracerFormatterBreadCrumbLength() {
-        return tracerFormatterBreadCrumbLength;
-    }
-
-    public void setTracerFormatterBreadCrumbLength(Integer tracerFormatterBreadCrumbLength) {
-        this.tracerFormatterBreadCrumbLength = tracerFormatterBreadCrumbLength;
-    }
-
-    public boolean isTraceFormatterShowShortExchangeId() {
-        return traceFormatterShowShortExchangeId;
-    }
-
-    public void setTraceFormatterShowShortExchangeId(boolean traceFormatterShowShortExchangeId) {
-        this.traceFormatterShowShortExchangeId = traceFormatterShowShortExchangeId;
-    }
-
-    public Integer getTracerFormatterNodeLength() {
-        return tracerFormatterNodeLength;
-    }
-
-    public void setTracerFormatterNodeLength(Integer tracerFormatterNodeLength) {
-        this.tracerFormatterNodeLength = tracerFormatterNodeLength;
-    }
-
-    public Integer getTracerFormatterMaxChars() {
-        return tracerFormatterMaxChars;
-    }
-
-    public void setTracerFormatterMaxChars(Integer tracerFormatterMaxChars) {
-        this.tracerFormatterMaxChars = tracerFormatterMaxChars;
-    }
-
-    public boolean isIncludeNonSingletons() {
-        return includeNonSingletons;
-    }
-
-    public void setIncludeNonSingletons(boolean includeNonSingletons) {
-        this.includeNonSingletons = includeNonSingletons;
     }
 }

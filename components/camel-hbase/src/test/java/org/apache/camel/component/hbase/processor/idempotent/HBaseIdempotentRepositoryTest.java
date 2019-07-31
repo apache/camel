@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
 
-    IdempotentRepository<Object> repository;
+    IdempotentRepository repository;
 
     private String key01 = "123";
     private String key02 = "456";

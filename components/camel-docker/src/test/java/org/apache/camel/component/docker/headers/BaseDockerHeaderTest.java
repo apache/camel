@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,12 +32,9 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
+@RunWith(MockitoJUnitRunner.class)
 public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
 
     @Mock
@@ -116,12 +113,16 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         return false;
     }
 
+    public String getCmdExecFactory() {
+        return DockerConstants.DEFAULT_CMD_EXEC_FACTORY;
+    }
+
     public T getMockObject() {
         return mockObject;
     }
 
     protected Map<String, Object> getDefaultParameters() {
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put(DockerConstants.DOCKER_HOST, getHost());
         parameters.put(DockerConstants.DOCKER_PORT, getPort());
         parameters.put(DockerConstants.DOCKER_EMAIL, getEmail());
@@ -131,7 +132,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         parameters.put(DockerConstants.DOCKER_SECURE, isSecure());
         parameters.put(DockerConstants.DOCKER_TLSVERIFY, isTlsVerify());
         parameters.put(DockerConstants.DOCKER_SOCKET_ENABLED, isSocket());
-
+        parameters.put(DockerConstants.DOCKER_CMD_EXEC_FACTORY, getCmdExecFactory());
         return parameters;
     }
 
@@ -146,6 +147,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         clientProfile.setSecure(isSecure());
         clientProfile.setTlsVerify(isTlsVerify());
         clientProfile.setSocket(isSocket());
+        clientProfile.setCmdExecFactory(getCmdExecFactory());
 
         return clientProfile;
 

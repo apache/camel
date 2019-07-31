@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,17 +19,11 @@ package org.apache.camel.component.servlet;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.http.common.DefaultHttpBinding;
-import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpMessage;
 
 public class ServletRestHttpBinding extends DefaultHttpBinding {
 
     public ServletRestHttpBinding() {
-    }
-
-    @Deprecated
-    public ServletRestHttpBinding(HttpCommonEndpoint endpoint) {
-        super(endpoint);
     }
 
     @Override

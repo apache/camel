@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,11 +25,10 @@ import javax.sip.message.Request;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.sip.listener.SipPublishListener;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
-public class SipPublisher extends DefaultProducer implements ServicePoolAware {
+public class SipPublisher extends DefaultProducer {
     private SipConfiguration configuration;
     private long sequenceNumber = 1;
     private SipPublishListener sipPublishListener;

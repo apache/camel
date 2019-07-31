@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,80 +22,68 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultComponentResolver;
+import org.apache.camel.impl.engine.DefaultComponentResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
+import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.apache.camel.util.KeyValueHolder;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
-
 public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSupport {
+    static final String SOURCE_URI = "direct-vm://source";
+    static final String MOCK_ACKNOWLEDGED_URI = "mock://acknowledged";
+    static final String MOCK_TIMEOUT_URI = "mock://timeoutError-ex";
+    static final String MOCK_AE_EX_URI = "mock://ae-ack";
+    static final String MOCK_AR_EX_URI = "mock://ar-ack";
+    static final String MOCK_FRAME_EX_URI = "mock://frameError-ex";
+
     @Rule
-    public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
+    public MllpServerResource mllpServer = new MllpServerResource("0.0.0.0", AvailablePortFinder.getNextAvailable());
 
-    final String sourceUri = "direct://source";
-    final String mockAcknowledgedUri = "mock://acknowledged";
-    final String mockTimeoutUri = "mock://timeoutError-ex";
-    final String mockAeExUri = "mock://ae-ack";
-    final String mockArExUri = "mock://ar-ack";
-    final String mockFrameExUri = "mock://frameError-ex";
-
-    @EndpointInject(uri = sourceUri)
-    ProducerTemplate source;
-    @EndpointInject(uri = mockAcknowledgedUri)
+    @EndpointInject(MOCK_ACKNOWLEDGED_URI)
     MockEndpoint acknowledged;
-    @EndpointInject(uri = mockTimeoutUri)
+
+    @EndpointInject(MOCK_TIMEOUT_URI)
     MockEndpoint timeout;
-    @EndpointInject(uri = mockAeExUri)
+
+    @EndpointInject(MOCK_AE_EX_URI)
     MockEndpoint ae;
-    @EndpointInject(uri = mockArExUri)
+
+    @EndpointInject(MOCK_AR_EX_URI)
     MockEndpoint ar;
-    @EndpointInject(uri = mockFrameExUri)
+
+    @EndpointInject(MOCK_FRAME_EX_URI)
     MockEndpoint frame;
-
-    @Override
-    protected String getBlueprintDescriptor() {
-        return "OSGI-INF/blueprint/mllp-tcp-client-producer-test.xml";
-    }
-
-    @Override
-    protected Properties useOverridePropertiesWithPropertiesComponent() {
-        Properties props = new Properties();
-
-        props.setProperty("sourceUri", sourceUri);
-        props.setProperty("acknowledgedUri", mockAcknowledgedUri);
-        props.setProperty("timeoutUri", mockTimeoutUri);
-        props.setProperty("frameErrorUri", mockFrameExUri);
-        props.setProperty("errorAcknowledgementUri", mockAeExUri);
-        props.setProperty("rejectAcknowledgementUri", mockArExUri);
-
-        props.setProperty("mllp.port", Integer.toString(mllpServer.getListenPort()));
-
-        return props;
-    }
-
-    /*
-        This doesn't seem to work
-        @Override
-        protected String useOverridePropertiesWithConfigAdmin(Dictionary props) throws Exception {
-
-            props.put("mllp.port", mllpServer.getListenPort() );
-
-            return "MllpTcpClientProducer";
-        }
-    */
 
     @Override
     protected void addServicesOnStartup(Map<String, KeyValueHolder<Object, Dictionary>> services) {
         ComponentResolver testResolver = new DefaultComponentResolver();
 
         services.put(ComponentResolver.class.getName(), asService(testResolver, "component", "mllp"));
+    }
+
+
+    @Override
+    protected String setConfigAdminInitialConfiguration(Properties props) {
+        props.setProperty("sourceUri", SOURCE_URI);
+        props.setProperty("acknowledgedUri", MOCK_ACKNOWLEDGED_URI);
+        props.setProperty("timeoutUri", MOCK_TIMEOUT_URI);
+        props.setProperty("errorAcknowledgementUri", MOCK_AE_EX_URI);
+        props.setProperty("rejectAcknowledgementUri", MOCK_AR_EX_URI);
+
+        props.setProperty("mllp.port", Integer.toString(mllpServer.getListenPort()));
+
+        return "MllpTcpClientProducer";
+    }
+
+
+    @Override
+    protected String getBlueprintDescriptor() {
+        return "OSGI-INF/blueprint/mllp-tcp-client-producer-test.xml";
     }
 
     @Test()
@@ -107,18 +95,19 @@ public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSuppor
         ae.expectedMessageCount(0);
         ar.expectedMessageCount(0);
 
+        startCamelContext();
         // Uncomment one of these lines to see the NACKs handled
         // mllpServer.setSendApplicationRejectAcknowledgementModulus(10);
         // mllpServer.setSendApplicationErrorAcknowledgementModulus(10);
 
         for (int i = 0; i < messageCount; ++i) {
             log.debug("Triggering message {}", i);
-            Object response = source.requestBodyAndHeader(generateMessage(i), "CamelMllpMessageControlId", String.format("%05d", i));
+            // Thread.sleep(5000);
+            Object response = template.requestBodyAndHeader(SOURCE_URI, Hl7TestMessageGenerator.generateMessage(i), "CamelMllpMessageControlId", String.format("%05d", i));
             log.debug("response {}\n{}", i, response);
         }
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
-
 
 }

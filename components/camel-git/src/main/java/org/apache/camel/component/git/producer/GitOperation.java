@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.component.git.producer;
 public interface GitOperation {
 
     String CLONE_OPERATION = "clone";
+    String CHECKOUT_OPERATION = "checkout";
     String INIT_OPERATION = "init";
     String ADD_OPERATION = "add";
     String REMOVE_OPERATION = "remove";
@@ -31,9 +32,14 @@ public interface GitOperation {
     String STATUS_OPERATION = "status";
     String LOG_OPERATION = "log";
     String PUSH_OPERATION = "push";
+    String PUSH_TAG_OPERATION = "pushTag";
     String PULL_OPERATION = "pull";
-    String SHOW_BRANCHES = "showBranches";
+    String MERGE_OPERATION = "merge";
+    String SHOW_BRANCHES_OPERATION = "showBranches";
+    String SHOW_TAGS_OPERATION = "showTags";
     String CHERRYPICK_OPERATION = "cherryPick";
     String REMOTE_ADD_OPERATION = "remoteAdd";
     String REMOTE_LIST_OPERATION = "remoteList";
+    String CLEAN_OPERATION = "clean";
+    String GC_OPERATION = "gc";
 }

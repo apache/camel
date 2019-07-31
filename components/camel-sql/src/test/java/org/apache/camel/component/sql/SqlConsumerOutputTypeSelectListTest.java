@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -83,7 +83,7 @@ public class SqlConsumerOutputTypeSelectListTest extends CamelTestSupport {
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects order by id?outputType=SelectList")
+                from("sql:select * from projects order by id?outputType=SelectList&consumer.initialDelay=0&consumer.delay=50")
                         .to("mock:result");
             }
         };

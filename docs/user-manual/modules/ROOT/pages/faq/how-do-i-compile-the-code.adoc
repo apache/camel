@@ -1,0 +1,4 @@
+[[HowdoIcompilethecode-HowdoIcompilefromthesourcecode]]
+= How do I compile from the source code?
+
+See the xref:building.adoc[Building] page.

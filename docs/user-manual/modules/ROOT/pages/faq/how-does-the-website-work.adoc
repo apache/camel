@@ -1,0 +1,8 @@
+[[Howdoesthewebsitework-Howdoesthewebsitework]]
+= How does the website work?
+
+This entire website is hosted in
+https://github.com/apache/camel/[the GitHub repository],
+and you can send a pull request to help us make the documentation better.
+
+TODO: Write how it works and how to contribute to the web site.

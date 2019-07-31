@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,9 +29,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanValidatorRouteTest extends CamelTestSupport {
     private Locale origLocale;
 
@@ -101,7 +98,7 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
             ConstraintViolation<Object> constraintViolation = constraintViolations.iterator().next();
             assertEquals("licensePlate", constraintViolation.getPropertyPath().toString());
             assertEquals(null, constraintViolation.getInvalidValue());
-            assertEquals("may not be null", constraintViolation.getMessage());
+            assertEquals("must not be null", constraintViolation.getMessage());
         }
         
         car.setLicensePlate("D-A");
@@ -138,7 +135,7 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
             ConstraintViolation<Object> constraintViolation = constraintViolations.iterator().next();
             assertEquals("licensePlate", constraintViolation.getPropertyPath().toString());
             assertEquals(null, constraintViolation.getInvalidValue());
-            assertEquals("may not be null", constraintViolation.getMessage());
+            assertEquals("must not be null", constraintViolation.getMessage());
         }
         
         car.setLicensePlate("D-A");
@@ -212,7 +209,7 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
             ConstraintViolation<Object> constraintViolation = constraintViolations.iterator().next();
             assertEquals("manufacturer", constraintViolation.getPropertyPath().toString());
             assertEquals(null, constraintViolation.getInvalidValue());
-            assertEquals("may not be null", constraintViolation.getMessage());
+            assertEquals("must not be null", constraintViolation.getMessage());
         }
         
         car.setManufacturer("BMW");

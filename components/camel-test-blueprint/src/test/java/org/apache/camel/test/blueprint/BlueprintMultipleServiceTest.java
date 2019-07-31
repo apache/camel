@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,10 +30,10 @@ import org.junit.Test;
 
 public class BlueprintMultipleServiceTest extends CamelBlueprintTestSupport {
 
-    @EndpointInject(uri = "fakeservice1:mock")
+    @EndpointInject("fakeservice1:mock")
     private MockEndpoint fakeServiceOneMock;
 
-    @EndpointInject(uri = "fakeservice2:mock")
+    @EndpointInject("fakeservice2:mock")
     private MockEndpoint fakeServiceTwoMock;
 
     private MockComponent mockComponentOne = new MockComponent();
@@ -47,10 +47,10 @@ public class BlueprintMultipleServiceTest extends CamelBlueprintTestSupport {
     @Override
     @SuppressWarnings("rawtypes")
     protected void addServicesOnStartup(List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> services) {
-        Dictionary<String, String> dict1 = new Hashtable<String, String>();
+        Dictionary<String, String> dict1 = new Hashtable<>();
         dict1.put("component", "fakeservice1");
 
-        Dictionary<String, String> dict2 = new Hashtable<String, String>();
+        Dictionary<String, String> dict2 = new Hashtable<>();
         dict2.put("component", "fakeservice2");
 
         services.add(asKeyValueService(ComponentResolver.class.getName(), mockComponentOne, dict1));

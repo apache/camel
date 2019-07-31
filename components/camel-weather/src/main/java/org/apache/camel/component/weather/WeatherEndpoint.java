@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,14 @@ package org.apache.camel.component.weather;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultPollingEndpoint;
 
 /**
  * Polls the weather information from Open Weather Map.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name", consumerClass = WeatherConsumer.class, label = "api")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name", label = "api")
 public class WeatherEndpoint extends DefaultPollingEndpoint {
 
     @UriParam
@@ -51,11 +51,6 @@ public class WeatherEndpoint extends DefaultPollingEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return new WeatherProducer(this, configuration.getQuery());
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     public WeatherConfiguration getConfiguration() {

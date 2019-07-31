@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,7 +38,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private static final QName MESSAGE_QNAME = new QName("", "message");
+    private static final QName MESSAGE_QNAME = new QName("message.jaxb.converter.camel.apache.org", "message");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.camel.converter.jaxb.message
@@ -53,7 +53,7 @@ public class ObjectFactory {
         return new Message();
     }
 
-    @XmlElementDecl(namespace = "", name = "message")
+    @XmlElementDecl(namespace = "message.jaxb.converter.camel.apache.org", name = "message")
     public JAXBElement<Message> createMessage(Message value) {
         return new JAXBElement<>(MESSAGE_QNAME, Message.class, null, value);
     }

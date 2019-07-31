@@ -1,0 +1,77 @@
+[[HowdoIuseSpringPropertyPlaceholderwithCamelXML-HowdoIuseSpringPropertyPlaceholderwithCamelXML]]
+= How do I use Spring Property Placeholder with Camel XML
+
+We do *NOT* yet support the `$\{something\}` notation inside arbitrary
+Camel XML. For example at the time of writing this is *NOT* supported
+(due Spring limitations).
+
+*IS NOT SUPPORTED*
+
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+    ">
+
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="activemq:${someQueueName}"/>
+      <to uri="mock:results"/>
+    </route>
+  </camelContext>
+
+</beans>
+----
+
+However you can use the `<endpoint/>` element to define endpoints which
+does support the property resolving which you can then refer to by name,
+using the xref:components::ref-component.adoc[Ref] component as shown below (notice the `ref:`
+in the URI):
+
+*SUPPORTED*
+
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+    ">
+
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+    <endpoint id="input1" uri="activemq:${someQueueName}"/>
+
+    <route>
+      <from uri="ref:input1"/>
+      <to uri="activemq:OutputQueue"/>
+    </route>
+  </camelContext>
+
+</beans>
+----
+
+Camel does not yet fully support property placeholders as there is a
+limitation in Spring. See JIRA
+http://jira.springframework.org/browse/SPR-4466[SPR-4466]
+
+== Bridge Spring and Camel property placeholders
+
+From Camel 2.10 onwards you can bridge Spring and Camel property
+placeholders, see xref:using-propertyplaceholder.adoc[Using
+PropertyPlaceholder] for more details.
+
+Here is a trick that you can use to define the uri in a property file
+using Spring injection and Camel endpoint:
+http://cmoulliard.blogspot.com/2009/05/trick-to-pass-uri-declared-in-property.html.
+
+From Camel 2.3 onwards there is a xref:components::properties-component.adoc[Properties]
+component build in Camel core which allows you to use properties in the
+same way as Spring property placeholders, and even more.

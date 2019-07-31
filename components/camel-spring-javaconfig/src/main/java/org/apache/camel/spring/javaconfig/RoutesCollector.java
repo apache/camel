@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,12 +25,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
 
 /**
  * Collects routes and rests from the various sources (like Spring application context beans registry or opinionated
  * classpath locations) and injects these into the Camel context.
  */
-public class RoutesCollector implements ApplicationListener<ContextRefreshedEvent> {
+public class RoutesCollector implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
     // Static collaborators
 
@@ -92,6 +93,13 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
         } else {
             LOG.debug("Ignore ContextRefreshedEvent: {}", event);
         }
+    }
+
+    @Override
+    public int getOrder() {
+        // we want the RoutesCollector to receive ContextRefreshedEvent
+        // before SpringCamelContext (see SpringCamelContext::getOrder)
+        return LOWEST_PRECEDENCE - 1;
     }
 
 }

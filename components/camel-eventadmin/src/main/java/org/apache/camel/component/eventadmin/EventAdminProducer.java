@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultProducer;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
@@ -42,7 +42,7 @@ public class EventAdminProducer extends DefaultProducer {
     public EventAdminProducer(EventAdminEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.tracker = new ServiceTracker<Object, Object>(endpoint.getComponent().getBundleContext(), EventAdmin.class.getName(), null);
+        this.tracker = new ServiceTracker<>(endpoint.getComponent().getBundleContext(), EventAdmin.class.getName(), null);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class EventAdminProducer extends DefaultProducer {
         Message in = exchange.getIn();
         CamelContext context = endpoint.getCamelContext();
         Map<?, ?> map = context.getTypeConverter().convertTo(Map.class, exchange, in.getBody());
-        Dictionary<String, Object> dict = new Hashtable<String, Object>();
+        Dictionary<String, Object> dict = new Hashtable<>();
         for (Entry<?, ?> entry : map.entrySet()) {
             String keyString = CamelContextHelper.convertTo(context, String.class, entry.getKey());
             if (keyString != null) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,13 +35,29 @@ public class CamelKubernetesTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelKubernetesTest.class))
-                //.dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
+                //.dependency(DependencyResolver.withVersion("org.hibernate.validator:hibernate-validator"))
                 .build();
     }
 
     @Test
     public void componentTests() throws Exception {
-        this.runComponentTest(config);
+        this.runComponentTest(createTestConfig(), "kubernetes-config-maps");
+        this.runComponentTest(createTestConfig(), "kubernetes-deployments");
+        this.runComponentTest(createTestConfig(), "kubernetes-hpa");
+        this.runComponentTest(createTestConfig(), "kubernetes-job");
+        this.runComponentTest(createTestConfig(), "kubernetes-namespaces");
+        this.runComponentTest(createTestConfig(), "kubernetes-nodes");
+        this.runComponentTest(createTestConfig(), "kubernetes-persistent-volumes-claims");
+        this.runComponentTest(createTestConfig(), "kubernetes-persistent-volumes");
+        this.runComponentTest(createTestConfig(), "kubernetes-pods");
+        this.runComponentTest(createTestConfig(), "kubernetes-replication-controllers");
+        this.runComponentTest(createTestConfig(), "kubernetes-resources-quota");
+        this.runComponentTest(createTestConfig(), "kubernetes-secrets");
+        this.runComponentTest(createTestConfig(), "kubernetes-service-accounts");
+        this.runComponentTest(createTestConfig(), "kubernetes-services");
+        this.runComponentTest(createTestConfig(), "openshift-builds");
+        this.runComponentTest(createTestConfig(), "openshift-build-configs");
+
         this.runModuleUnitTestsIfEnabled(config);
     }
 

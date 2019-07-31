@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,19 +32,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Producer that can write to streams
  */
 public class StreamProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StreamProducer.class);
     private static final String TYPES = "out,err,file,header,url";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
@@ -85,19 +81,28 @@ public class StreamProducer extends DefaultProducer {
 
     private OutputStream resolveStreamFromUrl() throws IOException {
         String u = endpoint.getUrl();
-        ObjectHelper.notEmpty(u, "url");
-        LOG.debug("About to write to url: {}", u);
+        StringHelper.notEmpty(u, "url");
+        log.debug("About to write to url: {}", u);
 
         URL url = new URL(u);
         URLConnection c = url.openConnection();
         c.setDoOutput(true);
+        if (endpoint.getConnectTimeout() > 0) {
+            c.setConnectTimeout(endpoint.getConnectTimeout());
+        }
+        if (endpoint.getReadTimeout() > 0) {
+            c.setReadTimeout(endpoint.getReadTimeout());
+        }
+        if (endpoint.getHttpHeaders() != null) {
+            endpoint.getHttpHeaders().forEach((k, v) -> c.addRequestProperty(k, v.toString()));
+        }
         return c.getOutputStream();
     }
 
     private OutputStream resolveStreamFromFile() throws IOException {
         String fileName = endpoint.getFileName();
-        ObjectHelper.notEmpty(fileName, "fileName");
-        LOG.debug("About to write to file: {}", fileName);
+        StringHelper.notEmpty(fileName, "fileName");
+        log.debug("About to write to file: {}", fileName);
         File f = new File(fileName);
         // will create a new file if missing or append to existing
         f.getParentFile().mkdirs();
@@ -113,7 +118,7 @@ public class StreamProducer extends DefaultProducer {
         if (ms == 0) {
             return;
         }
-        LOG.trace("Delaying {} millis", ms);
+        log.trace("Delaying {} millis", ms);
         Thread.sleep(ms);
     }
 
@@ -129,7 +134,7 @@ public class StreamProducer extends DefaultProducer {
         if (!(body instanceof String)) {
             byte[] bytes = exchange.getIn().getBody(byte[].class);
             if (bytes != null) {
-                LOG.debug("Writing as byte[]: {} to {}", bytes, outputStream);
+                log.debug("Writing as byte[]: {} to {}", bytes, outputStream);
                 outputStream.write(bytes);
                 return;
             }
@@ -140,8 +145,8 @@ public class StreamProducer extends DefaultProducer {
         Charset charset = endpoint.getCharset();
         Writer writer = new OutputStreamWriter(outputStream, charset);
         BufferedWriter bw = IOHelper.buffered(writer);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Writing as text: {} to {} using encoding: {}", new Object[]{body, outputStream, charset});
+        if (log.isDebugEnabled()) {
+            log.debug("Writing as text: {} to {} using encoding: {}", body, outputStream, charset);
         }
         bw.write(s);
         bw.write(System.lineSeparator());
@@ -163,7 +168,7 @@ public class StreamProducer extends DefaultProducer {
             outputStream = resolveStreamFromUrl();
         }
         count.set(outputStream == null ? 0 : endpoint.getAutoCloseCount());
-        LOG.debug("Opened stream '{}'", endpoint.getEndpointKey());
+        log.debug("Opened stream '{}'", endpoint.getEndpointKey());
     }
 
     private void openStream(final Exchange exchange) throws Exception {
@@ -172,7 +177,7 @@ public class StreamProducer extends DefaultProducer {
         }
         if ("header".equals(uri)) {
             outputStream = resolveStreamFromHeader(exchange.getIn().getHeader("stream"), exchange);
-            LOG.debug("Opened stream '{}'", endpoint.getEndpointKey());
+            log.debug("Opened stream '{}'", endpoint.getEndpointKey());
         } else {
             openStream();
         }
@@ -199,7 +204,7 @@ public class StreamProducer extends DefaultProducer {
         if (!systemStream && expiredStream) {
             outputStream.close();
             outputStream = null;
-            LOG.debug("Closed stream '{}'", endpoint.getEndpointKey());
+            log.debug("Closed stream '{}'", endpoint.getEndpointKey());
         }
     }
 

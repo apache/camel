@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.couchbase;
 
 import java.net.URI;
@@ -26,11 +25,13 @@ import org.apache.camel.Endpoint;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CouchbaseComponentTest {
@@ -40,7 +41,7 @@ public class CouchbaseComponentTest {
 
     @Test
     public void testEndpointCreated() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
 
         String uri = "couchbase:http://localhost:9191/bucket";
         String remaining = "http://localhost:9191/bucket";
@@ -51,7 +52,9 @@ public class CouchbaseComponentTest {
 
     @Test
     public void testPropertiesSet() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
+
+        Map<String, Object> params = new HashMap<>();
         params.put("username", "ugol");
         params.put("password", "pwd");
         params.put("additionalHosts", "127.0.0.1,example.com,another-host");
@@ -76,62 +79,57 @@ public class CouchbaseComponentTest {
 
     @Test
     public void testCouchbaseURI() throws Exception {
-
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         String uri = "couchbase:http://localhost/bucket?param=true";
         String remaining = "http://localhost/bucket?param=true";
 
         CouchbaseEndpoint endpoint = new CouchbaseComponent(context).createEndpoint(uri, remaining, params);
         assertEquals(new URI("http://localhost:8091/pools"), endpoint.makeBootstrapURI()[0]);
-
     }
 
     @Test
     public void testCouchbaseAdditionalHosts() throws Exception {
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
 
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("additionalHosts", "127.0.0.1,example.com,another-host");
         String uri = "couchbase:http://localhost/bucket?param=true";
         String remaining = "http://localhost/bucket?param=true";
 
         CouchbaseEndpoint endpoint = new CouchbaseComponent(context).createEndpoint(uri, remaining, params);
 
-        // System.out.print(endpoint.makeBootstrapURI()[0].toString() + " " +
-        // endpoint.makeBootstrapURI().length + " ");
         URI[] endpointArray = endpoint.makeBootstrapURI();
         assertEquals(new URI("http://localhost:8091/pools"), endpointArray[0]);
         assertEquals(new URI("http://127.0.0.1:8091/pools"), endpointArray[1]);
         assertEquals(new URI("http://example.com:8091/pools"), endpointArray[2]);
         assertEquals(new URI("http://another-host:8091/pools"), endpointArray[3]);
         assertEquals(4, endpointArray.length);
-
     }
 
     @Test
     public void testCouchbaseAdditionalHostsWithSpaces() throws Exception {
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
 
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("additionalHosts", " 127.0.0.1, example.com, another-host ");
         String uri = "couchbase:http://localhost/bucket?param=true";
         String remaining = "http://localhost/bucket?param=true";
 
         CouchbaseEndpoint endpoint = new CouchbaseComponent(context).createEndpoint(uri, remaining, params);
 
-        // System.out.print(endpoint.makeBootstrapURI()[0].toString() + " " +
-        // endpoint.makeBootstrapURI().length + " ");
         URI[] endpointArray = endpoint.makeBootstrapURI();
         assertEquals(new URI("http://localhost:8091/pools"), endpointArray[0]);
         assertEquals(new URI("http://127.0.0.1:8091/pools"), endpointArray[1]);
         assertEquals(new URI("http://example.com:8091/pools"), endpointArray[2]);
         assertEquals(new URI("http://another-host:8091/pools"), endpointArray[3]);
         assertEquals(4, endpointArray.length);
-
     }
 
     @Test
     public void testCouchbaseDuplicateAdditionalHosts() throws Exception {
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
 
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("additionalHosts", "127.0.0.1,localhost, localhost");
         String uri = "couchbase:http://localhost/bucket?param=true";
         String remaining = "http://localhost/bucket?param=true";
@@ -141,39 +139,22 @@ public class CouchbaseComponentTest {
         assertEquals(2, endpointArray.length);
         assertEquals(new URI("http://localhost:8091/pools"), endpointArray[0]);
         assertEquals(new URI("http://127.0.0.1:8091/pools"), endpointArray[1]);
-
     }
 
     @Test
     public void testCouchbaseNullAdditionalHosts() throws Exception {
+        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
 
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("additionalHosts", null);
         String uri = "couchbase:http://localhost/bucket?param=true";
         String remaining = "http://localhost/bucket?param=true";
 
         CouchbaseEndpoint endpoint = new CouchbaseComponent(context).createEndpoint(uri, remaining, params);
 
-        // System.out.print(endpoint.makeBootstrapURI()[0].toString() + " " +
-        // endpoint.makeBootstrapURI().length + " ");
         URI[] endpointArray = endpoint.makeBootstrapURI();
 
         assertEquals(1, endpointArray.length);
-
     }
 
-    @Test
-    public void testCouchbasePersistToAndReplicateToParameters() throws Exception {
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("persistTo", "1");
-        params.put("replicateTo", "2");
-        String uri = "couchbase:http://localhost/bucket?param=true";
-        String remaining = "http://localhost/bucket?param=true";
-
-        CouchbaseEndpoint endpoint = new CouchbaseComponent(context).createEndpoint(uri, remaining, params);
-
-        assertEquals(1, endpoint.getPersistTo());
-        assertEquals(2, endpoint.getReplicateTo());
-    }
 }

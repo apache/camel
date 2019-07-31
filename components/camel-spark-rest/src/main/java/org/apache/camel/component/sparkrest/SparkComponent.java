@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,19 +25,28 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import spark.Service;
 
-public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory {
+@Component("spark-rest")
+public class SparkComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
     private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
+    
+    /**
+     * SPARK instance for the component
+     */
+    private Service sparkInstance;
 
     @Metadata(defaultValue = "4567")
     private int port = 4567;
@@ -65,8 +74,8 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     @Metadata(label = "advanced")
     private SparkBinding sparkBinding = new DefaultSparkBinding();
 
-    public SparkComponent() {
-        super(SparkEndpoint.class);
+    public Service getSparkInstance() {
+        return sparkInstance;
     }
 
     public int getPort() {
@@ -206,8 +215,8 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
             throw new IllegalArgumentException("Invalid syntax. Must be spark-rest:verb:path");
         }
 
-        String verb = ObjectHelper.before(remaining, ":");
-        String path = ObjectHelper.after(remaining, ":");
+        String verb = StringHelper.before(remaining, ":");
+        String path = StringHelper.after(remaining, ":");
 
         answer.setVerb(verb);
         answer.setPath(path);
@@ -219,39 +228,42 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     protected void doStart() throws Exception {
         super.doStart();
 
+        sparkInstance = Service.ignite();
         if (getPort() != 4567) {
-            CamelSpark.port(getPort());
+            sparkInstance.port(getPort());
         } else {
             // if no explicit port configured, then use port from rest configuration
             RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
             int port = config.getPort();
             if (port > 0) {
-                CamelSpark.port(port);
+                sparkInstance.port(port);
             }
         }
 
         String host = getIpAddress();
         if (host != null) {
-            CamelSpark.ipAddress(host);
+            sparkInstance.ipAddress(host);
         } else {
             // if no explicit port configured, then use port from rest configuration
             RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
             host = config.getHost();
             if (ObjectHelper.isEmpty(host)) {
-                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                     host = "0.0.0.0";
-                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                     host = HostUtils.getLocalHostName();
-                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                     host = HostUtils.getLocalIp();
                 }
             }
-            CamelSpark.ipAddress(host);
+            sparkInstance.ipAddress(host);
         }
 
         if (keystoreFile != null || truststoreFile != null) {
-            CamelSpark.security(keystoreFile, keystorePassword, truststoreFile, truststorePassword);
+            sparkInstance.secure(keystoreFile, keystorePassword, truststoreFile, truststorePassword);
         }
+        
+        CamelSpark.threadPool(sparkInstance, minThreads, maxThreads, timeOutMillis);
 
         // configure component options
         RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
@@ -264,7 +276,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
-        CamelSpark.stop();
+        sparkInstance.stop();
     }
 
     @Override
@@ -299,7 +311,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
             config = camelContext.getRestConfiguration("spark-rest", true);
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         if (consumes != null) {
             map.put("accept", consumes);
         }

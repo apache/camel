@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,19 +16,18 @@
  */
 package org.apache.camel.component.bonita.api.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.MediaType;
 
 import static javax.ws.rs.client.Entity.entity;
@@ -40,12 +39,9 @@ import org.apache.camel.component.bonita.api.filter.JsonClientFilter;
 import org.apache.camel.component.bonita.api.model.FileInput;
 import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.model.UploadFileResponse;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.logging.LoggingFeature;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.AttachmentBuilder;
+import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 
 public class BonitaAPIUtil {
 
@@ -55,15 +51,9 @@ public class BonitaAPIUtil {
     public static BonitaAPIUtil getInstance(BonitaAPIConfig bonitaAPIConfig) {
         if (instance == null) {
             instance = new BonitaAPIUtil();
-            ClientConfig clientConfig = new ClientConfig();
-            clientConfig.register(MultiPartFeature.class);
-            clientConfig.register(JacksonJsonProvider.class);
-            Logger logger = Logger.getLogger("org.bonitasoft.camel.bonita.api.util.BonitaAPIUtil");
-
-            Feature feature = new LoggingFeature(logger, Level.INFO, null, null);
-            clientConfig.register(feature);
-            ClientBuilder clientBuilder = ClientBuilder.newBuilder().withConfig(clientConfig);
+            ClientBuilder clientBuilder = ClientBuilder.newBuilder();
             Client client = clientBuilder.build();
+            client.register(JacksonJsonProvider.class);
             client.register(new JsonClientFilter());
             client.register(new BonitaAuthFilter(bonitaAPIConfig));
             instance.setWebTarget(client.target(bonitaAPIConfig.getBaseBonitaURI()));
@@ -77,16 +67,20 @@ public class BonitaAPIUtil {
             .path("portal/resource/process/{processName}/{processVersion}/API/formFileUpload")
             .resolveTemplate("processName", processDefinition.getName())
             .resolveTemplate("processVersion", processDefinition.getVersion());
-        File tempFile = File.createTempFile("tempFile", ".tmp");
+
+        File tempFile = Files.createTempFile("tempFile", ".tmp").toFile();
         FileOutputStream fos = new FileOutputStream(tempFile);
         fos.write(file.getContent());
         fos.close();
-        final FileDataBodyPart filePart =
-                new FileDataBodyPart("file", tempFile, MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        final MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
+
+        String dispositionValue = String.format("form-data;filename=%s;name=file", tempFile.getName());
+        Attachment attachment = new AttachmentBuilder()
+                .object(new ByteArrayInputStream(file.getContent()))
+                .contentDisposition(new ContentDisposition(dispositionValue))
+                .build();
+
         return resource.request().accept(MediaType.APPLICATION_JSON).post(
-                entity(multipart, MediaType.MULTIPART_FORM_DATA), UploadFileResponse.class);
-       
+                entity(attachment, MediaType.MULTIPART_FORM_DATA), UploadFileResponse.class);
     }
 
     public Map<String, Serializable> prepareInputs(ProcessDefinitionResponse processDefinition,
@@ -95,7 +89,7 @@ public class BonitaAPIUtil {
             if (entry.getValue() instanceof FileInput) {
                 FileInput file = (FileInput) entry.getValue();
                 String tmpFile = uploadFile(processDefinition, file).getTempPath();
-                HashMap<String, Serializable> fileInput = new HashMap<String, Serializable>();
+                HashMap<String, Serializable> fileInput = new HashMap<>();
                 fileInput.put("filename", file.getFilename());
                 fileInput.put("tempPath", tmpFile);
                 entry.setValue(fileInput);

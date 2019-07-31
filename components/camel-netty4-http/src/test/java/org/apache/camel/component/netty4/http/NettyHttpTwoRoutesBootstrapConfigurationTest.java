@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,18 +16,17 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty4.NettyServerBootstrapConfiguration;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettyHttpTwoRoutesBootstrapConfigurationTest extends BaseNettyTest {
 
     private NettyServerBootstrapConfiguration bootstrapConfiguration;
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("myBootstrapOptions")
+    public NettyServerBootstrapConfiguration loadNettyBootstrapConf() throws Exception {
 
         // create NettyServerBootstrapConfiguration instance where we can configure the bootstrap
         // option we want to use in our Camel routes. This allows us to configure this once,
@@ -38,9 +37,7 @@ public class NettyHttpTwoRoutesBootstrapConfigurationTest extends BaseNettyTest 
         bootstrapConfiguration.setKeepAlive(true);
         bootstrapConfiguration.setWorkerCount(4);
 
-        // register the configuration in the registry with this key
-        jndi.bind("myBootstrapOptions", bootstrapConfiguration);
-        return jndi;
+        return bootstrapConfiguration;
     }
 
     @Test

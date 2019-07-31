@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,8 @@ package org.apache.camel.component.salesforce;
 
 import java.util.Arrays;
 
-import org.apache.camel.builder.RouteBuilder;
+import com.googlecode.junittoolbox.ParallelParameterized;
+
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Account_IndustryEnum;
@@ -26,21 +27,15 @@ import org.apache.camel.component.salesforce.dto.generated.Asset;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class)
+@RunWith(ParallelParameterized.class)
 public class CompositeApiTreeIntegrationTest extends AbstractSalesforceTestBase {
 
     private final String format;
 
     public CompositeApiTreeIntegrationTest(final String format) {
         this.format = format;
-    }
-
-    @Parameters(name = "format = {0}")
-    public static Iterable<String> formats() {
-        return Arrays.asList("JSON", "XML");
     }
 
     @Test
@@ -106,12 +101,8 @@ public class CompositeApiTreeIntegrationTest extends AbstractSalesforceTestBase 
         assertNotNull("Simple asset on the contact of the third account should have Id set", asset.getId());
     }
 
-    @Override
-    protected RouteBuilder doCreateRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-            }
-        };
+    @Parameters(name = "format = {0}")
+    public static Iterable<String> formats() {
+        return Arrays.asList("JSON", "XML");
     }
 }

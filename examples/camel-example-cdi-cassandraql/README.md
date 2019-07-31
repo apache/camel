@@ -8,18 +8,21 @@ The example get the list of pods from a Kubernetes cluster and print name and st
 
 The `camel-cdi`, `camel-core` and `camel-cassandraql` components are used in this example.
 The example assumes you have a running Cassandra Cluster in your environment. We will use Docker to spin up this cluster.
-As first step we will need to run a single node cluster:
 
+By default cluster requires significant amount of RAM memory (approx. 12GB).
+You can limit memory of docker container specifying parameter: `--env MAX_HEAP_SIZE`
+
+As first step we will need to run a single node cluster:
 ```
-docker run --name master_node -dt oscerd/cassandra
-docker run --name node1 -d -e SEED="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' master_node)" oscerd/cassandra
-docker run --name node2 -d -e SEED="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' master_node)" oscerd/cassandra
+$ docker run --name master_node --env MAX_HEAP_SIZE='800M' -dt oscerd/cassandra
+$ docker run --name node1 --env MAX_HEAP_SIZE='800M' -d -e SEED="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' master_node)" oscerd/cassandra
+$ docker run --name node2 --env MAX_HEAP_SIZE='800M' -d -e SEED="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' master_node)" oscerd/cassandra
 ```
 
 We now have three nodes in our cluster.
 
 ```
-docker exec -ti master_node /opt/cassandra/bin/nodetool status
+$ docker exec -ti master_node /opt/cassandra/bin/nodetool status
 Datacenter: datacenter1
 =======================
 Status=Up/Down

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,18 +19,18 @@ package org.apache.camel.component.ssh;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.sshd.common.KeyPairProvider;
+import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The ssh component enables access to SSH servers such that you can send an SSH command, and process the response.
+ * The ssh component enables access to SSH servers such that you can send an SSH
+ * command, and process the response.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port", alternativeSyntax = "ssh:username:password@host:port",
-        consumerClass = SshConsumer.class, label = "file")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port", alternativeSyntax = "ssh:username:password@host:port", label = "file")
 public class SshEndpoint extends ScheduledPollEndpoint {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -162,4 +162,53 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public void setCertResource(String certResource) {
         getConfiguration().setCertResource(certResource);
     }
+
+    public String getCertResourcePassword() {
+        return getConfiguration().getCertResourcePassword();
+    }
+
+    public void setCertResourcePassword(String certResourcePassword) {
+        getConfiguration().setCertResourcePassword(certResourcePassword);
+    }
+
+    public String getKnownHostsResource() {
+        return getConfiguration().getKnownHostsResource();
+    }
+
+    public void setKnownHostsResource(String knownHostsResource) {
+        getConfiguration().setKnownHostsResource(knownHostsResource);
+    }
+
+    public boolean isFailOnUnknownHost() {
+        return getConfiguration().isFailOnUnknownHost();
+    }
+
+    public void setFailOnUnknownHost(boolean failOnUnknownHost) {
+        getConfiguration().setFailOnUnknownHost(failOnUnknownHost);
+    }
+
+    public String getChannelType() {
+        return getConfiguration().getChannelType();
+    }
+
+    public void setChannelType(String channelType) {
+        getConfiguration().setChannelType(channelType);
+    }
+
+    public String getShellPrompt() {
+        return getConfiguration().getShellPrompt();
+    }
+
+    public void setShellPrompt(String shellPrompt) {
+        getConfiguration().setShellPrompt(shellPrompt);
+    }
+
+    public long getSleepForShellPrompt() {
+        return getConfiguration().getSleepForShellPrompt();
+    }
+
+    public void setSleepForShellPrompt(long sleepForShellPrompt) {
+        getConfiguration().setSleepForShellPrompt(sleepForShellPrompt);
+    }
+
 }

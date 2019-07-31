@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.metrics.messagehistory;
 
-import java.util.Date;
-
 import com.codahale.metrics.Timer;
+import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
-import org.apache.camel.impl.DefaultMessageHistory;
+import org.apache.camel.support.DefaultMessageHistory;
 
 /**
  * A codahale metrics based {@link MessageHistory}
@@ -30,8 +29,8 @@ public class MetricsMessageHistory extends DefaultMessageHistory {
 
     private final Timer.Context context;
 
-    public MetricsMessageHistory(String routeId, NamedNode namedNode, Timer timer) {
-        super(routeId, namedNode, new Date());
+    public MetricsMessageHistory(String routeId, NamedNode namedNode, Timer timer, long timestamp, Message message) {
+        super(routeId, namedNode, timestamp, message);
         this.context = timer.time();
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,36 +16,39 @@
  */
 package org.apache.camel.spring;
 
-import junit.framework.TestCase;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.example.MyProcessor;
+import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * @version 
- */
-public class MainExampleTest extends TestCase {
+public class MainExampleTest extends Assert {
 
+    @Test
     public void testMain() throws Exception {
         Main main = new Main();
         main.addRouteBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://src/test/data?noop=true").process(new MyProcessor()).to("file://target/mainTest");
+                from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor()).to("file://target/mainTest");
             }
         });
         main.start();
 
-        // then some time later
-        Thread.sleep(1000);
+        // run for 100 millis
+        main.setDuration(100);
+
         main.stop();
     }
     
+    @Test
     public void testFileApplicationContextUri() throws Exception {
         Main main = new Main();
         main.setFileApplicationContextUri("src/test/resources/org/apache/camel/spring/routingUsingProcessor.xml");
         main.start();
-        // sleep for a while
-        Thread.sleep(1000);
+
+        // run for 100 millis
+        main.setDuration(100);
+
         main.stop();
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,15 +18,13 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 
-/**
- * @version 
- */
-@Converter
+import static org.apache.camel.TypeConverter.MISS_VALUE;
+
+@Converter(loader = true)
 public final class JettyConverter {
 
     private JettyConverter() {
@@ -38,13 +36,13 @@ public final class JettyConverter {
         return response.toString();
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     @SuppressWarnings("unchecked")
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         if (value != null) {
             // should not try to convert Request as its not possible
             if (Request.class.isAssignableFrom(value.getClass())) {
-                return (T) Void.TYPE;
+                return (T) MISS_VALUE;
             }
         }
 

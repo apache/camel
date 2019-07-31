@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,8 @@ package org.apache.camel.component.optaplanner;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
+import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.impl.solver.ProblemFactChange;
@@ -43,8 +44,7 @@ public class OptaPlannerProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         if (configuration.isAsync()) {
-            executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(
-                    this, endpoint.getEndpointUri(), configuration.getThreadPoolSize());
+            executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), configuration.getThreadPoolSize());
         }
         super.doStart();
     }
@@ -58,20 +58,26 @@ public class OptaPlannerProducer extends DefaultProducer {
         super.doStop();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public synchronized void process(Exchange exchange) throws Exception {
         final Object body = exchange.getIn().getMandatoryBody();
         final String solverId = getSolverId(exchange);
 
-        if (body instanceof Solution) {
+        /*
+         * Keep for backward compatibility untill optaplanner version 8.0.0 not
+         * released After that the code '|| body instanceof Solution' need to be
+         * removed
+         */
+        if (body.getClass().isAnnotationPresent(PlanningSolution.class) || body instanceof Solution) {
             if (isAsync(exchange)) {
                 LOGGER.debug("Asynchronously solving problem: [{}] with id [{}]", body, solverId);
-                final Solver solver = endpoint.getOrCreateSolver(solverId);
+                final Solver<Object> solver = endpoint.getOrCreateSolver(solverId);
                 executor.submit(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            solver.solve((Solution) body);
+                            solver.solve(body);
                         } catch (Throwable e) {
                             LOGGER.error("Asynchronously solving failed for solverId ({})", solverId, e);
                         }
@@ -79,26 +85,26 @@ public class OptaPlannerProducer extends DefaultProducer {
                 });
             } else {
                 LOGGER.debug("Synchronously solving problem: [{}] with id [{}]", body, solverId);
-                Solver solver = endpoint.getSolver(solverId);
+                Solver<Object> solver = endpoint.getSolver(solverId);
                 if (solver == null) {
                     solver = endpoint.createSolver();
                 }
-                solver.solve((Solution) body);
+                solver.solve(body);
                 populateResult(exchange, solver);
             }
         } else if (body instanceof ProblemFactChange) {
             LOGGER.debug("Adding ProblemFactChange to solver: [{}] with id [{}]", body, solverId);
-            Solver solver = endpoint.getOrCreateSolver(solverId);
-            solver.addProblemFactChange((ProblemFactChange)body);
+            Solver<Object> solver = endpoint.getOrCreateSolver(solverId);
+            solver.addProblemFactChange((ProblemFactChange<Object>)body);
             if (!isAsync(exchange)) {
                 while (!solver.isEveryProblemFactChangeProcessed()) {
-                    Thread.sleep(100);
+                    Thread.sleep(OptaPlannerConstants.IS_EVERY_PROBLEM_FACT_CHANGE_DELAY);
                 }
             }
             populateResult(exchange, solver);
         } else {
             LOGGER.debug("Retrieving best score for solver: [{}]", solverId);
-            Solver solver = endpoint.getSolver(solverId);
+            Solver<Object> solver = endpoint.getSolver(solverId);
             if (solver == null) {
                 throw new RuntimeException("Solver not found: " + solverId);
             }
@@ -106,7 +112,7 @@ public class OptaPlannerProducer extends DefaultProducer {
         }
     }
 
-    private void populateResult(Exchange exchange, Solver solver) {
+    private void populateResult(Exchange exchange, Solver<Object> solver) {
         exchange.getIn().setBody(solver.getBestSolution());
         exchange.getIn().setHeader(OptaPlannerConstants.TIME_SPENT, solver.getTimeMillisSpent());
         exchange.getIn().setHeader(OptaPlannerConstants.IS_EVERY_PROBLEM_FACT_CHANGE_PROCESSED, solver.isEveryProblemFactChangeProcessed());

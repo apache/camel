@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -50,7 +50,7 @@ import static org.junit.Assert.assertNull;
 @ContextConfiguration(locations = {"exec-mock-executor-context.xml"})
 public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     private ProducerTemplate producerTemplate;
 
     @Autowired

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +16,11 @@
  */
 package org.apache.camel.opentracing.starter;
 
+import io.opentracing.Tracer;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.opentracing.OpenTracingTracer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,12 +32,24 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(value = "camel.opentracing.enabled", matchIfMissing = true)
 public class OpenTracingAutoConfiguration {
 
+    @Autowired(required = false)
+    private Tracer tracer;
+
     @Bean(initMethod = "", destroyMethod = "")
     // Camel handles the lifecycle of this bean
     @ConditionalOnMissingBean(OpenTracingTracer.class)
     OpenTracingTracer openTracingEventNotifier(CamelContext camelContext,
                         OpenTracingConfigurationProperties config) {
         OpenTracingTracer ottracer = new OpenTracingTracer();
+        if (tracer != null) {
+            ottracer.setTracer(tracer);
+        }
+        if (config.getExcludePatterns() != null) {
+            ottracer.setExcludePatterns(config.getExcludePatterns());
+        }
+        if (config.getEncoding() != null) {
+            ottracer.setEncoding(config.getEncoding().booleanValue());
+        }
         ottracer.init(camelContext);
 
         return ottracer;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.hazelcast.ringbuffer;
 
-import java.util.Map;
-
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.ringbuffer.Ringbuffer;
 
@@ -26,6 +24,7 @@ import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 
 public class HazelcastRingbufferProducer extends HazelcastDefaultProducer {
 
@@ -38,29 +37,27 @@ public class HazelcastRingbufferProducer extends HazelcastDefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
 
-        Map<String, Object> headers = exchange.getIn().getHeaders();
-        
-        int operation = lookupOperationNumber(exchange);
+        HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
 
-        case HazelcastConstants.READ_ONCE_HEAD_OPERATION:
+        case READ_ONCE_HEAD:
             this.readOnceHead(exchange);
             break;
             
-        case HazelcastConstants.READ_ONCE_TAIL_OPERATION:
+        case READ_ONCE_TAIL:
             this.readOnceTail(exchange);
             break;
             
-        case HazelcastConstants.GET_CAPACITY_OPERATION:
+        case CAPACITY:
             this.getCapacity(exchange);
             break;
             
-        case HazelcastConstants.REMAINING_CAPACITY_OPERATION:
+        case REMAINING_CAPACITY:
             this.getRemainingCapacity(exchange);
             break;
             
-        case HazelcastConstants.ADD_OPERATION:
+        case ADD:
             this.add(exchange);
             break;
 

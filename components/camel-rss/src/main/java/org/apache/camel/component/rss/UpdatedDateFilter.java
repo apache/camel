@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,10 +19,11 @@ package org.apache.camel.component.rss;
 import java.util.Date;
 import java.util.Map;
 
-import com.sun.syndication.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndEntry;
+
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEndpoint;
-import org.apache.camel.util.LRUCache;
+import org.apache.camel.support.LRUCacheFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,8 @@ public class UpdatedDateFilter implements EntryFilter {
     private static final Logger LOG = LoggerFactory.getLogger(UpdatedDateFilter.class);
     private Date lastUpdate;
     // use a LRU so we only keep the last 1000 elements to avoid growing to large
-    private Map<Integer, Integer> entriesForLastUpdate = new LRUCache<Integer, Integer>(1000);
+    @SuppressWarnings("unchecked")
+    private Map<Integer, Integer> entriesForLastUpdate = LRUCacheFactory.newLRUCache(1000);
 
     public UpdatedDateFilter(Date lastUpdate) {
         this.lastUpdate = lastUpdate;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.sparkrest;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 /**
  * Default Spark {@link org.apache.camel.spi.HeaderFilterStrategy} used when binding with {@link org.apache.camel.component.sparkrest.SparkBinding}.
@@ -28,6 +28,8 @@ public class SparkHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     protected void initialize() {
+        getInFilter().add("content-type");
+        
         getOutFilter().add("content-length");
         getOutFilter().add("content-type");
         getOutFilter().add("host");

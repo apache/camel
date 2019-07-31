@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,57 +16,31 @@
  */
 package org.apache.camel.itest.cdi;
 
-import java.util.Map;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.CamelContextHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class CamelCdiTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelCdiTest.class);
+    @Inject
+    CamelContext camelContext;
 
-    @Any
     @Inject
-    Instance<CamelContext> camelContexts;
+    @Uri("seda:a")
+    ProducerTemplate producer;
     
-    @Inject
-    @ContextName("contextA")
-    RoutesContextA routesA;
-    @Inject
-    @ContextName("contextB")
-    RoutesContextB routesB;
-    @Inject
-    @ContextName("contextC")
-    RoutesContextC routesC;
-    @Inject
-    @ContextName("contextD")
-    RoutesContextD routesD;
-    
-    @Inject
-    @ContextName("contextD")
-    @Uri(value = "seda:foo")
-    ProducerTemplate producerD;
-
     @Deployment
     public static JavaArchive createDeployment() {
         return Maven.configureResolver().workOffline()
@@ -75,76 +49,20 @@ public class CamelCdiTest {
             .withoutTransitivity()
             .asSingle(JavaArchive.class)
             .addClasses(
-                RoutesContextA.class,
-                RoutesContextB.class,
-                RoutesContextC.class,
-                RoutesContextD.class
+                MyRoutes.class
             );
     }
 
     @Test
-    public void checkContextsHaveCorrectEndpointsAndRoutes() throws Exception {
-        assertNotNull("camelContexts not injected!", camelContexts);
+    public void testSendMessages() throws Exception {
+        assertNotNull(camelContext);
 
-        for (CamelContext camelContext : camelContexts) {
-            LOG.info("CamelContext " + camelContext + " has endpoints: " + camelContext.getEndpointMap().keySet());
-            camelContext.start();
-        }
+        MockEndpoint b = camelContext.getEndpoint("mock:b", MockEndpoint.class);
+        b.expectedBodiesReceived("Hello World");
 
-        CamelContext contextA = assertCamelContext("contextA");
-        assertHasEndpoints(contextA, "seda://A.a", "mock://A.b");
+        producer.sendBody("Hello World");
 
-        MockEndpoint mockEndpoint = routesA.b;
-        mockEndpoint.expectedBodiesReceived(Constants.EXPECTED_BODIES_A);
-        routesA.sendMessages();
-        mockEndpoint.assertIsSatisfied();
-
-        CamelContext contextB = assertCamelContext("contextB");
-        assertHasEndpoints(contextB, "seda://B.a", "mock://B.b");
-
-        MockEndpoint mockEndpointB = routesB.b;
-        mockEndpointB.expectedBodiesReceived(Constants.EXPECTED_BODIES_B);
-        routesB.sendMessages();
-        mockEndpointB.assertIsSatisfied();
-
-        CamelContext contextC = assertCamelContext("contextC");
-        assertHasEndpoints(contextC, "seda://C.a", "mock://C.b");
-
-        MockEndpoint mockEndpointC = routesC.b;
-        mockEndpointC.expectedBodiesReceived(Constants.EXPECTED_BODIES_C);
-        routesC.sendMessages();
-        mockEndpointC.assertIsSatisfied();
-
-        CamelContext contextD = assertCamelContext("contextD");
-        assertHasEndpoints(contextD, "seda://D.a", "mock://D.b");
-
-        MockEndpoint mockEndpointD = routesD.b;
-        mockEndpointD.expectedBodiesReceived(Constants.EXPECTED_BODIES_D);
-        routesD.sendMessages();
-        mockEndpointD.assertIsSatisfied();
-
-        CamelContext contextE = assertCamelContext("contextD");
-        assertHasEndpoints(contextE, "seda://D.a", "mock://D.b");
-        MockEndpoint mockDb = CamelContextHelper.getMandatoryEndpoint(contextE, "mock://D.b", MockEndpoint.class);
-        mockDb.reset();
-        mockDb.expectedBodiesReceived(Constants.EXPECTED_BODIES_D_A);
-        for (Object body : Constants.EXPECTED_BODIES_D_A) {
-            producerD.sendBody("seda:D.a", body);
-        }
-        mockDb.assertIsSatisfied();
+        b.assertIsSatisfied();
     }
 
-    public static void assertHasEndpoints(CamelContext context, String... uris) {
-        Map<String, Endpoint> endpointMap = context.getEndpointMap();
-        for (String uri : uris) {
-            Endpoint endpoint = endpointMap.get(uri);
-            assertNotNull("CamelContext " + context + " does not have an Endpoint with URI " + uri + " but has " + endpointMap.keySet(), endpoint);
-        }
-    }
-
-    protected CamelContext assertCamelContext(String contextName) {
-        CamelContext answer = camelContexts.select(ContextName.Literal.of(contextName)).get();
-        assertTrue("CamelContext '" + contextName + "' is not started", answer.getStatus().isStarted());
-        return answer;
-    }
 }

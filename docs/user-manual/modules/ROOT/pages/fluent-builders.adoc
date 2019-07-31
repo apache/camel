@@ -1,0 +1,11 @@
+[[FluentBuilders-FluentBuilders]]
+= Fluent Builders
+
+Camel provides _fluent builders_ for creating routing and mediation
+rules using a type-safe IDE friendly way which provides smart completion
+and is refactoring safe.
+
+For more information see:
+
+* xref:dsl.adoc[Java Domain Specific Language]
+* xref:xml-configuration.adoc[XML Configuration]

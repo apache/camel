@@ -1,0 +1,136 @@
+[[hazelcast-topic-component]]
+= Hazelcast Topic Component
+
+*Available as of Camel version 2.15*
+
+The http://www.hazelcast.com/[Hazelcast] Topic component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed topic.
+
+
+== Options
+
+// component options: START
+The Hazelcast Topic component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hazelcastInstance* (advanced) | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. |  | HazelcastInstance
+| *hazelcastMode* (advanced) | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+// endpoint options: START
+The Hazelcast Topic endpoint is configured using URI syntax:
+
+----
+hazelcast-topic:cacheName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cacheName* | *Required* The name of the cache |  | String
+|===
+
+
+=== Query Parameters (18 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *defaultOperation* (common) | To specify a default operation to use, if no operation header has been provided. |  | HazelcastOperation
+| *hazelcastInstance* (common) | The hazelcast instance reference which can be used for hazelcast endpoint. |  | HazelcastInstance
+| *hazelcastInstanceName* (common) | The hazelcast instance reference name which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. |  | String
+| *reliable* (common) | Define if the endpoint will use a reliable Topic struct or not. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *pollingTimeout* (consumer) | Define the polling timeout of the Queue consumer in Poll mode | 10000 | long
+| *poolSize* (consumer) | Define the Pool size for Queue Consumer Executor | 1 | int
+| *queueConsumerMode* (consumer) | Define the Queue Consumer mode: Listen or Poll | Listen | HazelcastQueueConsumer Mode
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *concurrentConsumers* (seda) | To use concurrent consumers polling from the SEDA queue. | 1 | int
+| *onErrorDelay* (seda) | Milliseconds before consumer continues polling after an error has occurred. | 1000 | int
+| *pollTimeout* (seda) | The timeout used when consuming from the SEDA queue. When a timeout occurs, the consumer can check whether it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown. | 1000 | int
+| *transacted* (seda) | If set to true then the consumer runs in transaction mode, where the messages in the seda queue will only be removed if the transaction commits, which happens when the processing is complete. | false | boolean
+| *transferExchange* (seda) | If set to true the whole Exchange will be transfered. If header or body contains not serializable objects, they will be skipped. | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hazelcast-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.hazelcast-topic.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.hazelcast-topic.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-topic.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-topic.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-topic.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-topic.enabled* | Enable hazelcast-topic component | true | Boolean
+| *camel.component.hazelcast-topic.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. The option is a com.hazelcast.core.HazelcastInstance type. |  | String
+| *camel.component.hazelcast-topic.hazelcast-mode* | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
+| *camel.component.hazelcast-topic.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Topic producer – to(“hazelcast-topic:foo”)
+
+The topic producer provides only one operation (publish).
+
+=== Sample for *publish*:
+
+[source,java]
+----------------------------------------------------------------------------------------
+from("direct:add")
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUBLISH))
+.toF("hazelcast-%sbar", HazelcastConstants.PUBLISH_OPERATION);
+----------------------------------------------------------------------------------------
+
+== Topic consumer – from(“hazelcast-topic:foo”)
+
+The topic consumer provides only one operation (received). This
+component is supposed to support multiple consumption as it's expected
+when it comes to topics so you are free to have as much consumers as you
+need on the same hazelcast topic.
+
+[source,java]
+--------------------------------------------------------------------------------------------
+fromF("hazelcast-%sfoo", HazelcastConstants.TOPIC_PREFIX)
+  .choice()
+    .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.RECEIVED))
+      .log("...message received")
+    .otherwise()
+      .log("...this should never have happened")
+--------------------------------------------------------------------------------------------

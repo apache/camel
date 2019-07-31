@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,12 @@
  */
 package org.apache.camel.dataformat.zipfile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -27,7 +30,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -37,26 +41,35 @@ import static org.apache.camel.Exchange.FILE_NAME;
  * Zip file data format.
  * See {@link org.apache.camel.model.dataformat.ZipDataFormat} for "deflate" compression.
  */
+@Dataformat("zipfile")
 public class ZipFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private boolean usingIterator;
+    private boolean allowEmptyDirectory;
+    private boolean preservePathElements;
 
     @Override
     public String getDataFormatName() {
-        return "zipFile";
+        return "zipfile";
     }
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
-        String filename = exchange.getIn().getHeader(FILE_NAME, String.class);
-        if (filename == null) {
+        String filename;
+        String filepath = exchange.getIn().getHeader(FILE_NAME, String.class);
+        if (filepath == null) {
             // generate the file name as the camel file component would do
-            filename = StringHelper.sanitize(exchange.getIn().getMessageId());
+            filename = filepath = StringHelper.sanitize(exchange.getIn().getMessageId());
         } else {
-            filename = Paths.get(filename).getFileName().toString(); // remove any path elements
+            filename = Paths.get(filepath).getFileName().toString(); // remove any path elements
         }
 
         ZipOutputStream zos = new ZipOutputStream(stream);
-        zos.putNextEntry(new ZipEntry(filename));
+
+        if (preservePathElements) {
+            createZipEntries(zos, filepath);
+        } else {
+            createZipEntries(zos, filename);
+        }
 
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
@@ -73,7 +86,9 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         if (usingIterator) {
-            return new ZipIterator(exchange.getIn());
+            ZipIterator zipIterator = new ZipIterator(exchange, inputStream);
+            zipIterator.setAllowEmptyDirectory(allowEmptyDirectory);
+            return zipIterator;
         } else {
             ZipInputStream zis = new ZipInputStream(inputStream);
             OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
@@ -97,12 +112,49 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
         }
     }
 
+    private void createZipEntries(ZipOutputStream zos, String filepath) throws IOException {
+        Iterator<Path> elements = Paths.get(filepath).iterator();
+        StringBuilder sb = new StringBuilder();
+
+        while (elements.hasNext()) {
+            Path path = elements.next();
+            String element = path.toString();
+
+            // If there are more elements to come this element is a directory
+            // The "/" at the end tells the ZipEntry it is a folder
+            if (elements.hasNext()) {
+                element += "/";
+            }
+
+            // Each entry needs the complete path, including previous created folders.
+            zos.putNextEntry(new ZipEntry(sb + element));
+
+            sb.append(element);
+        }
+    }
+
     public boolean isUsingIterator() {
         return usingIterator;
     }
 
     public void setUsingIterator(boolean usingIterator) {
         this.usingIterator = usingIterator;
+    }
+
+    public boolean isAllowEmptyDirectory() {
+        return allowEmptyDirectory;
+    }
+
+    public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
+    }
+
+    public boolean isPreservePathElements() {
+        return preservePathElements;
+    }
+
+    public void setPreservePathElements(boolean preservePathElements) {
+        this.preservePathElements = preservePathElements;
     }
 
     @Override

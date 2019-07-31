@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,13 +26,12 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
-import org.apache.camel.processor.interceptor.Tracer;
+
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -45,13 +44,13 @@ public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
 
-    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> models = new ArrayList<>();
     private String expected;
 
-    @Produce(uri = URI_DIRECT_START)
+    @Produce(URI_DIRECT_START)
     private ProducerTemplate template;
 
-    @EndpointInject(uri = URI_MOCK_RESULT)
+    @EndpointInject(URI_MOCK_RESULT)
     private MockEndpoint result;
 
     @Test
@@ -68,7 +67,7 @@ public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests
     }
 
     public List<Map<String, Object>> generateModel() {
-        Map<String, Object> modelObjects = new HashMap<String, Object>();
+        Map<String, Object> modelObjects = new HashMap<>();
 
         Order order = new Order();
         order.setOrderNr(1);
@@ -102,12 +101,6 @@ public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests
     public static class ContextConfig extends RouteBuilder {
 
         public void configure() {
-
-            Tracer tracer = new Tracer();
-            tracer.setLogLevel(LoggingLevel.ERROR);
-            tracer.setLogName("org.apache.camel.bindy");
-
-            getContext().addInterceptStrategy(tracer);
 
             BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
             camelDataFormat.setLocale("en");

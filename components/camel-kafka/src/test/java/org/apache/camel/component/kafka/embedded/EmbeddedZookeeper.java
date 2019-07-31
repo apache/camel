@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,54 +21,53 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.zookeeper.server.NIOServerCnxnFactory;
 import org.apache.zookeeper.server.ServerCnxnFactory;
 import org.apache.zookeeper.server.ZooKeeperServer;
+import org.junit.rules.ExternalResource;
 
-public class EmbeddedZookeeper {
+import static org.apache.camel.component.kafka.embedded.TestUtils.constructTempDir;
+import static org.apache.camel.component.kafka.embedded.TestUtils.perTest;
+
+public class EmbeddedZookeeper extends ExternalResource {
     private int port = -1;
     private int tickTime = 500;
 
-    private ServerCnxnFactory factory;
+    private ServerCnxnFactory cnxnFactory;
     private File snapshotDir;
     private File logDir;
+    private ZooKeeperServer zooKeeperServer;
+
 
     public EmbeddedZookeeper() {
-        this(-1);
+        this(AvailablePortFinder.getNextAvailable());
     }
 
     public EmbeddedZookeeper(int port) {
-        this(port, 500);
+        this.port = port;
     }
 
-    public EmbeddedZookeeper(int port, int tickTime) {
-        this.port = resolvePort(port);
-        this.tickTime = tickTime;
-    }
-
-    private int resolvePort(int port) {
-        if (port == -1) {
-            return TestUtils.getAvailablePort();
-        }
-        return port;
-    }
-
-    public void startup() throws IOException {
-        if (this.port == -1) {
-            this.port = TestUtils.getAvailablePort();
-        }
-        this.factory = ServerCnxnFactory.createFactory(new InetSocketAddress("localhost", port), 1024);
-        this.snapshotDir = TestUtils.constructTempDir("embeeded-zk/snapshot");
-        this.logDir = TestUtils.constructTempDir("embeeded-zk/log");
+    @Override
+    public void before() throws IOException {
+        this.snapshotDir = constructTempDir(perTest("zk-snapshot"));
+        this.logDir = constructTempDir(perTest("zk-log"));
 
         try {
-            factory.startup(new ZooKeeperServer(snapshotDir, logDir, tickTime));
+            zooKeeperServer = new ZooKeeperServer(snapshotDir, logDir, tickTime);
+            cnxnFactory = new NIOServerCnxnFactory();
+            cnxnFactory.configure(new InetSocketAddress("localhost", port), 1024);
+            cnxnFactory.startup(zooKeeperServer);
         } catch (InterruptedException e) {
             throw new IOException(e);
         }
     }
 
-    public void shutdown() {
-        factory.shutdown();
+    @Override
+    public void after() {
+        cnxnFactory.shutdown();
+        zooKeeperServer.shutdown();
+
         try {
             TestUtils.deleteFile(snapshotDir);
         } catch (FileNotFoundException e) {
@@ -85,20 +84,8 @@ public class EmbeddedZookeeper {
         return "localhost:" + port;
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public void setTickTime(int tickTime) {
-        this.tickTime = tickTime;
-    }
-
     public int getPort() {
         return port;
-    }
-
-    public int getTickTime() {
-        return tickTime;
     }
 
     @Override

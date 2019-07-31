@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,37 +16,24 @@
  */
 package org.apache.camel.component.google.drive;
 
-
-
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
-import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.
  */
 public class CustomClientFactoryTest extends AbstractGoogleDriveTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CustomClientFactoryTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
-    
+    @BindToRegistry("myAuth")
+    private MyClientFactory cf = new MyClientFactory();
+
     @Test
     public void testClientFactoryUpdated() throws Exception {
         Endpoint endpoint = context.getEndpoint("google-drive://drive-files/list?clientFactory=#myAuth");
         assertTrue(endpoint instanceof GoogleDriveEndpoint);
         assertTrue(((GoogleDriveEndpoint)endpoint).getClientFactory() instanceof MyClientFactory);        
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("myAuth", new MyClientFactory());
-        return registry;
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,6 +27,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.mojo.exec.AbstractExecMojo;
 
 /**
@@ -34,53 +38,40 @@ import org.codehaus.mojo.exec.AbstractExecMojo;
  * <code>META-INF/spring/*.xml</code> and <code>camel-*.xml</code>
  * and starting up the context; then generating
  * the DOT file before closing the context down.
- *
- * @goal embedded
- * @requiresDependencyResolution compile+runtime
- * @execute phase="prepare-package"
  */
+@Mojo(name = "embedded", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class EmbeddedMojo extends AbstractExecMojo {
 
     /**
      * The duration to run the application for which by default is in milliseconds.
      * A value <= 0 will run forever. 
      * Adding a s indicates seconds - eg "5s" means 5 seconds.
-     *
-     * @parameter property="camel.duration"
-     *            default-value="-1"
      */
+    @Parameter(property = "camel.duration", defaultValue = "-1")
     protected String duration;
     
     /**
      * The classpath based application context uri that spring wants to get.
-     *
-     * @parameter property="camel.applicationContextUri"
      */
+    @Parameter(property = "camel.applicationContextUri")
     protected String applicationContextUri;
     
     /**
      * The filesystem based application context uri that spring wants to get.
-     *
-     * @parameter property="camel.fileApplicationContextUri"
      */
+    @Parameter(property = "camel.fileApplicationContextUri")
     protected String fileApplicationContextUri;
 
     /**
      * Project classpath.
-     *
-     * @parameter property="project.testClasspathElements"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project.testClasspathElements", required = true, readonly = true)
     private List<?> classpathElements;
 
     /**
      * The main class to execute.
-     *
-     * @parameter property="camel.mainClass"
-     *            default-value="org.apache.camel.spring.Main"
-     * @required
      */
+    @Parameter(property = "camel.mainClass", defaultValue = "org.apache.camel.spring.Main", required = true)
     private String mainClass;
 
     /**
@@ -171,7 +162,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
 
     protected String[] createArguments() {
 
-        List<String> args = new ArrayList<String>(5);
+        List<String> args = new ArrayList<>(5);
 
         if (applicationContextUri != null) {
             args.add("-applicationContext");

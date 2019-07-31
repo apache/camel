@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,24 +17,19 @@
 package org.apache.camel.component.quickfixj;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import javax.management.JMException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import quickfix.Acceptor;
-import quickfix.ConfigError;
 import quickfix.DataDictionary;
-import quickfix.FieldConvertError;
 import quickfix.Initiator;
 import quickfix.Message;
 import quickfix.SessionFactory;
@@ -94,7 +89,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     @Test
     public void convertToExchange() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
-        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent());
+        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent(new DefaultCamelContext()));
         
         Message message = new Message();     
         message.getHeader().setString(MsgType.FIELD, MsgType.ORDER_SINGLE);
@@ -112,7 +107,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     @Test
     public void convertToExchangeWithNullMessage() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
-        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent());
+        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent(new DefaultCamelContext()));
         
         Exchange exchange = QuickfixjConverters.toExchange(endpoint, sessionID, null, QuickfixjEventCategory.AppMessageSent);
         
@@ -219,7 +214,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
         }
     }
 
-    private void createSession(SessionID sessionID) throws IOException, ConfigError, FieldConvertError, JMException, Exception {
+    private void createSession(SessionID sessionID) throws Exception {
         SessionSettings settings = new SessionSettings();
         settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         

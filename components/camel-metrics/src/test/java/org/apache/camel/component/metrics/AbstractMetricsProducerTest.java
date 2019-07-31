@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,15 @@ package org.apache.camel.component.metrics;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.apache.camel.component.metrics.AbstractMetricsProducer.HEADER_PATTERN;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
@@ -171,7 +172,7 @@ public class AbstractMetricsProducerTest {
 
     @Test
     public void testClearRealHeaders() throws Exception {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(new DefaultCamelContext());
         Object val = new Object();
         msg.setHeader(HEADER_HISTOGRAM_VALUE, 109L);
         msg.setHeader(HEADER_METRIC_NAME, "the metric");

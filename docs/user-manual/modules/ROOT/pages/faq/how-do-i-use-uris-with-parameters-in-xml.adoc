@@ -1,0 +1,52 @@
+[[HowdoIuseURIswithparametersinXML-HowdoIuseURIswithparametersinXML]]
+= How do I use URIs with parameters in XML?
+
+If you try and use one of the Camel xref:uris.adoc[URIs] in an
+xref:xml-configuration.adoc[XML Configuration] using the URI query
+parameter notation, such as:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start?paramA=1&paramB=2"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+you might get errors such as...
+
+----
+Caused by: org.xml.sax.SAXParseException: The reference to entity "paramB" must end with the ';' delimiter.
+  at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(ErrorHandlerWrapper.java:236)
+  at
+----
+
+This is because in XML you need to escape some special XML characters
+like these:
+
+[width="100%",cols="50%,50%",options="header",]
+|==================================================
+|Special Character |How to escape it in XML
+a|`&`
+
+a|`+&amp;+`
+
+a|`<`
+
+a|`+&lt;+`
+
+a|`>`
+
+a|`+&gt;+`
+
+|==================================================
+
+So if you write the following XML it should work...
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start?paramA=1&amp;paramB=2"/>
+  <to uri="mock:result"/>
+</route>
+----

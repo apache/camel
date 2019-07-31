@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.apns.model.InactiveDevice;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 public class ApnsConsumer extends ScheduledPollConsumer {
 
@@ -63,7 +63,7 @@ public class ApnsConsumer extends ScheduledPollConsumer {
 
         Map<String, Date> inactiveDeviceMap = ae.getApnsService().getInactiveDevices();
 
-        List<InactiveDevice> inactiveDeviceList = new ArrayList<InactiveDevice>();
+        List<InactiveDevice> inactiveDeviceList = new ArrayList<>();
         for (Entry<String, Date> inactiveDeviceEntry : inactiveDeviceMap.entrySet()) {
             String deviceToken = inactiveDeviceEntry.getKey();
             Date date = inactiveDeviceEntry.getValue();

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,19 +16,18 @@
  */
 package org.apache.camel.component.http4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.DefaultHttpBinding;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Unit test for resolving reference parameters.
- *
- * @version 
  */
 public class HttpReferenceParameterTest extends CamelTestSupport {
 
@@ -38,11 +37,17 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
     private HttpEndpoint endpoint1;
     private HttpEndpoint endpoint2;
 
+    @BindToRegistry("customBinding")
     private TestHttpBinding testBinding;
+    
+    @BindToRegistry("customConfigurer")
     private TestClientConfigurer testConfigurer;
+    
+    @BindToRegistry("customContext")
     private HttpContext testHttpContext;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         this.testBinding = new TestHttpBinding();
         this.testConfigurer = new TestClientConfigurer();
@@ -68,15 +73,6 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
     public void testHttpContext() {
         assertSame(testHttpContext, endpoint1.getHttpContext());
         assertSame(testHttpContext, endpoint2.getHttpContext());
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("customBinding", testBinding);
-        registry.bind("customConfigurer", testConfigurer);
-        registry.bind("customContext", testHttpContext);
-        return registry;
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,21 +31,24 @@ import org.apache.camel.component.olingo2.internal.Olingo2Constants;
 import org.apache.camel.component.olingo2.internal.Olingo2PropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.component.AbstractApiEndpoint;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.AbstractApiEndpoint;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
- * Communicates with OData 2.0 and 3.0 services using Apache Olingo.
+ * Communicates with OData 2.0 services using Apache Olingo.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName", consumerClass = Olingo2Consumer.class, label = "cloud")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName", label = "cloud")
 public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration> {
 
     protected static final String RESOURCE_PATH_PROPERTY = "resourcePath";
     protected static final String RESPONSE_HANDLER_PROPERTY = "responseHandler";
+    protected static final String SERVICE_URI_PROPERTY = "serviceUri";
+    protected static final String FILTER_ALREADY_SEEN = "filterAlreadySeen";
 
     private static final String KEY_PREDICATE_PROPERTY = "keyPredicate";
     private static final String QUERY_PARAMS_PROPERTY = "queryParams";
+    private static final String ENDPOINT_HTTP_HEADERS_PROPERTY = "endpointHttpHeaders";
 
     private static final String READ_METHOD = "read";
     private static final String EDM_PROPERTY = "edm";
@@ -69,9 +72,12 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         this.configuration = endpointConfiguration;
 
         // get all endpoint property names
-        endpointPropertyNames = new HashSet<String>(getPropertiesHelper().getValidEndpointProperties(configuration));
+        endpointPropertyNames = new HashSet<>(getPropertiesHelper().getValidEndpointProperties(configuration));
         // avoid adding edm as queryParam
         endpointPropertyNames.add(EDM_PROPERTY);
+        endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
+        endpointPropertyNames.add(SERVICE_URI_PROPERTY);
+        endpointPropertyNames.add(FILTER_ALREADY_SEEN);
     }
 
     public Producer createProducer() throws Exception {
@@ -162,6 +168,9 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         // read Edm if not set yet
         properties.put(EDM_PROPERTY, apiProxy.getEdm());
 
+        // handle filterAlreadySeen property
+        properties.put(FILTER_ALREADY_SEEN, configuration.getFilterAlreadySeen());
+
         // handle keyPredicate
         final String keyPredicate = (String) properties.get(KEY_PREDICATE_PROPERTY);
         if (keyPredicate != null) {
@@ -188,11 +197,19 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     private void parseQueryParams(Map<String, Object> options) {
         // extract non-endpoint properties as query params
-        final Map<String, String> queryParams = new HashMap<String, String>();
+        final Map<String, String> queryParams = new HashMap<>();
         for (Iterator<Map.Entry<String, Object>> it = options.entrySet().iterator(); it.hasNext();) {
 
             final Map.Entry<String, Object> entry = it.next();
             final String paramName = entry.getKey();
+            
+            /**
+             * Avoid swallowing consumer scheduler properties, which
+             * get processed in configureProperties()
+             */
+            if (paramName.startsWith("consumer.")) {
+                continue;
+            }
 
             if (!endpointPropertyNames.contains(paramName)) {
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,7 +27,7 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * Unit test for request-reply with jms where processing the input could cause: OK, FAULT or Exception
+ * Unit test for request-reply with jms where processing the input could cause: OK or Exception
  */
 public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
 
@@ -35,12 +35,6 @@ public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
     public void testSendOK() throws Exception {
         Object out = template.requestBody("activemq:queue:ok", "Hello World");
         assertEquals("Bye World", out);
-    }
-
-    @Test
-    public void testSendFailure() throws Exception {
-        Object out = template.requestBody("activemq:queue:fault", "Hello World");
-        assertEquals("This is a fault message", out);
     }
 
     @Test
@@ -64,8 +58,6 @@ public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("activemq:queue:ok").transform(constant("Bye World"));
-
-                from("activemq:queue:fault").setFaultBody(constant("This is a fault message"));
 
                 from("activemq:queue:error?transferException=true").bean(MyExceptionBean.class);
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,13 +23,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.camel.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Converter
+@Converter(loader = true)
 public final class SyslogConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(SyslogConverter.class);
@@ -248,7 +249,7 @@ public final class SyslogConverter {
         }
 
         syslogMessage.setLogMessage(msg.toString());
-        LOG.trace("Syslog message : {}", syslogMessage.toString());
+        LOG.trace("Syslog message : {}", syslogMessage);
 
         return syslogMessage;
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf;
 
 import javax.xml.ws.Endpoint;
 
-import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.AfterClass;
@@ -48,7 +47,8 @@ public class CxfGreeterCXFMessageRouterTest extends AbstractCXFGreeterRouterTest
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                context.setErrorHandlerBuilder(new NoErrorHandlerBuilder());
+                errorHandler(noErrorHandler());
+
                 from("cxf:bean:routerEndpoint?dataFormat=CXF_MESSAGE&publishedEndpointUrl=http://www.simple.com/services/test")
                     .to("cxf:bean:serviceEndpoint?dataFormat=CXF_MESSAGE");
             }

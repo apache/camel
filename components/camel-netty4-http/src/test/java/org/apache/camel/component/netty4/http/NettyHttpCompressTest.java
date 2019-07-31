@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,20 +25,18 @@ import java.util.Map;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettyHttpCompressTest extends BaseNettyTest {
     
     // setup the decompress decoder here
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+    @BindToRegistry("myDecoders")
+    public List<ChannelHandler> addChannelHandlers() throws Exception {
+        List<ChannelHandler> decoders = new ArrayList<>();
         decoders.add(new HttpContentDecompressor());
-        registry.bind("myDecoders", decoders);
-        return registry;
+        return decoders;
     }
     
 
@@ -46,7 +44,7 @@ public class NettyHttpCompressTest extends BaseNettyTest {
     public void testContentType() throws Exception {
         
         byte[] data = "Hello World".getBytes(Charset.forName("UTF-8"));
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("content-type", "text/plain; charset=\"UTF-8\"");
         headers.put("Accept-Encoding", "compress, gzip");
         String out = template.requestBodyAndHeaders("netty4-http:http://localhost:{{port}}/foo?decoders=#myDecoders", data,

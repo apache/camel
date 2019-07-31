@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.pg-replication-slot.enabled",
+      "description": "Enable pg-replication-slot component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

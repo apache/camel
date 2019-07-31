@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,10 +31,10 @@ import org.junit.Test;
 
 public class ShiroAuthorizationTest extends CamelTestSupport {
     
-    @EndpointInject(uri = "mock:success")
+    @EndpointInject("mock:success")
     protected MockEndpoint successEndpoint;
 
-    @EndpointInject(uri = "mock:authorizationException")
+    @EndpointInject("mock:authorizationException")
     protected MockEndpoint failureEndpoint;
     
     private byte[] passPhrase = {
@@ -146,7 +146,7 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() {
                 
-                List<Permission> permissionsList = new ArrayList<Permission>();
+                List<Permission> permissionsList = new ArrayList<>();
                 Permission permission = new WildcardPermission("zone1:readwrite:*");
                 permissionsList.add(permission);
                 
@@ -164,7 +164,7 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() {
                 
-                List<Permission> permissionsList = new ArrayList<Permission>();
+                List<Permission> permissionsList = new ArrayList<>();
                 Permission permission = new WildcardPermission("zone1:readonly:*");
                 permissionsList.add(permission);
                 permission = new WildcardPermission("zone1:writeonly:*");
@@ -184,7 +184,7 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() {
                 
-                List<Permission> permissionsList = new ArrayList<Permission>();
+                List<Permission> permissionsList = new ArrayList<>();
                 Permission permission = new WildcardPermission("zone1:readonly:*");
                 permissionsList.add(permission);
                 permission = new WildcardPermission("zone1:writeonly:*");

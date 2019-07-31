@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,21 +33,19 @@ import org.junit.Test;
 
 /**
  * Tests duplicate delivery via mqtt consumer.
- * 
- * @version
  */
 public class MQTTDuplicatesTest extends MQTTBaseTest {
 
     private static final int MESSAGE_COUNT = 50;
     private static final int WAIT_MILLIS = 100;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:withClientID")
+    @Produce("direct:withClientID")
     protected ProducerTemplate templateWithClientID;
 
-    @Produce(uri = "direct:withoutClientID")
+    @Produce("direct:withoutClientID")
     protected ProducerTemplate templateWithoutClientID;
 
     @Test
@@ -110,8 +108,8 @@ public class MQTTDuplicatesTest extends MQTTBaseTest {
     private void assertNoDuplicates() {
         List<Exchange> exchanges = resultEndpoint.getExchanges();
         Assert.assertTrue("No message was delivered - something wrong happened", exchanges.size() > 0);
-        Set<String> values = new HashSet<String>();
-        List<String> duplicates = new ArrayList<String>();
+        Set<String> values = new HashSet<>();
+        List<String> duplicates = new ArrayList<>();
         for (Exchange e : exchanges) {
             String body = e.getIn().getBody(String.class);
             if (values.contains(body)) {

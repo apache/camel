@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,10 @@
 package org.apache.camel.component.linkedin.api;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -34,27 +38,15 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.ProxyConfig;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebClientOptions;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.WebResponse;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
 
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpStatus;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.FormElement;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,58 +59,54 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
 
     public static final String BASE_ADDRESS = "https://api.linkedin.com/v1";
 
+    private static final int SC_OK = 200;
+    private static final int SC_MOVED_TEMPORARILY = 302;
+    private static final int SC_SEE_OTHER = 303;
+    private static final String HEADER_LOCATION = "location";
+
     private static final Logger LOG = LoggerFactory.getLogger(LinkedInOAuthRequestFilter.class);
 
-    private static final String AUTHORIZATION_URL = "https://www.linkedin.com/uas/oauth2/authorization?"
-        + "response_type=code&client_id=%s&state=%s&redirect_uri=%s";
-    private static final String AUTHORIZATION_URL_WITH_SCOPE = "https://www.linkedin.com/uas/oauth2/authorization?"
-        + "response_type=code&client_id=%s&state=%s&scope=%s&redirect_uri=%s";
+    private static final String AUTHORIZATION_URL_PREFIX = "https://www.linkedin.com";
 
-    private static final String ACCESS_TOKEN_URL = "https://www.linkedin.com/uas/oauth2/accessToken?"
-        + "grant_type=authorization_code&code=%s&redirect_uri=%s&client_id=%s&client_secret=%s";
+    private static final String AUTHORIZATION_URL = AUTHORIZATION_URL_PREFIX + "/uas/oauth2/authorization?"
+            + "response_type=code&client_id=%s&state=%s&redirect_uri=%s";
+    private static final String AUTHORIZATION_URL_WITH_SCOPE = AUTHORIZATION_URL_PREFIX + "/uas/oauth2/authorization?"
+            + "response_type=code&client_id=%s&state=%s&scope=%s&redirect_uri=%s";
+
+    private static final String ACCESS_TOKEN_URL = AUTHORIZATION_URL_PREFIX + "/uas/oauth2/accessToken?"
+            + "grant_type=authorization_code&code=%s&redirect_uri=%s&client_id=%s&client_secret=%s";
 
     private static final Pattern QUERY_PARAM_PATTERN = Pattern.compile("&?([^=]+)=([^&]+)");
 
-    private final WebClient webClient;
 
     private final OAuthParams oAuthParams;
 
     private OAuthToken oAuthToken;
 
-    @SuppressWarnings("deprecation")
+    private Proxy proxy;
+
     public LinkedInOAuthRequestFilter(OAuthParams oAuthParams, Map<String, Object> httpParams,
                                       boolean lazyAuth, String[] enabledProtocols) {
 
         this.oAuthParams = oAuthParams;
-        this.oAuthToken = null;
-
-        // create HtmlUnit client
-        webClient = new WebClient(BrowserVersion.FIREFOX_38);
-        final WebClientOptions options = webClient.getOptions();
-        options.setRedirectEnabled(true);
-        options.setJavaScriptEnabled(false);
-        options.setThrowExceptionOnFailingStatusCode(true);
-        options.setThrowExceptionOnScriptError(true);
-        options.setPrintContentOnFailingStatusCode(LOG.isDebugEnabled());
-        options.setSSLClientProtocols(enabledProtocols);
-
-        // add HTTP proxy if set
-        if (httpParams != null && httpParams.get(ConnRoutePNames.DEFAULT_PROXY) != null) {
-            final HttpHost proxyHost = (HttpHost) httpParams.get(ConnRoutePNames.DEFAULT_PROXY);
-            final Boolean socksProxy = (Boolean) httpParams.get("http.route.socks-proxy");
-            final ProxyConfig proxyConfig = new ProxyConfig(proxyHost.getHostName(), proxyHost.getPort(),
-                socksProxy != null ? socksProxy : false);
-            options.setProxyConfig(proxyConfig);
+        if (oAuthParams.getSecureStorage() != null) {
+            this.oAuthToken = oAuthParams.getSecureStorage().getOAuthToken();
+        } else {
+            this.oAuthToken = null;
         }
 
-        // disable default gzip compression, as error pages are sent with no compression and htmlunit doesn't negotiate
-        new WebConnectionWrapper(webClient) {
-            @Override
-            public WebResponse getResponse(WebRequest request) throws IOException {
-                request.setAdditionalHeader(HttpHeaders.ACCEPT_ENCODING, "identity");
-                return super.getResponse(request);
+        if (httpParams != null && httpParams.get(ConnRoutePNames.DEFAULT_PROXY) != null) {
+            final HttpHost proxyHost = (HttpHost)httpParams.get(ConnRoutePNames.DEFAULT_PROXY);
+            final Boolean socksProxy = (Boolean)httpParams.get("http.route.socks-proxy");
+            SocketAddress proxyAddr = new InetSocketAddress(proxyHost.getHostName(), proxyHost.getPort());
+            if (socksProxy != null && socksProxy) {
+                proxy = new Proxy(Proxy.Type.SOCKS, proxyAddr);
+            } else {
+                proxy = new Proxy(Proxy.Type.HTTP, proxyAddr);
             }
-        };
+        } else {
+            proxy = null;
+        }
 
         if (!lazyAuth) {
             try {
@@ -132,85 +120,73 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
 
     @SuppressWarnings("deprecation")
     private String getRefreshToken() {
-        // disable redirect to avoid loading error redirect URL
-        webClient.getOptions().setRedirectEnabled(false);
 
         try {
             final String csrfId = String.valueOf(new SecureRandom().nextLong());
 
             final String encodedRedirectUri = URLEncoder.encode(oAuthParams.getRedirectUri(), "UTF-8");
             final OAuthScope[] scopes = oAuthParams.getScopes();
+            final Map<String, String> cookies = new HashMap();
+            final String authorizationUrl = authorizationUrl(csrfId, encodedRedirectUri, scopes);
 
-            final String url;
-            if (scopes == null || scopes.length == 0) {
-                url = String.format(AUTHORIZATION_URL, oAuthParams.getClientId(),
-                    csrfId, encodedRedirectUri);
+            //get login page (redirection is disabled as there could be an error message in redirect url
+            final Connection.Response loginPageResponse = addProxy(Jsoup.connect(authorizationUrl), proxy)
+                    .followRedirects(false)
+                    .method(Connection.Method.GET)
+                    .execute();
+            final Connection.Response loginPageRedirectedResponse = followRedirection(loginPageResponse, cookies);
+            final Document loginPage = loginPageRedirectedResponse.parse();
+
+            validatePage(loginPage);
+
+            //fill login form
+            final FormElement loginForm = (FormElement) loginPage.select("form").first();
+
+            final Element loginField = loginForm.select("input[name=session_key]").first();
+            loginField.val(oAuthParams.getUserName());
+
+            final Element passwordField = loginForm.select("input[name=session_password]").first();
+            passwordField.val(oAuthParams.getUserPassword());
+
+            //submit loginPage
+            final Connection.Response afterLoginResponse = addProxy(loginForm.submit(), proxy)
+                    .followRedirects(false)
+                    .cookies(cookies)
+                    .execute();
+            cookies.putAll(afterLoginResponse.cookies());
+            //follow redirects
+            final Connection.Response afterLoginRedirectedResponse = followRedirection(afterLoginResponse, cookies);
+            final URL redirectionUrl = getRedirectLocationAndValidate(afterLoginRedirectedResponse);
+            final String redirectQuery;
+            //if redirect url != null, it means that it contains code= and there is no need to continue
+            if (redirectionUrl != null) {
+                redirectQuery = redirectionUrl.getQuery();
+            } else if (afterLoginRedirectedResponse.statusCode() == SC_OK) {
+                //allow permission page is in response (or still login page containing errors)
+                final Document allowPage = afterLoginRedirectedResponse.parse();
+                //detect possible login errors
+                validatePage(allowPage);
+                //if there is no error, allow permission page is it for sure
+                final FormElement allowForm = (FormElement) allowPage.select("form").get(1);
+                final Connection.Response allowRedirectResponse = addProxy(allowForm.submit(), proxy)
+                        .followRedirects(false)
+                        .cookies(cookies)
+                        .execute();
+                final URL allowUrl = getRedirectLocationAndValidate(allowRedirectResponse);
+
+                redirectQuery = allowUrl.getQuery();
             } else {
-                final int nScopes = scopes.length;
-                final StringBuilder builder = new StringBuilder();
-                int i = 0;
-                for (OAuthScope scope : scopes) {
-                    builder.append(scope.getValue());
-                    if (++i < nScopes) {
-                        builder.append("%20");
-                    }
-                }
-                url = String.format(AUTHORIZATION_URL_WITH_SCOPE, oAuthParams.getClientId(), csrfId,
-                    builder.toString(), encodedRedirectUri);
-            }
-            HtmlPage authPage;
-            try {
-                authPage = webClient.getPage(url);
-            } catch (FailingHttpStatusCodeException e) {
-                // only handle errors returned with redirects
-                if (e.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
-                    final URL location = new URL(e.getResponse().getResponseHeaderValue(HttpHeaders.LOCATION));
-                    final String locationQuery = location.getQuery();
-                    if (locationQuery != null && locationQuery.contains("error=")) {
-                        throw new IOException(URLDecoder.decode(locationQuery).replaceAll("&", ", "));
-                    } else {
-                        // follow the redirect to login form
-                        authPage = webClient.getPage(location);
-                    }
-                } else {
-                    throw e;
-                }
-            }
-
-            // look for <div role="alert">
-            final HtmlDivision div = authPage.getFirstByXPath("//div[@role='alert']");
-            if (div != null) {
-                throw new IllegalArgumentException("Error authorizing application: " + div.getTextContent());
-            }
-
-            // submit login credentials
-            final HtmlForm loginForm = authPage.getFormByName("oauth2SAuthorizeForm");
-            final HtmlTextInput login = loginForm.getInputByName("session_key");
-            login.setText(oAuthParams.getUserName());
-            final HtmlPasswordInput password = loginForm.getInputByName("session_password");
-            password.setText(oAuthParams.getUserPassword());
-            final HtmlSubmitInput submitInput = loginForm.getInputByName("authorize");
-
-            // validate CSRF and get authorization code
-            String redirectQuery;
-            try {
-                final Page redirectPage = submitInput.click();
-                redirectQuery = redirectPage.getUrl().getQuery();
-            } catch (FailingHttpStatusCodeException e) {
-                // escalate non redirect errors
-                if (e.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY) {
-                    throw e;
-                }
-                final String location = e.getResponse().getResponseHeaderValue("Location");
-                redirectQuery = new URL(location).getQuery();
-            }
-            if (redirectQuery == null) {
                 throw new IllegalArgumentException("Redirect response query is null, check username, password and permissions");
             }
+
             final Map<String, String> params = new HashMap<String, String>();
             final Matcher matcher = QUERY_PARAM_PATTERN.matcher(redirectQuery);
             while (matcher.find()) {
                 params.put(matcher.group(1), matcher.group(2));
+            }
+            // check if we got caught in a Captcha!
+            if (params.get("challengeId") != null) {
+                throw new SecurityException("Unable to login due to CAPTCHA, use with a valid accessToken instead!");
             }
             final String state = params.get("state");
             if (!csrfId.equals(state)) {
@@ -221,28 +197,130 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                 return params.get("code");
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException("Error authorizing application: " + e.getMessage(), e);
         }
     }
 
-    public void close() {
-        webClient.close();
+    /**
+     * Validate page html for errors.
+     */
+    private void validatePage(Document loginPage) {
+        //this error could happen e.g. if there is a wrong redirect url
+        Elements errorDivs = loginPage.select("body[class=error]");
+        if (errorDivs.isEmpty()) {
+            //this error could happen e.g. with wrong clientId, usernane or password
+            errorDivs = loginPage.select("div[role=alert]:not([class*=hidden])");
+        }
+
+        if (!errorDivs.isEmpty()) {
+            final String errorMessage = errorDivs.first().text();
+            throw new IllegalArgumentException("Error authorizing application: " + errorMessage);
+        }
+    }
+
+    /**
+     * Constructs authorization URL from AuthParams.
+     */
+    private String authorizationUrl(String csrfId, String encodedRedirectUri, OAuthScope[] scopes) {
+        final String url;
+        if (scopes == null || scopes.length == 0) {
+            url = String.format(AUTHORIZATION_URL, oAuthParams.getClientId(), csrfId, encodedRedirectUri);
+        } else {
+            final int nScopes = scopes.length;
+            final StringBuilder builder = new StringBuilder();
+            int i = 0;
+            for (OAuthScope scope : scopes) {
+                builder.append(scope.getValue());
+                if (++i < nScopes) {
+                    builder.append("%20");
+                }
+            }
+            url = String.format(AUTHORIZATION_URL_WITH_SCOPE, oAuthParams.getClientId(), csrfId, builder.toString(), encodedRedirectUri);
+        }
+        return url;
+    }
+
+    /**
+     * Follows redirection (states 302 and 303) - on each step validates whether there s abn error.
+     */
+    private Connection.Response followRedirection(Connection.Response response, Map<String, String> cookies) throws IOException {
+        return followRedirection(response, cookies, 0);
+    }
+
+    /**
+     * Follows redirections (recursively, with max 5 repetitions)
+     */
+    private Connection.Response followRedirection(Connection.Response response, Map<String, String> cookies, int deep) throws IOException {
+        //if recursive calls are not ending (theoretically it could happen if there is some error), we will end after 5 redirections (in successfull scenario there is maximal redirection count 1)
+        if (deep > 5) {
+            throw new IllegalArgumentException("Error authorizing application. Redirection goes still on and on.");
+        }
+        //try to get redirection url
+        URL url = getRedirectLocationAndValidate(response);
+        //if contains code=, then it is final url (containing refresh code)
+        if (url != null) {
+            if (url.getQuery().contains("code=")) {
+                return response;
+            } else if (url.toString().contains("error=") || url.toString().contains("errorKey=")) {
+                throw new IOException(URLDecoder.decode(url.toString()).replaceAll("&", ", "));
+            } else {
+                Connection.Response resp = addProxy(Jsoup.connect(url.toString()), proxy)
+                                                .followRedirects(false)
+                                                .method(Connection.Method.GET)
+                                                .cookies(cookies)
+                                                .execute();
+                return followRedirection(resp, cookies, deep++);
+            }
+        }
+        cookies.putAll(response.cookies());
+        return response;
+    }
+
+    /**
+     * Extract header Location from response, also validates for possible errors, which could be part of redirection url (e.g. errorKey=unexpected_error)
+     */
+    private URL getRedirectLocationAndValidate(Connection.Response response) throws IOException {
+        if (response.statusCode() == SC_MOVED_TEMPORARILY || response.statusCode() == SC_SEE_OTHER) {
+            URL location;
+            try {
+                location = new URL(response.header(HEADER_LOCATION));
+            } catch (MalformedURLException e) {
+                location = new URL(AUTHORIZATION_URL_PREFIX + response.header(HEADER_LOCATION));
+            }
+
+            final String locationQuery = location.getQuery();
+            if (locationQuery != null && (locationQuery.contains("error=") || locationQuery.contains("errorKey="))) {
+                throw new IOException(URLDecoder.decode(locationQuery).replaceAll("&", ", "));
+            }
+            return location;
+        }
+        return null;
+    }
+
+    /**
+     * Helper method to add proxy into JSoup connection
+     */
+    private static Connection addProxy(Connection connection, Proxy proxy) {
+        if (proxy != null) {
+            return connection.proxy(proxy);
+        }
+        return  connection;
     }
 
     private OAuthToken getAccessToken(String refreshToken) throws IOException {
-        final String tokenUrl = String.format(ACCESS_TOKEN_URL, refreshToken,
-            oAuthParams.getRedirectUri(), oAuthParams.getClientId(), oAuthParams.getClientSecret());
-        final WebRequest webRequest = new WebRequest(new URL(tokenUrl), HttpMethod.POST);
+        final String tokenUrl = String.format(ACCESS_TOKEN_URL, refreshToken, oAuthParams.getRedirectUri(), oAuthParams.getClientId(), oAuthParams.getClientSecret());
+        final Connection.Response response = addProxy(Jsoup.connect(tokenUrl), proxy)
+                                                .ignoreContentType(true)
+                                                .method(Connection.Method.POST)
+                                                .execute();
 
-        final WebResponse webResponse = webClient.loadWebResponse(webRequest);
-        if (webResponse.getStatusCode() != HttpStatus.SC_OK) {
-            throw new IOException(String.format("Error getting access token: [%s: %s]",
-                webResponse.getStatusCode(), webResponse.getStatusMessage()));
+        if (response.statusCode() != SC_OK) {
+            throw new IOException(String.format("Error getting access token: [%s: %s]", response.statusCode(), response.statusMessage()));
         }
         final long currentTime = System.currentTimeMillis();
         final ObjectMapper mapper = new ObjectMapper();
-        final Map map = mapper.readValue(webResponse.getContentAsStream(), Map.class);
+        final Map map = mapper.readValue(response.body(), Map.class);
         final String accessToken = map.get("access_token").toString();
         final Integer expiresIn = Integer.valueOf(map.get("expires_in").toString());
         return new OAuthToken(refreshToken, accessToken,
@@ -286,11 +364,6 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                     return;
                 }
                 LOG.info("OAuth secure storage returned a null or expired token, creating a new token...");
-
-                // throw an exception if a user password is not set for authorization
-                if (oAuthParams.getUserPassword() == null || oAuthParams.getUserPassword().isEmpty()) {
-                    throw new IllegalArgumentException("Missing password for LinkedIn authorization");
-                }
             }
 
             // need new OAuth token, authorize user, LinkedIn does not support OAuth2 grant_type=refresh_token

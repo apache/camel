@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,8 +18,6 @@ package org.apache.camel.spring.spi;
 
 /**
  * We use a runtime exception to force Spring transaction manager to rollback the transaction.
- *
- * @version 
  */
 public class TransactionRollbackException extends RuntimeException {
     private static final long serialVersionUID = 1L;

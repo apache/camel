@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,13 +19,20 @@ package org.apache.camel.component.flatpack;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.AbstractList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
+import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
+import net.sf.flatpack.DataError;
 import net.sf.flatpack.DataSet;
 import net.sf.flatpack.Record;
 import net.sf.flatpack.ordering.OrderBy;
@@ -93,7 +100,7 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
     }
 
     @Override
-    public List getErrors() {
+    public List<DataError> getErrors() {
         return dataSet.getErrors();
     }
 
@@ -253,7 +260,70 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
     }
 
     @Override
-    public Record getRecord() {
+    public String getString(String column, Supplier<String> defaultSupplier) {
+        return dataSet.getString(column, defaultSupplier);
+    }
+
+    @Override
+    public double getDouble(String column, DoubleSupplier defaultSupplier) {
+        return dataSet.getDouble(column, defaultSupplier);
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(String column, Supplier<BigDecimal> defaultSupplier) {
+        return dataSet.getBigDecimal(column, defaultSupplier);
+    }
+
+    @Override
+    public int getInt(String column, IntSupplier defaultSupplier) {
+        return dataSet.getInt(column, defaultSupplier);
+    }
+
+    @Override
+    public long getLong(String column, LongSupplier defaultSupplier) {
+        return dataSet.getLong(column, defaultSupplier);
+    }
+
+    @Override
+    public Date getDate(String column, Supplier<Date> defaultSupplier) throws ParseException {
+        return dataSet.getDate(column, defaultSupplier);
+    }
+
+    @Override
+    public Date getDate(String column, SimpleDateFormat sdf, Supplier<Date> defaultSupplier)
+        throws ParseException {
+        return dataSet.getDate(column, sdf, defaultSupplier);
+    }
+
+    @Override
+    public LocalDate getLocalDate(String column, Supplier<LocalDate> defaultSupplier) throws ParseException {
+        return dataSet.getLocalDate(column, defaultSupplier);
+    }
+
+    @Override
+    public LocalDate getLocalDate(String column) throws ParseException {
+        return dataSet.getLocalDate(column);
+    }
+
+    @Override
+    public LocalDate getLocalDate(String column, String dateFormat, Supplier<LocalDate> defaultSupplier)
+        throws ParseException {
+        return dataSet.getLocalDate(column, dateFormat, defaultSupplier);
+    }
+
+    @Override
+    public LocalDate getLocalDate(String column, String dateFormat) throws ParseException {
+        return dataSet.getLocalDate(column, dateFormat);
+    }
+
+    @Override
+    public String getRecordID() {
+        return dataSet.getRecordID();
+    }
+
+    @Override
+    public Optional<Record> getRecord() {
         return dataSet.getRecord();
     }
+
 }

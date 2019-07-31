@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,7 @@ import org.apache.camel.model.rest.RestDefinition;
 public class CamelRestContextFactoryBean extends IdentifiedType {
 
     @XmlElement(name = "rest", required = true)
-    private List<RestDefinition> rests = new ArrayList<RestDefinition>();
+    private List<RestDefinition> rests = new ArrayList<>();
 
     public List<RestDefinition> getRests() throws Exception {
         return rests;

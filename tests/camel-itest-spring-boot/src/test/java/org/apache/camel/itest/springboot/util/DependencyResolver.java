@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -85,6 +85,9 @@ public final class DependencyResolver {
         if (property != null && !isResolved(property)) {
             property = resolveCamelParentProperty(property);
         }
+        if (property != null && !isResolved(property)) {
+            property = resolveCamelProperty(property);
+        }
 
         return property;
     }
@@ -104,6 +107,10 @@ public final class DependencyResolver {
 
     public static String resolveCamelParentProperty(String property) {
         return resolveProperty(camelRoot("parent/pom.xml"), property, 0);
+    }
+
+    public static String resolveCamelProperty(String property) {
+        return resolveProperty(camelRoot("pom.xml"), property, 0);
     }
 
 

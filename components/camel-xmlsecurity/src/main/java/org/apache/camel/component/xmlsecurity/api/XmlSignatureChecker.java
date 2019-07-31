@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,7 +41,6 @@ import org.apache.camel.Message;
  * You can get the total and current count of the XML signatures via the methods
  * {@link Input#getTotalCountOfSignatures()} and
  * {@link Input#getCurrentCountOfSignatures()}.
- * 
  */
 public interface XmlSignatureChecker {
 

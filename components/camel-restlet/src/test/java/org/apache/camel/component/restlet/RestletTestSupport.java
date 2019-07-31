@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.restlet;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -28,16 +29,18 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.BeforeClass;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
-/**
- *
- * @version 
- */
 public abstract class RestletTestSupport extends CamelTestSupport {
     protected static int portNum;
     
     @BeforeClass
     public static void initializePortNum() {
+        // restlet uses the JUL logger which is a pain to configure/install
+        // we should not see WARN logs
+        SLF4JBridgeHandler.install();
+        java.util.logging.LogManager.getLogManager().getLogger("").setLevel(Level.INFO);
+
         portNum = AvailablePortFinder.getNextAvailable();
     }
     
@@ -45,7 +48,9 @@ public abstract class RestletTestSupport extends CamelTestSupport {
         CloseableHttpClient client = HttpClientBuilder.create().build();
         try {
             HttpResponse response = client.execute(method);
-            response.setEntity(new BufferedHttpEntity(response.getEntity()));
+            if (response.getEntity() != null) {
+                response.setEntity(new BufferedHttpEntity(response.getEntity()));
+            }
             return response;
         } finally {
             client.close();

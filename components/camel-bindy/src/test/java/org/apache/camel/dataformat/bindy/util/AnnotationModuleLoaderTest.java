@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ import java.util.Set;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Client;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Security;
-import org.apache.camel.impl.DefaultPackageScanClassResolver;
+import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dataformat.zipfile;
 
+import java.io.InputStream;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -30,12 +32,13 @@ public class ZipSplitter implements Expression {
 
     public ZipSplitter() {
     }
-    
+
     public Object evaluate(Exchange exchange) {
         Message inputMessage = exchange.getIn();
-        return new ZipIterator(inputMessage);
+        InputStream inputStream = inputMessage.getBody(InputStream.class);
+        return new ZipIterator(exchange, inputStream);
     }
-    
+
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         Object result = evaluate(exchange);

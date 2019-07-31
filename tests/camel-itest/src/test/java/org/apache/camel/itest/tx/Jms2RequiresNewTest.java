@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,8 +36,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * <p/>
  * We use Spring Testing for unit test, eg we extend AbstractJUnit4SpringContextTests
  * that is a Spring class.
- * 
- * @version 
  */
 @ContextConfiguration
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -47,16 +45,16 @@ public class Jms2RequiresNewTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     private CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:result1")
+    @EndpointInject("mock:result1")
     private MockEndpoint result1;
 
-    @EndpointInject(uri = "mock:result2")
+    @EndpointInject("mock:result2")
     private MockEndpoint result2;
 
-    @EndpointInject(uri = "mock:dlq")
+    @EndpointInject("mock:dlq")
     private MockEndpoint dlq;
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private ProducerTemplate start;
 
     @Before

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -35,12 +36,14 @@ import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.Session;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +83,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         this.sjmsBatchEndpoint = ObjectHelper.notNull(sjmsBatchEndpoint, "batchJmsEndpoint");
 
-        destinationName = ObjectHelper.notEmpty(sjmsBatchEndpoint.getDestinationName(), "destinationName");
+        destinationName = StringHelper.notEmpty(sjmsBatchEndpoint.getDestinationName(), "destinationName");
 
         completionSize = sjmsBatchEndpoint.getCompletionSize();
         completionInterval = sjmsBatchEndpoint.getCompletionInterval();
@@ -128,7 +131,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         super.doStart();
 
         boolean recovery = getEndpoint().isAsyncStartListener();
-        StartConsumerTask task = new StartConsumerTask(recovery, getEndpoint().getRecoveryInterval());
+        StartConsumerTask task = new StartConsumerTask(recovery, getEndpoint().getRecoveryInterval(), getEndpoint().getKeepAliveDelay());
 
         if (recovery) {
             // use a background thread to keep starting the consumer until
@@ -145,11 +148,13 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         private boolean recoveryEnabled;
         private int recoveryInterval;
+        private int keepAliveDelay;
         private long attempt;
 
-        public StartConsumerTask(boolean recoveryEnabled, int recoveryInterval) {
+        public StartConsumerTask(boolean recoveryEnabled, int recoveryInterval, int keepAliveDelay) {
             this.recoveryEnabled = recoveryEnabled;
             this.recoveryInterval = recoveryInterval;
+            this.keepAliveDelay = keepAliveDelay;
         }
 
         @Override
@@ -183,6 +188,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     final List<AtomicBoolean> triggers = new ArrayList<>();
                     for (int i = 0; i < consumerCount; i++) {
                         BatchConsumptionLoop loop = new BatchConsumptionLoop();
+                        loop.setKeepAliveDelay(keepAliveDelay);
                         triggers.add(loop.getCompletionTimeoutTrigger());
                         jmsConsumerExecutors.submit(loop);
                     }
@@ -212,7 +218,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     if (recoveryEnabled) {
                         getExceptionHandler().handleException("Error starting consumer after " + attempt + " attempts. Will try again in " + recoveryInterval + " millis.", e);
                     } else {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
                 }
 
@@ -290,32 +296,54 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         private final AtomicBoolean completionTimeoutTrigger = new AtomicBoolean();
         private final BatchConsumptionTask task = new BatchConsumptionTask(completionTimeoutTrigger);
+        private int keepAliveDelay;
 
         public AtomicBoolean getCompletionTimeoutTrigger() {
             return completionTimeoutTrigger;
+        }
+        public void setKeepAliveDelay(int i) {
+            keepAliveDelay = i;
         }
 
         @Override
         public void run() {
             try {
-                // a batch corresponds to a single session that will be committed or rolled back by a background thread
-                final Session session = connection.createSession(TRANSACTED, Session.CLIENT_ACKNOWLEDGE);
-                try {
-                    // only batch consumption from queues is supported - it makes no sense to transactionally consume
-                    // from a topic as you don't car about message loss, users can just use a regular aggregator instead
-                    Queue queue = session.createQueue(destinationName);
-                    MessageConsumer consumer = session.createConsumer(queue);
-
+                // This loop is intended to keep the consumer up and running as long as it's supposed to be, but allow it to bail if signaled.
+                // I'm using a do/while loop because the first time through we want to attempt it regardless of any other conditions... we
+                // only want to try AGAIN if the keepAlive is set.
+                do {
+                    // a batch corresponds to a single session that will be committed or rolled back by a background thread
+                    final Session session = connection.createSession(TRANSACTED, Session.CLIENT_ACKNOWLEDGE);
                     try {
-                        task.consumeBatchesOnLoop(session, consumer);
+                        // only batch consumption from queues is supported - it makes no sense to transactionally consume
+                        // from a topic as you don't car about message loss, users can just use a regular aggregator instead
+                        Queue queue = session.createQueue(destinationName);
+                        MessageConsumer consumer = session.createConsumer(queue);
+
+                        try {
+                            task.consumeBatchesOnLoop(session, consumer);
+                        } finally {
+                            closeJmsConsumer(consumer);
+                        }
+                    } catch (javax.jms.IllegalStateException ex) {
+                        // from consumeBatchesOnLoop
+                        // if keepAliveDelay was not specified (defaults to -1) just rethrow to break the loop. This preserves original default behavior
+                        if (keepAliveDelay < 0) {
+                            throw ex;
+                        }
+                        // this will log the exception and the parent loop will create a new session
+                        getExceptionHandler().handleException("Exception caught consuming from " + destinationName, ex);
+                        //sleep to avoid log spamming
+                        if (keepAliveDelay > 0) {
+                            Thread.sleep(keepAliveDelay);
+                        }
                     } finally {
-                        closeJmsConsumer(consumer);
+                        closeJmsSession(session);
                     }
-                } finally {
-                    closeJmsSession(session);
-                }
+                }while (running.get() || isStarting());
             } catch (Throwable ex) {
                 // from consumeBatchesOnLoop
+                // catch anything besides the IllegalStateException and exit the application
                 getExceptionHandler().handleException("Exception caught consuming from " + destinationName, ex);
             } finally {
                 // indicate that we have shut down
@@ -391,6 +419,8 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     long waitTime = (usingTimeout && (timeElapsed > 0))
                             ? getReceiveWaitTime(timeElapsed)
                             : pollDuration;
+
+
                     Message message = consumer.receive(waitTime);
 
                     if (running.get()) {

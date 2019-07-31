@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-/**
- * @version 
- */
 @Service
 public class MyListenerService implements MyListener {
 
@@ -35,7 +32,7 @@ public class MyListenerService implements MyListener {
         LOG.debug("Instantiated service: " + this);
     }
     
-    @Consume(uri = "direct:end")
+    @Consume("direct:end")
     public String greet(Map<String, Object> headers, String name) {
         return headers.get("greeter") + name;
     }

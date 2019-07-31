@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,6 @@
 package org.apache.camel.component.hipchat;
 
 import java.io.IOException;
-
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -26,26 +25,21 @@ import java.util.TimeZone;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.URISupport;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Hipchat consumer consumes messages from a list of users.
  */
 public class HipchatConsumer extends ScheduledPollConsumer {
     public static final long DEFAULT_CONSUMER_DELAY = 5 * 1000;
-    private static final Logger LOG = LoggerFactory.getLogger(HipchatConsumer.class);
     private static final MapType MAP_TYPE = TypeFactory.defaultInstance().constructMapType(Map.class, String.class, Object.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final CloseableHttpClient HTTP_CLIENT = HttpClients.createDefault();
     
     private transient String hipchatConsumerToString;
 
@@ -66,7 +60,7 @@ public class HipchatConsumer extends ScheduledPollConsumer {
 
     private void processExchangeForUser(String user, Exchange exchange) throws Exception {
         String urlPath = String.format(getMostRecentMessageUrl(), user);
-        LOG.debug("Polling HipChat Api " + urlPath + " for new messages at " + Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime());
+        log.debug("Polling HipChat Api " + urlPath + " for new messages at " + Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime());
         HttpGet httpGet = new HttpGet(getConfig().hipChatUrl() + urlPath);
         CloseableHttpResponse response = executeGet(httpGet);
         exchange.getIn().setHeader(HipchatConstants.FROM_USER, user);
@@ -76,7 +70,7 @@ public class HipchatConsumer extends ScheduledPollConsumer {
     private void processApiResponse(Exchange exchange, CloseableHttpResponse response) throws Exception {
         try {
             Map<String, Object> jsonMap = MAPPER.readValue(response.getEntity().getContent(), MAP_TYPE);
-            LOG.debug("Hipchat response " + response + ", json: " + MAPPER.writeValueAsString(jsonMap));
+            log.debug("Hipchat response " + response + ", json: " + MAPPER.writeValueAsString(jsonMap));
             if (jsonMap != null && jsonMap.size() > 0) {
                 List<Map<String, Object>> items = (List<Map<String, Object>>) jsonMap.get(HipchatApiConstants.API_ITEMS);
                 if (items != null && items.size() > 0) {
@@ -84,7 +78,7 @@ public class HipchatConsumer extends ScheduledPollConsumer {
                         Map<String, Object> item = items.get(0);
                         String date = (String) item.get(HipchatApiConstants.API_DATE);
                         String message = (String) item.get(HipchatApiConstants.API_MESSAGE);
-                        LOG.debug("Setting exchange body: " + message + ", header " + HipchatConstants.MESSAGE_DATE + ": " + date);
+                        log.debug("Setting exchange body: " + message + ", header " + HipchatConstants.MESSAGE_DATE + ": " + date);
                         exchange.getIn().setHeader(HipchatConstants.FROM_USER_RESPONSE_STATUS, response.getStatusLine());
                         exchange.getIn().setHeader(HipchatConstants.MESSAGE_DATE, date);
                         exchange.getIn().setBody(message);
@@ -100,7 +94,7 @@ public class HipchatConsumer extends ScheduledPollConsumer {
     }
 
     protected CloseableHttpResponse executeGet(HttpGet httpGet) throws IOException {
-        return HTTP_CLIENT.execute(httpGet);
+        return getConfig().getHttpClient().execute(httpGet);
     }
 
     private String getMostRecentMessageUrl() {

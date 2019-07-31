@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,25 +37,24 @@ import com.thoughtworks.xstream.security.ExplicitTypePermission;
 import com.thoughtworks.xstream.security.TypePermission;
 import com.thoughtworks.xstream.security.WildcardTypePermission;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) interface which leverage the XStream library for XML or JSON's marshaling and unmarshaling
  */
-public abstract class AbstractXStreamWrapper extends ServiceSupport implements DataFormat, DataFormatName {
+public abstract class AbstractXStreamWrapper extends ServiceSupport implements CamelContextAware, DataFormat, DataFormatName {
     private static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";
-    private static final String PERMISSIONS_PROPERTY_DEFAULT = "-*,java.lang.*,java.util.*";
-    
+
+    private CamelContext camelContext;
     private XStream xstream;
     private HierarchicalStreamDriver xstreamDriver;
-    private StaxConverter staxConverter;
     private List<String> converters;
     private Map<String, String> aliases;
     private Map<String, String[]> omitFields;
@@ -71,6 +70,16 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements D
         this.xstream = xstream;
     }
 
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     /**
      * Resolves the XStream instance to be used by this data format. If XStream is not explicitly set, new instance will
      * be created and cached.
@@ -80,7 +89,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements D
      */
     public XStream getXStream(ClassResolver resolver) {
         if (xstream == null) {
-            xstream = createXStream(resolver);
+            xstream = createXStream(resolver, null);
         }
         return xstream;
     }
@@ -101,14 +110,6 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements D
 
     public void setXStream(XStream xstream) {
         this.xstream = xstream;
-    }
-
-    /**
-     * @deprecated Use {@link #createXStream(ClassResolver, ClassLoader)}
-     */
-    @Deprecated
-    protected XStream createXStream(ClassResolver resolver) {
-        return createXStream(resolver, null);
     }
 
     protected XStream createXStream(ClassResolver resolver, ClassLoader classLoader) {
@@ -231,7 +232,13 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements D
     }
 
     private static void addDefaultPermissions(XStream xstream) {
-        addPermissions(xstream, System.getProperty(PERMISSIONS_PROPERTY_KEY, PERMISSIONS_PROPERTY_DEFAULT));
+        XStream.setupDefaultSecurity(xstream);
+
+        String value = System.getProperty(PERMISSIONS_PROPERTY_KEY);
+        if (value != null) {
+            // using custom permissions
+            addPermissions(xstream, value);
+        }
     }
 
     protected int getModeFromString(String modeString) {
@@ -252,17 +259,6 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements D
             throw new IllegalArgumentException("Unknown mode : " + modeString);
         }
         return result;
-    }
-
-    public StaxConverter getStaxConverter() {
-        if (staxConverter == null) {
-            staxConverter = new StaxConverter();
-        }
-        return staxConverter;
-    }
-
-    public void setStaxConverter(StaxConverter staxConverter) {
-        this.staxConverter = staxConverter;
     }
 
     public List<String> getConverters() {
@@ -368,7 +364,11 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements D
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
+        // initialize xstream
+        if (xstream == null) {
+            xstream = createXStream(camelContext.getClassResolver(), camelContext.getApplicationContextClassLoader());
+        }
     }
 
     @Override

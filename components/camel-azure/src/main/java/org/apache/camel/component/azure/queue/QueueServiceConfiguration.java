@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,26 +17,36 @@
 package org.apache.camel.component.azure.queue;
 
 import com.microsoft.azure.storage.queue.CloudQueue;
+
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.azure.common.AbstractConfiguration;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-
 @UriParams
 public class QueueServiceConfiguration extends AbstractConfiguration {
 
     private String queueName;
     @UriParam
     private CloudQueue azureQueueClient;
-    
-    @UriParam(label = "producer", defaultValue = "getMessage")
-    private QueueServiceOperations operation = QueueServiceOperations.getMessage;
-    
+
+    @UriParam(label = "producer", defaultValue = "listQueues")
+    private QueueServiceOperations operation = QueueServiceOperations.listQueues;
+
+    @UriParam(label = "producer")
+    private int messageTimeToLive;
+
+    @UriParam(label = "producer")
+    private int messageVisibilityDelay;
+
+    @UriParam(label = "producer")
+    private String queuePrefix;
+
     public String getQueueName() {
         return queueName;
     }
-    
+
     /**
-     * The queue resource name 
+     * The queue resource name
      */
     public void setQueueName(String queueName) {
         this.queueName = queueName;
@@ -47,7 +57,7 @@ public class QueueServiceConfiguration extends AbstractConfiguration {
     }
 
     /**
-     * The queue service client 
+     * The queue service client
      */
     public void setAzureQueueClient(CloudQueue azureQueueClient) {
         this.azureQueueClient = azureQueueClient;
@@ -58,9 +68,54 @@ public class QueueServiceConfiguration extends AbstractConfiguration {
     }
 
     /**
-     * Queue service operation hint to the producer 
+     * Queue service operation hint to the producer
      */
     public void setOperation(QueueServiceOperations operation) {
         this.operation = operation;
+    }
+
+    public int getMessageTimeToLive() {
+        return messageTimeToLive;
+    }
+
+    /**
+     * Message Time To Live in seconds
+     */
+    public void setMessageTimeToLive(int messageTimeToLive) {
+        this.messageTimeToLive = messageTimeToLive;
+    }
+
+    public int getMessageVisibilityDelay() {
+        return messageVisibilityDelay;
+    }
+
+    /**
+     * Message Visibility Delay in seconds
+     */
+    public void setMessageVisibilityDelay(int messageVisibilityDelay) {
+        this.messageVisibilityDelay = messageVisibilityDelay;
+    }
+
+    public String getQueuePrefix() {
+        return queuePrefix;
+    }
+
+    /**
+     * Set a prefix which can be used for listing the queues
+     */
+    public void setQueuePrefix(String queuePrefix) {
+        this.queuePrefix = queuePrefix;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public QueueServiceConfiguration copy() {
+        try {
+            return (QueueServiceConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

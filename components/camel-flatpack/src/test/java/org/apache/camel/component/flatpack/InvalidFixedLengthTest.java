@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,16 +24,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.util.Assert;
 
-/**
- * @version
- */
 @ContextConfiguration
 public class InvalidFixedLengthTest extends AbstractJUnit4SpringContextTests {
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     protected MockEndpoint error;
 
     @Test
@@ -46,7 +43,7 @@ public class InvalidFixedLengthTest extends AbstractJUnit4SpringContextTests {
 
         Exchange e = error.getReceivedExchanges().get(0);
         FlatpackException cause = e.getProperty(Exchange.EXCEPTION_CAUGHT, FlatpackException.class);
-        Assert.notNull(cause);
+        Assert.notNull(cause, "Exception should not be null");
 
         Assert.hasText("Flatpack has found 4 errors while parsing. Exchange[PEOPLE-FixedLength.txt]", cause.getMessage());
         Assert.hasText("Line:4 Level:2 Desc:LINE TOO LONG. LINE IS 278 LONG. SHOULD BE 277", cause.getMessage());

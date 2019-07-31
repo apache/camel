@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.blueprint;
 
 import java.util.List;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.component.properties.PropertiesLocation;
 import org.junit.Test;
 
 public class BlueprintPropertiesLocationElementOptionalTest extends CamelBlueprintTestSupport {
@@ -40,7 +38,7 @@ public class BlueprintPropertiesLocationElementOptionalTest extends CamelBluepri
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         assertNotNull("Properties component not defined", pc);
 
-        List<PropertiesLocation> locations = pc.getLocations();
+        List<String> locations = pc.getLocations();
 
         assertNotNull(locations);
         assertEquals("Properties locations", 3, locations.size());

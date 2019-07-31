@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.weather.geolocation;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.component.weather.WeatherComponent;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -30,14 +32,22 @@ public class FreeGeoIpGeoLocationProvider implements GeoLocationProvider {
 
     private final WeatherComponent component;
 
-    public FreeGeoIpGeoLocationProvider(WeatherComponent component) {
+    public FreeGeoIpGeoLocationProvider(WeatherComponent component, String accessKey) {
         this.component = component;
     }
 
     @Override
     public GeoLocation getCurrentGeoLocation() throws Exception {
         HttpClient httpClient = component.getHttpClient();
-        GetMethod getMethod = new GetMethod("http://freegeoip.io/json/");
+        if (isEmpty(component.getGeolocationAccessKey())) {
+            throw new IllegalStateException("The geolocation service requires a mandatory geolocationAccessKey");
+        }
+        if (isEmpty(component.getGeolocationRequestHostIP())) {
+            throw new IllegalStateException("The geolocation service requires a mandatory geolocationRequestHostIP");
+        }
+        GetMethod getMethod = new GetMethod("http://api.ipstack.com/" + component.getGeolocationRequestHostIP());
+        getMethod.setQueryString(new NameValuePair[] {new NameValuePair("access_key", component.getGeolocationAccessKey()), new NameValuePair("legacy", "1"),
+                                                      new NameValuePair("output", "json")});
         try {
             int statusCode = httpClient.executeMethod(getMethod);
             if (statusCode != HttpStatus.SC_OK) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -38,29 +39,27 @@ import org.junit.runners.Parameterized.Parameters;
 public abstract class SolrComponentTestSupport extends SolrTestSupport {
     protected static final String TEST_ID = "test1";
     protected static final String TEST_ID2 = "test2";
-   
+
     private SolrFixtures solrFixtures;
 
     public SolrComponentTestSupport(SolrFixtures.TestServerType serverToTest) {
         this.solrFixtures = new SolrFixtures(serverToTest);
     }
-    
 
     protected void solrInsertTestEntry() {
         solrInsertTestEntry(TEST_ID);
     }
-    
+
     protected static Collection<Object[]> secureOrNot() {
         return Arrays.asList(new Object[][] {{true}, {false}});
     }
 
-    
     String solrRouteUri() {
         return solrFixtures.solrRouteUri();
     }
 
     protected void solrInsertTestEntry(String id) {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
         headers.put("SolrField.id", id);
         template.sendBodyAndHeaders("direct:start", "", headers);
@@ -73,15 +72,17 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
     protected QueryResponse executeSolrQuery(String query) throws SolrServerException, IOException {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(query);
+        QueryRequest queryRequest = new QueryRequest(solrQuery);
+        queryRequest.setBasicAuthCredentials("solr", "SolrRocks");
         SolrClient solrServer = solrFixtures.getServer();
-        return solrServer.query(solrQuery);
+        return queryRequest.process(solrServer, "collection1");
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
         SolrFixtures.createSolrFixtures();
     }
- 
+
     @AfterClass
     public static void afterClass() throws Exception {
         SolrFixtures.teardownSolrFixtures();
@@ -102,7 +103,7 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
             }
         };
     }
-    
+
     @Parameters
     public static Collection<Object[]> serverTypes() {
         Object[][] serverTypes = {{SolrFixtures.TestServerType.USE_CLOUD},

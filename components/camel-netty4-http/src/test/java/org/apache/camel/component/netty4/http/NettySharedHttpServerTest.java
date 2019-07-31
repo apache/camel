@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,20 +15,19 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4.http;
-
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultClassResolver;
-import org.apache.camel.impl.JndiRegistry;
+import org.junit.After;
 import org.junit.Test;
 
 public class NettySharedHttpServerTest extends BaseNettyTest {
 
     private NettySharedHttpServer nettySharedHttpServer;
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("myNettyServer")
+    public NettySharedHttpServer createServer() throws Exception {
         nettySharedHttpServer = new DefaultNettySharedHttpServer();
-        nettySharedHttpServer.setClassResolver(new DefaultClassResolver(context));
+        nettySharedHttpServer.setCamelContext(context);
 
         NettySharedHttpServerBootstrapConfiguration configuration = new NettySharedHttpServerBootstrapConfiguration();
         configuration.setPort(getPort());
@@ -40,12 +39,11 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
 
         nettySharedHttpServer.start();
 
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myNettyServer", nettySharedHttpServer);
-        return jndi;
+        return nettySharedHttpServer;
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         nettySharedHttpServer.stop();
         super.tearDown();

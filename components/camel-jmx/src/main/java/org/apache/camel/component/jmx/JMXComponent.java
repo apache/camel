@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,9 +19,10 @@ package org.apache.camel.component.jmx;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 
 /**
  * Component for connecting JMX Notification events to a camel route.
@@ -29,19 +30,17 @@ import org.apache.camel.util.IntrospectionSupport;
  * an ObjectName to listen to and any JMX Notifications received from
  * that object will flow into the route.
  */
-public class JMXComponent extends UriEndpointComponent {
+@Component("jmx")
+public class JMXComponent extends DefaultComponent {
 
     public JMXComponent() {
-        super(JMXEndpoint.class);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JMXEndpoint endpoint = new JMXEndpoint(uri, this);
-        // use the helper class to set all of the properties
-        EndpointHelper.setReferenceProperties(getCamelContext(), endpoint, parameters);
-        EndpointHelper.setProperties(getCamelContext(), endpoint, parameters);
+        PropertyBindingSupport.bindProperties(getCamelContext(), endpoint, parameters);
 
         endpoint.setServerURL(remaining);
 

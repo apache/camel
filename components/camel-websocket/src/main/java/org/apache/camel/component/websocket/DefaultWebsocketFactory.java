@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 public class DefaultWebsocketFactory implements WebSocketFactory {
 
     @Override
-    public DefaultWebsocket newInstance(ServletUpgradeRequest request, String protocol, NodeSynchronization sync, WebsocketConsumer consumer) {
-        return new DefaultWebsocket(sync, consumer);
+    public DefaultWebsocket newInstance(ServletUpgradeRequest request, String protocol, String pathSpec, NodeSynchronization sync, WebsocketConsumer consumer) {
+        return new DefaultWebsocket(sync, pathSpec, consumer);
     }
 }

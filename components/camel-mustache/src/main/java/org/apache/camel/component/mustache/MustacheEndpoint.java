@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_ENDPOINT_URI_PREFIX;
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_RESOURCE_URI;
@@ -59,11 +59,6 @@ public class MustacheEndpoint extends ResourceEndpoint {
 
     public MustacheEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override
@@ -106,7 +101,6 @@ public class MustacheEndpoint extends ResourceEndpoint {
             Message out = exchange.getOut();
             out.setBody(writer.toString());
             out.setHeaders(exchange.getIn().getHeaders());
-            out.setAttachments(exchange.getIn().getAttachments());
         } else {
             exchange.getIn().removeHeader(MustacheConstants.MUSTACHE_RESOURCE_URI);
             MustacheEndpoint newEndpoint = getCamelContext().getEndpoint(MUSTACHE_ENDPOINT_URI_PREFIX + newResourceUri, MustacheEndpoint.class);

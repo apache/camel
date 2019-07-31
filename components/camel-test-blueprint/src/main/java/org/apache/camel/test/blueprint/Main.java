@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,7 @@
  */
 package org.apache.camel.test.blueprint;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -35,7 +31,6 @@ public class Main extends MainSupport {
     protected static Main instance;
     private BundleContext bundleContext;
     private String descriptors = "OSGI-INF/blueprint/*.xml";
-    private CamelContext camelContext;
     private String bundleName = "MyBundle";
     private boolean includeSelfAsBundle;
     private String configAdminPid;
@@ -91,8 +86,12 @@ public class Main extends MainSupport {
     }
 
     @Override
+    protected CamelContext createCamelContext() {
+        return CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
+    }
+
+    @Override
     protected void doStart() throws Exception {
-        super.doStart();
         if (bundleContext == null) {
             String descriptors = getDescriptors();
             if (descriptors == null) {
@@ -105,11 +104,14 @@ public class Main extends MainSupport {
             } else {
                 bundleContext = createBundleContext(bundleName);
             }
-            Set<Long> eventHistory = new HashSet<>();
-
-            camelContext = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
-            if (camelContext == null) {
-                throw new IllegalArgumentException("Cannot find CamelContext in blueprint XML file: " + descriptors);
+        }
+        try {
+            super.doStart();
+            initCamelContext();
+        } finally {
+            // if we were veto started then mark as completed
+            if (getCamelContext() != null && getCamelContext().isVetoStarted()) {
+                completed();
             }
         }
     }
@@ -117,11 +119,11 @@ public class Main extends MainSupport {
     @Override
     protected void doStop() throws Exception {
         // stop camel context
-        if (camelContext != null) {
-            camelContext.stop();
+        if (getCamelContext() != null) {
+            getCamelContext().stop();
         }
         // and then stop blueprint
-        LOG.debug("Stopping Blueprint XML file: " + descriptors);
+        LOG.debug("Stopping Blueprint XML file: {}", descriptors);
         CamelBlueprintHelper.disposeBundleContext(bundleContext);
         // call completed to properly stop as we count down the waiting latch
         completed();
@@ -129,8 +131,8 @@ public class Main extends MainSupport {
 
     @Override
     protected ProducerTemplate findOrCreateCamelTemplate() {
-        if (camelContext != null) {
-            return camelContext.createProducerTemplate();
+        if (getCamelContext() != null) {
+            return getCamelContext().createProducerTemplate();
         } else {
             return null;
         }
@@ -140,23 +142,14 @@ public class Main extends MainSupport {
         return createBundleContext(getClass().getSimpleName());
     }
 
-    protected BundleContext createBundleContext(String name, String[] ... configAdminPidFiles) throws Exception {
+    protected BundleContext createBundleContext(String name, String[]... configAdminPidFiles) throws Exception {
         return createBundleContext(name, loader, configAdminPidFiles);
     }
 
-    protected BundleContext createBundleContext(String name, ClassLoader loader, String[] ... configAdminPidFiles) throws Exception {
+    protected BundleContext createBundleContext(String name, ClassLoader loader, String[]... configAdminPidFiles) throws Exception {
         return CamelBlueprintHelper.createBundleContext(name, descriptors, isIncludeSelfAsBundle(),
                 CamelBlueprintHelper.BUNDLE_FILTER, CamelBlueprintHelper.BUNDLE_VERSION, null,
                 loader, configAdminPidFiles);
-    }
-
-    @Override
-    protected Map<String, CamelContext> getCamelContextMap() {
-        Map<String, CamelContext> map = new HashMap<String, CamelContext>(1);
-        if (camelContext != null) {
-            map.put(camelContext.getName(), camelContext);
-        }
-        return map;
     }
 
     public String getDescriptors() {

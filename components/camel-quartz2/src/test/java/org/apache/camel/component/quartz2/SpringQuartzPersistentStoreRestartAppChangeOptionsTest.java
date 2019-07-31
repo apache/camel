@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.quartz2;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.IOHelper;
@@ -31,8 +30,6 @@ import org.quartz.Trigger;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- */
 public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest extends TestSupport {
 
     private static AbstractXmlApplicationContext db;

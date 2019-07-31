@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,10 +32,4 @@ public class SalesforceMultipleChoicesException extends SalesforceException {
         return choices;
     }
 
-    @Override
-    public void appendFields(StringBuilder builder) {
-        super.appendFields(builder);
-        builder.append(",choices=");
-        builder.append(choices.toString());
-    }
 }

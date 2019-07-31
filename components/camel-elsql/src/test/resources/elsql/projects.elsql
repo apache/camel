@@ -12,6 +12,10 @@
   SELECT *
   FROM projects
   ORDER BY id
+@NAME(projectsByIdBean)
+  SELECT *
+  FROM projects
+  WHERE id = :${bean#myIdGenerator.nextId}
 @NAME(projectById)
   SELECT *
   FROM projects

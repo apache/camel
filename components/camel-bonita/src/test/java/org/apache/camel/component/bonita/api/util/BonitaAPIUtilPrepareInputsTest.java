@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.bonita.api.util;
 
 import java.io.Serializable;
@@ -27,97 +26,81 @@ import org.apache.camel.component.bonita.api.model.UploadFileResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(BonitaAPIUtil.class)
+@RunWith(MockitoJUnitRunner.class)
 public class BonitaAPIUtilPrepareInputsTest {
 
     @Mock
     ProcessDefinitionResponse processDefinition;
-    
+
     private BonitaAPIUtil bonitaApiUtil;
 
     @Before
     public void setup() {
-        bonitaApiUtil = BonitaAPIUtil
-                .getInstance(new BonitaAPIConfig("hostname", "port", "username", "password"));
-        Mockito.when(processDefinition.getName()).thenReturn("processName");
-        Mockito.when(processDefinition.getVersion()).thenReturn("1.0");
-        Mockito.when(processDefinition.getId()).thenReturn("1");
+        bonitaApiUtil = BonitaAPIUtil.getInstance(new BonitaAPIConfig("hostname", "port", "username", "password"));
     }
 
     @Test
     public void testPrepareInputsEmpty() throws Exception {
-        Map<String, Serializable> rawInputs = new HashMap<String, Serializable>();
-        Map<String, Serializable> inputs =
-                bonitaApiUtil.prepareInputs(processDefinition, rawInputs);
+        Map<String, Serializable> rawInputs = new HashMap<>();
+        Map<String, Serializable> inputs = bonitaApiUtil.prepareInputs(processDefinition, rawInputs);
         assertEquals(inputs.size(), rawInputs.size());
     }
 
     @Test
     public void testPrepareInputsNoFiles() throws Exception {
-        Map<String, Serializable> rawInputs = new HashMap<String, Serializable>();
+        Map<String, Serializable> rawInputs = new HashMap<>();
         rawInputs.put("myVariable", 1);
-        Map<String, Serializable> inputs =
-                bonitaApiUtil.prepareInputs(processDefinition, rawInputs);
+        Map<String, Serializable> inputs = bonitaApiUtil.prepareInputs(processDefinition, rawInputs);
         assertEquals(rawInputs.size(), inputs.size());
     }
 
     @Test
     public void testPrepareInputsOneFile() throws Exception {
-
-        Map<String, Serializable> rawInputs = new HashMap<String, Serializable>();
+        Map<String, Serializable> rawInputs = new HashMap<>();
         FileInput file = new FileInput("filename", "String".getBytes());
         rawInputs.put("myVariable", 1);
         rawInputs.put("filename", file);
-        BonitaAPIUtil bonitaApiUtilMod = Mockito.spy(bonitaApiUtil);
+        BonitaAPIUtil bonitaApiUtilMod = spy(bonitaApiUtil);
         UploadFileResponse uploadFileResponse = new UploadFileResponse();
         uploadFileResponse.setTempPath("temp");
-        Mockito.doReturn(uploadFileResponse).when(bonitaApiUtilMod).uploadFile(Matchers.any(),
-                Matchers.any());
-        Map<String, Serializable> inputs =
-                bonitaApiUtilMod.prepareInputs(processDefinition, rawInputs);
+        doReturn(uploadFileResponse).when(bonitaApiUtilMod).uploadFile(any(), any());
+        Map<String, Serializable> inputs = bonitaApiUtilMod.prepareInputs(processDefinition, rawInputs);
         assertEquals(rawInputs.size(), inputs.size());
     }
 
     @Test
     public void testPrepareInputsFileType() throws Exception {
-
-        Map<String, Serializable> rawInputs = new HashMap<String, Serializable>();
+        Map<String, Serializable> rawInputs = new HashMap<>();
         FileInput file = new FileInput("filename", "String".getBytes());
         rawInputs.put("filename", file);
-        BonitaAPIUtil bonitaApiUtilMod = Mockito.spy(bonitaApiUtil);
+        BonitaAPIUtil bonitaApiUtilMod = spy(bonitaApiUtil);
         UploadFileResponse uploadFileResponse = new UploadFileResponse();
         uploadFileResponse.setTempPath("temp");
-        Mockito.doReturn(uploadFileResponse).when(bonitaApiUtilMod).uploadFile(Matchers.any(),
-                Matchers.any());
-        Map<String, Serializable> inputs =
-                bonitaApiUtilMod.prepareInputs(processDefinition, rawInputs);
+        doReturn(uploadFileResponse).when(bonitaApiUtilMod).uploadFile(any(), any());
+        Map<String, Serializable> inputs = bonitaApiUtilMod.prepareInputs(processDefinition, rawInputs);
         assertTrue(Map.class.isInstance(inputs.get("filename")));
     }
 
     @Test
     public void testPrepareInputsTempFilePath() throws Exception {
-
-        Map<String, Serializable> rawInputs = new HashMap<String, Serializable>();
+        Map<String, Serializable> rawInputs = new HashMap<>();
         FileInput file = new FileInput("filename", "String".getBytes());
         rawInputs.put("filename", file);
-        BonitaAPIUtil bonitaApiUtilMod = Mockito.spy(bonitaApiUtil);
+        BonitaAPIUtil bonitaApiUtilMod = spy(bonitaApiUtil);
         UploadFileResponse uploadFileResponse = new UploadFileResponse();
         uploadFileResponse.setTempPath("temp");
-        Mockito.doReturn(uploadFileResponse).when(bonitaApiUtilMod).uploadFile(Matchers.any(),
-                Matchers.any());
-        Map<String, Serializable> inputs =
-                bonitaApiUtilMod.prepareInputs(processDefinition, rawInputs);
-        Map<String, Serializable> fileMap = (Map<String, Serializable>) inputs.get("filename");
+        doReturn(uploadFileResponse).when(bonitaApiUtilMod).uploadFile(any(), any());
+        Map<String, Serializable> inputs = bonitaApiUtilMod.prepareInputs(processDefinition, rawInputs);
+        Map<String, Serializable> fileMap = (Map<String, Serializable>)inputs.get("filename");
         assertEquals("temp", fileMap.get("tempPath"));
     }
 }

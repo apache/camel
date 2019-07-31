@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,4 +38,13 @@ public interface JsonPathAdapter {
      * @return converted as {@link Map} or <tt>null</tt> if not possible
      */
     Map readValue(Object body, Exchange exchange);
+
+    /**
+     * Attempts to write the value as a JSOn {@link String} value.
+     *
+     * @param value  the value
+     * @param exchange the Camel exchange
+     * @return written as {@link String} JSon or <tt>null</tt> if not possible
+     */
+    String writeAsString(Object value, Exchange exchange);
 }

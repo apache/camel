@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,10 +22,13 @@ import org.apache.camel.component.openstack.cinder.producer.SnapshotProducer;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.storage.BlockVolumeSnapshotService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.storage.block.VolumeSnapshot;
 
@@ -33,23 +36,42 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
 
     @Mock
+    private BlockVolumeSnapshotService snapshotService;
+
+    @Mock
     private VolumeSnapshot testOSVolumeSnapshot;
+
+    @Captor
+    private ArgumentCaptor<String> idCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> nameCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> descCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> captor;
 
     private VolumeSnapshot dummyVolumeSnapshot;
 
     @Before
     public void setUp() {
+        when(blockStorageService.snapshots()).thenReturn(snapshotService);
+        
         producer = new SnapshotProducer(endpoint, client);
 
-        when(snapshotService.create(Matchers.any(VolumeSnapshot.class))).thenReturn(testOSVolumeSnapshot);
-        when(snapshotService.get(Matchers.anyString())).thenReturn(testOSVolumeSnapshot);
+        when(snapshotService.create(any())).thenReturn(testOSVolumeSnapshot);
+        when(snapshotService.get(anyString())).thenReturn(testOSVolumeSnapshot);
 
         dummyVolumeSnapshot = createTestVolume();
         when(testOSVolumeSnapshot.getId()).thenReturn(UUID.randomUUID().toString());
@@ -81,15 +103,11 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> descCaptor = ArgumentCaptor.forClass(String.class);
         verify(snapshotService).update(idCaptor.capture(), nameCaptor.capture(), descCaptor.capture());
 
         assertEquals(id, idCaptor.getValue());
         assertEquals(name, nameCaptor.getValue());
         assertEquals(desc, descCaptor.getValue());
-        assertFalse(msg.isFault());
         assertNull(msg.getBody());
     }
 
@@ -112,10 +130,8 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(snapshotService).delete(captor.capture());
         assertEquals(id, captor.getValue());
-        assertFalse(msg.isFault());
     }
 
     private void assertEqualsVolumeSnapshots(VolumeSnapshot old, VolumeSnapshot newVolumeSn) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stax;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,7 +28,7 @@ import org.junit.Test;
 
 public class StAXComponentRefTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:records")
+    @EndpointInject("mock:records")
     private MockEndpoint recordsEndpoint;
 
     @BeforeClass

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,13 +24,10 @@ import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SftpConsumerAutoCreateTest extends SftpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "sftp://admin@localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/foo/bar/baz/xxx?password=admin&autoCreate=true";
+        return "sftp://admin@localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/foo/bar/baz/xxx?password=admin";
     }
 
     @Override
@@ -44,7 +41,7 @@ public class SftpConsumerAutoCreateTest extends SftpServerTestSupport {
         if (!canTest()) {
             return;
         }
-        SftpEndpoint endpoint = (SftpEndpoint) this.getMandatoryEndpoint(getFtpUrl());
+        SftpEndpoint endpoint = (SftpEndpoint) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
         endpoint.start();
         endpoint.getExchanges();
         assertTrue(new File(FTP_ROOT_DIR + "/foo/bar/baz/xxx").exists());

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,8 +35,8 @@ import org.apache.camel.Message;
 
 
 /**
- * Accesses the private key from a key-store and returns a KeyInfo which
- * contains the X.509 certificate chain corresponding to the private key.
+ * Accesses the public key from a key-store and returns a KeyInfo which
+ * contains the X.509 certificate chain corresponding to the public key.
  */
 public class DefaultKeyAccessor extends DefaultKeySelector implements KeyAccessor {
 
@@ -87,7 +87,7 @@ public class DefaultKeyAccessor extends DefaultKeySelector implements KeyAccesso
         if (certs == null) {
             return null;
         }
-        ArrayList<X509Certificate> certList = new ArrayList<X509Certificate>(certs.length);
+        ArrayList<X509Certificate> certList = new ArrayList<>(certs.length);
         for (Certificate cert : certs) {
             if (cert instanceof X509Certificate) {
                 certList.add((X509Certificate) cert);

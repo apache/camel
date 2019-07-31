@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,6 +39,7 @@ import javax.xml.ws.handler.MessageContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.cxf.attachment.AttachmentDataSource;
@@ -47,6 +48,7 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
 
@@ -55,7 +57,6 @@ import org.springframework.test.context.ContextConfiguration;
  * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfProducer in PAYLOAD mode.  
  * That is, testing attachment with MTOM optimization off.
  *  
- * @version 
  */
 @ContextConfiguration
 public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPayloadModeTest {
@@ -71,6 +72,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
     }
     
     @Override
+    @Test
     public void testProducer() throws Exception {
         if (MtomTestHelper.isAwtHeadless(logger, null)) {
             return;
@@ -80,15 +82,15 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
 
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
-                List<Source> elements = new ArrayList<Source>();
+                List<Source> elements = new ArrayList<>();
                 elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_REQ_MESSAGE)).getDocumentElement()));
-                CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
+                CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
                     elements, null);
                 exchange.getIn().setBody(body);
-                exchange.getIn().addAttachment(MtomTestHelper.REQ_PHOTO_CID, 
+                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_PHOTO_CID,
                     new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
 
-                exchange.getIn().addAttachment(MtomTestHelper.REQ_IMAGE_CID, 
+                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_IMAGE_CID,
                     new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
 
             }
@@ -101,11 +103,11 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
         Assert.assertEquals(1, out.getBody().size());
         
 
-        DataHandler dr = exchange.getOut().getAttachment(MtomTestHelper.RESP_PHOTO_CID);
+        DataHandler dr = exchange.getOut(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_PHOTO_CID);
         Assert.assertEquals("application/octet-stream", dr.getContentType());
         MtomTestHelper.assertEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
    
-        dr = exchange.getOut().getAttachment(MtomTestHelper.RESP_IMAGE_CID);
+        dr = exchange.getOut(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_IMAGE_CID);
         Assert.assertEquals("image/jpeg", dr.getContentType());
         
         BufferedImage image = ImageIO.read(dr.getInputStream());

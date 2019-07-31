@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,10 +25,11 @@ public class ClientRoute extends RouteBuilder {
     @Override
     public void configure() {
         // you can configure the route rule with Java DSL here
-        from("timer:trigger?period=1s").streamCaching()
+        from("timer:trigger?period=500").streamCaching()
             .bean("counterBean")
             .log(" Client request: ${body}")
             .hystrix()
+                // see application.properties how hystrix is configured
                 .to("http://localhost:9090/service1")
             //.onFallback()
             // we use a fallback without network that provides a repsonse message immediately

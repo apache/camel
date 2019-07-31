@@ -1,0 +1,17 @@
+[[HowcanIgettheremoteconnectionIPaddressfromthecamel-cxfconsumer-HowcanIgettheremoteconnectionIPaddressfromthecamel-cxfconsumer]]
+= How can I get the remote connection IP address from the camel-cxf consumer ?
+
+From *Camel 2.6.0*, you can access the CXF Message by using the key of
+`CamelCxfMessage` from message header, and you can get the
+`ServletRequest` instance from the CXF message, then you can get the
+remote connection IP easily.
+
+Here is the code snippet:
+
+[source,java]
+----
+// check the remote IP from the CXF Message
+org.apache.cxf.message.Message cxfMessage = exchange.getIn().getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
+ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
+String remoteAddress = request.getRemoteAddr();
+----

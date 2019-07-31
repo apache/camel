@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -55,10 +55,10 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration(classes = SpringBatchJobRegistryTest.ContextConfig.class, loader = CamelSpringDelegatingTestContextLoader.class)
 public class SpringBatchJobRegistryTest extends AbstractJUnit4SpringContextTests {
 
-    @EndpointInject(uri = "mock:output")
+    @EndpointInject("mock:output")
     MockEndpoint outputEndpoint;
 
-    @EndpointInject(uri = "mock:jobExecutionEventsQueue")
+    @EndpointInject("mock:jobExecutionEventsQueue")
     MockEndpoint jobExecutionEventsQueueEndpoint;
 
     @Autowired
@@ -127,18 +127,18 @@ public class SpringBatchJobRegistryTest extends AbstractJUnit4SpringContextTests
         ProducerTemplate producerTemplate;
 
         @Bean
-        protected ItemReader reader() throws Exception {
-            return new CamelItemReader(consumerTemplate, "seda:inputQueue");
+        protected ItemReader<Object> reader() throws Exception {
+            return new CamelItemReader<>(consumerTemplate, "seda:inputQueue");
         }
 
         @Bean
-        protected ItemWriter writer() throws Exception {
-            return new CamelItemWriter(producerTemplate, "mock:output");
+        protected ItemWriter<Object> writer() throws Exception {
+            return new CamelItemWriter<>(producerTemplate, "mock:output");
         }
 
         @Bean
-        protected ItemProcessor processor() throws Exception {
-            return new CamelItemProcessor(producerTemplate, "direct:processor");
+        protected ItemProcessor<Object, Object> processor() throws Exception {
+            return new CamelItemProcessor<>(producerTemplate, "direct:processor");
         }
 
         @Bean

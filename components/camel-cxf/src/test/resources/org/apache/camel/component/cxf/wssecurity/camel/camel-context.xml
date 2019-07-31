@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,13 +8,14 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring" xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:cxf-core="http://cxf.apache.org/core" xmlns:wsa="http://cxf.apache.org/ws/addressing" xmlns:p="http://cxf.apache.org/policy" xsi:schemaLocation="             http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd            http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd  http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd
        http://www.w3.org/ns/ws-policy http://www.w3.org/2007/02/ws-policy.xsd">
@@ -75,7 +77,7 @@
         address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterEncryptionPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
+            <entry key="dataFormat" value="RAW"/>
         </cxf:properties>
     </cxf:cxfEndpoint>
     
@@ -84,7 +86,7 @@
         address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterEncryptionPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
+            <entry key="dataFormat" value="RAW"/>
         </cxf:properties>
     </cxf:cxfEndpoint>
     
@@ -93,7 +95,7 @@
         address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
+            <entry key="dataFormat" value="RAW"/>
         </cxf:properties>
     </cxf:cxfEndpoint>
     
@@ -102,7 +104,7 @@
         address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
+            <entry key="dataFormat" value="RAW"/>
         </cxf:properties>
     </cxf:cxfEndpoint>
     
@@ -131,7 +133,7 @@
         <constructor-arg>
             <map>
                 <entry key="action" value="Signature Timestamp"/>
-                <entry key="signaturePropFile" value="wssecurity/etc/Server_SignVerf.properties"/>
+                <entry key="signaturePropFile" value="wssecurity/etc/cxfca.properties"/>
             </map>
         </constructor-arg>
     </bean>

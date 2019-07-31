@@ -1,0 +1,34 @@
+[[WhatjarsdoIneed-WhatjarsdoIneed]]
+= What jars do I need?
+
+Camel is designed to be small lightweight and extremely modular so that
+you only pay for what you use. The core of camel, *camel-core.jar* is
+small and has minimal dependencies.
+
+On Java 6 camel-core.jar only depends on
+
+* *commons-management.jar* (for Camel 2.8 or older)
+* *commons-logging.jar* (for Camel 2.6 or older)
+* *slf4j-api.jar* (from Camel 2.7 onwards)
+
+On Java 5 camel-core.jar depends also on *activation.jar* and a JAXB2
+implementation which typically involves *jaxb-api.jar*, *jaxb-impl.jar*
+and a StAX API which may be *stax-api.jar* and *woodstox.jar*.
+
+[[WhatjarsdoIneed-UsingSpring]]
+== Using Spring
+
+If you wish to work with Spring, you will also need *camel-spring.jar*
+along with the *spring.jar* or the individual spring jars if you prefer.
+
+[[WhatjarsdoIneed-Othercomponents]]
+== Other components
+
+For other components you may want to look at the
+http://activemq.apache.org/camel/maven/[Maven reports] to see the exact
+dependencies of individual modules.
+
+For example to work with JMS you will require the JMS API jar together
+with *camel-jms.jar* and your JMS provider of choice such as the
+http://activemq.apache.org/[ActiveMQ]
+http://activemq.apache.org/initial-configuration.html[required jars].

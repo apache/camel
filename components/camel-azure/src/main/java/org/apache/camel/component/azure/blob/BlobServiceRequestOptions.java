@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,14 +17,13 @@
 package org.apache.camel.component.azure.blob;
 
 import com.microsoft.azure.storage.AccessCondition;
-import com.microsoft.azure.storage.OperationContext;
 import com.microsoft.azure.storage.blob.BlobRequestOptions;
+import org.apache.camel.component.azure.common.AbstractServiceRequestOptions;
 
-public class BlobServiceRequestOptions {
+public class BlobServiceRequestOptions extends AbstractServiceRequestOptions {
     private AccessCondition accessCond;
     private BlobRequestOptions requestOpts;
-    private OperationContext opContext;
-
+    
     public AccessCondition getAccessCond() {
         return accessCond;
     }
@@ -41,11 +40,4 @@ public class BlobServiceRequestOptions {
         this.requestOpts = requestOpts;
     }
 
-    public OperationContext getOpContext() {
-        return opContext;
-    }
-
-    public void setOpContext(OperationContext opContext) {
-        this.opContext = opContext;
-    }
 }

@@ -1,0 +1,265 @@
+[[milo-client-component]]
+= OPC UA Client Component
+
+*Available as of Camel version 2.19*
+
+The Milo Client component provides access to OPC UA servers using the
+http://eclipse.org/milo[Eclipse Milo™] implementation.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-milo</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+
+
+// component options: START
+The OPC UA Client component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *defaultConfiguration* (common) | All default options for client |  | MiloClientConfiguration
+| *applicationName* (common) | Default application name |  | String
+| *applicationUri* (common) | Default application URI |  | String
+| *productUri* (common) | Default product URI |  | String
+| *reconnectTimeout* (common) | Default reconnect timeout |  | Long
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+
+
+== URI format
+
+The URI syntax of the endpoint is: 
+
+[source]
+------------------------
+milo-client:tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn:foo:bar;s=item-1)
+------------------------
+
+If the server does not use a path, then it is possible to simply omit it:
+
+------------------------
+milo-client:tcp://[user:password@]host:port?node=RAW(nsu=urn:foo:bar;s=item-1)
+------------------------
+
+If no user credentials are provided the client will switch to anonymous mode.
+
+== URI options
+
+All configuration options in the group +client+ are applicable to the shared client instance. Endpoints
+will share client instances for each endpoint URI. So the first time a request for that endpoint URI is
+made, the options of the +client+ group are applied. All further instances will be ignored.
+
+If you need alternate options for the same endpoint URI it is possible though to set the +clientId+ option
+which will by added internally to the endpoint URI in order to select a different shared connection instance.
+In other words, shared connections located by the combination of endpoint URI and client id.
+
+
+
+
+
+
+
+
+
+
+
+
+// endpoint options: START
+The OPC UA Client endpoint is configured using URI syntax:
+
+----
+milo-client:endpointUri
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *endpointUri* | *Required* The OPC UA server endpoint |  | String
+|===
+
+
+=== Query Parameters (29 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *clientId* (common) | A virtual client id to force the creation of a new connection instance |  | String
+| *defaultAwaitWrites* (common) | Default await setting for writes | false | boolean
+| *discoveryEndpointSuffix* (common) | A suffix for endpoint URI when discovering |  | String
+| *discoveryEndpointUri* (common) | An alternative discovery URI |  | String
+| *method* (common) | The method definition (see Method ID) |  | ExpandedNodeId
+| *node* (common) | The node definition (see Node ID) |  | ExpandedNodeId
+| *samplingInterval* (common) | The sampling interval in milliseconds |  | Double
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *allowedSecurityPolicies* (client) | A set of allowed security policy URIs. Default is to accept all and use the highest. |  | String
+| *applicationName* (client) | The application name | Apache Camel adapter for Eclipse Milo | String
+| *applicationUri* (client) | The application URI | http://camel.apache.org/EclipseMilo/Client | String
+| *channelLifetime* (client) | Channel lifetime in milliseconds |  | Long
+| *keyAlias* (client) | The name of the key in the keystore file |  | String
+| *keyPassword* (client) | The key password |  | String
+| *keyStorePassword* (client) | The keystore password |  | String
+| *keyStoreType* (client) | The key store type |  | String
+| *keyStoreUrl* (client) | The URL where the key should be loaded from |  | URL
+| *maxPendingPublishRequests* (client) | The maximum number of pending publish requests |  | Long
+| *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
+| *overrideHost* (client) | Override the server reported endpoint host with the host from the endpoint URI. | false | boolean
+| *productUri* (client) | The product URI | http://camel.apache.org/EclipseMilo | String
+| *requestTimeout* (client) | Request timeout in milliseconds |  | Long
+| *sessionName* (client) | Session name |  | String
+| *sessionTimeout* (client) | Session timeout in milliseconds |  | Long
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-milo-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 26 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.milo-client.application-name* | Default application name |  | String
+| *camel.component.milo-client.application-uri* | Default application URI |  | String
+| *camel.component.milo-client.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.milo-client.default-configuration.allowed-security-policies* | A set of allowed security policy URIs. Default is to accept all and use the highest. |  | Set
+| *camel.component.milo-client.default-configuration.application-name* | The application name | Apache Camel adapter for Eclipse Milo | String
+| *camel.component.milo-client.default-configuration.application-uri* | The application URI | http://camel.apache.org/EclipseMilo/Client | String
+| *camel.component.milo-client.default-configuration.channel-lifetime* | Channel lifetime in milliseconds |  | Long
+| *camel.component.milo-client.default-configuration.client-id* | A virtual client id to force the creation of a new connection instance |  | String
+| *camel.component.milo-client.default-configuration.discovery-endpoint-suffix* | A suffix for endpoint URI when discovering |  | String
+| *camel.component.milo-client.default-configuration.discovery-endpoint-uri* | An alternative discovery URI |  | String
+| *camel.component.milo-client.default-configuration.key-alias* | The name of the key in the keystore file |  | String
+| *camel.component.milo-client.default-configuration.key-password* | The key password |  | String
+| *camel.component.milo-client.default-configuration.key-store-password* | The keystore password |  | String
+| *camel.component.milo-client.default-configuration.key-store-type* | The key store type |  | String
+| *camel.component.milo-client.default-configuration.key-store-url* | The URL where the key should be loaded from |  | String
+| *camel.component.milo-client.default-configuration.max-pending-publish-requests* | The maximum number of pending publish requests |  | Long
+| *camel.component.milo-client.default-configuration.max-response-message-size* | The maximum number of bytes a response message may have |  | Long
+| *camel.component.milo-client.default-configuration.override-host* | Override the server reported endpoint host with the host from the endpoint URI. | false | Boolean
+| *camel.component.milo-client.default-configuration.product-uri* | The product URI | http://camel.apache.org/EclipseMilo | String
+| *camel.component.milo-client.default-configuration.request-timeout* | Request timeout in milliseconds |  | Long
+| *camel.component.milo-client.default-configuration.session-name* | Session name |  | String
+| *camel.component.milo-client.default-configuration.session-timeout* | Session timeout in milliseconds |  | Long
+| *camel.component.milo-client.enabled* | Enable milo-client component | true | Boolean
+| *camel.component.milo-client.product-uri* | Default product URI |  | String
+| *camel.component.milo-client.reconnect-timeout* | Default reconnect timeout |  | Long
+| *camel.component.milo-client.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+=== Discovery
+
+If the server uses a dedicated discovery endpoint (e.g. `/discovery`), which may support different (less secure) security policies,
+then you can make use of this via the parameter `discoveryEndpointSuffix`, which will be appended to the `endpointUri`. Or by using
+an explicit `discoveryEndpointUri`.
+
+=== Overriding the host name
+
+The client uses the host information from the endpoint information, queried from the server. However in some situations this endpoint URI
+might be different, and wrong from the point of view of the connecting client (e.g. an internal hostname).
+
+In this case it is possible to set the parameter `overrideHost` to `true`, which will take the discovered endpoint information,
+but override the host information with the value of the original URI.
+
+=== Node ID
+
+
+In order to define a target node a namespace and node id is required. In previous versions this was possible by
+specifying `nodeId` and either `namespaceUri` or `namespaceIndex`. However this only allowed for using
+string based node IDs. And while this configuration is still possible, the newer one is preferred.
+
+The new approach is to specify a full namespace+node ID in the format `ns=1;i=1` which also allows to use the other
+node ID formats (like numeric, GUID/UUID or opaque). If the `node` parameter is used the older ones must not be used.
+The syntax of this node format is a set of `key=value` pairs delimited by a semi-colon (`;`). 
+
+Exactly one namespace and one node id key must be used. See the following table for possible keys:
+
+[width="100%",cols="2,2,5",options="header"]
+|===
+| Key | Type | Description
+| *ns*  | namespace | Numeric namespace index
+| *nsu* | namespace | Namespace URI
+| *s*   | node | String node ID
+| *i*   | node | Numeric node ID
+| *g*   | node | GUID/UUID node ID
+| *b*   | node | Base64 encoded string for opaque node ID
+|===
+
+As the values generated by the syntax cannot be transparently encoded into a URI parameter value, it is necessary to escape them.
+However Camel allows to wrap the actual value inside `RAW(…)`, which makes escaping unnecessary. For example:
+
+------------------------
+milo-client:tcp://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)
+------------------------
+
+=== Method ID
+
+It is possible to perform methods calls on OPC UA nodes. If the parameter `method` is set to the Node ID of a method call (the node ID must be set to the parent object in this case),
+then a method call will be performed instead of a write operation.
+
+Input parameters are taken from the body:
+
+* If the body is null, then an empty `Variant[]` will be used
+* If the body is a `Variant[]`, then it will be used as is
+* If the body is a `Variant`, then it will be wrapped in a `Variant[]` array
+* Otherwise the body will be converted into a `Variant` and wrapped in an array of `Variant[]`
+
+=== Security policies
+
+When setting the allowing security policies is it possible to use the well known OPC UA URIs (e.g. `\http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15`)
+or to use the Milo enum literals (e.g. `None`). Specifying an unknown security policy URI or enum is an error.
+
+The known security policy URIs and enum literals are can be seen here: https://github.com/eclipse/milo/blob/master/opc-ua-stack/stack-core/src/main/java/org/eclipse/milo/opcua/stack/core/security/SecurityPolicy.java[SecurityPolicy.java] 
+
+**Note:** In any case security policies are considered case sensitive.
+
+== See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

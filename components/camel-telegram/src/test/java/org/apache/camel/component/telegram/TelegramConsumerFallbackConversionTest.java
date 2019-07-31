@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.verify;
  */
 public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport {
 
-    @EndpointInject(uri = "direct:message")
+    @EndpointInject("direct:message")
     protected ProducerTemplate template;
 
     @Before

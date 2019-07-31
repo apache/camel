@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,8 +23,11 @@ import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxFileUploadResult;
+import org.apache.camel.component.dropbox.util.DropboxHelper;
 import org.apache.camel.component.dropbox.util.DropboxResultCode;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
+import org.apache.camel.component.dropbox.util.DropboxUploadMode;
+import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +40,14 @@ public class DropboxPutProducer extends DropboxProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        DropboxFileUploadResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
-                .put(configuration.getLocalPath(), configuration.getRemotePath(), configuration.getUploadMode());
+        String remotePath = DropboxHelper.getRemotePath(configuration, exchange);
+        String localPath = DropboxHelper.getLocalPath(configuration, exchange);
+        DropboxUploadMode uploadMode = DropboxHelper.getUploadMode(configuration, exchange);
 
+        DropboxConfigurationValidator.validatePutOp(localPath, remotePath, uploadMode);
+
+        DropboxFileUploadResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
+                .put(localPath, remotePath, uploadMode);
 
         Map<String, DropboxResultCode> map = result.getResults();
         if (map.size() == 1) {
@@ -58,7 +66,7 @@ public class DropboxPutProducer extends DropboxProducer {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Uploaded: {}", result.toString());
+            LOG.debug("Uploaded: {}", result);
         }
     }
 

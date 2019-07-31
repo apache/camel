@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,12 +27,10 @@ import java.util.Properties;
 
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.model.File;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.IntrospectionSupport;
-import org.junit.AfterClass;
 
 public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
 
@@ -50,7 +48,6 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     private static String propertyText;
 
     
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
     private static final String REFRESH_TOKEN_PROPERTY = "refreshToken";
     
@@ -60,7 +57,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         fileMetadata.setTitle(UPLOAD_FILE.getName());
         FileContent mediaContent = new FileContent(null, UPLOAD_FILE);
         
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is com.google.api.services.drive.model.File
         headers.put("CamelGoogleDrive.content", fileMetadata);
         // parameter type is com.google.api.client.http.AbstractInputStreamContent
@@ -81,6 +78,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        final CamelContext context = super.createCamelContext();
 
         final InputStream in = getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES);
         if (in == null) {
@@ -91,7 +89,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         String line;
         while ((line = reader.readLine()) != null) {
-            builder.append(line).append(LINE_SEPARATOR);
+            builder.append(line).append(LS);
         }
         propertyText = builder.toString();
 
@@ -109,27 +107,20 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
 //        testFileId = properties.getProperty("testFileId");
 //        testUserId = properties.getProperty("testUserId");
 //
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             options.put(entry.getKey().toString(), entry.getValue());
         }
 
         final GoogleDriveConfiguration configuration = new GoogleDriveConfiguration();
-        IntrospectionSupport.setProperties(configuration, options);
+        PropertyBindingSupport.bindProperties(context, configuration, options);
 
         // add GoogleDriveComponent  to Camel context
-        final CamelContext context = super.createCamelContext();
         final GoogleDriveComponent component = new GoogleDriveComponent(context);
-
         component.setConfiguration(configuration);
         context.addComponent("google-drive", component);
 
         return context;
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-        CamelTestSupport.tearDownAfterClass();
     }
 
     @Override
@@ -143,6 +134,11 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
     }
 
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type)
+        throws CamelExecutionException {
+        return template().requestBodyAndHeaders(endpointUri, body, headers, type);
+    }
+    
     protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
         return (T) template().requestBody(endpoint, body);
     }

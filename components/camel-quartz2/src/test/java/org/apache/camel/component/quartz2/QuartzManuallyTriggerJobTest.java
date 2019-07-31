@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,6 @@ import org.quartz.impl.matchers.GroupMatcher;
 
 /**
  * This test the  CronTrigger as a timer endpoint in a route.
- * @version 
  */
 public class QuartzManuallyTriggerJobTest extends BaseQuartzTest {
 
@@ -41,7 +40,7 @@ public class QuartzManuallyTriggerJobTest extends BaseQuartzTest {
         Scheduler scheduler = component.getScheduler();
         
         // collect all jobKeys of this route (ideally only one).
-        ArrayList<JobKey> jobKeys = new ArrayList<JobKey>();
+        ArrayList<JobKey> jobKeys = new ArrayList<>();
         for (String group : scheduler.getJobGroupNames()) {
             for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(group))) {
                 jobKeys.add(jobKey);

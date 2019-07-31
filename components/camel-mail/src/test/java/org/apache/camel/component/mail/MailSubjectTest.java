@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mail;
 
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -43,7 +44,7 @@ public class MailSubjectTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertFalse("Should not have attachements", mock.getExchanges().get(0).getIn().hasAttachments());
+        assertFalse("Should not have attachements", mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -53,7 +54,7 @@ public class MailSubjectTest extends CamelTestSupport {
                 from("direct:a").setHeader("subject", constant(subject)).to("smtp://james2@localhost");
                 // END SNIPPET: e1
 
-                from("pop3://localhost?username=james2&password=secret&consumer.delay=1000").to("mock:result");
+                from("pop3://localhost?username=james2&password=secret&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

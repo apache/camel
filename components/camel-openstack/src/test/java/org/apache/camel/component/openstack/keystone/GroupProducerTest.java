@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,12 +21,15 @@ import java.util.List;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.keystone.producer.GroupProducer;
-import org.apache.camel.component.openstack.neutron.NeutronConstants;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.identity.v3.GroupService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Group;
 import org.openstack4j.model.network.Network;
@@ -35,12 +38,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class GroupProducerTest extends KeystoneProducerTestSupport {
 
     private Group dummyGroup;
@@ -48,11 +52,22 @@ public class GroupProducerTest extends KeystoneProducerTestSupport {
     @Mock
     private Group testOSgroup;
 
+    @Mock
+    private GroupService groupService;
+
+    @Captor
+    private ArgumentCaptor<Group> groupCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> groupIdCaptor;
+
     @Before
     public void setUp() {
+        when(identityService.groups()).thenReturn(groupService);
+
         producer = new GroupProducer(endpoint, client);
 
-        when(groupService.create(any(Group.class))).thenReturn(testOSgroup);
+        when(groupService.create(any())).thenReturn(testOSgroup);
         when(groupService.get(anyString())).thenReturn(testOSgroup);
 
         List<Group> getAllList = new ArrayList<>();
@@ -73,13 +88,11 @@ public class GroupProducerTest extends KeystoneProducerTestSupport {
         msg.setHeader(KeystoneConstants.DESCRIPTION, dummyGroup.getDescription());
         msg.setHeader(KeystoneConstants.DOMAIN_ID, dummyGroup.getDomainId());
 
-
         producer.process(exchange);
 
-        ArgumentCaptor<Group> captor = ArgumentCaptor.forClass(Group.class);
-        verify(groupService).create(captor.capture());
+        verify(groupService).create(groupCaptor.capture());
 
-        assertEqualsGroup(dummyGroup, captor.getValue());
+        assertEqualsGroup(dummyGroup, groupCaptor.getValue());
     }
 
     @Test
@@ -90,10 +103,9 @@ public class GroupProducerTest extends KeystoneProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(groupService).get(captor.capture());
+        verify(groupService).get(groupIdCaptor.capture());
 
-        assertEquals(id, captor.getValue());
+        assertEquals(id, groupIdCaptor.getValue());
         assertEqualsGroup(testOSgroup, msg.getBody(Group.class));
     }
 
@@ -118,16 +130,15 @@ public class GroupProducerTest extends KeystoneProducerTestSupport {
         when(testOSgroup.getName()).thenReturn(newName);
         when(testOSgroup.getDescription()).thenReturn("desc");
 
-        when(groupService.update(any(Group.class))).thenReturn(testOSgroup);
+        when(groupService.update(any())).thenReturn(testOSgroup);
         msg.setBody(testOSgroup);
 
         producer.process(exchange);
 
-        ArgumentCaptor<Group> captor = ArgumentCaptor.forClass(Group.class);
-        verify(groupService).update(captor.capture());
+        verify(groupService).update(groupCaptor.capture());
 
-        assertEqualsGroup(testOSgroup, captor.getValue());
-        assertNotNull(captor.getValue().getId());
+        assertEqualsGroup(testOSgroup, groupCaptor.getValue());
+        assertNotNull(groupCaptor.getValue().getId());
         assertEquals(newName, msg.getBody(Group.class).getName());
     }
 
@@ -140,17 +151,8 @@ public class GroupProducerTest extends KeystoneProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(groupService).delete(captor.capture());
-        assertEquals(networkID, captor.getValue());
-        assertFalse(msg.isFault());
-
-        //in case of failure
-        final String failureMessage = "fail";
-        when(groupService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
-        producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failureMessage));
+        verify(groupService).delete(groupIdCaptor.capture());
+        assertEquals(networkID, groupIdCaptor.getValue());
     }
 
     private void assertEqualsGroup(Group old, Group newGroup) {

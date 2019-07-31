@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Unit test for the <tt>transferExchange=true</tt> option.
- *
- * @version
  */
 public class Mina2TransferExchangeOptionTest extends BaseMina2Test {
 
@@ -68,19 +66,17 @@ public class Mina2TransferExchangeOptionTest extends BaseMina2Test {
         return exchange;
     }
 
-    private void assertExchange(Exchange exchange, boolean hasFault) {
-        if (!hasFault) {
+    private void assertExchange(Exchange exchange, boolean hasException) {
+        if (!hasException) {
             Message out = exchange.getOut();
             assertNotNull(out);
-            assertFalse(out.isFault());
             assertEquals("Goodbye!", out.getBody());
             assertEquals("cheddar", out.getHeader("cheese"));
         } else {
             Message fault = exchange.getOut();
             assertNotNull(fault);
-            assertTrue(fault.isFault());
             assertNotNull(fault.getBody());
-            assertTrue("Should get the InterrupteException exception", fault.getBody() instanceof InterruptedException);
+            assertTrue("Should get the InterruptedException exception", fault.getBody() instanceof InterruptedException);
             assertEquals("nihao", fault.getHeader("hello"));
         }
 
@@ -120,7 +116,6 @@ public class Mina2TransferExchangeOptionTest extends BaseMina2Test {
                         Boolean setException = (Boolean) e.getProperty("setException");
 
                         if (setException) {
-                            e.getOut().setFault(true);
                             e.getOut().setBody(new InterruptedException());
                             e.getOut().setHeader("hello", "nihao");
                         } else {

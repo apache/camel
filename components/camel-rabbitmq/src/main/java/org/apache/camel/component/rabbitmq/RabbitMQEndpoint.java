@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,8 +17,6 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -33,40 +31,47 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
-
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.URISupport;
+
+import static org.apache.camel.component.rabbitmq.RabbitMQComponent.BINDING_ARG_PREFIX;
+import static org.apache.camel.component.rabbitmq.RabbitMQComponent.EXCHANGE_ARG_PREFIX;
+import static org.apache.camel.component.rabbitmq.RabbitMQComponent.QUEUE_ARG_PREFIX;
 
 /**
- * The rabbitmq component allows you produce and consume messages from <a href="http://www.rabbitmq.com/">RabbitMQ</a> instances.
+ * The rabbitmq component allows you produce and consume messages from
+ * <a href="http://www.rabbitmq.com/">RabbitMQ</a> instances.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:hostname:portNumber/exchangeName",
-        consumerClass = RabbitMQConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:exchangeName", label = "messaging")
 public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     // header to indicate that the message body needs to be de-serialized
     public static final String SERIALIZE_HEADER = "CamelSerialize";
 
-    @UriPath @Metadata(required = "true")
-    private String hostname;
-    @UriPath(defaultValue = "5672") @Metadata(required = "true")
-    private int portNumber;
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = true)
     private String exchangeName;
+    @UriParam(label = "common")
+    private String hostname;
+    @UriParam(label = "common")
+    private int portNumber;
     @UriParam(label = "security", defaultValue = ConnectionFactory.DEFAULT_USER, secret = true)
     private String username = ConnectionFactory.DEFAULT_USER;
     @UriParam(label = "security", defaultValue = ConnectionFactory.DEFAULT_PASS, secret = true)
     private String password = ConnectionFactory.DEFAULT_PASS;
-    @UriParam(defaultValue = ConnectionFactory.DEFAULT_VHOST)
+    @UriParam(label = "common", defaultValue = ConnectionFactory.DEFAULT_VHOST)
     private String vhost = ConnectionFactory.DEFAULT_VHOST;
+    @UriParam(label = "common")
+    private ConnectionFactory connectionFactory;
     @UriParam(label = "consumer,advanced", defaultValue = "10")
     private int threadPoolSize = 10;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -75,8 +80,12 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean autoDelete = true;
     @UriParam(label = "common", defaultValue = "true")
     private boolean durable = true;
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean exclusiveConsumer;
+    @UriParam(label = "common")
     private boolean exclusive;
+    @UriParam(label = "common")
+    private boolean passive;
     @UriParam(label = "producer")
     private boolean bridgeEndpoint;
     @UriParam(label = "common")
@@ -91,9 +100,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean skipQueueBind;
     @UriParam(label = "common")
     private boolean skipExchangeDeclare;
-    @UriParam(label = "advanced")
+    @UriParam(label = "common")
     private Address[] addresses;
-    @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
+    @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT;
     @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CHANNEL_MAX)
     private int requestedChannelMax = ConnectionFactory.DEFAULT_CHANNEL_MAX;
@@ -108,11 +117,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam(label = "advanced")
     private Map<String, Object> clientProperties;
     @UriParam(label = "advanced")
-    private ConnectionFactory connectionFactory;
-    @UriParam(label = "advanced")
     private Boolean automaticRecoveryEnabled;
-    @UriParam(label = "advanced")
-    private Integer networkRecoveryInterval;
+    @UriParam(label = "advanced", defaultValue = "5000")
+    private Integer networkRecoveryInterval = 5000;
     @UriParam(label = "advanced")
     private Boolean topologyRecoveryEnabled;
     @UriParam(label = "consumer")
@@ -125,7 +132,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean prefetchGlobal;
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private boolean declare = true;
     @UriParam(label = "common")
     private String deadLetterExchange;
@@ -145,24 +152,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean immediate;
     @UriParam(label = "advanced", prefix = "arg.", multiValue = true)
     private Map<String, Object> args;
-    @UriParam(label = "advanced")
-    @Deprecated
-    private Map<String, Object> exchangeArgs = new HashMap<>();
-    @UriParam(label = "advanced")
-    @Deprecated
-    private Map<String, Object> queueArgs = new HashMap<>();
-    @UriParam(label = "advanced")
-    @Deprecated
-    private Map<String, Object> bindingArgs = new HashMap<>();
-    @UriParam(label = "advanced")
-    @Deprecated
-    private ArgsConfigurer queueArgsConfigurer;
-    @UriParam(label = "advanced")
-    @Deprecated
-    private ArgsConfigurer exchangeArgsConfigurer;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", defaultValue = "20000")
     private long requestTimeout = 20000;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", defaultValue = "1000")
     private long requestTimeoutCheckerInterval = 1000;
     @UriParam(label = "advanced")
     private boolean transferException;
@@ -172,6 +164,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private long publisherAcknowledgementsTimeout;
     @UriParam(label = "producer")
     private boolean guaranteedDeliveries;
+    @UriParam(label = "producer")
+    private boolean allowNullHeaders;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
@@ -186,11 +180,11 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     public RabbitMQEndpoint() {
     }
 
-    public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component) throws URISyntaxException {
+    public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component) {
         super(endpointUri, component);
     }
 
-    public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component, ConnectionFactory connectionFactory) throws URISyntaxException {
+    public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component, ConnectionFactory connectionFactory) {
         super(endpointUri, component);
         this.connectionFactory = connectionFactory;
     }
@@ -213,18 +207,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public void publishExchangeToChannel(Exchange camelExchange, Channel channel, String routingKey) throws IOException {
         new RabbitMQMessagePublisher(camelExchange, channel, routingKey, this).publish();
-    }
-
-    /**
-     * Extracts name of the rabbitmq exchange
-     */
-    protected String getExchangeName(Message msg) {
-        String exchangeName = msg.getHeader(RabbitMQConstants.EXCHANGE_NAME, String.class);
-        // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_NAME
-        if (exchangeName == null || isBridgeEndpoint()) {
-            exchangeName = getExchangeName();
-        }
-        return exchangeName;
     }
 
     @Override
@@ -261,14 +243,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return new RabbitMQProducer(this);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     protected ExecutorService createExecutor() {
         if (getCamelContext() != null) {
-            return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "RabbitMQConsumer", getThreadPoolSize());
+            return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, URISupport.sanitizeUri(getEndpointUri()), getThreadPoolSize());
         } else {
             return Executors.newFixedThreadPool(getThreadPoolSize());
         }
@@ -323,7 +300,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads.
+     * The consumer uses a Thread Pool Executor with a fixed number of threads.
+     * This setting allows you to set that number of threads.
      */
     public void setThreadPoolSize(int threadPoolSize) {
         this.threadPoolSize = threadPoolSize;
@@ -334,7 +312,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Port number for the host with the running rabbitmq instance or cluster. Default value is 5672.
+     * Port number for the host with the running rabbitmq instance or cluster.
+     * Default value is 5672.
      */
     public void setPortNumber(int portNumber) {
         this.portNumber = portNumber;
@@ -367,7 +346,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * If we are declaring a durable exchange (the exchange will survive a server restart)
+     * If we are declaring a durable exchange (the exchange will survive a
+     * server restart)
      */
     public void setDurable(boolean durable) {
         this.durable = durable;
@@ -389,8 +369,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * The exchange name determines which exchange produced messages will sent to.
-     * In the case of consumers, the exchange name determines which exchange the queue will bind to.
+     * The exchange name determines which exchange produced messages will sent
+     * to. In the case of consumers, the exchange name determines which exchange
+     * the queue will bind to.
      */
     public void setExchangeName(String exchangeName) {
         this.exchangeName = exchangeName;
@@ -412,16 +393,16 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * The routing key to use when binding a consumer queue to the exchange.
-     * For producer routing keys, you set the header rabbitmq.ROUTING_KEY.
+     * The routing key to use when binding a consumer queue to the exchange. For
+     * producer routing keys, you set the header rabbitmq.ROUTING_KEY.
      */
     public void setRoutingKey(String routingKey) {
         this.routingKey = routingKey;
     }
 
     /**
-     * If true the producer will not declare and bind a queue.
-     * This can be used for directing messages via an existing routing key.
+     * If true the producer will not declare and bind a queue. This can be used
+     * for directing messages via an existing routing key.
      */
     public void setSkipQueueDeclare(boolean skipQueueDeclare) {
         this.skipQueueDeclare = skipQueueDeclare;
@@ -433,7 +414,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     /**
      * If true the queue will not be bound to the exchange after declaring it
-     * @return
      */
     public boolean isSkipQueueBind() {
         return skipQueueBind;
@@ -455,7 +435,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * If the bridgeEndpoint is true, the producer will ignore the message header of "rabbitmq.EXCHANGE_NAME" and "rabbitmq.ROUTING_KEY"
+     * If the bridgeEndpoint is true, the producer will ignore the message
+     * header of "rabbitmq.EXCHANGE_NAME" and "rabbitmq.ROUTING_KEY"
      */
     public void setBridgeEndpoint(boolean bridgeEndpoint) {
         this.bridgeEndpoint = bridgeEndpoint;
@@ -466,14 +447,24 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses.
-     * The addresses value is a string which looks like "server1:12345, server2:12345"
+     * If this option is set, camel-rabbitmq will try to create connection based
+     * on the setting of option addresses. The addresses value is a string which
+     * looks like "server1:12345, server2:12345"
      */
     public void setAddresses(String addresses) {
         Address[] addressArray = Address.parseAddresses(addresses);
         if (addressArray.length > 0) {
             this.addresses = addressArray;
         }
+    }
+
+    /**
+     * If this option is set, camel-rabbitmq will try to create connection based
+     * on the setting of option addresses. The addresses value is a string which
+     * looks like "server1:12345, server2:12345"
+     */
+    public void setAddresses(Address[] addresses) {
+        this.addresses = addresses;
     }
 
     public Address[] getAddresses() {
@@ -540,8 +531,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * To use a custom RabbitMQ connection factory.
-     * When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used
+     * To use a custom RabbitMQ connection factory. When this option is set, all
+     * connection options (connectionTimeout, requestedChannelMax...) set on URI
+     * are not used
      */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
@@ -574,7 +566,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application)
+     * Enables connection automatic recovery (uses connection implementation
+     * that performs automatic recovery when connection shutdown is not
+     * initiated by the application)
      */
     public void setAutomaticRecoveryEnabled(Boolean automaticRecoveryEnabled) {
         this.automaticRecoveryEnabled = automaticRecoveryEnabled;
@@ -585,7 +579,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Network recovery interval in milliseconds (interval used when recovering from network failure)
+     * Network recovery interval in milliseconds (interval used when recovering
+     * from network failure)
      */
     public void setNetworkRecoveryInterval(Integer networkRecoveryInterval) {
         this.networkRecoveryInterval = networkRecoveryInterval;
@@ -596,7 +591,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Enables connection topology recovery (should topology recovery be performed?)
+     * Enables connection topology recovery (should topology recovery be
+     * performed?)
      */
     public void setTopologyRecoveryEnabled(Boolean topologyRecoveryEnabled) {
         this.topologyRecoveryEnabled = topologyRecoveryEnabled;
@@ -607,16 +603,18 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Enables the quality of service on the RabbitMQConsumer side.
-     * You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time
+     * Enables the quality of service on the RabbitMQConsumer side. You need to
+     * specify the option of prefetchSize, prefetchCount, prefetchGlobal at the
+     * same time
      */
     public void setPrefetchEnabled(boolean prefetchEnabled) {
         this.prefetchEnabled = prefetchEnabled;
     }
 
     /**
-     * The maximum amount of content (measured in octets) that the server will deliver, 0 if unlimited.
-     * You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time
+     * The maximum amount of content (measured in octets) that the server will
+     * deliver, 0 if unlimited. You need to specify the option of prefetchSize,
+     * prefetchCount, prefetchGlobal at the same time
      */
     public void setPrefetchSize(int prefetchSize) {
         this.prefetchSize = prefetchSize;
@@ -627,8 +625,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * The maximum number of messages that the server will deliver, 0 if unlimited.
-     * You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time
+     * The maximum number of messages that the server will deliver, 0 if
+     * unlimited. You need to specify the option of prefetchSize, prefetchCount,
+     * prefetchGlobal at the same time
      */
     public void setPrefetchCount(int prefetchCount) {
         this.prefetchCount = prefetchCount;
@@ -639,8 +638,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * If the settings should be applied to the entire channel rather than each consumer
-     * You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time
+     * If the settings should be applied to the entire channel rather than each
+     * consumer You need to specify the option of prefetchSize, prefetchCount,
+     * prefetchGlobal at the same time
      */
     public void setPrefetchGlobal(boolean prefetchGlobal) {
         this.prefetchGlobal = prefetchGlobal;
@@ -655,7 +655,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Number of concurrent consumers when consuming from broker. (eg similar as to the same option for the JMS component).
+     * Number of concurrent consumers when consuming from broker. (eg similar as
+     * to the same option for the JMS component).
      */
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
@@ -666,8 +667,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * If the option is true, camel declare the exchange and queue name and bind them together.
-     * If the option is false, camel won't declare the exchange and queue name on the server.
+     * If the option is true, camel declare the exchange and queue name and bind
+     * them together. If the option is false, camel won't declare the exchange
+     * and queue name on the server.
      */
     public void setDeclare(boolean declare) {
         this.declare = declare;
@@ -733,7 +735,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Set the maximum number of milliseconds to wait for a channel from the pool
+     * Set the maximum number of milliseconds to wait for a channel from the
+     * pool
      */
     public void setChannelPoolMaxWait(long channelPoolMaxWait) {
         this.channelPoolMaxWait = channelPoolMaxWait;
@@ -744,9 +747,10 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * This flag tells the server how to react if the message cannot be routed to a queue.
-     * If this flag is set, the server will return an unroutable message with a Return method.
-     * If this flag is zero, the server silently drops the message.
+     * This flag tells the server how to react if the message cannot be routed
+     * to a queue. If this flag is set, the server will return an unroutable
+     * message with a Return method. If this flag is zero, the server silently
+     * drops the message.
      * <p/>
      * If the header is present rabbitmq.MANDATORY it will override this option.
      */
@@ -759,9 +763,11 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * This flag tells the server how to react if the message cannot be routed to a queue consumer immediately.
-     * If this flag is set, the server will return an undeliverable message with a Return method.
-     * If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed.
+     * This flag tells the server how to react if the message cannot be routed
+     * to a queue consumer immediately. If this flag is set, the server will
+     * return an undeliverable message with a Return method. If this flag is
+     * zero, the server will queue the message, but with no guarantee that it
+     * will ever be consumed.
      * <p/>
      * If the header is present rabbitmq.IMMEDIATE it will override this option.
      */
@@ -770,17 +776,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Specify arguments for configuring the different RabbitMQ concepts, a different prefix is
-     * required for each:
+     * Specify arguments for configuring the different RabbitMQ concepts, a
+     * different prefix is required for each:
      * <ul>
-     *     <li>Exchange: arg.exchange.</li>
-     *     <li>Queue: arg.queue.</li>
-     *     <li>Binding: arg.binding.</li>
+     * <li>Exchange: arg.exchange.</li>
+     * <li>Queue: arg.queue.</li>
+     * <li>Binding: arg.binding.</li>
      * </ul>
      * For example to declare a queue with message ttl argument:
-     *
      * http://localhost:5672/exchange/queue?args=arg.queue.x-message-ttl=60000
-     *
      */
     public void setArgs(Map<String, Object> args) {
         this.args = args;
@@ -790,74 +794,21 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return args;
     }
 
-    /**
-     * Key/value args for configuring the exchange parameters when declare=true
-     *
-     * @Deprecated Use args instead e.g arg.exchange.x-message-ttl=1000
-     */
-    @Deprecated
-    public void setExchangeArgs(Map<String, Object> exchangeArgs) {
-        this.exchangeArgs = exchangeArgs;
-    }
-
     public Map<String, Object> getExchangeArgs() {
-        return exchangeArgs;
-    }
-
-    /**
-     * Key/value args for configuring the queue parameters when declare=true
-     *
-     * @Deprecated Use args instead e.g arg.queue.x-message-ttl=1000
-     */
-    public void setQueueArgs(Map<String, Object> queueArgs) {
-        this.queueArgs = queueArgs;
+        return IntrospectionSupport.extractProperties(args, EXCHANGE_ARG_PREFIX);
     }
 
     public Map<String, Object> getQueueArgs() {
-        return queueArgs;
-    }
-
-    /**
-     * Key/value args for configuring the queue binding parameters when declare=true
-     *
-     * @Deprecated Use args instead e.g arg.binding.foo=bar
-     */
-    public void setBindingArgs(Map<String, Object> bindingArgs) {
-        this.bindingArgs = bindingArgs;
+        return IntrospectionSupport.extractProperties(args, QUEUE_ARG_PREFIX);
     }
 
     public Map<String, Object> getBindingArgs() {
-        return bindingArgs;
+        return IntrospectionSupport.extractProperties(args, BINDING_ARG_PREFIX);
     }
 
-    public ArgsConfigurer getQueueArgsConfigurer() {
-        return queueArgsConfigurer;
-    }
-
-    /**
-     * Set the configurer for setting the queue args in Channel.queueDeclare
-     *
-     * @Deprecated Use args instead e.g arg.queue.x-message-ttl=1000
-     */
-    public void setQueueArgsConfigurer(ArgsConfigurer queueArgsConfigurer) {
-        this.queueArgsConfigurer = queueArgsConfigurer;
-    }
-
-    public ArgsConfigurer getExchangeArgsConfigurer() {
-        return exchangeArgsConfigurer;
-    }
-
-    /**
-     * Set the configurer for setting the exchange args in Channel.exchangeDeclare
-     *
-     * @Deprecated Use args instead e.g arg.exchange.x-message-ttl=1000
-     */
-    public void setExchangeArgsConfigurer(ArgsConfigurer exchangeArgsConfigurer) {
-        this.exchangeArgsConfigurer = exchangeArgsConfigurer;
-    }
-
-    /**
-     * Set timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds)
+     /**
+     * Set timeout for waiting for a reply when using the InOut Exchange Pattern
+     * (in milliseconds)
      */
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
@@ -886,7 +837,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * When true and an inOut Exchange failed on the consumer side send the caused Exception back in the response
+     * When true and an inOut Exchange failed on the consumer side send the
+     * caused Exception back in the response
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
@@ -897,7 +849,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * When true, the message will be published with <a href="https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a> turned on
+     * When true, the message will be published with
+     * <a href="https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a> turned on
      */
     public boolean isPublisherAcknowledgements() {
         return publisherAcknowledgements;
@@ -908,7 +861,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server
+     * The amount of time in milliseconds to wait for a basic.ack response from
+     * RabbitMQ server
      */
     public long getPublisherAcknowledgementsTimeout() {
         return publisherAcknowledgementsTimeout;
@@ -919,12 +873,11 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * When true, an exception will be thrown when the message cannot be delivered (basic.return) and the message is
-     * marked as mandatory.
-     * PublisherAcknowledgement will also be activated in this case
-     *
-     * See also <a href=https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a> - When will messages be
-     * confirmed?
+     * When true, an exception will be thrown when the message cannot be
+     * delivered (basic.return) and the message is marked as mandatory.
+     * PublisherAcknowledgement will also be activated in this case.
+     * See also <a href=https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a>
+     * - When will messages be confirmed.
      */
     public boolean isGuaranteedDeliveries() {
         return guaranteedDeliveries;
@@ -953,10 +906,45 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Exclusive queues may only be accessed by the current connection, and are deleted when that connection closes.
+     * Exclusive queues may only be accessed by the current connection, and are
+     * deleted when that connection closes.
      */
     public void setExclusive(boolean exclusive) {
         this.exclusive = exclusive;
     }
-   
+
+    public boolean isExclusiveConsumer() {
+        return exclusiveConsumer;
+    }
+
+    /**
+     * Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful
+     * when you want a long-lived shared queue to be temporarily accessible by just one consumer.
+     */
+    public void setExclusiveConsumer(boolean exclusiveConsumer) {
+        this.exclusiveConsumer = exclusiveConsumer;
+    }
+
+    /**
+     * Allow pass null values to header
+     */
+    public boolean isAllowNullHeaders() {
+        return allowNullHeaders;
+    }
+
+    public void setAllowNullHeaders(boolean allowNullHeaders) {
+        this.allowNullHeaders = allowNullHeaders;
+    }
+
+    public boolean isPassive() {
+        return passive;
+    }
+
+    /**
+     * Passive queues depend on the queue already to be available at RabbitMQ.
+     */
+    public void setPassive(boolean passive) {
+        this.passive = passive;
+    }
+
 }

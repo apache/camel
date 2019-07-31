@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,10 +19,12 @@ package org.apache.camel.component.hbase;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Connection;
@@ -31,7 +33,8 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 /**
  * Represents the component that manages {@link HBaseEndpoint}.
  */
-public class HBaseComponent extends UriEndpointComponent {
+@Component("hbase")
+public class HBaseComponent extends DefaultComponent {
 
     private Connection connection;
 
@@ -41,13 +44,22 @@ public class HBaseComponent extends UriEndpointComponent {
     private int poolMaxSize = 10;
 
     public HBaseComponent() {
-        super(HBaseEndpoint.class);
+    }
+
+    public HBaseComponent(CamelContext context) {
+        super(context);
     }
 
     @Override
     protected void doStart() throws Exception {
         if (configuration == null) {
             configuration = HBaseConfiguration.create();
+
+            ClassLoader applicationContextClassLoader = getCamelContext().getApplicationContextClassLoader();
+            if (applicationContextClassLoader != null) {
+                configuration.setClassLoader(applicationContextClassLoader);
+                HBaseConfiguration.addHbaseResources(configuration);
+            }
         }
 
         connection = ConnectionFactory.createConnection(

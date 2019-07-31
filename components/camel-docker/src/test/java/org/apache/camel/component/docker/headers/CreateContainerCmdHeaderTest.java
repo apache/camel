@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,9 +28,11 @@ import com.github.dockerjava.api.model.VolumesFrom;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Create Container Request headers are parsed properly
@@ -40,6 +42,9 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
 
     @Mock
     private CreateContainerCmd mockObject;
+
+    @Mock
+    private HostConfig hostConfig;
 
     @Test
     public void createContainerHeaderTest() {
@@ -65,7 +70,6 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         VolumesFrom volumesFromContainer = new VolumesFrom("/etc");
         String env = "FOO=bar";
         String cmd = "whoami";
-        HostConfig hostConfig = new HostConfig();
         Capability capAdd = Capability.NET_BROADCAST;
         Capability capDrop = Capability.BLOCK_SUSPEND;
         String[] entrypoint = new String[]{"sleep", "9999"};
@@ -102,13 +106,14 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         headers.put(DockerConstants.DOCKER_DNS, dns);
         headers.put(DockerConstants.DOCKER_DOMAIN_NAME, domainName);
 
+        Mockito.when(mockObject.getHostConfig()).thenReturn(hostConfig);
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).createContainerCmd(image);
-        Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(Matchers.eq(exposedPort));
-        Mockito.verify(mockObject, Mockito.times(1)).withTty(Matchers.eq(tty));
-        Mockito.verify(mockObject, Mockito.times(1)).withName(Matchers.eq(name));
+        Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(eq(exposedPort));
+        Mockito.verify(mockObject, Mockito.times(1)).withTty(eq(tty));
+        Mockito.verify(mockObject, Mockito.times(1)).withName(eq(name));
         Mockito.verify(mockObject, Mockito.times(1)).withWorkingDir(workingDir);
         Mockito.verify(mockObject, Mockito.times(1)).withNetworkDisabled(disableNetwork);
         Mockito.verify(mockObject, Mockito.times(1)).withHostName(hostname);
@@ -118,27 +123,26 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStderr(attachStdErr);
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStdin(attachStdIn);
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStdout(attachStdOut);
-        Mockito.verify(mockObject, Mockito.times(1)).withMemory(memoryLimit);
-        Mockito.verify(mockObject, Mockito.times(1)).withMemorySwap(swapMemory);
-        Mockito.verify(mockObject, Mockito.times(1)).withCpuShares(cpuShares);
         Mockito.verify(mockObject, Mockito.times(1)).withVolumes(volumes);
-        Mockito.verify(mockObject, Mockito.times(1)).withVolumesFrom(volumesFromContainer);
         Mockito.verify(mockObject, Mockito.times(1)).withEnv(env);
         Mockito.verify(mockObject, Mockito.times(1)).withCmd(cmd);
         Mockito.verify(mockObject, Mockito.times(1)).withHostConfig(hostConfig);
-        Mockito.verify(mockObject, Mockito.times(1)).withCapAdd(capAdd);
-        Mockito.verify(mockObject, Mockito.times(1)).withCapDrop(capDrop);
         Mockito.verify(mockObject, Mockito.times(1)).withEntrypoint(entrypoint);
         Mockito.verify(mockObject, Mockito.times(1)).withPortSpecs(portSpecs);
-        Mockito.verify(mockObject, Mockito.times(1)).withDns(dns);
         Mockito.verify(mockObject, Mockito.times(1)).withDomainName(domainName);
 
-
+        Mockito.verify(hostConfig, Mockito.times(1)).withVolumesFrom(volumesFromContainer);
+        Mockito.verify(hostConfig, Mockito.times(1)).withCapAdd(capAdd);
+        Mockito.verify(hostConfig, Mockito.times(1)).withCapDrop(capDrop);
+        Mockito.verify(hostConfig, Mockito.times(1)).withDns(dns);
+        Mockito.verify(hostConfig, Mockito.times(1)).withMemory(memoryLimit);
+        Mockito.verify(hostConfig, Mockito.times(1)).withMemorySwap(swapMemory);
+        Mockito.verify(hostConfig, Mockito.times(1)).withCpuShares(cpuShares);
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.createContainerCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.createContainerCmd(anyString())).thenReturn(mockObject);
     }
 
     @Override

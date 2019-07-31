@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,146 +17,112 @@
 package org.apache.camel.component.kubernetes.producer;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
+import io.fabric8.kubernetes.api.model.ConfigMapListBuilder;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
 
+    @Rule
+    public KubernetesServer server = new KubernetesServer();
+
+    @BindToRegistry("kubernetesClient")
+    public KubernetesClient getClient() throws Exception {
+        return server.getClient();
+    }
+
     @Test
     public void listTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+        server.expect().withPath("/api/v1/configmaps").andReturn(200, new ConfigMapListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         List<ConfigMap> result = template.requestBody("direct:list", "", List.class);
-        assertEquals(1, result.size());
+        assertEquals(3, result.size());
     }
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+        server.expect().withPath("/api/v1/configmaps?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
+            .andReturn(200, new ConfigMapListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listConfigMapsByLabels", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("component", "elasticsearch");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels);
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels);
             }
         });
 
         List<ConfigMap> result = ex.getOut().getBody(List.class);
 
-        boolean configMapExists = false;
-        Iterator<ConfigMap> it = result.iterator();
-        while (it.hasNext()) {
-            ConfigMap cfMap = it.next();
-            if (cfMap.getMetadata().getLabels().containsValue("elasticsearch")) {
-                configMapExists = true;
-            }
-        }
-
-        assertFalse(configMapExists);
+        assertEquals(3, result.size());
     }
 
     @Test
-    public void getConfigMapTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+    public void getConfigMapTestDefaultNamespace() throws Exception {
+        ObjectMeta meta = new ObjectMeta();
+        meta.setName("cm1");
+        server.expect().withPath("/api/v1/namespaces/test/configmaps/cm1").andReturn(200, new ConfigMapBuilder().withMetadata(meta).build()).once();
+        server.expect().withPath("/api/v1/namespaces/test/configmaps/cm2").andReturn(200, new ConfigMapBuilder().build()).once();
         Exchange ex = template.request("direct:getConfigMap", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_CONFIGMAP_NAME,
-                        "elasticsearch-7015o");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "cm1");
             }
         });
 
         ConfigMap result = ex.getOut().getBody(ConfigMap.class);
 
-        assertNull(result);
+        assertEquals("cm1", result.getMetadata().getName());
+    }
+
+    @Test
+    public void getConfigMapTestCustomNamespace() throws Exception {
+        ObjectMeta meta = new ObjectMeta();
+        meta.setName("cm1");
+        server.expect().withPath("/api/v1/namespaces/custom/configmaps/cm1").andReturn(200, new ConfigMapBuilder().withMetadata(meta).build()).once();
+        server.expect().withPath("/api/v1/namespaces/custom/configmaps/cm2").andReturn(200, new ConfigMapBuilder().build()).once();
+        Exchange ex = template.request("direct:getConfigMap", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "custom");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "cm1");
+            }
+        });
+
+        ConfigMap result = ex.getOut().getBody(ConfigMap.class);
+
+        assertEquals("cm1", result.getMetadata().getName());
     }
 
     @Test
     public void createGetAndDeleteConfigMap() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        Exchange ex = template.request("direct:createConfigMap", new Processor() {
+        ConfigMap cm1 = new ConfigMapBuilder().withNewMetadata().withName("cm1").withNamespace("test").and().build();
+        server.expect().withPath("/api/v1/namespaces/test/configmaps/cm1").andReturn(200, cm1).once();
+
+        Exchange ex = template.request("direct:deleteConfigMap", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test");
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels);
-
-                Map<String, String> data = new HashMap<String, String>();
-                
-                data.put("test", "test1");
-                data.put("test1", "test2");
-
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, data);
-            }
-        });
-        
-        ex = template.request("direct:getConfigMap", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_CONFIGMAP_NAME,
-                        "test");
-            }
-        });
-
-        ConfigMap result = ex.getOut().getBody(ConfigMap.class);
-        
-        assertNotNull(result);
-        assertTrue(result.getData().containsKey("test"));
-        assertTrue(result.getData().containsKey("test1"));
-        assertEquals("test1", result.getData().get("test"));
-        assertEquals("test2", result.getData().get("test1"));
-
-        ex = template.request("direct:deleteConfigMap", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "cm1");
             }
         });
 
@@ -170,21 +136,11 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=configMaps&operation=listConfigMaps",
-                                host, authToken);
-                from("direct:listConfigMapsByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=configMaps&operation=listConfigMapsByLabels",
-                                host, authToken);
-                from("direct:getConfigMap")
-                        .toF("kubernetes://%s?oauthToken=%s&category=configMaps&operation=getConfigMap",
-                                host, authToken);
-                from("direct:createConfigMap")
-                        .toF("kubernetes://%s?oauthToken=%s&category=configMaps&operation=createConfigMap",
-                                host, authToken);
-                from("direct:deleteConfigMap")
-                        .toF("kubernetes://%s?oauthToken=%s&category=configMaps&operation=deleteConfigMap",
-                                host, authToken);
+                from("direct:list").to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMaps");
+                from("direct:listConfigMapsByLabels").to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMapsByLabels");
+                from("direct:getConfigMap").to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=getConfigMap");
+                from("direct:createConfigMap").to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=createConfigMap");
+                from("direct:deleteConfigMap").to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=deleteConfigMap");
             }
         };
     }

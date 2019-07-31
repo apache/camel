@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,13 +20,21 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.hazelcast.HazelcastComponent;
+import org.apache.camel.component.hazelcast.HazelcastCommand;
+import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 
+/**
+ * The hazelcast-instance component is used to consume join/leave events of the cache instance in the cluster.
+ */
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-instance", title = "Hazelcast Instance", syntax = "hazelcast-instance:cacheName",
+    consumerOnly = true, label = "cache,datagrid")
 public class HazelcastInstanceEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastInstanceEndpoint(HazelcastInstance hazelcastInstance, String uri, HazelcastComponent component) {
+    public HazelcastInstanceEndpoint(HazelcastInstance hazelcastInstance, String uri, HazelcastDefaultComponent component) {
         super(hazelcastInstance, uri, component);
+        setCommand(HazelcastCommand.instance);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {

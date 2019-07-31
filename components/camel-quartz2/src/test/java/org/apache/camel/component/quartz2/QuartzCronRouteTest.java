@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,7 +27,6 @@ import org.quartz.Trigger;
 
 /**
  * This test the  CronTrigger as a timer endpoint in a route.
- * @version 
  */
 public class QuartzCronRouteTest extends BaseQuartzTest {
 
@@ -45,16 +44,15 @@ public class QuartzCronRouteTest extends BaseQuartzTest {
         Assert.assertThat(detail.getJobClass().equals(CamelJob.class), CoreMatchers.is(true));
 
         Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE).equals("cron"), CoreMatchers.is(true));
-        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/2 * * * * ?"), CoreMatchers.is(true));
+        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/1 * * * * ?"), CoreMatchers.is(true));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // triggers every 2th second at precise 00,02,04,06..58
-                // notice we must use + as space when configured using URI parameter
-                from("quartz2://myGroup/myTimerName?cron=0/2+*+*+*+*+?").to("mock:result");
+                // triggers every 1th second at precise 00,01,02,03..59
+                from("quartz2://myGroup/myTimerName?cron=0/1 * * * * ?").to("mock:result");
             }
         };
     }

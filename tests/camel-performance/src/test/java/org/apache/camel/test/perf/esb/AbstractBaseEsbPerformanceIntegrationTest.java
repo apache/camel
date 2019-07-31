@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -71,7 +71,7 @@ public abstract class AbstractBaseEsbPerformanceIntegrationTest extends CamelBlu
     protected void send(String endpointUri, int messagesToSend) {
         template.setDefaultEndpointUri(endpointUri);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("Content-Type", "text/xml;charset=UTF-8");
         headers.put("SOAPAction", "urn:buyStocks.2");
         headers.put("routing", "xadmin;server1;community#1.0##");

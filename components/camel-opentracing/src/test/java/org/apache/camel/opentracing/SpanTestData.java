@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,17 @@
  */
 package org.apache.camel.opentracing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SpanTestData {
 
     private String label;
     private String uri;
+    private String operation;
     private String kind;
     private int parentId = -1;
+    private List<String> logMessages = new ArrayList<>();
 
     public String getLabel() {
         return label;
@@ -38,6 +43,15 @@ public class SpanTestData {
 
     public SpanTestData setUri(String uri) {
         this.uri = uri;
+        return this;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public SpanTestData setOperation(String operation) {
+        this.operation = operation;
         return this;
     }
 
@@ -59,4 +73,12 @@ public class SpanTestData {
         return this;
     }
 
+    public SpanTestData addLogMessage(String mesg) {
+        logMessages.add(mesg);
+        return this;
+    }
+
+    public List<String> getLogMessages() {
+        return logMessages;
+    }
 }

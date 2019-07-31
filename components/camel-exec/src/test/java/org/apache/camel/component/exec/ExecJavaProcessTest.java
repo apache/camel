@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,7 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.exec.impl.ProvokeExceptionExecCommandExecutor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -67,24 +68,20 @@ import static org.apache.commons.io.IOUtils.LINE_SEPARATOR;
 public class ExecJavaProcessTest extends CamelTestSupport {
 
     private static final String EXECUTABLE_PROGRAM_ARG = ExecutableJavaProgram.class.getName();
-
-    @Produce(uri = "direct:input")
+    
+    @Produce("direct:input")
     ProducerTemplate producerTemplate;
 
-    @EndpointInject(uri = "mock:output")
+    @EndpointInject("mock:output")
     MockEndpoint output;
+    
+    @BindToRegistry("executorMock")
+    private ProvokeExceptionExecCommandExecutor provokerMock = new ProvokeExceptionExecCommandExecutor();
 
     @Override
     public boolean isUseAdviceWith() {
         return true;
     }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("executorMock", new ProvokeExceptionExecCommandExecutor());
-        return registry;
-    } 
 
     @Test
     public void testExecJavaProcessExitCode0() throws Exception {
@@ -401,7 +398,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
      */
     @Test
     public void testExecJavaProcessWithThrownExecException() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString(".*java.*").replace().to("exec:java?commandExecutor=#executorMock");
@@ -410,11 +407,12 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         context.start();
 
         output.setExpectedMessageCount(0);
+
         Exchange out = sendFailExchange(EXIT_WITH_VALUE_0, NO_TIMEOUT);
 
         //test if exitValue and stderr are accessible through thrown ExecException
         ExecException ee = (ExecException) out.getException();
-        assertNotNull(ee.getExitValue());
+        assertTrue(ee.getExitValue() > 0);
         assertNotNull(ee.getStderr());
 
         output.assertIsSatisfied();
@@ -450,7 +448,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
     List<String> buildArgs(Object commandArgument) {
         String classpath = System.getProperty("java.class.path");
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         args.add("-cp");
         args.add(classpath);
         args.add(EXECUTABLE_PROGRAM_ARG);
@@ -463,7 +461,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
      */
     List<String> buildFailArgs(Object commandArgument) {
         String classpath = System.getProperty("java.class.path");
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         args.add("-failArg");
         args.add(classpath);
         args.add(EXECUTABLE_PROGRAM_ARG);

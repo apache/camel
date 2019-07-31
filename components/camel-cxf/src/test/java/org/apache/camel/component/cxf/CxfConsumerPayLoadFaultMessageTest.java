@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,11 +42,10 @@ public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultT
                 from(fromURI).process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
                         Element details = StaxUtils.read(new StringReader(FAULTS)).getDocumentElement();
-                        List<Element> outElements = new ArrayList<Element>();
+                        List<Element> outElements = new ArrayList<>();
                         outElements.add(details);
-                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements);
+                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<>(null, outElements);
                         exchange.getOut().setBody(responsePayload);
-                        exchange.getOut().setFault(true);
                     }
                 });
                 

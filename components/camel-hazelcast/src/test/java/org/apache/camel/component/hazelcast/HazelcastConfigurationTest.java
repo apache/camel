@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.hazelcast;
 
 import java.util.Arrays;
@@ -24,8 +23,9 @@ import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.hazelcast.map.HazelcastMapComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -54,14 +54,14 @@ public class HazelcastConfigurationTest {
             context = new DefaultCamelContext();
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast:map:my-cache-1?hazelcastInstanceName=" + instanceName);
-            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast:map:my-cache-2?hazelcastInstanceName=" + instanceName);
+            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastInstanceName=" + instanceName);
+            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastInstanceName=" + instanceName);
 
             Assert.assertNotNull(endpoint1.getHazelcastInstance());
             Assert.assertNotNull(endpoint2.getHazelcastInstance());
             Assert.assertTrue(endpoint1.getHazelcastInstance() == endpoint2.getHazelcastInstance());
 
-            HazelcastComponent component = context.getComponent("hazelcast", HazelcastComponent.class);
+            HazelcastMapComponent component = context.getComponent("hazelcast-map", HazelcastMapComponent.class);
             Assert.assertNull(component.getHazelcastInstance());
 
             for (HazelcastDefaultEndpoint endpoint : Arrays.asList(endpoint1, endpoint2)) {
@@ -87,14 +87,14 @@ public class HazelcastConfigurationTest {
             context = new DefaultCamelContext();
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast:map:my-cache-1");
-            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast:map:my-cache-2");
+            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast-map:my-cache-1");
+            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast-map:my-cache-2");
 
             Assert.assertNotNull(endpoint1.getHazelcastInstance());
             Assert.assertNotNull(endpoint2.getHazelcastInstance());
             Assert.assertTrue(endpoint1.getHazelcastInstance() != endpoint2.getHazelcastInstance());
 
-            HazelcastComponent component = context.getComponent("hazelcast", HazelcastComponent.class);
+            HazelcastMapComponent component = context.getComponent("hazelcast-map", HazelcastMapComponent.class);
             Assert.assertNull(component.getHazelcastInstance());
 
             for (HazelcastDefaultEndpoint endpoint : Arrays.asList(endpoint1, endpoint2)) {
@@ -119,14 +119,14 @@ public class HazelcastConfigurationTest {
             context = new DefaultCamelContext();
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast:map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-named.xml");
-            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast:map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-named.xml");
+            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-named.xml");
+            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-named.xml");
 
             Assert.assertNotNull(endpoint1.getHazelcastInstance());
             Assert.assertNotNull(endpoint2.getHazelcastInstance());
             Assert.assertTrue(endpoint1.getHazelcastInstance() == endpoint2.getHazelcastInstance());
 
-            HazelcastComponent component = context.getComponent("hazelcast", HazelcastComponent.class);
+            HazelcastMapComponent component = context.getComponent("hazelcast-map", HazelcastMapComponent.class);
             Assert.assertNull(component.getHazelcastInstance());
 
             HazelcastInstance hz = endpoint1.getHazelcastInstance();
@@ -150,14 +150,14 @@ public class HazelcastConfigurationTest {
             context = new DefaultCamelContext();
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast:map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-custom.xml");
-            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast:map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-custom.xml");
+            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-custom.xml");
+            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-custom.xml");
 
             Assert.assertNotNull(endpoint1.getHazelcastInstance());
             Assert.assertNotNull(endpoint2.getHazelcastInstance());
             Assert.assertTrue(endpoint1.getHazelcastInstance() != endpoint2.getHazelcastInstance());
 
-            HazelcastComponent component = context.getComponent("hazelcast", HazelcastComponent.class);
+            HazelcastMapComponent component = context.getComponent("hazelcast-map", HazelcastMapComponent.class);
             Assert.assertNull(component.getHazelcastInstance());
 
             for (HazelcastDefaultEndpoint endpoint : Arrays.asList(endpoint1, endpoint2)) {
@@ -187,16 +187,16 @@ public class HazelcastConfigurationTest {
             config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
 
             SimpleRegistry reg = new SimpleRegistry();
-            reg.put("my-config", config);
+            reg.bind("my-config", config);
 
             context = new DefaultCamelContext(reg);
             context.start();
-            context.getEndpoint("hazelcast:map:my-cache?hazelcastConfig=#my-config");
+            context.getEndpoint("hazelcast-map:my-cache?hazelcastConfig=#my-config");
 
-            HazelcastDefaultEndpoint endpoint = getHzEndpoint(context, "hazelcast:map:my-cache?hazelcastConfig=#my-config");
+            HazelcastDefaultEndpoint endpoint = getHzEndpoint(context, "hazelcast-map:my-cache?hazelcastConfig=#my-config");
             Assert.assertNotNull(endpoint.getHazelcastInstance());
 
-            HazelcastComponent component = context.getComponent("hazelcast", HazelcastComponent.class);
+            HazelcastMapComponent component = context.getComponent("hazelcast-map", HazelcastMapComponent.class);
             Assert.assertNull(component.getHazelcastInstance());
 
             HazelcastInstance hz = endpoint.getHazelcastInstance();
@@ -252,20 +252,20 @@ public class HazelcastConfigurationTest {
             HazelcastInstance hzComponent = Hazelcast.newHazelcastInstance(componentConfig);
 
             SimpleRegistry reg = new SimpleRegistry();
-            reg.put(customConfig.getInstanceName(), customConfig);
-            reg.put(sharedConfig.getInstanceName(), hzShared);
+            reg.bind(customConfig.getInstanceName(), customConfig);
+            reg.bind(sharedConfig.getInstanceName(), hzShared);
 
-            HazelcastComponent component = new HazelcastComponent();
+            HazelcastMapComponent component = new HazelcastMapComponent();
             component.setHazelcastInstance(hzComponent);
 
             context = new DefaultCamelContext(reg);
-            context.addComponent("hazelcast", component);
+            context.addComponent("hazelcast-map", component);
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast:map:my-cache-1?hazelcastInstanceName=" + namedConfig.getInstanceName());
-            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast:map:my-cache-2?hazelcastConfig=#" + customConfig.getInstanceName());
-            HazelcastDefaultEndpoint endpoint3 = getHzEndpoint(context, "hazelcast:map:my-cache-2?hazelcastInstance=#" + sharedConfig.getInstanceName());
-            HazelcastDefaultEndpoint endpoint4 = getHzEndpoint(context, "hazelcast:map:my-cache-4");
+            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastInstanceName=" + namedConfig.getInstanceName());
+            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfig=#" + customConfig.getInstanceName());
+            HazelcastDefaultEndpoint endpoint3 = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastInstance=#" + sharedConfig.getInstanceName());
+            HazelcastDefaultEndpoint endpoint4 = getHzEndpoint(context, "hazelcast-map:my-cache-4");
 
             Assert.assertNotNull(endpoint1.getHazelcastInstance());
             Assert.assertNotNull(endpoint2.getHazelcastInstance());

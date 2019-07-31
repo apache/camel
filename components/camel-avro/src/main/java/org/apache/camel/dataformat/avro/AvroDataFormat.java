@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,9 +38,11 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
+@Dataformat("avro")
 public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final String GENERIC_CONTAINER_CLASSNAME = GenericContainer.class.getName();
@@ -126,7 +128,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
         // the schema should be from the graph class name
         Schema useSchema = actualSchema != null ? actualSchema : loadSchema(graph.getClass().getName());
 
-        DatumWriter<Object> datum = new SpecificDatumWriter<Object>(useSchema);
+        DatumWriter<Object> datum = new SpecificDatumWriter<>(useSchema);
         Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
         datum.write(graph, encoder);
         encoder.flush();
@@ -142,7 +144,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
             classLoader = clazz.getClassLoader();
         }
         SpecificData specificData = new SpecificDataNoCache(classLoader);
-        DatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(null, null, specificData);
+        DatumReader<GenericRecord> reader = new SpecificDatumReader<>(null, null, specificData);
         reader.setSchema(actualSchema);
         Decoder decoder = DecoderFactory.get().binaryDecoder(inputStream, null);
         Object result = reader.read(null, decoder);

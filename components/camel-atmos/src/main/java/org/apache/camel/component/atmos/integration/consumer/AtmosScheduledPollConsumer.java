@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,13 +19,11 @@ package org.apache.camel.component.atmos.integration.consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.atmos.AtmosConfiguration;
 import org.apache.camel.component.atmos.AtmosEndpoint;
-import org.apache.camel.impl.ScheduledPollConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 
 public abstract class AtmosScheduledPollConsumer extends ScheduledPollConsumer {
-    protected static final transient Logger LOG = LoggerFactory.getLogger(AtmosScheduledPollConsumer.class);
+
     protected AtmosEndpoint endpoint;
     protected AtmosConfiguration configuration;
 

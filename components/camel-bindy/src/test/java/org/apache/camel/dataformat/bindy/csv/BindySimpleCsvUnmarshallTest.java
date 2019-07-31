@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,14 +20,12 @@ import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
-import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -45,13 +43,13 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
 
-    @Produce(uri = URI_DIRECT_START)
+    @Produce(URI_DIRECT_START)
     private ProducerTemplate template;
 
-    @EndpointInject(uri = URI_MOCK_RESULT)
+    @EndpointInject(URI_MOCK_RESULT)
     private MockEndpoint result;
 
-    @EndpointInject(uri = URI_MOCK_ERROR)
+    @EndpointInject(URI_MOCK_ERROR)
     private MockEndpoint error;
 
     private String expected;
@@ -75,7 +73,7 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
         /*
          * List<Exchange> exchanges = resultEndpoint.getExchanges();
          * for(Exchange exchange : exchanges) { Object body =
-         * exchange.getOut().getBody(); LOG.debug("Body received : " +
+         * exchange.getOut().getBody(); log.debug("Body received : " +
          * body.toString()); }
          */
 
@@ -127,8 +125,13 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
 
         assertNotNull(orders);
         // As the @DataField defines a default value for the firstName, the
-        // value might not be empty
+        // value might not be empty and equal to defaultValue property 
+        // inside @DataField annotation
         assertFalse(orders.get(0).getFirstName().isEmpty());
+        assertEquals("Joe", orders.get(0).getFirstName());
+        
+        // Check default String value set to empty ("") for the skipped clientNr field
+        assertEquals("", orders.get(0).getClientNr());
     }
     
     public static class ContextConfig extends RouteBuilder {
@@ -136,12 +139,6 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
 
         public void configure() {
             // from("file://src/test/data?move=./target/done").unmarshal(camelDataFormat).to("mock:result");
-
-            Tracer tracer = new Tracer();
-            tracer.setLogLevel(LoggingLevel.ERROR);
-            tracer.setLogName("org.apache.camel.bindy");
-
-            getContext().addInterceptStrategy(tracer);
 
             // default should errors go to mock:error
             errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliveryDelay(0));

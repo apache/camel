@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,6 +38,7 @@ public class CamelRestletTest extends AbstractSpringBootTestSupport {
                 .module(inferModuleName(CamelRestletTest.class))
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|RestletConfigurationTest$)")
                 .testLibraryVersion("com.google.guava:guava", DependencyResolver.resolveCamelParentProperty("${google-guava-version}"))
+                .dependency("org.hibernate.validator:hibernate-validator")
                 .build();
     }
 

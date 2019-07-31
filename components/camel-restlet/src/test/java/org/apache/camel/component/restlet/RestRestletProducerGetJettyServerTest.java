@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,11 +21,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.StringHelper;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestRestletProducerGetJettyServerTest extends CamelTestSupport {
     
     @Test
@@ -51,7 +49,8 @@ public class RestRestletProducerGetJettyServerTest extends CamelTestSupport {
                 from("jetty:http://localhost:" + port + "/users/?matchOnUriPrefix=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            String id = exchange.getIn().getHeader("id", String.class);
+                            String id = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
+                            id = StringHelper.before(id, "/");
                             exchange.getOut().setBody(id + ";Donald Duck");
                         }
                     });

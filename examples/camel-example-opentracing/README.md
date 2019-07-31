@@ -25,7 +25,7 @@ $ mvn compile
 
 ### Run the example
 
-Then using three different shells and run service1 and service2 before the client.
+Then using three different shells and run service1 and service2 before the client. These services use an annotation _CamelOpenTracing_ to indicate that the service should be traced.
 
 ```sh
 $ cd service1
@@ -36,7 +36,7 @@ When service1 is ready then start service2
 
 ```sh
 $ cd service2
-$ mvn compile camel:run
+$ mvn compile spring-boot:run
 ```
 
 And then start the client that calls service1 every 30 seconds.
@@ -45,6 +45,8 @@ And then start the client that calls service1 every 30 seconds.
 $ cd client
 $ mvn compile camel:run
 ```
+
+The client application explicitly instantiates and initializes the OpenTracing Tracer with the _CamelContext_.
 
 The shells will show *SPAN FINISHED* messages indicating what spans have been reported from the client
 and two services.

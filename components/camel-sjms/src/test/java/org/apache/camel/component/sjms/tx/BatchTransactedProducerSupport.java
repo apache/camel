@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -52,10 +52,10 @@ public abstract class BatchTransactedProducerSupport extends CamelTestSupport {
             getMockEndpoint("mock:test.consumer." + i).expectedMessageCount(messageCount);
         }
 
-        List<BatchMessage<String>> messages = new ArrayList<BatchMessage<String>>();
+        List<BatchMessage<String>> messages = new ArrayList<>();
         for (int i = 1; i <= messageCount; i++) {
             String body = "Hello World " + i;
-            BatchMessage<String> message = new BatchMessage<String>(body, null);
+            BatchMessage<String> message = new BatchMessage<>(body, null);
             messages.add(message);
         }
         

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,77 +18,88 @@ package org.apache.camel.component.reactive.streams;
 
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.component.reactive.streams.engine.CamelReactiveStreamsServiceImpl;
+import org.apache.camel.component.reactive.streams.engine.DefaultCamelReactiveStreamsService;
 import org.apache.camel.component.reactive.streams.support.ReactiveStreamsTestService;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.SimpleRegistry;
+import org.junit.Assert;
 import org.junit.Test;
 
 
-public class CamelReactiveStreamsTest extends CamelTestSupport {
+public class CamelReactiveStreamsTest {
 
     @Test
-    public void testDefaultService() {
-        CamelReactiveStreamsService service1 = CamelReactiveStreams.get(context, "default-service");
-        assertTrue(service1 instanceof CamelReactiveStreamsServiceImpl);
-    }
+    public void testDefaultService() throws Exception {
+        DefaultCamelContext context = new DefaultCamelContext();
+        try {
+            context.start();
 
-    @Test
-    public void testSameDefaultServiceReturned() {
-        CamelReactiveStreamsService service1 = CamelReactiveStreams.get(context, "default-service");
-        CamelReactiveStreamsService service2 = CamelReactiveStreams.get(context, "default-service");
-        assertTrue(service1 instanceof CamelReactiveStreamsServiceImpl);
-        assertEquals(service1, service2);
-    }
-
-    @Test
-    public void testSameServiceReturnedFromRegistry() {
-        CamelReactiveStreamsService service1 = CamelReactiveStreams.get(context);
-        CamelReactiveStreamsService service2 = CamelReactiveStreams.get(context);
-
-        assertEquals(service1, service2);
-        assertTrue(service1 instanceof ReactiveStreamsTestService);
-        assertEquals("from-registry", ((ReactiveStreamsTestService) service1).getName());
+            CamelReactiveStreamsService service1 = CamelReactiveStreams.get(context);
+            Assert.assertTrue(service1 instanceof DefaultCamelReactiveStreamsService);
+        } finally {
+            context.stop();
+        }
     }
 
     @Test
-    public void testSameNamedServiceReturnedFromRegistry() {
-        CamelReactiveStreamsService service1 = CamelReactiveStreams.get(context, "dummy");
-        CamelReactiveStreamsService service2 = CamelReactiveStreams.get(context, "dummy");
+    public void testSameDefaultServiceReturned() throws Exception {
+        DefaultCamelContext context = new DefaultCamelContext();
+        try {
+            context.start();
 
-        assertEquals(service1, service2);
-        assertTrue(service1 instanceof ReactiveStreamsTestService);
-        assertEquals("from-registry", ((ReactiveStreamsTestService) service1).getName());
-    }
+            CamelReactiveStreamsService service1 = CamelReactiveStreams.get(context);
+            CamelReactiveStreamsService service2 = CamelReactiveStreams.get(context);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testOnlyOneService() {
-        CamelReactiveStreams.get(context);
-        CamelReactiveStreams.get(context, "dummy");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testOnlyOneNamedService() {
-        CamelReactiveStreams.get(context, "dummy");
-        CamelReactiveStreams.get(context, "dummy2");
+            Assert.assertTrue(service1 instanceof DefaultCamelReactiveStreamsService);
+            Assert.assertEquals(service1, service2);
+        } finally {
+            context.stop();
+        }
     }
 
     @Test
-    public void testNamedServiceResolvedUsingFactory() {
-        CamelReactiveStreamsService service1 = CamelReactiveStreams.get(context, "test-service");
-        assertTrue(service1 instanceof ReactiveStreamsTestService);
-        assertNull(((ReactiveStreamsTestService) service1).getName());
-    }
+    public void testSameServiceReturnedFromRegistry() throws Exception {
+        ReactiveStreamsComponent component = new ReactiveStreamsComponent();
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+        SimpleRegistry registry = new SimpleRegistry();
         registry.bind("dummy", new ReactiveStreamsTestService("from-registry"));
-        return registry;
+
+        DefaultCamelContext context = new DefaultCamelContext(registry);
+        context.addComponent(ReactiveStreamsConstants.SCHEME, component);
+
+        try {
+            context.start();
+
+            CamelReactiveStreamsService service1 = CamelReactiveStreams.get(context);
+            CamelReactiveStreamsService service2 = CamelReactiveStreams.get(context);
+
+            Assert.assertEquals(service1, service2);
+            Assert.assertTrue(service1 instanceof ReactiveStreamsTestService);
+            Assert.assertEquals("from-registry", service1.getId());
+        } finally {
+            context.stop();
+        }
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    @Test
+    public void testNamedServiceResolvedUsingFactory() throws Exception {
+        ReactiveStreamsComponent component = new ReactiveStreamsComponent();
+        component.setServiceType("test-service");
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        context.addComponent(ReactiveStreamsConstants.SCHEME, component);
+
+        try {
+            context.start();
+
+            CamelReactiveStreamsService service1 = CamelReactiveStreams.get(context);
+            CamelReactiveStreamsService service2 = CamelReactiveStreams.get(context);
+
+            Assert.assertEquals(service1, service2);
+            Assert.assertTrue(service1 instanceof ReactiveStreamsTestService);
+            Assert.assertEquals("test-service", service1.getId());
+        } finally {
+            context.stop();
+        }
     }
 }

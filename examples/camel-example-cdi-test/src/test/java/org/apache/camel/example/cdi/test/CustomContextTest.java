@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,11 +19,11 @@ package org.apache.camel.example.cdi.test;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
+import javax.inject.Named;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.DefaultManagementStrategy;
+import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.test.cdi.CamelCdiRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +39,7 @@ public class CustomContextTest {
     }
 
     @Default
-    @ContextName("camel-test-cdi")
+    @Named("camel-test-cdi")
     @ApplicationScoped
     static class CustomCamelContext extends DefaultCamelContext {
 

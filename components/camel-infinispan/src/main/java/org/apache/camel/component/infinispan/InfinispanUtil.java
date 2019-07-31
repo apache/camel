@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,8 +24,8 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 import org.infinispan.AdvancedCache;
 import org.infinispan.Cache;
 import org.infinispan.client.hotrod.RemoteCache;
@@ -106,22 +106,8 @@ public final class InfinispanUtil {
         return ObjectHelper.isEmpty(message.getHeader(header));
     }
 
-    public static BasicCache<Object, Object> getCache(BasicCacheContainer cacheContainer, String cacheName) {
-        return ObjectHelper.isEmpty(cacheName) ? cacheContainer.getCache() : cacheContainer.getCache(cacheName);
-    }
-
-    public static Properties loadProperties(CamelContext camelContext, String uri) throws IOException {
-        if (camelContext != null) {
-            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uri)) {
-                Properties properties = new Properties();
-                properties.load(is);
-
-                return properties;
-            } catch (IOException e) {
-            }
-        }
-
-        try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(uri)) {
+    public static Properties loadProperties(CamelContext camelContext, String uri) throws Exception {
+        try (InputStream is = openInputStream(camelContext, uri)) {
             Properties properties = new Properties();
             properties.load(is);
 
@@ -130,5 +116,14 @@ public final class InfinispanUtil {
         }
 
         throw new FileNotFoundException("Cannot find resource: " + uri);
+    }
+
+    public static InputStream openInputStream(CamelContext camelContext, String uri) throws Exception {
+        if (camelContext != null) {
+            uri = camelContext.resolvePropertyPlaceholders(uri);
+            return ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uri);
+        }
+
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(uri);
     }
 }

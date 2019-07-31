@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,25 +18,24 @@ package org.apache.camel.tools.apt.model;
 
 import java.util.Set;
 
-import org.apache.camel.tools.apt.helper.CollectionStringBuffer;
-
 public final class EndpointPath {
 
     private String name;
     private String displayName;
     private String type;
-    private String required;
+    private boolean required;
     private String defaultValue;
     private String documentation;
     private boolean deprecated;
+    private String deprecationNote;
     private boolean secret;
     private String group;
     private String label;
     private boolean enumType;
     private Set<String> enums;
 
-    public EndpointPath(String name, String displayName, String type, String required, String defaultValue, String documentation,
-                        boolean deprecated, boolean secret, String group, String label,
+    public EndpointPath(String name, String displayName, String type, boolean required, String defaultValue, String documentation,
+                        boolean deprecated, String deprecationNote, boolean secret, String group, String label,
                         boolean enumType, Set<String> enums) {
         this.name = name;
         this.displayName = displayName;
@@ -45,6 +44,7 @@ public final class EndpointPath {
         this.defaultValue = defaultValue;
         this.documentation = documentation;
         this.deprecated = deprecated;
+        this.deprecationNote = deprecationNote;
         this.secret = secret;
         this.group = group;
         this.label = label;
@@ -64,7 +64,7 @@ public final class EndpointPath {
         return type;
     }
 
-    public String getRequired() {
+    public boolean isRequired() {
         return required;
     }
 
@@ -78,6 +78,10 @@ public final class EndpointPath {
 
     public boolean isDeprecated() {
         return deprecated;
+    }
+
+    public String getDeprecationNote() {
+        return deprecationNote;
     }
 
     public boolean isSecret() {

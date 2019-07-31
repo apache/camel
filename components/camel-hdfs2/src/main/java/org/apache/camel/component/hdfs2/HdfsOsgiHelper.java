@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,13 +41,17 @@ public class HdfsOsgiHelper {
             // get bundle classloader for camel-hdfs2 bundle
             ClassLoader cl = getClass().getClassLoader();
             Configuration conf = new Configuration();
+            // set that as the hdfs configuration's classloader
+            conf.setClassLoader(cl);
             for (String key : fileSystems.keySet()) {
                 URI uri = URI.create(key);
                 conf.setClass(String.format("fs.%s.impl", uri.getScheme()), cl.loadClass(fileSystems.get(key)), FileSystem.class);
+                LOG.debug("Successfully loaded class: {}", fileSystems.get(key));
                 FileSystem.get(uri, conf);
+                LOG.debug("Successfully got uri: {} from FileSystem Object", uri);
             }
         } catch (Exception e) {
-            LOG.debug(e.getMessage());
+            LOG.debug(e.getMessage(), e);
         }
     }
 

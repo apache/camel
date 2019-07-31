@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,6 +40,7 @@ public class SjmsDestinationCreationStrategyTest extends JmsTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUri);
+        setupFactoryExternal(connectionFactory);
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         component.setDestinationCreationStrategy(new TestDestinationCreationStrategyTest());

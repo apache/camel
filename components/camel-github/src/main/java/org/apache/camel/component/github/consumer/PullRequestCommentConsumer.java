@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,7 +42,7 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
 
     private IssueService issueService;
     
-    private List<Long> commentIds = new ArrayList<Long>();
+    private List<Long> commentIds = new ArrayList<>();
     
     public PullRequestCommentConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
@@ -50,7 +50,7 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE);
         if (service != null) {
-            LOG.debug("Using PullRequestService found in registry " + service.getClass().getCanonicalName());
+            LOG.debug("Using PullRequestService found in registry {}", service.getClass().getCanonicalName());
             pullRequestService = (PullRequestService) service;
         } else {
             pullRequestService = new PullRequestService();
@@ -84,11 +84,11 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
     protected int poll() throws Exception {
         // Do this here, rather than at the class level.  We only care about it for setting the Exchange header, so
         // there's no point growing memory over time.
-        Map<Long, PullRequest> commentIdToPullRequest = new HashMap<Long, PullRequest>();
+        Map<Long, PullRequest> commentIdToPullRequest = new HashMap<>();
         
         List<PullRequest> pullRequests = pullRequestService.getPullRequests(getRepository(), "open");
         // In the end, we want comments oldest to newest.
-        Stack<Comment> newComments = new Stack<Comment>();
+        Stack<Comment> newComments = new Stack<>();
         for (PullRequest pullRequest : pullRequests) {
             List<CommitComment> commitComments = pullRequestService.getComments(getRepository(), pullRequest.getNumber());
             for (Comment comment : commitComments) {

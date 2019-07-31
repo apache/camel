@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,20 +19,21 @@ package org.apache.camel.component.telegram;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * The Camel component for Telegram.
  */
-public class TelegramComponent extends UriEndpointComponent {
+@Component("telegram")
+public class TelegramComponent extends DefaultComponent {
 
     @Metadata(label = "security")
     private String authorizationToken;
 
     public TelegramComponent() {
-        super(TelegramEndpoint.class);
     }
 
     @Override

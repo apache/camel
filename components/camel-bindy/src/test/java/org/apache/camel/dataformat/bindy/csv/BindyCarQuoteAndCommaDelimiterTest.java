@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,16 +21,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.format.factories.DefaultFactoryRegistry;
 import org.apache.camel.dataformat.bindy.model.car.Car;
 import org.apache.camel.dataformat.bindy.model.car.Car.Colour;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
 
     private static final String HEADER = "\"stockid\";\"make\";\"model\";\"deriv\";\"series\";\"registration\";\"chassis\";\"engine\";\"year\""
@@ -46,9 +41,7 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
 
     @Before
     public void setup() {
-        PropertyPlaceholderDelegateRegistry registry = (PropertyPlaceholderDelegateRegistry)context.getRegistry();
-        JndiRegistry reg = (JndiRegistry)registry.getRegistry();
-        reg.bind("defaultFactoryRegistry", new DefaultFactoryRegistry());
+        context.getRegistry().bind("defaultFactoryRegistry", new DefaultFactoryRegistry());
     }
 
     @Test

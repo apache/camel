@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,12 +35,14 @@ import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Ac
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequests;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultMessage;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -78,7 +80,7 @@ public class AbstractRestProcessorApprovalTest {
         }
 
         @Override
-        protected InputStream getRequestStream(final Object object) throws SalesforceException {
+        protected InputStream getRequestStream(final Message in, final Object object) throws SalesforceException {
             return null;
         }
 
@@ -88,7 +90,7 @@ public class AbstractRestProcessorApprovalTest {
 
         @Override
         protected void processResponse(final Exchange exchange, final InputStream responseEntity,
-                final SalesforceException ex, final AsyncCallback callback) {
+                final Map<String, String> headers, final SalesforceException ex, final AsyncCallback callback) {
         }
     }
 
@@ -113,7 +115,7 @@ public class AbstractRestProcessorApprovalTest {
 
         final TestRestProcessor processor = sendBodyAndHeader(approvalRequest, template);
 
-        verify(processor).getRequestStream(new ApprovalRequests(approvalRequest.applyTemplate(template)));
+        verify(processor).getRequestStream(any(Message.class), eq(new ApprovalRequests(approvalRequest.applyTemplate(template))));
     }
 
     @Test
@@ -130,8 +132,8 @@ public class AbstractRestProcessorApprovalTest {
         final TestRestProcessor processor = sendBodyAndHeader(Arrays.asList(approvalRequest1, approvalRequest2),
                 template);
 
-        verify(processor).getRequestStream(new ApprovalRequests(
-                Arrays.asList(approvalRequest1.applyTemplate(template), approvalRequest2.applyTemplate(template))));
+        verify(processor).getRequestStream(any(Message.class), eq(new ApprovalRequests(
+                Arrays.asList(approvalRequest1.applyTemplate(template), approvalRequest2.applyTemplate(template)))));
     }
 
     @Test
@@ -165,7 +167,7 @@ public class AbstractRestProcessorApprovalTest {
 
         final TestRestProcessor processor = sendBody(approvalRequest);
 
-        verify(processor).getRequestStream(new ApprovalRequests(approvalRequest));
+        verify(processor).getRequestStream(any(Message.class), eq(new ApprovalRequests(approvalRequest)));
     }
 
     @Test
@@ -174,7 +176,7 @@ public class AbstractRestProcessorApprovalTest {
         request.setComments("hi there");
         final TestRestProcessor processor = sendBodyAndHeader(null, request);
 
-        verify(processor).getRequestStream(new ApprovalRequests(request));
+        verify(processor).getRequestStream(any(Message.class), eq(new ApprovalRequests(request)));
     }
 
     @Test
@@ -189,7 +191,7 @@ public class AbstractRestProcessorApprovalTest {
         combined.setComments("hi there");
         combined.setContextId("context-id");
 
-        verify(processor).getRequestStream(new ApprovalRequests(combined));
+        verify(processor).getRequestStream(any(Message.class), eq(new ApprovalRequests(combined)));
     }
 
     @Test
@@ -202,7 +204,7 @@ public class AbstractRestProcessorApprovalTest {
 
         final TestRestProcessor processor = sendBody(Arrays.asList(approvalRequest1, approvalRequest2));
 
-        verify(processor).getRequestStream(new ApprovalRequests(Arrays.asList(approvalRequest1, approvalRequest2)));
+        verify(processor).getRequestStream(any(Message.class), eq(new ApprovalRequests(Arrays.asList(approvalRequest1, approvalRequest2))));
     }
 
     @Test
@@ -215,7 +217,7 @@ public class AbstractRestProcessorApprovalTest {
         final ApprovalRequest request = new ApprovalRequest();
         request.setContextId("contextId");
 
-        verify(processor).getRequestStream(new ApprovalRequests(request));
+        verify(processor).getRequestStream(any(Message.class), eq(new ApprovalRequests(request)));
     }
 
     @Test
@@ -230,13 +232,13 @@ public class AbstractRestProcessorApprovalTest {
 
         final TestRestProcessor processor1 = sendBodyAndHeaders(null, template, null);
 
-        verify(processor1).getRequestStream(new ApprovalRequests(requestWithComment("third priority")));
+        verify(processor1).getRequestStream(any(Message.class), eq(new ApprovalRequests(requestWithComment("third priority"))));
 
         final TestRestProcessor processor2 = sendBodyAndHeaders(null, template, headers);
-        verify(processor2).getRequestStream(new ApprovalRequests(requestWithComment("second priority")));
+        verify(processor2).getRequestStream(any(Message.class), eq(new ApprovalRequests(requestWithComment("second priority"))));
 
         final TestRestProcessor processor3 = sendBodyAndHeaders(body, template, headers);
-        verify(processor3).getRequestStream(new ApprovalRequests(requestWithComment("first priority")));
+        verify(processor3).getRequestStream(any(Message.class), eq(new ApprovalRequests(requestWithComment("first priority"))));
     }
 
     TestRestProcessor sendBody(final Object body) throws SalesforceException {
@@ -254,7 +256,7 @@ public class AbstractRestProcessorApprovalTest {
         final CamelContext context = new DefaultCamelContext();
         final Exchange exchange = new DefaultExchange(context);
 
-        final Message message = new DefaultMessage();
+        final Message message = new DefaultMessage(context);
         if (headers != null) {
             message.setHeaders(headers);
         }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,21 +8,23 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.19.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-avro</artifactId>
@@ -30,11 +33,6 @@
     <description>Camel Avro data format</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.dataformat.avro*,org.apache.camel.component.avro*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>
-          org.apache.camel.spi.ComponentResolver;component=avro,
-          org.apache.camel.spi.DataFormatResolver;dataformat=avro
-      </camel.osgi.export.service>
     </properties>
 
     <build>
@@ -65,68 +63,27 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <exclusions>
-	          <exclusion>
-	          	<groupId>org.codehaus.jackson</groupId>
-	            <artifactId>jackson-core-asl</artifactId>
-	          </exclusion>
-	          <exclusion>
-	          	<groupId>org.codehaus.jackson</groupId>
-	            <artifactId>jackson-mapper-asl</artifactId>
-	          </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
-            <artifactId>avro-ipc</artifactId>
-            <exclusions>
-	          <exclusion>
-	          	<groupId>org.codehaus.jackson</groupId>
-	            <artifactId>jackson-core-asl</artifactId>
-	          </exclusion>
-	          <exclusion>
-	          	<groupId>org.codehaus.jackson</groupId>
-	            <artifactId>jackson-mapper-asl</artifactId>
-	          </exclusion>
-	          <exclusion>
-	          	<groupId>io.netty</groupId>
-	            <artifactId>netty</artifactId>
-	          </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- use Netty version as Camel -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty</artifactId>
-            <version>${netty3-version}</version>
-        </dependency>
-        <!-- use Jackson version as Camel -->
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-            <version>${jackson-version}</version>
+            <artifactId>avro-ipc-netty</artifactId>
+            <version>${avro-ipc-netty-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>${jackson-version}</version>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro-ipc-jetty</artifactId>
+            <version>${avro-ipc-jetty-version}</version>
         </dependency>
 
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-juel</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

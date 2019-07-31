@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<xs:schema elementFormDefault="qualified" version="1.0"
+           targetNamespace="http://foo.com/report-base"
+           xmlns:tns="http://foo.com/report-base"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+  <xs:element name="content" type="tns:content" />
+  
+  <xs:complexType name="content">
+  	<xs:sequence>
+  		<xs:element name="chapter" type="tns:chapter" maxOccurs="unbounded" />
+  	</xs:sequence>
+  </xs:complexType>
+	  
+  <xs:complexType name="chapter">
+    <xs:sequence>
+      <xs:element name="subject" type="xs:string"/>
+      <xs:element name="abstract" type="xs:string"/>
+      <xs:element name="body" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="person">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="email" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

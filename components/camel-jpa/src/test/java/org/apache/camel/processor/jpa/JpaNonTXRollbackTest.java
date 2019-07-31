@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.SendEmail;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JpaNonTXRollbackTest extends AbstractJpaTest {
 
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
@@ -47,7 +44,7 @@ public class JpaNonTXRollbackTest extends AbstractJpaTest {
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         // start route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

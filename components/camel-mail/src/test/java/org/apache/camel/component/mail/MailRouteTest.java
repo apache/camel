@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,15 +27,13 @@ import javax.mail.MessagingException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
-/**
- * @version 
- */
 public class MailRouteTest extends CamelTestSupport {
 
     @Test
@@ -45,16 +43,12 @@ public class MailRouteTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("hello world!");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("reply-to", "route-test-reply@localhost");
         template.sendBodyAndHeaders("smtp://route-test-james@localhost", "hello world!", headers);
 
         // lets test the first sent worked
         assertMailboxReceivedMessages("route-test-james@localhost");
-
-        // lets sleep to check that the mail poll does not redeliver duplicate
-        // mails
-        Thread.sleep(3000);
 
         // lets test the receive worked
         resultEndpoint.assertIsSatisfied();
@@ -92,7 +86,7 @@ public class MailRouteTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertFalse("Should not have attachements", mock.getExchanges().get(0).getIn().hasAttachments());
+        assertFalse("Should not have attachements", mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments());
 
     }
 
@@ -117,7 +111,7 @@ public class MailRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://route-test-james@localhost?consumer.delay=1000").to("direct:a");
+                from("pop3://route-test-james@localhost?consumer.initialDelay=100&consumer.delay=100").to("direct:a");
 
                 // must use fixed to option to send the mail to the given
                 // reciever, as we have polled
@@ -130,7 +124,7 @@ public class MailRouteTest extends CamelTestSupport {
                     .setHeader("to", constant("route-test-result@localhost; route-test-copy@localhost"))
                     .to("smtp://localhost");
 
-                from("pop3://route-test-result@localhost?consumer.delay=1000").convertBodyTo(String.class)
+                from("pop3://route-test-result@localhost?consumer.initialDelay=100&consumer.delay=100").convertBodyTo(String.class)
                     .to("mock:result");
             }
         };

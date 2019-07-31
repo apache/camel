@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,22 @@
  */
 package org.apache.camel.test.patterns;
 
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SimpleMockTest extends CamelSpringTestSupport {
+
+    @EndpointInject("mock:result")
+    protected MockEndpoint resultEndpoint;
+
+    @Produce("direct:start")
+    protected ProducerTemplate template;
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -30,11 +40,24 @@ public class SimpleMockTest extends CamelSpringTestSupport {
 
     @Test
     public void testMock() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        String expectedBody = "Hello World";
 
-        template.sendBody("direct:start", "Hello World");
+        resultEndpoint.expectedBodiesReceived(expectedBody);
 
-        assertMockEndpointsSatisfied();
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
+
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testMockAgain() throws Exception {
+        String expectedBody = "Bye World";
+
+        resultEndpoint.expectedBodiesReceived(expectedBody);
+
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
+
+        resultEndpoint.assertIsSatisfied();
     }
 
 }

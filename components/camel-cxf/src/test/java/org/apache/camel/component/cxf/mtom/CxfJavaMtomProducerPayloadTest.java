@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,6 +22,7 @@ import javax.xml.ws.Holder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.junit.Test;
 
 public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
@@ -36,8 +37,8 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
             return;
         }
 
-        final Holder<byte[]> photo = new Holder<byte[]>("RequestFromCXF".getBytes("UTF-8"));
-        final Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
+        final Holder<byte[]> photo = new Holder<>("RequestFromCXF".getBytes("UTF-8"));
+        final Holder<Image> image = new Holder<>(getImage("/java.jpg"));
         
         Exchange exchange = context.createProducerTemplate().send(MTOM_ENDPOINT_URI_MTOM_ENABLE, new Processor() {
 
@@ -50,7 +51,7 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
         });
         
         // Make sure we don't put the attachement into out message
-        assertEquals("The attachement size should be 0 ", 0, exchange.getOut().getAttachments().size());
+        assertEquals("The attachement size should be 0 ", 0, exchange.getOut(AttachmentMessage.class).getAttachments().size());
         
         Object[] result = exchange.getOut().getBody(Object[].class);
         

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
@@ -96,10 +93,6 @@ public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertTrue(cause.getMessage(), cause.getMessage().startsWith("doneFileName must be specified and not empty"));
         }
-    }
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 
 }

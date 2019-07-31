@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,7 @@
 package org.apache.camel.component.spring.ws.converter;
 
 import org.apache.camel.Converter;
-import org.apache.camel.StringSource;
+import org.apache.camel.util.xml.StringSource;
 
 /**
  * A helper class to transform to and from {@link org.springframework.xml.transform.StringSource} implementations
@@ -32,7 +32,7 @@ import org.apache.camel.StringSource;
  * since it's the most simple one. It has just one constructor that accepts a
  * String as input.
  */
-@Converter
+@Converter(loader = true)
 public final class StringSourceConverter {
 
     private StringSourceConverter() {

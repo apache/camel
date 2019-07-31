@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,30 +20,25 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Component that creates {@link ZooKeeperEndpoint}s for interacting with a ZooKeeper cluster.
  */
-public class ZooKeeperComponent extends UriEndpointComponent {
+@Component("zookeeper")
+public class ZooKeeperComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private ZooKeeperConfiguration configuration;
 
     public ZooKeeperComponent() {
-        super(ZooKeeperEndpoint.class);
-    }
-
-    public ZooKeeperComponent(CamelContext context) {
-        super(context, ZooKeeperEndpoint.class);
     }
 
     public ZooKeeperComponent(ZooKeeperConfiguration configuration) {
-        super(ZooKeeperEndpoint.class);
         this.configuration = configuration;
     }
 

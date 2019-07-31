@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,12 @@
  */
 package org.apache.camel.spring;
 
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Test for LifecycleStrategy injection.
- *
- * @version 
  */
 public class MultipleLifecycleStrategyInjectionTest extends SpringTestSupport {
 
@@ -31,10 +30,11 @@ public class MultipleLifecycleStrategyInjectionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/multipleLifecycleStrategyInjection.xml");
     }
 
+    @Test
     public void testInjectedStrategy() throws Exception {
-        assertEquals(4, context.getLifecycleStrategies().size());
+        assertEquals(2, context.getLifecycleStrategies().size());
+        assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(0));
         assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(1));
-        assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(2));
     }
 
 }

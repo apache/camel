@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,6 @@ import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -35,8 +34,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * Unit test to verify that we can route a JMS message and do header lookup by name
  * without mutating it and that it can handle the default keyFormatStrategy with _HYPHEN_
  * in the key name 
- *
- * @version 
  */
 public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends CamelTestSupport {
 

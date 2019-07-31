@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.consul.cloud;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,10 +24,19 @@ import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.agent.ImmutableRegistration;
 import com.orbitz.consul.model.agent.Registration;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.Navigate;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.component.consul.ConsulTestSupport;
+import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
+import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.test.testcontainers.spring.ContainerAwareSpringTestSupport;
+import org.junit.Assert;
 import org.junit.Test;
+import org.testcontainers.containers.GenericContainer;
 
-public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSupport {
+public abstract class SpringConsulServiceCallRouteTest extends ContainerAwareSpringTestSupport {
     private AgentClient client;
     private List<Registration> registrations;
 
@@ -37,42 +46,62 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
 
     @Override
     public void doPreSetup() throws Exception {
-        this.client = Consul.builder().build().agentClient();
+        super.doPreSetup();
+
+        this.client = Consul.builder()
+            .withUrl(consulUrl())
+            .build()
+            .agentClient();
+
         this.registrations = Arrays.asList(
             ImmutableRegistration.builder()
-                .id("service-1")
+                .id("service-1-1")
                 .name("http-service-1")
                 .address("127.0.0.1")
-                .port(9091)
+                .port(9011)
                 .build(),
             ImmutableRegistration.builder()
-                .id("service-2")
+                .id("service-1-2")
                 .name("http-service-1")
                 .address("127.0.0.1")
-                .port(9092)
+                .port(9012)
                 .build(),
             ImmutableRegistration.builder()
-                .id("service-3")
-                .name("http-service-2")
+                .id("service-1-3")
+                .name("http-service-1")
                 .address("127.0.0.1")
-                .port(9093)
+                .port(9013)
                 .build(),
             ImmutableRegistration.builder()
-                .id("service-4")
+                .id("service-2-1")
                 .name("http-service-2")
                 .address("127.0.0.1")
-                .port(9094)
+                .port(9021)
+                .build(),
+            ImmutableRegistration.builder()
+                .id("service-2-2")
+                .name("http-service-2")
+                .address("127.0.0.1")
+                .port(9022)
+                .build(),
+            ImmutableRegistration.builder()
+                .id("service-2-3")
+                .name("http-service-2")
+                .address("127.0.0.1")
+                .port(9023)
                 .build()
         );
 
         this.registrations.forEach(client::register);
-        super.doPreSetup();
     }
 
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-        registrations.forEach(r -> client.deregister(r.getId()));
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
+
+        if (client != null) {
+            registrations.forEach(r -> client.deregister(r.getId()));
+        }
     }
 
     // *************************************************************************
@@ -82,9 +111,9 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
     @Test
     public void testServiceCall() throws Exception {
         getMockEndpoint("mock:result-1").expectedMessageCount(2);
-        getMockEndpoint("mock:result-1").expectedBodiesReceivedInAnyOrder("service-1 9091", "service-1 9092");
+        getMockEndpoint("mock:result-1").expectedBodiesReceivedInAnyOrder("service-1 9012", "service-1 9013");
         getMockEndpoint("mock:result-2").expectedMessageCount(2);
-        getMockEndpoint("mock:result-2").expectedBodiesReceivedInAnyOrder("service-2 9093", "service-2 9094");
+        getMockEndpoint("mock:result-2").expectedBodiesReceivedInAnyOrder("service-2 9021", "service-2 9023");
 
         template.sendBody("direct:start", "service-1");
         template.sendBody("direct:start", "service-1");
@@ -92,5 +121,47 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
         template.sendBody("direct:start", "service-2");
 
         assertMockEndpointsSatisfied();
+    }
+
+    // ************************************
+    // Helpers
+    // ************************************
+
+    protected List<DefaultServiceCallProcessor> findServiceCallProcessors() {
+        Route route = context().getRoute("scall");
+
+        Assert.assertNotNull("ServiceCall Route should be present", route);
+
+        return findServiceCallProcessors(new ArrayList<>(), route.navigate());
+    }
+
+    protected List<DefaultServiceCallProcessor> findServiceCallProcessors(List<DefaultServiceCallProcessor> processors, Navigate<Processor> navigate) {
+        for (Processor processor : navigate.next()) {
+            if (processor instanceof DefaultServiceCallProcessor) {
+                processors.add((DefaultServiceCallProcessor)processor);
+            }
+            if (processor instanceof ChoiceProcessor) {
+                for (FilterProcessor filter : ((ChoiceProcessor) processor).getFilters()) {
+                    findServiceCallProcessors(processors, filter);
+                }
+            } else if (processor instanceof Navigate) {
+                return findServiceCallProcessors(processors, (Navigate<Processor>)processor);
+            }
+        }
+
+        return processors;
+    }
+
+    @Override
+    protected GenericContainer<?> createContainer() {
+        return ConsulTestSupport.consulContainer();
+    }
+
+    protected String consulUrl() {
+        return String.format(
+            "http://%s:%d",
+            getContainerHost(ConsulTestSupport.CONTAINER_NAME),
+            getContainerPort(ConsulTestSupport.CONTAINER_NAME, Consul.DEFAULT_HTTP_PORT)
+        );
     }
 }

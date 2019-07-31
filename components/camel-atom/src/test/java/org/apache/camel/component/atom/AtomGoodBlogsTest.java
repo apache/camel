@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 
@@ -40,7 +40,7 @@ public class AtomGoodBlogsTest extends TestSupport {
 
         // First we register a blog service in our bean registry
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("blogService", new BlogService());
+        registry.bind("blogService", new BlogService());
 
         // Then we create the camel context with our bean registry
         context = new DefaultCamelContext(registry);

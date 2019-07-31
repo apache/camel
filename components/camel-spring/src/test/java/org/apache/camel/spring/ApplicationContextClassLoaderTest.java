@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring;
 
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -26,6 +27,7 @@ public class ApplicationContextClassLoaderTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxConfig.xml");
     }
     
+    @Test
     public void testClassLoader() {
         ClassLoader cl = context.getApplicationContextClassLoader();
         assertNotNull("The application context class loader should not be null", cl);

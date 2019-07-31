@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,33 +18,31 @@ package org.apache.camel.component.azure.queue;
 
 import java.net.URI;
 
+import com.microsoft.azure.storage.OperationContext;
 import com.microsoft.azure.storage.StorageCredentials;
 import com.microsoft.azure.storage.queue.CloudQueue;
+import com.microsoft.azure.storage.queue.CloudQueueMessage;
+import com.microsoft.azure.storage.queue.QueueRequestOptions;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.azure.common.ExchangeUtil;
 
 public final class QueueServiceUtil {
     private QueueServiceUtil() { 
     }
     
     public static URI prepareStorageQueueUri(QueueServiceConfiguration cfg) {
-        return prepareStorageQueueUri(cfg, true);
-    }
-
-    public static URI prepareStorageQueueUri(QueueServiceConfiguration cfg, boolean isForMessages) {
         StringBuilder uriBuilder = new StringBuilder();
         uriBuilder.append("https://")
             .append(cfg.getAccountName())
             .append(QueueServiceConstants.SERVICE_URI_SEGMENT)
-            .append("/")
-            .append(cfg.getQueueName());
-        if (isForMessages) {
-            uriBuilder.append("/messages");
-        }
+            .append("/" + cfg.getQueueName());
+        
         return URI.create(uriBuilder.toString());
     }
     
     public static CloudQueue createQueueClient(QueueServiceConfiguration cfg)
         throws Exception {
-        CloudQueue client = (CloudQueue) getConfiguredClient(cfg);
+        CloudQueue client = getConfiguredClient(cfg);
         if (client == null) {
             URI uri = prepareStorageQueueUri(cfg);
             StorageCredentials creds = getAccountCredentials(cfg);
@@ -63,5 +61,32 @@ public final class QueueServiceUtil {
     
     public static StorageCredentials getAccountCredentials(QueueServiceConfiguration cfg) {
         return cfg.getCredentials();
+    }
+    
+    public static void retrieveMessage(Exchange exchange, QueueServiceConfiguration cfg) throws Exception {
+        CloudQueue client = createQueueClient(cfg);
+        QueueServiceRequestOptions opts = getRequestOptions(exchange);  
+        int visibilityTimeout = cfg.getMessageVisibilityDelay();
+        visibilityTimeout = visibilityTimeout != 0 ? visibilityTimeout : 30;
+        CloudQueueMessage message = client.retrieveMessage(visibilityTimeout,
+                               opts.getRequestOpts(), opts.getOpContext());
+        ExchangeUtil.getMessageForResponse(exchange).setBody(message);
+    }
+    
+    public static QueueServiceRequestOptions getRequestOptions(Exchange exchange) {
+        QueueServiceRequestOptions opts = exchange.getIn().getHeader(
+            QueueServiceConstants.QUEUE_SERVICE_REQUEST_OPTIONS, QueueServiceRequestOptions.class);
+        if (opts != null) {
+            return opts;
+        } else {
+            opts = new QueueServiceRequestOptions();
+        }
+        QueueRequestOptions requestOpts =
+            exchange.getIn().getHeader(QueueServiceConstants.QUEUE_REQUEST_OPTIONS, QueueRequestOptions.class);
+        OperationContext opContext =
+            exchange.getIn().getHeader(QueueServiceConstants.OPERATION_CONTEXT, OperationContext.class);
+        opts.setOpContext(opContext);
+        opts.setRequestOpts(requestOpts);
+        return opts;
     }
 }

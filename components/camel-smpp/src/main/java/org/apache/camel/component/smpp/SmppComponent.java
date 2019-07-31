@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,19 +21,17 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
-/**
- * @version 
- */
-public class SmppComponent extends UriEndpointComponent {
+@Component("smpp,smpps")
+public class SmppComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private SmppConfiguration configuration;
 
     public SmppComponent() {
-        super(SmppEndpoint.class);
     }
 
     public SmppComponent(SmppConfiguration configuration) {
@@ -42,7 +40,7 @@ public class SmppComponent extends UriEndpointComponent {
     }
 
     public SmppComponent(CamelContext context) {
-        super(context, SmppEndpoint.class);
+        super(context);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -56,17 +54,6 @@ public class SmppComponent extends UriEndpointComponent {
         SmppConfiguration config = this.configuration.copy();
 
         config.configureFromURI(new URI(uri));
-        // TODO Camel 3.0 cmueller: We should change the default in Camel 3.0 to '' so that we can remove this special handling
-        // special handling to set the system type to an empty string
-        if (parameters.containsKey("systemType") && parameters.get("systemType") == null) {
-            config.setSystemType("");
-            parameters.remove("systemType");
-        }
-        // special handling to set the service type to an empty string
-        if (parameters.containsKey("serviceType") && parameters.get("serviceType") == null) {
-            config.setServiceType("");
-            parameters.remove("serviceType");
-        }
         setProperties(config, parameters);
 
         return createEndpoint(uri, config);

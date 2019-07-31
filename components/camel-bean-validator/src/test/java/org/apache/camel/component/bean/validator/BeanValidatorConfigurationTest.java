@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.bean.validator;
 
 import java.lang.annotation.ElementType;
 import java.util.Locale;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
@@ -25,38 +26,30 @@ import javax.validation.Path;
 import javax.validation.Path.Node;
 import javax.validation.TraversableResolver;
 
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanValidatorConfigurationTest extends CamelTestSupport {
-    
+
+    @BindToRegistry("myMessageInterpolator")
     private MessageInterpolator messageInterpolator;
+    @BindToRegistry("myTraversableResolver")
     private TraversableResolver traversableResolver;
+    @BindToRegistry("myConstraintValidatorFactory")
     private ConstraintValidatorFactory constraintValidatorFactory;
-    
+
     @Override
+    @Before
     public void setUp() throws Exception {
         this.messageInterpolator = new MyMessageInterpolator();
         this.traversableResolver = new MyTraversableResolver();
         this.constraintValidatorFactory = new MyConstraintValidatorFactory();
-        
+
         super.setUp();
     }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        registry.bind("myMessageInterpolator", this.messageInterpolator);
-        registry.bind("myTraversableResolver", this.traversableResolver);
-        registry.bind("myConstraintValidatorFactory", this.constraintValidatorFactory);
-        return registry;
-    }
-    
+
     @Test
     public void configureWithDefaults() throws Exception {
         if (isPlatform("aix")) {
@@ -67,7 +60,7 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
         BeanValidatorEndpoint endpoint = context.getEndpoint("bean-validator://x", BeanValidatorEndpoint.class);
         assertNull(endpoint.getGroup());
     }
-    
+
     @Test
     public void configureBeanValidator() throws Exception {
         if (isPlatform("aix")) {
@@ -75,11 +68,9 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
             return;
         }
 
-        BeanValidatorEndpoint endpoint = context.getEndpoint("bean-validator://x"
-                + "?group=org.apache.camel.component.bean.validator.OptionalChecks"
-                + "&messageInterpolator=#myMessageInterpolator"
-                + "&traversableResolver=#myTraversableResolver"
-                + "&constraintValidatorFactory=#myConstraintValidatorFactory", BeanValidatorEndpoint.class);
+        BeanValidatorEndpoint endpoint = context
+            .getEndpoint("bean-validator://x" + "?group=org.apache.camel.component.bean.validator.OptionalChecks" + "&messageInterpolator=#myMessageInterpolator"
+                         + "&traversableResolver=#myTraversableResolver" + "&constraintValidatorFactory=#myConstraintValidatorFactory", BeanValidatorEndpoint.class);
 
         assertEquals("org.apache.camel.component.bean.validator.OptionalChecks", endpoint.getGroup());
         assertSame(endpoint.getMessageInterpolator(), this.messageInterpolator);
@@ -108,7 +99,7 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
             return false;
         }
     }
-    
+
     class MyConstraintValidatorFactory implements ConstraintValidatorFactory {
 
         public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {

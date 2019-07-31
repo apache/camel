@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +23,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.namespace.QName;
@@ -74,9 +75,9 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
         }
 
         final List<Object> bodyContent;
-        List<Object> headerContent = new ArrayList<Object>();
+        List<Object> headerContent = new ArrayList<>();
         if (exception != null) {
-            bodyContent = new ArrayList<Object>();
+            bodyContent = new ArrayList<>();
             bodyContent.add(createFaultFromException(exception));
         } else {
             if (!dataFormat.isIgnoreUnmarshalledHeaders()) {
@@ -150,7 +151,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
             List<Object> anyHeaderElements = envelope.getHeader().getAny();
             if (null != anyHeaderElements && !(getDataFormat().isIgnoreUnmarshalledHeaders())) {
                 if (getDataFormat().isIgnoreJAXBElement()) {
-                    returnHeaders = new ArrayList<Object>();
+                    returnHeaders = new ArrayList<>();
                     for (Object headerEl : anyHeaderElements) {
                         returnHeaders.add(JAXBIntrospector.getValue(headerEl));
                     }
@@ -199,19 +200,29 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
                 throw new RuntimeCamelException(e);
             }
         }
-        
-        JAXBElement<?> detailEl = (JAXBElement<?>) faultDetail.getAny().get(0);
+
+        Object detailObj = faultDetail.getAny().get(0);
+
+        if (!(detailObj instanceof JAXBElement)) {
+            try {
+                return new SOAPFaultException(SOAPFactory.newInstance().createFault(message, fault.getFaultcode()));
+            } catch (SOAPException e) {
+                throw new RuntimeCamelException(e);
+            }
+        }
+
+        JAXBElement<?> detailEl = (JAXBElement<?>) detailObj;
         Class<? extends Exception> exceptionClass = getDataFormat().getElementNameStrategy().findExceptionForFaultName(detailEl.getName());
         Constructor<? extends Exception> messageConstructor;
         Constructor<? extends Exception> constructor;
 
         try {
-            messageConstructor = exceptionClass.getConstructor(String.class);
             Object detail = JAXBIntrospector.getValue(detailEl);
             try {
                 constructor = exceptionClass.getConstructor(String.class, detail.getClass());
                 return constructor.newInstance(message, detail);
             } catch (NoSuchMethodException e) {
+                messageConstructor = exceptionClass.getConstructor(String.class);
                 return messageConstructor.newInstance(message);
             }
         } catch (Exception e) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,17 +16,17 @@
  */
 package org.apache.camel.example.cdi.rest.servlet;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 
 public class Application {
 
-    @ContextName("hello")
+    @ApplicationScoped
     public static class HelloRoute extends RouteBuilder {
 
         @Override

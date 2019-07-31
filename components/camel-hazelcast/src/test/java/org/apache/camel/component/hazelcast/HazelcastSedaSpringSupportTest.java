@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,14 +27,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class HazelcastSedaSpringSupportTest extends CamelSpringTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
     public void simpleSend() throws Exception {
         mock.expectedMessageCount(1);
 
-        template.sendBody("hazelcast:seda:foo", "test");
+        template.sendBody("hazelcast-seda:foo", "test");
 
         assertMockEndpointsSatisfied();
     }

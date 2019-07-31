@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,39 +24,36 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
-import org.apache.camel.impl.DefaultPackageScanClassResolver;
+import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.util.IOHelper;
+import org.junit.After;
+import org.junit.Before;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-/**
- * @version 
- */
 public abstract class SpringTestSupport extends ContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
     protected abstract AbstractXmlApplicationContext createApplicationContext();
 
-    @SuppressWarnings("deprecation")
+    @Before
     @Override
-    protected void setUp() throws Exception {
-        if (isLazyLoadingTypeConverter()) {
-            System.setProperty(AbstractCamelContextFactoryBean.LAZY_LOAD_TYPE_CONVERTERS, "true");
-        } else {
-            System.setProperty(AbstractCamelContextFactoryBean.LAZY_LOAD_TYPE_CONVERTERS, "false");
-        }
+    public void setUp() throws Exception {
+        // we want SpringTestSupport to startup faster and not use JMX by default and should stop seda quicker
+        System.setProperty("CamelSedaPollTimeout", "10");
+        System.setProperty("org.apache.camel.jmx.disabled", Boolean.toString(!useJmx()));
 
         applicationContext = createApplicationContext();
         assertNotNull("Should have created a valid spring context", applicationContext);
         super.setUp();
     }
 
+    @After
     @Override
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);
     }
@@ -101,7 +98,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
 
         ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
         List<Class<?>> excluded = Arrays.asList(excludeRoutes());
-        excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
+        excludingResolver.setExcludedClasses(new HashSet<>(excluded));
 
         return routeExcludingContext;
     }
@@ -137,8 +134,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = SpringCamelContext.springCamelContext(applicationContext);
-        context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());
+        CamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         return context;
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,6 @@ import java.util.Map;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.netty4.NettyConstants;
@@ -54,7 +53,7 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
         if (producer.getEndpoint().getCookieHandler() != null) {
             String actualUri = exchange.getIn().getHeader(Exchange.HTTP_URL, String.class);
             URI uri = new URI(actualUri);
-            Map<String, List<String>> m = new HashMap<String, List<String>>();
+            Map<String, List<String>> m = new HashMap<>();
             for (String name : response.headers().names()) {
                 m.put(name, response.headers().getAll(name));
             }

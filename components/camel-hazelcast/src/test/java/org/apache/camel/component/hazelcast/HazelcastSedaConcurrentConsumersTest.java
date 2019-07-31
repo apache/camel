@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,11 +24,10 @@ import org.junit.Test;
 
 /**
  * Test concurrent consumers.
- * 
  */
 public class HazelcastSedaConcurrentConsumersTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
@@ -39,7 +38,7 @@ public class HazelcastSedaConcurrentConsumersTest extends CamelTestSupport {
         mock.expectedMessageCount(bodyCount);
 
         for (int i = 0; i < bodyCount; i++) {
-            template.sendBody("hazelcast:seda:foo?concurrentConsumers=4", "test");
+            template.sendBody("hazelcast-seda:foo?concurrentConsumers=4", "test");
         }
 
         assertMockEndpointsSatisfied();
@@ -51,7 +50,7 @@ public class HazelcastSedaConcurrentConsumersTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("hazelcast:seda:foo?concurrentConsumers=4").threads(6).to("mock:result");
+                from("hazelcast-seda:foo?concurrentConsumers=4").threads(6).to("mock:result");
             }
         };
     }

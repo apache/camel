@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.twitter;
-
+import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +23,25 @@ import org.slf4j.LoggerFactory;
  * consumes tweets
  */
 public class DirectMessageDirectTest extends CamelTwitterConsumerTestSupport {
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        /* Uncomment when you need a test direct message
+        TwitterConfiguration properties = new TwitterConfiguration();
+        properties.setConsumerKey(consumerKey);
+        properties.setConsumerSecret(consumerSecret);
+        properties.setAccessToken(accessToken);
+        properties.setAccessTokenSecret(accessTokenSecret);
+        Twitter twitter = properties.getTwitter();
+        twitter.sendDirectMessage(twitter.getScreenName(), "Test Direct Message: " + new Date().toString());
+        */
+    }
+
     @Override
     protected String getUri() {
-        return "twitter://directmessage?type=direct&";
+        return "twitter-directmessage://foo?type=direct&";
     }
 
     @Override

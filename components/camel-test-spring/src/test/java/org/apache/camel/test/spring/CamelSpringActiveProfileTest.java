@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,7 +41,8 @@ public class CamelSpringActiveProfileTest {
 
     @Autowired
     protected CamelContext camelContext;
-    @Produce(uri = "direct:start", context = "camelContext")
+
+    @Produce(value = "direct:start")
     protected ProducerTemplate start;
 
     @Test

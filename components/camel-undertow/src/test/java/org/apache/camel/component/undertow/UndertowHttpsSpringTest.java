@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.undertow;
-
 import java.net.URL;
+
 import javax.annotation.Resource;
 
 import org.apache.camel.EndpointInject;
@@ -41,7 +41,7 @@ public class UndertowHttpsSpringTest {
     @Produce
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:input")
+    @EndpointInject("mock:input")
     private MockEndpoint mockEndpoint;
 
     @BeforeClass
@@ -59,7 +59,7 @@ public class UndertowHttpsSpringTest {
     public void testSSLConsumer() throws Exception {
         mockEndpoint.expectedBodiesReceived("Hello World");
 
-        String out = template.requestBody("https://localhost:" + port + "/spring", "Hello World", String.class);
+        String out = template.requestBody("undertow:https://localhost:" + port + "/spring?sslContextParameters=#sslClient", "Hello World", String.class);
         assertEquals("Bye World", out);
 
         mockEndpoint.assertIsSatisfied();

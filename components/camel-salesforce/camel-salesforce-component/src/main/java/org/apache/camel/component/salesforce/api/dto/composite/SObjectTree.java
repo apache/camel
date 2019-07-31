@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -247,7 +247,7 @@ public final class SObjectTree implements Serializable {
         if (Objects.equals(attributesReferenceId, referenceId)) {
             final Object object = node.getObject();
 
-            if (object instanceof AbstractSObjectBase) {
+            if (object != null) {
                 return updateBaseObjectId(id, (AbstractSObjectBase) object);
             } else {
                 return updateGeneralObjectId(id, object);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,14 +22,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -142,7 +143,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
         // First time for this aggregation
         if (oldExchange == null) {
             try {
-                tarFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix, parentDir);
+                tarFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix, this.parentDir);
                 LOG.trace("Created temporary file: {}", tarFile);
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
@@ -193,7 +194,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
     }
 
     private void addFileToTar(File source, File file, String fileName) throws IOException, ArchiveException {
-        File tmpTar = File.createTempFile(source.getName(), null, parentDir);
+        File tmpTar = Files.createTempFile(parentDir.toPath(), source.getName(), null).toFile();
         tmpTar.delete();
         if (!source.renameTo(tmpTar)) {
             throw new IOException("Could not make temp file (" + source.getName() + ")");
@@ -228,7 +229,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
     }
 
     private void addEntryToTar(File source, String entryName, byte[] buffer, int length) throws IOException, ArchiveException {
-        File tmpTar = File.createTempFile(source.getName(), null, parentDir);
+        File tmpTar = Files.createTempFile(parentDir.toPath(), source.getName(), null).toFile();
         tmpTar.delete();
         if (!source.renameTo(tmpTar)) {
             throw new IOException("Cannot create temp file: " + source.getName());
@@ -278,7 +279,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
 
         @Override
         public void onComplete(Exchange exchange) {
-            LOG.debug("Deleting tar file on completion: {} ", this.fileToDelete);
+            LOG.debug("Deleting tar file on completion: {}", this.fileToDelete);
             FileUtil.deleteFile(this.fileToDelete);
         }
     }

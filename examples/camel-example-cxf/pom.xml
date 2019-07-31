@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,288 +8,307 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>examples</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel.example</groupId>
+        <artifactId>examples</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-example-cxf</artifactId>
-  <name>Camel :: Example :: CXF</name>
-  <description>An example which demonstrates the use of the Camel CXF component</description>
+    <artifactId>camel-example-cxf</artifactId>
+    <name>Camel :: Example :: CXF</name>
+    <description>An example which demonstrates the use of the Camel CXF component</description>
 
-  <properties>
-    <category>WebService</category>
-    <title>CXF</title>
+    <properties>
+        <category>WebService</category>
+        <title>CXF</title>
 
-    <jetty9-version>${jetty92-version}</jetty9-version>
-  </properties>
+        <camel.osgi.import.additional>
+            org.apache.cxf.*;version="${cxf-version-range}"
+        </camel.osgi.import.additional>
+    </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-cxf</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cxf</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-cxf-transport</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cxf-transport</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http-jetty</artifactId>
-      <version>${cxf-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-server</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-util</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-io</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-security</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-continuation</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-http</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty9</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http-jetty</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-util</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-security</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-continuation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-http</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jetty</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-bindings-soap</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-bindings-soap</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-jms</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-jms</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-kahadb-store</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-kahadb-store</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-spring</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-    </dependency>
-    
-    <!-- logging -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>runtime</scope>
-    </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+        </dependency>
 
-    <!-- testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <!-- Not test scope because we need to use the port finder utility in the actual example code. -->
-    </dependency>
+        <!-- logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
-  </dependencies>
+        <!-- testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <!-- Not test scope because we need to use the port finder utility in the actual example code. -->
+        </dependency>
 
-  <profiles>
-    <profile>
-      <id>HttpToJMS</id>
-      <properties>
-        <!-- Starting the camel-cxf example of routing the SOAP over http
-            message to SOAP over JMS Server -->
-        <target.main.class>org.apache.camel.example.cxf.httptojms.CamelCxfExample</target.main.class>
-      </properties>
-    </profile>
-    <profile>
-      <id>CamelTransport</id>
-      <properties>
-        <!-- Starting the camel-cxf example of using Camel transport of CXF -->
-        <target.main.class>org.apache.camel.example.camel.transport.CamelTransportExample</target.main.class>
-      </properties>
-    </profile>
-    <profile>
-      <id>WebServiceProvider</id>
-      <properties>
-        <!-- Starting the camel-cxf example of how to use the JAXWS WebServiceProvider
-            API -->
-        <target.main.class>org.apache.camel.example.cxf.provider.CamelCxfExample</target.main.class>
-      </properties>
-    </profile>
-    <profile>
-      <id>JAXRS</id>
-      <properties>
-        <!-- Starting the camel-cxf example of JAXRS -->
-        <target.main.class>org.apache.camel.example.cxf.jaxrs.CamelRouterBuilder</target.main.class>
-      </properties>
-    </profile>
-    <profile>
-      <id>HttpToJMS.Client</id>
-      <properties>
-        <!-- Starting the camel-cxf example client of routing the SOAP over
-            http message to SOAP over JMS Server -->
-        <target.main.class>org.apache.camel.example.cxf.httptojms.Client</target.main.class>
-      </properties>
-    </profile>
-    <profile>
-      <id>CamelTransport.Client</id>
-      <properties>
-        <!-- Starting the camel-cxf example client of using Camel transport
-            of CXF -->
-        <target.main.class>org.apache.camel.example.camel.transport.Client</target.main.class>
-      </properties>
-    </profile>
-    <profile>
-      <id>WebServiceProvider.Client</id>
-      <properties>
-        <!-- Starting the camel-cxf example client of how to use the JAXWS
-            WebServiceProvider API -->
-        <target.main.class>org.apache.camel.example.cxf.provider.Client</target.main.class>
-      </properties>
-    </profile>
-    <profile>
-      <id>JAXRS.Client</id>
-      <properties>
-        <!-- Starting the camel-cxf example client of JAXRS -->
-        <target.main.class>org.apache.camel.example.cxf.jaxrs.Client</target.main.class>
-      </properties>
-    </profile>
-  </profiles>
+    </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-codegen-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
-            <configuration>
-              <fork>${cxf.codegenplugin.forkmode}</fork>
-              <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
-              <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
-              <wsdlOptions>
-                <wsdlOption>
-                  <wsdl>${basedir}/src/main/resources/wsdl/hello_world.wsdl</wsdl>
-                </wsdlOption>
-              </wsdlOptions>
-            </configuration>
-            <goals>
-              <goal>wsdl2java</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+    <profiles>
+        <profile>
+            <id>HttpToJMS</id>
+            <properties>
+                <!-- Starting the camel-cxf example of routing the SOAP over http
+                    message to SOAP over JMS Server -->
+                <target.main.class>org.apache.camel.example.cxf.httptojms.CamelCxfExample</target.main.class>
+            </properties>
+        </profile>
+        <profile>
+            <id>CamelTransport</id>
+            <properties>
+                <!-- Starting the camel-cxf example of using Camel transport of CXF -->
+                <target.main.class>org.apache.camel.example.camel.transport.CamelTransportExample</target.main.class>
+            </properties>
+        </profile>
+        <profile>
+            <id>WebServiceProvider</id>
+            <properties>
+                <!-- Starting the camel-cxf example of how to use the JAXWS WebServiceProvider
+                    API -->
+                <target.main.class>org.apache.camel.example.cxf.provider.CamelCxfExample</target.main.class>
+            </properties>
+        </profile>
+        <profile>
+            <id>JAXRS</id>
+            <properties>
+                <!-- Starting the camel-cxf example of JAXRS -->
+                <target.main.class>org.apache.camel.example.cxf.jaxrs.CamelRouterBuilder</target.main.class>
+            </properties>
+        </profile>
+        <profile>
+            <id>HttpToJMS.Client</id>
+            <properties>
+                <!-- Starting the camel-cxf example client of routing the SOAP over
+                    http message to SOAP over JMS Server -->
+                <target.main.class>org.apache.camel.example.cxf.httptojms.Client</target.main.class>
+            </properties>
+        </profile>
+        <profile>
+            <id>CamelTransport.Client</id>
+            <properties>
+                <!-- Starting the camel-cxf example client of using Camel transport
+                    of CXF -->
+                <target.main.class>org.apache.camel.example.camel.transport.Client</target.main.class>
+            </properties>
+        </profile>
+        <profile>
+            <id>WebServiceProvider.Client</id>
+            <properties>
+                <!-- Starting the camel-cxf example client of how to use the JAXWS
+                    WebServiceProvider API -->
+                <target.main.class>org.apache.camel.example.cxf.provider.Client</target.main.class>
+            </properties>
+        </profile>
+        <profile>
+            <id>JAXRS.Client</id>
+            <properties>
+                <!-- Starting the camel-cxf example client of JAXRS -->
+                <target.main.class>org.apache.camel.example.cxf.jaxrs.Client</target.main.class>
+            </properties>
+        </profile>
+        <profile>
+            <id>java9+</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <!--ignore tests until CXF-7520 is resolved and released-->
+                                <exclude>**/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
-      <!-- Allows the example to be run via 'mvn compile exec:java' -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <configuration>
-          <mainClass>${target.main.class}</mainClass>
-          <includePluginDependencies>false</includePluginDependencies>
-          <systemProperties>
-            <property>
-              <key>java.util.logging.config.file</key>
-              <value>logging.properties</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <fork>${cxf.codegenplugin.forkmode}</fork>
+                            <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
+                            <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/main/resources/wsdl/hello_world.wsdl</wsdl>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Allows the example to be run via 'mvn compile exec:java' -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>${target.main.class}</mainClass>
+                    <includePluginDependencies>false</includePluginDependencies>
+                    <systemProperties>
+                        <property>
+                            <key>java.util.logging.config.file</key>
+                            <value>logging.properties</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

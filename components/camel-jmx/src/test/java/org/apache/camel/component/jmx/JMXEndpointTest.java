@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,11 +41,8 @@ public class JMXEndpointTest {
     DefaultCamelContext context;
     
     @Before
-    @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
         context = new DefaultCamelContext();
-        // saves 5 seconds on this unit test
-        context.setLazyLoadTypeConverters(true);
     }
 
     @Test

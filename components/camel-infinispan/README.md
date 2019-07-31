@@ -1,6 +1,6 @@
 # Camel Infinispan Component
 
-This component aims at integrating Infinispan 8+ for both embedded and 
+This component aims at integrating Infinispan 8+ and Infinispan 9+ for both embedded and 
 remote (HotRod) usage.
 
 ## Integration testing

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -48,7 +48,7 @@ public final class MessageConsumerClient {
                 from("kafka:{{consumer.topic}}?brokers={{kafka.host}}:{{kafka.port}}"
                         + "&maxPollRecords={{consumer.maxPollRecords}}"
                         + "&consumersCount={{consumer.consumersCount}}"
-                        + "&seekToBeginning={{consumer.seekToBeginning}}"
+                        + "&seekTo={{consumer.seekTo}}"
                         + "&groupId={{consumer.group}}")
                         .routeId("FromKafka")
                     .log("${body}");

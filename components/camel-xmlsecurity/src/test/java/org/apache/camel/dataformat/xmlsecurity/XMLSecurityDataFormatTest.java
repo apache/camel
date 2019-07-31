@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.xmlsecurity;
-
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,10 +30,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.commons.codec.Charsets;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 
@@ -52,9 +55,10 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     }
     
     @Override 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
-        context.getProperties().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
+        context.getGlobalOptions().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
     }
     
     
@@ -140,6 +144,31 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         });
         xmlsecTestHelper.testEncryption(context);
     }
+    
+    @Test
+    public void testPartialPayloadXMLElementEncryptionWithByteKeyAndAlgorithm() throws Exception {
+        final byte[] bits192 = {
+            (byte)0x24, (byte)0xf2, (byte)0xd3, (byte)0x45,
+            (byte)0xc0, (byte)0x75, (byte)0xb1, (byte)0x00,
+            (byte)0x30, (byte)0xd4, (byte)0x3d, (byte)0xf5,
+            (byte)0x6d, (byte)0xaa, (byte)0x7d, (byte)0xc2,
+            (byte)0x85, (byte)0x32, (byte)0x2a, (byte)0xb6,
+            (byte)0xfe, (byte)0xed, (byte)0xbe, (byte)0xef};
+
+        final Charset passCodeCharset = Charsets.UTF_8;
+        final String passCode = new String(bits192, passCodeCharset);
+        byte[] bytes = passCode.getBytes(passCodeCharset);
+        assertTrue(bits192.length != bytes.length);
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start")
+                    .marshal().secureXML("//cheesesites/netherlands", false, bits192, XMLCipher.TRIPLEDES)
+                    .to("mock:encrypted");
+            }
+        });
+        xmlsecTestHelper.testEncryption(context);
+    }
+    
 
     @Test
     public void testFullPayloadAsymmetricKeyEncryption() throws Exception {
@@ -162,16 +191,12 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         xmlsecTestHelper.testEncryption(context);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testPartialPayloadAsymmetricKeyEncryptionWithContextTruststoreProperties() throws Exception {
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
         tsParameters.setResource("sender.ts");
         
-        Map<String, String> contextProps = context.getProperties();
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_TRUST_STORE_PASSWORD, "password");
- 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -181,32 +206,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         });
         xmlsecTestHelper.testEncryption(context);
     }
- 
-    @Test
-    @SuppressWarnings("deprecation")
-    public void testPartialPayloadAsymmetricKeyEncryptionWithExchangeRecipientAlias() throws Exception {
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:foo", MockEndpoint.class);
-        resultEndpoint.setExpectedMessageCount(1);
- 
-        final KeyStoreParameters tsParameters = new KeyStoreParameters();
-        tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
- 
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                from("direct:start")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getIn().setHeader(XMLSecurityDataFormat.XML_ENC_RECIPIENT_ALIAS, "recipient");
-                        }
-                    })
-                    .marshal().secureXML("//cheesesites/italy/cheese", true, null, testCypherAlgorithm, XMLCipher.RSA_v1dot5, tsParameters)
-                    .to("mock:encrypted");
-            }
-        });
-        xmlsecTestHelper.testEncryption(context);
-    }
-    
+
     @Test
     public void testAsymmetricEncryptionAddKeyValue() throws Exception {
         KeyStoreParameters tsParameters = new KeyStoreParameters();
@@ -317,6 +317,32 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         });
         xmlsecTestHelper.testDecryption(context);
     }
+    
+    @Test
+    public void testXMLElementDecryptionWithoutEncryptedKey() throws Exception {
+        if (!TestHelper.HAS_3DES) {
+            return;
+        }
+        String passPhrase = "this is a test passphrase";
+        
+        byte[] bytes = passPhrase.getBytes();
+        final byte[] keyBytes = Arrays.copyOf(bytes, 24);
+        for (int j = 0, k = 16; j < 8;) {
+            keyBytes[k++] = keyBytes[j++];
+        }
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("timer://foo?period=5000&repeatCount=1").
+                to("language:constant:resource:classpath:org/apache/camel/component/xmlsecurity/EncryptedMessage.xml")
+                .unmarshal()
+                        .secureXML("/*[local-name()='Envelope']/*[local-name()='Body']", 
+                                   true, keyBytes, XMLCipher.TRIPLEDES)
+                        .to("mock:decrypted");
+            }
+        });
+        xmlsecTestHelper.testDecryptionNoEncryptedKey(context);
+    }
 
     @Test
     public void testPartialPayloadXMLContentDecryptionWithKeyAndAlgorithm() throws Exception {
@@ -381,7 +407,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadAsymmetricKeyDecryption() throws Exception {
-        final Map<String, String> namespaces = new HashMap<String, String>();
+        final Map<String, String> namespaces = new HashMap<>();
         namespaces.put("ns1", "http://cheese.xmlsecurity.camel.apache.org/");
         
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
@@ -413,7 +439,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         ksParameters.setResource("recipient.ks");
         
         
-        final Map<String, String> namespaces = new HashMap<String, String>();
+        final Map<String, String> namespaces = new HashMap<>();
         namespaces.put("cust", "http://cheese.xmlsecurity.camel.apache.org/");
 
 

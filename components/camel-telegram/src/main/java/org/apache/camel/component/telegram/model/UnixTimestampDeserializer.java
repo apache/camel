@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,6 @@ import java.time.Instant;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,7 @@ public class UnixTimestampDeserializer extends JsonDeserializer<Instant> {
 
             return Instant.ofEpochSecond(unixTimestamp);
         } catch (Exception e) {
-            log.warn("Unable to deserialize the unix timestamp " + jsonParser.getText(), e);
+            log.warn("Unable to deserialize the unix timestamp {}", jsonParser.getText(), e);
             return null;
         }
     }

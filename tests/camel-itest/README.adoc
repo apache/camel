@@ -1,0 +1,5 @@
+= Camel Integration Tests
+
+== Overview
+
+This module is where you should add cross component tests.

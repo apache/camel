@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,7 +43,7 @@ public class DatagramPacketObjectDecoder extends MessageToMessageDecoder<Address
             ByteBuf payload = (ByteBuf) msg.content();
             Object result = delegateDecoder.decode(ctx, payload);
             AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = 
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(result, msg.recipient(), msg.sender());
+                new DefaultAddressedEnvelope<>(result, msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         }
     }

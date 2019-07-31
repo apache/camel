@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,6 @@
 package org.apache.camel.itest.jms;
 
 import javax.jms.ConnectionFactory;
-import javax.naming.Context;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -26,17 +25,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * Based on user forum.
- *
- * @version 
  */
 public class JmsHttpJmsTest extends CamelTestSupport {
 
@@ -90,15 +87,12 @@ public class JmsHttpJmsTest extends CamelTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-
+    protected void bindToRegistry(Registry registry) throws Exception {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
         amq.setCamelContext(context);
-        answer.bind("jms", amq);
-        return answer;
+        registry.bind("jms", amq);
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,11 +33,13 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Requires a running Kubernetes Cluster")
 public class KubernetesReplicationControllersConsumerTest extends KubernetesTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test
@@ -54,7 +56,7 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "test");
-                Map<String, String> labels = new HashMap<String, String>();
+                Map<String, String> labels = new HashMap<>();
                 labels.put("this", "rocks");
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);
                 ReplicationControllerSpec rcSpec = new ReplicationControllerSpec();
@@ -65,7 +67,7 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
                         .withName("wildfly").withImage("jboss/wildfly").addNewPort().withContainerPort(80).endPort()
                         .endContainer().endSpec().build();
                 rcSpec.setTemplate(t);
-                Map<String, String> selectorMap = new HashMap<String, String>();
+                Map<String, String> selectorMap = new HashMap<>();
                 selectorMap.put("server", "nginx");
                 rcSpec.setSelector(selectorMap);
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_SPEC, rcSpec);
@@ -100,21 +102,21 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
             @Override
             public void configure() throws Exception {
                 from("direct:list").toF(
-                        "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=listReplicationControllers",
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllers",
                         host, authToken);
                 from("direct:listByLabels").toF(
-                        "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=listReplicationControllersByLabels",
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllersByLabels",
                         host, authToken);
                 from("direct:getReplicationController").toF(
-                        "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=getReplicationController",
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=getReplicationController",
                         host, authToken);
                 from("direct:createReplicationController").toF(
-                        "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=createReplicationController",
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=createReplicationController",
                         host, authToken);
                 from("direct:deleteReplicationController").toF(
-                        "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=deleteReplicationController",
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=deleteReplicationController",
                         host, authToken);
-                fromF("kubernetes://%s?oauthToken=%s&category=replicationControllers&resourceName=wildfly", host, authToken)
+                fromF("kubernetes-replication-controllers://%s?oauthToken=%s&resourceName=wildfly", host, authToken)
                         .process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,34 +19,38 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.RuntimeCamelException;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         try {
             createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryCatchMisconfiguredTest.xml");
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("This doCatch should have a doTry as its parent on DoCatch[ [class java.io.IOException] -> [To[mock:fail]]]", e.getCause().getCause().getMessage());
+            FailedToCreateRouteException ftce = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ftce.getCause());
+            assertEquals("This doCatch should have a doTry as its parent on DoCatch[ [class java.io.IOException] -> [To[mock:fail]]]", iae.getMessage());
         }
 
         try {
             createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryCatchMisconfiguredFinallyTest.xml");
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("This doFinally should have a doTry as its parent on DoFinally[[To[mock:finally]]]", e.getCause().getCause().getMessage());
+            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ftcre.getCause());
+            assertEquals("This doFinally should have a doTry as its parent on DoFinally[[To[mock:finally]]]", iae.getMessage());
         }
 
         // return a working context instead, to let this test pass
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryProcessorHandledTest.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/convertBody.xml");
     }
 
+    @Test
     public void testTryCatchMisconfigured() {
         // noop
     }

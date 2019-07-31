@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -101,7 +101,6 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 SoapFault fault =
                                     exchange.getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
-                                exchange.getOut().setFault(true);
                                 exchange.getOut().setBody(fault);
                             }
                             
@@ -110,7 +109,12 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
                     .to(serviceURI);
                 // END SNIPPET: onException
                 // START SNIPPET: ThrowFault
-                from(routerEndpointURI).setFaultBody(constant(SOAP_FAULT));
+                from(routerEndpointURI).process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getMessage().setBody(SOAP_FAULT);
+                    }
+                });
                 // END SNIPPET: ThrowFault
             }
         };

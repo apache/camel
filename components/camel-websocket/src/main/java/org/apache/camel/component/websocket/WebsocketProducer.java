@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.StopWatch;
 
 public class WebsocketProducer extends DefaultProducer implements WebsocketProducerConsumer {
@@ -54,7 +54,11 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
             // look for connection key and get Websocket
             String connectionKey = in.getHeader(WebsocketConstants.CONNECTION_KEY, String.class);
             if (connectionKey != null) {
-                DefaultWebsocket websocket = store.get(connectionKey);
+                String pathSpec = "";
+                if (endpoint.getResourceUri() != null) {
+                    pathSpec = WebsocketComponent.createPathSpec(endpoint.getResourceUri());
+                }
+                DefaultWebsocket websocket = store.get(connectionKey + pathSpec);
                 log.debug("Sending to connection key {} -> {}", connectionKey, message);
                 Future<Void> future = sendMessage(websocket, message);
                 if (future != null) {
@@ -99,14 +103,22 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
 
         List<Future> futures = new CopyOnWriteArrayList<>();
         for (DefaultWebsocket websocket : websockets) {
-            try {
-                Future<Void> future = sendMessage(websocket, message);
-                if (future != null) {
-                    futures.add(future);
-                }
-            } catch (Exception e) {
-                if (exception == null) {
-                    exception = new WebsocketSendException("Failed to deliver message to one or more recipients.", exchange, e);
+            boolean isOkToSendMessage = false;
+            if (endpoint.getResourceUri() == null) {
+                isOkToSendMessage = true;
+            } else if (websocket.getPathSpec().equals(WebsocketComponent.createPathSpec(endpoint.getResourceUri()))) {
+                isOkToSendMessage = true;
+            }
+            if (isOkToSendMessage) {
+                try {
+                    Future<Void> future = sendMessage(websocket, message);
+                    if (future != null) {
+                        futures.add(future);
+                    }
+                } catch (Exception e) {
+                    if (exception == null) {
+                        exception = new WebsocketSendException("Failed to deliver message to one or more recipients.", exchange, e);
+                    }
                 }
             }
         }

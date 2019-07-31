@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.example.cdi.xml;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,17 +30,16 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.reifier.RouteReifier;
+import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.test.cdi.CamelCdiRunner;
 import org.apache.camel.test.cdi.Order;
+import org.awaitility.Awaitility;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 @RunWith(CamelCdiRunner.class)
 public class CdiXmlTest {
@@ -53,8 +53,8 @@ public class CdiXmlTest {
 
     void pipeMatrixStream(@Observes CamelContextStartingEvent event,
                           ModelCamelContext context) throws Exception {
-        context.getRouteDefinition("matrix")
-            .adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier
+            .adviceWith(context.getRouteDefinition("matrix"), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() {
                     weaveAddLast().to("mock:matrix");
@@ -66,7 +66,7 @@ public class CdiXmlTest {
 
         @Override
         public void configure() {
-            from("seda:rescue?multipleConsumers=true").routeId("rescue mission").to("mock:zion");
+            from("stub:rescue").routeId("rescue mission").to("mock:zion");
         }
     }
 
@@ -95,7 +95,8 @@ public class CdiXmlTest {
     @Test
     @Order(3)
     public void verifyRescue(CamelContext context) {
-        assertThat("Neo is still in the matrix!",
-            context.getRouteStatus("terminal"), is(equalTo(ServiceStatus.Stopped)));
+        Awaitility.await("Neo is still in the matrix!")
+            .atMost(5, TimeUnit.SECONDS)
+            .until(() -> ServiceStatus.Stopped.equals(context.getRouteController().getRouteStatus("terminal")));
     }
 }

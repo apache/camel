@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -216,7 +216,8 @@ public final class BlobServiceUtil {
 
 
     public static BlobServiceRequestOptions getRequestOptions(Exchange exchange) {
-        BlobServiceRequestOptions opts = exchange.getIn().getBody(BlobServiceRequestOptions.class);
+        BlobServiceRequestOptions opts = exchange.getIn().getHeader(
+            BlobServiceConstants.BLOB_SERVICE_REQUEST_OPTIONS, BlobServiceRequestOptions.class);
         if (opts != null) {
             return opts;
         } else {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-
+import org.apache.camel.attachment.AttachmentMessage;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -53,12 +53,12 @@ public class SoapResponseAttachmentTest extends AbstractJUnit4SpringContextTests
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(xmlRequestForGoogleStockQuote);
                 exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, soapHeader);
-                exchange.getIn().addAttachment("requestAttachment1.txt", new DataHandler("hello attachment!", "text/plain"));
+                exchange.getIn(AttachmentMessage.class).addAttachment("requestAttachment1.txt", new DataHandler("hello attachment!", "text/plain"));
             }
         });
         assertNotNull(result);
-        assertNotNull(result.getOut().getAttachment("requestAttachment1.txt"));
-        assertNotNull(result.getOut().getAttachment("responseAttachment1.txt"));
-        assertNotNull(result.getOut().getAttachment("responseAttachment2.xml"));
+        assertNotNull(result.getOut(AttachmentMessage.class).getAttachment("requestAttachment1.txt"));
+        assertNotNull(result.getOut(AttachmentMessage.class).getAttachment("responseAttachment1.txt"));
+        assertNotNull(result.getOut(AttachmentMessage.class).getAttachment("responseAttachment2.xml"));
     }
 }

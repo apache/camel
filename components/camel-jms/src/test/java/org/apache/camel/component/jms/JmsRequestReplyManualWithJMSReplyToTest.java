@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,9 +30,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsRequestReplyManualWithJMSReplyToTest extends CamelTestSupport {
 
     @Override
@@ -40,7 +37,7 @@ public class JmsRequestReplyManualWithJMSReplyToTest extends CamelTestSupport {
         return false;
     }
 
-    @Consume(uri = "activemq:queue:foo")
+    @Consume("activemq:queue:foo")
     public void doSomething(@Header("JMSReplyTo") Destination jmsReplyTo, @Body String body) throws Exception {
         assertEquals("Hello World", body);
 

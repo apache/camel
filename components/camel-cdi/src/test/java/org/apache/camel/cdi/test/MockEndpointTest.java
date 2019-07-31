@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,6 @@ import javax.inject.Inject;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.cdi.CdiCamelExtension;
-import org.apache.camel.cdi.Mock;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.cdi.bean.DefaultCamelContextBean;
 import org.apache.camel.cdi.bean.MockAnnotationRoute;
@@ -51,7 +50,7 @@ public class MockEndpointTest {
     private ProducerTemplate defaultInbound;
 
     @Inject
-    @Mock("mock:result")
+    @Uri("mock:result")
     private MockEndpoint defaultOutbound;
 
     @Deployment

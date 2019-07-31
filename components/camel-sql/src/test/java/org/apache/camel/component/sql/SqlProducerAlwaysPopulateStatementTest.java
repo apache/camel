@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,9 +33,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-/**
- * @version 
- */
 public class SqlProducerAlwaysPopulateStatementTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
@@ -99,7 +96,7 @@ public class SqlProducerAlwaysPopulateStatementTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                    .to("sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=true&prepareStatementStrategy=#myStrategy")
+                    .to("sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=true&prepareStatementStrategy=#myStrategy&consumer.initialDelay=0&consumer.delay=50")
                     .to("mock:result");
             }
         };

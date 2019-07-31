@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,16 +21,13 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @version 
- */
 @Transactional(propagation = org.springframework.transaction.annotation.Propagation.NEVER, readOnly = true)
 public class AnnotatedConsumeImpl implements AnnotatedConsume {
 
-    @Produce(uri = "mock:book")
+    @Produce("mock:book")
     ProducerTemplate producer;
 
-    @Consume(uri = "seda:book")
+    @Consume("seda:book")
     public void handleTitle(String title) {
         Transactional tx = this.getClass().getAnnotation(Transactional.class);
         if (tx == null) {

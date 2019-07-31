@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -50,10 +50,10 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
     private static final String TEST_RECORD = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n";
     private static final String TEST_FOOTER = "9000000001\r\n";
 
-    @EndpointInject(uri = URI_MOCK_MARSHALL_RESULT)
+    @EndpointInject(URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
 
-    @EndpointInject(uri = URI_MOCK_UNMARSHALL_RESULT)
+    @EndpointInject(URI_MOCK_UNMARSHALL_RESULT)
     private MockEndpoint unmarshallResult;
 
     // *************************************************************************
@@ -108,8 +108,8 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
         calendar.set(2009, 7, 1);
         order.setOrderDate(calendar.getTime());
         
-        List<Map<String, Object>> input = new ArrayList<Map<String, Object>>();
-        Map<String, Object> bodyRow = new HashMap<String, Object>();
+        List<Map<String, Object>> input = new ArrayList<>();
+        Map<String, Object> bodyRow = new HashMap<>();
         bodyRow.put(Order.class.getName(), order);
         input.add(createHeaderRow());
         input.add(bodyRow);
@@ -124,7 +124,7 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
     }
         
     private Map<String, Object> createHeaderRow() {
-        Map<String, Object> headerMap = new HashMap<String, Object>();
+        Map<String, Object> headerMap = new HashMap<>();
         OrderHeader header = new OrderHeader();
         Calendar calendar = new GregorianCalendar();
         calendar.set(2009, 7, 1);
@@ -134,7 +134,7 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
     }
    
     private Map<String, Object> createFooterRow() {
-        Map<String, Object> footerMap = new HashMap<String, Object>();
+        Map<String, Object> footerMap = new HashMap<>();
         OrderFooter footer = new OrderFooter();
         footer.setNumberOfRecordsInTheFile(1);
         footerMap.put(OrderFooter.class.getName(), footer);

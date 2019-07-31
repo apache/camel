@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,8 +37,6 @@ import static org.junit.Assert.fail;
  * <p/>
  * We use Spring Testing for unit test, eg we extend AbstractJUnit4SpringContextTests
  * that is a Spring class.
- *
- * @version 
  */
 @ContextConfiguration
 public class JmsToHttpTXWithOnExceptionTest extends AbstractJUnit4SpringContextTests {
@@ -46,10 +44,10 @@ public class JmsToHttpTXWithOnExceptionTest extends AbstractJUnit4SpringContextT
     @Autowired
     private ProducerTemplate template;
 
-    @EndpointInject(ref = "data")
+    @EndpointInject("ref:data")
     private Endpoint data;
 
-    @EndpointInject(uri = "mock:rollback")
+    @EndpointInject("mock:rollback")
     private MockEndpoint rollback;
 
     // the ok response to expect

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,13 +27,13 @@ import org.junit.Test;
 public class RouteConcurrentTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("seda:foo client").setUri("seda://foo")
+        new SpanTestData().setLabel("seda:foo client").setUri("seda://foo").setOperation("foo")
             .setKind(Tags.SPAN_KIND_CLIENT),
-        new SpanTestData().setLabel("seda:bar client").setUri("seda://bar")
+        new SpanTestData().setLabel("seda:bar client").setUri("seda://bar").setOperation("bar")
             .setKind(Tags.SPAN_KIND_CLIENT).setParentId(2),
-        new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5")
+        new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5").setOperation("foo")
             .setKind(Tags.SPAN_KIND_SERVER).setParentId(0),
-        new SpanTestData().setLabel("seda:bar server").setUri("seda://bar?concurrentConsumers=5")
+        new SpanTestData().setLabel("seda:bar server").setUri("seda://bar?concurrentConsumers=5").setOperation("bar")
             .setKind(Tags.SPAN_KIND_SERVER).setParentId(1)
     };
 

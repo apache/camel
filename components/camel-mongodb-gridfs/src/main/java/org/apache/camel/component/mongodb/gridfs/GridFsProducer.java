@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
 import com.mongodb.util.JSON;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 
 public class GridFsProducer extends DefaultProducer {    
@@ -59,7 +59,9 @@ public class GridFsProducer extends DefaultProducer {
             }
             String metaData = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_METADATA, String.class);
             DBObject dbObject = (DBObject) JSON.parse(metaData);
-            gfsFile.setMetaData(dbObject);
+            if (dbObject != null) {
+                gfsFile.setMetaData(dbObject);
+            }
             gfsFile.save();
             //add headers with the id and file name produced by the driver.
             exchange.getIn().setHeader(Exchange.FILE_NAME_PRODUCED, gfsFile.getFilename());

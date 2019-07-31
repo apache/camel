@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.scan;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.RandomAccessFile;
@@ -28,14 +27,17 @@ import java.util.jar.JarFile;
 
 import org.apache.camel.core.xml.PatternBasedPackageScanFilter;
 import org.apache.camel.util.CollectionHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.scan.ScanTestSupport {
 
     private Set<Class<?>> allClasses;
 
+    @Before
     public void setUp() throws Exception {
         // use classes that are pretty much constants
-        allClasses = new HashSet<Class<?>>();
+        allClasses = new HashSet<>();
         allClasses.add(List.class);
         allClasses.add(ArrayList.class);
         allClasses.add(LinkedList.class);
@@ -47,10 +49,12 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         super.setUp();
     }
 
+    @Test
     public void testNoPattersIncludeAllClasses() {
         validateMatchingSetContains(allClasses);
     }
 
+    @Test
     public void testIncludePatterns() {
         addIncludePatterns("*");
         validateMatchingSetContains(allClasses);
@@ -100,6 +104,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         validateMatchingSetContains();
     }
 
+    @Test
     public void testExcludePatterns() {
         addExcludePatterns("*");
         validateMatchingSetContains();
@@ -149,6 +154,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         validateMatchingSetContains(allClasses);
     }
 
+    @Test
     public void testExcludeHasPrecedenceOverInclude() {
         // include any classes from the util pkg but exclude those in jar
         addIncludePatterns("java.util.*");
@@ -156,6 +162,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         validateMatchingSetContains(List.class, ArrayList.class, LinkedList.class);
     }
     
+    @Test
     public void testBulkIncludeAdd() {
         // include any classes from the util pkg but exclude those in jar
         Set<String> includes = CollectionHelper.createSetContaining("java.io.*", "java.util.*");
@@ -163,6 +170,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         validateMatchingSetContains(allClasses);
     }
     
+    @Test
     public void testBulkExcludeAdd() {
         // include any classes from the util pkg but exclude those in jar
         Set<String> excludes = CollectionHelper.createSetContaining("java.io.*", "java.util.*");

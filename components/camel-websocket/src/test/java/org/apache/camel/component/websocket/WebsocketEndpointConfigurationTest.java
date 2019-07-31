@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,13 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assume.assumeTrue;
+
+@RunWith(MockitoJUnitRunner.class)
 public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
     
     private int port;
@@ -41,7 +46,7 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
         component.setMinThreads(1);
-        component.setMaxThreads(20);
+        component.setMaxThreads(25);
         Consumer consumer = websocketEndpoint.createConsumer(processor);
         component.connect((WebsocketProducerConsumer) consumer);
         
@@ -74,6 +79,7 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
     
     @Test
     public void testSetServletNoMinThreadsNoMaxThreadsNoThreadPool() throws Exception {
+        assumeTrue("At lease 18 CPUs available", 1 + Runtime.getRuntime().availableProcessors() * 2 >= 19);
         port = AvailablePortFinder.getNextAvailable(16331);
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=25000&maxIdleTime=3000";
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
@@ -105,7 +111,7 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=25000&maxIdleTime=3000";
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
-        QueuedThreadPool qtp = new QueuedThreadPool(20, 1);
+        QueuedThreadPool qtp = new QueuedThreadPool(25, 1);
         component.setThreadPool(qtp);
         Consumer consumer = websocketEndpoint.createConsumer(processor);
         component.connect((WebsocketProducerConsumer) consumer);

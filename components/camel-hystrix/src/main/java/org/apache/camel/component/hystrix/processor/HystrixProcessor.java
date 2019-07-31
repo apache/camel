@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,30 +19,26 @@ package org.apache.camel.component.hystrix.processor;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.netflix.hystrix.HystrixCircuitBreaker;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandMetrics;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * Implementation of the Hystrix EIP.
  */
 @ManagedResource(description = "Managed Hystrix Processor")
-public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
+public class HystrixProcessor extends AsyncProcessorSupport implements Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HystrixProcessor.class);
     private String id;
     private final HystrixCommandGroupKey groupKey;
     private final HystrixCommandKey commandKey;
@@ -144,6 +140,15 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
         return 0;
     }
 
+    @ManagedAttribute
+    public boolean isCircuitBreakerOpen() {
+        HystrixCircuitBreaker cb = HystrixCircuitBreaker.Factory.getInstance(commandKey);
+        if (cb != null) {
+            return cb.isOpen();
+        }
+        return false;
+    }
+
     @Override
     public String getId() {
         return id;
@@ -164,7 +169,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>();
+        List<Processor> answer = new ArrayList<>();
         answer.add(processor);
         if (fallback != null) {
             answer.add(fallback);
@@ -175,11 +180,6 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     @Override
     public boolean hasNext() {
         return true;
-    }
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override

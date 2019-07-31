@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,7 +39,7 @@ public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
 
     @BeforeClass
     public static void setup() {
-        namespacePrefixMap = new HashMap<String, String>();
+        namespacePrefixMap = new HashMap<>();
         namespacePrefixMap.put("http://schemas.xmlsoap.org/soap/envelope/", "soap");
         namespacePrefixMap.put("http://www.w3.org/2001/XMLSchema", "xsd");
         namespacePrefixMap.put("http://www.w3.org/2001/XMLSchema-instance", "xsi");
@@ -83,7 +83,7 @@ public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "0");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "0");
         context.setTracing(true);
 
         return new RouteBuilder() {

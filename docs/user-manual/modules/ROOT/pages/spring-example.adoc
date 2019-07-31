@@ -1,0 +1,54 @@
+= Spring Example
+
+The spring example is a simple refactor of the
+adoc:walk-through-an-example.adoc[first example] to show how to use the
+xref:spring.adoc[Spring] approach to working with Camel. In this example
+we just write RouteBuilder implementations, then we write a Spring
+ApplicationContext XML file to configure Camel so that it auto-discovers
+the routes on the classpath.
+
+To run the example we use the xref:camel-maven-plugin.adoc[Camel Maven
+Plugin]. For example from the source or binary distribution the
+following should work
+
+[source,shell]
+----
+cd examples/camel-example-spring
+mvn camel:run
+----
+
+What this does is boot up the Spring ApplicationContext defined in the
+file
+https://github.com/apache/camel/blob/master/examples/camel-example-spring/src/main/resources/META-INF/spring/camel-context.xml[META-INF/spring/camel-context.xml]
+on the classpath. This is a regular Spring XML document which uses the
+Camel link:xml-configuration.html[Xml Configuration] to configure a
+link:camelcontext.html[CamelContext]. Notice how the <camelContext>
+element is configured
+
+[source,syntaxhighlighter-pre]
+----
+  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+   <package>org.apache.camel.example.spring</package>
+     ...
+----
+
+The packages attribute defines the comma separated list of Java package
+names which are recursively searched for Java classes on the classpath
+which implement the xref:route-builder.adoc[RouteBuilder] interface. What
+this means is that Camel will automatically detect our
+https://github.com/apache/camel/blob/master/examples/camel-example-spring/src/main/java/org/apache/camel/example/spring/MyRouteBuilder.java[MyRouteBuilder
+class] and automatically install its routes. Of course, in practice you
+should not specify org.apache.camel (or a sub package of this) as the
+package name because this will instruct Camel to search in its own
+packages for your routes.
+
+This approach, of using Java code to write the routes in the
+xref:dsl.adoc[DSL] and just wire together in XML what we really need to
+allows us to use the right language for the job and minimise the amount
+of XML bloat. Of course if you prefer you can create all of your routes
+in the xref:xml-configuration.adoc[Xml Configuration].
+
+Also note at the end of this
+https://github.com/apache/camel/blob/master/examples/camel-example-spring/src/main/resources/META-INF/spring/camel-context.xml[XML
+example file] we explicitly configure the xref:components::activemq-component.adoc[ActiveMQ]
+component with details of how to connect to the broker.

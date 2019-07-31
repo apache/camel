@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ import javax.print.attribute.standard.MediaTray;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
 public class PrinterProducer extends DefaultProducer {
@@ -53,8 +53,8 @@ public class PrinterProducer extends DefaultProducer {
     
     private void print(InputStream body, String jobName) throws PrintException { 
         if (printerOperations.getPrintService().isDocFlavorSupported(printerOperations.getFlavor())) {
-            PrintDocument printDoc = new PrintDocument(body, printerOperations.getFlavor());        
-            printerOperations.print(printDoc, config.getCopies(), config.isSendToPrinter(), config.getMimeType(), jobName); 
+            PrintDocument printDoc = new PrintDocument(body, printerOperations.getFlavor());
+            printerOperations.print(printDoc, config.isSendToPrinter(), config.getMimeType(), jobName); 
         }
     }
 
@@ -148,7 +148,7 @@ public class PrinterProducer extends DefaultProducer {
             // align slashes so we match / or \
             printerName = printerName.toLowerCase(Locale.US);
             printerName = printerName.replace('\\', '/');
-            if (printerName.endsWith(printer)) {
+            if (printer.endsWith(printerName)) {
                 position = i;
                 break;
             }

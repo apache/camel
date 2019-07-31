@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,13 +34,13 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration
 public class BindySimpleCsvRemoveWhitespaceUnmarshallTest extends AbstractJUnit4SpringContextTests {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     private String record = "1 , 2,Albert,Cartier,ISIN,BE12345678,SELL,,1500,EUR,08-01-2009\r\n"
                             + ",,Jacques,,,BE12345678,SELL,,1500,EUR,08-01-2009";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Test

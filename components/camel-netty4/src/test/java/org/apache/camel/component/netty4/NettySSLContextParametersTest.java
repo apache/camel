@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,36 +16,38 @@
  */
 package org.apache.camel.component.netty4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.jsse.ClientAuthentication;
-import org.apache.camel.util.jsse.KeyManagersParameters;
-import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.SSLContextServerParameters;
-import org.apache.camel.util.jsse.TrustManagersParameters;
+import org.apache.camel.support.jsse.ClientAuthentication;
+import org.apache.camel.support.jsse.KeyManagersParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextServerParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.Test;
 
 public class NettySSLContextParametersTest extends BaseNettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        
+    @BindToRegistry("sslContextParameters")
+    public SSLContextParameters loadSSLContextParams() throws Exception {
+
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("keystore.jks").toString());
         ksp.setPassword("changeit");
-        
+
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setKeyPassword("changeit");
         kmp.setKeyStore(ksp);
-        
+
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
 
-        // NOTE: Needed since the client uses a loose trust configuration when no ssl context
-        // is provided.  We turn on WANT client-auth to prefer using authentication
+        // NOTE: Needed since the client uses a loose trust configuration when
+        // no ssl context
+        // is provided. We turn on WANT client-auth to prefer using
+        // authentication
         SSLContextServerParameters scsp = new SSLContextServerParameters();
         scsp.setClientAuthentication(ClientAuthentication.WANT.name());
 
@@ -54,11 +56,9 @@ public class NettySSLContextParametersTest extends BaseNettyTest {
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
 
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslContextParameters", sslContextParameters);
-        return registry;
+        return sslContextParameters;
     }
-    
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -73,19 +73,18 @@ public class NettySSLContextParametersTest extends BaseNettyTest {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");                           
-                        }
-                    });
+                from("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
+                    }
+                });
             }
         });
         context.start();
 
-        String response = template.requestBody(
-                "netty4:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters",
-                "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
+        String response = template.requestBody("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters",
+                                               "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds",
+                                               String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }
 

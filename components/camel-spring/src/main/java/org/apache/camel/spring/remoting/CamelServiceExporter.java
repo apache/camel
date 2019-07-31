@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -45,6 +45,7 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
     private String camelContextId;
     private Consumer consumer;
     private String serviceRef;
+    private String method;
     private ApplicationContext applicationContext;
 
     public String getUri() {
@@ -75,6 +76,14 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
         this.serviceRef = serviceRef;
     }
 
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
     public ApplicationContext getApplicationContext() {
         return applicationContext;
     }
@@ -102,7 +111,9 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
         try {
             // need to start endpoint before we create consumer
             ServiceHelper.startService(endpoint);
-            consumer = endpoint.createConsumer(new BeanProcessor(proxy, camelContext));
+            BeanProcessor processor = new BeanProcessor(proxy, camelContext);
+            processor.setMethod(method);
+            consumer = endpoint.createConsumer(processor);
             // add and start consumer
             camelContext.addService(consumer, true, true);
         } catch (Exception e) {

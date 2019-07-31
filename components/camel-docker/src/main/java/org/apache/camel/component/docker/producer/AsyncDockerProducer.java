@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -52,7 +52,7 @@ import org.apache.camel.component.docker.DockerEndpoint;
 import org.apache.camel.component.docker.DockerHelper;
 import org.apache.camel.component.docker.DockerOperation;
 import org.apache.camel.component.docker.exception.DockerException;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -215,15 +215,12 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
             // If request included a response, set as body
             if (result != null) {
                 exchange.getIn().setBody(result);
-
-                return true;
             }
         } catch (DockerException | InterruptedException | IOException e) {
             log.error(e.getMessage(), e);
-
-            return false;
         }
 
+        callback.done(false);
         return false;
     }
 
@@ -243,9 +240,9 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         BuildImageCmd buildImageCmd;
 
-        if (body != null && body instanceof InputStream) {
+        if (body instanceof InputStream) {
             buildImageCmd = client.buildImageCmd((InputStream)body);
-        } else if (body != null && body instanceof File) {
+        } else if (body instanceof File) {
             buildImageCmd = client.buildImageCmd((File)body);
         } else {
             throw new DockerException("Unable to location source Image");
@@ -487,7 +484,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
      */
     private ExecStartCmd executeExecStartRequest(DockerClient client, Message message) {
 
-        LOGGER.debug("Executing Docker Exec Create Request");
+        LOGGER.debug("Executing Docker Exec Start Request");
 
         String execId = DockerHelper.getProperty(DockerConstants.DOCKER_EXEC_ID, configuration, message, String.class);
 

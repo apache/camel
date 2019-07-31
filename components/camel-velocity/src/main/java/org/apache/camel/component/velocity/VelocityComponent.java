@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,21 +19,19 @@ package org.apache.camel.component.velocity;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.velocity.app.VelocityEngine;
 
-/**
- * @version 
- */
-public class VelocityComponent extends UriEndpointComponent {
+@Component("velocity")
+public class VelocityComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private VelocityEngine velocityEngine;
     
     public VelocityComponent() {
-        super(VelocityEndpoint.class);
     }
 
     public VelocityEngine getVelocityEngine() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -54,7 +54,7 @@ public @interface Metadata {
     /**
      * To define that this entity is required.
      */
-    String required() default "";
+    boolean required() default false;
 
     /**
      * An optional human readable title of this entity, to be used instead of a computed title.
@@ -84,8 +84,20 @@ public @interface Metadata {
     boolean secret() default false;
 
     /**
+     * To re-associate the preferred Java type of this parameter.
+     * <p/>
+     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as from a String.
+     */
+    String javaType() default "";
+
+    /**
      * The first version this functionality was added to Apache Camel.
      */
     String firstVersion() default "";
+
+    /**
+     * Additional description that can explain the user about the deprecation and give reference to what to use instead.
+     */
+    String deprecationNote() default "";
 
 }

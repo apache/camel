@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ import java.util.Iterator;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -49,14 +49,14 @@ public class TarIterator implements Iterator<Message>, Closeable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TarIterator.class);
 
-    private final Message inputMessage;
+    private final Exchange exchange;
     private volatile TarArchiveInputStream tarInputStream;
     private volatile Message parent;
+    private boolean allowEmptyDirectory;
 
-    public TarIterator(Message inputMessage, InputStream inputStream) {
-        this.inputMessage = inputMessage;
-        //InputStream inputStream = inputMessage.getBody(InputStream.class);
-
+    public TarIterator(Exchange exchange, InputStream inputStream) {
+        this.exchange = exchange;
+        this.allowEmptyDirectory = false;
         if (inputStream instanceof TarArchiveInputStream) {
             tarInputStream = (TarArchiveInputStream) inputStream;
         } else {
@@ -89,7 +89,6 @@ public class TarIterator implements Iterator<Message>, Closeable {
             }
             return availableDataInCurrentEntry;
         } catch (IOException exception) {
-            //Just wrap the IOException as CamelRuntimeException
             throw new RuntimeCamelException(exception);
         }
     }
@@ -99,7 +98,6 @@ public class TarIterator implements Iterator<Message>, Closeable {
         if (parent == null) {
             parent = getNextElement();
         }
-
         Message answer = parent;
         parent = null;
         checkNullAnswer(answer);
@@ -117,8 +115,8 @@ public class TarIterator implements Iterator<Message>, Closeable {
 
             if (current != null) {
                 LOGGER.debug("Reading tarEntry {}", current.getName());
-                Message answer = new DefaultMessage();
-                answer.getHeaders().putAll(inputMessage.getHeaders());
+                Message answer = new DefaultMessage(exchange.getContext());
+                answer.getHeaders().putAll(exchange.getIn().getHeaders());
                 answer.setHeader(TARFILE_ENTRY_NAME_HEADER, current.getName());
                 answer.setHeader(Exchange.FILE_NAME, current.getName());
                 if (current.getSize() > 0) {
@@ -133,7 +131,6 @@ public class TarIterator implements Iterator<Message>, Closeable {
                 return null;
             }
         } catch (IOException exception) {
-            //Just wrap the IOException as CamelRuntimeException
             throw new RuntimeCamelException(exception);
         }
     }
@@ -151,6 +148,10 @@ public class TarIterator implements Iterator<Message>, Closeable {
         while ((entry = tarInputStream.getNextTarEntry()) != null) {
             if (!entry.isDirectory()) {
                 return entry;
+            } else {
+                if (allowEmptyDirectory) {
+                    return entry;
+                }
             }
         }
 
@@ -166,5 +167,13 @@ public class TarIterator implements Iterator<Message>, Closeable {
     public void close() throws IOException {
         IOHelper.close(tarInputStream);
         tarInputStream = null;
+    }
+
+    public boolean isAllowEmptyDirectory() {
+        return allowEmptyDirectory;
+    }
+
+    public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
     }
 }

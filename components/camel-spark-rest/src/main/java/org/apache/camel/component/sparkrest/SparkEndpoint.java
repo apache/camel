@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,22 +20,22 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.StringHelper;
 import spark.route.HttpMethod;
 
 /**
  * The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "spark-rest", title = "Spark Rest", syntax = "spark-rest:verb:path", consumerOnly = true, consumerClass =  SparkConsumer.class, label = "rest")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "spark-rest", title = "Spark Rest", syntax = "spark-rest:verb:path", consumerOnly = true, label = "rest")
 public class SparkEndpoint extends DefaultEndpoint {
-    @UriPath(enums = "get,post,put,patch,delete,head,trace,connect,options") @Metadata(required = "true")
+    @UriPath(enums = "get,post,put,patch,delete,head,trace,connect,options") @Metadata(required = true)
     private String verb;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String path;
     @UriParam
     private String accept;
@@ -117,19 +117,19 @@ public class SparkEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        ObjectHelper.notEmpty(verb, "verb", this);
-        ObjectHelper.notEmpty(path, "path", this);
+        StringHelper.notEmpty(verb, "verb", this);
+        StringHelper.notEmpty(path, "path", this);
 
         // verb must be supported by Spark and lets convert to the actual name
         HttpMethod method = getCamelContext().getTypeConverter().mandatoryConvertTo(HttpMethod.class, verb);
         verb = method.name();
+    }
+
+    @Override
+    public SparkComponent getComponent() {
+        return (SparkComponent) super.getComponent();
     }
 }

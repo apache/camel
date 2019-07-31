@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,9 +38,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-/**
- * @version 
- */
 public class SqlRouteTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
@@ -83,7 +80,7 @@ public class SqlRouteTest extends CamelTestSupport {
     public void testListBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        List<Object> body = new ArrayList<Object>();
+        List<Object> body = new ArrayList<>();
         body.add("ASF");
         body.add("Camel");
         template.sendBody("direct:list", body);
@@ -126,7 +123,7 @@ public class SqlRouteTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedHeaderReceived(SqlConstants.SQL_ROW_COUNT, "2");
         mock.expectedMessageCount(1);
-        List<Object> body = new ArrayList<Object>();
+        List<Object> body = new ArrayList<>();
         body.add("ASF");
         template.sendBody("direct:simple", body);
         mock.assertIsSatisfied();
@@ -142,7 +139,7 @@ public class SqlRouteTest extends CamelTestSupport {
     public void testListLimitedResult() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        List<Object> body = new ArrayList<Object>();
+        List<Object> body = new ArrayList<>();
         body.add("ASF");
         template.sendBody("direct:simpleLimited", body);
         mock.assertIsSatisfied();

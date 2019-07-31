@@ -1,0 +1,43 @@
+[[Classloaderissueofservicemixcamelcomponent-Classloaderissueofservicemixcamelcomponent]]
+= Classloader issue of servicemix-camel component
+
+We got some classloader issue about the camel processor which after the
+JBI endpoint recently, so I add this entry for some explanation about
+it.
+
+Here is a good code example to demo the thread context classloader in
+different processor after the jbi endpoint.
+
+[source,java]
+----
+from("jbi:endpoint:http://test/MyProviderService/myConsumer)
+  .process(new ProcessA())
+  // The thread context classloader is servicemix-camel component classloader
+   
+.to("jbi:endpoint:http://test/MyProviderService/myProviderA")
+  .process(new ProcessB())
+  // The thread context classloader is the myProviderService's servicemix component classloader
+----
+
+servicemix-camel component works as an adapter for camel and servicemix,
+so camel Jbi endpoint can talk with servicemix endpoint. As you know
+camel uses pipeline pattern to chain the processors and endpoints (which
+can act as consumer and producer) to together. In this way you can chain
+the different servicemix endpoint by using camel EIP routes.
+
+Now back to the classloader issue, for the jbi endpoint in the routing
+rule, it acts as a camel producer which delegate the camel exchange to
+servicemix jms endpoint, and then calling the processor which is after
+the jbi endpoint like pipeline. Since servicemix component has its onw
+thread pool, and these thread pools' context classloader are set to be
+their component's classlaoder, you will find out the ProcessorA and
+ProcessorB are run with different thread, so it is not hard to explain
+why these processors have different thread context classloader.
+
+But for you route application, you may need to use set the thread
+context loader to your own application classloader, so you may set the
+thread context classloader yourself in the ProcessA or ProcessB to get
+the everything work again. Please keep it in mind, you need set the
+thread context loader back when you finish your work, since you wouldn't
+want pollute the servicemix components thread pools' context
+classloader.

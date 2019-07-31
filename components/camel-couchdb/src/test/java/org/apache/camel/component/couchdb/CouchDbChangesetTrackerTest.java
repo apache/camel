@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,15 +25,14 @@ import org.lightcouch.Changes;
 import org.lightcouch.ChangesResult.Row;
 import org.lightcouch.CouchDbContext;
 import org.lightcouch.CouchDbInfo;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CouchDbChangesetTrackerTest {
@@ -69,9 +68,6 @@ public class CouchDbChangesetTrackerTest {
 
     @Before
     public void before() {
-        initMocks(this);
-
-        when(endpoint.isDeletes()).thenReturn(true);
         when(endpoint.isUpdates()).thenReturn(true);
 
         when(client.context()).thenReturn(context);
@@ -83,7 +79,7 @@ public class CouchDbChangesetTrackerTest {
         when(changes.includeDocs(true)).thenReturn(changes);
         when(changes.since(anyString())).thenReturn(changes);
         when(changes.heartBeat(anyLong())).thenReturn(changes);
-        when(changes.style(anyString())).thenReturn(changes);
+        when(changes.style(ArgumentMatchers.isNull())).thenReturn(changes);
 
         when(row1.getSeq()).thenReturn("seq1");
         when(row2.getSeq()).thenReturn("seq2");
@@ -124,6 +120,6 @@ public class CouchDbChangesetTrackerTest {
         tracker.run();
 
         verify(endpoint).createExchange("seq1", "id1", null, false);
-        verify(processor).process(any(Exchange.class));
+        verify(processor).process(ArgumentMatchers.isNull());
     }
 }

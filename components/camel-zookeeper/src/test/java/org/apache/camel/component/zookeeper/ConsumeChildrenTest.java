@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,11 +25,9 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.NaturalSortComparator.Order;
-import org.apache.camel.util.ExchangeHelper;
-
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
-
 import org.junit.Test;
 
 public class ConsumeChildrenTest extends ZooKeeperTestSupport {

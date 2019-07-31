@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -134,30 +134,30 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
             public void configure() throws Exception {
 
                 from("direct:setInvalid").setHeader(HazelcastConstants.OPERATION, constant("invalid"))
-                        .to(String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:set").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.SETVALUE_OPERATION))
-                        .to(String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                from("direct:set").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.SET_VALUE))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET)).to(String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:increment").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.INCREMENT_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                from("direct:increment").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.INCREMENT)).to(
+                        String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:decrement").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DECREMENT_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                from("direct:decrement").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DECREMENT)).to(
+                        String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:destroy").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DESTROY_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                from("direct:destroy").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DESTROY)).to(
+                        String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
                 
-                from("direct:compareAndSet").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.COMPARE_AND_SET_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                from("direct:compareAndSet").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.COMPARE_AND_SET)).to(
+                        String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
               
-                from("direct:getAndAdd").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_AND_ADD_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                from("direct:getAndAdd").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET_AND_ADD)).to(
+                        String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:setWithOperationNumber").toF("hazelcast:%sfoo?operation=%s", HazelcastConstants.ATOMICNUMBER_PREFIX, HazelcastConstants.SETVALUE_OPERATION);
-                from("direct:setWithOperationName").toF("hazelcast:%sfoo?operation=setvalue", HazelcastConstants.ATOMICNUMBER_PREFIX);
+                from("direct:setWithOperationNumber").toF("hazelcast-%sfoo?operation=%s", HazelcastConstants.ATOMICNUMBER_PREFIX, HazelcastOperation.SET_VALUE);
+                from("direct:setWithOperationName").toF("hazelcast-%sfoo?operation=setvalue", HazelcastConstants.ATOMICNUMBER_PREFIX);
 
             }
         };

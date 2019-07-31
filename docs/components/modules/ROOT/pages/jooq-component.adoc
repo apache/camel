@@ -1,0 +1,302 @@
+[[jooq-component]]
+= JOOQ Component
+
+*Available as of Camel version 3.0*
+
+The JOOQ component enables you to store and retrieve Java objects from persistent storage using JOOQ library.
+
+JOOQ provides DSL to create queries.
+There are two types of queries:
+
+. org.jooq.Query - can be executed
+. org.jooq.ResultQuery - can return results
+
+For example:
+[source,java]
+----
+// Create a Query object and execute it:
+Query query = create.query("DELETE FROM BOOK");
+query.execute();
+
+// Create a ResultQuery object and execute it, fetching results:
+ResultQuery<Record> resultQuery = create.resultQuery("SELECT * FROM BOOK");
+Result<Record> result = resultQuery.fetch();
+----
+
+== Plain SQL
+SQL could be executed using JOOQ's objects "Query" or "ResultQuery".
+Also SQL query could be specified inside URI:
+[source,java]
+----
+from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=query=select * from book_store x where x.name = 'test'").to("bean:myBusinessLogic");
+----
+See examples below.
+
+== Consuming from endpoint
+Consuming messages from a JOOQ consumer endpoint removes (or updates) entity beans in the database.
+This allows you to use a database table as a logical queue: consumers take messages from the queue and then delete/update them to logically remove them from the queue.
+If you do not wish to delete the entity bean when it has been processed, you can specify consumeDelete=false on the URI.
+
+== Options
+
+// component options: START
+The JOOQ component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (common) | Component configuration (database connection, database entity type, etc.) |  | JooqConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The JOOQ endpoint is configured using URI syntax:
+
+----
+jooq:entityType
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *entityType* | JOOQ entity class |  | Class
+|===
+
+
+=== Query Parameters (24 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *consumeDelete* (consumer) | Delete entity after it is consumed | true | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | Type of operation to execute on query | NONE | JooqOperation
+| *query* (producer) | To execute plain SQL query |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jooq-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jooq.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.jooq.configuration.consume-delete* | Delete entity after it is consumed | true | Boolean
+| *camel.component.jooq.configuration.database-configuration* |  |  | Configuration
+| *camel.component.jooq.configuration.entity-type* | JOOQ entity class |  | Class
+| *camel.component.jooq.configuration.operation* | Type of operation to execute on query |  | JooqOperation
+| *camel.component.jooq.configuration.query* | To execute plain SQL query |  | String
+| *camel.component.jooq.enabled* | Whether to enable auto configuration of the jooq component. This is enabled by default. |  | Boolean
+| *camel.component.jooq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+=== Operations
+
+When using jooq as a producer you can use any of the following `JooqOperation` operations:
+
+[width="100%",cols="1,2",options="header"]
+|===
+| Operation | Description
+| none | Execute a query (default)
+| execute | Execute a query with no expected results
+| fetch | Execute a query and the result of the query is stored as the new message body
+|===
+
+=== Example:
+JOOQ configuration:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:config.properties"
+                                  xmlns:context="http://www.springframework.org/schema/context"/>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="url" value="${db.url}"/>
+        <property name="driverClassName" value="${db.driver}"/>
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
+    </bean>
+
+    <bean id="transactionAwareDataSource"
+          class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+
+    <bean class="org.jooq.impl.DataSourceConnectionProvider" name="connectionProvider">
+        <constructor-arg ref="transactionAwareDataSource"/>
+    </bean>
+
+    <bean id="dsl" class="org.jooq.impl.DefaultDSLContext">
+        <constructor-arg ref="config"/>
+    </bean>
+
+    <bean id="jooqConfig" class="org.jooq.impl.DefaultConfiguration" name="config">
+        <property name="SQLDialect">
+            <value type="org.jooq.SQLDialect">${jooq.sql.dialect}</value>
+        </property>
+        <property name="connectionProvider" ref="connectionProvider"/>
+    </bean>
+
+</beans>
+----
+
+Camel context configuration:
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <import resource="classpath:jooq-spring.xml"/>
+
+    <!-- Configure component -->
+    <bean id="jooq" class="org.apache.camel.component.jooq.JooqComponent">
+        <property name="configuration">
+            <bean id="jooqConfiguration" class="org.apache.camel.component.jooq.JooqConfiguration">
+                <property name="databaseConfiguration" ref="jooqConfig"/>
+            </bean>
+        </property>
+    </bean>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <!-- Create and store entity -->
+        <route id="insert-route">
+            <from uri="direct:insert"/>
+            <transform>
+                <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="generate"/>
+            </transform>
+            <!-- Send entity to endpoint -->
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord"/>
+        </route>
+
+        <!-- Create JOOQ ResultQuery and fetch -->
+        <route id="execute-route">
+            <from uri="direct:fetch"/>
+            <transform>
+                <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="select"/>
+            </transform>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch"/>
+            <log message="Fetched ${body}"/>
+        </route>
+
+        <!-- Create JOOQ Query end execute -->
+        <route id="query-route">
+            <from uri="direct:execute"/>
+            <transform>
+                <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="delete"/>
+            </transform>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute"/>
+            <log message="Executed ${body}"/>
+        </route>
+
+        <!-- Consume entity -->
+        <route id="queue-route">
+            <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?consumeDelete=false"/>
+            <log message="Consumed ${body}"/>
+        </route>
+
+        <!-- SQL: select -->
+        <route id="sql-select">
+            <from uri="direct:sql-select"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch?query=select * from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
+        </route>
+
+        <!-- SQL: delete -->
+        <route id="sql-delete">
+            <from uri="direct:sql-delete"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute?query=delete from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
+        </route>
+
+        <!-- SQL: consume -->
+        <route id="sql-consume">
+            <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
+        </route>
+    </camelContext>
+</beans>
+----
+
+Sample bean:
+[source,java]
+----
+@Component
+public class BookStoreRecordBean {
+    private String name = "test";
+
+    public BookStoreRecord generate() {
+        return new BookStoreRecord(name);
+    }
+
+    public ResultQuery select() {
+        return DSL.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq(name));
+    }
+
+    public Query delete() {
+        return DSL.delete(BOOK_STORE).where(BOOK_STORE.NAME.eq(name));
+    }
+}
+----

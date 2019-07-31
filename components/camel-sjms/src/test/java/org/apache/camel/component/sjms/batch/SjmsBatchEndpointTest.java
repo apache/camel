@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,13 @@ package org.apache.camel.component.sjms.batch;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.toolbox.AggregationStrategies;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("aggStrategy", AggregationStrategies.groupedExchange());
+        registry.bind("aggStrategy", AggregationStrategies.groupedExchange());
 
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
         connectionFactory.setBrokerURL(broker.getTcpConnectorUri());
@@ -87,7 +88,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
         context.start();
     }
 
-    @Test(expected = FailedToCreateRouteException.class)
+    @Test(expected = FailedToStartRouteException.class)
     public void testConsumerNegativePollDuration() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -99,7 +100,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
         context.start();
     }
 
-    @Test(expected = FailedToCreateRouteException.class)
+    @Test(expected = FailedToStartRouteException.class)
     public void testConsumerNegativeConsumerCount() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

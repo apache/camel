@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jdbc;
 
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
@@ -29,16 +29,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
  */
 public abstract class AbstractJdbcTestSupport extends CamelTestSupport {
     
+    @BindToRegistry("testdb")
     protected EmbeddedDatabase db;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        // START SNIPPET: register
-        JndiRegistry reg = super.createRegistry();
-        reg.bind("testdb", db);
-        return reg;
-        // END SNIPPET: register
-    }
 
     @Before
     @Override

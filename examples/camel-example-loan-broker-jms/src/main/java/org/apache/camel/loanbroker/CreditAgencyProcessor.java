@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.loanbroker;
 
+import java.util.Random;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
@@ -24,8 +26,9 @@ public class CreditAgencyProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
-        int score = (int) (Math.random() * 600 + 300);
-        int hlength = (int) (Math.random() * 19 + 1);
+        Random rand = new Random();
+        int score = (int) (rand.nextDouble() * 600 + 300);
+        int hlength = (int) (rand.nextDouble() * 19 + 1);
 
         exchange.getOut().setHeader(Constants.PROPERTY_SCORE, score);
         exchange.getOut().setHeader(Constants.PROPERTY_HISTORYLENGTH, hlength);

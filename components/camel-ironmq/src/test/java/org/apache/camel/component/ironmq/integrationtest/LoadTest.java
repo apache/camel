@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,12 +18,11 @@ package org.apache.camel.component.ironmq.integrationtest;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.naming.Context;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dataset.DataSetSupport;
 import org.apache.camel.component.ironmq.IronMQConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -58,10 +57,8 @@ public class LoadTest extends CamelTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
+    protected void bindToRegistry(Registry registry) throws Exception {
+        registry.bind("foo", dataSet);
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,7 +40,6 @@ public class CxfConsumerFaultTest extends CxfConsumerPayloadFaultTest {
                         faultDetail.setPersonId("");
                         UnknownPersonFault fault = new UnknownPersonFault("Get the null value of person name", faultDetail);
                         exchange.getOut().setBody(fault);
-                        exchange.getOut().setFault(true);
                     }
                 });
                 

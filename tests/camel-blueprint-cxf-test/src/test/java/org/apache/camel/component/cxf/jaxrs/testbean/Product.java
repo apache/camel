@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,10 +18,6 @@ package org.apache.camel.component.cxf.jaxrs.testbean;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- *
- * @version 
- */
 @XmlRootElement(name = "Product")
 public class Product {
     private long id;

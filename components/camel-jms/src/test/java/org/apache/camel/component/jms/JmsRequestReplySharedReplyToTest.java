@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,9 +26,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version
- */
 public class JmsRequestReplySharedReplyToTest extends CamelTestSupport {
 
     @Test
@@ -44,7 +41,7 @@ public class JmsRequestReplySharedReplyToTest extends CamelTestSupport {
         assertEquals("Hello D", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "D"));
         assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "E"));
 
-        long delta = watch.stop();
+        long delta = watch.taken();
         assertTrue("Should be slower than about 2 seconds, was: " + delta, delta > 2000);
     }
 

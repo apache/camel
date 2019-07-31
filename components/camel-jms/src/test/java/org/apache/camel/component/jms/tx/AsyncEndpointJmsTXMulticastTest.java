@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,9 +25,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class AsyncEndpointJmsTXMulticastTest extends CamelSpringTestSupport {
     private static String beforeThreadName;
     private static String afterThreadName;
@@ -47,7 +44,7 @@ public class AsyncEndpointJmsTXMulticastTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // we are synchronous due to TX so the we are using same threads during the routing
+        // we are asynchronous due to multicast so we should ideally use same thread during processing
         assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
@@ -68,10 +65,10 @@ public class AsyncEndpointJmsTXMulticastTest extends CamelSpringTestSupport {
                                 assertTrue("Exchange should be transacted", exchange.isTransacted());
                             }
                         })
+                        // if we use mutlicast then we can propagate transactions across
                         .multicast().to("direct:foo");
 
                 from("direct:foo")
-                        // tx should be conveyed to this route as well
                         .to("async:bye:camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

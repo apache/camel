@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,13 +17,14 @@
 package org.apache.camel.component.lumberjack;
 
 import java.util.concurrent.ThreadFactory;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.lumberjack.io.LumberjackMessageProcessor;
 import org.apache.camel.component.lumberjack.io.LumberjackServer;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 
 public class LumberjackConsumer extends DefaultConsumer {
@@ -38,6 +39,12 @@ public class LumberjackConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         lumberjackServer.start();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        lumberjackServer.stop();
+        super.doStop();
     }
 
     @Override

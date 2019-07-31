@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,7 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import twitter4j.Status;
 
 import static org.hamcrest.core.Is.is;
@@ -36,9 +35,10 @@ import static org.hamcrest.core.Is.is;
  * Tests posting a twitter update and getting the status update id from the Twitter API response
  */
 public class UserProducerInOutTest extends CamelTwitterTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOutTest.class);
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Test
@@ -71,7 +71,7 @@ public class UserProducerInOutTest extends CamelTwitterTestSupport {
             public void configure() {
                 from("direct:tweets")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
-                        .inOut("twitter://timeline/user?" + getUriTokens())
+                        .inOut("twitter-timeline://user?" + getUriTokens())
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         //.transform().simple("The tweet '${body.text}' was published with the id '${body.id}'")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")

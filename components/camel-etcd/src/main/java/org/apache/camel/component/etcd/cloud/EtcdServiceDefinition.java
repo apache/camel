@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.etcd.cloud;
 
 import java.util.Comparator;
@@ -29,11 +28,12 @@ public class EtcdServiceDefinition extends DefaultServiceDefinition {
 
     @JsonCreator
     public EtcdServiceDefinition(
+        @JsonProperty("id") final String id,
         @JsonProperty("name") final String name,
         @JsonProperty("address") final String address,
         @JsonProperty("port") final Integer port,
         @JsonProperty("tags") final Map<String, String> tags) {
-        super(name, address, port, tags);
+        super(id, name, address, port, tags);
     }
 
     public static Comparator<EtcdServiceDefinition> comparator() {

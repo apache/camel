@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,18 +17,16 @@
 package org.apache.camel.component.ignite;
 
 import org.apache.camel.Component;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.ignite.Ignite;
 
 /**
  * Base class for all Ignite endpoints. 
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite:...", title = "Ignite endpoints", syntax = "ignite:...", label = "nosql,cache,compute", producerOnly = true)
 public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
 
-    protected IgniteComponent component;
+    protected AbstractIgniteComponent component;
 
     @UriParam(defaultValue = "true")
     private boolean propagateIncomingBodyIfNoReturnValue = true;
@@ -45,9 +43,9 @@ public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
         return false;
     }
 
-    protected IgniteComponent igniteComponent() {
+    protected AbstractIgniteComponent igniteComponent() {
         if (component == null) {
-            component = (IgniteComponent) getComponent();
+            component = (AbstractIgniteComponent) getComponent();
         }
         return component;
     }

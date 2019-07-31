@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,6 @@ import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.properties.PropertiesComponent;
 
 /**
@@ -40,7 +39,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
  */
 public class Application {
 
-    @ContextName("camel-example-kubernetes-cdi")
+    @ApplicationScoped
     static class KubernetesRoute extends RouteBuilder {
 
         @Override
@@ -52,7 +51,7 @@ public class Application {
                     // Let's stop the route (we may want to implement a way to exit the container)
                     .to("controlbus:route?routeId=kubernetes-client&action=stop&async=true&loggingLevel=DEBUG")
                     .end()
-                .to("kubernetes://{{kubernetes-master-url:{{env:KUBERNETES_MASTER}}}}?oauthToken={{kubernetes-oauth-token:}}&category=pods&operation=listPods")
+                .to("kubernetes-pods://{{kubernetes-master-url:{{env:KUBERNETES_MASTER}}}}?oauthToken={{kubernetes-oauth-token:}}&operation=listPods")
                 .log("We currently have ${body.size()} pods:")
                 .process(exchange -> {
                     List<Pod> pods = exchange.getIn().getBody(List.class);

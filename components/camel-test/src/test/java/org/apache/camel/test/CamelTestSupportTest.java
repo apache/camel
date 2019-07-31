@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,19 +19,15 @@ package org.apache.camel.test;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
 public class CamelTestSupportTest extends CamelTestSupport {
 
-    private volatile boolean called;
-
     @Override
     @Before
     public void setUp() throws Exception {
-        called = false;
         replaceRouteFromWith("routeId", "direct:start");
         super.setUp();
     }
@@ -59,21 +55,6 @@ public class CamelTestSupportTest extends CamelTestSupport {
     public void autoCreateNoneExisting() {
         MockEndpoint mock = getMockEndpoint("mock:bogus2", true);
         assertNotNull(mock);
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        called = true;
-
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("beer", "yes");
-        return jndi;
-    }
-
-    @Test
-    public void testCreateRegistry() {
-        assertTrue("Should call createRegistry", called);
-        assertEquals("yes", context.getRegistry().lookupByName("beer"));
     }
 
     @Override

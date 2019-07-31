@@ -25,7 +25,7 @@ $ mvn package
 You can run this example with Maven using:
 
 ```sh
-$ mvn spring-boot:run
+$ mvn spring-boot:run -Dspring.profiles.active=dev
 ```
 
 Alternatively, you can also run this example using the executable JAR:

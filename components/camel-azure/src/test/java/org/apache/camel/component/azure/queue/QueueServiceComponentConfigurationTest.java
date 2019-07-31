@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,8 +25,6 @@ import com.microsoft.azure.storage.queue.CloudQueue;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -37,9 +35,8 @@ public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
         CloudQueue client = 
             new CloudQueue(URI.create("https://camelazure.queue.core.windows.net/testqueue/messages"),
                            newAccountKeyCredentials());
-        
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("azureQueueClient", client);
+
+        context.getRegistry().bind("azureQueueClient", client);
         
         QueueServiceComponent component = new QueueServiceComponent(context);
         QueueServiceEndpoint endpoint = 
@@ -59,6 +56,18 @@ public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
         doTestCreateEndpointWithMinConfig(endpoint, false);
     }
     
+    @Test
+    public void testCreateEndpointWithMaxConfig() throws Exception {
+        registerCredentials();
+        
+        QueueServiceComponent component = new QueueServiceComponent(context);
+        QueueServiceEndpoint endpoint = 
+            (QueueServiceEndpoint) component.createEndpoint("azure-queue://camelazure/testqueue?credentials=#creds"
+                + "&operation=addMessage&queuePrefix=prefix&messageTimeToLive=100&messageVisibilityDelay=10");
+        
+        doTestCreateEndpointWithMaxConfig(endpoint, false);
+    }
+    
     private void doTestCreateEndpointWithMinConfig(QueueServiceEndpoint endpoint, boolean clientExpected)
         throws Exception {
         assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
@@ -70,6 +79,31 @@ public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
             assertNull(endpoint.getConfiguration().getAzureQueueClient());
             assertNotNull(endpoint.getConfiguration().getCredentials());
         }
+        assertEquals(QueueServiceOperations.listQueues, endpoint.getConfiguration().getOperation());
+        
+        assertNull(endpoint.getConfiguration().getQueuePrefix());
+        assertEquals(0, endpoint.getConfiguration().getMessageTimeToLive());
+        assertEquals(0, endpoint.getConfiguration().getMessageVisibilityDelay());
+        createConsumer(endpoint);
+    }
+    
+    private void doTestCreateEndpointWithMaxConfig(QueueServiceEndpoint endpoint, boolean clientExpected)
+        throws Exception {
+        assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
+        assertEquals("testqueue", endpoint.getConfiguration().getQueueName());
+        if (clientExpected) {
+            assertNotNull(endpoint.getConfiguration().getAzureQueueClient());
+            assertNull(endpoint.getConfiguration().getCredentials());
+        } else {
+            assertNull(endpoint.getConfiguration().getAzureQueueClient());
+            assertNotNull(endpoint.getConfiguration().getCredentials());
+        }
+        assertEquals(QueueServiceOperations.addMessage, endpoint.getConfiguration().getOperation());
+        
+        assertEquals("prefix", endpoint.getConfiguration().getQueuePrefix());
+        assertEquals(100, endpoint.getConfiguration().getMessageTimeToLive());
+        assertEquals(10, endpoint.getConfiguration().getMessageVisibilityDelay());
+        
         createConsumer(endpoint);
     }
     
@@ -99,10 +133,10 @@ public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
     public void testTooFewPathSegments() throws Exception {
         QueueServiceComponent component = new QueueServiceComponent(context);
         try {
-            component.createEndpoint("azure-queue://camelazure");
+            component.createEndpoint("azure-queue://camelazure?operation=addMessage");
             fail();
         } catch (IllegalArgumentException ex) {
-            assertEquals("The account and queue names must be specified.", ex.getMessage());
+            assertEquals("The queue name must be specified.", ex.getMessage());
         }
     }
     
@@ -117,8 +151,7 @@ public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
     }
     
     private void registerCredentials() {
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("creds", newAccountKeyCredentials());
+        context.getRegistry().bind("creds", newAccountKeyCredentials());
     }
     private StorageCredentials newAccountKeyCredentials() {
         return new StorageCredentialsAccountAndKey("camelazure", 

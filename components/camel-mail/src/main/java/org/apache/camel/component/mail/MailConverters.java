@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mail;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -33,21 +34,17 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
 
 import com.sun.mail.imap.SortTerm;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * JavaMail specific converters.
- *
- * @version 
  */
-@Converter
+@Converter(loader = true)
 public final class MailConverters {
 
     private static final String NOW_DATE_FORMAT = "yyyy-MM-dd HH:mm:SS";
@@ -120,14 +117,14 @@ public final class MailConverters {
         if (s == null) {
             return null;
         }
-        return IOConverter.toInputStream(s, exchange);
+        return new ByteArrayInputStream(s.getBytes(ExchangeHelper.getCharsetName(exchange)));
     }
 
     /**
      * Converts a JavaMail multipart into a body of any type a String can be
      * converted into. The content-type of the part must be text based.
      */
-    @FallbackConverter
+    @Converter(fallback = true)
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws MessagingException, IOException {
         if (Multipart.class.isAssignableFrom(value.getClass())) {
             TypeConverter tc = registry.lookup(type, String.class);
@@ -141,6 +138,11 @@ public final class MailConverters {
         return null;
     }
 
+    /**
+     * Converters the simple search term builder to search term.
+     *
+     * This should not be a @Converter method
+     */
     public static SearchTerm toSearchTerm(SimpleSearchTerm simple, TypeConverter typeConverter) throws ParseException, NoTypeConversionAvailableException {
         SearchTermBuilder builder = new SearchTermBuilder();
         if (simple.isUnseen()) {
@@ -149,7 +151,9 @@ public final class MailConverters {
 
         if (simple.getSubjectOrBody() != null) {
             String text = simple.getSubjectOrBody();
-            builder = builder.subject(text).body(SearchTermBuilder.Op.or, text);
+            SearchTermBuilder builderTemp = new SearchTermBuilder();
+            builderTemp = builderTemp.subject(text).body(SearchTermBuilder.Op.or, text);
+            builder = builder.and(builderTemp.build());
         }
         if (simple.getSubject() != null) {
             builder = builder.subject(simple.getSubject());
@@ -212,11 +216,11 @@ public final class MailConverters {
     }
 
     /*
-     * Converts from comma separated list of sort terms to SortTerm obj array
+     * Converts from comma separated list of sort terms to SortTerm obj array.
+     * This should not be a @Converter method
      */
-    @Converter
     public static SortTerm[] toSortTerm(String sortTerm) {
-        ArrayList<SortTerm> result = new ArrayList<SortTerm>();
+        ArrayList<SortTerm> result = new ArrayList<>();
         
         if (sortTerm == null) {
             return null;

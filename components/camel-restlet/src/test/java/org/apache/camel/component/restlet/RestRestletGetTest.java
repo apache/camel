@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,11 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestRestletGetTest extends RestletTestSupport {
     
     @Override
@@ -38,6 +36,16 @@ public class RestRestletGetTest extends RestletTestSupport {
     public void testRestletProducerGet() throws Exception {
         String out = template.requestBody("http://localhost:" + portNum + "/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out);
+    }
+
+    @Test
+    @Ignore("CAMEL-12320")
+    public void testRestletProducerGetInvalid() throws Exception {
+        try {
+            template.requestBody("http://localhost:" + portNum + "/users/123/basicshouldnotbevalid", null, String.class);
+        } catch (Exception e) {
+            // should be a 404
+        }
     }
 
     @Override

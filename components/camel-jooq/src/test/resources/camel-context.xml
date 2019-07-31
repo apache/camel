@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <import resource="classpath:jooq-spring.xml"/>
+
+    <!-- Configure component -->
+    <bean id="jooq" class="org.apache.camel.component.jooq.JooqComponent">
+        <property name="configuration">
+            <bean id="jooqConfiguration" class="org.apache.camel.component.jooq.JooqConfiguration">
+                <property name="databaseConfiguration" ref="jooqConfig"/>
+            </bean>
+        </property>
+    </bean>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <!-- Create and store entity -->
+        <route id="insert-route">
+            <from uri="direct:insert"/>
+            <transform>
+                <method ref="bookStoreBean" method="generate"/>
+            </transform>
+            <!-- Send entity to endpoint -->
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord"/>
+        </route>
+
+        <!-- Create JOOQ ResultQuery and fetch -->
+        <route id="execute-route">
+            <from uri="direct:fetch"/>
+            <transform>
+                <method ref="bookStoreBean" method="select"/>
+            </transform>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch"/>
+            <log message="Fetched ${body}"/>
+        </route>
+
+        <!-- Create JOOQ Query end execute -->
+        <route id="query-route">
+            <from uri="direct:execute"/>
+            <transform>
+                <method ref="bookStoreBean" method="delete"/>
+            </transform>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute"/>
+            <log message="Executed ${body}"/>
+        </route>
+
+        <!-- Consume entity -->
+        <route id="queue-route">
+            <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?consumeDelete=false"/>
+            <log message="Consumed ${body}"/>
+        </route>
+
+        <!-- SQL: select -->
+        <route id="sql-select">
+            <from uri="direct:sql-select"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch&amp;query=select * from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
+        </route>
+
+        <!-- SQL: delete -->
+        <route id="sql-delete">
+            <from uri="direct:sql-delete"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute&amp;query=delete from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
+        </route>
+
+        <!-- SQL: consume -->
+        <route id="sql-consume">
+            <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
+        </route>
+    </camelContext>
+</beans>

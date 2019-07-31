@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.http.common.cookie;
 
 import java.net.CookieManager;
+import java.net.CookiePolicy;
 
 import org.apache.camel.Exchange;
 
@@ -28,6 +29,7 @@ import org.apache.camel.Exchange;
  * limitation.
  */
 public class ExchangeCookieHandler extends BaseCookieHandler {
+    private CookiePolicy cookiePolicy = CookiePolicy.ACCEPT_ORIGINAL_SERVER;
 
     @Override
     protected CookieManager getCookieManager(Exchange exchange) {
@@ -36,8 +38,14 @@ public class ExchangeCookieHandler extends BaseCookieHandler {
             return (CookieManager)handlerObj;
         } else {
             CookieManager handler = new CookieManager();
+            handler.setCookiePolicy(cookiePolicy);
             exchange.setProperty(Exchange.COOKIE_HANDLER, handler);
             return handler;
         }
+    }
+
+    @Override
+    public void setCookiePolicy(CookiePolicy cookiePolicy) {
+        this.cookiePolicy = cookiePolicy;
     }
 }

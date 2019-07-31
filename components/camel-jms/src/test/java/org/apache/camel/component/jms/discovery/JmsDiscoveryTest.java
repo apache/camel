@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,24 +18,22 @@ package org.apache.camel.component.jms.discovery;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.jms.ConnectionFactory;
-import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsDiscoveryTest extends CamelTestSupport {
-    protected MyRegistry registry = new MyRegistry();
+    protected MyRegistry myRegistry = new MyRegistry();
 
     @Test
     public void testDiscovery() throws Exception {
@@ -50,7 +48,7 @@ public class JmsDiscoveryTest extends CamelTestSupport {
         // sleep a little
         Thread.sleep(1000);
 
-        Map<String, Map<?, ?>> map = new HashMap<String, Map<?, ?>>(registry.getServices());
+        Map<String, Map<?, ?>> map = new HashMap<>(myRegistry.getServices());
         assertTrue("There should be 1 or more, was: " + map.size(), map.size() >= 1);
     }
 
@@ -64,11 +62,9 @@ public class JmsDiscoveryTest extends CamelTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("service1", new MyService("service1"));
-        context.bind("registry", registry);
-        return context;
+    protected void bindToRegistry(Registry registry) throws Exception {
+        registry.bind("service1", new MyService("service1"));
+        registry.bind("registry", myRegistry);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

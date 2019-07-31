@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -85,8 +85,7 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
         } else {
             value = expression.evaluate(exchange, Object.class);
         }
-
-        log.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);
+        log.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, value);
 
         assertTrue("Expression: " + expression + " on Exchange: " + exchange,
                    expectedValue.equals(value) || orThisExpectedValue.equals(value));

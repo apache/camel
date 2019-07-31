@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.stax;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
@@ -72,7 +73,7 @@ public class StaxStreamXMLReader implements XMLReader {
 
 	private Boolean isStandalone;
 
-	private final Map<String, String> namespaces = new LinkedHashMap<String, String>();
+	private final Map<String, String> namespaces = new LinkedHashMap<>();
 
 	private final XMLStreamReader reader;
 

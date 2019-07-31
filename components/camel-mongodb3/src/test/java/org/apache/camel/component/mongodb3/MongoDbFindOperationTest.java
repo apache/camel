@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.mongodb.client.model.Projections;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.lang3.ObjectUtils;
@@ -189,6 +188,38 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
     }
 
     @Test
+    public void testFindDistinctNoQuery() {
+        // Test that the collection has 0 documents in it
+        assertEquals(0, testCollection.count());
+        pumpDataIntoTestCollection();
+
+        Object result = template.requestBodyAndHeader("direct:findDistinct", null, MongoDbConstants.DISTINCT_QUERY_FIELD, "scientist");
+        assertTrue("Result is not of type List", result instanceof List);
+
+        @SuppressWarnings("unchecked")
+        List<String> resultList = (List<String>)result;
+        assertEquals(10, resultList.size());
+    }
+
+    @Test
+    public void testFindDistinctWithQuery() {
+        // Test that the collection has 0 documents in it
+        assertEquals(0, testCollection.count());
+        pumpDataIntoTestCollection();
+
+        Bson query = eq("scientist", "Einstein");
+
+        Object result = template.requestBodyAndHeader("direct:findDistinct", query, MongoDbConstants.DISTINCT_QUERY_FIELD, "scientist");
+        assertTrue("Result is not of type List", result instanceof List);
+
+        @SuppressWarnings("unchecked")
+        List<String> resultList = (List<String>)result;
+        assertEquals(1, resultList.size());
+
+        assertEquals("Einstein", resultList.get(0));
+    }
+
+    @Test
     public void testFindOneByQuery() throws Exception {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.count());
@@ -257,6 +288,8 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
                 from("direct:findById").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true")
                     .to("mock:resultFindById");
 
+                from("direct:findDistinct").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findDistinct&dynamicity=true")
+                    .to("mock:resultFindDistinct");
             }
         };
     }

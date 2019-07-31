@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,30 +17,28 @@
 package org.apache.camel.component.stream;
 
 import java.nio.charset.Charset;
+import java.util.Map;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file and URL.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", consumerClass = StreamConsumer.class, label = "file,system")
+@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", label = "file,system")
 public class StreamEndpoint extends DefaultEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 
     private transient Charset charset;
 
-    @UriPath(enums = "in,out,err,header,file,url") @Metadata(required = "true")
+    @UriPath(enums = "in,out,err,header,file,url") @Metadata(required = true)
     private String kind;
     @UriParam
     private String url;
@@ -50,6 +48,8 @@ public class StreamEndpoint extends DefaultEndpoint {
     private boolean scanStream;
     @UriParam(label = "consumer")
     private boolean retry;
+    @UriParam(label = "consumer")
+    private boolean fileWatcher;
     @UriParam(label = "producer")
     private boolean closeOnDone;
     @UriParam(label = "consumer")
@@ -70,28 +70,28 @@ public class StreamEndpoint extends DefaultEndpoint {
     private int autoCloseCount;
     @UriParam(label = "consumer")
     private GroupStrategy groupStrategy = new DefaultGroupStrategy();
+    @UriParam(label = "advanced", prefix = "httpHeaders.", multiValue = true)
+    private Map<String, Object> httpHeaders;
+    @UriParam(label = "advanced")
+    private int connectTimeout;
+    @UriParam(label = "advanced")
+    private int readTimeout;
 
     public StreamEndpoint(String endpointUri, Component component) throws Exception {
         super(endpointUri, component);
     }
 
-    @Deprecated
-    public StreamEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public Consumer createConsumer(Processor processor) throws Exception {
         StreamConsumer answer = new StreamConsumer(this, processor, getEndpointUri());
+        if (isFileWatcher() && !"file".equals(getKind())) {
+            throw new IllegalArgumentException("File watcher is only possible if reading streams from files");
+        }
         configureConsumer(answer);
         return answer;
     }
 
     public Producer createProducer() throws Exception {
         return new StreamProducer(this, getEndpointUri());
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     protected Exchange createExchange(Object body, long index, boolean last) {
@@ -224,12 +224,25 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Will retry opening the file if it's overwritten, somewhat like tail --retry
+     * Will retry opening the stream if it's overwritten, somewhat like tail --retry
+     * <p/>
+     * If reading from files then you should also enable the fileWatcher option, to make it work reliable.
      */
     public void setRetry(boolean retry) {
         this.retry = retry;
     }
-    
+
+    public boolean isFileWatcher() {
+        return fileWatcher;
+    }
+
+    /**
+     * To use JVM file watcher to listen for file change events to support re-loading files that may be overwritten, somewhat like tail --retry
+     */
+    public void setFileWatcher(boolean fileWatcher) {
+        this.fileWatcher = fileWatcher;
+    }
+
     public boolean isCloseOnDone() {
         return closeOnDone;
     }
@@ -282,6 +295,49 @@ public class StreamEndpoint extends DefaultEndpoint {
         return charset;
     }
 
+    public Map<String, Object> getHttpHeaders() {
+        return httpHeaders;
+    }
+
+    /**
+     * Optional http headers to use in request when using HTTP URL.
+     */
+    public void setHttpHeaders(Map<String, Object> httpHeaders) {
+        this.httpHeaders = httpHeaders;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * Sets a specified timeout value, in milliseconds, to be used
+     * when opening a communications link to the resource referenced
+     * by this URLConnection.  If the timeout expires before the
+     * connection can be established, a
+     * java.net.SocketTimeoutException is raised. A timeout of zero is
+     * interpreted as an infinite timeout.
+     */
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * Sets the read timeout to a specified timeout, in
+     * milliseconds. A non-zero value specifies the timeout when
+     * reading from Input stream when a connection is established to a
+     * resource. If the timeout expires before there is data available
+     * for read, a java.net.SocketTimeoutException is raised. A
+     * timeout of zero is interpreted as an infinite timeout.
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
     // Implementations
     //-------------------------------------------------------------------------
 
@@ -292,7 +348,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     Charset loadCharset() {
         if (encoding == null) {
             encoding = Charset.defaultCharset().name();
-            LOG.debug("No encoding parameter using default charset: {}", encoding);
+            log.debug("No encoding parameter using default charset: {}", encoding);
         }
         if (!Charset.isSupported(encoding)) {
             throw new IllegalArgumentException("The encoding: " + encoding + " is not supported");

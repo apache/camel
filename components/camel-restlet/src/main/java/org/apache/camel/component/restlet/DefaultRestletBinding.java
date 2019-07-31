@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,15 +38,17 @@ import javax.xml.transform.dom.DOMSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.StringSource;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.util.xml.StringSource;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.restlet.Request;
@@ -55,14 +57,19 @@ import org.restlet.data.CacheDirective;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.CharacterSet;
+import org.restlet.data.ClientInfo;
+import org.restlet.data.Cookie;
+import org.restlet.data.Encoding;
 import org.restlet.data.Form;
 import org.restlet.data.Header;
+import org.restlet.data.Language;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Preference;
 import org.restlet.data.Status;
 import org.restlet.engine.application.DecodeRepresentation;
 import org.restlet.engine.header.HeaderConstants;
+import org.restlet.engine.header.HeaderUtils;
 import org.restlet.representation.ByteArrayRepresentation;
 import org.restlet.representation.EmptyRepresentation;
 import org.restlet.representation.FileRepresentation;
@@ -111,10 +118,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
 
         // copy query string to header
-        String query = request.getResourceRef().getQuery();
-        if (query != null) {
-            inMessage.setHeader(Exchange.HTTP_QUERY, query);
-        }
+        populateQueryParameters(request, exchange);
 
         // copy URI to header
         inMessage.setHeader(Exchange.HTTP_URI, request.getResourceRef().getIdentifier(true));
@@ -157,6 +161,24 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
     }
 
+    protected void populateQueryParameters(Request request, Exchange exchange) throws Exception {
+        String query = request.getResourceRef().getQuery();
+        if (query != null) {
+            exchange.getIn().setHeader(Exchange.HTTP_QUERY, query);
+
+            // parse query and map to Camel message headers
+            Map<String, Object> map = URISupport.parseQuery(query);
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+                    LOG.trace("HTTP query parameter {} = {}", key, value);
+                    exchange.getIn().setHeader(key, value);
+                }
+            }
+        }
+    }
+
     public void populateRestletRequestFromExchange(Request request, Exchange exchange) {
         request.setReferrerRef("camel-restlet");
 
@@ -187,7 +209,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 // use string based for forms
                 String body = exchange.getIn().getBody(String.class);
                 if (body != null) {
-                    List<NameValuePair> pairs = URLEncodedUtils.parse(body, Charset.forName(IOHelper.getCharsetName(exchange, true)));
+                    List<NameValuePair> pairs = URLEncodedUtils.parse(body, Charset.forName(ExchangeHelper.getCharsetName(exchange, true)));
                     for (NameValuePair p : pairs) {
                         form.add(p.getName(), p.getValue());
                     }
@@ -198,7 +220,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // get outgoing custom http headers from the exchange if they exists
         Series<Header> restletHeaders = exchange.getIn().getHeader(HeaderConstants.ATTRIBUTE_HEADERS, Series.class);
         if (restletHeaders == null) {
-            restletHeaders = new Series<Header>(Header.class);
+            restletHeaders = new Series<>(Header.class);
             request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, restletHeaders);
         } else {
             // if the restlet headers already exists on the exchange, we need to filter them
@@ -264,8 +286,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             request.setEntity(form.getWebRepresentation());
             LOG.debug("Populate Restlet {} request from exchange body as form using media type {}", method, mediaType);
         } else {
-            // include body if PUT or POST
-            if (request.getMethod() == Method.PUT || request.getMethod() == Method.POST) {
+            // include body if PUT, POST or PATCH
+            if (request.getMethod().equals(Method.PUT) || request.getMethod().equals(Method.POST) || request.getMethod().equals(Method.PATCH)) {
                 Representation body = createRepresentationFromBody(exchange, mediaType);
                 request.setEntity(body);
                 LOG.debug("Populate Restlet {} request from exchange body: {} using media type {}", method, body, mediaType);
@@ -276,19 +298,98 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
 
-        // accept
-        String accept = exchange.getIn().getHeader("Accept", String.class);
-        if (accept != null) {
-            MediaType acceptedMediaType = exchange.getContext().getTypeConverter().tryConvertTo(MediaType.class, exchange, accept);
-            if (acceptedMediaType != null) {
-                request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(acceptedMediaType));
+        // filter out standard restlet headers which must be configured differently
+        org.restlet.Message extensionHeaders = new Request();
+        HeaderUtils.copyExtensionHeaders(restletHeaders, extensionHeaders);
+
+        // setup standard headers
+        Series<Header> standardHeaders = new Series<>(Header.class);
+        standardHeaders.addAll(restletHeaders);
+        standardHeaders.removeAll(extensionHeaders.getHeaders());
+
+        // setup extension headers
+        restletHeaders.removeAll(standardHeaders);
+
+        // now add standard headers but via the special restlet api
+        LOG.debug("Detected {} request extension headers", extensionHeaders.getHeaders().size());
+        LOG.debug("Detected {} request standard headers", standardHeaders.size());
+
+        configureRestletRequestStandardHeaders(exchange, request, standardHeaders);
+
+        // deprecated accept
+        final MediaType[] acceptedMediaTypes = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType[].class);
+        if (acceptedMediaTypes != null) {
+            ClientInfo clientInfo = request.getClientInfo();
+            List<Preference<MediaType>> acceptedMediaTypesList = clientInfo.getAcceptedMediaTypes();
+            for (MediaType acceptedMediaType : acceptedMediaTypes) {
+                acceptedMediaTypesList.add(new Preference<>(acceptedMediaType));
             }
         }
-        MediaType acceptedMediaType = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType.class);
-        if (acceptedMediaType != null) {
-            request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(acceptedMediaType));
-        }
+    }
 
+    private void configureRestletRequestStandardHeaders(Exchange exchange, Request request, Series standardHeaders) {
+        Iterator it = standardHeaders.iterator();
+        while (it.hasNext()) {
+            Header h = (Header) it.next();
+            String key = h.getName();
+            String value = h.getValue();
+
+            // ignore these headers
+            if ("Server".equalsIgnoreCase(key) || "Set-Cookie".equalsIgnoreCase(key) || "Expires".equalsIgnoreCase(key)
+                || "Connection".equalsIgnoreCase(key)) {
+                continue;
+            }
+
+            if ("Authorization".equalsIgnoreCase(key)) {
+                // special workaround for restlet (https://github.com/restlet/restlet-framework-java/issues/1086)
+                ChallengeResponse c = new ChallengeResponse(new ChallengeScheme("", ""));
+                c.setRawValue(value);
+                request.setChallengeResponse(c);
+            } else if ("Accept".equalsIgnoreCase(key)) {
+                ClientInfo clientInfo = request.getClientInfo();
+                List<Preference<MediaType>> acceptedMediaTypesList = clientInfo.getAcceptedMediaTypes();
+                MediaType[] acceptedMediaTypes = exchange.getContext().getTypeConverter().tryConvertTo(MediaType[].class, exchange, value);
+                for (MediaType acceptedMediaType : acceptedMediaTypes) {
+                    acceptedMediaTypesList.add(new Preference<>(acceptedMediaType));
+                }
+            } else if ("Accept-Encoding".equalsIgnoreCase(key)) {
+                // assume only accepting one encoding
+                ClientInfo clientInfo = request.getClientInfo();
+                Encoding encoding = Encoding.valueOf(value);
+                clientInfo.getAcceptedEncodings().add(new Preference<>(encoding));
+            } else if ("Accept-Language".equalsIgnoreCase(key)) {
+                // assume only accepting one encoding
+                ClientInfo clientInfo = request.getClientInfo();
+                Language language = Language.valueOf(value);
+                clientInfo.getAcceptedLanguages().add(new Preference<>(language));
+            } else if ("Cookie".equalsIgnoreCase(key)) {
+                String k = StringHelper.before(value, "=");
+                String v = StringHelper.after(value, "=");
+                if (k != null && v != null) {
+                    Cookie cookie = new Cookie(k, v);
+                    request.getCookies().add(cookie);
+                }
+            } else if ("Content-Type".equalsIgnoreCase(key)) {
+                MediaType mediaType = exchange.getContext().getTypeConverter().tryConvertTo(MediaType.class, exchange, value);
+                if (mediaType != null) {
+                    request.getEntity().setMediaType(mediaType);
+                }
+            } else if ("User-Agent".equalsIgnoreCase(key)) {
+                request.getClientInfo().setAgent(value);
+            } else if ("Referer".equalsIgnoreCase(key)) {
+                request.setReferrerRef(value);
+            } else if ("Host".equalsIgnoreCase(key)) {
+                request.setHostRef(value);
+            } else if ("Date".equalsIgnoreCase(key)) {
+                Date d = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, value);
+                if (d != null) {
+                    request.setDate(d);
+                }
+            } else {
+                // TODO: implement all the other restlet standard headers
+                LOG.warn("Addition of the standard request header \"{}\" is not allowed. Please use the equivalent property in the Restlet API.", key);
+            }
+        }
     }
 
     public void populateRestletResponseFromExchange(Exchange exchange, Response response) throws Exception {
@@ -296,20 +397,16 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (exchange.isFailed()) {
             // 500 for internal server error which can be overridden by response code in header
             response.setStatus(Status.valueOf(500));
-            Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-            if (msg.isFault()) {
-                out = msg;
-            } else {
-                // print exception as message and stacktrace
-                Exception t = exchange.getException();
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                t.printStackTrace(pw);
-                response.setEntity(sw.toString(), MediaType.TEXT_PLAIN);
-                return;
-            }
+            Message msg = exchange.getMessage();
+            // print exception as message and stacktrace
+            Exception t = exchange.getException();
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            t.printStackTrace(pw);
+            response.setEntity(sw.toString(), MediaType.TEXT_PLAIN);
+            return;
         } else {
-            out = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+            out = exchange.getMessage();
         }
 
         // get content type
@@ -341,6 +438,10 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (body == null) {
             // empty response
             response.setEntity("", MediaType.TEXT_PLAIN);
+            // if empty response and status is OK, then set it to NO_CONTENT which is more correct
+            if (Status.SUCCESS_OK.equals(response.getStatus())) {
+                response.setStatus(Status.SUCCESS_NO_CONTENT);
+            }
         } else if (body instanceof Response) {
             // its already a restlet response, so dont do anything
             LOG.debug("Using existing Restlet Response from exchange body: {}", body);
@@ -368,7 +469,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // set headers at the end, as the entity must be set first
         // NOTE: setting HTTP headers on restlet is cumbersome and its API is "weird" and has some flaws
         // so we need to headers two times, and the 2nd time we add the non-internal headers once more
-        Series<Header> series = new Series<Header>(Header.class);
+        Series<Header> series = new Series<>(Header.class);
         for (Map.Entry<String, Object> entry : out.getHeaders().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -386,9 +487,29 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
 
-        // set HTTP headers so we return these in the response
-        if (!series.isEmpty()) {
-            response.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, series);
+        // filter out standard restlet headers which must be configured differently
+        org.restlet.Message extensionHeaders = new Request();
+        HeaderUtils.copyExtensionHeaders(series, extensionHeaders);
+
+        // setup standard headers
+        Series<Header> standardHeaders = new Series<>(Header.class);
+        standardHeaders.addAll(series);
+        standardHeaders.removeAll(extensionHeaders.getHeaders());
+
+        // setup extension headers
+        series.removeAll(standardHeaders);
+
+        // now add standard headers but via the special restlet api
+        LOG.debug("Detected {} response extension headers", extensionHeaders.getHeaders().size());
+        LOG.debug("Detected {} response standard headers", standardHeaders.size());
+
+        // use Restlet utils for standard headers
+        HeaderUtils.copyResponseTransportHeaders(standardHeaders, response);
+        HeaderUtils.extractEntityHeaders(standardHeaders, response.getEntity());
+
+        // include the extension headers on the response
+        if (extensionHeaders.getHeaders().size() > 0) {
+            response.getHeaders().addAll(extensionHeaders.getHeaders());
         }
     }
 
@@ -413,7 +534,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             // get content type
             MediaType mediaType = response.getEntity().getMediaType();
             if (mediaType != null) {
-                LOG.debug("Setting the Content-Type to be {}",  mediaType.toString());
+                LOG.debug("Setting the Content-Type to be {}", mediaType);
                 exchange.getOut().setHeader(Exchange.CONTENT_TYPE, mediaType.toString());
             }
             if (streamRepresentation && response.getEntity() instanceof StreamRepresentation) {
@@ -487,7 +608,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                     message.setCacheDirectives((List<CacheDirective>) value);
                 }
                 if (value instanceof String) {
-                    List<CacheDirective> list = new ArrayList<CacheDirective>();
+                    List<CacheDirective> list = new ArrayList<>();
                     // set the cache control value directive
                     list.add(new CacheDirective((String) value));
                     message.setCacheDirectives(list);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,8 +18,8 @@ package org.apache.camel.component.dropbox;
 
 import java.util.Locale;
 
-import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.v2.DbxClientV2;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.spi.Metadata;
@@ -31,10 +31,10 @@ import org.apache.camel.spi.UriPath;
 public class DropboxConfiguration {
 
     //specific dropbox operation for the component
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private DropboxOperation operation;
     //dropbox auth options
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String accessToken;
     //local path to put files
     @UriParam
@@ -52,20 +52,20 @@ public class DropboxConfiguration {
     @UriParam
     private DropboxUploadMode uploadMode;
     //id of the app
-    @UriParam @Metadata(required = "true")
+    @UriParam
     private String clientIdentifier;
     //reference to dropbox client
     @UriParam
-    private DbxClient client;
+    private DbxClientV2 client;
 
     /**
      * To use an existing DbxClient instance as DropBox client.
      */
-    public void setClient(DbxClient client) {
+    public void setClient(DbxClientV2 client) {
         this.client = client;
     }
 
-    public DbxClient getClient() {
+    public DbxClientV2 getClient() {
         return client;
     }
 
@@ -74,7 +74,7 @@ public class DropboxConfiguration {
      */
     public void createClient() {
         DbxRequestConfig config = new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
-        this.client = new DbxClient(config, accessToken);
+        this.client = new DbxClientV2(config, accessToken);
     }
 
     public String getAccessToken() {
@@ -93,7 +93,8 @@ public class DropboxConfiguration {
     }
 
     /**
-     * Folder or file to upload on Dropbox from the local filesystem.
+     * Optional folder or file to upload on Dropbox from the local filesystem.
+     * If this option has not been configured then the message body is used as the content to upload.
      */
     public void setLocalPath(String localPath) {
         this.localPath = localPath;

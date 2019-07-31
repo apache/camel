@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,31 +20,31 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.cxf.message.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a>
  */
-public class CxfComponent extends HeaderFilterStrategyComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CxfComponent.class);
+@Component("cxf")
+public class CxfComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private Boolean allowStreaming;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public CxfComponent() {
-        super(CxfEndpoint.class);
     }
 
     public CxfComponent(CamelContext context) {
-        super(context, CxfEndpoint.class);
+        super(context);
     }
 
     /**
@@ -59,6 +59,19 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         return allowStreaming;
     }
 
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
     /**
      * Create a {@link CxfEndpoint} which, can be a Spring bean endpoint having
      * URI format cxf:bean:<i>beanId</i> or transport address endpoint having URI format
@@ -71,7 +84,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
 
         Object value = parameters.remove("setDefaultBus");
         if (value != null) {
-            LOG.warn("The option setDefaultBus is @deprecated, use name defaultBus instead");
+            log.warn("The option setDefaultBus is @deprecated, use name defaultBus instead");
             if (!parameters.containsKey("defaultBus")) {
                 parameters.put("defaultBus", value);
             }
@@ -114,6 +127,11 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         if (result.getProperties() != null) {
             // set the properties of MTOM
             result.setMtomEnabled(Boolean.valueOf((String) result.getProperties().get(Message.MTOM_ENABLED)));
+        }
+
+        // use global ssl config if set
+        if (result.getSslContextParameters() == null) {
+            result.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         return result;

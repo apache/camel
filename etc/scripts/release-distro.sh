@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 VERSION=${1}
 DOWNLOAD=${2:-/tmp/camel-release}
@@ -47,9 +47,11 @@ wget -e robots=off --wait 3 --no-check-certificate \
  -r -np "--reject=html,txt" "--follow-tags=" \
  -P "${DOWNLOAD}/${VERSION}" -nH "--cut-dirs=3" "--level=1" "--ignore-length" \
  "https://repository.apache.org/content/repositories/releases/org/apache/camel/apache-camel/${VERSION}/"
+# Remove duplicate signature files
+rm ${DOWNLOAD}/dist/${VERSION}/*.asc.asc
 # Remove the signature check sum files
-rm ${DOWNLOAD}/${VERSION}/org/apache/camel/apache-camel/${VERSION}/*.asc.md5
-rm ${DOWNLOAD}/${VERSION}/org/apache/camel/apache-camel/${VERSION}/*.asc.sha1
+rm ${DOWNLOAD}/dist/${VERSION}/*.asc.md5
+rm ${DOWNLOAD}/dist/${VERSION}/*.asc.sha1
 
 echo "################################################################################"
 echo "                         RESET GROUP PERMISSIONS                                "

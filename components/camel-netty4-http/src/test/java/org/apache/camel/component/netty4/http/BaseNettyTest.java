@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4.http;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collection;
@@ -24,10 +23,10 @@ import java.util.Properties;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ResourceLeakDetector;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.logging.log4j.core.LogEvent;
@@ -106,15 +105,13 @@ public class BaseNettyTest extends CamelTestSupport {
         return context;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("prop")
+    public Properties loadProp() throws Exception {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
-        jndi.bind("prop", prop);
 
-        return jndi;
+        return prop;
     }
 
     protected int getNextPort() {

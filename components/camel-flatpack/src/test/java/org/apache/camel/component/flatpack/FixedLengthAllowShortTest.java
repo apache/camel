@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,20 +32,17 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-/**
- * @version
- */
 @ContextConfiguration
 public class FixedLengthAllowShortTest extends AbstractJUnit4SpringContextTests {
     private static final Logger LOG = LoggerFactory.getLogger(FixedLengthAllowShortTest.class);
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    @EndpointInject(uri = "mock:results-df")
+    @EndpointInject("mock:results-df")
     protected MockEndpoint resultsdf;
 
-    @EndpointInject(uri = "mock:results-xml")
+    @EndpointInject("mock:results-xml")
     protected MockEndpoint resultsxml;
 
     protected String[] expectedFirstName = {"JOHN-SHORT", "JIMMY-SHORT", "JANE-SHORT", "FRED-SHORT"};

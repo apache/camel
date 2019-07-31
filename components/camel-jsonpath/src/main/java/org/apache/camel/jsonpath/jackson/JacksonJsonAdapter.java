@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -61,6 +61,18 @@ public class JacksonJsonAdapter implements JsonPathAdapter {
         ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
         try {
             return mapper.convertValue(body, Map.class);
+        } catch (Throwable e) {
+            // ignore because we are attempting to convert
+        }
+
+        return null;
+    }
+
+    @Override
+    public String writeAsString(Object value, Exchange exchange) {
+        ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
+        try {
+            return mapper.writeValueAsString(value);
         } catch (Throwable e) {
             // ignore because we are attempting to convert
         }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,11 +38,6 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin"
                 + "&readLock=none&consumer.delay=500";
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 
     @Test

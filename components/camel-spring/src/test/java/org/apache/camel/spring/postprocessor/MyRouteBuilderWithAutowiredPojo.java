@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,15 +21,12 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * @version 
- */
 public class MyRouteBuilderWithAutowiredPojo extends SpringRouteBuilder {
 
     @Autowired
     private TestPojo pojo;
 
-    @EndpointInject(uri = "mock:injected")
+    @EndpointInject("mock:injected")
     private Endpoint injected;
 
     public void configure() throws Exception {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,19 +19,9 @@ package org.apache.camel.opentracing;
 import io.opentracing.Span;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.opentracing.decorators.AbstractSpanDecorator;
+import org.apache.camel.opentracing.decorators.SedaSpanDecorator;
 
-public class TestSEDASpanDecorator extends AbstractSpanDecorator {
-
-    @Override
-    public String getComponent() {
-        return "seda";
-    }
-
-    @Override
-    public String getOperationName(Exchange exchange, Endpoint endpoint) {
-        return "testop";
-    }
+public class TestSEDASpanDecorator extends SedaSpanDecorator {
 
     @Override
     public void pre(Span span, Exchange exchange, Endpoint endpoint) {

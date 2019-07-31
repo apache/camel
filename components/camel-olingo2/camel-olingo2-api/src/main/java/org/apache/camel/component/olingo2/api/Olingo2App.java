@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -76,9 +76,11 @@ public interface Olingo2App {
      * @param resourcePath OData Resource path
      * @param queryParams OData query params
      *                    from http://www.odata.org/documentation/odata-version-2-0/uri-conventions#SystemQueryOptions
+     * @param endpointHttpHeaders HTTP Headers to add/override the component versions
      * @param responseHandler callback handler
      */
     <T> void read(Edm edm, String resourcePath, Map<String, String> queryParams,
+                  Map<String, String> endpointHttpHeaders,
                   Olingo2ResponseHandler<T> responseHandler);
 
     /**
@@ -87,60 +89,74 @@ public interface Olingo2App {
      * @param resourcePath OData Resource path
      * @param queryParams OData query params
      *                    from http://www.odata.org/documentation/odata-version-2-0/uri-conventions#SystemQueryOptions
+     * @param endpointHttpHeaders HTTP Headers to add/override the component versions
      * @param responseHandler callback handler
      */
     void uread(Edm edm, String resourcePath, Map<String, String> queryParams,
+               Map<String, String> endpointHttpHeaders,
                Olingo2ResponseHandler<InputStream> responseHandler);
 
     /**
      * Deletes an OData resource and invokes callback
      * with {@link org.apache.olingo.odata2.api.commons.HttpStatusCodes} on success, or with exception on failure.
      * @param resourcePath resource path for Entry
+     * @param endpointHttpHeaders HTTP Headers to add/override the component versions
      * @param responseHandler {@link org.apache.olingo.odata2.api.commons.HttpStatusCodes} callback handler
      */
-    void delete(String resourcePath, Olingo2ResponseHandler<HttpStatusCodes> responseHandler);
+    void delete(String resourcePath, Map<String, String> endpointHttpHeaders, 
+                Olingo2ResponseHandler<HttpStatusCodes> responseHandler);
 
     /**
      * Creates a new OData resource.
      * @param edm service Edm
      * @param resourcePath resource path to create
+     * @param endpointHttpHeaders HTTP Headers to add/override the component versions
      * @param data request data
      * @param responseHandler callback handler
      */
-    <T> void create(Edm edm, String resourcePath, Object data, Olingo2ResponseHandler<T> responseHandler);
+    <T> void create(Edm edm, String resourcePath, Map<String, String> endpointHttpHeaders, Object data, 
+                    Olingo2ResponseHandler<T> responseHandler);
 
     /**
      * Updates an OData resource.
      * @param edm service Edm
      * @param resourcePath resource path to update
+     * @param endpointHttpHeaders HTTP Headers to add/override the component versions
      * @param data updated data
      * @param responseHandler {@link org.apache.olingo.odata2.api.ep.entry.ODataEntry} callback handler
      */
-    <T> void update(Edm edm, String resourcePath, Object data, Olingo2ResponseHandler<T> responseHandler);
+    <T> void update(Edm edm, String resourcePath, Map<String, String> endpointHttpHeaders, Object data, 
+                    Olingo2ResponseHandler<T> responseHandler);
 
     /**
      * Patches/merges an OData resource using HTTP PATCH.
      * @param edm service Edm
      * @param resourcePath resource path to update
+     * @param endpointHttpHeaders HTTP Headers to add/override the component versions
      * @param data patch/merge data
      * @param responseHandler {@link org.apache.olingo.odata2.api.ep.entry.ODataEntry} callback handler
      */
-    <T> void patch(Edm edm, String resourcePath, Object data, Olingo2ResponseHandler<T> responseHandler);
+    <T> void patch(Edm edm, String resourcePath, Map<String, String> endpointHttpHeaders, Object data, 
+                   Olingo2ResponseHandler<T> responseHandler);
 
     /**
      * Patches/merges an OData resource using HTTP MERGE.
      * @param edm service Edm
      * @param resourcePath resource path to update
+     * @param endpointHttpHeaders HTTP Headers to add/override the component versions
      * @param data patch/merge data
      * @param responseHandler {@link org.apache.olingo.odata2.api.ep.entry.ODataEntry} callback handler
      */
-    <T> void merge(Edm edm, String resourcePath, Object data, Olingo2ResponseHandler<T> responseHandler);
+    <T> void merge(Edm edm, String resourcePath, Map<String, String> endpointHttpHeaders, Object data, 
+                   Olingo2ResponseHandler<T> responseHandler);
 
     /**
      * Executes a batch request.
      * @param edm service Edm
+     * @param endpointHttpHeaders HTTP Headers to add/override the component versions
      * @param data ordered {@link org.apache.camel.component.olingo2.api.batch.Olingo2BatchRequest} list
      * @param responseHandler callback handler
      */
-    void batch(Edm edm, Object data, Olingo2ResponseHandler<List<Olingo2BatchResponse>> responseHandler);
+    void batch(Edm edm, Map<String, String> endpointHttpHeaders, Object data, 
+               Olingo2ResponseHandler<List<Olingo2BatchResponse>> responseHandler);
 }

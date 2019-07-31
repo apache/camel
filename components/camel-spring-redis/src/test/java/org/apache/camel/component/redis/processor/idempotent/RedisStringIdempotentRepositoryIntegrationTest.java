@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,14 +38,14 @@ public class RedisStringIdempotentRepositoryIntegrationTest extends CamelTestSup
 
     protected RedisStringIdempotentRepository idempotentRepository;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate producer;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
     @Resource
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
     static {
         CONNECTION_FACTORY.afterPropertiesSet();
@@ -54,7 +54,7 @@ public class RedisStringIdempotentRepositoryIntegrationTest extends CamelTestSup
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        redisTemplate = new RedisTemplate();
+        redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(CONNECTION_FACTORY);
         redisTemplate.afterPropertiesSet();
 

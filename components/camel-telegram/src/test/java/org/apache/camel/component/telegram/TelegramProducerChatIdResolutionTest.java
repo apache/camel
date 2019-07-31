@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,14 +27,14 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Tests a producer route with a fixed destination.
  */
 public class TelegramProducerChatIdResolutionTest extends TelegramTestSupport {
 
-    @EndpointInject(uri = "direct:telegram")
+    @EndpointInject("direct:telegram")
     private Endpoint endpoint;
 
     @Test

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,6 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Producer receives a HL7 Commit Error Acknowledgement
  */
 public class MllpCommitErrorAcknowledgementException extends MllpNegativeAcknowledgementException {
-
     static final String EXCEPTION_MESSAGE = "HL7 Commit Error Acknowledgment Received";
 
     public MllpCommitErrorAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement) {

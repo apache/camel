@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,24 +20,24 @@ import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.impl.DefaultProducer;
-import org.jivesoftware.smack.SmackConfiguration;
+import org.apache.camel.support.DefaultProducer;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smackx.muc.DiscussionHistory;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smackx.muc.MucEnterConfiguration;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class XmppGroupChatProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(XmppGroupChatProducer.class);
     private final XmppEndpoint endpoint;
-    private XMPPConnection connection;
+    private XMPPTCPConnection connection;
     private MultiUserChat chat;
     private String room;
 
@@ -53,10 +53,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
                 connection = endpoint.createConnection();
             } catch (Exception e) {
                 throw new RuntimeExchangeException("Could not connect to XMPP server.", exchange, e);
-            }   
-            
+            }
         }
- 
+
         if (chat == null) {
             try {
                 initializeChat();
@@ -66,11 +65,12 @@ public class XmppGroupChatProducer extends DefaultProducer {
         }
 
         Message message = chat.createMessage();
-        message.setTo(room);
-        message.setFrom(endpoint.getUser());
-
-        endpoint.getBinding().populateXmppMessage(message, exchange);
         try {
+            message.setTo(JidCreate.from(room));
+            message.setFrom(JidCreate.from(endpoint.getUser()));
+
+            endpoint.getBinding().populateXmppMessage(message, exchange);
+
             // make sure we are connected
             if (!connection.isConnected()) {
                 this.reconnect();
@@ -85,10 +85,10 @@ public class XmppGroupChatProducer extends DefaultProducer {
             chat.pollMessage();
         } catch (Exception e) {
             throw new RuntimeExchangeException("Could not send XMPP message: " + message, exchange, e);
-        } 
+        }
     }
 
-    private synchronized void reconnect() throws XMPPException, SmackException, IOException {
+    private synchronized void reconnect() throws InterruptedException, IOException, SmackException, XMPPException {
         if (!connection.isConnected()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
@@ -118,16 +118,16 @@ public class XmppGroupChatProducer extends DefaultProducer {
         super.doStart();
     }
 
-    protected synchronized void initializeChat() throws XMPPException, SmackException {
+    protected synchronized void initializeChat() throws InterruptedException, SmackException, XMPPException, XmppStringprepException {
         if (chat == null) {
             room = endpoint.resolveRoom(connection);
-            chat = new MultiUserChat(connection, room);
-            DiscussionHistory history = new DiscussionHistory();
-            history.setMaxChars(0); // we do not want any historical messages
-            chat.join(endpoint.getNickname(), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
-            }
+            MultiUserChatManager chatManager = MultiUserChatManager.getInstanceFor(connection);
+            chat = chatManager.getMultiUserChat(JidCreate.entityBareFrom(room));
+            MucEnterConfiguration mucc = chat.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
+                    .requestNoHistory()
+                    .build();
+            chat.join(mucc);
+            LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
         }
     }
 

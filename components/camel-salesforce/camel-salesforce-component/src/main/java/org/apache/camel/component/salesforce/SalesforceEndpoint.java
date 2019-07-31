@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,29 +20,35 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.salesforce.internal.OperationName;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.SynchronousDelegateProducer;
 import org.eclipse.jetty.client.HttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The salesforce component is used for integrating Camel with the massive Salesforce API.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", label = "api,cloud,crm", consumerClass = SalesforceConsumer.class)
+@UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", label = "api,cloud,crm")
 public class SalesforceEndpoint extends DefaultEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
-
-    @UriPath(label = "producer", description = "The operation to use")
+    @UriPath(label = "producer", description = "The operation to use", enums = "getVersions,getResources,"
+        + "getGlobalObjects,getBasicInfo,getDescription,getSObject,createSObject,updateSObject,deleteSObject,"
+        + "getSObjectWithId,upsertSObject,deleteSObjectWithId,getBlobField,query,queryMore,queryAll,search,apexCall,"
+        + "recent,createJob,getJob,closeJob,abortJob,createBatch,getBatch,getAllBatches,getRequest,getResults,"
+        + "createBatchQuery,getQueryResultIds,getQueryResult,getRecentReports,getReportDescription,executeSyncReport,"
+        + "executeAsyncReport,getReportInstances,getReportResults,limits,approval,approvals,composite-tree,"
+        + "composite-batch,composite")
     private final OperationName operationName;
-    @UriPath(label = "consumer", description = "The name of the topic to use")
+    @UriPath(label = "consumer", description = "The name of the topic/channel to use")
     private final String topicName;
     @UriParam
     private final SalesforceEndpointConfig config;
+
+    @UriParam(label = "consumer", description = "The replayId value to use when subscribing")
+    private Long replayId;
 
     public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent,
                               SalesforceEndpointConfig config, OperationName operationName, String topicName) {
@@ -74,8 +80,8 @@ public class SalesforceEndpoint extends DefaultEndpoint {
                     operationName.value()));
         }
 
-        final SalesforceConsumer consumer = new SalesforceConsumer(this, processor,
-            getComponent().getSubscriptionHelper(topicName));
+        final SubscriptionHelper subscriptionHelper = getComponent().getSubscriptionHelper();
+        final SalesforceConsumer consumer = new SalesforceConsumer(this, processor, subscriptionHelper);
         configureConsumer(consumer);
         return consumer;
     }
@@ -103,6 +109,14 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         return topicName;
     }
 
+    public void setReplayId(final Long replayId) {
+        this.replayId = replayId;
+    }
+
+    public Long getReplayId() {
+        return replayId;
+    }
+
     @Override
     protected void doStart() throws Exception {
         try {
@@ -112,9 +126,9 @@ public class SalesforceEndpoint extends DefaultEndpoint {
             final HttpClient httpClient = getConfiguration().getHttpClient();
             if (httpClient != null && getComponent().getConfig().getHttpClient() != httpClient) {
                 final String endpointUri = getEndpointUri();
-                LOG.debug("Starting http client for {} ...", endpointUri);
+                log.debug("Starting http client for {} ...", endpointUri);
                 httpClient.start();
-                LOG.debug("Started http client for {}", endpointUri);
+                log.debug("Started http client for {}", endpointUri);
             }
         }
     }
@@ -128,9 +142,9 @@ public class SalesforceEndpoint extends DefaultEndpoint {
             final HttpClient httpClient = getConfiguration().getHttpClient();
             if (httpClient != null && getComponent().getConfig().getHttpClient() != httpClient) {
                 final String endpointUri = getEndpointUri();
-                LOG.debug("Stopping http client for {} ...", endpointUri);
+                log.debug("Stopping http client for {} ...", endpointUri);
                 httpClient.stop();
-                LOG.debug("Stopped http client for {}", endpointUri);
+                log.debug("Stopped http client for {}", endpointUri);
             }
         }
     }

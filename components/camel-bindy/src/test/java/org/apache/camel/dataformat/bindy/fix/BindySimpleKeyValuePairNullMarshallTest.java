@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,10 +38,10 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration
 public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4SpringContextTests {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Test
@@ -57,8 +57,8 @@ public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4Sprin
     }
 
     public List<Map<String, Object>> generateModel() {
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-        Map<String, Object> model = new HashMap<String, Object>();
+        List<Map<String, Object>> models = new ArrayList<>();
+        Map<String, Object> model = new HashMap<>();
 
         Header header = new Header();
         header.setBeginString("FIX 4.1");

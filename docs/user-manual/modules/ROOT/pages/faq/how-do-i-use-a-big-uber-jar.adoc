@@ -1,0 +1,11 @@
+[[HowdoIuseabiguberJAR-HowdoIuseabiguberJAR]]
+= How do I use a big (uber) JAR?
+
+If you want to repackage all the Camel JARs into a single uber JAR then
+you can use the Maven shade plugin. But you have to ensure all the
+service files get appended correctly. If you do this you are taking
+responsible yourself for this.
+
+See some example in this
+https://issues.apache.org/jira/browse/CAMEL-3773[CAMEL-3773] JIRA
+ticket.

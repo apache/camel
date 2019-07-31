@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,14 +23,13 @@ import org.apache.camel.spi.UriParams;
 
 /**
  * FTP Secure (FTP over SSL/TLS) configuration
- * 
- * @version 
  */
 @UriParams
 public class FtpsConfiguration extends FtpConfiguration {
 
-    @UriParam(defaultValue = "TLS", label = "security")
-    private String securityProtocol = "TLS";
+    @UriParam(defaultValue = "TLSv1.2", label = "security")
+    // TODO : switch to TLSv1.3 when we fully upgrade to JDK11
+    private String securityProtocol = "TLSv1.2";
     @UriParam(label = "security")
     private boolean isImplicit;
     @UriParam(label = "security")

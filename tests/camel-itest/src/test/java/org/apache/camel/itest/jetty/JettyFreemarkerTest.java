@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,10 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 import org.junit.Test;
 
 public class JettyFreemarkerTest extends CamelTestSupport {
@@ -36,7 +37,7 @@ public class JettyFreemarkerTest extends CamelTestSupport {
 
     @Test
     public void testClasspath() throws Exception {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 
@@ -48,7 +49,7 @@ public class JettyFreemarkerTest extends CamelTestSupport {
     @Test
     public void testClasspathInvalidParameter() throws Exception {
         try {
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, Object> map = new HashMap<>();
             map.put("firstName", "John");
             map.put("lastName", "Doe");
 
@@ -61,7 +62,7 @@ public class JettyFreemarkerTest extends CamelTestSupport {
 
     @Test
     public void testHttp() throws Exception {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 
@@ -84,10 +85,10 @@ public class JettyFreemarkerTest extends CamelTestSupport {
                             ObjectHelper.notNull(name, "name");
 
                             // strip off the locale
-                            name = ObjectHelper.before(name, "_");
+                            name = StringHelper.before(name, "_");
 
                             name = "org/apache/camel/itest/jetty/" + name + ".ftl";
-                            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), name);
+                            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
                             String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
 
                             exchange.getOut().setBody(xml);

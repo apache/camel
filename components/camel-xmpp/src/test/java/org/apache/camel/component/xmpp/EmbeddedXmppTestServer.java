@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,9 +17,17 @@
 package org.apache.camel.component.xmpp;
 
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.vysper.mina.TCPEndpoint;
 import org.apache.vysper.storage.StorageProviderRegistry;
 import org.apache.vysper.storage.inmemory.MemoryStorageProviderRegistry;
@@ -32,68 +40,57 @@ import org.apache.vysper.xmpp.modules.extension.xep0045_muc.MUCModule;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Conference;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.RoomType;
 import org.apache.vysper.xmpp.server.XMPPServer;
-
+import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jxmpp.jid.impl.JidCreate;
 
 public final class EmbeddedXmppTestServer {
-
-    private static EmbeddedXmppTestServer instance;
 
     private XMPPServer xmppServer;
     private TCPEndpoint endpoint;
     private int port;
-    
-    // restricted to singleton
-    private EmbeddedXmppTestServer()  { }
 
-    public static EmbeddedXmppTestServer instance()  {
-        if (instance == null) {
-            instance = new EmbeddedXmppTestServer();
-            instance.initializeXmppServer();
-        }
-        return instance;
+    public EmbeddedXmppTestServer() { 
+        initializeXmppServer();
     }
 
     private void initializeXmppServer() {
         try {
-            if (xmppServer == null) {
-                xmppServer = new XMPPServer("apache.camel");
+            xmppServer = new XMPPServer("apache.camel");
 
-                StorageProviderRegistry providerRegistry = new MemoryStorageProviderRegistry();
-                AccountManagement accountManagement = (AccountManagement) providerRegistry.retrieve(AccountManagement.class);
+            StorageProviderRegistry providerRegistry = new MemoryStorageProviderRegistry();
+            AccountManagement accountManagement = (AccountManagement) providerRegistry.retrieve(AccountManagement.class);
 
-                Entity user = EntityImpl.parseUnchecked("camel_consumer@apache.camel");
-                accountManagement.addUser(user, "secret");
+            Entity user = EntityImpl.parseUnchecked("camel_consumer@apache.camel");
+            accountManagement.addUser(user, "secret");
 
-                Entity user2 = EntityImpl.parseUnchecked("camel_producer@apache.camel");
-                accountManagement.addUser(user2, "secret");
-                
-                Entity user3 = EntityImpl.parseUnchecked("camel_producer1@apache.camel");
-                accountManagement.addUser(user3, "secret");
+            Entity user2 = EntityImpl.parseUnchecked("camel_producer@apache.camel");
+            accountManagement.addUser(user2, "secret");
+            
+            Entity user3 = EntityImpl.parseUnchecked("camel_producer1@apache.camel");
+            accountManagement.addUser(user3, "secret");
 
-                xmppServer.setStorageProviderRegistry(providerRegistry);
+            xmppServer.setStorageProviderRegistry(providerRegistry);
 
-                if (endpoint == null) {
-                    endpoint = new TCPEndpoint();
-                    this.port = AvailablePortFinder.getNextAvailable(5222);
-                    endpoint.setPort(port);
-                }
+            endpoint = new TCPEndpoint();
+            this.port = AvailablePortFinder.getNextAvailable(5222);
+            endpoint.setPort(port);
 
-                xmppServer.addEndpoint(endpoint);
+            xmppServer.addEndpoint(endpoint);
 
-                InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("xmppServer.jks");
-                xmppServer.setTLSCertificateInfo(stream, "secret");
+            InputStream stream = ObjectHelper.loadResourceAsStream("xmppServer.jks");
+            xmppServer.setTLSCertificateInfo(stream, "secret");
 
-                // allow anonymous logins
-                xmppServer.setSASLMechanisms(Arrays.asList(new SASLMechanism[]{new Anonymous()}));
+            // allow anonymous logins
+            xmppServer.setSASLMechanisms(Arrays.asList(new SASLMechanism[]{new Anonymous()}));
 
-                xmppServer.start();
+            xmppServer.start();
 
-                // add the multi-user chat module and create a few test rooms
-                Conference conference = new Conference("test conference");
-                conference.createRoom(EntityImpl.parseUnchecked("camel-anon@apache.camel"), "camel-anon", RoomType.FullyAnonymous);
-                conference.createRoom(EntityImpl.parseUnchecked("camel-test@apache.camel"), "camel-test", RoomType.Public);
-                xmppServer.addModule(new MUCModule("conference", conference));
-            }
+            // add the multi-user chat module and create a few test rooms
+            Conference conference = new Conference("test conference");
+            conference.createRoom(EntityImpl.parseUnchecked("camel-anon@apache.camel"), "camel-anon", RoomType.FullyAnonymous);
+            conference.createRoom(EntityImpl.parseUnchecked("camel-test@apache.camel"), "camel-test", RoomType.Public);
+            xmppServer.addModule(new MUCModule("conference", conference));
         } catch (Exception e) {
             throw new RuntimeException("An error occurred when initializing the XMPP Test Server.", e);
         }
@@ -109,5 +106,30 @@ public final class EmbeddedXmppTestServer {
 
     public int getXmppPort() {
         return port;
+    }
+
+    public void bindSSLContextTo(JndiRegistry registry) throws Exception {
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(ObjectHelper.loadResourceAsStream("xmppServer.jks"), "secret".toCharArray());
+
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustManagerFactory.getTrustManagers(), new SecureRandom());
+
+        ConnectionConfiguration connectionConfig = XMPPTCPConnectionConfiguration.builder()
+                .setXmppDomain(JidCreate.domainBareFrom("apache.camel"))
+                .setHostAddress(InetAddress.getLocalHost())
+                .setPort(getXmppPort())
+                .setCustomSSLContext(sslContext)
+                .setHostnameVerifier((hostname, session) -> true)
+                .build();
+
+        registry.bind("customConnectionConfig", connectionConfig);
+    }
+
+    public void stop() {
+        xmppServer.stop();
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
@@ -73,7 +72,7 @@ public class CMISSessionFacade {
     }
 
     void initSession() {
-        Map<String, String> parameter = new HashMap<String, String>();
+        Map<String, String> parameter = new HashMap<>();
         parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
         parameter.put(SessionParameter.ATOMPUB_URL, this.url);
         parameter.put(SessionParameter.USER, this.username);
@@ -134,7 +133,7 @@ public class CMISSessionFacade {
     //some duplication
     public List<Map<String, Object>> retrieveResult(Boolean retrieveContent, Integer readSize,
                                                     ItemIterable<QueryResult> itemIterable) {
-        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> result = new ArrayList<>();
         boolean queryForContent = retrieveContent != null ? retrieveContent : readContent;
         int documentsToRead = readSize != null ? readSize : readCount;
         int count = 0;
@@ -182,14 +181,21 @@ public class CMISSessionFacade {
 
     public InputStream getContentStreamFor(QueryResult item) {
         Document document = getDocument(item);
-        if (document != null && document.getContentStream() != null) {
-            return document.getContentStream().getStream();
+        if (document != null) {
+            ContentStream contentStream = document.getContentStream();
+            if (contentStream != null) {
+                return contentStream.getStream();
+            }
         }
         return null;
     }
 
     public CmisObject getObjectByPath(String path) {
         return session.getObjectByPath(path);
+    }
+
+    public CmisObject getObjectById(String id) {
+        return this.session.getObject(id);
     }
 
     public boolean isObjectTypeVersionable(String objectType) {

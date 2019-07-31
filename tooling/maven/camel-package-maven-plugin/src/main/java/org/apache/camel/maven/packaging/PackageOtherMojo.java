@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,18 +17,14 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.Collections;
-import java.util.Properties;
 
-import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -37,50 +33,21 @@ import static org.apache.camel.maven.packaging.StringHelper.camelDashToTitle;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
- *
- * @goal generate-others-list
  */
-public class PackageOtherMojo extends AbstractMojo {
-
-    /**
-     * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
+@Mojo(name = "generate-others-list", threadSafe = true)
+public class PackageOtherMojo extends AbstractGeneratorMojo {
 
     /**
      * The output directory for generated components file
-     *
-     * @parameter default-value="${project.build.directory}/generated/camel/others"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated/camel/others")
     protected File otherOutDir;
 
     /**
      * The output directory for generated languages file
-     *
-     * @parameter default-value="${project.build.directory}/classes"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes")
     protected File schemaOutDir;
-
-    /**
-     * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
-     */
-    private MavenProjectHelper projectHelper;
-
-    /**
-     * build context to check changed files and mark them for refresh (used for
-     * m2e compatibility)
-     * 
-     * @component
-     * @readonly
-     */
-    private BuildContext buildContext;
 
     /**
      * Execute goal.
@@ -90,44 +57,30 @@ public class PackageOtherMojo extends AbstractMojo {
      * @throws MojoFailureException something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
+        File f = new File(project.getBasedir(), "target/classes");
+        File comp = new File(f, "META-INF/services/org/apache/camel/component");
+        if (comp.exists() && comp.isDirectory()) {
+            return;
+        }
+        File df = new File(f, "META-INF/services/org/apache/camel/dataformat");
+        if (df.exists() && df.isDirectory()) {
+            return;
+        }
+        File lan = new File(f, "META-INF/services/org/apache/camel/language");
+        if (lan.exists() && lan.isDirectory()) {
+            return;
+        }
+
         prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
     }
 
     public static void prepareOthers(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
                                      File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
 
-        // are there any components, data formats or languages?
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            File comp = new File(f, "META-INF/services/org/apache/camel/component");
-            if (comp.exists() && comp.isDirectory()) {
-                return;
-            }
-            File df = new File(f, "META-INF/services/org/apache/camel/dataformat");
-            if (df.exists() && df.isDirectory()) {
-                return;
-            }
-            File lan = new File(f, "META-INF/services/org/apache/camel/language");
-            if (lan.exists() && lan.isDirectory()) {
-                return;
-            }
-        }
-
-        // okay none of those then this is a other kind of artifact
-
         // first we need to setup the output directory because the next check
         // can stop the build before the end and eclipse always needs to know about that directory
         if (projectHelper != null) {
             projectHelper.addResource(project, otherOutDir.getPath(), Collections.singletonList("**/other.properties"), Collections.emptyList());
-        }
-
-        if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/component")
-            && !PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/dataformat")
-            && !PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
-            return;
         }
 
         String name = project.getArtifactId();
@@ -157,71 +110,31 @@ public class PackageOtherMojo extends AbstractMojo {
             }
             otherModel.setTitle(title);
 
-            log.debug("Model " + otherModel);
+            if (log.isDebugEnabled()) {
+                log.debug("Model: " + otherModel);
+            }
+
+            String schema = createJsonSchema(otherModel);
 
             // write this to the directory
-            File dir = schemaOutDir;
-            dir.mkdirs();
+            Path out = schemaOutDir.toPath()
+                    .resolve(name + ".json");
+            updateResource(buildContext, out, schema);
 
-            File out = new File(dir, name + ".json");
-            OutputStream fos = buildContext.newFileOutputStream(out);
-            String json = createJsonSchema(otherModel);
-            fos.write(json.getBytes());
-            fos.close();
-
-            buildContext.refresh(out);
-
-            log.debug("Generated " + out + " containing JSon schema for " + name + " other");
+            if (log.isDebugEnabled()) {
+                log.debug("Generated " + out + " containing JSon schema for " + name + " other");
+            }
         } catch (Exception e) {
-            throw new MojoExecutionException("Error loading language model from camel-core. Reason: " + e, e);
+            throw new MojoExecutionException("Error loading other model. Reason: " + e, e);
         }
 
         // now create properties file
         File camelMetaDir = new File(otherOutDir, "META-INF/services/org/apache/camel/");
 
-        Properties properties = new Properties();
-        properties.put("name", name);
-        properties.put("groupId", project.getGroupId());
-        properties.put("artifactId", project.getArtifactId());
-        properties.put("version", project.getVersion());
-        properties.put("projectName", project.getName());
-        if (project.getDescription() != null) {
-            properties.put("projectDescription", project.getDescription());
-        }
-
-        camelMetaDir.mkdirs();
-        File outFile = new File(camelMetaDir, "other.properties");
-
-        // check if the existing file has the same content, and if so then leave it as is so we do not write any changes
-        // which can cause a re-compile of all the source code
-        if (outFile.exists()) {
-            try {
-                Properties existing = new Properties();
-
-                InputStream is = new FileInputStream(outFile);
-                existing.load(is);
-                is.close();
-
-                // are the content the same?
-                if (existing.equals(properties)) {
-                    log.debug("No changes detected");
-                    return;
-                }
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-
-        try {
-            OutputStream os = buildContext.newFileOutputStream(outFile);
-            properties.store(os, "Generated by camel-package-maven-plugin");
-            os.close();
-
-            log.info("Generated " + outFile);
-
-        } catch (IOException e) {
-            throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
-        }
+        Path outFile = camelMetaDir.toPath().resolve("other.properties");
+        String properties = createProperties(project, "name", name);
+        updateResource(buildContext, outFile, properties);
+        log.info("Generated " + outFile + " containing 1 Camel other: " + name);
     }
 
     private static String createJsonSchema(OtherModel otherModel) {
@@ -256,6 +169,7 @@ public class PackageOtherMojo extends AbstractMojo {
         private String title;
         private String description;
         private String deprecated;
+        private String deprecationNote;
         private String firstVersion;
         private String label;
         private String groupId;
@@ -292,6 +206,14 @@ public class PackageOtherMojo extends AbstractMojo {
 
         public void setDeprecated(String deprecated) {
             this.deprecated = deprecated;
+        }
+
+        public String getDeprecationNote() {
+            return deprecationNote;
+        }
+
+        public void setDeprecationNote(String deprecationNote) {
+            this.deprecationNote = deprecationNote;
         }
 
         public String getFirstVersion() {

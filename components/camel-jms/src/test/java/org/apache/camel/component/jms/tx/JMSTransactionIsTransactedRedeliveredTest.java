@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.tx;
 
+import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -23,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -48,7 +51,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
 
     @Test
     public void testTransactionSuccess() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(AssertionError.class).to("log:error", "mock:error");
@@ -75,7 +78,9 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         // need a little sleep to ensure JMX is updated
         Thread.sleep(500);
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"myRoute\"");
+        Set<ObjectName> objectNames = getMBeanServer().queryNames(new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""), null);
+        assertEquals(1, objectNames.size());
+        ObjectName name = objectNames.iterator().next();
 
         Long total = (Long) getMBeanServer().getAttribute(name, "ExchangesTotal");
         assertEquals(3, total.intValue());

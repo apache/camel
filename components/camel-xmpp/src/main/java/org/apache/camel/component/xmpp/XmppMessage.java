@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,27 +18,27 @@ package org.apache.camel.component.xmpp;
 
 import java.util.Map;
 
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExchangeHelper;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with XMPP
  */
 public class XmppMessage extends DefaultMessage {
-    private Packet xmppPacket;
+    private Stanza xmppPacket;
 
-    public XmppMessage() {
-        this(new Message());
+    public XmppMessage(CamelContext camelContext) {
+        super(camelContext);
+        this.xmppPacket = new Message();
     }
 
-    public XmppMessage(Message jmsMessage) {
-        this.xmppPacket = jmsMessage;
-    }
-
-    public XmppMessage(Packet jmsMessage) {
-        this.xmppPacket = jmsMessage;
+    public XmppMessage(Exchange exchange, Stanza packet) {
+        super(exchange);
+        this.xmppPacket = packet;
     }
 
     @Override
@@ -64,17 +64,18 @@ public class XmppMessage extends DefaultMessage {
     /**
      * Returns the underlying XMPP packet
      */
-    public Packet getXmppPacket() {
+    public Stanza getXmppPacket() {
         return xmppPacket;
     }
 
-    public void setXmppPacket(Packet xmppPacket) {
+    public void setXmppPacket(Stanza xmppPacket) {
         this.xmppPacket = xmppPacket;
     }
 
     @Override
     public XmppMessage newInstance() {
-        return new XmppMessage();
+        XmppMessage answer = new XmppMessage(getCamelContext());
+        return answer;
     }
 
     @Override

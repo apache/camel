@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,48 +16,48 @@
  */
 package org.apache.camel.component.ignite.set;
 
-import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
-import org.apache.camel.component.ignite.IgniteComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ignite.configuration.CollectionConfiguration;
 
 /**
- * Ignite Cache endpoint.
+ * The Ignite Sets endpoint is one of camel-ignite endpoints which allows you to interact with
+ * <a href="https://apacheignite.readme.io/docs/queue-and-set">Ignite Set data structures</a>.
+ * This endpoint only supports producers.
  */
-@UriEndpoint(scheme = "ignite:set", title = "Ignite Sets", syntax = "ignite:set:[name]", label = "nosql,cache", producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-set", title = "Ignite Sets", syntax = "ignite-set:name", label = "nosql,cache", producerOnly = true)
 public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
-    @UriParam @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
 
-    @UriParam
+    @UriParam(label = "producer")
     private CollectionConfiguration configuration = new CollectionConfiguration();
 
-    @UriParam
+    @UriParam(label = "producer")
     private IgniteSetOperation operation;
 
-    public IgniteSetEndpoint(String endpointUri, URI remainingUri, Map<String, Object> parameters, IgniteComponent igniteComponent) throws Exception {
+    public IgniteSetEndpoint(String endpointUri, String remaining, Map<String, Object> parameters, IgniteSetComponent igniteComponent) throws Exception {
         super(endpointUri, igniteComponent);
-        name = remainingUri.getHost();
+        name = remaining;
 
         ObjectHelper.notNull(name, "Set name");
 
         // Set the configuration values.
         if (!parameters.containsKey("configuration")) {
             Map<String, Object> configProps = IntrospectionSupport.extractProperties(parameters, "config.");
-            EndpointHelper.setReferenceProperties(this.getCamelContext(), configProps, parameters);
-            EndpointHelper.setProperties(this.getCamelContext(), configProps, parameters);
+            PropertyBindingSupport.bindProperties(this.getCamelContext(), configProps, parameters);
         }
 
     }
@@ -82,7 +82,7 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Sets the set name.
+     * The set name.
      * 
      * @param name
      */
@@ -100,7 +100,7 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Sets the collection configuration. Default: empty configuration.
+     * The collection configuration. Default: empty configuration.
      * <p>
      * You can also conveniently set inner properties by using <tt>configuration.xyz=123</tt> options.
      * 
@@ -120,7 +120,9 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Sets the set operation to perform.
+     * The operation to invoke on the Ignite Set.
+     * Superseded by the IgniteConstants.IGNITE_SETS_OPERATION header in the IN message.
+     * Possible values: CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR, RETAIN_ALL, ARRAY.The set operation to perform.
      * 
      * @param operation
      */

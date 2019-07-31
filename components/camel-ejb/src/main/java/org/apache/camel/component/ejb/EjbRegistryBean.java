@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,19 +18,17 @@ package org.apache.camel.component.ejb;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.bean.RegistryBean;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.support.jndi.JndiBeanRepository;
 
 /**
  * An implementation of a {@link org.apache.camel.component.bean.BeanHolder} which will look up
  * an EJB bean from the JNDI {@link javax.naming.Context}
- *
- * @version 
  */
 public class EjbRegistryBean extends RegistryBean {
 
-    private Registry registry;
+    private JndiBeanRepository registry;
 
-    public EjbRegistryBean(Registry registry, CamelContext context, String name) {
+    public EjbRegistryBean(JndiBeanRepository registry, CamelContext context, String name) {
         super(context, name);
         this.registry = registry;
     }

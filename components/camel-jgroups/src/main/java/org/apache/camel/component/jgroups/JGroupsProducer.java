@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,9 +17,9 @@
 package org.apache.camel.component.jgroups;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.jgroups.Address;
-import org.jgroups.Channel;
+import org.jgroups.JChannel;
 import org.jgroups.Message;
 
 /**
@@ -31,13 +31,13 @@ public class JGroupsProducer extends DefaultProducer {
 
     private final JGroupsEndpoint endpoint;
 
-    private final Channel channel;
+    private final JChannel channel;
 
     private final String clusterName;
 
     // Constructor
 
-    public JGroupsProducer(JGroupsEndpoint endpoint, Channel channel, String clusterName) {
+    public JGroupsProducer(JGroupsEndpoint endpoint, JChannel channel, String clusterName) {
         super(endpoint);
 
         this.endpoint = endpoint;
@@ -75,8 +75,9 @@ public class JGroupsProducer extends DefaultProducer {
             if (sourceAddress != null) {
                 log.debug("Posting from custom source address: {}", sourceAddress);
             }
-
-            channel.send(new Message(destinationAddress, sourceAddress, body));
+            Message message = new Message(destinationAddress, body);
+            message.setSrc(sourceAddress);
+            channel.send(message);
         } else {
             log.debug("Body is null, cannot post to channel.");
         }

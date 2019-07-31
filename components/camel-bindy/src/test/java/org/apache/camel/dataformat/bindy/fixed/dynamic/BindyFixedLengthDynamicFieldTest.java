@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,10 +47,10 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
     private static final String TEST_RECORD = "10A9Pauline^M^ISIN10XD12345678BUYShare000002500.45USD01-08-2009\r\n";
     private static final String TEST_RECORD_WITH_EXTRA_CHARS = "10A9Pauline^M^ISIN10XD12345678BUYShare000002500.45USD01-08-2009x\r\n";
 
-    @EndpointInject(uri = URI_MOCK_MARSHALL_RESULT)
+    @EndpointInject(URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
 
-    @EndpointInject(uri = URI_MOCK_UNMARSHALL_RESULT)
+    @EndpointInject(URI_MOCK_UNMARSHALL_RESULT)
     private MockEndpoint unmarshallResult;
 
     // *************************************************************************

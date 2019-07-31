@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -582,6 +582,8 @@ public enum FacebookMethodsType {
     GET_PAGE_TAGGED(ResponseList.class, "getPageTagged", String.class, "pageId"),
     GET_PAGE_TAGGED_WITH_READING(ResponseList.class, "getPageTagged", String.class, "pageId", Reading.class, FacebookConstants.READING_PROPERTY),
     GET_PAGE(Page.class, "getPage"),
+    GET_PAGE_LIKES(ResponseList.class, "getPageLikes", String.class, "pageId"),
+    GET_PAGE_LIKES_WITH_READING(ResponseList.class, "getPageLikes", String.class, "pageId", Reading.class, FacebookConstants.READING_PROPERTY),
     GET_PAGE_WITH_ID(Page.class, "getPage", String.class, "pageId"),
     GET_PAGE_WITH_READING(Page.class, "getPage", Reading.class, FacebookConstants.READING_PROPERTY),
     GET_PAGE_WITH_ID_AND_READING(Page.class, "getPage", String.class, "pageId", Reading.class, FacebookConstants.READING_PROPERTY),
@@ -694,8 +696,8 @@ public enum FacebookMethodsType {
                     + "must be of the form 'Class arg1, String arg1Name, Class arg2, String arg2Name...");
         }
         int nArgs = args.length / 2;
-        this.argNames = new ArrayList<String>(nArgs);
-        this.argTypes = new ArrayList<Class<?>>(nArgs);
+        this.argNames = new ArrayList<>(nArgs);
+        this.argTypes = new ArrayList<>(nArgs);
         for (int i = 0; i < nArgs; i++) {
             this.argTypes.add((Class<?>) args[i * 2]);
             this.argNames.add((String) args[i * 2 + 1]);

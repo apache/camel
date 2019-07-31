@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,17 +18,18 @@ package org.apache.camel.component.springldap;
 
 import java.util.Map;
 import java.util.function.BiFunction;
-
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.ModificationItem;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.BaseLdapPathContextSource;
 import org.springframework.ldap.query.LdapQueryBuilder;
 
 public class SpringLdapProducer extends DefaultProducer {
@@ -89,12 +90,19 @@ public class SpringLdapProducer extends DefaultProducer {
             throw new UnsupportedOperationException("LDAP operation must not be empty, but you provided an empty operation");
         }
 
+        LdapTemplate ldapTemplate = endpoint.getLdapTemplate();
+
         String dn = (String)body.get(DN);
+        if (StringUtils.isBlank(dn)) {
+            ContextSource contextSource = ldapTemplate.getContextSource();
+            if (contextSource instanceof BaseLdapPathContextSource) {
+                dn = ((BaseLdapPathContextSource) contextSource).getBaseLdapPathAsString();
+            }
+        }
         if (operation != LdapOperation.FUNCTION_DRIVEN && (StringUtils.isBlank(dn))) {
             throw new UnsupportedOperationException("DN must not be empty, but you provided an empty DN");
         }
 
-        LdapOperations ldapTemplate = endpoint.getLdapTemplate();
         switch (operation) {
         case SEARCH:
             String filter = (String)body.get(FILTER);

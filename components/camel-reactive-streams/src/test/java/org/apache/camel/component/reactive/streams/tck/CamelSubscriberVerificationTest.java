@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,10 +21,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.engine.DefaultShutdownStrategy;
+import org.apache.camel.support.DefaultExchange;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
+import org.testng.annotations.AfterTest;
 
 public class CamelSubscriberVerificationTest extends SubscriberBlackboxVerification<Exchange> {
 
@@ -36,7 +38,8 @@ public class CamelSubscriberVerificationTest extends SubscriberBlackboxVerificat
 
     @Override
     public Subscriber<Exchange> createSubscriber() {
-        this.context = new DefaultCamelContext();
+        init();
+
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -62,5 +65,25 @@ public class CamelSubscriberVerificationTest extends SubscriberBlackboxVerificat
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(element);
         return exchange;
+    }
+
+    protected void init() {
+        tearDown();
+        this.context = new DefaultCamelContext();
+        DefaultShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy();
+        shutdownStrategy.setShutdownNowOnTimeout(true);
+        shutdownStrategy.setTimeout(1);
+        this.context.setShutdownStrategy(shutdownStrategy);
+    }
+
+    @AfterTest
+    protected void tearDown() {
+        try {
+            if (this.context != null) {
+                this.context.stop();
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

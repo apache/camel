@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,10 +32,10 @@ import org.slf4j.LoggerFactory;
  */
 public class MustacheComponentTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:endSimple")
+    @EndpointInject("mock:endSimple")
     protected MockEndpoint endSimpleMock;
 
-    @Produce(uri = "direct:startSimple")
+    @Produce("direct:startSimple")
     protected ProducerTemplate startSimpleProducerTemplate;
 
     /**
@@ -129,7 +129,7 @@ public class MustacheComponentTest extends CamelTestSupport {
             startSimpleProducerTemplate.sendBodyAndHeader("The Body", "someHeader", "Some Header");
         }
         assertMockEndpointsSatisfied();
-        LoggerFactory.getLogger(getClass()).info("Mustache performance: " + stopwatch.stop() + "ms for " + messageCount + " messages");
+        LoggerFactory.getLogger(getClass()).info("Mustache performance: " + stopwatch.taken() + "ms for " + messageCount + " messages");
     }
 
     @Override

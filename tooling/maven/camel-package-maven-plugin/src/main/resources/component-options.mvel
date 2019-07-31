@@ -1,15 +1,13 @@
 @if{componentOptions.isEmpty()}
 The @{title} component has no options.
 @else{}
-The @{title} component supports @{componentOptions.size()} options which are listed below.
+The @{title} component supports @{componentOptions.size()} options, which are listed below.
 @end{}
 
 @if{!componentOptions.isEmpty()}
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
-|=======================================================================
-| Name | Group | Default | Java Type | Description
-@foreach{row : componentOptions}| @{row.name} | @{row.group} | @{row.defaultValue} | @{row.shortJavaType} | @{row.description}
-@end{}|=======================================================================
-{% endraw %}
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+@foreach{row : componentOptions}| *@{row.getShortName(25)}* (@{row.shortGroup}) | @{util.escape(row.description)} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
+@end{}|===
 @end{}

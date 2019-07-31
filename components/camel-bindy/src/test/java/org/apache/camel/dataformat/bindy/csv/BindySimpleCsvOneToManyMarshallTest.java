@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,14 +35,14 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration
 public class BindySimpleCsvOneToManyMarshallTest extends AbstractJUnit4SpringContextTests {
 
-    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> models = new ArrayList<>();
     private String result = "Charles,Moulliard,Camel in Action 1,2010,43\r\n" + "Charles,Moulliard,Camel in Action 2,2012,43\r\n"
                             + "Charles,Moulliard,Camel in Action 3,2013,43\r\n" + "Charles,Moulliard,Camel in Action 4,,43\r\n";
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Test
@@ -58,8 +58,8 @@ public class BindySimpleCsvOneToManyMarshallTest extends AbstractJUnit4SpringCon
         Author author;
         Book book;
 
-        Map<String, Object> model = new HashMap<String, Object>();
-        List<Book> books = new ArrayList<Book>();
+        Map<String, Object> model = new HashMap<>();
+        List<Book> books = new ArrayList<>();
         // List<Reference> references = new ArrayList<Reference>();
         // List<Editor> editors = new ArrayList<Editor>();
 

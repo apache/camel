@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,18 +16,26 @@
  */
 package sample.camel;
 
-import org.apache.camel.main.Main;
+import org.apache.camel.opentracing.starter.CamelOpenTracing;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-public final class Service2Application {
+//CHECKSTYLE:OFF
+/**
+ * A Spring Boot application that starts the Camel OpenTracing application.
+ * <p/>
+ * Notice we use the `@CamelOpenTracing` annotation to enable Camel with OpenTracing.
+ */
+@SpringBootApplication
+@CamelOpenTracing
+public class Service2Application {
 
-    private Service2Application() {
-      // noop
-    }
-
-    public static void main(String[] args) throws Exception {
-        Main main = new Main();
-        main.addRouteBuilder(new Service2Route());
-        main.run();
+    /**
+     * A main method to start this application.
+     */
+    public static void main(String[] args) {
+        SpringApplication.run(Service2Application.class, args);
     }
 
 }
+//CHECKSTYLE:ON

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to propagate headers to and from CXF message.
- *
- * @version 
  */
 public final class CxfHeaderHelper {
     private static final Logger LOG = LoggerFactory.getLogger(CxfHeaderHelper.class);

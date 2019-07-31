@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.websocket;
 
 import java.io.Serializable;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 
 import org.eclipse.jetty.websocket.api.Session;
@@ -36,10 +37,12 @@ public class DefaultWebsocket implements Serializable {
     private final NodeSynchronization sync;
     private Session session;
     private String connectionKey;
+    private String pathSpec;
 
-    public DefaultWebsocket(NodeSynchronization sync, WebsocketConsumer consumer) {
+    public DefaultWebsocket(NodeSynchronization sync, String pathSpec, WebsocketConsumer consumer) {
         this.sync = sync;
         this.consumer = consumer;
+        this.pathSpec = pathSpec;
     }
 
     @OnWebSocketClose
@@ -60,7 +63,7 @@ public class DefaultWebsocket implements Serializable {
     public void onMessage(String message) {
         LOG.debug("onMessage: {}", message);
         if (this.consumer != null) {
-            this.consumer.sendMessage(this.connectionKey, message);
+            this.consumer.sendMessage(this.connectionKey, message, getRemoteAddress());
         } else {
             LOG.debug("No consumer to handle message received: {}", message);
         }
@@ -73,14 +76,23 @@ public class DefaultWebsocket implements Serializable {
         if (this.consumer != null) {
             byte[] message = new byte[length];
             System.arraycopy(data, offset, message, 0, length);
-            this.consumer.sendMessage(this.connectionKey, message);
+            this.consumer.sendMessage(this.connectionKey, message, getRemoteAddress());
         } else {
             LOG.debug("No consumer to handle message received: byte[]");
         }
     }
 
+    private InetSocketAddress getRemoteAddress() {
+        Session current = session;
+        return current != null ? current.getRemoteAddress() : null;
+    }
+
     public Session getSession() {
         return session;
+    }
+    
+    public String getPathSpec() {
+        return pathSpec;
     }
 
     public void setSession(Session session) {

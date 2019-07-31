@@ -1,21 +1,20 @@
 #!/bin/sh
-
-## ---------------------------------------------------------------------------
-## Licensed to the Apache Software Foundation (ASF) under one or more
-## contributor license agreements.  See the NOTICE file distributed with
-## this work for additional information regarding copyright ownership.
-## The ASF licenses this file to You under the Apache License, Version 2.0
-## (the "License"); you may not use this file except in compliance with
-## the License.  You may obtain a copy of the License at
-##
-## http://www.apache.org/licenses/LICENSE-2.0
-##
-## Unless required by applicable law or agreed to in writing, software
-## distributed under the License is distributed on an "AS IS" BASIS,
-## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-## See the License for the specific language governing permissions and
-## limitations under the License.
-## ---------------------------------------------------------------------------
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 ## This script runs the camel-itest-karaf in a more reliable way
 ## than Maven surefire will do as it can hang after a while
@@ -37,24 +36,24 @@ else
 fi  
 
 ## ensure the files are sorted
-for filename in $(ls -f $testdir/* | sort);
+for filename in $(ls -f $testdir/*Test* | sort);
 do
   testname=$(basename ${filename%.*})
 
   if [ $found -eq 0 ]
   then
-    if [ $testname == "$1" ]
+    if [ $testname = "$1" ]
     then
      found=1
     fi 
   fi
 
-  if [ $found -eq 1 ] && [ $testname != "AbstractFeatureTest" ]
+  if [ $found -eq 1 ] && [ $testname != "BaseKarafTest" ]
   then
     echo "*******************************************************************"
     echo "Running test $testname"
     echo "*******************************************************************"
-    if mvn test -Dtest=$testname ; then
+    if ../../mvnw clean test -Dtest=$testname ; then
       echo "\n"
       echo "*******************************************************************"
       echo "Test success: $testname"
@@ -69,6 +68,6 @@ do
       exit 1;
     fi  
     echo "Killing Karaf to ensure no dangling karaf running"
-    jps -l | grep karaf | cut -d ' ' -f 1 | xargs -n1 kill -kill
+    ./kill-karaf.sh
   fi  
 done

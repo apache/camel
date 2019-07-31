@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,27 +36,27 @@ import org.openstack4j.core.transport.Config;
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "regions,domains,projects,users,groups")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     String subsystem;
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String host;
     @UriParam(defaultValue = "default")
     private String domain = "default";
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String project;
 
     @UriParam
     private String operation;
 
     @UriParam
-    @Metadata(required = "true", secret = true)
+    @Metadata(required = true, secret = true)
     private String username;
 
     @UriParam
-    @Metadata(required = "true", secret = true)
+    @Metadata(required = true, secret = true)
     private String password;
 
     @UriParam

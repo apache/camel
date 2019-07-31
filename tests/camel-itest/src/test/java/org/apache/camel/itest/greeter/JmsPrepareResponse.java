@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,9 +35,7 @@ public class JmsPrepareResponse implements Processor {
             FaultDetail faultDetail = new FaultDetail();
             faultDetail.setMajor((short)2);
             faultDetail.setMinor((short)1);
-            exchange.getOut().setBody(new PingMeFault("PingMeFault raised by server", faultDetail));
-            exchange.getOut().setFault(true);
-            
+            exchange.getOut().setBody(new PingMeFault("PingMeFault raised by server", faultDetail));          
         }
     }
 }

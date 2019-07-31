@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -88,24 +88,13 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
                             + exchange.getIn().getHeader("passwd"));
                     }
                 });
-
-                // Restlet consumer default to handle GET method
-                from("restlet:http://localhost:" + portNum + "/orders with spaces in path/{id}/{x}").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody(
-                            "received GET request with id="
-                            + exchange.getIn().getHeader("id")
-                            + " and x="
-                            + exchange.getIn().getHeader("x"));
-                    }
-                });
             }
         };
     }
 
     @Test
     public void testProducer() throws IOException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_XML);
         
         String response = template.requestBodyAndHeaders("direct:start", "<order foo='1'/>", headers, String.class);
@@ -152,15 +141,6 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
     }
 
     @Test
-    public void testConsumerWithSpaces() throws IOException {
-        Client client = new Client(Protocol.HTTP);
-        Response response = client.handle(new Request(Method.GET, 
-            "http://localhost:" + portNum + "/orders with spaces in path/99991/6"));
-        assertEquals("received GET request with id=99991 and x=6",
-            response.getEntity().getText());
-    }
-    
-    @Test
     public void testUnhandledConsumer() throws IOException {
         Client client = new Client(Protocol.HTTP);
         Response response = client.handle(new Request(Method.POST, 
@@ -182,7 +162,7 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
     
     @Test
     public void testFormsProducer() throws IOException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_WWW_FORM);
         
         String response = template.requestBodyAndHeaders("restlet:http://localhost:" + portNum + "/login?restletMethod=post", "user=jaymandawg&passwd=secret$%", headers, String.class);
@@ -191,7 +171,7 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
     
     @Test
     public void testFormsProducerMapBody() throws IOException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_WWW_FORM);
         Map<String, String> body = new HashMap<>();
         body.put("user", "jaymandawg");

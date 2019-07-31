@@ -1,0 +1,16 @@
+[[WhyusemultipleCamelContext-WhyusemultipleCamelContext]]
+= Why use multiple CamelContext?
+
+In general, you don't tend to want multiple camel contexts in your
+application, if you're running Camel as a standalone Java instance.
+However, if you're deploying Camel routes as OSGi bundles, or WARs in an
+application server, then you can end up having multiple routes being
+deployed, each in it's own, isolated camel context, in the same JVM.
+This makes sense: you want each Camel application to be deployable in
+isolation, in it's own Application Context, and not affected by the
+other Camel applications.
+
+If you want the endpoints or producers in different camel contexts to
+communicate with another, there are a number of solutions. You can use
+the ServiceMix NMR, or you can use xref:components::jms-component.adoc[JMS], or
+you can use Camel's xref:components::vm-component.adoc[VM] transport.

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
@@ -30,14 +31,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A simple router that routes requests to target Restlets based on method. 
- * 
- * @version 
  */
 class MethodBasedRouter extends Restlet {
     private static final Logger LOG = LoggerFactory.getLogger(MethodBasedRouter.class);
     private String uriPattern;
     
-    private Map<Method, Restlet> routes = new ConcurrentHashMap<Method, Restlet>();
+    private Map<Method, Restlet> routes = new ConcurrentHashMap<>();
     private AtomicBoolean hasBeenAttachedFlag = new AtomicBoolean(false);
 
     MethodBasedRouter(String uriPattern) {
@@ -48,16 +47,26 @@ class MethodBasedRouter extends Restlet {
     public void handle(Request request, Response response) {
         Method method = request.getMethod();
         LOG.debug("MethodRouter ({}) received request method: {}", uriPattern, method);
-        
-        Restlet target = routes.get(method);
-        if (target != null) {
-            target.handle(request, response);
+        String requestPath = request.getResourceRef().getPath();
+        String consumerPath = request.getRootRef().getPath();
+        boolean matchOnUriPrefix = false;
+        boolean  result = RestConsumerContextPathMatcher.matchPath(requestPath, consumerPath, matchOnUriPrefix);
+        if (result) {
+            Restlet target = routes.get(method);
+            if (target == null || org.restlet.data.Method.OPTIONS.equals(method)) {
+                // must include list of allowed methods
+                response.setAllowedMethods(routes.keySet());
+            }
+            if (target != null) {
+                target.handle(request, response);
+            } else {
+                LOG.debug("MethodRouter ({}) method not allowed: {}", uriPattern, method);
+                response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+            }
         } else {
-            LOG.debug("MethodRouter ({}) method not allowed: {}", uriPattern, method);
-            response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
-            // must include list of allowed methods
-            response.setAllowedMethods(routes.keySet());
+            response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
         }
+    
     }
 
     void addRoute(Method method, Restlet target) {

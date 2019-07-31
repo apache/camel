@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,8 +18,17 @@ package org.apache.camel.component.salesforce.internal;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.time.Clock;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutionException;
@@ -28,7 +37,10 @@ import java.util.concurrent.TimeoutException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
+import org.apache.camel.component.salesforce.AuthenticationType;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -36,6 +48,7 @@ import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.dto.LoginError;
 import org.apache.camel.component.salesforce.internal.dto.LoginToken;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.HttpConversation;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -48,6 +61,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SalesforceSession implements Service {
+
+    private static final String JWT_SIGNATURE_ALGORITHM = "SHA256withRSA";
+
+    private static final int JWT_CLAIM_WINDOW = 270; // 4.5 min
+
+    private static final String JWT_HEADER = Base64.getUrlEncoder()
+        .encodeToString("{\"alg\":\"RS256\"}".getBytes(StandardCharsets.UTF_8));
 
     private static final String OAUTH2_REVOKE_PATH = "/services/oauth2/revoke?token=";
     private static final String OAUTH2_TOKEN_PATH = "/services/oauth2/token";
@@ -65,20 +85,14 @@ public class SalesforceSession implements Service {
     private volatile String accessToken;
     private volatile String instanceUrl;
 
-    public SalesforceSession(SalesforceHttpClient httpClient, long timeout, SalesforceLoginConfig config) {
+    private CamelContext camelContext;
+
+    public SalesforceSession(CamelContext camelContext, SalesforceHttpClient httpClient, long timeout, SalesforceLoginConfig config) {
+        this.camelContext = camelContext;
         // validate parameters
         ObjectHelper.notNull(httpClient, "httpClient");
         ObjectHelper.notNull(config, "SalesforceLoginConfig");
-        ObjectHelper.notNull(config.getLoginUrl(), "loginUrl");
-        ObjectHelper.notNull(config.getClientId(), "clientId");
-        ObjectHelper.notNull(config.getClientSecret(), "clientSecret");
-
-        if (ObjectHelper.isEmpty(config.getRefreshToken())) {
-            ObjectHelper.notNull(config.getUserName(), "userName");
-            ObjectHelper.notNull(config.getPassword(), "password");
-        } else {
-            ObjectHelper.notNull(config.getRefreshToken(), "refreshToken");
-        }
+        config.validate();
 
         this.httpClient = httpClient;
         this.timeout = timeout;
@@ -89,7 +103,7 @@ public class SalesforceSession implements Service {
         config.setLoginUrl(loginUrl.endsWith("/") ? loginUrl.substring(0, loginUrl.length() - 1) : loginUrl);
 
         this.objectMapper = JsonUtils.createObjectMapper();
-        this.listeners = new CopyOnWriteArraySet<SalesforceSessionListener>();
+        this.listeners = new CopyOnWriteArraySet<>();
     }
 
     public synchronized String login(String oldToken) throws SalesforceException {
@@ -129,7 +143,9 @@ public class SalesforceSession implements Service {
     }
 
     /**
-     * Creates login request, allows SalesforceSecurityHandler to create a login request for a failed authentication conversation
+     * Creates login request, allows SalesforceSecurityHandler to create a login request for a failed authentication
+     * conversation
+     * 
      * @return login POST request.
      */
     public Request getLoginRequest(HttpConversation conversation) {
@@ -138,34 +154,97 @@ public class SalesforceSession implements Service {
         final Fields fields = new Fields(true);
 
         fields.put("client_id", config.getClientId());
-        fields.put("client_secret", config.getClientSecret());
         fields.put("format", "json");
 
-        if (ObjectHelper.isEmpty(config.getRefreshToken())) {
+        final AuthenticationType type = config.getType();
+        switch (type) {
+        case USERNAME_PASSWORD:
+            fields.put("client_secret", config.getClientSecret());
             fields.put("grant_type", "password");
             fields.put("username", config.getUserName());
             fields.put("password", config.getPassword());
-        } else {
+            break;
+        case REFRESH_TOKEN:
+            fields.put("client_secret", config.getClientSecret());
             fields.put("grant_type", "refresh_token");
             fields.put("refresh_token", config.getRefreshToken());
+            break;
+        case JWT:
+            fields.put("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
+            fields.put("assertion", generateJwtAssertion());
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported login configuration type: " + type);
         }
 
         final Request post;
         if (conversation == null) {
             post = httpClient.POST(loginUrl);
         } else {
-            post = httpClient.newHttpRequest(conversation, URI.create(loginUrl))
-                .method(HttpMethod.POST);
+            post = httpClient.newHttpRequest(conversation, URI.create(loginUrl)).method(HttpMethod.POST);
         }
 
-        return post.content(new FormContentProvider(fields))
-            .timeout(timeout, TimeUnit.MILLISECONDS);
+        return post.content(new FormContentProvider(fields)).timeout(timeout, TimeUnit.MILLISECONDS);
+    }
+
+    String generateJwtAssertion() {
+        final long utcPlusWindow = Clock.systemUTC().millis() / 1000 + JWT_CLAIM_WINDOW;
+
+        final StringBuilder claim = new StringBuilder().append("{\"iss\":\"").append(config.getClientId())
+            .append("\",\"sub\":\"").append(config.getUserName()).append("\",\"aud\":\"").append(config.getLoginUrl())
+            .append("\",\"exp\":\"").append(utcPlusWindow).append("\"}");
+
+        final StringBuilder token = new StringBuilder(JWT_HEADER).append('.')
+            .append(Base64.getUrlEncoder().encodeToString(claim.toString().getBytes(StandardCharsets.UTF_8)));
+
+        final KeyStoreParameters keyStoreParameters = config.getKeystore();
+        keyStoreParameters.setCamelContext(camelContext);
+
+        try {
+            final KeyStore keystore = keyStoreParameters.createKeyStore();
+
+            final Enumeration<String> aliases = keystore.aliases();
+            String alias = null;
+            while (aliases.hasMoreElements()) {
+                String tmp = aliases.nextElement();
+                if (keystore.isKeyEntry(tmp)) {
+                    if (alias == null) {
+                        alias = tmp;
+                    } else {
+                        throw new IllegalArgumentException("The given keystore `" + keyStoreParameters.getResource()
+                            + "` contains more than one key entry, expecting only one");
+                    }
+                }
+            }
+
+            PrivateKey key = (PrivateKey) keystore.getKey(alias, keyStoreParameters.getPassword().toCharArray());
+
+            Signature signature = Signature.getInstance(JWT_SIGNATURE_ALGORITHM);
+            signature.initSign(key);
+            signature.update(token.toString().getBytes(StandardCharsets.UTF_8));
+            byte[] signed = signature.sign();
+
+            token.append('.').append(Base64.getUrlEncoder().encodeToString(signed));
+
+            // Clean the private key from memory
+            try {
+                key.destroy();
+            } catch (javax.security.auth.DestroyFailedException ex) {
+                LOG.debug("Error destroying private key: {}", ex.getMessage());
+            }
+        } catch (IOException | GeneralSecurityException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return token.toString();
     }
 
     /**
-     * Parses login response, allows SalesforceSecurityHandler to parse a login request for a failed authentication conversation.
+     * Parses login response, allows SalesforceSecurityHandler to parse a login request for a failed authentication
+     * conversation.
      */
-    public synchronized void parseLoginResponse(ContentResponse loginResponse, String responseContent) throws SalesforceException {
+    public synchronized void parseLoginResponse(ContentResponse loginResponse, String responseContent)
+        throws SalesforceException {
         final int responseStatus = loginResponse.getStatus();
 
         try {
@@ -177,7 +256,12 @@ public class SalesforceSession implements Service {
                 // don't log token or instance URL for security reasons
                 LOG.info("Login successful");
                 accessToken = token.getAccessToken();
-                instanceUrl = token.getInstanceUrl();
+                instanceUrl = Optional.ofNullable(config.getInstanceUrl()).orElse(token.getInstanceUrl());
+                // strip trailing '/'
+                int lastChar = instanceUrl.length() - 1;
+                if (instanceUrl.charAt(lastChar) == '/') {
+                    instanceUrl = instanceUrl.substring(0, lastChar);
+                }
 
                 // notify all session listeners
                 for (SalesforceSessionListener listener : listeners) {
@@ -193,15 +277,17 @@ public class SalesforceSession implements Service {
             case HttpStatus.BAD_REQUEST_400:
                 // parse the response to get error
                 final LoginError error = objectMapper.readValue(responseContent, LoginError.class);
-                final String msg = String.format("Login error code:[%s] description:[%s]",
-                    error.getError(), error.getErrorDescription());
-                final List<RestError> errors = new ArrayList<RestError>();
-                errors.add(new RestError(msg, error.getErrorDescription()));
+                final String errorCode = error.getError();
+                final String msg = String.format("Login error code:[%s] description:[%s]", error.getError(),
+                    error.getErrorDescription());
+                final List<RestError> errors = new ArrayList<>();
+                errors.add(new RestError(errorCode, msg));
                 throw new SalesforceException(errors, HttpStatus.BAD_REQUEST_400);
 
             default:
-                throw new SalesforceException(String.format("Login error status:[%s] reason:[%s]",
-                    responseStatus, loginResponse.getReason()), responseStatus);
+                throw new SalesforceException(
+                    String.format("Login error status:[%s] reason:[%s]", responseStatus, loginResponse.getReason()),
+                    responseStatus);
             }
         } catch (IOException e) {
             String msg = "Login error: response parse exception " + e.getMessage();
@@ -215,9 +301,9 @@ public class SalesforceSession implements Service {
         }
 
         try {
-            String logoutUrl = (instanceUrl == null ? config.getLoginUrl() : instanceUrl) + OAUTH2_REVOKE_PATH + accessToken;
-            final Request logoutGet = httpClient.newRequest(logoutUrl)
-                .timeout(timeout, TimeUnit.MILLISECONDS);
+            String logoutUrl = (instanceUrl == null ? config.getLoginUrl() : instanceUrl) + OAUTH2_REVOKE_PATH
+                + accessToken;
+            final Request logoutGet = httpClient.newRequest(logoutUrl).timeout(timeout, TimeUnit.MILLISECONDS);
             final ContentResponse logoutResponse = logoutGet.send();
 
             final int statusCode = logoutResponse.getStatus();
@@ -227,9 +313,7 @@ public class SalesforceSession implements Service {
                 LOG.info("Logout successful");
             } else {
                 throw new SalesforceException(
-                        String.format("Logout error, code: [%s] reason: [%s]",
-                                statusCode, reason),
-                        statusCode);
+                    String.format("Logout error, code: [%s] reason: [%s]", statusCode, reason), statusCode);
             }
 
         } catch (InterruptedException e) {
@@ -272,15 +356,23 @@ public class SalesforceSession implements Service {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         // auto-login at start if needed
-        login(accessToken);
+        try {
+            login(accessToken);
+        } catch (SalesforceException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         // logout
-        logout();
+        try {
+            logout();
+        } catch (SalesforceException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
     }
 
     public long getTimeout() {

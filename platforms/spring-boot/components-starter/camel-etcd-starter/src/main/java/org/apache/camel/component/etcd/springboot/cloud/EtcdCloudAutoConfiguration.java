@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,66 +18,90 @@ package org.apache.camel.component.etcd.springboot.cloud;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
-import org.apache.camel.component.etcd.cloud.EtcdOnDemandServiceDiscovery;
 import org.apache.camel.component.etcd.cloud.EtcdServiceDiscoveryFactory;
-import org.apache.camel.component.etcd.cloud.EtcdWatchServiceDiscovery;
+import org.apache.camel.model.cloud.springboot.EtcdServiceCallServiceDiscoveryConfigurationCommon;
+import org.apache.camel.model.cloud.springboot.EtcdServiceCallServiceDiscoveryConfigurationProperties;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.spring.boot.util.GroupCondition;
+import org.apache.camel.support.IntrospectionSupport;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionMessage;
-import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.type.AnnotatedTypeMetadata;
 
 @Configuration
 @ConditionalOnBean(CamelAutoConfiguration.class)
 @Conditional(EtcdCloudAutoConfiguration.Condition.class)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
-@EnableConfigurationProperties(EtcdCloudConfiguration.class)
+@EnableConfigurationProperties(EtcdServiceCallServiceDiscoveryConfigurationProperties.class)
 public class EtcdCloudAutoConfiguration {
+    @Autowired
+    private CamelContext camelContext;
+    @Autowired
+    private EtcdServiceCallServiceDiscoveryConfigurationProperties configuration;
+    @Autowired
+    private ConfigurableBeanFactory beanFactory;
+
     @Lazy
     @Bean(name = "etcd-service-discovery")
     @ConditionalOnClass(CamelContext.class)
-    public ServiceDiscovery configureServiceDiscoveryFactory(CamelContext camelContext, EtcdCloudConfiguration configuration) throws Exception {
+    public ServiceDiscovery configureServiceDiscoveryFactory() throws Exception {
         EtcdServiceDiscoveryFactory factory = new EtcdServiceDiscoveryFactory();
 
-        Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(configuration, parameters, null, false);
-        IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), factory, parameters);
+        IntrospectionSupport.setProperties(
+            camelContext,
+            camelContext.getTypeConverter(),
+            factory,
+            IntrospectionSupport.getNonNullProperties(configuration));
 
         return factory.newInstance(camelContext);
     }
 
-    public static class Condition extends SpringBootCondition {
-        @Override
-        public ConditionOutcome getMatchOutcome(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
-            boolean groupEnabled = isEnabled(conditionContext, "camel.cloud.", true);
+    @PostConstruct
+    public void postConstruct() {
+        if (beanFactory != null) {
+            Map<String, Object> parameters = new HashMap<>();
 
-            ConditionMessage.Builder message = ConditionMessage.forCondition("camel.cloud.etcd");
-            if (isEnabled(conditionContext, "camel.cloud.etcd.", groupEnabled)) {
-                return ConditionOutcome.match(message.because("enabled"));
+            for (Map.Entry<String, EtcdServiceCallServiceDiscoveryConfigurationCommon> entry : configuration.getConfigurations().entrySet()) {
+                // clean up params
+                parameters.clear();
+
+                // The instance factory
+                EtcdServiceDiscoveryFactory factory = new EtcdServiceDiscoveryFactory();
+
+                try {
+                    IntrospectionSupport.getProperties(entry.getValue(), parameters, null, false);
+                    IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), factory, parameters);
+
+                    beanFactory.registerSingleton(entry.getKey(), factory.newInstance(camelContext));
+                } catch (Exception e) {
+                    throw new BeanCreationException(entry.getKey(), e.getMessage(), e);
+                }
             }
-
-            return ConditionOutcome.noMatch(message.because("not enabled"));
         }
+    }
 
-        private boolean isEnabled(ConditionContext context, String prefix, boolean defaultValue) {
-            RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(context.getEnvironment(), prefix);
-            return resolver.getProperty("enabled", Boolean.class, defaultValue);
+    // *******************************
+    // Condition
+    // *******************************
+
+    public static class Condition extends GroupCondition {
+        public Condition() {
+            super(
+                "camel.cloud.etcd",
+                "camel.cloud.etcd.service-discovery"
+            );
         }
     }
 }

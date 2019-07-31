@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,9 +25,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.URISupport;
 import org.junit.Test;
@@ -57,11 +57,10 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
             }
         };
     }
-    
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry =  new JndiRegistry(createJndiContext());
+
+    @Override
+    protected void bindToRegistry(Registry registry) throws Exception {
         registry.bind("my", new MyComponent());
-        return registry;
     }
     
     class MyComponent extends DefaultComponent {
@@ -87,7 +86,7 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
         private final Endpoint childEndpoint;
         
         MyEndpoint(String uri, Endpoint childEndpoint) {
-            super(uri);
+            super(uri, null);
             this.childEndpoint = childEndpoint;
         }
 

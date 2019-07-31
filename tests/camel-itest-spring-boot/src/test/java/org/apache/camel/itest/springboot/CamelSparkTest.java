@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,6 +35,8 @@ public class CamelSparkTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSparkTest.class))
+                .ignoreLibraryMismatch("org.scala-lang.modules:scala-parser-combinators_2.11")
+                .ignoreLibraryMismatch("org.scala-lang.modules:scala-xml_2.11")
                 .build();
     }
 

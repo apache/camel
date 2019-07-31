@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,7 @@ package org.apache.camel.component.smpp;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
@@ -28,12 +28,10 @@ import org.jsmpp.session.SMPPSession;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SmppQuerySmCommandTest {
 
@@ -43,7 +41,7 @@ public class SmppQuerySmCommandTest {
     
     @Before
     public void setUp() {
-        session = createMock(SMPPSession.class);
+        session = mock(SMPPSession.class);
         config = new SmppConfiguration();
         
         command = new SmppQuerySmCommand(session, config);
@@ -54,14 +52,10 @@ public class SmppQuerySmCommandTest {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "QuerySm");
         exchange.getIn().setHeader(SmppConstants.ID, "1");
-        expect(session.queryShortMessage("1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616"))
-                .andReturn(new QuerySmResult("-300101010000004+", MessageState.DELIVERED, (byte) 0));
-        
-        replay(session);
+        when(session.queryShortMessage("1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616"))
+                .thenReturn(new QuerySmResult("-300101010000004+", MessageState.DELIVERED, (byte) 0));
         
         command.execute(exchange);
-        
-        verify(session);
         
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals("DELIVERED", exchange.getOut().getHeader(SmppConstants.MESSAGE_STATE));
@@ -77,14 +71,10 @@ public class SmppQuerySmCommandTest {
         exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_TON, TypeOfNumber.NATIONAL.value());
         exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_NPI, NumberingPlanIndicator.NATIONAL.value());
         exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
-        expect(session.queryShortMessage("1", TypeOfNumber.NATIONAL, NumberingPlanIndicator.NATIONAL, "1818"))
-                .andReturn(new QuerySmResult("-300101010000004+", MessageState.DELIVERED, (byte) 0));
-        
-        replay(session);
+        when(session.queryShortMessage("1", TypeOfNumber.NATIONAL, NumberingPlanIndicator.NATIONAL, "1818"))
+                .thenReturn(new QuerySmResult("-300101010000004+", MessageState.DELIVERED, (byte) 0));
         
         command.execute(exchange);
-        
-        verify(session);
         
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals("DELIVERED", exchange.getOut().getHeader(SmppConstants.MESSAGE_STATE));

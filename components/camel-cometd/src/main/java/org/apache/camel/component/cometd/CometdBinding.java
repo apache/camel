@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,9 +21,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
@@ -57,7 +58,6 @@ public class CometdBinding {
         this.bayeux = bayeux;
         this.enableSessionHeader = enableSessionHeader;
     }
-    
 
     public ServerMessage.Mutable createCometdMessage(ServerChannel channel, ServerSession serverSession, Message camelMessage) {
         ServerMessage.Mutable mutable = bayeux.newMessage();
@@ -71,12 +71,12 @@ public class CometdBinding {
         return mutable;
     }
 
-    public Message createCamelMessage(ServerSession remote, ServerMessage cometdMessage, Object data) {
+    public Message createCamelMessage(CamelContext camelContext, ServerSession remote, ServerMessage cometdMessage, Object data) {
         if (cometdMessage != null) {
             data = cometdMessage.getData();
         }
 
-        Message message = new DefaultMessage();
+        Message message = new DefaultMessage(camelContext);
         message.setBody(data);
         Map headers = getHeadersFromMessage(cometdMessage);
         if (headers != null) {
@@ -112,7 +112,6 @@ public class CometdBinding {
         }
     }
 
-
     public void addHeadersToMessage(ServerMessage.Mutable cometdMessage, Message camelMessage) {
         if (camelMessage.hasHeaders()) {
             Map<String, Object> ext = cometdMessage.getExt(true);
@@ -122,7 +121,7 @@ public class CometdBinding {
 
     //TODO: do something in the style of JMS where they have header Strategies?
     private Object filterHeaders(Map<String, Object> headers) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         for (Entry<String, Object> entry : headers.entrySet()) {
             if (entry != null && entry.getKey() != null) {
                 map.put(entry.getKey(), entry.getValue());

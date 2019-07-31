@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Using some token definions from: http://kiwwito.com/build-a-lexical-analyzer-with-javacc/
+// Using some token definitions from: http://kiwwito.com/build-a-lexical-analyzer-with-javacc/
 
 options {
     STATIC = false;
@@ -27,10 +27,20 @@ PARSER_BEGIN(SSPTParser)
 
 package org.apache.camel.component.sql.stored.template.generated;
 
+import java.io.Reader;
+
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.component.sql.stored.template.ast.*;
 
 public class SSPTParser {
    int parameterNameCounter = 0;
+
+   ClassResolver classResolver;
+
+   public SSPTParser(Reader reader, ClassResolver classResolver) {
+     this(reader);
+     this.classResolver = classResolver;
+   }
 
    String createNextParameterName() {
       return "_"+(parameterNameCounter++);
@@ -59,44 +69,92 @@ Object Parameter() :
     Object param;
 }
 {
-     (param = InputParameter() {return param;}) | (param = OutParameter(){return param;})
+     (param = InParameter() {return param;}) | (param = OutParameter(){return param;}) | (param = InOutParameter(){return param;})
 }
 
-InputParameter InputParameter() :
+InParameter InParameter() :
 {
      Token sqlTypeToken;
-     String name;
+     String name = null;
      Token valueSrcToken;
+     Integer scale = null;
+     String typeName = null;
 }
 {
-    (sqlTypeToken = ParameterSqlType() " " valueSrcToken =
-    InputParameterSrc())
+    ((name = ParameterName() " ")? sqlTypeToken = ParameterSqlType() (scale = Scale())? " " (typeName = ParameterName() " ")? valueSrcToken =
+    InParameterSrc())
     {
-        int sqlType = ParseHelper.parseSqlType(sqlTypeToken);
-        return new InputParameter(createNextParameterName(),sqlType,valueSrcToken);
+        int sqlType = ParseHelper.parseSqlType(sqlTypeToken, classResolver);
+
+        return new InParameter(name == null ? createNextParameterName() : name, sqlType, valueSrcToken, scale, typeName);
     }
 }
 
 OutParameter OutParameter() :
 {
      Token sqlTypeToken;
-     String name;
+     String outValueMapKey;
+     Integer scale = null;
+     String typeName = null;
+}
+{
+    ("OUT " sqlTypeToken = ParameterSqlType() (scale = Scale())? " " (typeName = ParameterName() " ")? outValueMapKey =
+    OutHeader())
+    {
+        return new OutParameter(ParseHelper.parseSqlType(sqlTypeToken, classResolver), outValueMapKey, scale, typeName);
+    }
+}
+
+InOutParameter InOutParameter() :
+{
+     Token sqlTypeToken;
+     Token valueSrcToken;
+     Integer scale = null;
+     String typeName = null;
      String outValueMapKey;
 }
 {
-    ("OUT" " " sqlTypeToken = ParameterSqlType() " " outValueMapKey =
-    OutHeader())
+    ("INOUT " sqlTypeToken = ParameterSqlType() (scale = Scale())? " "
+    (typeName = ParameterName() " ")? valueSrcToken = InParameterSrc() " " outValueMapKey = OutHeader())
     {
-        return new OutParameter(createNextParameterName(),ParseHelper.parseSqlType(sqlTypeToken),outValueMapKey);
+        int sqlType = ParseHelper.parseSqlType(sqlTypeToken, classResolver);
+
+        return new InOutParameter(sqlType, valueSrcToken, scale, typeName, outValueMapKey);
+    }
+}
+
+String ParameterName():
+{
+    Token t = null;
+}
+{
+    (t = <PARAMETER_NAME>)
+
+    {
+        return ParseHelper.removeQuotes(t.toString()) ;
+    }
+}
+
+Integer Scale():
+{
+    Token t;
+
+}
+{
+    ( t = <SCALE> )
+    {
+
+        return ParseHelper.parseScale(t);
     }
 }
 
 Token ParameterSqlType():
 {
     Token t;
+    Token scaleToken;
 }
 {
-    (t = <NUMBER> | t = <IDENTIFIER>)
+    (t = <NUMBER> | t = <IDENTIFIER>  )
     {
         return t;
     }
@@ -112,7 +170,7 @@ String OutHeader():
         return token.toString();
     }
 }
-Token InputParameterSrc():
+Token InParameterSrc():
 {
     Token ret = null;
 }
@@ -130,6 +188,10 @@ Token InputParameterSrc():
 }
 
 TOKEN: {
+    <SCALE: "(" (["-","0"-"9"])+ ")">
+}
+
+TOKEN: {
     <NUMBER: (["-","0"-"9"])+>
 }
 
@@ -142,7 +204,7 @@ TOKEN: {
 }
 
 TOKEN: {
-    <#SPECIAL: (["#","_","-","'",".","$","{","}","\"","[","]"])>
+    <#SPECIAL: ([":","#","_","-","'",".","$","{","}","\"","[","]"])>
 }
 
 TOKEN: {
@@ -174,6 +236,13 @@ TOKEN : {
 }
 
 TOKEN : {
+    <PARAMETER_NAME: "'"( <LETTER> | <DIGIT> | <SPECIAL> )+"'" >
+}
+
+TOKEN : {
     <IDENTIFIER: ( <LETTER> | <DIGIT> | <SPECIAL> )+ >
 }
+
+
+
 

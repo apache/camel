@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,11 +21,12 @@ import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
@@ -34,16 +35,11 @@ import org.jvnet.mock_javamail.Mailbox;
  */
 public class MailIdempotentRepositoryTest extends CamelTestSupport {
 
+    @BindToRegistry("myRepo")
     private MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myRepo", myRepo);
-        return jndi;
-    }
-
-    @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -56,7 +52,7 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(5);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 
@@ -64,7 +60,8 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
         Thread.sleep(500);
 
         assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount());
-        // they get deleted after processing by default so we should be back to 0
+        // they get deleted after processing by default so we should be back to
+        // 0
         assertEquals(0, myRepo.getCacheSize());
     }
 
@@ -92,8 +89,8 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo").routeId("foo").noAutoStartup()
-                        .to("mock:result");
+                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&consumer.initialDelay=100&consumer.delay=100").routeId("foo").noAutoStartup()
+                    .to("mock:result");
             }
         };
     }

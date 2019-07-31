@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,9 +21,6 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpProducerFileExistOverrideTwoUploadTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
@@ -52,10 +49,5 @@ public class FtpProducerFileExistOverrideTwoUploadTest extends FtpServerTestSupp
 
         body = context.getTypeConverter().convertTo(String.class, file);
         assertEquals("Bye World", body);
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 }

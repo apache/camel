@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,13 +30,12 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.handler.MessageContext.Scope;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.model.SoapHeaderInfo;
 import org.apache.cxf.endpoint.Client;
@@ -46,19 +45,14 @@ import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
-import org.apache.cxf.transport.Conduit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * CxfProducer binds a Camel exchange to a CXF exchange, acts as a CXF 
  * client, and sends the request to a CXF to a server.  Any response will 
  * be bound to Camel exchange. 
- *
- * @version 
  */
-public class CxfProducer extends DefaultProducer implements AsyncProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(CxfProducer.class);
+public class CxfProducer extends DefaultAsyncProducer {
+
     private Client client;
     private CxfEndpoint endpoint;
 
@@ -83,17 +77,6 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         if (client == null) {
             client = endpoint.createClient();
         }
-        Conduit conduit = client.getConduit();
-        if (conduit.getClass().getName().endsWith("JMSConduit")) {
-            java.lang.reflect.Method getJmsConfig = conduit.getClass().getMethod("getJmsConfig");
-            Object jmsConfig = getJmsConfig.invoke(conduit);
-            java.lang.reflect.Method getMessageType = jmsConfig.getClass().getMethod("getMessageType");
-            boolean isTextPayload = "text".equals(getMessageType.invoke(jmsConfig));
-            if (isTextPayload && endpoint.getDataFormat().equals(DataFormat.MESSAGE)) {
-                //throw Exception as the Text JMS mesasge won't send as stream
-                throw new RuntimeException("Text JMS message coundn't be a stream");
-            }
-        }
 
 
         endpoint.getChainedCxfEndpointConfigurer().configureClient(client);
@@ -112,7 +95,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     // As the cxf client async and sync api is implement different,
     // so we don't delegate the sync process call to the async process 
     public boolean process(Exchange camelExchange, AsyncCallback callback) {
-        LOG.trace("Process exchange: {} in an async way.", camelExchange);
+        log.trace("Process exchange: {} in an async way.", camelExchange);
         
         try {
             // create CXF exchange
@@ -123,8 +106,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             // prepare binding operation info
             BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
             
-            Map<String, Object> invocationContext = new HashMap<String, Object>();
-            Map<String, Object> responseContext = new HashMap<String, Object>();
+            Map<String, Object> invocationContext = new HashMap<>();
+            Map<String, Object> responseContext = new HashMap<>();
             invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
             invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
             
@@ -150,7 +133,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
      * invokes the CXF client.
      */
     public void process(Exchange camelExchange) throws Exception {
-        LOG.trace("Process exchange: {} in sync way.", camelExchange);
+        log.trace("Process exchange: {} in sync way.", camelExchange);
         
         // create CXF exchange
         ExchangeImpl cxfExchange = new ExchangeImpl();
@@ -160,8 +143,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         // prepare binding operation info
         BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
         
-        Map<String, Object> invocationContext = new HashMap<String, Object>();
-        Map<String, Object> responseContext = new HashMap<String, Object>();
+        Map<String, Object> invocationContext = new HashMap<>();
+        Map<String, Object> responseContext = new HashMap<>();
         invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
         invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
         
@@ -176,10 +159,13 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             // add cookies to the cookie store
             if (endpoint.getCookieHandler() != null) {
                 try {
-                    Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)cxfExchange.getInMessage().get(Message.PROTOCOL_HEADERS));
-                    endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
+                    Message inMessage = cxfExchange.getInMessage();
+                    if (inMessage != null) {
+                        Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)inMessage.get(Message.PROTOCOL_HEADERS));
+                        endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
+                    }
                 } catch (IOException e) {
-                    LOG.error("Cannot store cookies", e);
+                    log.error("Cannot store cookies", e);
                 }
             }
             // bind the CXF response to Camel exchange
@@ -193,15 +179,14 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     protected Map<String, Object> prepareRequest(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) throws Exception {
         
         // create invocation context
-        WrappedMessageContext requestContext = new WrappedMessageContext(
-                new HashMap<String, Object>(), null, Scope.APPLICATION);
+        WrappedMessageContext requestContext = new WrappedMessageContext(new HashMap<String, Object>(), null, Scope.APPLICATION);
 
         camelExchange.setProperty(Message.MTOM_ENABLED, String.valueOf(endpoint.isMtomEnabled()));
         
         // set data format mode in exchange
         DataFormat dataFormat = endpoint.getDataFormat();
         camelExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
-        LOG.trace("Set Camel Exchange property: {}={}", DataFormat.class.getName(), dataFormat);
+        log.trace("Set Camel Exchange property: {}={}", DataFormat.class.getName(), dataFormat);
         
         if (endpoint.getMergeProtocolHeaders()) {
             camelExchange.setProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.TRUE);
@@ -213,7 +198,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         // don't let CXF ClientImpl close the input stream 
         if (dataFormat.dealias() == DataFormat.RAW) {
             cxfExchange.put(Client.KEEP_CONDUIT_ALIVE, true);
-            LOG.trace("Set CXF Exchange property: {}={}", Client.KEEP_CONDUIT_ALIVE, true);
+            log.trace("Set CXF Exchange property: {}={}", Client.KEEP_CONDUIT_ALIVE, true);
         }
      
         // bind the request CXF exchange
@@ -226,7 +211,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                 Map<String, List<String>> transportHeaders = CastUtils.cast((Map<?, ?>)requestContext.get(Message.PROTOCOL_HEADERS));
                 boolean added;
                 if (transportHeaders == null) {
-                    transportHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+                    transportHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                     added = true;
                 } else {
                     added = false;
@@ -236,7 +221,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                     requestContext.put(Message.PROTOCOL_HEADERS, transportHeaders);
                 }
             } catch (IOException e) {
-                LOG.warn("Cannot load cookies", e);
+                log.warn("Cannot load cookies", e);
             }
         }
 
@@ -262,13 +247,13 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         
         // store the original boi in the exchange
         camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
-        LOG.trace("Set exchange property: BindingOperationInfo: {}", boi);
+        log.trace("Set exchange property: BindingOperationInfo: {}", boi);
 
         // Unwrap boi before passing it to make a client call
         if (endpoint.getDataFormat() != DataFormat.PAYLOAD && !endpoint.isWrapped() && boi != null) {
             if (boi.isUnwrappedCapable()) {
                 boi = boi.getUnwrappedOperation();
-                LOG.trace("Unwrapped BOI {}", boi);
+                log.trace("Unwrapped BOI {}", boi);
             }
         }
         return  boi;
@@ -284,15 +269,15 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                 boi = boi.getUnwrappedOperation();
             }
         }
-        int experctMessagePartsSize = boi.getInput().getMessageParts().size();
+        int expectMessagePartsSize = boi.getInput().getMessageParts().size();
         
-        if (parameters.length < experctMessagePartsSize) {
+        if (parameters.length < expectMessagePartsSize) {
             throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Expect size "
-                                               + experctMessagePartsSize + ", Parameter size " + parameters.length
+                                               + expectMessagePartsSize + ", Parameter size " + parameters.length
                                                + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
         }
         
-        if (parameters.length > experctMessagePartsSize) {
+        if (parameters.length > expectMessagePartsSize) {
             // need to check the holder parameters        
             int holdersSize = 0;            
             for (Object parameter : parameters) {
@@ -310,9 +295,9 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                 }
             }
           
-            if (holdersSize + experctMessagePartsSize + soapHeadersSize < parameters.length) {
+            if (holdersSize + expectMessagePartsSize + soapHeadersSize < parameters.length) {
                 throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Expect size "
-                                                   + (experctMessagePartsSize + holdersSize + soapHeadersSize) + ", Parameter size " + parameters.length
+                                                   + (expectMessagePartsSize + holdersSize + soapHeadersSize) + ", Parameter size " + parameters.length
                                                    + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
             }
         }
@@ -365,10 +350,10 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             params[0] = exchange.getIn().getBody();
         }
 
-        if (LOG.isTraceEnabled()) {
+        if (log.isTraceEnabled()) {
             if (params != null) {
                 for (int i = 0; i < params.length; i++) {
-                    LOG.trace("params[{}] = {}", i, params[i]);
+                    log.trace("params[{}] = {}", i, params[i]);
                 }
             }
         }
@@ -391,11 +376,11 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         BindingOperationInfo answer = null;
         String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
         if (lp == null) {
-            LOG.debug("CxfProducer cannot find the {} from message header, trying with defaultOperationName", CxfConstants.OPERATION_NAME);
+            log.debug("CxfProducer cannot find the {} from message header, trying with defaultOperationName", CxfConstants.OPERATION_NAME);
             lp = endpoint.getDefaultOperationName();
         }
         if (lp == null) {
-            LOG.debug("CxfProducer cannot find the {} from message header and there is no DefaultOperationName setting, CxfProducer will pick up the first available operation.",
+            log.debug("CxfProducer cannot find the {} from message header and there is no DefaultOperationName setting, CxfProducer will pick up the first available operation.",
                      CxfConstants.OPERATION_NAME);
             Collection<BindingOperationInfo> bois = 
                 client.getEndpoint().getEndpointInfo().getBinding().getOperations();
@@ -412,12 +397,12 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             }
             if (ns == null) {
                 ns = client.getEndpoint().getService().getName().getNamespaceURI();
-                LOG.trace("Operation namespace not in header. Set it to: {}", ns);
+                log.trace("Operation namespace not in header. Set it to: {}", ns);
             }            
 
             QName qname = new QName(ns, lp);
 
-            LOG.trace("Operation qname = {}", qname.toString());
+            log.trace("Operation qname = {}", qname);
             
             answer = client.getEndpoint().getEndpointInfo().getBinding().getOperation(qname);
             if (answer == null) {

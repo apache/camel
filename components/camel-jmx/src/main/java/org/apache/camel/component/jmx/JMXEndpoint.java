@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.jmx;
 
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import javax.management.MalformedObjectNameException;
 import javax.management.NotificationFilter;
 import javax.management.ObjectName;
@@ -25,11 +26,11 @@ import javax.management.ObjectName;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -47,7 +48,7 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * You can append query options to the URI in the following format, ?options=value&option2=value&...
  */
-@UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true, consumerClass = JMXConsumer.class, label = "monitoring")
+@UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true, label = "monitoring")
 public class JMXEndpoint extends DefaultEndpoint {
 
     // error messages as constants so they can be asserted on from unit tests
@@ -60,166 +61,174 @@ public class JMXEndpoint extends DefaultEndpoint {
     protected static final String ERR_OBSERVED_ATTRIBUTE = "Observed attribute must be specified";
 
     /**
-     * server url comes from the remaining endpoint
+     * Server url comes from the remaining endpoint. Use platform to connect to local JVM.
      */
     @UriPath
     private String serverURL;
 
     /**
-     * URI Property: [monitor types only] The attribute to observe for the monitor bean.  
+     * The domain for the mbean you're connecting to
      */
-    @UriParam
-    private String observedAttribute;
-
-    /**
-     * URI Property: [monitor types only] The frequency to poll the bean to check the monitor.  
-     */
-    @UriParam(defaultValue = "10000")
-    private long granularityPeriod = 10000;
-
-    /**
-     * URI Property: [monitor types only] The type of monitor to create. One of string, gauge, counter.  
-     */
-    @UriParam(enums = "counter,gauge,string")
-    private String monitorType;
-
-    /**
-     * URI Property: [counter monitor only] Initial threshold for the monitor. The value must exceed this before notifications are fired.  
-     */
-    @UriParam(label = "counter")
-    private int initThreshold;
-
-    /**
-     * URI Property: [counter monitor only] The amount to increment the threshold after it's been exceeded.  
-     */
-    @UriParam(label = "counter")
-    private int offset;
-
-    /**
-     * URI Property: [counter monitor only] The value at which the counter is reset to zero  
-     */
-    @UriParam(label = "counter")
-    private int modulus;
-
-    /**
-     * URI Property: [counter + gauge monitor only] If true, then the value reported in the notification is the difference from the threshold as opposed to the value itself.  
-     */
-    @UriParam(label = "counter,gauge")
-    private boolean differenceMode;
-
-    /**
-     * URI Property: [gauge monitor only] If true, the gauge will fire a notification when the high threshold is exceeded  
-     */
-    @UriParam(label = "gauge")
-    private boolean notifyHigh;
-
-    /**
-     * URI Property: [gauge monitor only] If true, the gauge will fire a notification when the low threshold is exceeded  
-     */
-    @UriParam(label = "gauge")
-    private boolean notifyLow;
-
-    /**
-     * URI Property: [gauge monitor only] Value for the gauge's high threshold  
-     */
-    @UriParam(label = "gauge")
-    private Double thresholdHigh;
-
-    /**
-     * URI Property: [gauge monitor only] Value for the gauge's low threshold  
-     */
-    @UriParam(label = "gauge")
-    private Double thresholdLow;
-
-    /**
-     * URI Property: [string monitor only] If true, the string monitor will fire a notification when the string attribute differs from the string to compare.  
-     */
-    @UriParam(label = "string")
-    private boolean notifyDiffer;
-
-    /**
-     * URI Property: [string monitor only] If true, the string monitor will fire a notification when the string attribute matches the string to compare.  
-     */
-    @UriParam(label = "string")
-    private boolean notifyMatch;
-
-    /**
-     * URI Property: [string monitor only] Value for the string monitor's string to compare.  
-     */
-    @UriParam(label = "string")
-    private String stringToCompare;
-    
-    /**
-     * URI Property: Format for the message body. Either "xml" or "raw". If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body.
-     */
-    @UriParam(defaultValue = "xml", enums = "xml,raw")
-    private String format = "xml";
-
-    /**
-     * URI Property: credentials for making a remote connection
-     */
-    @UriParam(label = "security", secret = true)
-    private String user;
-
-    /**
-     * URI Property: credentials for making a remote connection
-     */
-    @UriParam(label = "security", secret = true)
-    private String password;
-
-    /**
-     * URI Property: The domain for the mbean you're connecting to
-     */
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String objectDomain;
 
     /**
-     * URI Property: The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed.
+     * The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed.
      */
     @UriParam
     private String objectName;
 
     /**
-     * URI Property: Reference to a bean that implements the NotificationFilter.
+     * The attribute to observe for the monitor bean or consumer.
+     */
+    @UriParam
+    private String observedAttribute;
+
+    /**
+     * The frequency to poll the bean to check the monitor (monitor types only).
+     */
+    @UriParam(defaultValue = "10000")
+    private long granularityPeriod = 10000;
+
+    /**
+     * The type of monitor to create. One of string, gauge, counter (monitor types only).
+     */
+    @UriParam(enums = "counter,gauge,string")
+    private String monitorType;
+
+    /**
+     * Initial threshold for the monitor. The value must exceed this before notifications are fired (counter monitor only).
+     */
+    @UriParam(label = "counter")
+    private int initThreshold;
+
+    /**
+     * The amount to increment the threshold after it's been exceeded (counter monitor only).
+     */
+    @UriParam(label = "counter")
+    private int offset;
+
+    /**
+     * The value at which the counter is reset to zero (counter monitor only).
+     */
+    @UriParam(label = "counter")
+    private int modulus;
+
+    /**
+     * If true, then the value reported in the notification is the difference from the threshold as opposed to the value itself (counter and gauge monitor only).
+     */
+    @UriParam(label = "counter,gauge")
+    private boolean differenceMode;
+
+    /**
+     * If true, the gauge will fire a notification when the high threshold is exceeded (gauge monitor only).
+     */
+    @UriParam(label = "gauge")
+    private boolean notifyHigh;
+
+    /**
+     * If true, the gauge will fire a notification when the low threshold is exceeded (gauge monitor only).
+     */
+    @UriParam(label = "gauge")
+    private boolean notifyLow;
+
+    /**
+     * Value for the gauge's high threshold (gauge monitor only).
+     */
+    @UriParam(label = "gauge")
+    private Double thresholdHigh;
+
+    /**
+     * Value for the gauge's low threshold (gauge monitor only).
+     */
+    @UriParam(label = "gauge")
+    private Double thresholdLow;
+
+    /**
+     * If true, will fire a notification when the string attribute differs from the string to compare (string monitor or consumer).
+     * By default the consumer will notify match if observed attribute and string to compare has been configured.
+     */
+    @UriParam(label = "consumer,string")
+    private boolean notifyDiffer;
+
+    /**
+     * If true, will fire a notification when the string attribute matches the string to compare (string monitor or consumer).
+     * By default the consumer will notify match if observed attribute and string to compare has been configured.
+     */
+    @UriParam(label = "consumer,string")
+    private boolean notifyMatch;
+
+    /**
+     * Value for attribute to compare (string monitor or consumer).
+     * By default the consumer will notify match if observed attribute and string to compare has been configured.
+     */
+    @UriParam(label = "consumer,string")
+    private String stringToCompare;
+    
+    /**
+     * Format for the message body. Either "xml" or "raw". If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body.
+     */
+    @UriParam(defaultValue = "xml", enums = "xml,raw")
+    private String format = "xml";
+
+    /**
+     * Credentials for making a remote connection
+     */
+    @UriParam(label = "security", secret = true)
+    private String user;
+
+    /**
+     * Credentials for making a remote connection
+     */
+    @UriParam(label = "security", secret = true)
+    private String password;
+
+    /**
+     * Reference to a bean that implements the NotificationFilter.
      */
     @UriParam(label = "advanced")
     private NotificationFilter notificationFilter;
 
     /**
-     * URI Property: Value to handback to the listener when a notification is received. This value will be put in the message header with the key "jmx.handback"
+     * Value to handback to the listener when a notification is received. This value will be put in the message header with the key "jmx.handback"
      */
     @UriParam(label = "advanced")
     private Object handback;
     
     /**
-     * URI Property:  If true the consumer will throw an exception if unable to establish the JMX connection upon startup.  If false, the consumer will attempt
-     *                to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured  reconnectionDelay 
+     * If true the consumer will throw an exception if unable to establish the JMX connection upon startup.  If false, the consumer will attempt
+     * to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured  reconnectionDelay
      */
-    @UriParam(defaultValue = "true", label = "advanced")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean testConnectionOnStartup = true;
     
-    
     /**
-     * URI Property:  If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs.  The consumer will attempt
-     *                to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured  reconnectionDelay
+     * If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs.  The consumer will attempt
+     * to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured  reconnectionDelay
      */
     @UriParam(label = "advanced")
     private boolean reconnectOnConnectionFailure;
      
-     /**
-      * URI Property:  The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection
-      */
-    @UriParam(defaultValue = "10", label = "advanced")
+    /**
+     * The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection
+     */
+    @UriParam(label = "advanced", defaultValue = "10")
     private int reconnectDelay = 10;
 
     /**
-     * URI Property: properties for the object name. These values will be used if the objectName param is not set
+     * Properties for the object name. These values will be used if the objectName param is not set
      */
     @UriParam(label = "advanced", prefix = "key.", multiValue = true)
     private Map<String, String> objectProperties;
 
     /**
-     * cached object name that was built from the objectName param or the hashtable
+     * To use a custom shared thread pool for the consumers. By default each consume has their own thread-pool to process and route notifications.
+     */
+    @UriParam(label = "advanced")
+    private ExecutorService executorService;
+
+    /**
+     * Cached object name that was built from the objectName param or the hashtable
      */
     private transient ObjectName jmxObjectName;
 
@@ -518,14 +527,22 @@ public class JMXEndpoint extends DefaultEndpoint {
     public void setReconnectDelay(int reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
     }
-     
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
     private ObjectName buildObjectName() throws MalformedObjectNameException {
         ObjectName objectName;
         if (getObjectProperties() == null) {
             StringBuilder sb = new StringBuilder(getObjectDomain()).append(':').append("name=").append(getObjectName());
             objectName = new ObjectName(sb.toString());
         } else {
-            Hashtable<String, String> ht = new Hashtable<String, String>();
+            Hashtable<String, String> ht = new Hashtable<>();
             ht.putAll(getObjectProperties());
             objectName = new ObjectName(getObjectDomain(), ht);
         }

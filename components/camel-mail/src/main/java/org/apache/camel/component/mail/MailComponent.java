@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,38 +20,42 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.mail.search.SearchTerm;
 
+import com.sun.mail.imap.SortTerm;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Component for JavaMail.
- *
- * @version
  */
-public class MailComponent extends UriEndpointComponent {
+@Component("imap,imaps,pop3,pop3s,smtp,smtps")
+public class MailComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private MailConfiguration configuration;
     @Metadata(label = "advanced")
     private ContentTypeResolver contentTypeResolver;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public MailComponent() {
-        super(MailEndpoint.class);
     }
 
     public MailComponent(MailConfiguration configuration) {
-        super(MailEndpoint.class);
+        super();
         this.configuration = configuration;
     }
 
     public MailComponent(CamelContext context) {
-        super(context, MailEndpoint.class);
+        super(context);
     }
 
     @Override
@@ -80,9 +84,20 @@ public class MailComponent extends UriEndpointComponent {
             endpoint.setSearchTerm(st);
         }
 
-        endpoint.setContentTypeResolver(contentTypeResolver);
-        setProperties(endpoint.getConfiguration(), parameters);
-        setProperties(endpoint, parameters);
+        // special for sort term
+        Object sortTerm = getAndRemoveOrResolveReferenceParameter(parameters, "sortTerm", Object.class);
+        if (sortTerm != null) {
+            SortTerm[] st;
+            if (sortTerm instanceof String) {
+                // okay its a String then lets convert that to SortTerm
+                st = MailConverters.toSortTerm((String) sortTerm);
+            } else if (sortTerm instanceof SortTerm[]) {
+                st = (SortTerm[]) sortTerm;
+            } else {
+                throw new IllegalArgumentException("SortTerm must either be SortTerm[] or a String value");
+            }
+            endpoint.setSortTerm(st);
+        }
 
         // special for searchTerm.xxx options
         Map<String, Object> sstParams = IntrospectionSupport.extractProperties(parameters, "searchTerm.");
@@ -94,16 +109,26 @@ public class MailComponent extends UriEndpointComponent {
             endpoint.setSearchTerm(st);
         }
 
+        endpoint.setContentTypeResolver(contentTypeResolver);
+        setEndpointHeaderFilterStrategy(endpoint);
+        setProperties(endpoint.getConfiguration(), parameters);
+        setProperties(endpoint, parameters);
+
         // sanity check that we know the mail server
-        ObjectHelper.notEmpty(config.getHost(), "host");
-        ObjectHelper.notEmpty(config.getProtocol(), "protocol");
+        StringHelper.notEmpty(config.getHost(), "host");
+        StringHelper.notEmpty(config.getProtocol(), "protocol");
+
+        // Use global ssl if present
+        if (endpoint.getConfiguration().getSslContextParameters() == null) {
+            endpoint.getConfiguration().setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
 
         return endpoint;
     }
 
     private void configureAdditionalJavaMailProperties(MailConfiguration config, Map<String, Object> parameters) {
         // we cannot remove while iterating, as we will get a modification exception
-        Set<Object> toRemove = new HashSet<Object>();
+        Set<Object> toRemove = new HashSet<>();
 
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             if (entry.getKey().toString().startsWith("mail.")) {
@@ -142,5 +167,18 @@ public class MailComponent extends UriEndpointComponent {
      */
     public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
         this.contentTypeResolver = contentTypeResolver;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

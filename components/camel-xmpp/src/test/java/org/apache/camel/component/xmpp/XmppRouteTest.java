@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,13 +21,15 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.jivesoftware.smack.packet.Message;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -40,10 +42,11 @@ public class XmppRouteTest extends TestCase {
     protected static String xmppUrl;
     private static final Logger LOG = LoggerFactory.getLogger(XmppRouteTest.class);
     protected Exchange receivedExchange;
-    protected CamelContext container = new DefaultCamelContext();
+    protected CamelContext context = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Endpoint endpoint;
-    protected ProducerCache client;
+    protected ProducerTemplate client;
+    private EmbeddedXmppTestServer embeddedXmppTestServer;
 
     public static void main(String[] args) {
         enabled = true;
@@ -91,7 +94,7 @@ public class XmppRouteTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        client = new ProducerCache(this, container, 10);
+        client = new DefaultProducerTemplate(context);
 
         String uriPrefix = getUriPrefix();
         final String uri1 = uriPrefix + "&resource=camel-test-from&nickname=came-test-from";
@@ -99,11 +102,11 @@ public class XmppRouteTest extends TestCase {
         final String uri3 = uriPrefix + "&resource=camel-test-from-processor&nickname=came-test-from-processor";
         LOG.info("Using URI " + uri1 + " and " + uri2);
 
-        endpoint = container.getEndpoint(uri1);
+        endpoint = context.getEndpoint(uri1);
         assertNotNull("No endpoint found!", endpoint);
 
         // lets add some routes
-        container.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri1).to(uri2);
                 from(uri3).process(new Processor() {
@@ -116,16 +119,18 @@ public class XmppRouteTest extends TestCase {
             }
         });
 
-        container.start();
+        context.start();
+        embeddedXmppTestServer = new EmbeddedXmppTestServer();
     }
 
     protected String getUriPrefix() {
-        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort() + "/camel?login=false&room=camel-anon";
+        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort() + "/camel?login=false&room=camel-anon";
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         client.stop();
-        container.stop();
+        context.stop();
+        embeddedXmppTestServer.stop();
     }
 }

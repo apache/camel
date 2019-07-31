@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,26 +16,25 @@
  */
 package org.apache.camel.component.spring.integration;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.support.DefaultEndpoint;
 import org.springframework.messaging.MessageChannel;
 
 /**
  * Bridges Camel with Spring Integration.
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "spring-integration", title = "Spring Integration", syntax = "spring-integration:defaultChannel",
-        consumerClass = SpringIntegrationConsumer.class, label = "spring,eventbus")
+        label = "spring,eventbus")
 public class SpringIntegrationEndpoint extends DefaultEndpoint {
     private MessageChannel messageChannel;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String defaultChannel;
     @UriParam(label = "consumer")
     private String inputChannel;
@@ -47,18 +46,6 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint {
     public SpringIntegrationEndpoint(String uri, String channel, SpringIntegrationComponent component) {
         super(uri, component);
         this.defaultChannel = channel;
-    }
-
-    @Deprecated
-    public SpringIntegrationEndpoint(String uri, MessageChannel channel, CamelContext context) {
-        super(uri, context);
-        this.messageChannel = channel;
-    }
-
-    @Deprecated
-    public SpringIntegrationEndpoint(String endpointUri, MessageChannel messageChannel) {
-        super(endpointUri);
-        this.messageChannel = messageChannel;
     }
 
     public Producer createProducer() throws Exception {

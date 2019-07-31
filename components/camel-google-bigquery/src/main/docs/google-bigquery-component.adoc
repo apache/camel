@@ -1,0 +1,200 @@
+[[google-bigquery-component]]
+= Google BigQuery Component
+
+*Available as of Camel version 2.20*
+
+The Google Bigquery component provides access
+to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
+the https://developers.google.com/api-client-library/java/apis/bigquery/v2[Google Client Services API].
+
+The current implementation does not use gRPC.
+
+The current implementation does not support querying BigQuery i.e. is a producer only.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-bigquery</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
+</dependency>
+
+------------------------------------------------------
+
+[[GoogleBigQuery-AuthenticationConfiguration]]
+
+== Authentication Configuration
+
+Google BigQuery component authentication is targeted for use with the GCP Service Accounts.
+For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
+
+Google security credentials can be set explicitly via one of the two options:
+
+* Service Account Email and Service Account Key (PEM format)
+* GCP credentials file location
+
+If both are set, the Service Account Email/Key will take precedence.
+
+Or implicitly, where the connection factory falls back on
+https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
+
+*OBS!* The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
+
+Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
+
+== URI Format
+
+[source,text]
+--------------------------------------------------------
+        google-bigquery://project-id:datasetId[:tableId]?[options]
+--------------------------------------------------------
+
+
+== Options
+
+// component options: START
+The Google BigQuery component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *projectId* (producer) | Google Cloud Project Id |  | String
+| *datasetId* (producer) | BigQuery Dataset Id |  | String
+| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQuery ConnectionFactory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Google BigQuery endpoint is configured using URI syntax:
+
+----
+google-bigquery:projectId:datasetId:tableId
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *projectId* | *Required* Google Cloud Project Id |  | String
+| *datasetId* | *Required* BigQuery Dataset Id |  | String
+| *tableId* | BigQuery table id |  | String
+|===
+
+
+=== Query Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used. |  | GoogleBigQuery ConnectionFactory
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *useAsInsertId* (producer) | Field name to use as insert id |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-bigquery-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.google-bigquery.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.google-bigquery.connection-factory.credentials-file-location* |  |  | String
+| *camel.component.google-bigquery.connection-factory.service-account* |  |  | String
+| *camel.component.google-bigquery.connection-factory.service-account-key* |  |  | String
+| *camel.component.google-bigquery.connection-factory.service-u-r-l* |  |  | String
+| *camel.component.google-bigquery.dataset-id* | BigQuery Dataset Id |  | String
+| *camel.component.google-bigquery.enabled* | Whether to enable auto configuration of the google-bigquery component. This is enabled by default. |  | Boolean
+| *camel.component.google-bigquery.project-id* | Google Cloud Project Id |  | String
+| *camel.component.google-bigquery.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Message Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+|`CamelGoogleBigQuery.TableSuffix` |`String` |Table suffix to use when inserting data
+|`CamelGoogleBigQuery.InsertId` |`String` |InsertId to use when inserting data
+|`CamelGoogleBigQuery.PartitionDecorator` |`String` |Partition decorator to indicate partition to use when inserting data
+|`CamelGoogleBigQuery.TableId` |`String` |Table id where data will be submitted. If specified will override endpoint configuration
+|=======================================================================
+
+
+== Producer Endpoints
+
+Producer endpoints can accept and deliver to BigQuery individual and grouped
+exchanges alike. Grouped exchanges have `Exchange.GROUPED_EXCHANGE` property set.
+
+Google BigQuery producer will send a grouped exchange in a single api call unless different table suffix or
+partition decorators are specified in which case it will break it down to ensure data is written with the
+correct suffix or partition decorator.
+
+Google BigQuery endpoint expects the payload to be either a map or list of maps. A payload containing a map
+will insert a single row and a payload containing a list of map's will insert a row for each entry in the list.
+
+== Template tables
+
+Reference: https://cloud.google.com/bigquery/streaming-data-into-bigquery#template-tables
+
+Templated tables can be specified using the `GoogleBigQueryConstants.TABLE_SUFFIX` header.
+
+I.e. the following route will create tables and insert records sharded on a per day basis:
+
+[source,java]
+------------------------------------------------------
+from("direct:start")
+  .header(GoogleBigQueryConstants.TABLE_SUFFIX, "_${date:now:yyyyMMdd}")
+  .to("google-bigquery:sampleDataset:sampleTable")
+------------------------------------------------------
+Note it is recommended to use partitioning for this use case.
+
+== Partitioning
+
+Reference: https://cloud.google.com/bigquery/docs/creating-partitioned-tables
+
+Partitioning is specified when creating a table and if set data will be automatically partitioned into
+separate tables. When inserting data a specific partition can be specified by setting the
+`GoogleBigQueryConstants.PARTITION_DECORATOR` header on the exchange.
+
+== Ensuring data consistency
+
+Reference: https://cloud.google.com/bigquery/streaming-data-into-bigquery#dataconsistency
+
+A insert id can be set on the exchange with the header `GoogleBigQueryConstants.INSERT_ID` or by specifying
+query parameter `useAsInsertId`. As an insert id need to be specified per row inserted the exchange header can't
+be used when the payload is a list - if the payload is a list the `GoogleBigQueryConstants.INSERT_ID` will
+be ignored. In that case use the query parameter `useAsInsertId`.

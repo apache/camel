@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,31 +16,50 @@
  */
 package org.apache.camel.component.slack;
 
-import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.direct.DirectEndpoint;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 
-public class SlackProducerTest extends CamelBlueprintTestSupport {
+public class SlackProducerTest extends CamelTestSupport {
+    
+    protected static final int UNDERTOW_PORT = AvailablePortFinder.getNextAvailable();
+    
+    @EndpointInject("mock:errors")
+    MockEndpoint errors;
 
-    @Override
-    protected String getBlueprintDescriptor() {
-        return "OSGI-INF/blueprint/blueprint.xml";
-    }
+    @EndpointInject("direct:test")
+    DirectEndpoint test;
 
     @Test
     public void testSlackMessage() throws Exception {
-        getMockEndpoint("mock:errors").expectedMessageCount(0);
+        errors.expectedMessageCount(0);
 
-        template.sendBody("direct:test", "Hello from Camel!");
+        template.sendBody(test, "Hello from Camel!");
 
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    public void testSlackError() throws Exception {
-        getMockEndpoint("mock:errors").expectedMessageCount(1);
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                SlackComponent slack = new SlackComponent();
+                slack.setWebhookUrl("http://localhost:" + UNDERTOW_PORT + "/slack/webhook");
+                context.addComponent("slack", slack);
 
-        template.sendBody("direct:error", "Error from Camel!");
+                onException(Exception.class).handled(true).to(errors);
 
-        assertMockEndpointsSatisfied();
+                final String slacUser =  System.getProperty("SLACK_USER", "CamelTest");
+                from("undertow:http://localhost:" + UNDERTOW_PORT + "/slack/webhook").setBody(constant("{\"ok\": true}"));
+                
+                from(test).to(String.format("slack:#general?iconEmoji=:camel:&username=%s", slacUser));
+            }
+        };
     }
 }

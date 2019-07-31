@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,8 +28,6 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode for SOAP 1.2
- * 
- * @version 
  */
 @ContextConfiguration
 public class CxfMtomRouterPayloadMode12Test extends CxfMtomRouterPayloadModeTest {

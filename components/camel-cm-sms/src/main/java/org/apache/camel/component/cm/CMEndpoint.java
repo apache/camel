@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,21 +21,21 @@ import java.util.UUID;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.StringHelper;
 
 /**
- * The influxdb component allows to integrate with <a href="https://www.cmtelecom.com/">CM SMS Gateway</a>.
+ * The cm-sms component allows to integrate with <a href="https://www.cmtelecom.com/">CM SMS Gateway</a>.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "cm-sms", title = "CM SMS Gateway", syntax = "cm-sms:host", label = "mobile", producerOnly = true)
 public class CMEndpoint extends DefaultEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String host;
     @UriParam
     private CMConfiguration configuration;
@@ -65,7 +65,7 @@ public class CMEndpoint extends DefaultEndpoint {
         // CMConstants.DEFAULT_SCHEME + host is a valid URL. It was previously checked
 
         String token = config.getProductToken();
-        ObjectHelper.notEmpty(token, "productToken");
+        StringHelper.notEmpty(token, "productToken");
 
         UUID uuid = UUID.fromString(token);
         return new CMProducer(this, new CMSenderOneMessageImpl(getCMUrl(), uuid));
@@ -82,11 +82,6 @@ public class CMEndpoint extends DefaultEndpoint {
 
     public void setConfiguration(final CMConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     public String getCMUrl() {

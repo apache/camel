@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,8 +36,8 @@ public class GroovyListMapTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        List<Map<String, Object>> grid = new ArrayList<Map<String, Object>>();
-        Map<String, Object> cells = new LinkedHashMap<String, Object>();
+        List<Map<String, Object>> grid = new ArrayList<>();
+        Map<String, Object> cells = new LinkedHashMap<>();
         cells.put("foo", "bar");
         grid.add(cells);
 

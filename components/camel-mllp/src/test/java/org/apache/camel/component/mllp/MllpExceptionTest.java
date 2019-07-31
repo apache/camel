@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,99 +16,173 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-public class MllpExceptionTest {
-    static final String EXCEPTION_MESSAGE = "Test Frame Exception";
+public class MllpExceptionTest extends MllpExceptionTestSupport {
+    static final String EXCEPTION_MESSAGE = "Test MllpException";
+    static final byte[] NULL_BYTE_ARRAY = null;
+    static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
-    static final String HL7_MESSAGE =
-            "MSH|^~\\&|APP_A|FAC_A|^org^sys||20161206193919||ADT^A04|00001||2.6" + '\r'
-                    + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S" + '\r'
-                    + '\r' + '\n';
+    MllpException instance;
 
-    static final String HL7_ACK =
-            "MSH|^~\\&|APP_A|FAC_A|^org^sys||20161206193919||ACK^A04|00002||2.6" + '\r'
-                    + "MSA|AA|00001" + '\r'
-                    + '\r' + '\n';
-
-    @After
-    public void tearDown() throws Exception {
-        System.clearProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY);
+    @Before
+    public void setUp() throws Exception {
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
     }
 
     @Test
-    public void testLogPhiDefault() throws Exception {
-        assertEquals(expectedMessage(HL7_MESSAGE, HL7_ACK), createException(HL7_MESSAGE, HL7_ACK).getMessage());
+    public void testGetHl7MessageBytes() throws Exception {
+        instance = new MllpException(EXCEPTION_MESSAGE);
+        assertNull(instance.getHl7MessageBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, NULL_BYTE_ARRAY);
+        assertNull(instance.getHl7MessageBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, NULL_BYTE_ARRAY, NULL_BYTE_ARRAY);
+        assertNull(instance.getHl7MessageBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, NULL_BYTE_ARRAY, EMPTY_BYTE_ARRAY);
+        assertNull(instance.getHl7MessageBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, EMPTY_BYTE_ARRAY);
+        assertNull(instance.getHl7MessageBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, EMPTY_BYTE_ARRAY, NULL_BYTE_ARRAY);
+        assertNull(instance.getHl7MessageBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, EMPTY_BYTE_ARRAY, EMPTY_BYTE_ARRAY);
+        assertNull(instance.getHl7MessageBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES);
+        assertArrayEquals(HL7_MESSAGE_BYTES, instance.getHl7MessageBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, NULL_BYTE_ARRAY);
+        assertArrayEquals(HL7_MESSAGE_BYTES, instance.getHl7MessageBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, EMPTY_BYTE_ARRAY);
+        assertArrayEquals(HL7_MESSAGE_BYTES, instance.getHl7MessageBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        assertArrayEquals(HL7_MESSAGE_BYTES, instance.getHl7MessageBytes());
     }
 
     @Test
-    public void testLogPhiDisabled() throws Exception {
-        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "false");
+    public void testGetHl7AcknowledgementBytes() throws Exception {
+        instance = new MllpException(EXCEPTION_MESSAGE);
+        assertNull(instance.getHl7AcknowledgementBytes());
 
-        assertEquals(EXCEPTION_MESSAGE, createException(HL7_MESSAGE, HL7_ACK).getMessage());
-    }
+        instance = new MllpException(EXCEPTION_MESSAGE, NULL_BYTE_ARRAY);
+        assertNull(instance.getHl7AcknowledgementBytes());
 
-    @Test
-    public void testLogPhiEnabled() throws Exception {
-        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
+        instance = new MllpException(EXCEPTION_MESSAGE, NULL_BYTE_ARRAY, NULL_BYTE_ARRAY);
+        assertNull(instance.getHl7AcknowledgementBytes());
 
-        assertEquals(expectedMessage(HL7_MESSAGE, HL7_ACK), createException(HL7_MESSAGE, HL7_ACK).getMessage());
+        instance = new MllpException(EXCEPTION_MESSAGE, NULL_BYTE_ARRAY, EMPTY_BYTE_ARRAY);
+        assertNull(instance.getHl7AcknowledgementBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, EMPTY_BYTE_ARRAY);
+        assertNull(instance.getHl7AcknowledgementBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, EMPTY_BYTE_ARRAY, NULL_BYTE_ARRAY);
+        assertNull(instance.getHl7AcknowledgementBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, EMPTY_BYTE_ARRAY, EMPTY_BYTE_ARRAY);
+        assertNull(instance.getHl7AcknowledgementBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES);
+        assertNull(instance.getHl7AcknowledgementBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, NULL_BYTE_ARRAY);
+        assertNull(instance.getHl7AcknowledgementBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, EMPTY_BYTE_ARRAY);
+        assertNull(instance.getHl7AcknowledgementBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.getHl7AcknowledgementBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, null, HL7_ACKNOWLEDGEMENT_BYTES);
+        assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.getHl7AcknowledgementBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, EMPTY_BYTE_ARRAY, HL7_ACKNOWLEDGEMENT_BYTES);
+        assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.getHl7AcknowledgementBytes());
+
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.getHl7AcknowledgementBytes());
     }
 
     @Test
     public void testNullHl7Message() throws Exception {
         System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
 
-        assertEquals(expectedMessage(null, HL7_ACK), createException(null, HL7_ACK).getMessage());
+        instance = new MllpException(EXCEPTION_MESSAGE, null, HL7_ACKNOWLEDGEMENT_BYTES);
+
+        assertEquals(expectedMessage(null, HL7_ACKNOWLEDGEMENT), instance.getMessage());
+    }
+
+    @Test
+    public void testEmptyHl7Message() throws Exception {
+        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
+
+        instance = new MllpException(EXCEPTION_MESSAGE, EMPTY_BYTE_ARRAY, HL7_ACKNOWLEDGEMENT_BYTES);
+
+        assertEquals(expectedMessage(null, HL7_ACKNOWLEDGEMENT), instance.getMessage());
     }
 
     @Test
     public void testNullHl7Acknowledgement() throws Exception {
         System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
 
-        assertEquals(expectedMessage(HL7_MESSAGE, null), createException(HL7_MESSAGE, null).getMessage());
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, NULL_BYTE_ARRAY);
+
+        assertEquals(expectedMessage(HL7_MESSAGE, null), instance.getMessage());
+    }
+
+    @Test
+    public void testEmptyAcknowledgement() throws Exception {
+        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
+
+        instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, EMPTY_BYTE_ARRAY);
+
+        assertEquals(expectedMessage(HL7_MESSAGE, null), instance.getMessage());
     }
 
     @Test
     public void testNullHl7Payloads() throws Exception {
         System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
 
-        assertEquals(expectedMessage(null, null), createException(null, null).getMessage());
+        instance = new MllpException(EXCEPTION_MESSAGE, NULL_BYTE_ARRAY, NULL_BYTE_ARRAY);
+
+        assertEquals(expectedMessage(null, null), instance.getMessage());
     }
 
-
-    // Utility methods
-    private Exception createException(String hl7Message, String hl7Acknowledgment) {
-        byte[] hl7MessageBytes = null;
-        byte[] hl7AcknowledgementBytes = null;
-
-        if (hl7Message != null) {
-            hl7MessageBytes = hl7Message.getBytes();
-        }
-
-        if (hl7Acknowledgment != null) {
-            hl7AcknowledgementBytes = hl7Acknowledgment.getBytes();
-        }
-        return new MllpException(EXCEPTION_MESSAGE, hl7MessageBytes, hl7AcknowledgementBytes);
-    }
 
     private String expectedMessage(String hl7Message, String hl7Acknowledgment) {
-        final String exceptionMessageFormat = EXCEPTION_MESSAGE + " \n\t{hl7Message= %s} \n\t{hl7Acknowledgement= %s}";
+        StringBuilder expectedMessageBuilder = new StringBuilder();
 
-        String formattedHl7Message = null;
-        String formattedHl7Acknowledgement = null;
+        expectedMessageBuilder.append(EXCEPTION_MESSAGE);
 
         if (hl7Message != null) {
-            formattedHl7Message = hl7Message.replaceAll("\r", "<CR>").replaceAll("\n", "<LF>");
+            expectedMessageBuilder.append("\n\t{hl7Message [")
+                .append(hl7Message.length())
+                .append("] = ")
+                .append(hl7Message.replaceAll("\r", "<0x0D CR>").replaceAll("\n", "<0x0A LF>"))
+                .append("}");
         }
 
         if (hl7Acknowledgment != null) {
-            formattedHl7Acknowledgement = hl7Acknowledgment.replaceAll("\r", "<CR>").replaceAll("\n", "<LF>");
+            expectedMessageBuilder.append("\n\t{hl7Acknowledgement [")
+                .append(hl7Acknowledgment.length())
+                .append("] = ")
+                .append(hl7Acknowledgment.replaceAll("\r", "<0x0D CR>").replaceAll("\n", "<0x0A LF>"))
+                .append("}");
         }
 
-        return String.format(exceptionMessageFormat, formattedHl7Message, formattedHl7Acknowledgement);
+        return expectedMessageBuilder.toString();
     }
 }

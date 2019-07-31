@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,36 +22,58 @@ import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.producer.ServerProducer;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.compute.ServerService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.Action;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.compute.ServerCreate;
-import org.openstack4j.openstack.compute.domain.NovaServerCreate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ServerProducerTest extends NovaProducerTestSupport {
+
     @Mock
     private org.openstack4j.model.compute.Server testOSServer;
+
+    @Mock
+    private ServerService serverService;
+
+    @Captor
+    private ArgumentCaptor<Action> actionArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> idArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> snapshot;
+
+    @Captor
+    private ArgumentCaptor<String> idCaptor;
 
     private ServerCreate dummyServer;
 
     @Before
     public void setUp() {
+        when(computeService.servers()).thenReturn(serverService);
+
         producer = new ServerProducer(endpoint, client);
 
-        when(serverService.boot(any(NovaServerCreate.class))).thenReturn(testOSServer);
+        when(serverService.boot(any())).thenReturn(testOSServer);
 
         dummyServer = createDummyServer();
         initServerMock();
@@ -87,28 +109,18 @@ public class ServerProducerTest extends NovaProducerTestSupport {
 
     @Test
     public void serverAction() throws Exception {
-        when(serverService.action(anyString(), any(Action.class))).thenReturn(ActionResponse.actionSuccess());
+        when(serverService.action(anyString(), any())).thenReturn(ActionResponse.actionSuccess());
         when(endpoint.getOperation()).thenReturn(NovaConstants.ACTION);
         String id = "myID";
         msg.setHeader(NovaConstants.ACTION, Action.PAUSE);
         msg.setHeader(OpenstackConstants.ID, id);
         producer.process(exchange);
 
-        ArgumentCaptor<Action> actionArgumentCaptor = ArgumentCaptor.forClass(Action.class);
-        ArgumentCaptor<String> idArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(serverService).action(idArgumentCaptor.capture(), actionArgumentCaptor.capture());
 
         assertEquals(id, idArgumentCaptor.getValue());
         assertTrue(actionArgumentCaptor.getValue() == Action.PAUSE);
-        assertFalse(msg.isFault());
         assertNull(msg.getBody());
-
-        //test fail
-        final String failReason = "fr";
-        when(serverService.action(anyString(), any(Action.class))).thenReturn(ActionResponse.actionFailed(failReason, 401));
-        producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failReason));
     }
 
     @Test
@@ -121,8 +133,6 @@ public class ServerProducerTest extends NovaProducerTestSupport {
         msg.setHeader(OpenstackConstants.ID, id);
         producer.process(exchange);
 
-        ArgumentCaptor<String> snapshot = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);
         verify(serverService).createSnapshot(idCaptor.capture(), snapshot.capture());
 
         assertEquals(id, idCaptor.getValue());

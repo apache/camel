@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -59,7 +59,7 @@ public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsume
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Downloaded: {}", result.toString());
+            LOG.debug("Downloaded: {}", result);
         }
 
         try {

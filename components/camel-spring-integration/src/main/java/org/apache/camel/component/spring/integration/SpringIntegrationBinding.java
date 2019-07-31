@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,8 +23,6 @@ import org.springframework.messaging.support.GenericMessage;
 
 /**
  * The helper class for Mapping between the Spring Integration message and the Camel Message.
- *
- * @version 
  */
 public final class SpringIntegrationBinding {
 
@@ -38,11 +36,11 @@ public final class SpringIntegrationBinding {
 
     public static org.springframework.messaging.Message<?> createSpringIntegrationMessage(Exchange exchange, Map<String, Object> headers) {
         org.apache.camel.Message message = exchange.getIn();
-        return new GenericMessage<Object>(message.getBody(), headers);
+        return new GenericMessage<>(message.getBody(), headers);
     }
 
     public static org.springframework.messaging.Message<?> storeToSpringIntegrationMessage(org.apache.camel.Message message) {
-        return new GenericMessage<Object>(message.getBody(), message.getHeaders());
+        return new GenericMessage<>(message.getBody(), message.getHeaders());
     }
 
     public static void storeToCamelMessage(org.springframework.messaging.Message<?> siMessage, org.apache.camel.Message cMessage) {

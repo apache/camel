@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,13 +19,14 @@ package org.apache.camel.component.spark;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.spark.api.java.JavaRDDLike;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -43,14 +44,14 @@ public class SparkEndpoint extends DefaultEndpoint {
 
     // Endpoint collaborators
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private EndpointType endpointType;
     @UriParam
     private JavaRDDLike rdd;
     @UriParam
     private RddCallback rddCallback;
     @UriParam
-    private DataFrame dataFrame;
+    private Dataset<Row> dataFrame;
     @UriParam
     private DataFrameCallback dataFrameCallback;
 
@@ -102,11 +103,6 @@ public class SparkEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Spark component supports producer endpoints only.");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     // Setters & getters
 
     @Override
@@ -147,14 +143,14 @@ public class SparkEndpoint extends DefaultEndpoint {
         this.rddCallback = rddCallback;
     }
 
-    public DataFrame getDataFrame() {
+    public Dataset<Row> getDataFrame() {
         return dataFrame;
     }
 
     /**
      * DataFrame to compute against.
      */
-    public void setDataFrame(DataFrame dataFrame) {
+    public void setDataFrame(Dataset<Row> dataFrame) {
         this.dataFrame = dataFrame;
     }
 

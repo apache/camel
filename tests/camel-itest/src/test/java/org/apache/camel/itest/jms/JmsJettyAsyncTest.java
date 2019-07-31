@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,14 +18,13 @@ package org.apache.camel.itest.jms;
 
 import java.util.concurrent.TimeUnit;
 import javax.jms.ConnectionFactory;
-import javax.naming.Context;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -59,7 +58,7 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // enable async consumer to process messages faster
                 from("activemq:queue:inbox?asyncConsumer=false")
-                    .to("jetty:http://0.0.0.0:" + port + "/myapp")
+                    .to("http://0.0.0.0:" + port + "/myapp")
                     .to("log:result?groupSize=10", "mock:result");
 
                 from("jetty:http://0.0.0.0:" + port + "/myapp")
@@ -70,15 +69,12 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-
+    protected void bindToRegistry(Registry registry) throws Exception {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
         amq.setCamelContext(context);
 
-        answer.bind("activemq", amq);
-        return answer;
+        registry.bind("activemq", amq);
     }
 }

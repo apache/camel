@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,10 +36,10 @@ import org.xbill.DNS.Record;
  */
 public class DnsLookupEndpointTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -85,7 +85,7 @@ public class DnsLookupEndpointTest extends CamelTestSupport {
                 return record[0].getName().toString().equals("www.example.com.");
             }
         });
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dns.name", "www.example.com");
         template.sendBodyAndHeaders("hello", headers);
         resultEndpoint.assertIsSatisfied();
@@ -101,7 +101,7 @@ public class DnsLookupEndpointTest extends CamelTestSupport {
                 return record[0].getName().toString().equals("www.example.com.");
             }
         });
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dns.name", "www.example.com");
         headers.put("dns.type", "A");
         template.sendBodyAndHeaders("hello", headers);

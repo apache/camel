@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,12 +18,10 @@ package org.apache.camel.component.netty4.http;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty4.SingleTCPNettyServerBootstrapFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +88,7 @@ public class HttpServerBootstrapFactory extends SingleTCPNettyServerBootstrapFac
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         // only stop if no more active consumers
         int consumers = channelFactory.consumers();
         if (consumers == 0) {

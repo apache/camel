@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -37,9 +38,6 @@ import org.springframework.jms.core.MessageCreator;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
 
     private static volatile String tempName;
@@ -51,7 +49,7 @@ public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
         return false;
     }
 
-    @Consume(uri = "activemq:queue:foo")
+    @Consume("activemq:queue:foo")
     public void doSomething(@Header("JMSReplyTo") Destination jmsReplyTo, @Body String body) throws Exception {
         assertEquals("Hello World", body);
 

@@ -1,0 +1,47 @@
+[[setHeader-eip]]
+= Set Header EIP
+
+The SetHeader EIP allows you to set and header on your exchange.
+
+== Options
+
+// eip options: START
+The Set Header EIP supports 1 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Name of message header to set a new value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used. |  | String
+|===
+// eip options: END
+
+== Examples
+
+The following example shows how to use the SetHeader EIP
+
+[source,java]
+----
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        from("direct:a")
+            .setHeader("myHeader", constant("test"))
+            .to("direct:b");
+    }
+};
+----
+
+
+And the same example using XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <setHeader name="myHeader">
+            <constant>test</constant>
+        </setHeader>
+        <to uri="direct:b"/>
+    </route>
+</camelContext>
+----

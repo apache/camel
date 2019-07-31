@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,12 +18,11 @@ package org.apache.camel.component.sparkrest;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import spark.Request;
 import spark.Response;
 
-@Converter
+@Converter(loader = true)
 public final class SparkConverter {
 
     private SparkConverter() {
@@ -32,7 +31,7 @@ public final class SparkConverter {
     /**
      * A fallback converter that allows us to easily call Java beans and use the raw Spark {@link Request} as parameter types.
      */
-    @FallbackConverter
+    @Converter(fallback = true)
     public static Object convertToRequest(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // if we want to covert to Request
         if (value != null && Request.class.isAssignableFrom(type)) {
@@ -57,7 +56,7 @@ public final class SparkConverter {
     /**
      * A fallback converter that allows us to easily call Java beans and use the raw Spark {@link Response} as parameter types.
      */
-    @FallbackConverter
+    @Converter(fallback = true)
     public static Object convertToResponse(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // if we want to covert to Response
         if (value != null && Response.class.isAssignableFrom(type)) {

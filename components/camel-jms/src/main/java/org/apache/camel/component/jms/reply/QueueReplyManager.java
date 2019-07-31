@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,8 +35,6 @@ import org.springframework.jms.support.destination.DestinationResolver;
 
 /**
  * A {@link ReplyManager} when using regular queues.
- *
- * @version 
  */
 public class QueueReplyManager extends ReplyManagerSupport {
 
@@ -131,7 +129,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 answer = new SharedQueueMessageListenerContainer(endpoint, fixedMessageSelector);
                 // must use cache level consumer for fixed message selector
                 answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
-                log.debug("Using shared queue: " + endpoint.getReplyTo() + " with fixed message selector [" + fixedMessageSelector + "] as reply listener: " + answer);
+                log.debug("Using shared queue: {} with fixed message selector [{}] as reply listener: {}", endpoint.getReplyTo(), fixedMessageSelector, answer);
             } else {
                 // use a dynamic message selector which will select the message we want to receive as reply
                 dynamicMessageSelector = new MessageSelectorCreator(correlation);
@@ -139,7 +137,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 // must use cache level session for dynamic message selector,
                 // as otherwise the dynamic message selector will not be updated on-the-fly
                 answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
-                log.debug("Using shared queue: " + endpoint.getReplyTo() + " with dynamic message selector as reply listener: " + answer);
+                log.debug("Using shared queue: {} with dynamic message selector as reply listener: {}", endpoint.getReplyTo(), answer);
             }
             // shared is not as fast as temporary or exclusive, so log this so the end user may be aware of this
             log.warn("{} is using a shared reply queue, which is not as fast as alternatives."
@@ -148,7 +146,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
             answer = new ExclusiveQueueMessageListenerContainer(endpoint);
             // must use cache level consumer for exclusive as there is no message selector
             answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
-            log.debug("Using exclusive queue:" + endpoint.getReplyTo() + " as reply listener: " + answer);
+            log.debug("Using exclusive queue: {} as reply listener: {}", endpoint.getReplyTo(), answer);
         } else {
             throw new IllegalArgumentException("ReplyToType " + type + " is not supported for reply queues");
         }
@@ -156,7 +154,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         String replyToCacheLevelName = endpoint.getConfiguration().getReplyToCacheLevelName();
         if (replyToCacheLevelName != null) {
             answer.setCacheLevelName(replyToCacheLevelName);
-            log.debug("Setting the replyCacheLevel to be " + replyToCacheLevelName);
+            log.debug("Setting the replyCacheLevel to be {}", replyToCacheLevelName);
         }
 
         DestinationResolver resolver = endpoint.getDestinationResolver();
@@ -179,7 +177,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getReplyToMaxConcurrentConsumers() > 0) {
             answer.setMaxConcurrentConsumers(endpoint.getReplyToMaxConcurrentConsumers());
         }
-        answer.setConnectionFactory(endpoint.getConnectionFactory());
+        answer.setConnectionFactory(endpoint.getConfiguration().getOrCreateConnectionFactory());
         String clientId = endpoint.getClientId();
         if (clientId != null) {
             clientId += ".CamelReplyManager";
@@ -206,9 +204,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         }
         // set task executor
         if (endpoint.getTaskExecutor() != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
-            }
+            log.debug("Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
             answer.setTaskExecutor(endpoint.getTaskExecutor());
         }
 

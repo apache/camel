@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,7 +34,6 @@ import javax.xml.namespace.QName;
  * type definitions, element declarations and model 
  * groups.  Factory methods for each of these are 
  * provided in this class.
- * 
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -62,7 +61,7 @@ public class ObjectFactory {
      
     @XmlElementDecl(namespace = "", name = "Person")
     public JAXBElement<PersonType> createPerson(PersonType value) {
-        return new JAXBElement<PersonType>(personQNAME, PersonType.class, null, value);
+        return new JAXBElement<>(personQNAME, PersonType.class, null, value);
     }
 
 }

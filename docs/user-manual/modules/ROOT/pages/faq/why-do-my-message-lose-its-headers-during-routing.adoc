@@ -1,0 +1,4 @@
+[[Whydomymessageloseitsheadersduringrouting-Whydomymessageloseitsheadersduringrouting]]
+= Why do my message lose its headers during routing?
+
+See this xref:faq/using-getin-or-getout-methods-on-exchange.adoc[FAQ entry].

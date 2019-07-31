@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,16 +20,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.Producer;
 
-/**
- * @version 
- */
 public class MyProduceBean {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private Producer producer;
 
     public void testDoSomething(String body) throws Exception {
-        Exchange exchange = producer.createExchange();
+        Exchange exchange = producer.getEndpoint().createExchange();
         exchange.getIn().setBody(body);
         producer.process(exchange);
     }

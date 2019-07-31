@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,9 +25,13 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.DefaultAddressedEnvelope;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ChannelHandler.Sharable
 public class DatagramPacketByteArrayEncoder extends MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketByteArrayEncoder.class);
 
     private DelegateByteArrayEncoder delegateEncoder = new DelegateByteArrayEncoder();
 
@@ -36,8 +40,10 @@ public class DatagramPacketByteArrayEncoder extends MessageToMessageEncoder<Addr
         if (msg.content() instanceof byte[]) {
             delegateEncoder.encode(ctx, (byte[]) msg.content(), out);
             ByteBuf buf = (ByteBuf) out.remove(out.size() - 1);
-            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = new DefaultAddressedEnvelope<Object, InetSocketAddress>(buf.retain(), msg.recipient(), msg.sender());
+            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = new DefaultAddressedEnvelope<>(buf.retain(), msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
+        } else {
+            LOG.debug("Ignoring message content as it is not a byte[] instance.");
         }
     }
 

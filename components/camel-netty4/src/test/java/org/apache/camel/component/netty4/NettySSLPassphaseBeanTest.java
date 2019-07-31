@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,23 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.netty4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettySSLPassphaseBeanTest extends BaseNettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myBean", "changeit");
-        return jndi;
-    }
+    @BindToRegistry("myBean")
+    private String bean = "changeit";
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -49,16 +44,16 @@ public class NettySSLPassphaseBeanTest extends BaseNettyTest {
                 from("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#myBean&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");                           
+                            exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                         }
                     });
             }
         });
         context.start();
 
-        String response = template.requestBody(
-                "netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#myBean&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks",
-                "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
+        String response = template
+            .requestBody("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#myBean&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks",
+                         "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }
 

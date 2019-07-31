@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mongodb3;
 
+import com.mongodb.DBObject;
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
 import org.junit.Test;
@@ -35,6 +36,26 @@ public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {
         } catch (Exception e) {
             extractAndAssertCamelMongoDbException(e, null);
         }
+    }
+
+    @Test
+    public void testInduceParseAndThenOkException() throws Exception {
+        // Test that the collection has 0 documents in it
+        assertEquals(0, testCollection.count());
+        pumpDataIntoTestCollection();
+
+        // notice missing quote at the end of Einstein
+        try {
+            template.requestBody("direct:findOneByQuery", "{\"scientist\": \"Einstein}");
+            fail("Should have thrown an exception");
+        } catch (Exception e) {
+            extractAndAssertCamelMongoDbException(e, null);
+        }
+
+        // this one is okay
+        DBObject out = template.requestBody("direct:findOneByQuery", "{\"scientist\": \"Einstein\"}", DBObject.class);
+        assertNotNull(out);
+        assertEquals("Einstein", out.get("scientist"));
     }
 
     @Test

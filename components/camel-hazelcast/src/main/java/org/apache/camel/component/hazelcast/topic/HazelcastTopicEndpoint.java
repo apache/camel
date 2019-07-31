@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,32 +22,40 @@ import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
+import org.apache.camel.spi.UriEndpoint;
 
 /**
- *
+ * The hazelcast-topic component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed topic.
  */
+@UriEndpoint(firstVersion = "2.15.0", scheme = "hazelcast-topic", title = "Hazelcast Topic", syntax = "hazelcast-topic:cacheName", label = "cache,datagrid")
 public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements MultipleConsumersSupport {
 
-    public HazelcastTopicEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
+    private final HazelcastTopicConfiguration configuration;
+    
+    public HazelcastTopicEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName, final HazelcastTopicConfiguration configuration) {
         super(hazelcastInstance, endpointUri, component, cacheName);
+        this.configuration = configuration;
+        setCommand(HazelcastCommand.topic);
+        setDefaultOperation(HazelcastOperation.PUBLISH);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        HazelcastTopicConsumer answer = new HazelcastTopicConsumer(hazelcastInstance, this, processor, cacheName);
+        HazelcastTopicConsumer answer = new HazelcastTopicConsumer(hazelcastInstance, this, processor, cacheName, configuration.isReliable());
         configureConsumer(answer);
         return answer;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new HazelcastTopicProducer(hazelcastInstance, this, cacheName);
+        return new HazelcastTopicProducer(hazelcastInstance, this, cacheName, configuration.isReliable());
     }
 
     @Override
     public boolean isMultipleConsumersSupported() {
         return true;
     }
-
 }

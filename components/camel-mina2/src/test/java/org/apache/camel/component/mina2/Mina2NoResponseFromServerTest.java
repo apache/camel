@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.mina2;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
@@ -31,9 +31,13 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.junit.Test;
 
 /**
- * Unit test to test what happens if remote server closes session but doesn't reply
+ * Unit test to test what happens if remote server closes session but doesn't
+ * reply
  */
 public class Mina2NoResponseFromServerTest extends BaseMina2Test {
+
+    @BindToRegistry("myCodec")
+    private MyCodec codec1 = new MyCodec();
 
     @Test
     public void testNoResponse() throws Exception {
@@ -50,12 +54,6 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
         mock.assertIsSatisfied();
     }
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myCodec", new MyCodec());
-        return jndi;
-    }
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 
@@ -70,8 +68,7 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
         public ProtocolEncoder getEncoder(IoSession session) throws Exception {
             return new ProtocolEncoder() {
 
-                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out)
-                    throws Exception {
+                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) throws Exception {
                     // close session instead of returning a reply
                     ioSession.closeNow();
                 }
@@ -86,14 +83,12 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
         public ProtocolDecoder getDecoder(IoSession session) throws Exception {
             return new ProtocolDecoder() {
 
-                public void decode(IoSession ioSession, IoBuffer in,
-                                   ProtocolDecoderOutput out) throws Exception {
+                public void decode(IoSession ioSession, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
                     // close session instead of returning a reply
                     ioSession.closeNow();
                 }
 
-                public void finishDecode(IoSession ioSession, ProtocolDecoderOutput protocolDecoderOutput)
-                    throws Exception {
+                public void finishDecode(IoSession ioSession, ProtocolDecoderOutput protocolDecoderOutput) throws Exception {
                     // do nothing
                 }
 

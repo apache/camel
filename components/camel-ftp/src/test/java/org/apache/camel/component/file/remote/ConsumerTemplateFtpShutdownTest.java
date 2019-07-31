@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,11 +37,6 @@ public class ConsumerTemplateFtpShutdownTest extends FtpServerTestSupport {
         
         consumer.doneUoW(exchange);
         consumer.stop();
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 
 }

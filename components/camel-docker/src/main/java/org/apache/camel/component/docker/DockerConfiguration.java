@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,11 +31,11 @@ public class DockerConfiguration implements Cloneable {
     @UriPath(enums = "events,stats,auth,info,ping,version,imagebuild,imagecreate,imageinspect,imagelist,imagepull,imagepush"
             + "imageremove,imagesearch,imagetag,containerattach,containercommit,containercopyfile,containercreate,containerdiff"
             + "inspectcontainer,containerkill,containerlist,containerlog,containerpause,containerrestart,containerremove,containerstart"
-            + "containerstop,containertop,containerunpause,containerwait,execcreate,execstart") @Metadata(required = "true")
+            + "containerstop,containertop,containerunpause,containerwait,execcreate,execstart") @Metadata(required = true)
     private DockerOperation operation;
-    @UriParam(defaultValue = "localhost") @Metadata(required = "true")
+    @UriParam(defaultValue = "localhost") @Metadata(required = true)
     private String host = "localhost";
-    @UriParam(defaultValue = "2375") @Metadata(required = "true")
+    @UriParam(defaultValue = "2375")
     private Integer port = 2375;
     @UriParam(label = "security", secret = true)
     private String username;
@@ -63,8 +63,10 @@ public class DockerConfiguration implements Cloneable {
     private boolean tlsVerify;
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean socket;
+    @UriParam(label = "advanced", defaultValue = "com.github.dockerjava.netty.NettyDockerCmdExecFactory")
+    private String cmdExecFactory = "com.github.dockerjava.netty.NettyDockerCmdExecFactory";
     
-    private Map<String, Object> parameters = new HashMap<String, Object>();
+    private Map<String, Object> parameters = new HashMap<>();
 
     public String getHost() {
         return host;
@@ -253,6 +255,17 @@ public class DockerConfiguration implements Cloneable {
         this.socket = socket;
     }
 
+    public String getCmdExecFactory() {
+        return cmdExecFactory;
+    }
+
+    /**
+     * The fully qualified class name of the DockerCmdExecFactory implementation to use
+     */
+    public void setCmdExecFactory(String cmdExecFactory) {
+        this.cmdExecFactory = cmdExecFactory;
+    }
+
     public DockerConfiguration copy() {
         try {
             return (DockerConfiguration) clone();
@@ -260,5 +273,4 @@ public class DockerConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

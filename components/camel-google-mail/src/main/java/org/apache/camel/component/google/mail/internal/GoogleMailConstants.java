@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,11 +19,18 @@ package org.apache.camel.component.google.mail.internal;
 /**
  * Constants for GoogleMail component.
  */
-public interface GoogleMailConstants {
+public final class GoogleMailConstants {
 
     // suffix for parameters when passed as exchange header properties
-    String PROPERTY_PREFIX = "CamelGoogleMail.";
+    public static final String PROPERTY_PREFIX = "CamelGoogleMail.";
 
     // thread profile name for this component
-    String THREAD_PROFILE_NAME = "CamelGoogleMail";
+    public static final String THREAD_PROFILE_NAME = "CamelGoogleMail";
+
+    /**
+     * Prevent instantiation.
+     */
+    private GoogleMailConstants() {
+        super();
+    }
 }

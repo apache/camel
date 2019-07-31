@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.io.File;
 import java.util.Map;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -25,17 +26,16 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.Topic;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
- *
- * @version 
  */
 public class JmsMessage extends DefaultMessage {
     private static final Logger LOG = LoggerFactory.getLogger(JmsMessage.class);
@@ -43,12 +43,8 @@ public class JmsMessage extends DefaultMessage {
     private Session jmsSession;
     private JmsBinding binding;
 
-    @Deprecated
-    public JmsMessage(Message jmsMessage, JmsBinding binding) {
-        this(jmsMessage, null, binding);
-    }
-
-    public JmsMessage(Message jmsMessage, Session jmsSession, JmsBinding binding) {
+    public JmsMessage(Exchange exchange, Message jmsMessage, Session jmsSession, JmsBinding binding) {
+        super(exchange);
         setJmsMessage(jmsMessage);
         setJmsSession(jmsSession);
         setBinding(binding);
@@ -91,18 +87,17 @@ public class JmsMessage extends DefaultMessage {
             setMessageId(that.getMessageId());
         }
 
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
+        }
+
         // copy body and fault flag
         setBody(that.getBody());
-        setFault(that.isFault());
 
         // we have already cleared the headers
         if (that.hasHeaders()) {
             getHeaders().putAll(that.getHeaders());
-        }
-
-        getAttachments().clear();
-        if (that.hasAttachments()) {
-            getAttachmentObjects().putAll(that.getAttachmentObjects());
         }
     }
 
@@ -191,7 +186,9 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     public JmsMessage newInstance() {
-        return new JmsMessage(null, null, binding);
+        JmsMessage answer = new JmsMessage(null, null, null, binding);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     /**
@@ -235,7 +232,12 @@ public class JmsMessage extends DefaultMessage {
             return super.createMessageId();
         }
         try {
-            String id = getDestinationAsString(jmsMessage.getJMSDestination()) + jmsMessage.getJMSMessageID();
+            String id = getDestinationAsString(jmsMessage.getJMSDestination());
+            if (id != null) {
+                id += jmsMessage.getJMSMessageID();
+            } else {
+                id = jmsMessage.getJMSMessageID();
+            }
             return getSanitizedString(id);
         } catch (JMSException e) {
             throw new RuntimeExchangeException("Unable to retrieve JMSMessageID from JMS Message", getExchange(), e);
@@ -252,12 +254,12 @@ public class JmsMessage extends DefaultMessage {
     }
 
     private String getDestinationAsString(Destination destination) throws JMSException {
-        String result;
+        String result = null;
         if (destination == null) {
             result = "null destination!" + File.separator;
         } else if (destination instanceof Topic) {
             result = "topic" + File.separator + ((Topic) destination).getTopicName() + File.separator;
-        } else {
+        } else if (destination instanceof Queue) {
             result = "queue" + File.separator + ((Queue) destination).getQueueName() + File.separator;
         }
         return result;

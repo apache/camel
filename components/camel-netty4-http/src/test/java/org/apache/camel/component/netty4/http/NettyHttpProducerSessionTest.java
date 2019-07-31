@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,16 +18,22 @@ package org.apache.camel.component.netty4.http;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.common.cookie.InstanceCookieHandler;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettyHttpProducerSessionTest extends BaseNettyTest {
+
+    @BindToRegistry("instanceCookieHandler")
+    private InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
+
+    @BindToRegistry("exchangeCookieHandler")
+    private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
 
     @Test
     public void testNoSession() throws Exception {
@@ -54,48 +60,32 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndiRegistry = super.createRegistry();
-        jndiRegistry.bind("instanceCookieHandler", new InstanceCookieHandler());
-        jndiRegistry.bind("exchangeCookieHandler", new ExchangeCookieHandler());
-        return jndiRegistry;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .toF("netty4-http:http://127.0.0.1:%d/session", getPort())
-                    .toF("netty4-http:http://127.0.0.1:%d/session", getPort())
-                    .to("mock:result");
+                from("direct:start").toF("netty4-http:http://127.0.0.1:%d/session", getPort()).toF("netty4-http:http://127.0.0.1:%d/session", getPort()).to("mock:result");
 
-                from("direct:instance")
-                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
-                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
-                    .to("mock:result");
+                from("direct:instance").toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
+                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort()).to("mock:result");
 
-                from("direct:exchange")
-                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
-                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
-                    .to("mock:result");
+                from("direct:exchange").toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
+                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort()).to("mock:result");
 
-                fromF("jetty:http://127.0.0.1:%d/session?sessionSupport=true", getPort())
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            HttpMessage message = exchange.getIn(HttpMessage.class);
-                            HttpSession session = message.getRequest().getSession();
-                            String body = message.getBody(String.class);
-                            if ("bar".equals(session.getAttribute("foo"))) {
-                                message.setBody("Old " + body);
-                            } else {
-                                session.setAttribute("foo", "bar");
-                                message.setBody("New " + body);
-                            }
+                fromF("jetty:http://127.0.0.1:%d/session?sessionSupport=true", getPort()).process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        HttpMessage message = exchange.getIn(HttpMessage.class);
+                        HttpSession session = message.getRequest().getSession();
+                        String body = message.getBody(String.class);
+                        if ("bar".equals(session.getAttribute("foo"))) {
+                            message.setBody("Old " + body);
+                        } else {
+                            session.setAttribute("foo", "bar");
+                            message.setBody("New " + body);
                         }
-                    });
+                    }
+                });
             }
         };
     }

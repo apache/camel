@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -250,7 +250,7 @@ public class SplunkEvent implements Serializable {
      * @param quoteValues whether or not to put quotes around values
      */
     public SplunkEvent(String eventName, String eventID, boolean useInternalDate, boolean quoteValues) {
-        this.event = new LinkedHashMap<String, String>();
+        this.event = new LinkedHashMap<>();
         this.quoteValues = quoteValues;
         this.useInternalDate = useInternalDate;
 
@@ -275,7 +275,7 @@ public class SplunkEvent implements Serializable {
      * Default constructor
      */
     public SplunkEvent() {
-        this.event = new LinkedHashMap<String, String>();
+        this.event = new LinkedHashMap<>();
     }
 
     public Map<String, String> getEventData() {

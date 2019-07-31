@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kubernetes.cloud;
 
 import java.util.Collections;
@@ -32,7 +31,7 @@ public class KubernetesEnvServiceDiscovery extends KubernetesServiceDiscovery {
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         try {
             final CamelContext ctx = getCamelContext();
             final String host = ctx.resolvePropertyPlaceholders("{{service.host:" + name + "}}");
@@ -40,8 +39,15 @@ public class KubernetesEnvServiceDiscovery extends KubernetesServiceDiscovery {
             final int port = ctx.getTypeConverter().tryConvertTo(int.class, num);
 
             return Collections.singletonList(new DefaultServiceDefinition(name, host, port));
+        } catch (IllegalArgumentException e) {
+            return Collections.emptyList();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "KubernetesEnvServiceDiscovery";
     }
 }

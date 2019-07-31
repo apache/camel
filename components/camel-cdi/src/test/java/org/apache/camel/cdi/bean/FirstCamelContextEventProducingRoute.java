@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,14 +21,11 @@ import javax.inject.Inject;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.CdiEventEndpoint;
-import org.apache.camel.cdi.ContextName;
 
 @ApplicationScoped
-@ContextName("first")
 public class FirstCamelContextEventProducingRoute extends RouteBuilder {
 
     @Inject
-    @ContextName("first")
     private CdiEventEndpoint<String> stringCdiEventEndpoint;
 
     @Override

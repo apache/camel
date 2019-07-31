@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,6 +28,7 @@ import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
+import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theory;
 
@@ -38,7 +39,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
 
     @DataPoints
     public static BatchTest[] getBatches() {
-        List<BatchTest> result = new ArrayList<BatchTest>();
+        List<BatchTest> result = new ArrayList<>();
         BatchTest test = new BatchTest();
         test.contentType = ContentType.XML;
         test.stream = BulkApiBatchIntegrationTest.class.getResourceAsStream(TEST_REQUEST_XML);
@@ -54,6 +55,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
     }
 
     @Theory
+    @Test
     public void testBatchLifecycle(BatchTest request) throws Exception {
         log.info("Testing Batch lifecycle with {} content", request.contentType);
 
@@ -66,7 +68,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
         jobInfo = createJob(jobInfo);
 
         // test createBatch
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(SalesforceEndpointConfig.JOB_ID, jobInfo.getId());
         headers.put(SalesforceEndpointConfig.CONTENT_TYPE, jobInfo.getContentType());
         BatchInfo batchInfo  = template().requestBodyAndHeaders("direct:createBatch",

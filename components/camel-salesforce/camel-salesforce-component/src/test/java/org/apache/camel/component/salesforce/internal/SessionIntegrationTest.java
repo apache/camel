@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,8 @@ package org.apache.camel.component.salesforce.internal;
 
 import org.apache.camel.component.salesforce.LoginConfigHelper;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,12 +39,12 @@ public class SessionIntegrationTest extends Assert implements SalesforceSession.
     @Test
     public void testLogin() throws Exception {
 
-        final SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext());
+        final SslContextFactory sslContextFactory = new SslContextFactory.Client();
+        sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext(new DefaultCamelContext()));
         final SalesforceHttpClient httpClient = new SalesforceHttpClient(sslContextFactory);
         httpClient.setConnectTimeout(TIMEOUT);
 
-        final SalesforceSession session = new SalesforceSession(
+        final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(),
             httpClient, TIMEOUT, LoginConfigHelper.getLoginConfig());
         session.addListener(this);
         httpClient.setSession(session);

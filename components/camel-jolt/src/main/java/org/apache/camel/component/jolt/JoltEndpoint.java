@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,9 +17,12 @@
 package org.apache.camel.component.jolt;
 
 import java.io.InputStream;
+import java.util.Map;
 
 import com.bazaarvoice.jolt.Chainr;
+import com.bazaarvoice.jolt.ContextualTransform;
 import com.bazaarvoice.jolt.Defaultr;
+import com.bazaarvoice.jolt.JoltTransform;
 import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.Removr;
 import com.bazaarvoice.jolt.Shiftr;
@@ -39,28 +42,23 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true, label = "transformation")
 public class JoltEndpoint extends ResourceEndpoint {
-    
-    private Transform transform;
-    
+
+    private JoltTransform transform;
+
     @UriParam(defaultValue = "Hydrated")
     private JoltInputOutputType outputType;
-    
+
     @UriParam(defaultValue = "Hydrated")
     private JoltInputOutputType inputType;
-    
+
     @UriParam(defaultValue = "Chainr")
     private JoltTransformType transformDsl = JoltTransformType.Chainr;
-    
+
     public JoltEndpoint() {
     }
 
     public JoltEndpoint(String uri, JoltComponent component, String resourceUri) {
         super(uri, component, resourceUri);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override
@@ -73,11 +71,11 @@ public class JoltEndpoint extends ResourceEndpoint {
         return "jolt:" + getResourceUri();
     }
 
-    private synchronized Transform getTransform() throws Exception {
+    private synchronized JoltTransform getTransform() throws Exception {
         if (transform == null) {
             if (log.isDebugEnabled()) {
                 String path = getResourceUri();
-                log.debug("Jolt content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{getResourceUri(), path, getEndpointUri()});
+                log.debug("Jolt content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
             }
 
             // Sortr does not require a spec
@@ -102,7 +100,7 @@ public class JoltEndpoint extends ResourceEndpoint {
                     break;
                 }
             }
-            
+
         }
         return transform;
     }
@@ -110,43 +108,43 @@ public class JoltEndpoint extends ResourceEndpoint {
     /**
      * Sets the Transform to use. If not set a Transform specified by the transformDsl will be created
      */
-    public void setTransform(Transform transform) {
+    public void setTransform(JoltTransform transform) {
         this.transform = transform;
     }
-    
+
     public JoltInputOutputType getOutputType() {
         return outputType;
     }
-    
+
     /**
      * Specifies if the output should be hydrated JSON or a JSON String.
      */
     public void setOutputType(JoltInputOutputType outputType) {
         this.outputType = outputType;
     }
-    
+
     public JoltInputOutputType getInputType() {
         return inputType;
     }
-    
+
     /**
      * Specifies if the input is hydrated JSON or a JSON String.
      */
     public void setInputType(JoltInputOutputType inputType) {
         this.inputType = inputType;
     }
-    
+
     public JoltTransformType getTransformDsl() {
         return transformDsl;
     }
-    
+
     /**
      * Specifies the Transform DSL of the endpoint resource. If none is specified <code>Chainr</code> will be used.
      */
     public void setTransformDsl(JoltTransformType transformType) {
         this.transformDsl = transformType;
     }
-    
+
     public JoltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(getResourceUri(), newResourceUri);
         log.debug("Getting endpoint with URI: {}", newUri);
@@ -167,14 +165,24 @@ public class JoltEndpoint extends ResourceEndpoint {
             newEndpoint.onExchange(exchange);
             return;
         }
+
         Object input;
         if (getInputType() == JoltInputOutputType.JsonString) {
             input = JsonUtils.jsonToObject(exchange.getIn().getBody(InputStream.class));
         } else {
             input = exchange.getIn().getBody();
         }
-        Object output = getTransform().transform(input);
-                
+
+        Object output;
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> inputContextMap = exchange.getIn().getHeader(JoltConstants.JOLT_CONTEXT, Map.class);
+        if (inputContextMap != null) {
+            output = ((ContextualTransform)getTransform()).transform(input, inputContextMap);
+        } else {
+            output = ((Transform)getTransform()).transform(input);
+        }
+
         // now lets output the results to the exchange
         Message out = exchange.getOut();
         if (getOutputType() == JoltInputOutputType.JsonString) {
@@ -183,6 +191,5 @@ public class JoltEndpoint extends ResourceEndpoint {
             out.setBody(output);
         }
         out.setHeaders(exchange.getIn().getHeaders());
-        out.setAttachments(exchange.getIn().getAttachments());
     }
 }

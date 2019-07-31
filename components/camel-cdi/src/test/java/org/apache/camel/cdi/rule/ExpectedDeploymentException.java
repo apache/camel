@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -55,7 +55,9 @@ public final class ExpectedDeploymentException implements TestRule {
                             // OpenWebBeans logs the deployment exception details
                             // TODO: OpenWebBeans only log the root cause of exception thrown in producer methods
                             //assertThat(log.getMessages(), containsInRelativeOrder(pecs(messages)))
-                            assertThat(log.getMessages(), anyOf(hasItems(messages)));
+
+                            List<String> causeExceptionsMessages = getCauseExceptionsMessages(exception);
+                            assertThat(causeExceptionsMessages, anyOf(hasItems(messages)));
                         } catch (AssertionError error) {
                             // Weld stores the deployment exception details in the exception message
                             assertThat(exception.getMessage(), allOf(pecs(messages)));
@@ -63,6 +65,17 @@ public final class ExpectedDeploymentException implements TestRule {
                     }
                 }
             });
+    }
+
+    private List<String> getCauseExceptionsMessages(Throwable exception) {
+        List<String> exceptionsMessages = new ArrayList<>();
+        Throwable cause = exception;
+        while (cause.getCause() != null && cause.getCause() != cause) {
+            cause = cause.getCause();
+            exceptionsMessages.add(cause.getMessage());
+        }
+        exceptionsMessages.addAll(log.getMessages());
+        return exceptionsMessages;
     }
 
     public static ExpectedDeploymentException none() {

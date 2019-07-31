@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,4 +38,17 @@ public interface CdiCamelConfiguration {
      * @return Current state of autoConfigureRoutes parameter.
      */
     boolean autoConfigureRoutes();
+    
+    /**
+     * Overrides the Camel CDI behavior to automatically start all Camel contexts.
+     * @return this Camel CDI configuration
+     * @throws IllegalStateException if called outside of the observer method invocation
+     */
+    CdiCamelConfiguration autoStartContexts(boolean autoStartContexts);
+
+    /**
+     * @return Current state of autoStartContexts parameter.
+     */
+    boolean autoStartContexts();
+    
 }

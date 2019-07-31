@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,7 +34,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * Parses ApiMethod signatures from a File.
  */
 @Mojo(name = "fromFile", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class FileApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
     @Parameter(required = true, property = PREFIX + "signatureFile")
@@ -43,7 +43,7 @@ public class FileApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
     @Override
     public List<String> getSignatureList() throws MojoExecutionException {
         // get signatureFile as a list of Strings
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(this.signatureFile));
             String line = reader.readLine();
@@ -52,8 +52,6 @@ public class FileApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
                 line = reader.readLine();
             }
             reader.close();
-        } catch (FileNotFoundException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }

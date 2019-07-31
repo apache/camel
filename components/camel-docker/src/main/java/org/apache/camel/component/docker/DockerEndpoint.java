@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,9 @@ import org.apache.camel.component.docker.consumer.DockerStatsConsumer;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.component.docker.producer.AsyncDockerProducer;
 import org.apache.camel.component.docker.producer.DockerProducer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The docker component is used for managing Docker containers.
@@ -44,10 +44,6 @@ public class DockerEndpoint extends DefaultEndpoint {
     public DockerEndpoint(String uri, DockerComponent component, DockerConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-    }
-
-    public DockerEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     @Override
@@ -77,11 +73,6 @@ public class DockerEndpoint extends DefaultEndpoint {
         default:
             throw new DockerException(operation + " is not a valid consumer operation");
         }
-    }
-    
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     public DockerConfiguration getConfiguration() {

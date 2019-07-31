@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,6 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Consumer receives an invalid HL7 Message.
  */
 public class MllpInvalidMessageException extends MllpException {
-
     public MllpInvalidMessageException(String message, byte[] hl7Message) {
         super(message, hl7Message);
     }

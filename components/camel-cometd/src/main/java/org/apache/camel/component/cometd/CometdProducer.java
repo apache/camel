@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,7 @@
 package org.apache.camel.component.cometd;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerMessage;
@@ -43,10 +43,9 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
     }
 
     @Override
-    public void start() throws Exception {
-        super.start();
+    public void doStart() throws Exception {
+        super.doStart();
         // must connect first
-
         endpoint.connect(this);
         // should probably look into synchronization for this.
         if (service == null) {
@@ -55,7 +54,7 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
     }
 
     @Override
-    public void stop() throws Exception {
+    public void doStop() throws Exception {
         super.stop();
         endpoint.disconnect(this);
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ import org.apache.camel.component.zookeeper.operations.GetChildrenOperation;
 import org.apache.camel.component.zookeeper.operations.GetDataOperation;
 import org.apache.camel.component.zookeeper.operations.OperationResult;
 import org.apache.camel.component.zookeeper.operations.ZooKeeperOperation;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.ZooKeeper;
 
@@ -44,7 +44,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     private final ZooKeeperConnectionManager zkm;
     private ZooKeeper connection;
     private ZooKeeperConfiguration configuration;
-    private LinkedBlockingQueue<ZooKeeperOperation> operations = new LinkedBlockingQueue<ZooKeeperOperation>();
+    private LinkedBlockingQueue<ZooKeeperOperation> operations = new LinkedBlockingQueue<>();
     private ExecutorService executor;
     private volatile boolean shuttingDown;
 
@@ -108,15 +108,15 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     }
 
     private Exchange createExchange(String path, OperationResult result, WatchedEvent watchedEvent) {
-        Exchange e = getEndpoint().createExchange();
-        ZooKeeperMessage in = new ZooKeeperMessage(path, result.getStatistics(), watchedEvent);
-        e.setIn(in);
+        Exchange exchange = getEndpoint().createExchange();
+        ZooKeeperMessage in = new ZooKeeperMessage(getEndpoint().getCamelContext(), path, result.getStatistics(), watchedEvent);
+        exchange.setIn(in);
         if (result.isOk()) {
             in.setBody(result.getResult());
         } else {
-            e.setException(result.getException());
+            exchange.setException(result.getException());
         }
-        return e;
+        return exchange;
     }
 
     private class OperationsExecutor implements Runnable {

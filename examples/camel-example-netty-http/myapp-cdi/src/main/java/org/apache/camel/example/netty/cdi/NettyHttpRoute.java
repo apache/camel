@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,20 +16,20 @@
  */
 package org.apache.camel.example.netty.cdi;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
-import org.apache.camel.component.netty.http.NettySharedHttpServer;
-import org.ops4j.pax.cdi.api.OsgiService;
+import org.apache.camel.component.netty4.http.NettySharedHttpServer;
+import org.ops4j.pax.cdi.api.Service;
 
-@ContextName("netty-myapp-cdi")
+@ApplicationScoped
 public class NettyHttpRoute extends RouteBuilder {
 
     @Inject
-    @OsgiService
+    @Service
     private NettySharedHttpServer server;
 
     @Produces

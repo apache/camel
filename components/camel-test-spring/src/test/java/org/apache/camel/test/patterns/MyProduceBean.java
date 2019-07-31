@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,10 +25,10 @@ import org.apache.camel.ProducerTemplate;
  */
 public class MyProduceBean {
 
-    @Produce(uri = "mock:result")
+    @Produce("mock:result")
     MySender sender;
     
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     ProducerTemplate template;
 
     public void doSomething(String body) {

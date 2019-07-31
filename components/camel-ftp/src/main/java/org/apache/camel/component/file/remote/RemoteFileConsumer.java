@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.support.SynchronizationAdapter;
 
 /**
@@ -34,8 +35,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected transient boolean loggedIn;
     protected transient boolean loggedInWarning;
 
-    public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations) {
-        super(endpoint, processor, operations);
+    public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations, GenericFileProcessStrategy processStrategy) {
+        super(endpoint, processor, operations, processStrategy);
         this.setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
 
@@ -51,15 +52,10 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     protected boolean prePollCheck() throws Exception {
         if (log.isTraceEnabled()) {
-            log.trace("prePollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
+            log.trace("prePollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
         try {
-            if (getEndpoint().getMaximumReconnectAttempts() > 0) {
-                // only use recoverable if we are allowed any re-connect attempts
-                recoverableConnectIfNecessary();
-            } else {
-                connectIfNecessary();
-            }
+            connectIfNecessary();
         } catch (Exception e) {
             loggedIn = false;
 
@@ -87,7 +83,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     @Override
     protected void postPollCheck(int polledMessages) {
         if (log.isTraceEnabled()) {
-            log.trace("postPollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
+            log.trace("postPollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
 
         // if we did not poll any messages, but are configured to disconnect then we need to do this now
@@ -112,7 +108,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             exchange.addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
-                    log.trace("postPollCheck disconnect from: {}", getEndpoint());
+                    log.trace("processExchange disconnect from: {}", getEndpoint());
                     disconnect();
                 }
 
@@ -166,21 +162,19 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         }
     }
 
-    protected void recoverableConnectIfNecessary() throws Exception {
-        try {
-            connectIfNecessary();
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Could not connect to: " + getEndpoint() + ". Will try to recover.", e);
-            }
-            loggedIn = false;
-        }
+    protected void forceDisconnect() {
+        // eager indicate we are no longer logged in
+        loggedIn = false;
 
-        // recover by re-creating operations which should most likely be able to recover
-        if (!loggedIn) {
-            log.debug("Trying to recover connection to: {} with a fresh client.", getEndpoint());
-            setOperations(getEndpoint().createRemoteFileOperations());
-            connectIfNecessary();
+        // disconnect
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("Force disconnecting from: {}", remoteServer());
+            }
+            getOperations().forceDisconnect();
+        } catch (GenericFileOperationFailedException e) {
+            // ignore just log a warning
+            log.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage() + ". This exception will be ignored.");
         }
     }
 
@@ -192,7 +186,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         } catch (Exception ex) {
             // here we just ignore the exception and try to reconnect
             if (log.isDebugEnabled()) {
-                log.debug("Exception checking connection status: " + ex.getMessage());
+                log.debug("Exception checking connection status: {}", ex.getMessage());
             }
         }
 
@@ -200,9 +194,9 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             if (log.isDebugEnabled()) {
                 log.debug("Not connected/logged in, connecting to: {}", remoteServer());
             }
-            loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration());
+            loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration(), null);
             if (loggedIn) {
-                log.debug("Connected and logged in to: " + remoteServer());
+                log.debug("Connected and logged in to: {}", remoteServer());
             }
         }
     }
@@ -215,12 +209,12 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     /**
-     * Executes doPollDirectory and on exception checks if it can be ignored by calling ignoreCannotRetrieveFile .
+     * Executes doPollDirectory and on exception checks if it can be ignored by calling ignoreCannotRetrieveFile.
      *
-     * @param absolutePath The path of the directory to poll
-     * @param dirName The name of the directory to poll
-     * @param fileList current list of files gathered
-     * @param depth the current depth of the directory
+     * @param absolutePath  the path of the directory to poll
+     * @param dirName       the name of the directory to poll
+     * @param fileList      current list of files gathered
+     * @param depth         the current depth of the directory
      * @return whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been hit
      * @throws GenericFileOperationFailedException if the exception during doPollDirectory can not be ignored
      */
@@ -230,13 +224,13 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             //Try to poll the directory
             return doPollDirectory(absolutePath, dirName, fileList, depth);
         } catch (Exception e) {
-            log.debug("Caught exception " + e.getMessage());
+            log.debug("Caught exception {}", e.getMessage());
             if (ignoreCannotRetrieveFile(absolutePath, null, e)) {
-                log.trace("Ignoring file error " + e.getMessage() + " for " + absolutePath);
+                log.trace("Ignoring file error {} for {}", e.getMessage(), absolutePath);
                 //indicate no files in this directory to poll, continue with fileList
                 return true;
             } else {
-                log.trace("Not ignoring file error " + e.getMessage() + " for " + absolutePath);
+                log.trace("Not ignoring file error {} for {}", e.getMessage(), absolutePath);
                 if (e instanceof GenericFileOperationFailedException) {
                     throw (GenericFileOperationFailedException) e;
                 } else {

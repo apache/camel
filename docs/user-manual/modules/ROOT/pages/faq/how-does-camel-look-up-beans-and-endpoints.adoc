@@ -1,0 +1,23 @@
+[[HowdoesCamellookupbeansandendpoints-HowdoesCamellookupbeans,componentsorendpoints]]
+= How does Camel look up beans, components or endpoints?
+
+There are many times using Camel that a name is used for a bean such as
+using the xref:components::bean-component.adoc[Bean] endpoint or using the
+xref:components::bean-language.adoc[Bean Language] to create a
+xref:expression.adoc[Expression] or xref:predicate.adoc[Predicate] or
+referring to any xref:component.adoc[Component] or
+xref:endpoint.adoc[Endpoint].
+
+Camel uses the xref:registry.adoc[Registry] to resolve names when
+looking up beans or components or endpoints. Typically this will be
+xref:spring.adoc[Spring]; though you can use Camel without Spring in
+which case it will use the xref:jndi.adoc[JNDI] registry implementation.
+
+Lots of test cases in the camel-core module don't use Spring (as
+camel-core explicitly doesn't depend on spring) - though test cases in
+camel-spring do.
+
+So you can just define beans, components or endpoints in your
+xref:registry.adoc[Registry] implementation then you can refer to them
+by name in the xref:endpoint.adoc[Endpoint] URIs or xref:components::bean-component.adoc[Bean]
+endpoints or xref:components::bean-language.adoc[Bean Language] expressions.

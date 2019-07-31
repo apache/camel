@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,13 +8,14 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="
@@ -68,56 +70,56 @@
     
     <route>
       <from uri="direct:basic-encryption" />
-      <marshal ref="basic" />
+      <marshal><custom ref="basic" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="basic" />
+      <unmarshal><custom ref="basic" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:init-vector" />
-      <marshal ref="initvector" />
+      <marshal><custom ref="initvector" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="initvector" />
+      <unmarshal><custom ref="initvector" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:inline" />
-      <marshal ref="inline" />
+      <marshal><custom ref="inline" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="inline-decrypt" />
+      <unmarshal><custom ref="inline-decrypt" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:hmac" />
-      <marshal ref="hmac" />
+      <marshal><custom ref="hmac" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="hmac" />
+      <unmarshal><custom ref="hmac" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:hmac-algorithm" />
-      <marshal ref="hmac-algorithm" />
+      <marshal><custom ref="hmac-algorithm" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="hmac-algorithm" />
+      <unmarshal><custom ref="hmac-algorithm" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:hmac-sha-256-algorithm" />
-      <marshal ref="hmac-sha-256-algorithm" />
+      <marshal><custom ref="hmac-sha-256-algorithm" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="hmac-sha-256-algorithm" />
+      <unmarshal><custom ref="hmac-sha-256-algorithm" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:key-in-header-encrypt" />
-      <marshal ref="nokey" />
-      <setHeader headerName="CamelCryptoKey">
+      <marshal><custom ref="nokey" /></marshal>
+      <setHeader name="CamelCryptoKey">
         <constant />
       </setHeader>
       <to uri="mock:encrypted" />
@@ -125,8 +127,8 @@
     
     <route>
       <from uri="direct:key-in-header-decrypt" />
-      <unmarshal ref="nokey" />
-      <setHeader headerName="CamelCryptoKey">
+      <unmarshal><custom ref="nokey" /></unmarshal>
+      <setHeader name="CamelCryptoKey">
         <constant />
       </setHeader>
       <to uri="mock:unencrypted" />
@@ -134,25 +136,25 @@
     
     <route>
       <from uri="direct:3des-ecb-encryption" />
-      <marshal ref="tripledes-ecb-encryption" />
+      <marshal><custom ref="tripledes-ecb-encryption" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="tripledes-ecb-encryption" />
+      <unmarshal><custom ref="tripledes-ecb-encryption" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:3des-cbc-encryption" />
-      <marshal ref="tripledes-cbc-encryption-encrypt" />
+      <marshal><custom ref="tripledes-cbc-encryption-encrypt" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="tripledes-cbc-encryption-decrypt" />
+      <unmarshal><custom ref="tripledes-cbc-encryption-decrypt" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:aes-128-ecb-encryption" />
-      <marshal ref="aes-128-ecb-encryption" />
+      <marshal><custom ref="aes-128-ecb-encryption" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="aes-128-ecb-encryption" />
+      <unmarshal><custom ref="aes-128-ecb-encryption" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     

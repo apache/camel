@@ -3,15 +3,16 @@
 The Camel Maven Plugin supports the following goals
 
  - camel:run - To run your Camel application
- - camel:validate - To validate your source code for invalid Camel endpoint uris
 
 == camel:run
 
 The `camel:run` goal of the Camel Maven Plugin is used to run your Camel Spring configurations in a forked JVM from Maven.
 A good example application to get you started is the Spring Example.
 
-    cd examples/camel-example-spring
-    mvn camel:run
+----
+cd examples/camel-example-spring
+mvn camel:run
+----
 
 This makes it very easy to spin up and test your routing rules without having to write a main(...) method;
 it also lets you create multiple jars to host different sets of routing rules and easily test them independently.
@@ -21,6 +22,19 @@ then boot up a Spring ApplicationContext using the XML configuration files on th
 
 If you want to boot up your Camel routes a little faster, you could try the `camel:embedded` instead.
 
+=== Options
+
+The maven plugin *run* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+
+|===
+| Parameter | Default Value | Description
+| duration | -1 | Sets the time duration (seconds) that the application will run for before terminating. A value <= 0 will run forever.
+| durationIdle | -1 | Sets the idle time duration (seconds) duration that the application can be idle before terminating. A value <= 0 will run forever.
+| durationMaxMessages | -1 | Sets the duration of maximum number of messages that the application will process before terminating.
+| logClasspath | false | Whether to log the classpath when starting
+|===
+
+
 === Running OSGi Blueprint
 
 The `camel:run` plugin also supports running a Blueprint application, and by default it scans for OSGi blueprint files in
@@ -28,13 +42,16 @@ The `camel:run` plugin also supports running a Blueprint application, and by def
 
 You would need to configure the camel:run plugin to use blueprint, by setting useBlueprint to true as shown below
 
-    <plugin>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-maven-plugin</artifactId>
-      <configuration>
-        <useBlueprint>true</useBlueprint>
-      </configuration>
-    </plugin>
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-maven-plugin</artifactId>
+  <configuration>
+    <useBlueprint>true</useBlueprint>
+  </configuration>
+</plugin>
+----
 
 This allows you to boot up any Blueprint services you wish - whether they are Camel-related, or any other Blueprint.
 
@@ -47,17 +64,20 @@ We use the Felix Connector project as the blueprint container. This project is n
 For that you can use Apache Karaf or Apache ServiceMix.
 You can use the applicationContextUri configuration to specify an explicit blueprint XML file, such as:
 
-    <plugin>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-maven-plugin</artifactId>
-      <configuration>
-        <useBlueprint>true</useBlueprint>
-        <applicationContextUri>myBlueprint.xml</applicationContextUri>
-        <!-- ConfigAdmin options which have been added since Camel 2.12.0 -->
-        <configAdminPid>test</configAdminPid>
-        <configAdminFileName>/user/test/etc/test.cfg</configAdminFileName>
-      </configuration>
-    </plugin>
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-maven-plugin</artifactId>
+  <configuration>
+    <useBlueprint>true</useBlueprint>
+    <applicationContextUri>myBlueprint.xml</applicationContextUri>
+    <!-- ConfigAdmin options which have been added since Camel 2.12.0 -->
+    <configAdminPid>test</configAdminPid>
+    <configAdminFileName>/user/test/etc/test.cfg</configAdminFileName>
+  </configuration>
+</plugin>
+----
 
 The `applicationContextUri` will currently load the file from the classpath, so in the example above the
 `myBlueprint.xml` file must be in the root of the classpath.
@@ -76,169 +96,45 @@ You should add the CDI container of your choice (e.g. Weld or OpenWebBeans) to t
 
 From the source of Camel you can run a CDI example via
 
-    cd examples/camel-example-cdi
-    mvn compile camel:run
+----
+cd examples/camel-example-cdi
+mvn compile camel:run
+----
 
 === Logging the classpath
 
 You can configure whether the classpath should be logged when `camel:run` executes.
 You can enable this in the configuration using:
 
-    <plugin>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-maven-plugin</artifactId>
-      <configuration>
-        <logClasspath>true</logClasspath>
-      </configuration>
-    </plugin>
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-maven-plugin</artifactId>
+  <configuration>
+    <logClasspath>true</logClasspath>
+  </configuration>
+</plugin>
+----
 
 === Using live reload of XML files
 
 You can configure the plugin to scan for XML file changes and trigger a reload of the Camel routes which are contained in those XML files.
 
-    <plugin>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-maven-plugin</artifactId>
-      <configuration>
-        <fileWatcherDirectory>src/main/resources/META-INF/spring</fileWatcherDirectory>
-      </configuration>
-    </plugin>
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-maven-plugin</artifactId>
+  <configuration>
+    <fileWatcherDirectory>src/main/resources/META-INF/spring</fileWatcherDirectory>
+  </configuration>
+</plugin>
+----
 
 Then the plugin watches this directory. This allows you to edit the source code from your editor and save the file, and have
     the running Camel application pickup those changes.
 
 Notice its only changes of Camel routes, eg `<routes>`, or `<route>` which is supported.
 You cannot change Spring or OSGi Blueprint `<bean>` elements.
-
-== camel:validate
-
-For validating Camel endpoints in the source code:
-
-Then you can run the validate goal from the command line or from within your Java editor such as IDEA or Eclipse.
-
-     mvn camel:validate
-
-You can also enable the plugin to automatic run as part of the build to catch these errors.
-
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>2.19.0</version>
-        <executions>
-          <execution>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>validate</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-The phase determines when the plugin runs. In the sample above the phase is `process-classes` which runs after
-the compilation of the main source code.
-
-The maven plugin can also be configured to validate the test source code , which means that the phase should be
-changed accordingly to `process-test-classes` as shown below:
-
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>2.19.0</version>
-        <executions>
-          <execution>
-            <configuration>
-              <includeTest>true</includeTest>
-            </configuration>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>validate</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-
-=== Running the goal on any Maven project
-
-You can also run the validate goal on any Maven project without having to add the plugin to the `pom.xml` file.
-Doing so requires to specify the plugin using its fully qualified name. For example to run the goal on
-the `camel-example-cdi` from Apache Camel you can run
-
-    $cd camel-example-cdi
-    $mvn org.apache.camel:camel-maven-plugin:2.19.0:validate
-
-which then runs and outputs the following:
-
-```
-[INFO] ------------------------------------------------------------------------
-[INFO] Building Camel :: Example :: CDI 2.19.0
-[INFO] ------------------------------------------------------------------------
-[INFO]
-[INFO] --- camel-maven-plugin:2.19.0:validate (default-cli) @ camel-example-cdi ---
-[INFO] Endpoint validation success: (4 = passed, 0 = invalid, 0 = incapable, 0 = unknown components)
-[INFO] Simple validation success: (0 = passed, 0 = invalid)
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-```
-
-The validation passed, and 4 endpoints was validated. Now suppose we made a typo in one of the Camel endpoint uris in the source code, such as:
-
-    @Uri("timer:foo?period=5000")
-
-is changed to include a typo error in the `period` option
-
-    @Uri("timer:foo?perid=5000")
-
-And when running the validate goal again reports the following:
-
-```
-[INFO] ------------------------------------------------------------------------
-[INFO] Building Camel :: Example :: CDI 2.19.0
-[INFO] ------------------------------------------------------------------------
-[INFO]
-[INFO] --- camel-maven-plugin:2.19.0:validate (default-cli) @ camel-example-cdi ---
-[WARNING] Endpoint validation error at: org.apache.camel.example.cdi.MyRoutes(MyRoutes.java:32)
-
-	timer:foo?perid=5000
-
-	                   perid    Unknown option. Did you mean: [period]
-
-
-[WARNING] Endpoint validation error: (3 = passed, 1 = invalid, 0 = incapable, 0 = unknown components)
-[INFO] Simple validation success: (0 = passed, 0 = invalid)
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-```
-
-
-=== Options
-
-The maven plugin supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
-
-|========================================
-| Parameter | Default Value | Description
-| downloadVersion | true | Whether to allow downloading Camel catalog version from the internet. This is needed if the project uses a different Camel version than this plugin is using by default.
-| failOnError | false | Whether to fail if invalid Camel endpoints was found. By default the plugin logs the errors at WARN level.
-| logUnparseable | false | Whether to log endpoint URIs which was un-parsable and therefore not possible to validate.
-| includeJava | true | Whether to include Java files to be validated for invalid Camel endpoints.
-| includeXml | true | Whether to include XML files to be validated for invalid Camel endpoints.
-| includeTest | false | Whether to include test source code.
-| includes | | To filter the names of java and xml files to only include files matching any of the given list of patterns (wildcard and regular expression). Multiple values can be separated by comma.
-| excludes | | To filter the names of java and xml files to exclude files matching any of the given list of patterns (wildcard and regular expression). Multiple values can be separated by comma.
-| ignoreUnknownComponent | true | Whether to ignore unknown components.
-| ignoreIncapable | true | Whether to ignore incapable of parsing the endpoint uri or simple expression.
-| ignoreLenientProperties | true |  Whether to ignore components that uses lenient properties. When this is true, then the uri validation is stricter but would fail on properties that are not part of the component but in the uri because of using lenient properties. For example using the HTTP components to provide query parameters in the endpoint uri.
-| showAll | false | Whether to show all endpoints and simple expressions (both invalid and valid).
-|========================================
-
-
-=== Validating include test
-
-If you have a Maven project then you can run the plugin to validate the endpoints in the unit test source code as well.
-You can pass in the options using `-D` style as shown:
-
-    $cd myproject
-    $mvn org.apache.camel:camel-maven-plugin:2.19.0:validate -DincludeTest=true
 

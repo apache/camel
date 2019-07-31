@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.blueprint;
 
 import org.apache.camel.EndpointInject;
@@ -28,10 +27,10 @@ import org.junit.Test;
  */
 public class SimpleTransformAnnotationsBlueprintTest extends CamelBlueprintTestSupport {
 
-    @Produce(uri = "direct:in")
+    @Produce("direct:in")
     private ProducerTemplate producerTemplate;
 
-    @EndpointInject(uri = "mock:out")
+    @EndpointInject("mock:out")
     private MockEndpoint mockOut;
 
     @Override

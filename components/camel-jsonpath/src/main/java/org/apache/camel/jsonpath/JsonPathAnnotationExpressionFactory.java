@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,8 +21,8 @@ import java.lang.annotation.Annotation;
 import com.jayway.jsonpath.Option;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.component.bean.DefaultAnnotationExpressionFactory;
-import org.apache.camel.language.LanguageAnnotation;
+import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
+import org.apache.camel.support.language.LanguageAnnotation;
 
 public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 

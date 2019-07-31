@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,10 +17,11 @@
 package org.apache.camel.component.file.remote.sftp;
 
 import com.jcraft.jsch.ProxyHTTP;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Test;
 import org.littleshoot.proxy.DefaultHttpProxyServer;
@@ -58,7 +59,7 @@ public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.expectedBodiesReceived(expected);
         
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
         
@@ -77,13 +78,11 @@ public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
         };
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("proxy")
+    public ProxyHTTP createProxy() throws Exception {
 
         final ProxyHTTP proxyHTTP = new ProxyHTTP("localhost", proxyPort);
         proxyHTTP.setUserPasswd("user", "password");
-        jndi.bind("proxy", proxyHTTP);
-        return jndi;
+        return proxyHTTP;
     }
 }

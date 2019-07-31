@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,14 +31,12 @@ import org.restlet.data.Status;
 /**
  * Testing that end users can use the {@link Response} API from Restlet directly to have fine grained
  * control of the response they want to use.
- *
- * @version 
  */
 public class RestletRequestAndResponseAPITest extends RestletTestSupport {
 
     @Test
     public void testRestletProducer() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("beverage.beer", "Carlsberg");
 
@@ -48,7 +46,7 @@ public class RestletRequestAndResponseAPITest extends RestletTestSupport {
 
     @Test
     public void testRestletProducer2() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("beverage.beer", "Carlsberg");
 

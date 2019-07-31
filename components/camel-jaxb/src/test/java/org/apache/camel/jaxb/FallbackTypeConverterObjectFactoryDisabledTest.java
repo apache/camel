@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,7 +38,7 @@ public class FallbackTypeConverterObjectFactoryDisabledTest extends CamelTestSup
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        context.getProperties().put(FallbackTypeConverter.OBJECT_FACTORY, "false");
+        context.getGlobalOptions().put(FallbackTypeConverter.OBJECT_FACTORY, "false");
         return new RouteBuilder(context) {
 
             @Override

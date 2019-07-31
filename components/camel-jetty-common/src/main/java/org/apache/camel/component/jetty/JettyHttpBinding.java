@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,9 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
- * Jetty specific binding to parse the response when using {@link org.apache.camel.component.jetty.JettyHttpProducer}
- *
- * @version 
+ * Jetty specific binding to parse the request/response from Jetty and Camel.
  */
 public interface JettyHttpBinding {
 
@@ -108,14 +106,18 @@ public interface JettyHttpBinding {
     boolean isAllowJavaSerializedObject();
 
     /**
-     * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+     * The status codes which are considered a success response. The values are inclusive. Multiple ranges can be
+     * defined, separated by comma, e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number or from-to
+     * with the dash included.
      * <p/>
      * The default range is <tt>200-299</tt>
      */
     String getOkStatusCodeRange();
 
     /**
-     * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+     * The status codes which are considered a success response. The values are inclusive. Multiple ranges can be
+     * defined, separated by comma, e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number or from-to
+     * with the dash included.
      * <p/>
      * The default range is <tt>200-299</tt>
      */

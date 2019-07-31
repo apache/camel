@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,30 +20,33 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultShutdownStrategy;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
+import org.testng.annotations.AfterTest;
 
 public class CamelPublisherConversionVerificationTest extends PublisherVerification<Long> {
+
+    private CamelContext context;
 
     public CamelPublisherConversionVerificationTest() {
         super(new TestEnvironment(2000L));
     }
 
+
     @Override
     public Publisher<Long> createPublisher(long l) {
+        init();
 
-        CamelContext context = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("timer:tick?delay=500&period=50&repeatCount=" + l)
-                        .setBody().simple("random(1000)")
+                        .setBody().simple("${random(1000)}")
                         .to("reactive-streams:prod");
             }
         };
-
-        Publisher<Long> pub = CamelReactiveStreams.get(context).fromStream("prod", Long.class);
 
         try {
             builder.addRoutesToCamelContext(context);
@@ -52,6 +55,7 @@ public class CamelPublisherConversionVerificationTest extends PublisherVerificat
             throw new RuntimeException(e);
         }
 
+        Publisher<Long> pub = CamelReactiveStreams.get(context).fromStream("prod", Long.class);
         return pub;
     }
 
@@ -64,5 +68,25 @@ public class CamelPublisherConversionVerificationTest extends PublisherVerificat
     @Override
     public Publisher<Long> createFailedPublisher() {
         return null;
+    }
+
+    protected void init() {
+        tearDown();
+        this.context = new DefaultCamelContext();
+        DefaultShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy();
+        shutdownStrategy.setShutdownNowOnTimeout(true);
+        shutdownStrategy.setTimeout(1);
+        this.context.setShutdownStrategy(shutdownStrategy);
+    }
+
+    @AfterTest
+    protected void tearDown() {
+        try {
+            if (this.context != null) {
+                this.context.stop();
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

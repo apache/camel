@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,6 +35,8 @@ public interface ConsulConstants {
     String CONSUL_SERVICE_FILTER = "CamelConsulSessionFilter";
     String CONSUL_VERSION = "CamelConsulVersion";
     String CONSUL_FLAGS = "CamelConsulFlags";
+    String CONSUL_INDEX = "CamelConsulIndex";
+    String CONSUL_WAIT = "CamelConsulWait";
     String CONSUL_CREATE_INDEX = "CamelConsulCreateIndex";
     String CONSUL_LOCK_INDEX = "CamelConsulLockIndex";
     String CONSUL_MODIFY_INDEX = "CamelConsulModifyIndex";
@@ -42,4 +44,15 @@ public interface ConsulConstants {
     String CONSUL_RESULT = "CamelConsulResult";
     String CONSUL_SESSION = "CamelConsulSession";
     String CONSUL_VALUE_AS_STRING = "CamelConsulValueAsString";
+    String CONSUL_NODE = "CamelConsulNode";
+    String CONSUL_SERVICE = "CamelConsulService";
+    String CONSUL_DATACENTER = "CamelConsulDatacenter";
+    String CONSUL_NEAR_NODE = "CamelConsulNearNode";
+    String CONSUL_NODE_META = "CamelConsulNodeMeta";
+    String CONSUL_LAST_CONTACT = "CamelConsulLastContact";
+    String CONSUL_KNOWN_LEADER = "CamelConsulKnownLeader";
+    String CONSUL_CONSISTENCY_MODE = "CamelConsulConsistencyMode";
+    String CONSUL_HEALTHY_ONLY = "CamelConsulHealthyOnly";
+    String CONSUL_HEALTHY_STATE = "CamelConsulHealthyState";
+    String CONSUL_PREPARED_QUERY_ID = "CamelConsulPreparedQueryID";
 }

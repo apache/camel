@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,9 +21,10 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 import javax.validation.ValidationProviderResolver;
+import javax.validation.spi.ValidationProvider;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.Test;
@@ -37,11 +38,12 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
 
     // Routing fixtures
 
+    @BindToRegistry("myValidationProviderResolver")
     ValidationProviderResolver validationProviderResolver = mock(ValidationProviderResolver.class);
 
     @Override
     protected void doPreSetup() throws Exception {
-        List validationProviders = asList(new HibernateValidator());
+        List<ValidationProvider<?>> validationProviders = asList(new HibernateValidator());
         given(validationProviderResolver.getValidationProviders()).willReturn(validationProviders);
         super.doPreSetup();
     }
@@ -51,17 +53,9 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:test").
-                    to("bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
+                from("direct:test").to("bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("myValidationProviderResolver", validationProviderResolver);
-        return registry;
     }
 
     // Tests

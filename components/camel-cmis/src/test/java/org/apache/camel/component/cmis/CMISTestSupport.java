@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
@@ -53,7 +53,7 @@ public class CMISTestSupport extends CamelTestSupport {
     protected static final String CMIS_ENDPOINT_TEST_SERVER
         = "http://localhost:%s/chemistry-opencmis-server-inmemory/atom11";
     protected static final String OPEN_CMIS_SERVER_WAR_PATH
-        = "target/dependency/chemistry-opencmis-server-inmemory-0.13.0.war";
+        = "target/dependency/chemistry-opencmis-server-inmemory.war";
 
     protected static Server cmisServer;
     protected static int port;
@@ -80,7 +80,7 @@ public class CMISTestSupport extends CamelTestSupport {
         Folder rootFolder = session.getRootFolder();
         ItemIterable<CmisObject> children = rootFolder.getChildren();
         for (CmisObject cmisObject : children) {
-            if ("cmis:folder".equals(cmisObject.getPropertyValue(PropertyIds.OBJECT_TYPE_ID))) {
+            if (CamelCMISConstants.CMIS_FOLDER.equals(cmisObject.getPropertyValue(PropertyIds.OBJECT_TYPE_ID))) {
                 List<String> notDeltedIdList = ((Folder)cmisObject)
                         .deleteTree(true, UnfileObject.DELETE, true);
                 if (notDeltedIdList != null && notDeltedIdList.size() > 0) {
@@ -95,7 +95,7 @@ public class CMISTestSupport extends CamelTestSupport {
 
     protected Session createSession() {
         SessionFactory sessionFactory = SessionFactoryImpl.newInstance();
-        Map<String, String> parameter = new HashMap<String, String>();
+        Map<String, String> parameter = new HashMap<>();
         parameter.put(SessionParameter.ATOMPUB_URL, getUrl());
         parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 
@@ -128,23 +128,23 @@ public class CMISTestSupport extends CamelTestSupport {
     }
 
     protected Folder createChildFolderWithName(Folder parent, String childName) {
-        Map<String, String> newFolderProps = new HashMap<String, String>();
-        newFolderProps.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
+        Map<String, String> newFolderProps = new HashMap<>();
+        newFolderProps.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         newFolderProps.put(PropertyIds.NAME, childName);
         return parent.createFolder(newFolderProps);
     }
 
-    protected void createTextDocument(Folder newFolder, String content, String fileName)
+    protected Document createTextDocument(Folder newFolder, String content, String fileName)
         throws UnsupportedEncodingException {
         byte[] buf = content.getBytes("UTF-8");
         ByteArrayInputStream input = new ByteArrayInputStream(buf);
         ContentStream contentStream = createSession().getObjectFactory()
                 .createContentStream(fileName, buf.length, "text/plain; charset=UTF-8", input);
 
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         properties.put(PropertyIds.NAME, fileName);
-        newFolder.createDocument(properties, contentStream, VersioningState.NONE);
+        return newFolder.createDocument(properties, contentStream, VersioningState.NONE);
     }
 
     @BeforeClass

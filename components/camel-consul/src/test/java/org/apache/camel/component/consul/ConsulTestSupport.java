@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,21 +22,31 @@ import java.util.UUID;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
-import org.apache.camel.test.junit4.CamelTestSupport;
+
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.test.testcontainers.ContainerAwareTestSupport;
+import org.apache.camel.test.testcontainers.Wait;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.GenericContainer;
 
-public class ConsulTestSupport extends CamelTestSupport {
-    public static final Logger LOGGER = LoggerFactory.getLogger(ConsulTestSupport.class);
+public class ConsulTestSupport extends ContainerAwareTestSupport {
+    public static final String CONTAINER_IMAGE = "consul:1.5.1";
+    public static final String CONTAINER_NAME = "consul";
     public static final String KV_PREFIX = "/camel";
 
     @Rule
     public final TestName testName = new TestName();
 
+    @BindToRegistry("consul")
+    public ConsulComponent getConsulComponent() {
+        ConsulComponent component = new ConsulComponent();
+        component.setUrl(consulUrl());
+        return component;
+    }
+
     protected Consul getConsul() {
-        return Consul.builder().build();
+        return Consul.builder().withUrl(consulUrl()).build();
     }
 
     protected KeyValueClient getKeyValueClient() {
@@ -60,5 +70,35 @@ public class ConsulTestSupport extends CamelTestSupport {
 
     protected String generateKey() {
         return KV_PREFIX + "/" + testName.getMethodName() + "/" + generateRandomString();
+    }
+
+    protected String consulUrl() {
+        return String.format(
+            "http://%s:%d",
+            getContainerHost(CONTAINER_NAME),
+            getContainerPort(CONTAINER_NAME, Consul.DEFAULT_HTTP_PORT)
+        );
+    }
+
+    @Override
+    protected GenericContainer<?> createContainer() {
+        return consulContainer();
+    }
+
+    public static GenericContainer consulContainer() {
+        return new GenericContainer(CONTAINER_IMAGE)
+            .withNetworkAliases(CONTAINER_NAME)
+            .withExposedPorts(Consul.DEFAULT_HTTP_PORT)
+            .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
+            .withCommand(
+                "agent",
+                "-dev",
+                "-server",
+                "-bootstrap",
+                "-client",
+                "0.0.0.0",
+                "-log-level",
+                "trace"
+            );
     }
 }

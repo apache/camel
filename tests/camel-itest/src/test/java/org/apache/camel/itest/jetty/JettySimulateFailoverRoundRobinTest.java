@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,9 +28,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
 
     private static int port1 = AvailablePortFinder.getNextAvailable(23041);
@@ -42,6 +39,10 @@ public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
     private String bad2 = "jetty:http://localhost:" + port2 + "/bad2";
     private String good = "jetty:http://localhost:" + port3 + "/good";
     private String good2 = "jetty:http://localhost:" + port4 + "/good2";
+    private String hbad = "http://localhost:" + port1 + "/bad";
+    private String hbad2 = "http://localhost:" + port2 + "/bad2";
+    private String hgood = "http://localhost:" + port3 + "/good";
+    private String hgood2 = "http://localhost:" + port4 + "/good2";
 
     @Test
     public void testJettySimulateFailoverRoundRobin() throws Exception {
@@ -74,7 +75,7 @@ public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .process(new MyFailoverLoadBalancer(template, bad, bad2, good, good2));
+                    .process(new MyFailoverLoadBalancer(template, hbad, hbad2, hgood, hgood2));
 
                 from(bad)
                     .to("mock:bad")
@@ -124,7 +125,7 @@ public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
 
         public MyFailoverLoadBalancer(ProducerTemplate template, String... endpoints) {
             this.template = template;
-            this.endpoints = new ArrayList<String>(Arrays.asList(endpoints));
+            this.endpoints = new ArrayList<>(Arrays.asList(endpoints));
         }
 
         public void process(Exchange exchange) throws Exception {

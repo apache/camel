@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,8 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,8 @@ import org.slf4j.LoggerFactory;
  * for asynchronous SEDA exchanges on an
  * <a href="https://github.com/LMAX-Exchange/disruptor">LMAX Disruptor</a> within a CamelContext
  */
-public class DisruptorComponent extends UriEndpointComponent {
+@Component("disruptor")
+public class DisruptorComponent extends DefaultComponent {
     
     public static final int DEFAULT_BUFFER_SIZE = 1024;
     public static final int MAX_CONCURRENT_CONSUMERS = 500;
@@ -54,10 +56,9 @@ public class DisruptorComponent extends UriEndpointComponent {
     private boolean defaultBlockWhenFull = true;
 
     //synchronized access guarded by this
-    private final Map<String, DisruptorReference> disruptors = new HashMap<String, DisruptorReference>();
+    private final Map<String, DisruptorReference> disruptors = new HashMap<>();
 
     public DisruptorComponent() {
-        super(DisruptorEndpoint.class);
     }
 
     @Override

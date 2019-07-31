@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,9 +20,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultShutdownStrategy;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
+import org.testng.annotations.AfterTest;
 
 public class CamelSubscriberConversionVerificationTest extends SubscriberBlackboxVerification<Integer> {
 
@@ -34,7 +36,8 @@ public class CamelSubscriberConversionVerificationTest extends SubscriberBlackbo
 
     @Override
     public Subscriber<Integer> createSubscriber() {
-        this.context = new DefaultCamelContext();
+        init();
+
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -59,4 +62,25 @@ public class CamelSubscriberConversionVerificationTest extends SubscriberBlackbo
     public Integer createElement(int element) {
         return element;
     }
+
+    protected void init() {
+        tearDown();
+        this.context = new DefaultCamelContext();
+        DefaultShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy();
+        shutdownStrategy.setShutdownNowOnTimeout(true);
+        shutdownStrategy.setTimeout(1);
+        this.context.setShutdownStrategy(shutdownStrategy);
+    }
+
+    @AfterTest
+    protected void tearDown() {
+        try {
+            if (this.context != null) {
+                this.context.stop();
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
 }

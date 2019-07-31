@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,19 +22,16 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 
 /**
  * Used to configure the errorHandler type
- *
- * @version 
  */
 @XmlType
 @XmlEnum(String.class)
 public enum ErrorHandlerType {
 
-    DefaultErrorHandler, DeadLetterChannel, LoggingErrorHandler, NoErrorHandler;
+    DefaultErrorHandler, DeadLetterChannel, NoErrorHandler;
 
     /**
      * Get the type as class.
@@ -47,8 +44,6 @@ public enum ErrorHandlerType {
             return DefaultErrorHandlerBuilder.class;
         case DeadLetterChannel:
             return DeadLetterChannelBuilder.class;
-        case LoggingErrorHandler:
-            return LoggingErrorHandlerBuilder.class;
         case NoErrorHandler:
             return NoErrorHandlerBuilder.class;
         default:

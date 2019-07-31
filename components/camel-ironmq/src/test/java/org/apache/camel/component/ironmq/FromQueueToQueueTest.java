@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,27 +20,30 @@ import java.io.IOException;
 
 import io.iron.ironmq.EmptyQueueException;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class FromQueueToQueueTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    @EndpointInject(uri = "ironmq:testqueue?client=#ironMock")
+    @EndpointInject("ironmq:testqueue?client=#ironMock")
     private IronMQEndpoint queue1;
 
-    @EndpointInject(uri = "ironmq:testqueue2?client=#ironMock")
+    @EndpointInject("ironmq:testqueue2?client=#ironMock")
     private IronMQEndpoint queue2;
-
+    
+    @BindToRegistry("ironMock")
+    private IronMQClientMock mock = new IronMQClientMock("dummy", "dummy");
+    
     @Test
     public void shouldDeleteMessageFromQueue1() throws Exception {
 
@@ -74,13 +77,6 @@ public class FromQueueToQueueTest extends CamelTestSupport {
                 throw e;
             }
         }
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("ironMock", new IronMQClientMock("dummy", "dummy"));
-        return registry;
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,7 +34,7 @@ import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
  * This class tests the marshalling of {@link org.apache.camel.dataformat.univocity.UniVocityTsvDataFormat}.
  */
 public final class UniVocityTsvDataFormatMarshalTest extends CamelTestSupport {
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint result;
 
     /**
@@ -121,7 +121,7 @@ public final class UniVocityTsvDataFormatMarshalTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final Map<String, DataFormat> tests = new HashMap<String, DataFormat>();
+        final Map<String, DataFormat> tests = new HashMap<>();
 
         // Default writing of TSV
         tests.put("default", new UniVocityTsvDataFormat());

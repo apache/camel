@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,35 +21,28 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.impl.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The Camel reactive-streams consumer.
  */
 public class ReactiveStreamsConsumer extends DefaultConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ReactiveStreamsConsumer.class);
-
-    private ReactiveStreamsEndpoint endpoint;
-
+    private final ReactiveStreamsEndpoint endpoint;
+    private final CamelReactiveStreamsService service;
     private ExecutorService executor;
 
-    private CamelReactiveStreamsService service;
-
-    public ReactiveStreamsConsumer(ReactiveStreamsEndpoint endpoint, Processor processor) {
+    public ReactiveStreamsConsumer(ReactiveStreamsEndpoint endpoint, Processor processor, CamelReactiveStreamsService service) {
         super(endpoint, processor);
         this.endpoint = endpoint;
+        this.service = ObjectHelper.notNull(service, "service");
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        this.service = CamelReactiveStreams.get(endpoint.getCamelContext(), endpoint.getServiceName());
 
         int poolSize = endpoint.getConcurrentConsumers();
         if (executor == null) {
@@ -110,7 +103,7 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
             return false;
 
         } else {
-            LOG.warn("Consumer not ready to process exchanges. The exchange {} will be discarded", exchange);
+            log.warn("Consumer not ready to process exchanges. The exchange {} will be discarded", exchange);
             callback.done(true);
             return true;
         }
@@ -120,4 +113,5 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
     public ReactiveStreamsEndpoint getEndpoint() {
         return endpoint;
     }
+
 }

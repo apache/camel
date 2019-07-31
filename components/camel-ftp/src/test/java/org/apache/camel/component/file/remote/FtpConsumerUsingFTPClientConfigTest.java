@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,14 +39,8 @@ public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
         prepareFtpServer();
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myConfig", createConfig());
-        return jndi;
-    }
-
-    private FTPClientConfig createConfig() {
+    @BindToRegistry("myConfig")
+    public FTPClientConfig createConfig() {
         FTPClientConfig config = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
         config.setServerTimeZoneId("Europe/Paris");
         return config;

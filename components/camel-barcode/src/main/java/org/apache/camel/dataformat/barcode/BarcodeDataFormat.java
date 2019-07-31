@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,10 +39,9 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ExchangeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * {@link DataFormat} to create (encode) and
@@ -51,12 +50,8 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * https://github.com/zxing/zxing
  */
+@Dataformat("barcode")
 public class BarcodeDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
-
-    /**
-     * Logger.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(BarcodeDataFormat.class);
 
     /**
      * The bean for the default parameters.
@@ -66,12 +61,12 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     /**
      * The encoding hint map, used for writing a barcode.
      */
-    private final Map<EncodeHintType, Object> writerHintMap = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+    private final Map<EncodeHintType, Object> writerHintMap = new EnumMap<>(EncodeHintType.class);
 
     /**
      * The decoding hint map, used for reading a barcode.
      */
-    private final Map<DecodeHintType, Object> readerHintMap = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
+    private final Map<DecodeHintType, Object> readerHintMap = new EnumMap<>(DecodeHintType.class);
 
 
     /**
@@ -239,7 +234,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     public final void addToHintMap(final EncodeHintType hintType, final Object value) {
         this.writerHintMap.put(hintType, value);
-        LOG.info(String.format("Added '%s' with value '%s' to writer hint map.", hintType.toString(), value.toString()));
+        log.info(String.format("Added '%s' with value '%s' to writer hint map.", hintType.toString(), value.toString()));
     }
 
     /**
@@ -255,9 +250,9 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     public final void removeFromHintMap(final EncodeHintType hintType) {
         if (this.writerHintMap.containsKey(hintType)) {
             this.writerHintMap.remove(hintType);
-            LOG.info(String.format("Removed '%s' from writer hint map.", hintType.toString()));
+            log.info(String.format("Removed '%s' from writer hint map.", hintType.toString()));
         } else {
-            LOG.warn(String.format("Could not find encode hint type '%s' in writer hint map.", hintType.toString()));
+            log.warn(String.format("Could not find encode hint type '%s' in writer hint map.", hintType.toString()));
         }
     }
 
@@ -267,9 +262,9 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     public final void removeFromHintMap(final DecodeHintType hintType) {
         if (this.readerHintMap.containsKey(hintType)) {
             this.readerHintMap.remove(hintType);
-            LOG.info(String.format("Removed '%s' from reader hint map.", hintType.toString()));
+            log.info(String.format("Removed '%s' from reader hint map.", hintType.toString()));
         } else {
-            LOG.warn(String.format("Could not find decode hint type '%s' in reader hint map.", hintType.toString()));
+            log.warn(String.format("Could not find decode hint type '%s' in reader hint map.", hintType.toString()));
         }
     }
 

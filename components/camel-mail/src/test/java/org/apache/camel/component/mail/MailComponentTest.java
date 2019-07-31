@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,6 @@ import org.apache.camel.pollconsumer.quartz2.QuartzScheduledPollConsumerSchedule
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MailComponentTest extends CamelTestSupport {
 
     @Test
@@ -125,23 +122,6 @@ public class MailComponentTest extends CamelTestSupport {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret&connectionTimeout=2500");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals(2500, config.getConnectionTimeout());
-    }
-
-    @Test
-    public void testDummyTrustManager() throws Exception {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret&dummyTrustManager=true");
-        MailConfiguration config = endpoint.getConfiguration();
-        assertEquals(true, config.isDummyTrustManager());
-        assertEquals(false, config.isSecureProtocol());
-    }
-
-    @Test
-    public void testDummyTrustManagerSecure() throws Exception {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtps://james@myhost?password=secret&dummyTrustManager=true");
-        MailConfiguration config = endpoint.getConfiguration();
-        assertEquals(true, config.isDummyTrustManager());
-        assertEquals(true, config.isSecureProtocol());
-        assertEquals("smtps://myhost:465 (SSL enabled using DummyTrustManager), folder=INBOX", config.getMailStoreLogInformation());
     }
 
     @Test
@@ -277,7 +257,7 @@ public class MailComponentTest extends CamelTestSupport {
     public void testMailComponentCtr() throws Exception {
         MailComponent comp = new MailComponent();
         comp.setCamelContext(context);
-        
+
         assertNotNull(comp.getConfiguration());
         assertNull(comp.getContentTypeResolver());
 

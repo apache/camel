@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.component.properties.PropertiesLocation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,7 @@ public class CamelSpringPropertiesLocationElementTest {
     protected CamelContext context;
     @Produce
     private ProducerTemplate producer;
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
@@ -56,7 +55,7 @@ public class CamelSpringPropertiesLocationElementTest {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         assertNotNull("Properties component not defined", pc);
 
-        List<PropertiesLocation> locations = pc.getLocations();
+        List<String> locations = pc.getLocations();
 
         assertNotNull(locations);
         assertEquals("Properties locations", 4, locations.size());

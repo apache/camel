@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,11 +27,6 @@ public class SftpProducerWithCharsetTest extends SftpServerTestSupport {
     private static final String SAMPLE_FILE_NAME = String.format("sample-%s.txt", SftpProducerWithCharsetTest.class.getSimpleName());
     private static final String SAMPLE_FILE_CHARSET = "iso-8859-1";
     private static final String SAMPLE_FILE_PAYLOAD = "\u00e6\u00f8\u00e5 \u00a9"; // danish ae oe aa and (c) sign
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 
     @Test
     public void testProducerWithCharset() throws Exception {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stax;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.stax.model.Record;
@@ -28,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringStAXJAXBIteratorExpressionTest extends CamelSpringTestSupport {
 
-    @EndpointInject(uri = "mock:records")
+    @EndpointInject("mock:records")
     private MockEndpoint recordsEndpoint;
 
     @Override

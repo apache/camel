@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,11 +19,12 @@ package org.apache.camel.component.yammer;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.yammer.model.User;
-import org.apache.camel.impl.ScheduledPollConsumer;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * A Yammer consumer that periodically polls messages from Yammer's user API.

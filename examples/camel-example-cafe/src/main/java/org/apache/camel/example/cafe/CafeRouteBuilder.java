@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,13 +24,10 @@ import org.apache.camel.example.cafe.stuff.DrinkRouter;
 import org.apache.camel.example.cafe.stuff.OrderSplitter;
 import org.apache.camel.example.cafe.stuff.Waiter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
-
+import org.apache.camel.spi.Registry;
 
 /**
  * A simple example router from Cafe Demo
- *
- * @version 
  */
 public class CafeRouteBuilder extends RouteBuilder {
     
@@ -39,23 +36,28 @@ public class CafeRouteBuilder extends RouteBuilder {
         builder.runCafeRouteDemo();
     }
     
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = new JndiRegistry();
-        jndi.bind("drinkRouter", new DrinkRouter());
-        jndi.bind("orderSplitter", new OrderSplitter());
-        jndi.bind("barista", new Barista());
-        jndi.bind("waiter", new Waiter());
-        jndi.bind("aggregatorStrategy", new CafeAggregationStrategy());
-        return jndi;
+    protected void bindBeans(Registry registry) throws Exception {
+        registry.bind("drinkRouter", new DrinkRouter());
+        registry.bind("orderSplitter", new OrderSplitter());
+        registry.bind("barista", new Barista());
+        registry.bind("waiter", new Waiter());
+        registry.bind("aggregatorStrategy", new CafeAggregationStrategy());
     }
     
     public void runCafeRouteDemo() throws Exception {
         // create CamelContext
         DefaultCamelContext camelContext = new DefaultCamelContext();
-        camelContext.setRegistry(createRegistry());
+
+        // bind beans to the Camel
+        bindBeans(camelContext.getRegistry());
+
+        // add the routes
         camelContext.addRoutes(this);
+
+        // start Camel
         camelContext.start();
-        
+
+        // create a producer so we can send messages to Camel
         ProducerTemplate template = camelContext.createProducerTemplate();
         
         Order order = new Order(2);
@@ -65,8 +67,11 @@ public class CafeRouteBuilder extends RouteBuilder {
         order.addItem(DrinkType.MOCHA, 2, false);
         
         template.sendBody("direct:cafe", order);
-        
+
+        // wait 6 seconds and stop
         Thread.sleep(6000);
+
+
         camelContext.stop();
         
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,33 +17,30 @@
 package org.apache.camel.component.hipchat;
 
 import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.UnsafeUriCharactersEncoder.encodeHttpURI;
 
 /**
  * The Hipchat producer to send message to a user and/or a room.
  */
 public class HipchatProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(HipchatProducer.class);
+
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final CloseableHttpClient HTTP_CLIENT = HttpClients.createDefault();
     
     private transient String hipchatProducerToString;
 
@@ -70,25 +67,25 @@ public class HipchatProducer extends DefaultProducer {
         if (backGroundColor != null) {
             jsonParam.put(HipchatApiConstants.API_MESSAGE_COLOR, backGroundColor);
         }
-        LOG.info("Sending message to room: " + room + ", " + MAPPER.writeValueAsString(jsonParam));
-        StatusLine statusLine = post(urlPath, jsonParam);
-        LOG.debug("Response status for send room message: " + statusLine);
+        log.info("Sending message to room: " + room + ", " + MAPPER.writeValueAsString(jsonParam));
+        StatusLine statusLine = post(encodeHttpURI(urlPath), jsonParam);
+        log.debug("Response status for send room message: {}", statusLine);
         return statusLine;
     }
 
     private StatusLine sendUserMessage(String user, Exchange exchange) throws IOException, InvalidPayloadException {
         String urlPath = String.format(getConfig().withAuthToken(HipchatApiConstants.URI_PATH_USER_MESSAGE), user);
         Map<String, String> jsonParam = getCommonHttpPostParam(exchange);
-        LOG.info("Sending message to user: " + user + ", " + MAPPER.writeValueAsString(jsonParam));
+        log.info("Sending message to user: " + user + ", " + MAPPER.writeValueAsString(jsonParam));
         StatusLine statusLine = post(urlPath, jsonParam);
-        LOG.debug("Response status for send user message: " + statusLine);
+        log.debug("Response status for send user message: {}", statusLine);
         return statusLine;
     }
 
     private Map<String, String> getCommonHttpPostParam(Exchange exchange) throws InvalidPayloadException {
         String format = exchange.getIn().getHeader(HipchatConstants.MESSAGE_FORMAT, "text", String.class);
         String notify = exchange.getIn().getHeader(HipchatConstants.TRIGGER_NOTIFY, String.class);
-        Map<String, String> jsonMap = new HashMap<String, String>(4);
+        Map<String, String> jsonMap = new HashMap<>(4);
         jsonMap.put(HipchatApiConstants.API_MESSAGE, exchange.getIn().getMandatoryBody(String.class));
         if (notify != null) {
             jsonMap.put(HipchatApiConstants.API_MESSAGE_NOTIFY, notify);
@@ -100,7 +97,7 @@ public class HipchatProducer extends DefaultProducer {
     protected StatusLine post(String urlPath, Map<String, String> postParam) throws IOException {
         HttpPost httpPost = new HttpPost(getConfig().hipChatUrl() + urlPath);
         httpPost.setEntity(new StringEntity(MAPPER.writeValueAsString(postParam), ContentType.APPLICATION_JSON));
-        CloseableHttpResponse closeableHttpResponse = HTTP_CLIENT.execute(httpPost);
+        CloseableHttpResponse closeableHttpResponse = getConfig().getHttpClient().execute(httpPost);
         try {
             return closeableHttpResponse.getStatusLine();
         } finally {

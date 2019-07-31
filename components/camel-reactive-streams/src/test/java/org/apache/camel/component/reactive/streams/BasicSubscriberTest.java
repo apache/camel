@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -53,7 +53,6 @@ public class BasicSubscriberTest extends CamelTestSupport {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doPostSetup() throws Exception {
 
         Subscriber<Integer> sub = CamelReactiveStreams.get(context()).streamSubscriber("sub", Integer.class);
@@ -76,7 +75,7 @@ public class BasicSubscriberTest extends CamelTestSupport {
                         .to("mock:sub2");
 
                 from("timer:tick?period=50")
-                        .setBody().simple("random(500)")
+                        .setBody().simple("${random(500)}")
                         .wireTap("mock:sub3")
                         .to("reactive-streams:pub");
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,7 @@ import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.spring.ws.SpringWebserviceConstants;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.springframework.ws.WebServiceMessage;
@@ -40,14 +40,15 @@ public class BasicMessageFilter implements MessageFilter {
     @Override
     public void filterProducer(Exchange exchange, WebServiceMessage response) {
         if (exchange != null) {
-            processHeaderAndAttachments(exchange.getIn(), response);
+            processHeaderAndAttachments(exchange.getIn(AttachmentMessage.class), response);
         }
     }
 
     @Override
     public void filterConsumer(Exchange exchange, WebServiceMessage response) {
         if (exchange != null) {
-            processHeaderAndAttachments(exchange.getOut(), response);
+            AttachmentMessage responseMessage = exchange.getMessage(AttachmentMessage.class);
+            processHeaderAndAttachments(responseMessage, response);
         }
     }
 
@@ -57,7 +58,7 @@ public class BasicMessageFilter implements MessageFilter {
      * @param inOrOut
      * @param response
      */
-    protected void processHeaderAndAttachments(Message inOrOut, WebServiceMessage response) {
+    protected void processHeaderAndAttachments(AttachmentMessage inOrOut, WebServiceMessage response) {
 
         if (response instanceof SoapMessage) {
             SoapMessage soapMessage = (SoapMessage)response;
@@ -72,7 +73,7 @@ public class BasicMessageFilter implements MessageFilter {
      * @param inOrOut
      * @param soapMessage
      */
-    protected void processSoapHeader(Message inOrOut, SoapMessage soapMessage) {
+    protected void processSoapHeader(AttachmentMessage inOrOut, SoapMessage soapMessage) {
         boolean isHeaderAvailable = inOrOut != null && inOrOut.getHeaders() != null && !inOrOut.getHeaders().isEmpty();
 
         if (isHeaderAvailable) {
@@ -88,12 +89,12 @@ public class BasicMessageFilter implements MessageFilter {
      * element. If it contains only a String value, it is transformed into a
      * header attribute. Following headers are excluded:
      */
-    protected void doProcessSoapHeader(Message inOrOut, SoapMessage soapMessage) {
+    protected void doProcessSoapHeader(AttachmentMessage inOrOut, SoapMessage soapMessage) {
         SoapHeader soapHeader = soapMessage.getSoapHeader();
 
         Map<String, Object> headers = inOrOut.getHeaders();
 
-        HashSet<String> headerKeySet = new HashSet<String>(headers.keySet());
+        HashSet<String> headerKeySet = new HashSet<>(headers.keySet());
 
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION);
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI);
@@ -131,12 +132,14 @@ public class BasicMessageFilter implements MessageFilter {
      * @param inOrOut
      * @param response
      */
-    protected void doProcessSoapAttachments(Message inOrOut, SoapMessage response) {
-        Map<String, DataHandler> attachments = inOrOut.getAttachments();
+    protected void doProcessSoapAttachments(AttachmentMessage inOrOut, SoapMessage response) {
+        if (inOrOut.hasAttachments()) {
+            Map<String, DataHandler> attachments = inOrOut.getAttachments();
 
-        Set<String> keySet = new HashSet<String>(attachments.keySet());
-        for (String key : keySet) {
-            response.addAttachment(key, attachments.get(key));
+            Set<String> keySet = new HashSet<>(attachments.keySet());
+            for (String key : keySet) {
+                response.addAttachment(key, attachments.get(key));
+            }
         }
     }
 

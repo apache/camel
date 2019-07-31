@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,7 +34,7 @@ public class BlueprintPropertiesTest extends CamelBlueprintTestSupport {
 
     @Test
     public void testProperties() throws Exception {
-        Bundle camelCore = getBundleBySymbolicName("org.apache.camel.camel-core");
+        Bundle camelCore = getBundleBySymbolicName("org.apache.camel.camel-blueprint");
         Bundle test = getBundleBySymbolicName(getClass().getSimpleName());
 
         camelCore.stop();

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,12 +22,10 @@ import org.apache.camel.RecipientList;
 /**
  * An example POJO which has a method {@link #route) which can be used as a
  * Dynamic Recipient List
- *
- * @version 
  */
 public class RouterBean {
 
-    @Consume(uri = "direct:start")
+    @Consume("direct:start")
     @RecipientList
     public String[] route(String body) {
         return new String[]{"mock:a", "mock:b"};

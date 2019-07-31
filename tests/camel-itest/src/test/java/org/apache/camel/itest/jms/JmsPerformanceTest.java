@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,24 +19,20 @@ package org.apache.camel.itest.jms;
 import java.util.ArrayList;
 import java.util.List;
 import javax.jms.ConnectionFactory;
-import javax.naming.Context;
 
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version
- */
 public class JmsPerformanceTest extends CamelTestSupport {
-    private List<Integer> receivedHeaders = new ArrayList<Integer>(getMessageCount());
-    private List<Object> receivedMessages = new ArrayList<Object>(getMessageCount());
+    private List<Integer> receivedHeaders = new ArrayList<>(getMessageCount());
+    private List<Object> receivedMessages = new ArrayList<>(getMessageCount());
 
     @Test
     public void testSendingAndReceivingMessages() throws Exception {
@@ -76,12 +72,12 @@ public class JmsPerformanceTest extends CamelTestSupport {
         assertEquals("The expected message count does not match!", getMessageCount(), receivedMessages.size());
 
         // assert on the expected message order
-        List<Integer> expectedHeaders = new ArrayList<Integer>(getMessageCount());
+        List<Integer> expectedHeaders = new ArrayList<>(getMessageCount());
         for (int i = 1; i <= getMessageCount(); i++) {
             expectedHeaders.add(i);
         }
 
-        List<Object> expectedMessages = new ArrayList<Object>(getMessageCount());
+        List<Object> expectedMessages = new ArrayList<>(getMessageCount());
         for (int i = 1; i <= getMessageCount(); i++) {
             expectedMessages.add("Hello:" + i);
         }
@@ -91,10 +87,7 @@ public class JmsPerformanceTest extends CamelTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-        answer.bind("myBean", new MyBean());
-
+    protected void bindToRegistry(Registry registry) throws Exception {
         // add AMQ client and make use of connection pooling we depend on because of the (large) number
         // of the JMS messages we do produce
         // add ActiveMQ with embedded broker
@@ -102,8 +95,8 @@ public class JmsPerformanceTest extends CamelTestSupport {
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
         amq.setCamelContext(context);
 
-        answer.bind("activemq", amq);
-        return answer;
+        registry.bind("myBean", new MyBean());
+        registry.bind("activemq", amq);
     }
 
     @Override

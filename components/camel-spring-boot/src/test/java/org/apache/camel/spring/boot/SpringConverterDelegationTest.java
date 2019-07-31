@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,22 +26,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = SpringConverterDelegationTest.class, properties = "camel.springboot.typeConversion=true")
+@SpringBootTest(properties = "camel.springboot.typeConversion=true")
 public class SpringConverterDelegationTest extends Assert {
-
-    @Configuration
-    static class Config {
-
-        @Bean
-        ConvertableConverter convertableConverter() {
-            return new ConvertableConverter();
-        }
-
-    }
 
     @Autowired
     TypeConverter typeConverter;
@@ -52,16 +44,22 @@ public class SpringConverterDelegationTest extends Assert {
         assertEquals("converted!", result);
     }
 
-}
+    @Configuration
+    public static class Config {
+        @Bean
+        ConvertableConverter convertableConverter() {
+            return new ConvertableConverter();
+        }
 
-class Convertable {
-}
-
-class ConvertableConverter implements Converter<Convertable, String> {
-
-    @Override
-    public String convert(Convertable source) {
-        return "converted!";
     }
 
+    public static class Convertable {
+    }
+
+    public static class ConvertableConverter implements Converter<Convertable, String> {
+        @Override
+        public String convert(Convertable source) {
+            return "converted!";
+        }
+    }
 }

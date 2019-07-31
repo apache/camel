@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,6 +25,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
+
+import org.junit.Assume;
 import org.junit.Test;
 
 public class QueueProducerQoSTest extends JmsTestSupport {
@@ -35,11 +37,12 @@ public class QueueProducerQoSTest extends JmsTestSupport {
     private static final String EXPIRED_MESSAGE_ROUTE_ID = "expiredAdvisoryRoute";
     private static final String MOCK_EXPIRED_ADVISORY = "mock:expiredAdvisory";
 
-    @EndpointInject(uri = MOCK_EXPIRED_ADVISORY)
+    @EndpointInject(MOCK_EXPIRED_ADVISORY)
     MockEndpoint mockExpiredAdvisory;
 
     @Test
     public void testInOutQueueProducerTTL() throws Exception {
+        Assume.assumeFalse(externalAmq);
         mockExpiredAdvisory.expectedMessageCount(1);
 
         String endpoint = String.format("sjms:queue:%s?ttl=1000&exchangePattern=InOut&responseTimeOut=500", TEST_INOUT_DESTINATION_NAME);
@@ -62,6 +65,7 @@ public class QueueProducerQoSTest extends JmsTestSupport {
 
     @Test
     public void testInOnlyQueueProducerTTL() throws Exception {
+        Assume.assumeFalse(externalAmq);
         mockExpiredAdvisory.expectedMessageCount(1);
 
         String endpoint = String.format("sjms:queue:%s?ttl=1000", TEST_INONLY_DESTINATION_NAME);

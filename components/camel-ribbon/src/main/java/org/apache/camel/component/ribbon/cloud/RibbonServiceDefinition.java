@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.ribbon.cloud;
 
 import java.util.Collections;
@@ -28,17 +27,39 @@ import org.apache.camel.impl.cloud.DefaultServiceHealth;
 import org.apache.camel.util.ObjectHelper;
 
 public class RibbonServiceDefinition extends Server implements ServiceDefinition {
+    private static final ServiceHealth DEFAULT_SERVICE_HEALTH = new DefaultServiceHealth();
+
     private String name;
     private ServiceHealth health;
+    private Map<String, String> metaData;
 
     public RibbonServiceDefinition(String name, String host, int port) {
-        this(name, host, port, DefaultServiceHealth.INSTANCE);
+        this(name, host, port, null, DEFAULT_SERVICE_HEALTH);
     }
 
-    public RibbonServiceDefinition(String name, String host, int port, ServiceHealth healt) {
+    public RibbonServiceDefinition(String name, String host, int port, ServiceHealth health) {
+        this(name, host, port, null, health);
+    }
+
+    public RibbonServiceDefinition(String name, String host, int port,  Map<String, String> meta) {
+        this(name, host, port, meta, DEFAULT_SERVICE_HEALTH);
+    }
+
+    public RibbonServiceDefinition(String name, String host, int port, Map<String, String> meta, ServiceHealth health) {
         super(host, port);
         this.name = name;
-        this.health = healt;
+        this.metaData = meta;
+        this.health = health;
+    }
+
+    public RibbonServiceDefinition(ServiceDefinition definition) {
+        this(
+            definition.getName(),
+            definition.getHost(),
+            definition.getPort(),
+            definition.getMetadata(),
+            definition.getHealth()
+        );
     }
 
     @Override
@@ -63,7 +84,7 @@ public class RibbonServiceDefinition extends Server implements ServiceDefinition
 
     @Override
     public Map<String, String> getMetadata() {
-        Map<String, String> meta = new HashMap<>();
+        Map<String, String> meta = metaData != null ? new HashMap<>(metaData) : new HashMap<>();
         ObjectHelper.ifNotEmpty(super.getId(), val -> meta.put("id", val));
         ObjectHelper.ifNotEmpty(super.getZone(), val -> meta.put("zone", val));
         ObjectHelper.ifNotEmpty(super.isAlive(), val -> meta.put("is_alive", Boolean.toString(val)));

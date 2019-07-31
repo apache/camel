@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,6 @@ package org.apache.camel.component.ldap;
 
 import java.util.Collection;
 
-import javax.activation.DataHandler;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
@@ -30,7 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.directory.server.annotations.CreateLdapServer;
 import org.apache.directory.server.annotations.CreateTransport;
 import org.apache.directory.server.core.annotations.ApplyLdifFiles;
@@ -46,7 +45,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(FrameworkRunner.class)
@@ -66,7 +64,7 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
         LdapContext ctx = getWiredContext(ldapServer);
 
         SimpleRegistry reg = new SimpleRegistry();
-        reg.put("localhost:" + port, ctx);
+        reg.bind("localhost:" + port, ctx);
         camel = new DefaultCamelContext(reg);
         template = camel.createProducerTemplate();
     }
@@ -144,16 +142,14 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
     }
     
     @Test
-    public void testLdapRoutePreserveHeaderAndAttachments() throws Exception {
+    public void testLdapRoutePreserveHeader() throws Exception {
         camel.addRoutes(createRouteBuilder("ldap:localhost:" + port + "?base=ou=system"));
         camel.start();
 
-        final DataHandler dataHandler = new DataHandler("test", "text");
         Exchange out = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("(!(ou=test1))");
                 exchange.getIn().setHeader("ldapTest", "Camel");
-                exchange.getIn().addAttachment("ldapAttachment", dataHandler);
             }
         });
         
@@ -164,7 +160,6 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
         assertTrue(contains("uid=testNoOU,ou=test,ou=system", searchResults));
         assertTrue(contains("uid=tcruise,ou=actors,ou=system", searchResults));
         assertEquals("Camel", out.getOut().getHeader("ldapTest"));
-        assertSame(dataHandler, out.getOut().getAttachment("ldapAttachment"));
     }
 
     @SuppressWarnings("unchecked")

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,8 +35,6 @@ import org.apache.cxf.staxutils.StaxUtils;
 
 /**
  * CxfMessage body type when {@link DataFormat#PAYLOAD} is used.
- * 
- * @version 
  */
 public class CxfPayload<T> {
     
@@ -51,7 +49,7 @@ public class CxfPayload<T> {
     }
     public CxfPayload(List<T> headers, List<Element> body) {
         this.headers = headers;
-        this.body = new ArrayList<Source>(body.size());
+        this.body = new ArrayList<>(body.size());
         for (Element el : body) {
             this.body.add(new DOMSource(el));
         }
@@ -134,6 +132,14 @@ public class CxfPayload<T> {
      */
     public List<Source> getBodySources() {
         return body;
+    }
+    
+    /*
+     * set the body back with cached stream source so
+     * CxfPayload is re-readable
+     */
+    public void setBodySources(List<Source> body) {
+        this.body = body;
     }
     
     public List<T> getHeaders() {

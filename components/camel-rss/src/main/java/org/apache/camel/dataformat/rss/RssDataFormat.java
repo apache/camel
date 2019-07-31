@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,14 @@ package org.apache.camel.dataformat.rss;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.sun.syndication.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndFeed;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * RSS DataFormat
@@ -38,6 +40,7 @@ import org.apache.camel.util.ExchangeHelper;
  * Uses <a href="https://rome.dev.java.net/">ROME</a> for RSS parsing.
  * <p/>
  */
+@Dataformat("rss")
 public class RssDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     @Override

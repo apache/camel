@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 import org.apache.camel.util.ObjectHelper;
 
 public class HazelcastMapProducer extends HazelcastDefaultProducer {
@@ -44,7 +45,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
 
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
-        // get header parameters
+        // GET header parameters
         Object oid = null;
         Object ovalue = null;
         Object ttl = null;
@@ -71,10 +72,10 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
             query = (String) headers.get(HazelcastConstants.QUERY);
         }
 
-        final int operation = lookupOperationNumber(exchange);
+        final HazelcastOperation operation = lookupOperation(exchange);
         switch (operation) {
 
-        case HazelcastConstants.PUT_OPERATION:
+        case PUT:
             if (ObjectHelper.isEmpty(ttl) && ObjectHelper.isEmpty(ttlUnit)) {
                 this.put(oid, exchange);
             } else {
@@ -82,7 +83,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
             }
             break;
             
-        case HazelcastConstants.PUT_IF_ABSENT_OPERATION:
+        case PUT_IF_ABSENT:
             if (ObjectHelper.isEmpty(ttl) && ObjectHelper.isEmpty(ttlUnit)) {
                 this.putIfAbsent(oid, exchange);
             } else {
@@ -90,31 +91,31 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
             }
             break;
 
-        case HazelcastConstants.GET_OPERATION:
+        case GET:
             this.get(oid, exchange);
             break;
             
-        case HazelcastConstants.GET_ALL_OPERATION:
+        case GET_ALL:
             this.getAll(oid, exchange);
             break;
 
-        case HazelcastConstants.GET_KEYS_OPERATION:
+        case GET_KEYS:
             this.getKeys(exchange);
             break;
 
-        case HazelcastConstants.CONTAINS_KEY_OPERATION:
+        case CONTAINS_KEY:
             this.containsKey(oid, exchange);
             break;
             
-        case HazelcastConstants.CONTAINS_VALUE_OPERATION:
+        case CONTAINS_VALUE:
             this.containsValue(exchange);
             break;
 
-        case HazelcastConstants.DELETE_OPERATION:
+        case DELETE:
             this.delete(oid);
             break;
 
-        case HazelcastConstants.UPDATE_OPERATION:
+        case UPDATE:
             if (ObjectHelper.isEmpty(ovalue)) {
                 this.update(oid, exchange);
             } else {
@@ -122,19 +123,19 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
             }
             break;
 
-        case HazelcastConstants.QUERY_OPERATION:
+        case QUERY:
             this.query(query, exchange);
             break;
             
-        case HazelcastConstants.CLEAR_OPERATION:
+        case CLEAR:
             this.clear(exchange);
             break;
             
-        case HazelcastConstants.EVICT_OPERATION:
+        case EVICT:
             this.evict(oid);
             break;
 
-        case HazelcastConstants.EVICT_ALL_OPERATION:
+        case EVICT_ALL:
             this.evictAll();
             break;
             
@@ -147,7 +148,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     }
 
     /**
-     * query map with a sql like syntax (see http://www.hazelcast.com/)
+     * QUERY map with a sql like syntax (see http://www.hazelcast.com/)
      */
     private void query(String query, Exchange exchange) {
         Collection<Object> result;
@@ -160,7 +161,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     }
 
     /**
-     * update an object in your cache (the whole object will be replaced)
+     * UPDATE an object in your cache (the whole object will be replaced)
      */
     private void update(Object oid, Exchange exchange) {
         Object body = exchange.getIn().getBody();
@@ -195,14 +196,14 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     
     
     /**
-     * get All objects and give it back
+     * GET All objects and give it back
      */
     private void getAll(Object oid, Exchange exchange) {
         exchange.getOut().setBody(this.cache.getAll((Set<Object>) oid));
     }
 
     /**
-     * put a new object into the cache
+     * PUT a new object into the cache
      */
     private void put(Object oid, Exchange exchange) {
         Object body = exchange.getIn().getBody();
@@ -210,7 +211,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     }
     
     /**
-     * put a new object into the cache with a specific time to live
+     * PUT a new object into the cache with a specific time to live
      */
     private void put(Object oid, Object ttl, Object ttlUnit, Exchange exchange) {
         Object body = exchange.getIn().getBody();
@@ -270,7 +271,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     }
 
     /**
-    * get keys set of objects and give it back
+    * GET keys set of objects and give it back
     */
     private void getKeys(Exchange exchange) {
         exchange.getOut().setBody(this.cache.keySet());

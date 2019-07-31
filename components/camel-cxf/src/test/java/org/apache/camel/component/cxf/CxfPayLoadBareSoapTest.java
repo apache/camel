@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jws.WebService;
@@ -26,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.frontend.ClientProxyFactoryBean;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -64,7 +63,7 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
     
     @Test
     public void testInvokeProxyService() {
-        ClientProxyFactoryBean factory = new ClientProxyFactoryBean();
+        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(BareSoapService.class);
         factory.setAddress(PROXY_URL);
         factory.setBus(BusFactory.newInstance().createBus());

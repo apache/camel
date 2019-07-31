@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,7 +37,7 @@ public class HystrixRouteConfigTest extends CamelTestSupport {
     @Test
     public void testGroupKeyAndThreadPoolKeyConfigFlagsDoNotScrapHystrixConfiguration() throws Exception {
         // dummy route
-        RouteBuilder rb = new RouteBuilder() {
+        RouteBuilder rb = new RouteBuilder(context) {
             @Override
             public void configure() throws Exception {
                 from("direct:foo")
@@ -61,6 +61,7 @@ public class HystrixRouteConfigTest extends CamelTestSupport {
         assertEquals("test2", config.getGroupKey());
         assertEquals(99999, config.getMetricsHealthSnapshotIntervalInMilliseconds().intValue());
     }
+
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

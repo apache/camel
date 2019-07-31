@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.snmp;
 
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.CamelContext;
+import org.apache.camel.support.DefaultMessage;
 import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.smi.OctetString;
@@ -24,15 +25,13 @@ import org.snmp4j.smi.OctetString;
 public class SnmpMessage extends DefaultMessage {
     private PDU pdu;
 
-    public SnmpMessage() {
-        this(new PDU());
-    }
-
-    public SnmpMessage(PDU pdu) {
+    public SnmpMessage(CamelContext camelContext, PDU pdu) {
+        super(camelContext);
         this.pdu = pdu;
     }
 
-    public SnmpMessage(PDU pdu, CommandResponderEvent event) {
+    public SnmpMessage(CamelContext camelContext, PDU pdu, CommandResponderEvent event) {
+        super(camelContext);
         this.pdu = pdu;
         this.setHeader("securityName", new OctetString(event.getSecurityName()));
         this.setHeader("peerAddress", event.getPeerAddress());
@@ -56,7 +55,7 @@ public class SnmpMessage extends DefaultMessage {
 
     @Override
     public SnmpMessage newInstance() {
-        return new SnmpMessage();
+        return new SnmpMessage(getCamelContext(), this.pdu);
     }
 
     @Override

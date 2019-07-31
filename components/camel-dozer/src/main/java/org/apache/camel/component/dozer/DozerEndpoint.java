@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,45 +16,36 @@
  */
 package org.apache.camel.component.dozer;
 
-import java.io.InputStream;
-import java.util.Collections;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.el.ExpressionFactory;
-
+import com.github.dozermapper.core.CustomConverter;
+import com.github.dozermapper.core.Mapper;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.converter.dozer.DozerTypeConverterLoader;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.converter.dozer.DozerBeanMapperConfiguration;
+import org.apache.camel.converter.dozer.MapperFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ResourceHelper;
-import org.dozer.CustomConverter;
-import org.dozer.DozerBeanMapper;
-import org.dozer.config.BeanContainer;
-import org.dozer.loader.xml.ELEngine;
-import org.dozer.loader.xml.ElementReader;
-import org.dozer.loader.xml.ExpressionElementReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ResourceHelper;
 
 /**
  * The dozer component provides the ability to map between Java beans using the Dozer mapping library.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "dozer", title = "Dozer", syntax = "dozer:name", producerOnly = true, label = "transformation")
 public class DozerEndpoint extends DefaultEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(DozerEndpoint.class);
 
     // IDs for built-in custom converters used with the Dozer component
     private static final String CUSTOM_MAPPING_ID = "_customMapping";
     private static final String VARIABLE_MAPPING_ID = "_variableMapping";
     private static final String EXPRESSION_MAPPING_ID = "_expressionMapping";
 
-    private DozerBeanMapper mapper;
+    private Mapper mapper;
     private VariableMapper variableMapper;
     private CustomMapper customMapper;
     private ExpressionMapper expressionMapper;
@@ -80,12 +71,7 @@ public class DozerEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer not supported for Dozer endpoints");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public DozerBeanMapper getMapper() throws Exception {
+    public Mapper getMapper() throws Exception {
         return mapper;
     }
 
@@ -123,76 +109,42 @@ public class DozerEndpoint extends DefaultEndpoint {
     }
 
     protected void initDozerBeanContainerAndMapper() throws Exception {
+        log.info("Configuring {}...", Mapper.class.getName());
 
-        LOG.info("Configuring DozerBeanContainer and DozerBeanMapper");
-
-
-        // init the expression engine with a fallback to the impl from glasfish
-        initELEngine();
-
-        // configure mapper as well
         if (mapper == null) {
-            if (configuration.getMappingConfiguration() != null) {
-                mapper = DozerTypeConverterLoader.createDozerBeanMapper(
-                        configuration.getMappingConfiguration());
+            if (configuration.getMappingConfiguration() == null) {
+                URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), configuration.getMappingFile());
+
+                DozerBeanMapperConfiguration config = new DozerBeanMapperConfiguration();
+                config.setCustomConvertersWithId(getCustomConvertersWithId());
+                config.setMappingFiles(Arrays.asList(url.toString()));
+
+                configuration.setMappingConfiguration(config);
             } else {
-                mapper = createDozerBeanMapper();
-            }
-            configureMapper(mapper);
-        }
+                DozerBeanMapperConfiguration config = configuration.getMappingConfiguration();
+                if (config.getCustomConvertersWithId() == null) {
+                    config.setCustomConvertersWithId(getCustomConvertersWithId());
+                } else {
+                    config.getCustomConvertersWithId().putAll(getCustomConvertersWithId());
+                }
 
-    }
+                if (config.getMappingFiles() == null || config.getMappingFiles().size() <= 0) {
+                    URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), configuration.getMappingFile());
+                    config.setMappingFiles(Arrays.asList(url.toString()));
+                }
+            }
 
-    public void initELEngine() {
-        String elprop = System.getProperty("javax.el.ExpressionFactory");
-        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        try {
-            ClassLoader appcl = getCamelContext().getApplicationContextClassLoader();
-            ClassLoader auxcl = appcl != null ? appcl : DozerEndpoint.class.getClassLoader();
-            Thread.currentThread().setContextClassLoader(auxcl);
-            try {
-                Class<?> clazz = auxcl.loadClass("com.sun.el.ExpressionFactoryImpl");
-                ExpressionFactory factory = (ExpressionFactory) clazz.newInstance();
-                System.setProperty("javax.el.ExpressionFactory", factory.getClass().getName());
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-                LOG.debug("Cannot load glasfish expression engine, using default");
-            }
-            ELEngine engine = new ELEngine();
-            engine.init();
-            BeanContainer.getInstance().setElEngine(engine);
-            ElementReader reader = new ExpressionElementReader(engine);
-            BeanContainer.getInstance().setElementReader(reader);
-        } finally {
-            Thread.currentThread().setContextClassLoader(tccl);
-            if (elprop != null) {
-                System.setProperty("javax.el.ExpressionFactory", elprop);
-            } else {
-                System.clearProperty("javax.el.ExpressionFactory");
-            }
+            MapperFactory factory = new MapperFactory(getCamelContext(), configuration.getMappingConfiguration());
+            mapper = factory.create();
         }
     }
 
-    private DozerBeanMapper createDozerBeanMapper() throws Exception {
-        DozerBeanMapper answer = DozerComponent.createDozerBeanMapper(Collections.<String>emptyList());
-        InputStream mapStream = null;
-        try {
-            LOG.info("Loading Dozer mapping file {}.", configuration.getMappingFile());
-            // create the mapper instance and add the mapping file
-            mapStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configuration.getMappingFile());
-            answer.addMapping(mapStream);
-        } finally {
-            IOHelper.close(mapStream);
-        }
-        return answer;
-    }
+    private Map<String, CustomConverter> getCustomConvertersWithId() {
+        Map<String, CustomConverter> customConvertersWithId = new HashMap<>();
+        customConvertersWithId.put(CUSTOM_MAPPING_ID, customMapper);
+        customConvertersWithId.put(VARIABLE_MAPPING_ID, variableMapper);
+        customConvertersWithId.put(EXPRESSION_MAPPING_ID, expressionMapper);
 
-    private void configureMapper(DozerBeanMapper mapper) throws Exception {
-        // add our built-in converters
-        Map<String, CustomConverter> converters = new HashMap<String, CustomConverter>();
-        converters.put(CUSTOM_MAPPING_ID, customMapper);
-        converters.put(VARIABLE_MAPPING_ID, variableMapper);
-        converters.put(EXPRESSION_MAPPING_ID, expressionMapper);
-        converters.putAll(mapper.getCustomConvertersWithId());
-        mapper.setCustomConvertersWithId(converters);
+        return customConvertersWithId;
     }
 }

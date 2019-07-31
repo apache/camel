@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,8 +18,6 @@ package org.apache.camel.component.mongodb3.processor.idempotent;
 
 import java.util.UUID;
 
-import com.mongodb.MongoClient;
-
 import org.apache.camel.component.mongodb3.AbstractMongoDbTest;
 import org.bson.Document;
 import org.junit.After;
@@ -28,7 +26,7 @@ import org.junit.Test;
 
 public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
 
-    MongoDbIdempotentRepository<String> repo;
+    MongoDbIdempotentRepository repo;
 
     @Before
     @After
@@ -39,7 +37,7 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
     @Override
     public void doPostSetup() {
         super.doPostSetup();
-        repo = new MongoDbIdempotentRepository<>((MongoClient)mongo, testCollectionName, dbName);
+        repo = new MongoDbIdempotentRepository(mongo, testCollectionName, dbName);
     }
 
     @Test

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,6 @@ import java.net.URI;
 import javax.xml.namespace.QName;
 
 import net.javacrumbs.smock.springws.client.AbstractSmockClientTest;
-
 import org.apache.camel.ProducerTemplate;
 import org.junit.After;
 import org.junit.Test;

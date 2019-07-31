@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,72 +16,129 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Assert;
 
-public class LoginConfigHelper extends Assert {
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
-    protected static final String TEST_LOGIN_PROPERTIES = "../test-salesforce-login.properties";
+public final class LoginConfigHelper {
 
-    public static SalesforceLoginConfig getLoginConfig() throws IOException {
+    private static final LoginConfigHelper INSTANCE = new LoginConfigHelper();
 
-        // load test-salesforce-login properties
-        Properties properties = new Properties();
-        InputStream stream = null;
+    private final Map<String, String> configuration;
+
+    private LoginConfigHelper() {
+        configuration = new HashMap<>();
         try {
-            final SalesforceLoginConfig config;
-            stream = new FileInputStream(TEST_LOGIN_PROPERTIES);
-            properties.load(stream);
-
-            if (ObjectHelper.isEmpty(properties.getProperty("refreshToken"))) {
-                config = new SalesforceLoginConfig(
-                        properties.getProperty("loginUrl", SalesforceLoginConfig.DEFAULT_LOGIN_URL),
-                        properties.getProperty("clientId"),
-                        properties.getProperty("clientSecret"),
-                        properties.getProperty("userName"),
-                        properties.getProperty("password"),
-                        Boolean.parseBoolean(properties.getProperty("lazyLogin", "false")));
-            } else {
-                config = new SalesforceLoginConfig(
-                        properties.getProperty("loginUrl", SalesforceLoginConfig.DEFAULT_LOGIN_URL),
-                        properties.getProperty("clientId"), //
-                        properties.getProperty("clientSecret"), //
-                        properties.getProperty("refreshToken"), //
-                        Boolean.parseBoolean(properties.getProperty("lazyLogin", "false")));
-            }
-
-
-            assertNotNull("Null loginUrl", config.getLoginUrl());
-            assertNotNull("Null clientId", config.getClientId());
-            assertNotNull("Null clientSecret", config.getClientSecret());
-            if (ObjectHelper.isEmpty(properties.getProperty("refreshToken"))) {
-                assertNotNull("Null userName", config.getUserName());
-                assertNotNull("Null password", config.getPassword());
-            } else {
-                assertNotNull("Null refreshToken", config.getRefreshToken());
-            }
-
-
-            return config;
-
-        } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("Create a properties file named "
-                + TEST_LOGIN_PROPERTIES + " with clientId, clientSecret, userName, and password or with clientId, clientSecret and refreshToken"
-                + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException ignore) {
-                }
-            }
+            final ResourceBundle properties = ResourceBundle.getBundle("test-salesforce-login");
+            properties.keySet().forEach(k -> configuration.put(k, properties.getString(k)));
+        } catch (final MissingResourceException ignored) {
+            // ignoring if missing
         }
+
+        System.getenv().keySet().stream()//
+            .filter(k -> k.startsWith("SALESFORCE_") && isNotEmpty(System.getenv(k)))
+            .forEach(k -> configuration.put(fromEnvName(k), System.getenv(k)));
+        System.getProperties().keySet().stream().map(String.class::cast)
+            .filter(k -> k.startsWith("salesforce.") && isNotEmpty(System.getProperty(k)))
+            .forEach(k -> configuration.put(k, System.getProperty(k)));
+    }
+
+    private String fromEnvName(final String envVariable) {
+        return envVariable.replaceAll("_", ".").toLowerCase();
+    }
+
+    SalesforceLoginConfig createLoginConfig() {
+        final SalesforceLoginConfig loginConfig = new SalesforceLoginConfig();
+
+        final String explicitType = configuration.get("salesforce.auth.type");
+        if (ObjectHelper.isNotEmpty(explicitType)) {
+            loginConfig.setType(AuthenticationType.valueOf(explicitType));
+        }
+        loginConfig.setClientId(configuration.get("salesforce.client.id"));
+        loginConfig.setClientSecret(configuration.get("salesforce.client.secret"));
+        loginConfig.setUserName(configuration.get("salesforce.username"));
+        loginConfig.setPassword(configuration.get("salesforce.password"));
+
+        final KeyStoreParameters keystore = new KeyStoreParameters();
+        keystore.setResource(configuration.get("salesforce.keystore.resource"));
+        keystore.setPassword(configuration.get("salesforce.keystore.password"));
+        keystore.setType(configuration.get("salesforce.keystore.type"));
+        keystore.setProvider(configuration.get("salesforce.keystore.provider"));
+        loginConfig.setKeystore(keystore);
+
+        validate(loginConfig);
+
+        return loginConfig;
+    }
+
+    void validate(final SalesforceLoginConfig loginConfig) {
+        try {
+            loginConfig.validate();
+        } catch (final IllegalArgumentException e) {
+            System.out.println("To run integration tests Salesforce Authentication information is");
+            System.out.println("needed.");
+            System.out.println("You need to specify the configuration for running tests by either");
+            System.out.println("specifying environment variables, Maven properties or create a Java");
+            System.out.println("properties file at:");
+            System.out.println();
+            System.out.println("camel/components/camel-salesforce/test-salesforce-login.properties");
+            System.out.println();
+            System.out.println("With authentication information to access a Salesforce instance.");
+            System.out.println("You can use:");
+            System.out.println();
+            System.out.println("camel/components/camel-salesforce/test-salesforce-login.properties.sample");
+            System.out.println();
+            System.out.println("as reference. A free Salesforce developer account can be obtained at:");
+            System.out.println();
+            System.out.println("https://developer.salesforce.com");
+            System.out.println();
+            System.out.println("Properties that you need to set:");
+            System.out.println();
+            System.out.println("| Maven or properties file     | Environment variable         | Use    |");
+            System.out.println("|------------------------------+------------------------------+--------|");
+            System.out.println("| salesforce.client.id         | SALESFORCE_CLIENT_ID         | ALL    |");
+            System.out.println("| salesforce.client.secret     | SALESFORCE_CLIENT_SECRET     | UP, RT |");
+            System.out.println("| salesforce.username          | SALESFORCE_USERNAME          | UP, JWT|");
+            System.out.println("| salesforce.password          | SALESFORCE_PASSWORD          | UP     |");
+            System.out.println("| salesforce.refreshToken      | SALESFORCE_REFRESH_TOKEN     | RT     |");
+            System.out.println("| salesforce.keystore.path     | SALESFORCE_KEYSTORE_PATH     | JWT    |");
+            System.out.println("| salesforce.keystore.type     | SALESFORCE_KEYSTORE_TYPE     | JWT    |");
+            System.out.println("| salesforce.keystore.password | SALESFORCE_KEYSTORE_PASSWORD | JWT    |");
+            System.out.println("| salesforce.login.url         | SALESFORCE_LOGIN_URL         | ALL    |");
+            System.out.println();
+            System.out.println("* ALL - required always");
+            System.out.println("* UP  - when using username and password authentication");
+            System.out.println("* RT  - when using refresh token flow");
+            System.out.println("* JWT - when using JWT flow");
+            System.out.println();
+            System.out.println("You can force authentication type to be one of USERNAME_PASSWORD,");
+            System.out.println("REFRESH_TOKEN or JWT by setting `salesforce.auth.type` (or ");
+            System.out.println("`SALESFORCE_AUTH_TYPE` for environment variables).");
+            System.out.println();
+            System.out.println("Examples:");
+            System.out.println();
+            System.out.println("Using environment:");
+            System.out.println();
+            System.out.println("$ export SALESFORCE_CLIENT_ID=...");
+            System.out.println("$ export SALESFORCE_CLIENT_SECRET=...");
+            System.out.println("$ export ...others...");
+            System.out.println();
+            System.out.println("or using Maven properties:");
+            System.out.println();
+            System.out.println("$ mvn -Pintegration -Dsalesforce.client.id=... \\");
+            System.out.println("  -Dsalesforce.client.secret=... ...");
+            System.out.println();
+        }
+    }
+
+    public static SalesforceLoginConfig getLoginConfig() {
+        return INSTANCE.createLoginConfig();
     }
 
 }

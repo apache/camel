@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -51,7 +51,6 @@ public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultT
                         context.createMarshaller().marshal(unknowPersonFault, details);
                         fault.setDetail(details);
                         exchange.getOut().setBody(fault);
-                        exchange.getOut().setFault(true);
                     }
                 });
                 

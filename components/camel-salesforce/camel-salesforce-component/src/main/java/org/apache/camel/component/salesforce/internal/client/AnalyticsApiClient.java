@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.AbstractReportResultsBase;
@@ -33,39 +34,39 @@ public interface AnalyticsApiClient {
     // Report operations
 
     public interface RecentReportsResponseCallback {
-        void onResponse(List<RecentReport> reportDescription, SalesforceException ex);
+        void onResponse(List<RecentReport> reportDescription, Map<String, String> headers, SalesforceException ex);
     }
 
     public interface ReportDescriptionResponseCallback {
-        void onResponse(ReportDescription reportDescription, SalesforceException ex);
+        void onResponse(ReportDescription reportDescription, Map<String, String> headers, SalesforceException ex);
     }
 
     public interface ReportResultsResponseCallback {
-        void onResponse(AbstractReportResultsBase reportResults, SalesforceException ex);
+        void onResponse(AbstractReportResultsBase reportResults, Map<String, String> headers, SalesforceException ex);
     }
 
     public interface ReportInstanceResponseCallback {
-        void onResponse(ReportInstance reportInstance, SalesforceException ex);
+        void onResponse(ReportInstance reportInstance, Map<String, String> headers, SalesforceException ex);
     }
 
     public interface ReportInstanceListResponseCallback {
-        void onResponse(List<ReportInstance> reportInstances, SalesforceException ex);
+        void onResponse(List<ReportInstance> reportInstances, Map<String, String> headers, SalesforceException ex);
     }
 
-    void getRecentReports(RecentReportsResponseCallback callback);
+    void getRecentReports(Map<String, List<String>> headers, RecentReportsResponseCallback callback);
 
-    void getReportDescription(String reportId,
+    void getReportDescription(String reportId, Map<String, List<String>> headers,
                               ReportDescriptionResponseCallback callback);
 
     void executeSyncReport(String reportId, Boolean includeDetails, ReportMetadata reportFilter,
-                           ReportResultsResponseCallback callback);
+        Map<String, List<String>> headers, ReportResultsResponseCallback callback);
 
     void executeAsyncReport(String reportId, Boolean includeDetails, ReportMetadata reportFilter,
-                           ReportInstanceResponseCallback callback);
+        Map<String, List<String>> headers, ReportInstanceResponseCallback callback);
 
-    void getReportInstances(String reportId,
+    void getReportInstances(String reportId, Map<String, List<String>> headers,
                            ReportInstanceListResponseCallback callback);
 
-    void getReportResults(String reportId, String instanceId,
+    void getReportResults(String reportId, String instanceId, Map<String, List<String>> headers,
                            ReportResultsResponseCallback callback);
 }

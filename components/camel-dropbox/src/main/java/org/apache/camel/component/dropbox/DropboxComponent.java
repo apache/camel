@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,21 +18,29 @@ package org.apache.camel.component.dropbox;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxPropertyManager;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DropboxComponent extends UriEndpointComponent {
+@Component("dropbox")
+public class DropboxComponent extends DefaultComponent {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxComponent.class);
-
+    
     public DropboxComponent() {
-        super(DropboxEndpoint.class);
+        this(null);
+    }
+
+    public DropboxComponent(CamelContext context) {
+        super(context);
+        registerExtension(new DropboxComponentVerifierExtension());        
     }
 
     /**
@@ -65,8 +73,9 @@ public class DropboxComponent extends UriEndpointComponent {
             configuration.setUploadMode(DropboxUploadMode.valueOf((String)parameters.get("uploadMode")));
         }
 
+
         //pass validation test
-        DropboxConfigurationValidator.validate(configuration);
+        DropboxConfigurationValidator.validateCommonProperties(configuration);
 
         // and then override from parameters
         setProperties(configuration, parameters);

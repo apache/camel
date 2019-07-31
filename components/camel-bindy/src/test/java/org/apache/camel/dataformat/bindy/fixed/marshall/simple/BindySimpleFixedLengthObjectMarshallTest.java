@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,7 +32,6 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spring.boot.TypeConversionConfiguration;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
@@ -59,13 +57,13 @@ public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4Spri
 
     private String expected;
 
-    @Produce(uri = URI_DIRECT_START)
+    @Produce(URI_DIRECT_START)
     private ProducerTemplate template;
 
-    @EndpointInject(uri = URI_MOCK_RESULT)
+    @EndpointInject(URI_MOCK_RESULT)
     private MockEndpoint result;
 
-    @EndpointInject(uri = URI_MOCK_ERROR)
+    @EndpointInject(URI_MOCK_ERROR)
     private MockEndpoint error;
 
     public static class Configuration extends SingleRouteCamelConfiguration {
@@ -75,11 +73,6 @@ public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4Spri
         public RouteBuilder route() {
             return new RouteBuilder() {
                 public void configure() {
-                    Tracer tracer = new Tracer();
-                    tracer.setLogLevel(LoggingLevel.ERROR);
-                    tracer.setLogName("org.apache.camel.bindy");
-                    getContext().addInterceptStrategy(tracer);
-
                     // default should errors go to mock:error
                     errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliveryDelay(0));
 
@@ -118,7 +111,7 @@ public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4Spri
         result.expectedBodiesReceived(expected);
         error.expectedMessageCount(0);
 
-        List<Order> list = new ArrayList<Order>();
+        List<Order> list = new ArrayList<>();
         list.add(generateModel("Pauline"));
         list.add(generateModel("Marcool"));
         template.sendBody(list);

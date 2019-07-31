@@ -1,0 +1,19 @@
+[[stream-config-eip]]
+= Stream-config EIP
+
+Stream-processing resequence EIP
+
+// eip options: START
+The Stream-config EIP supports 6 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *capacity* | Sets the capacity of the resequencer's inbound queue. | 100 | Integer
+| *timeout* | Sets minimum time to wait for missing elements (messages). | 1000 | Long
+| *deliveryAttemptInterval* | Sets the interval in milli seconds the stream resequencer will at most wait while waiting for condition of being able to deliver. | 1000 | Long
+| *ignoreInvalidExchanges* | Whether to ignore invalid exchanges | false | Boolean
+| *comparatorRef* | To use a custom comparator |  | String
+| *rejectOld* | If true, throws an exception when messages older than the last delivered message are processed | false | Boolean
+|===
+// eip options: END

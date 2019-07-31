@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
+import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
@@ -31,14 +32,14 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Tests a producer that sends media information.
  */
 public class TelegramProducerMediaTest extends TelegramTestSupport {
 
-    @EndpointInject(uri = "direct:telegram")
+    @EndpointInject("direct:telegram")
     private Endpoint endpoint;
 
     @Test
@@ -92,7 +93,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Audio");
-        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.AUDIO.name());
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.AUDIO);
         byte[] audio = TelegramTestUtil.createSampleAudio();
         ex.getIn().setBody(audio);
 
@@ -136,7 +137,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Document");
-        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.DOCUMENT.name());
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.DOCUMENT);
         byte[] document = TelegramTestUtil.createSampleDocument();
         ex.getIn().setBody(document);
 
@@ -149,6 +150,89 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         assertEquals(document, captor.getValue().getDocument());
         assertEquals("file", captor.getValue().getFilenameWithExtension());
         assertEquals("Document", captor.getValue().getCaption());
+    }
+
+    @Test
+    public void testRouteWithText() throws Exception {
+
+        TelegramService service = mockTelegramService();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.TEXT.name());
+        ex.getIn().setBody("Hello");
+
+        context().createProducerTemplate().send(endpoint, ex);
+
+        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
+
+        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
+        assertEquals("my-id", captor.getValue().getChatId());
+        assertEquals("Hello", captor.getValue().getText());
+        assertNull(captor.getValue().getParseMode());
+    }
+    
+    @Test
+    public void testRouteWithTextAndCustomKeyBoard() throws Exception {
+
+        TelegramService service = mockTelegramService();
+
+        Exchange ex = endpoint.createExchange();
+
+        OutgoingTextMessage msg = new OutgoingTextMessage.Builder().text("Hello").build();
+        withInlineKeyboardContainingTwoRows(msg);
+        
+        ex.getIn().setBody(msg);
+
+        context().createProducerTemplate().send(endpoint, ex);
+
+        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
+
+        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
+        assertEquals("my-id", captor.getValue().getChatId());
+        assertEquals("Hello", captor.getValue().getText());
+        assertEquals(2, captor.getValue().getReplyKeyboardMarkup().getKeyboard().size());
+        assertEquals(true, captor.getValue().getReplyKeyboardMarkup().getOneTimeKeyboard());
+        assertNull(captor.getValue().getParseMode());
+    }    
+
+    @Test
+    public void testRouteWithTextHtml() throws Exception {
+
+        TelegramService service = mockTelegramService();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.TEXT.name());
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_PARSE_MODE, TelegramParseMode.HTML.name());
+        ex.getIn().setBody("Hello");
+
+        context().createProducerTemplate().send(endpoint, ex);
+
+        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
+
+        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
+        assertEquals("my-id", captor.getValue().getChatId());
+        assertEquals("Hello", captor.getValue().getText());
+        assertEquals("HTML", captor.getValue().getParseMode());
+    }
+
+    @Test
+    public void testRouteWithTextMarkdown() throws Exception {
+
+        TelegramService service = mockTelegramService();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.TEXT.name());
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_PARSE_MODE, TelegramParseMode.MARKDOWN);
+        ex.getIn().setBody("Hello");
+
+        context().createProducerTemplate().send(endpoint, ex);
+
+        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
+
+        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
+        assertEquals("my-id", captor.getValue().getChatId());
+        assertEquals("Hello", captor.getValue().getText());
+        assertEquals("Markdown", captor.getValue().getParseMode());
     }
 
     @Override

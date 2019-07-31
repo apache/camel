@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,113 +17,73 @@
 package org.apache.camel.component.kubernetes.producer;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ServiceAccount;
+import io.fabric8.kubernetes.api.model.ServiceAccountBuilder;
+import io.fabric8.kubernetes.api.model.ServiceAccountListBuilder;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.codec.binary.Base64;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport {
 
+    @Rule
+    public KubernetesServer server = new KubernetesServer();
+
+    @BindToRegistry("kubernetesClient")
+    public KubernetesClient getClient() throws Exception {
+        return server.getClient();
+    }
+
     @Test
     public void listTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        List<ServiceAccount> result = template.requestBody("direct:list", "",
-                List.class);
+        server.expect().withPath("/api/v1/serviceaccounts").andReturn(200, new ServiceAccountListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        List<ServiceAccount> result = template.requestBody("direct:list", "", List.class);
 
-        boolean fabric8Exists = false;
-
-        Iterator<ServiceAccount> it = result.iterator();
-        while (it.hasNext()) {
-            ServiceAccount service = it.next();
-            if ("fabric8".equalsIgnoreCase(service.getMetadata().getName())) {
-                fabric8Exists = true;
-            }
-        }
-
-        assertTrue(fabric8Exists);
+        assertEquals(3, result.size());
     }
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+        server.expect().withPath("/api/v1/serviceaccounts?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
+            .andReturn(200, new ServiceAccountListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("component", "elasticsearch");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, labels);
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, labels);
             }
         });
 
         List<ServiceAccount> result = ex.getOut().getBody(List.class);
 
-        assertTrue(result.size() == 0);
+        assertEquals(3, result.size());
     }
 
     @Test
     public void createAndDeleteServiceAccount() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        Exchange ex = template.request("direct:create", new Processor() {
+        ServiceAccount pod1 = new ServiceAccountBuilder().withNewMetadata().withName("sa1").withNamespace("test").and().build();
+
+        server.expect().withPath("/api/v1/namespaces/test/serviceaccounts/sa1").andReturn(200, pod1).once();
+        Exchange ex = template.request("direct:delete", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, "test");
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, labels);
-                ServiceAccount s = new ServiceAccount();
-                s.setKind("ServiceAccount");
-                Map<String, String> mp = new HashMap<String, String>();
-                mp.put("username", Base64.encodeBase64String("pippo".getBytes()));
-                mp.put("password", Base64.encodeBase64String("password".getBytes()));
-                ObjectMeta meta = new ObjectMeta();
-                meta.setName("test");
-                s.setMetadata(meta);
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, s);
-            }
-        });
-
-        ServiceAccount sec = ex.getOut().getBody(ServiceAccount.class);
-
-        assertEquals(sec.getMetadata().getName(), "test");
-
-        ex = template.request("direct:delete", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, "sa1");
             }
         });
 
@@ -137,21 +97,9 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=listServiceAccounts",
-                                host, authToken);
-                from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=listServiceAccountsByLabels",
-                                host, authToken);
-                from("direct:getServices")
-                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=getServiceAccount",
-                                host, authToken);
-                from("direct:create")
-                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=createServiceAccount",
-                                host, authToken);
-                from("direct:delete")
-                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=deleteServiceAccount",
-                                host, authToken);
+                from("direct:list").to("kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=listServiceAccounts");
+                from("direct:listByLabels").to("kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=listServiceAccountsByLabels");
+                from("direct:delete").to("kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=deleteServiceAccount");
             }
         };
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ import org.apache.camel.component.openstack.cinder.CinderConstants;
 import org.apache.camel.component.openstack.cinder.CinderEndpoint;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -73,7 +73,7 @@ public class SnapshotProducer extends AbstractOpenstackProducer {
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.SNAPSHOT_ID, String.class), String.class);
-        ObjectHelper.notEmpty(id, "Snapshot ID");
+        StringHelper.notEmpty(id, "Snapshot ID");
         final VolumeSnapshot out = os.blockStorage().snapshots().get(id);
         msg.setBody(out);
     }
@@ -87,19 +87,19 @@ public class SnapshotProducer extends AbstractOpenstackProducer {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.SNAPSHOT_ID, String.class), String.class);
         final VolumeSnapshot vs = messageToSnapshot(msg);
-        ObjectHelper.notEmpty(id, "Cinder Snapshot ID");
+        StringHelper.notEmpty(id, "Cinder Snapshot ID");
 
         final ActionResponse out = os.blockStorage().snapshots().update(id, vs.getName(), vs.getDescription());
-        checkFailure(out, msg, "Update volume snapshot " + id);
+        checkFailure(out, exchange, "Update volume snapshot " + id);
     }
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.SNAPSHOT_ID, String.class), String.class);
-        ObjectHelper.notEmpty(id, "Cinder Snapshot ID");
+        StringHelper.notEmpty(id, "Cinder Snapshot ID");
 
         final ActionResponse out = os.blockStorage().snapshots().delete(id);
-        checkFailure(out, msg, "Delete snapshot " + id);
+        checkFailure(out, exchange, "Delete snapshot " + id);
     }
 
     private VolumeSnapshot messageToSnapshot(Message message) {
@@ -109,7 +109,7 @@ public class SnapshotProducer extends AbstractOpenstackProducer {
             VolumeSnapshotBuilder builder = Builders.volumeSnapshot();
 
             final String name = message.getHeader(OpenstackConstants.NAME, String.class);
-            ObjectHelper.notEmpty(name, "Name");
+            StringHelper.notEmpty(name, "Name");
             builder.name(name);
 
             if (headers.containsKey(OpenstackConstants.DESCRIPTION)) {

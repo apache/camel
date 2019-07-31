@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,12 +43,14 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultAttachment;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.InputStreamDataSource;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.model.URITemplate;
+import org.apache.cxf.jaxrs.utils.AnnotationUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.MessageContentsList;
 
@@ -100,13 +102,12 @@ import org.apache.cxf.message.MessageContentsList;
  * 
  * <b><tt>public Response doAction(DataHandler abcd);</tt></b><br/>
  * The DataHandler is unwrapped from the {@link MessageContentsList} and preserved as the IN message body.
- * 
  */
 public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
 
     /** The JAX-RS annotations to be injected as headers in the IN message */
     private static final Set<Class<?>> HEADER_ANNOTATIONS = Collections.unmodifiableSet(
-            new HashSet<Class<?>>(Arrays.asList(new Class<?>[] {
+            new HashSet<>(Arrays.asList(new Class<?>[] {
                 CookieParam.class, 
                 FormParam.class, 
                 PathParam.class,
@@ -115,7 +116,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
                 QueryParam.class})));
     
     private static final Set<Class<?>> BINARY_ATTACHMENT_TYPES = Collections.unmodifiableSet(
-            new HashSet<Class<?>>(Arrays.asList(new Class<?>[] {
+            new HashSet<>(Arrays.asList(new Class<?>[] {
                 Attachment.class,
                 DataHandler.class,
                 DataSource.class,
@@ -126,7 +127,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
     private static final Object[] NO_PARAMETERS = null;
     
     /** Caches the Method to Parameters associations to avoid reflection with every request */
-    private Map<Method, MethodSpec> methodSpecCache = new ConcurrentHashMap<Method, MethodSpec>();
+    private Map<Method, MethodSpec> methodSpecCache = new ConcurrentHashMap<>();
    
 
     @Override
@@ -163,7 +164,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
      * @return
      */
     protected Object buildResponse(org.apache.camel.Exchange camelExchange, Object base) {
-        Message m = camelExchange.hasOut() ? camelExchange.getOut() : camelExchange.getIn();
+        Message m = camelExchange.getMessage();
         ResponseBuilder response;
 
         // if the body is different to Response, it's an entity; therefore, check 
@@ -195,7 +196,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
      */
     protected Map<String, String> filterCamelHeadersForResponseHeaders(Map<String, Object> headers,
                                                                      org.apache.camel.Exchange camelExchange) {
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         for (Map.Entry<String, Object> entry : headers.entrySet()) {
             if (getHeaderFilterStrategy().applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
                 continue;
@@ -280,7 +281,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
     }
 
     private void transferBinaryMultipartParameter(Object toMap, String parameterName, String multipartType, Message in) {
-        org.apache.camel.Attachment dh = null;
+        org.apache.camel.attachment.Attachment dh = null;
         if (toMap instanceof Attachment) {
             dh = createCamelAttachment((Attachment) toMap);
         } else if (toMap instanceof DataSource) {
@@ -291,7 +292,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
             dh = new DefaultAttachment(new InputStreamDataSource((InputStream) toMap, multipartType == null ? "application/octet-stream" : multipartType));
         }
         if (dh != null) {
-            in.addAttachmentObject(parameterName, dh);
+            in.getExchange().getMessage(AttachmentMessage.class).addAttachmentObject(parameterName, dh);
         }
     }
 
@@ -319,6 +320,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
          * @return A MethodSpec instance representing the method metadata relevant to the Camel binding process.
          */
         public static MethodSpec fromMethod(Method method) {
+            method = AnnotationUtils.getAnnotatedMethod(method.getDeclaringClass(), method);
             MethodSpec answer = new MethodSpec();
             
             Annotation[][] annotations = method.getParameterAnnotations();

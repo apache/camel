@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,9 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
-import org.apache.camel.component.openstack.nova.NovaConstants;
 import org.apache.camel.component.openstack.nova.NovaEndpoint;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.Keypair;
@@ -59,7 +58,7 @@ public class KeypairProducer extends AbstractOpenstackProducer {
     private void doCreate(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String name = msg.getHeader(OpenstackConstants.NAME, String.class);
-        ObjectHelper.notEmpty(name, "Keypair name");
+        StringHelper.notEmpty(name, "Keypair name");
 
         final String body = msg.getBody(String.class);
         final Keypair kp = os.compute().keypairs().create(name, body);
@@ -69,7 +68,7 @@ public class KeypairProducer extends AbstractOpenstackProducer {
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String keypairName = msg.getHeader(OpenstackConstants.NAME, String.class);
-        ObjectHelper.notEmpty(keypairName, "Keypair name");
+        StringHelper.notEmpty(keypairName, "Keypair name");
         final Keypair kp = os.compute().keypairs().get(keypairName);
         msg.setBody(kp);
     }
@@ -83,9 +82,9 @@ public class KeypairProducer extends AbstractOpenstackProducer {
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String keypairName = msg.getHeader(OpenstackConstants.NAME, String.class);
-        ObjectHelper.notEmpty(keypairName, "Keypair name");
+        StringHelper.notEmpty(keypairName, "Keypair name");
         final ActionResponse response = os.compute().keypairs().delete(keypairName);
-        checkFailure(response, msg, "Delete keypair " + keypairName);
+        checkFailure(response, exchange, "Delete keypair " + keypairName);
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,28 +16,46 @@
  */
 package org.apache.camel.component.telegram;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.model.Update;
-import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.component.webhook.WebhookCapableEndpoint;
+import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 
 /**
  * The telegram component provides access to the <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type/authorizationToken", consumerClass = TelegramConsumer.class, label = "chat")
-public class TelegramEndpoint extends ScheduledPollEndpoint {
+@UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type/authorizationToken", label = "chat")
+public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint {
+    private static final Logger LOG = LoggerFactory.getLogger(TelegramEndpoint.class);
 
     @UriParam
     private TelegramConfiguration configuration;
 
+    private WebhookConfiguration webhookConfiguration;
+
     public TelegramEndpoint(String endpointUri, Component component, TelegramConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
+        // setup the proxy setting here
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            LOG.debug("Setup http proxy host:{} port:{} for TelegramService", configuration.getProxyHost(), configuration.getProxyPort());
+            TelegramServiceProvider.get().getService().setHttpProxy(configuration.getProxyHost(), configuration.getProxyPort());
+        }
     }
 
     @Override
@@ -54,21 +72,43 @@ public class TelegramEndpoint extends ScheduledPollEndpoint {
 
     public Exchange createExchange(Update update) {
         Exchange exchange = super.createExchange();
-
-        if (update.getMessage() != null) {
-            exchange.getIn().setBody(update.getMessage());
-
-            if (update.getMessage().getChat() != null) {
-                exchange.getIn().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getMessage().getChat().getId());
-            }
-        }
-
+        populateExchange(exchange, update);
         return exchange;
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
+    public Processor createWebhookHandler(Processor next) {
+        return new TelegramWebhookProcessor(next);
+    }
+
+    @Override
+    public void registerWebhook() throws Exception {
+        TelegramService service = TelegramServiceProvider.get().getService();
+        if (!service.setWebhook(configuration.getAuthorizationToken(), webhookConfiguration.computeFullExternalUrl())) {
+            throw new RuntimeCamelException("The Telegram API refused to register a webhook");
+        }
+    }
+
+    @Override
+    public void unregisterWebhook() throws Exception {
+        TelegramService service = TelegramServiceProvider.get().getService();
+        if (!service.removeWebhook(configuration.getAuthorizationToken())) {
+            throw new RuntimeCamelException("The Telegram API refused to unregister the webhook");
+        }
+    }
+
+    public WebhookConfiguration getWebhookConfiguration() {
+        return webhookConfiguration;
+    }
+
+    @Override
+    public void setWebhookConfiguration(WebhookConfiguration webhookConfiguration) {
+        this.webhookConfiguration = webhookConfiguration;
+    }
+
+    @Override
+    public List<String> getWebhookMethods() {
+        return Collections.singletonList("POST");
     }
 
     public TelegramConfiguration getConfiguration() {

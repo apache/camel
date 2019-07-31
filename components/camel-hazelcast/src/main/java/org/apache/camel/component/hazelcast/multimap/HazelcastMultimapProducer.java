@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,6 +26,7 @@ import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 
 public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
 
@@ -40,45 +41,45 @@ public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
 
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
-        // get header parameters
+        // GET header parameters
         Object oid = null;
 
         if (headers.containsKey(HazelcastConstants.OBJECT_ID)) {
             oid = headers.get(HazelcastConstants.OBJECT_ID);
         }
 
-        final int operation = lookupOperationNumber(exchange);
+        final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
-        case HazelcastConstants.PUT_OPERATION:
+        case PUT:
             this.put(oid, exchange);
             break;
 
-        case HazelcastConstants.GET_OPERATION:
+        case GET:
             this.get(oid, exchange);
             break;
 
-        case HazelcastConstants.DELETE_OPERATION:
+        case DELETE:
             this.delete(oid);
             break;
 
-        case HazelcastConstants.REMOVEVALUE_OPERATION:
+        case REMOVE_VALUE:
             this.removevalue(oid, exchange);
             break;
             
-        case HazelcastConstants.CONTAINS_KEY_OPERATION:
+        case CONTAINS_KEY:
             this.containsKey(oid, exchange);
             break;
             
-        case HazelcastConstants.CONTAINS_VALUE_OPERATION:
+        case CONTAINS_VALUE:
             this.containsValue(exchange);
             break;
 
-        case HazelcastConstants.CLEAR_OPERATION:
+        case CLEAR:
             this.clear(exchange);
             break;
             
-        case HazelcastConstants.VALUE_COUNT_OPERATION:
+        case VALUE_COUNT:
             this.valuecount(oid, exchange);
             break;
             

@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.19.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-infinispan</artifactId>
@@ -31,19 +34,29 @@
     <description>Camel Infinispan support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.infinispan.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=infinispan</camel.osgi.export.service>
+      <jgroups-infinispan-version>4.0.18.Final</jgroups-infinispan-version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core</artifactId>
             <version>${infinispan-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jgroups</groupId>
+                    <artifactId>jgroups</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
+            <version>${jgroups-infinispan-version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
@@ -53,6 +66,11 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-client-hotrod</artifactId>
+            <version>${infinispan-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-remote-query-client</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
 
@@ -77,6 +95,12 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-spring4-remote</artifactId>
+            <version>${infinispan-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-marshaller-protostuff</artifactId>
             <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
@@ -107,36 +131,34 @@
                     <groupId>org.infinispan</groupId>
                     <artifactId>infinispan-remote-query-client</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.karaf</groupId>
+                    <artifactId>apache-karaf</artifactId>
+                </exclusion>
             </exclusions>
-        </dependency>           
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>${log4j2-25-version}</version>
+            <version>${log4j2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>${log4j2-25-version}</version>
+            <version>${log4j2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j2-25-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <version>${log4j2-25-version}</version>
+            <version>${log4j2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-jcl</artifactId>
-            <version>${log4j2-25-version}</version>
+            <version>${log4j2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -144,47 +166,26 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>${mockito-version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
-    <!-- unit testing requires java 8 -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>infinispan.test.jgroups.protocol</name>
+                            <value>tcp</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
-        <profile>
-            <id>jdk8-test</id>
-            <activation>
-                <jdk>!1.8</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-testCompile</id>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>testCompile</goal>
-                                </goals>
-                                <configuration>
-                                    <skip>true</skip>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>infinispan-itests</id>
             <activation>
@@ -195,41 +196,35 @@
                 <server.dir.name>infinispan-server-${infinispan-version}</server.dir.name>
                 <server.dir>${server.dir.parent}/${server.dir.name}</server.dir>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.infinispan.server</groupId>
-                    <artifactId>infinispan-server</artifactId>
-                    <version>${infinispan-version}</version>
-                    <type>zip</type>
-                    <classifier>bin</classifier>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
+                        <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>unpack-server</id>
+                                <id>install-binary-distribution</id>
                                 <phase>generate-test-resources</phase>
                                 <goals>
-                                    <goal>unpack</goal>
+                                    <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>org.infinispan.server</groupId>
-                                            <artifactId>infinispan-server</artifactId>
-                                            <version>${infinispan-version}</version>
-                                            <classifier>bin</classifier>
-                                            <type>zip</type>
-                                            <outputDirectory>${server.dir.parent}</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
+                                    <target>
+                                        <get
+                                                src="https://downloads.jboss.org/infinispan/${infinispan-version}/infinispan-server-${infinispan-version}.zip"
+                                                dest="${project.build.directory}/infinispan-server-${infinispan-version}.zip"/>
+                                        <unzip
+                                                src="${project.build.directory}/infinispan-server-${infinispan-version}.zip"
+                                                dest="${server.dir.parent}"/>
+                                    </target>
                                 </configuration>
                             </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
                             <execution>
                                 <id>deploy-converter-factory</id>
                                 <phase>generate-test-resources</phase>
@@ -253,7 +248,7 @@
                     <plugin>
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
-                        <version>1.1.0.Alpha6</version>
+                        <version>1.2.2.Final</version>
                         <executions>
                             <execution>
                                 <id>start-server</id>
@@ -277,17 +272,29 @@
                                     <executeCommands>
                                         <commands>
                                             <!-- Separate cache for protobuf serialized objects. -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=remote_query:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=remote_query:add(configuration=default)
+                                            </command>
                                             <!-- Separate cache for converter factory which uses Int keys -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=static_converter_factory:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=static_converter_factory:add(configuration=default)
+                                            </command>
                                             <!-- Separate cache for converter factory which uses Int keys -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=static_filter_factory:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=static_filter_factory:add(configuration=default)
+                                            </command>
                                             <!-- Separate cache for @ClientListener(includeCurrentState=true) -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=include_current_state:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=include_current_state:add(configuration=default)
+                                            </command>
                                             <!-- Separate cache for misc tests. -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=misc_cache:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=misc_cache:add(configuration=default)
+                                            </command>
                                             <!-- Separate cache for idempotent tests. -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=idempotent:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=idempotent:add(configuration=default)
+                                            </command>
                                         </commands>
                                     </executeCommands>
                                 </configuration>
@@ -316,6 +323,14 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>infinispan.test.jgroups.protocol</name>
+                                    <value>tcp</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

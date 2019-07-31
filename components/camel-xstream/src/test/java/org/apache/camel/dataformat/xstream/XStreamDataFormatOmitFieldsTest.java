@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class XStreamDataFormatOmitFieldsTest extends CamelTestSupport {
 
     @Test
@@ -54,7 +51,7 @@ public class XStreamDataFormatOmitFieldsTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
-                Map<String, String[]> omitFields = new HashMap<String, String[]>();
+                Map<String, String[]> omitFields = new HashMap<>();
                 omitFields.put(PurchaseOrder.class.getName(), new String[]{"price"});
                 xStreamDataFormat.setOmitFields(omitFields);
 

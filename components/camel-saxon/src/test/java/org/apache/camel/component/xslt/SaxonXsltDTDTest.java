@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -25,8 +26,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -43,7 +42,7 @@ public class SaxonXsltDTDTest extends CamelTestSupport {
     
     @Test
     public void testSendingInputStreamMessage() throws Exception {
-        InputStream is = IOConverter.toInputStream(MESSAGE, new DefaultExchange(context));
+        InputStream is = new ByteArrayInputStream(MESSAGE.getBytes());
         sendEntityMessage(is);   
     }
     

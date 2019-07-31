@@ -1,58 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.19.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-blueprint</artifactId>
-    <name>Camel :: Blueprint</name>
-    <description>Using Camel with OSGi Blueprint</description>
     <packaging>jar</packaging>
 
+    <name>Camel :: Blueprint</name>
+    <description>Using Camel with OSGi Blueprint</description>
+
     <properties>
-        <!-- use by camel-catalog -->
         <firstVersion>2.4.0</firstVersion>
         <label>java,osgi</label>
-
-        <camel.osgi.import>
-            !org.apache.camel.blueprint.*,
-            !org.apache.camel.util.blueprint.*,
-            !org.apache.camel.core.osgi.*,
-            !org.apache.camel.core.xml.*,
-            org.apache.camel.*;${camel.osgi.import.strict.version},
-            org.osgi.service.event*;resolution:=optional,
-            org.apache.aries*;version="[1.0,2)",
-            ${camel.osgi.import.defaults},
-            *
-        </camel.osgi.import>
-        <camel.osgi.export>
-            org.apache.camel.blueprint*;${camel.osgi.version},
-            org.apache.camel.util.blueprint*;${camel.osgi.version}
-        </camel.osgi.export>
-    		<camel.osgi.private.pkg>
-    			org.apache.camel.core.osgi*,
-    			org.apache.camel.core.xml*
-    		</camel.osgi.private.pkg>
     </properties>
 
     <dependencies>
@@ -69,13 +52,17 @@
             <artifactId>camel-core-osgi</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-properties</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <artifactId>osgi.core</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
+            <artifactId>osgi.cmpn</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -88,6 +75,14 @@
             <artifactId>org.apache.aries.util</artifactId>
             <version>${aries-util-version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.karaf.bundle</groupId>
+            <artifactId>org.apache.karaf.bundle.core</artifactId>
+            <version>${karaf4-version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <!-- for testing -->
@@ -125,109 +120,17 @@
                 <includes>
                     <include>**/*</include>
                 </includes>
+                <excludes>
+                    <exclude>**/*.class</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*</include>
                 </includes>
-                <filtering>true</filtering>
             </resource>
         </resources>
-
-        <plugins>
-            <!-- Inline the contents of camel-core-osgi and camel-core-xml into this bundle. -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-dependency-plugin</artifactId>
-              <version>2.10</version>
-              <executions>
-                <execution>
-                  <id>unpack</id>
-                  <phase>prepare-package</phase>
-                  <goals>
-                    <goal>unpack</goal>
-                  </goals>
-                  <configuration>
-                    <artifactItems>
-                      <artifactItem>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-core-xml</artifactId>
-                        <version>${project.version}</version>
-                        <includes>org/apache/camel/**</includes>
-                        <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                      </artifactItem>
-                      <artifactItem>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-core-osgi</artifactId>
-                        <version>${project.version}</version>
-                        <includes>org/apache/camel/**</includes>
-                        <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                      </artifactItem>
-                    </artifactItems>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-
-            <!-- add the sources from camel-core-osgi and camel-core-xml as source code in the camel-blueprint-sources.jar -->
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>build-helper-maven-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>attach-artifacts</id>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>attach-artifact</goal>
-                  </goals>
-                  <configuration>
-                    <artifacts>
-                      <artifact>
-                        <file>${project.build.directory}/schema/camel-blueprint.xsd</file>
-                        <type>xsd</type>
-                      </artifact>
-                    </artifacts>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-
-            <!-- enrich the schemas with documentation -->
-            <plugin>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
-              <version>${project.version}</version>
-              <executions>
-                <execution>
-                  <id>eip-documentation-enricher</id>
-                  <!-- need to run earlier so we use the process-test-resources phase -->
-                  <phase>process-test-resources</phase>
-                  <goals>
-                    <goal>eip-documentation-enricher</goal>
-                  </goals>
-                  <configuration>
-                    <inputCamelSchemaFile>${project.build.directory}/schema/camel-blueprint.xsd</inputCamelSchemaFile>
-                    <outputCamelSchemaFile>${project.build.directory}/schema/camel-blueprint.xsd</outputCamelSchemaFile>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-
-            <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
-            <plugin>
-              <groupId>org.apache.felix</groupId>
-              <artifactId>maven-bundle-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>bundle-manifest</id>
-                  <phase>prepare-package</phase>
-                </execution>
-              </executions>
-            </plugin>
-
-        </plugins>
-
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -265,7 +168,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -274,7 +177,125 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>jaxb-list</id>
+                        <goals>
+                            <goal>generate-jaxb-list</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-generated-resources-jaxb</id>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/generated/camel/jaxb</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- enrich the schemas with documentation -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>eip-documentation-enricher</id>
+                        <!-- need to run earlier so we use the process-test-resources phase -->
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>eip-documentation-enricher</goal>
+                        </goals>
+                        <configuration>
+                            <inputCamelSchemaFile>${project.build.directory}/schema/schema1.xsd</inputCamelSchemaFile>
+                            <outputCamelSchemaFile>${project.build.directory}/schema/camel-blueprint.xsd
+                            </outputCamelSchemaFile>
+                            <deleteFilesAfterRun>
+                                ${project.build.directory}/schema/schema1.xsd,${project.build.directory}/schema/schema2.xsd
+                            </deleteFilesAfterRun>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-schema</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>schemagen</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/schema</outputDirectory>
+                    <sources>
+                        <source>${project.build.directory}/schema-src</source>
+                    </sources>
+                    <createJavaDocAnnotations>false</createJavaDocAnnotations>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <links>
+                        <link>http://download.oracle.com/javase/7/docs/api/</link>
+                        <link>http://download.oracle.com/javaee/7/api/</link>
+                        <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
+                    </links>
+                    <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
+                    <linksource>true</linksource>
+                    <maxmemory>256m</maxmemory>
+                    <source>${jdk.version}</source>
+                    <groups>
+                        <group>
+                            <title>Camel Blueprint Classes</title>
+                            <packages>org.apache.camel.blueprint</packages>
+                        </group>
+                    </groups>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <profiles>
         <profile>
@@ -308,218 +329,173 @@
         </profile>
 
         <!-- The next three profiles are used to bypass the schemagen plugin on HP and IBM JDKs.
-
              TODO: Whenever Maven supports profile activations based on multiple properties, we
              should combine the on-ibmjdk and on-hpjdk profiles as they do exactly the same thing. -->
         <profile>
-          <id>enable-schemagen</id>
-          <activation>
-            <activeByDefault>true</activeByDefault>
-          </activation>
+            <id>enable-schemagen</id>
+            <activation>
+                <property>
+                    <name>!disable-schemagen</name>
+                </property>
+            </activation>
 
-          <build>
-            <plugins>
-              <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-antrun-plugin</artifactId>
-                  <inherited>true</inherited>
-                  <dependencies>
-                    <!-- need JAXB on the classpath to use the xjc SchemaGenTask -->
-                    <dependency>
-                      <groupId>com.sun.xml.bind</groupId>
-                      <artifactId>jaxb-core</artifactId>
-                      <version>${jaxb-version}</version>
-                    </dependency>
-                    <dependency>
-                      <groupId>com.sun.xml.bind</groupId>
-                      <artifactId>jaxb-impl</artifactId>
-                      <version>${jaxb-version}</version>
-                    </dependency>
-                    <dependency>
-                      <groupId>com.sun.xml.bind</groupId>
-                      <artifactId>jaxb-xjc</artifactId>
-                      <version>${jaxb-version}</version>
-                    </dependency>
-                    <dependency>
-                      <groupId>javax.xml.bind</groupId>
-                      <artifactId>jaxb-api</artifactId>
-                      <version>${jaxb-version}</version>
-                    </dependency>
-                    <dependency>
-                      <groupId>javax.activation</groupId>
-                      <artifactId>activation</artifactId>
-                      <version>1.1.1</version>
-                    </dependency>
-                  </dependencies>
-                  <executions>
-                      <execution>
-                          <id>process-sources</id>
-                          <phase>process-classes</phase>
-                          <configuration>
-                              <target>
-                                  <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <inherited>true</inherited>
+                        <executions>
+                            <execution>
+                                <id>process-sources</id>
+                                <phase>process-classes</phase>
+                                <configuration>
+                                    <target>
+                                        <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+                                                 classpathref="maven.plugin.classpath"/>
 
-                                  <echo>Copying to code together for the XSD generation</echo>
-                                  <mkdir dir="${project.build.directory}/schema-src" />
-                                  <mkdir dir="${project.build.directory}/schema" />
-                                  <copy todir="${project.build.directory}/schema-src">
-                                      <fileset dir="${basedir}/src/main/java">
-                                          <include name="org/apache/camel/blueprint/Camel*.java" />
-                                          <include name="org/apache/camel/blueprint/ErrorHandler*.java" />
-                                          <include name="org/apache/camel/blueprint/package-info.java" />
-                                          <include name="org/apache/camel/util/blueprint/**/*.java" />
-                                      </fileset>
-                                      <fileset dir="${basedir}/../camel-core-xml/src/main/java">
-                                          <include name="org/apache/camel/core/xml/*.java" />
-                                          <include name="org/apache/camel/core/xml/util/**/*.java" />
-                                      </fileset>
-                                      <fileset dir="${basedir}/../../camel-core/src/main/java">
-                                          <include name="org/apache/camel/model/**/*.java" />
-                                          <include name="org/apache/camel/ExchangePattern.java" />
-                                          <include name="org/apache/camel/LoggingLevel.java" />
-                                          <include name="org/apache/camel/ManagementStatisticsLevel.java" />
-                                          <include name="**/package-info.java" />
-                                      </fileset>
-                                  </copy>
-
-                                  <echo>Generating XSD schema</echo>
-                                  <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
-                                      <schema namespace="http://camel.apache.org/schema/spring" file="camel-blueprint.xsd" />
-                                      <compilerarg line="-target ${jdk.version}"/>
-                                      <compilerarg line="-source ${jdk.version}"/>
-                                      <classpath refid="maven.compile.classpath" />
-                                  </schemagen>
-
-                              </target>
-                          </configuration>
-                          <goals>
-                              <goal>run</goal>
-                          </goals>
-                      </execution>
-                      <execution>
-                        <id>include-sources</id>
-                        <phase>package</phase>
-                        <configuration>
-                          <target>
-                            <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
-                            <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
-                              <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
-                              <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
-                            </jar>
-                          </target>
-                        </configuration>
-                        <goals>
-                          <goal>run</goal>
-                        </goals>
-                      </execution>
-                      <!-- after the eip-documentation-enricher we need to copy some shchema files -->
-                      <execution>
-                        <id>include-schemas</id>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                          <target>
-                            <echo>Copying XSD schema to be included in JAR</echo>
-                            <replace file="${project.build.directory}/schema/camel-blueprint.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/blueprint" />
-                            <copy todir="${project.build.directory}/classes">
-                              <fileset dir="${project.build.directory}/schema" />
-                            </copy>
-                            <!-- copy modified schemas back again in classes so they are included in the JAR -->
-                            <copy todir="${project.build.directory}/classes">
-                              <fileset dir="${project.build.directory}/schema" />
-                            </copy>
-                          </target>
-                        </configuration>
-                        <goals>
-                          <goal>run</goal>
-                        </goals>
-                      </execution>
-                  </executions>
-              </plugin>
-            </plugins>
-          </build>
-        </profile>        
+                                        <echo>Copying to code together for the XSD generation</echo>
+                                        <mkdir dir="${project.build.directory}/schema-src"/>
+                                        <mkdir dir="${project.build.directory}/schema"/>
+                                        <mkdir dir="${project.build.directory}/schema/META-INF/JAXB"/>
+                                        <copy todir="${project.build.directory}/schema-src">
+                                            <fileset dir="${basedir}/src/main/java">
+                                                <include name="org/apache/camel/blueprint/Camel*.java"/>
+                                                <include name="org/apache/camel/blueprint/ErrorHandler*.java"/>
+                                                <include name="org/apache/camel/blueprint/package-info.java"/>
+                                                <include name="org/apache/camel/util/blueprint/**/*.java"/>
+                                            </fileset>
+                                            <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java">
+                                                <include name="org/apache/camel/core/xml/*.java"/>
+                                                <include name="org/apache/camel/core/xml/util/**/*.java"/>
+                                            </fileset>
+                                            <fileset dir="${basedir}/../../core/camel-core/src/main/java">
+                                                <include name="org/apache/camel/model/**/*.java"/>
+                                                <include name="org/apache/camel/ExchangePattern.java"/>
+                                                <include name="org/apache/camel/LoggingLevel.java"/>
+                                                <include name="org/apache/camel/ManagementStatisticsLevel.java"/>
+                                                <include name="**/package-info.java"/>
+                                                <exclude name="org/apache/camel/model/endpoint/*.java"/>
+                                            </fileset>
+                                            <fileset dir="${basedir}/../../core/camel-util/src/main/java">
+                                                <include
+                                                        name="org/apache/camel/util/concurrent/ThreadPoolRejectedPolicy.java"/>
+                                            </fileset>
+                                        </copy>
+                                    </target>
+                                    <exportAntProperties>true</exportAntProperties>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>include-sources</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <target>
+                                        <echo>Including source code from camel-core-xml in the
+                                            camel-blueprint-sources.jar
+                                        </echo>
+                                        <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar"
+                                             update="true">
+                                            <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java"
+                                                     includes="**/*"/>
+                                            <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java"
+                                                     includes="**/*"/>
+                                            <fileset dir="${basedir}/src/main/java" includes="**/*"/>
+                                        </jar>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <!-- after the eip-documentation-enricher we need to copy some schema files -->
+                            <execution>
+                                <id>include-schemas</id>
+                                <phase>prepare-package</phase>
+                                <configuration>
+                                    <target>
+                                        <echo>Copying XSD schema to be included in JAR</echo>
+                                        <replace file="${project.build.directory}/schema/camel-blueprint.xsd"
+                                                 token="xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;"
+                                                 value="xs:schema xmlns=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;"/>
+                                        <replace file="${project.build.directory}/schema/camel-blueprint.xsd"
+                                                 token="http://camel.apache.org/schema/spring"
+                                                 value="http://camel.apache.org/schema/blueprint"/>
+                                        <copy todir="${project.build.directory}/classes">
+                                            <fileset dir="${project.build.directory}/schema">
+                                                <exclude name="**/*.class"/>
+                                            </fileset>
+                                        </copy>
+                                        <!-- copy modified schemas back again in classes so they are included in the JAR -->
+                                        <fileset dir="${project.build.directory}/schema">
+                                            <exclude name="**/*.class"/>
+                                        </fileset>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
-          <id>on-ibmjdk</id>
-          <activation>
-            <property>
-              <name>java.vendor</name>
-              <value>IBM Corporation</value>
-            </property>
-          </activation>
-          <build>
-            <plugins>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-
-                  <execution>
-                    <id>unpack</id>
-                    <phase>generate-sources</phase>
-                    <goals>
-                      <goal>unpack</goal>
-                    </goals>
-                  </execution>
-
-                </executions>
-              </plugin>                  
-            </plugins>
-          </build>
-
-        </profile>    
+            <id>on-ibmjdk</id>
+            <activation>
+                <property>
+                    <name>java.vendor</name>
+                    <value>IBM Corporation</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
-          <id>on-hpjdk</id>
-          <activation>
-            <property>
-              <name>java.vendor</name>
-              <value>Hewlett-Packard Co.</value>
-            </property>
-          </activation>
-          <build>
-            <plugins>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                  <execution>
-                    <id>unpack</id>
-                    <phase>generate-sources</phase>
-                    <goals>
-                      <goal>unpack</goal>
-                    </goals>
-                  </execution>
-                </executions>
-              </plugin>                          
-            </plugins>
-          </build>
-        </profile>      
+            <id>on-hpjdk</id>
+            <activation>
+                <property>
+                    <name>java.vendor</name>
+                    <value>Hewlett-Packard Co.</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <links>
-                        <link>http://download.oracle.com/javase/6/docs/api/</link>
-                        <link>http://download.oracle.com/javaee/6/api/</link>
-                        <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
-                    </links>
-                    <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
-                    <linksource>true</linksource>
-                    <maxmemory>256m</maxmemory>
-                    <source>${jdk.version}</source>
-
-                    <groups>
-                        <group>
-                            <title>Camel Blueprint Classes</title>
-                            <packages>org.apache.camel.blueprint</packages>
-                        </group>
-                    </groups>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
-
 </project>

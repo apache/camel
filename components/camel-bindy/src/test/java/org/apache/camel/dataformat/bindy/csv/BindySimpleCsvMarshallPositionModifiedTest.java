@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,11 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.bindy.CommonBindyTest;
 import org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order;
-import org.apache.camel.processor.interceptor.Tracer;
+
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,7 +35,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest {
 
-    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> models = new ArrayList<>();
     private String expected;
 
     @Test
@@ -51,7 +50,7 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
     }
 
     public List<Map<String, Object>> generateModel() {
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
 
         Order order = new Order();
         order.setOrderNr(1);
@@ -79,12 +78,6 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
     public static class ContextConfig extends RouteBuilder {
 
         public void configure() {
-
-            Tracer tracer = new Tracer();
-            tracer.setLogLevel(LoggingLevel.ERROR);
-            tracer.setLogName("org.apache.camel.bindy");
-
-            getContext().addInterceptStrategy(tracer);
 
             BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);
             csvBindyDataFormat.setLocale("en");

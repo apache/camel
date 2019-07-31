@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,22 +27,19 @@ import javax.xml.transform.stream.StreamSource;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.converter.stream.StreamSourceCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.xml.StreamSourceCache;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.ByteSourcePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
 
-@Converter
+@Converter(loader = true)
 public final class JcloudsPayloadConverter {
 
     private JcloudsPayloadConverter() {
@@ -56,7 +53,7 @@ public final class JcloudsPayloadConverter {
 
     @Converter
     public static Payload toPayload(String str, Exchange ex) throws UnsupportedEncodingException {
-        return toPayload(str.getBytes(IOHelper.getCharsetName(ex)));
+        return toPayload(str.getBytes(ExchangeHelper.getCharsetName(ex)));
     }
     
     public static Payload toPayload(String str) throws UnsupportedEncodingException {
@@ -107,12 +104,7 @@ public final class JcloudsPayloadConverter {
         InputStreamPayload payload = new InputStreamPayload(is);
         // only set the contentlength if possible
         if (is.markSupported()) {
-            long contentLength = ByteStreams.length(new InputSupplier<InputStream>() {
-                @Override
-                public InputStream getInput() throws IOException {
-                    return is;
-                }
-            });
+            long contentLength = ByteStreams.toByteArray(is).length;
             is.reset();
             payload.getContentMetadata().setContentLength(contentLength);
         }
@@ -126,12 +118,7 @@ public final class JcloudsPayloadConverter {
 
     @Converter
     public static Payload toPayload(final StreamSourceCache cache, Exchange exchange) throws IOException {
-        long contentLength = ByteStreams.length(new InputSupplier<InputStream>() {
-            @Override
-            public InputStream getInput() throws IOException {
-                return cache.getInputStream();
-            }
-        });
+        long contentLength = ByteStreams.toByteArray(cache.getInputStream()).length;
         cache.reset();
         InputStreamPayload payload = new InputStreamPayload(cache.getInputStream());
         payload.getContentMetadata().setContentLength(contentLength);
@@ -139,17 +126,17 @@ public final class JcloudsPayloadConverter {
         return payload;
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     @SuppressWarnings("unchecked")
-    public static <T extends Payload> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws IOException {
+    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         Class<?> sourceType = value.getClass();
-        if (GenericFile.class.isAssignableFrom(sourceType)) {
-            GenericFile<?> genericFile = (GenericFile<?>) value;
-            if (genericFile.getFile() != null) {
-                Class<?> genericFileType = genericFile.getFile().getClass();
-                TypeConverter converter = registry.lookup(Payload.class, genericFileType);
+        if (type == Payload.class && WrappedFile.class.isAssignableFrom(sourceType)) {
+            // attempt to convert to JClouds Payload from a file
+            WrappedFile wf = (WrappedFile) value;
+            if (wf.getFile() != null) {
+                TypeConverter converter = registry.lookup(Payload.class, wf.getFile().getClass());
                 if (converter != null) {
-                    return (T) converter.convertTo(Payload.class, genericFile.getFile());
+                    return (T) converter.tryConvertTo(Payload.class, wf.getFile());
                 }
             }
         }

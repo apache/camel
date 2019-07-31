@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.file.remote.sftp;
 
+import java.security.interfaces.RSAPublicKey;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.junit.Test;
 
 public class SftpKeyFileConsumeTest extends SftpServerTestSupport {
@@ -39,9 +42,14 @@ public class SftpKeyFileConsumeTest extends SftpServerTestSupport {
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.expectedBodiesReceived(expected);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected PublickeyAuthenticator getPublickeyAuthenticator() {
+        return (username, key, session) -> key instanceof RSAPublicKey;
     }
 
     @Override

@@ -1,636 +1,691 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>components</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
-  </parent>
-
-  <artifactId>camel-spring</artifactId>
-  <name>Camel :: Spring</name>
-  <description>Camel Spring with XML DSL</description>
-  <packaging>jar</packaging>
-
-  <properties>
-    <!-- use spring-all-version-range to support camel-spring-dm also -->
-    <camel.osgi.import>
-      !org.springframework.boot.*,
-      !org.springframework.context.annotation.*;resolution:=optional,
-      !org.apache.camel.spring.*,
-      !org.apache.camel.component,
-      !org.apache.camel.component.event,
-      !org.apache.camel.language.spel,
-      !org.apache.camel.core.xml*,
-      org.apache.camel.*;${camel.osgi.import.strict.version},
-      org.springframework*;version="${spring-all-version-range}",
-      org.osgi.service.event;resolution:=optional,
-      ${camel.osgi.import.defaults},
-      *
-    </camel.osgi.import>
-    <camel.osgi.export>
-      org.apache.camel.spring.*;${camel.osgi.version},
-      org.apache.camel.util.spring.*;${camel.osgi.version},
-      org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
-      org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
-    </camel.osgi.export>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=spring-event,
-      org.apache.camel.spi.LanguageResolver;language=spel
-    </camel.osgi.export.service>
-    <!-- do not skip any tests by default -->
-    <platform.skip.tests/>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-xml</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aop</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-expression</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-tx</artifactId>
-    </dependency>
-
-    <!-- for testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>jsr250-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <scope>test</scope>
-    </dependency>  
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- todo: remove log4j loggin if possible -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-1.2-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>xmlunit</groupId>
-      <artifactId>xmlunit</artifactId>
-      <version>${xmlunit-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- for testing Spring AOP at class level -->
-    <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjrt</artifactId>
-      <version>${aspectj-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjweaver</artifactId>
-      <version>${aspectj-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib</artifactId>
-      <version>${cglib-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
-
-  <build>
-    <resources>
-      <resource>
-        <directory>target/schema</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-
-    <plugins>
-
-      <!-- Inline the contents of camel-core-xml into this jar. -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.10</version>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.camel</groupId>
-                  <artifactId>camel-core-xml</artifactId>
-                  <version>${project.version}</version>
-                  <includes>org/apache/camel/**</includes>
-                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>prepare-package</phase>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <!-- skip file stress tests as they are intended to run manually -->
-          <excludes>
-            <exclude>${platform.skip.tests}</exclude>
-          </excludes>
-          <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <dependencies>
-          <!-- need JAXB on the classpath to use the xjc SchemaGenTask -->
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>${jaxb-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-xjc</artifactId>
-            <version>${jaxb-version}</version>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <id>generate-sources</id>
-            <phase>process-classes</phase>
-            <configuration>
-              <target>
-                <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
-
-                <echo>Copying code together for the XSD generation</echo>
-                <mkdir dir="${project.build.directory}/schema-src" />
-                <copy todir="${project.build.directory}/schema-src">
-                  <fileset dir="${basedir}/src/main/java">
-                    <include name="org/apache/camel/spring/Camel*.java" />
-                    <include name="org/apache/camel/spring/ErrorHandler*.java" />
-                    <include name="org/apache/camel/spring/package-info.java" />
-                    <include name="org/apache/camel/util/spring/**/*.java" />
-                  </fileset>
-                  <fileset dir="${basedir}/../camel-core-xml/src/main/java">
-                    <include name="org/apache/camel/core/xml/*.java" />
-                    <include name="org/apache/camel/core/xml/util/**/*.java" />
-                  </fileset>
-                  <fileset dir="${basedir}/../../camel-core/src/main/java">
-                    <include name="org/apache/camel/model/**/*.java" />
-                    <include name="org/apache/camel/ExchangePattern.java" />
-                    <include name="org/apache/camel/LoggingLevel.java" />
-                    <include name="org/apache/camel/ManagementStatisticsLevel.java" />
-                    <include name="org/apache/camel/ShutdownRoute.java" />
-                    <include name="org/apache/camel/ShutdownRunningTask.java" />
-                    <include name="org/apache/camel/ThreadPoolRejectedPolicy.java" />
-                    <include name="org/apache/camel/WaitForTaskToComplete.java" />
-                    <include name="org/apache/camel/package-info.java" />
-                  </fileset>
-                </copy>
-
-
-                <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
-                <property name="ant.regexp.regexpimpl" value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp" />
-                <property name="mv" value="${project.version}" />
-                <propertyregex property="ov.p1" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1" defaultValue="0" />
-                <propertyregex property="ov.p2" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2" defaultValue=".0" />
-                <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1" defaultValue="0" />
-                <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0" />
-                <property name="camel.schema.version" value="${ov.p1a}${ov.p2a}" />
-                <mkdir dir="target" />
-                <echo file="target/camel.osgi.version.txt">
-                      camel.schema.version = ${camel.schema.version}
-                </echo>
-
-                <echo>Generating XSD schema</echo>
-                <mkdir dir="${project.build.directory}/schema" />
-                <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
-                    <schema namespace="http://camel.apache.org/schema/spring" file="camel-spring.xsd" />
-                    <compilerarg line="-target ${jdk.version}"/>
-                    <compilerarg line="-source ${jdk.version}"/>
-                    <classpath refid="maven.compile.classpath" />
-                </schemagen>
-
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>include-sources</id>
-            <phase>package</phase>
-            <configuration>
-              <target>
-                <echo>Including source code from camel-core-xml in the camel-spring-sources.jar</echo>
-                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
-                  <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
-                  <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
-                </jar>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-          <!-- after the eip-documentation-enricher we need to copy some shchema files -->
-          <execution>
-            <id>include-schemas</id>
-            <phase>prepare-package</phase>
-            <configuration>
-              <target>
-                <echo>Copying XSD schema to be included in JAR</echo>
-                <copy file="${project.build.directory}/classes/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" />
-                <copy file="${project.build.directory}/classes/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" />
-                <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/spring/v${camel.schema.version}" />
-                <!-- copy modified schemas back again in classes so they are included in the JAR -->
-                <copy todir="${project.build.directory}/classes">
-                  <fileset dir="${project.build.directory}/schema" />
-                </copy>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>properties-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>read-project-properties</goal>
-            </goals>
-            <configuration>
-              <files>
-                <file>target/camel.osgi.version.txt</file>
-              </files>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- add the sources from camel-core-osgi and camel-core-xml as source code in the camel-spring-sources.jar -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>${project.build.directory}/classes/camel-spring.xsd</file>
-                  <type>xsd</type>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
+    <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <id>eip-documentation-enricher</id>
-            <!-- need to run earlier so we use the process-test-resources phase -->
-            <phase>process-test-resources</phase>
-            <goals>
-              <goal>eip-documentation-enricher</goal>
-            </goals>
-            <configuration>
-              <inputCamelSchemaFile>${project.build.directory}/schema/camel-spring.xsd</inputCamelSchemaFile>
-              <outputCamelSchemaFile>${project.build.directory}/classes/camel-spring.xsd</outputCamelSchemaFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-    <pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                    <artifactItems>
-                        <artifactItem>
-                            <groupId>org.apache.camel</groupId>
-                            <artifactId>camel-spring</artifactId>
-                            <version>${project.version}</version>
-                            <type>jar</type>
-                            <overWrite>false</overWrite>
-                            <outputDirectory>${project.build.directory}/schema</outputDirectory>
-                            <includes>*.xsd</includes>
-                        </artifactItem>
-                    </artifactItems>
-                </configuration>
-            </plugin>
-            <!-- Eclipse m2e Lifecycle Management -->
-            <plugin>
-             <groupId>org.eclipse.m2e</groupId>
-             <artifactId>lifecycle-mapping</artifactId>
-             <version>${lifecycle-mapping-version}</version>
-             <configuration>
-               <lifecycleMappingMetadata>
-                 <pluginExecutions>
-                   <pluginExecution>
-                     <pluginExecutionFilter>
-                       <groupId>org.codehaus.mojo</groupId>
-                       <artifactId>properties-maven-plugin</artifactId>
-                       <versionRange>[0.0.0,)</versionRange>
-                       <goals>
-                         <goal>read-project-properties</goal>
-                       </goals>
-                     </pluginExecutionFilter>
-                     <action>
-                       <ignore />
-                     </action>
-                   </pluginExecution>
-                   <pluginExecution>
-                     <pluginExecutionFilter>
-                       <groupId>org.apache.maven.plugins</groupId>
-                       <artifactId>maven-antrun-plugin</artifactId>
-                       <versionRange>${maven-antrun-plugin-version}</versionRange>
-                       <goals>
-                         <goal>run</goal>
-                       </goals>
-                     </pluginExecutionFilter>
-                     <action>
-                       <ignore />
-                     </action>
-                   </pluginExecution>
-                 </pluginExecutions>
-               </lifecycleMappingMetadata>
-             </configuration>
-            </plugin>
-        </plugins>
-    </pluginManagement>
-  </build>
+        <artifactId>components</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <profiles>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>package</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <links>
-                  <link>http://download.oracle.com/javase/6/docs/api/</link>
-                  <link>http://download.oracle.com/javaee/6/api/</link>
-                  <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
-              </links>
-              <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
-              <linksource>true</linksource>
-              <source>${jdk.version}</source>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+    <artifactId>camel-spring</artifactId>
+    <packaging>jar</packaging>
 
-    <!-- skip management tests on AIX as it hangs CI servers -->
-    <profile>
-      <id>aix</id>
-      <activation>
-        <os>
-          <name>aix</name>
-        </os>
-      </activation>
-      <properties>
-        <platform.skip.tests>org/apache/camel/spring/management/**/*.java</platform.skip.tests>
-      </properties>
-    </profile>
-    <profile>
-       <id>woodstox</id>
-       <activation>
-         <activeByDefault>true</activeByDefault>
-       </activation>
-       <dependencies>
-          <!-- xmltokenizer using woodstox -->
-          <dependency>
+    <name>Camel :: Spring</name>
+    <description>Camel Spring with XML DSL</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-properties</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-main</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+
+        <!-- for testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cloud</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management-impl</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- todo: remove log4j 1.x logging if possible -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-core</artifactId>
+            <version>${xmlunit-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- for testing Spring AOP at class level -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>${cglib-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>woodstox-core-asl</artifactId>
             <version>${woodstox-version}</version>
             <scope>test</scope>
-          </dependency>
-        </dependencies>
-    </profile>
+        </dependency>
+    </dependencies>
 
-    <profile>
-      <id>jdk9-build</id>
-      <activation>
-        <jdk>9</jdk>
-      </activation>
-      <build>
+    <build>
+        <resources>
+            <resource>
+                <directory>target/schema</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.class</exclude>
+                </excludes>
+            </resource>
+            <!--
+            <resource>
+              <directory>src/main/resources</directory>
+              <includes>
+                <include>**/*</include>
+              </includes>
+              <filtering>true</filtering>
+            </resource>
+            -->
+        </resources>
         <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-antrun-plugin</artifactId>
-              <dependencies>
-                <dependency>
-                  <groupId>javax.xml.bind</groupId>
-                  <artifactId>jaxb-api</artifactId>
-                  <version>${jaxb-version}</version>
-                </dependency>
-                <dependency>
-                  <groupId>javax.activation</groupId>
-                  <artifactId>activation</artifactId>
-                  <version>1.1.1</version>
-                </dependency>
-              </dependencies>
-            </plugin>
-          </plugins>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <configuration>
+                        <artifactItems>
+                            <artifactItem>
+                                <groupId>org.apache.camel</groupId>
+                                <artifactId>camel-spring</artifactId>
+                                <version>${project.version}</version>
+                                <type>jar</type>
+                                <overWrite>false</overWrite>
+                                <outputDirectory>${project.build.directory}/schema</outputDirectory>
+                                <includes>*.xsd</includes>
+                            </artifactItem>
+                        </artifactItems>
+                    </configuration>
+                </plugin>
+                <!-- Eclipse m2e Lifecycle Management -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>${lifecycle-mapping-version}</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>properties-maven-plugin</artifactId>
+                                        <versionRange>[0.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>read-project-properties</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-antrun-plugin</artifactId>
+                                        <versionRange>${maven-antrun-plugin-version}</versionRange>
+                                        <goals>
+                                            <goal>run</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
         </pluginManagement>
-      </build>
-    </profile>
-  </profiles>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate schema</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>schemagen</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/schema</outputDirectory>
+                    <sources>
+                        <source>${project.build.directory}/schema-src</source>
+                    </sources>
+                    <createJavaDocAnnotations>false</createJavaDocAnnotations>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>jaxb-list</id>
+                        <goals>
+                            <goal>generate-jaxb-list</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-generated-resources-jaxb</id>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/generated/camel/jaxb</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <links>
-            <link>http://download.oracle.com/javase/7/docs/api/</link>
-            <link>http://download.oracle.com/javaee/7/api/</link>
-            <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
-            <link>http://camel.apache.org/maven/current/camel-core/apidocs/</link>
-          </links>
-          <linksource>true</linksource>
-          <maxmemory>256m</maxmemory>
+            <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
+            </plugin>
 
-          <groups>
-            <group>
-              <title>Camel Spring Classes</title>
-              <packages>org.apache.camel.spring</packages>
-            </group>
-            <group>
-              <title>Spring Remoting Classes</title>
-              <packages>org.apache.camel.spring.remoting</packages>
-            </group>
-            <group>
-              <title>Camel Components</title>
-              <packages>org.apache.camel.component:org.apache.camel.component.*</packages>
-            </group>
-            <group>
-              <title>Camel SPI implementations for Spring</title>
-              <packages>org.apache.camel.spring.spi</packages>
-            </group>
-            <group>
-              <title>Spring Namespace Handling Code</title>
-              <packages>org.apache.camel.spring.handler</packages>
-            </group>
-            <group>
-              <title>Utility classes</title>
-              <packages>org.apache.camel.spring.util:org.apache.camel.spring.factory</packages>
-            </group>
-          </groups>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>${platform.skip.tests}</exclude>
+                    </excludes>
+                    <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
+                </configuration>
+            </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>store-camel-schema-version-in-file</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <target>
+                                <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+                                         classpathref="maven.plugin.classpath"/>
+                                <property name="ant.regexp.regexpimpl"
+                                          value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp"/>
+                                <property name="mv" value="${project.version}"/>
+                                <propertyregex property="ov.p1" input="${mv}"
+                                               regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1"
+                                               defaultValue="0"/>
+                                <propertyregex property="ov.p2" input="${mv}"
+                                               regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2"
+                                               defaultValue=".0"/>
+                                <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1"
+                                               defaultValue="0"/>
+                                <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1"
+                                               defaultValue=".0"/>
+                                <property name="camel.schema.version" value="${ov.p1a}${ov.p2a}"/>
+                                <mkdir dir="target"/>
+                                <mkdir dir="${project.build.directory}/schema/META-INF/JAXB"/>
+                                <echo file="target/camel.osgi.version.txt">
+                                    camel.schema.version = ${camel.schema.version}
+                                </echo>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <target>
+                                <echo>Copying code together for the XSD generation</echo>
+                                <mkdir dir="${project.build.directory}/schema-src"/>
+                                <copy todir="${project.build.directory}/schema-src">
+                                    <fileset dir="${basedir}/src/main/java">
+                                        <include name="org/apache/camel/spring/Camel*.java"/>
+                                        <include name="org/apache/camel/spring/ErrorHandler*.java"/>
+                                        <include name="org/apache/camel/spring/package-info.java"/>
+                                        <include name="org/apache/camel/util/spring/**/*.java"/>
+                                    </fileset>
+                                    <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java">
+                                        <include name="org/apache/camel/core/xml/*.java"/>
+                                        <include name="org/apache/camel/core/xml/util/**/*.java"/>
+                                    </fileset>
+                                    <fileset dir="${basedir}/../../core/camel-core/src/main/java">
+                                        <include name="org/apache/camel/model/**/*.java"/>
+                                        <include name="org/apache/camel/ExchangePattern.java"/>
+                                        <include name="org/apache/camel/LoggingLevel.java"/>
+                                        <include name="org/apache/camel/ManagementStatisticsLevel.java"/>
+                                        <include name="org/apache/camel/ShutdownRoute.java"/>
+                                        <include name="org/apache/camel/ShutdownRunningTask.java"/>
+                                        <include name="org/apache/camel/WaitForTaskToComplete.java"/>
+                                        <include name="org/apache/camel/package-info.java"/>
+                                        <exclude name="org/apache/camel/model/endpoint/*.java"/>
+                                    </fileset>
+                                    <fileset dir="${basedir}/../../core/camel-util/src/main/java">
+                                        <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>include-sources</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <echo>Including source code from camel-core-xml in the camel-spring-sources.jar</echo>
+                                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar"
+                                     update="true">
+                                    <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java" includes="**/*"/>
+                                    <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java" includes="**/*"/>
+                                    <fileset dir="${basedir}/src/main/java" includes="**/*"/>
+                                </jar>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <!-- after the eip-documentation-enricher we need to copy some schema files -->
+                    <execution>
+                        <id>include-schemas</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <echo>Copying XSD schema to be included in JAR</echo>
+                                <copy file="${project.build.directory}/classes/camel-spring.xsd"
+                                      tofile="${project.build.directory}/schema/camel-spring.xsd"
+                                      preservelastmodified="true"/>
+                                <copy file="${project.build.directory}/classes/camel-spring.xsd"
+                                      tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"
+                                      preservelastmodified="true"/>
+                                <replace
+                                        file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"
+                                        token="&quot;http://camel.apache.org/schema/spring&quot;"
+                                        value="&quot;http://camel.apache.org/schema/spring/v${camel.schema.version}&quot;"
+                                        preservelastmodified="true"/>
+                                <!-- copy modified schemas back again in classes so they are included in the JAR -->
+                                <copy todir="${project.build.directory}/classes" preservelastmodified="true">
+                                    <fileset dir="${project.build.directory}/schema">
+                                        <exclude name="**/*.class"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>copy-spring-meta-filter</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <target>
+                                <echo>Copying spring meta files</echo>
+                                <copy todir="${project.build.directory}/spring-meta" preservelastmodified="true">
+                                    <fileset dir="${project.basedir}/src/main/resources"/>
+                                </copy>
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers"
+                                         token="\\${camel.schema.version}" value="${camel.schema.version}"
+                                         preservelastmodified="true"/>
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas"
+                                         token="\\${camel.schema.version}" value="${camel.schema.version}"
+                                         preservelastmodified="true"/>
+                                <copy todir="${project.build.directory}/classes" preservelastmodified="true">
+                                    <fileset dir="${project.build.directory}/spring-meta"/>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>Create JAR for test</id>
+                        <phase>process-test-classes</phase>
+                        <configuration>
+                            <target>
+                                <echo>Create some jars for testing</echo>
+                                <jar destfile="${project.build.directory}/test-classes/package+scan+test.jar"
+                                     update="true">
+                                    <fileset dir="${project.build.directory}/test-classes/" includes="**/Test.class"/>
+                                </jar>
+                                <copy file="${project.build.directory}/test-classes/package+scan+test.jar"
+                                      tofile="${project.build.directory}/test-classes/package_scan_test.jar"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>init-camel-schema-version-property-from-file</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>target/camel.osgi.version.txt</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- add the sources from camel-core-osgi and camel-core-xml as source code in the camel-spring-sources.jar -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/classes/camel-spring.xsd</file>
+                                    <type>xsd</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>eip-documentation-enricher</id>
+                        <!-- need to run earlier so we use the process-test-resources phase -->
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>eip-documentation-enricher</goal>
+                        </goals>
+                        <configuration>
+                            <inputCamelSchemaFile>${project.build.directory}/schema/schema1.xsd</inputCamelSchemaFile>
+                            <outputCamelSchemaFile>${project.build.directory}/classes/camel-spring.xsd
+                            </outputCamelSchemaFile>
+                            <deleteFilesAfterRun>
+                                ${project.build.directory}/schema/schema1.xsd,${project.build.directory}/schema/schema2.xsd
+                            </deleteFilesAfterRun>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <links>
+                        <link>http://download.oracle.com/javase/7/docs/api/</link>
+                        <link>http://download.oracle.com/javaee/7/api/</link>
+                        <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
+                        <link>http://camel.apache.org/maven/current/camel-core/apidocs/</link>
+                    </links>
+                    <linksource>true</linksource>
+                    <maxmemory>256m</maxmemory>
+
+                    <groups>
+                        <group>
+                            <title>Camel Spring classes</title>
+                            <packages>org.apache.camel.spring</packages>
+                        </group>
+                        <group>
+                            <title>Spring remoting classes</title>
+                            <packages>org.apache.camel.spring.remoting</packages>
+                        </group>
+                        <group>
+                            <title>Camel Components</title>
+                            <packages>org.apache.camel.component:org.apache.camel.component.*</packages>
+                        </group>
+                        <group>
+                            <title>Camel Languages</title>
+                            <packages>org.apache.camel.language:org.apache.camel.language.*</packages>
+                        </group>
+                        <group>
+                            <title>Camel SPI implementations for Spring</title>
+                            <packages>org.apache.camel.spring.spi</packages>
+                        </group>
+                        <group>
+                            <title>Camel Spring Scheduler Polling Consumer support</title>
+                            <packages>org.apache.camel.spring.pollingconsumer</packages>
+                        </group>
+                        <group>
+                            <title>Camel Spring Idempotent Repository</title>
+                            <packages>org.apache.camel.spring.processor.idempotent</packages>
+                        </group>
+                        <group>
+                            <title>Spring XML Namespace handling code</title>
+                            <packages>org.apache.camel.spring.handler</packages>
+                        </group>
+                        <group>
+                            <title>Utility classes</title>
+                            <packages>org.apache.camel.spring.util</packages>
+                        </group>
+                    </groups>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>package</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <links>
+                                <link>http://download.oracle.com/javase/7/docs/api/</link>
+                                <link>http://download.oracle.com/javaee/7/api/</link>
+                                <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
+                            </links>
+                            <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
+                            <linksource>true</linksource>
+                            <source>${jdk.version}</source>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- skip management tests on AIX as it hangs CI servers -->
+        <profile>
+            <id>aix</id>
+            <activation>
+                <os>
+                    <name>aix</name>
+                </os>
+            </activation>
+            <properties>
+                <platform.skip.tests>org/apache/camel/spring/management/**/*.java</platform.skip.tests>
+            </properties>
+        </profile>
+    </profiles>
 </project>

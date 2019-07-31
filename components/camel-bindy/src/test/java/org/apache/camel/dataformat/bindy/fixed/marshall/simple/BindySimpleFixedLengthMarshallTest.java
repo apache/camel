@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,7 +34,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.processor.interceptor.Tracer;
+
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,13 +47,13 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
 
-    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> models = new ArrayList<>();
     private String expected;
 
-    @Produce(uri = URI_DIRECT_START)
+    @Produce(URI_DIRECT_START)
     private ProducerTemplate template;
 
-    @EndpointInject(uri = URI_MOCK_RESULT)
+    @EndpointInject(URI_MOCK_RESULT)
     private MockEndpoint result;
 
     @Test
@@ -69,7 +68,7 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
     }
 
     public List<Map<String, Object>> generateModel() {
-        Map<String, Object> modelObjects = new HashMap<String, Object>();
+        Map<String, Object> modelObjects = new HashMap<>();
 
         Order order = new Order();
         order.setOrderNr(10);
@@ -96,12 +95,6 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
 
     public static class ContextConfig extends RouteBuilder {
         public void configure() {
-
-            Tracer tracer = new Tracer();
-            tracer.setLogLevel(LoggingLevel.ERROR);
-            tracer.setLogName("org.apache.camel.bindy");
-
-            getContext().addInterceptStrategy(tracer);
 
             // default should errors go to mock:error
             errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliveryDelay(0));

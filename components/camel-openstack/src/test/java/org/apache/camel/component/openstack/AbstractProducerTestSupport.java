@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,15 +18,17 @@ package org.apache.camel.component.openstack;
 
 import java.io.IOException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.impl.engine.DefaultHeadersMapFactory;
+import org.apache.camel.support.DefaultMessage;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.openstack4j.api.OSClient;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openstack4j.api.OSClient.OSClientV3;
 
 import static org.mockito.Mockito.when;
 
@@ -34,10 +36,13 @@ import static org.mockito.Mockito.when;
 public abstract class AbstractProducerTestSupport {
 
     @Mock
-    protected OSClient.OSClientV3 client;
+    protected OSClientV3 client;
 
     @Mock
     protected Exchange exchange;
+
+    @Mock
+    protected CamelContext camelContext;
 
     protected Message msg;
 
@@ -45,7 +50,8 @@ public abstract class AbstractProducerTestSupport {
 
     @Before
     public void before() throws IOException {
-        msg = new DefaultMessage();
+        msg = new DefaultMessage(camelContext);
         when(exchange.getIn()).thenReturn(msg);
+        when(camelContext.getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,19 +27,19 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 /**
  * This class marshal data into a CSV format.
  */
-abstract class CsvMarshaller {
+public abstract class CsvMarshaller {
     private final CSVFormat format;
 
-    private CsvMarshaller(CSVFormat format) {
+    protected CsvMarshaller(CSVFormat format) {
         this.format = format;
     }
 
@@ -51,6 +51,8 @@ abstract class CsvMarshaller {
      * @return New instance
      */
     public static CsvMarshaller create(CSVFormat format, CsvDataFormat dataFormat) {
+        org.apache.camel.util.ObjectHelper.notNull(format, "CSV format");
+        org.apache.camel.util.ObjectHelper.notNull(dataFormat, "CSV data format");
         // If we don't want the header record, clear it
         if (format.getSkipHeaderRecord()) {
             format = format.withHeader((String[]) null);
@@ -72,8 +74,9 @@ abstract class CsvMarshaller {
      * @throws NoTypeConversionAvailableException if the body cannot be converted
      * @throws IOException                        if we cannot write into the given stream
      */
+    @SuppressWarnings("rawtypes")
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws NoTypeConversionAvailableException, IOException {
-        CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream, IOHelper.getCharsetName(exchange)), format);
+        CSVPrinter printer = createPrinter(exchange, outputStream);
         try {
             Iterator it = ObjectHelper.createIterator(object);
             while (it.hasNext()) {
@@ -83,6 +86,19 @@ abstract class CsvMarshaller {
         } finally {
             IOHelper.close(printer);
         }
+    }
+
+    /**
+     * Creates and returns a {@link CSVPrinter}.
+     *
+     * @param exchange     Exchange (used for access to type conversion). Could NOT be <code>null</code>.
+     * @param outputStream Output stream of the CSV. Could NOT be <code>null</code>.
+     * @return a new {@link CSVPrinter}. Never <code>null</code>.
+     */
+    protected CSVPrinter createPrinter(Exchange exchange, OutputStream outputStream) throws IOException {
+        org.apache.camel.util.ObjectHelper.notNull(exchange, "Exchange");
+        org.apache.camel.util.ObjectHelper.notNull(outputStream, "Output stream");
+        return new CSVPrinter(new OutputStreamWriter(outputStream, ExchangeHelper.getCharsetName(exchange)), format);
     }
 
     private Iterable<?> getRecordValues(Exchange exchange, Object data) throws NoTypeConversionAvailableException {
@@ -117,7 +133,7 @@ abstract class CsvMarshaller {
 
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
-            List<Object> result = new ArrayList<Object>(fixedColumns.length);
+            List<Object> result = new ArrayList<>(fixedColumns.length);
             for (String key : fixedColumns) {
                 result.add(map.get(key));
             }
@@ -135,7 +151,7 @@ abstract class CsvMarshaller {
 
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
-            List<Object> result = new ArrayList<Object>(map.size());
+            List<Object> result = new ArrayList<>(map.size());
             for (Object key : map.keySet()) {
                 result.add(map.get(key));
             }

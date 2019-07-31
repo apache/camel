@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,9 +27,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.crypto.processor.SigningProcessor;
 import org.apache.camel.component.crypto.processor.VerifyingProcessor;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
@@ -56,11 +56,7 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Digital Signatures endpoints are not meant to be consumed from. They are meant be used as an intermediate endpoints");
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    /**
+/**
      * Sets the configuration to use
      */
     public void setConfiguration(DigitalSignatureConfiguration configuration) {

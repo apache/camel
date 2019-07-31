@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,7 @@ package org.apache.camel.component.rss;
 import java.util.Comparator;
 import java.util.Date;
 
-import com.sun.syndication.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndEntry;
 
 public class RssDateComparator implements Comparator<SyndEntry> {
 
@@ -37,7 +37,7 @@ public class RssDateComparator implements Comparator<SyndEntry> {
         Date date = entry.getUpdatedDate();
         if (date == null) {
             date = entry.getPublishedDate();
-        }        
+        }
         return date;
-    }    
+    }
 }

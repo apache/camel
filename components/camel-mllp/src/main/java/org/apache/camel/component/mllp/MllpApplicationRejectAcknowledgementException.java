@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,6 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Producer receives a HL7 Application Reject Acknowledgement
  */
 public class MllpApplicationRejectAcknowledgementException extends MllpNegativeAcknowledgementException {
-
     static final String EXCEPTION_MESSAGE = "HL7 Application Reject Acknowledgment Received";
 
     public MllpApplicationRejectAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement) {

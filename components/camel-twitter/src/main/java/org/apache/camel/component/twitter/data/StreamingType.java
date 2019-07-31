@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ public enum StreamingType {
 
     private static final StreamingType[] VALUES = values();
 
-    public static StreamingType fromUri(String uri) {
+    public static StreamingType fromString(String uri) {
         return TwitterHelper.enumFromString(VALUES, uri, StreamingType.UNKNOWN);
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,9 +19,8 @@ package org.apache.camel.component.quartz2;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.junit.After;
 import org.junit.Test;
-import org.quartz.SchedulerException;
-
 
 public class QuartzPropertiesTest extends BaseQuartzTest {
 
@@ -33,6 +32,7 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         quartz.stop();
         super.tearDown();
@@ -59,8 +59,8 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
         try {
             quartz.start();
             fail("Should have thrown exception");
-        } catch (SchedulerException e) {
-            assertEquals("Error loading Quartz properties file: doesnotexist.properties", e.getMessage());
+        } catch (Exception e) {
+            assertEquals("Error loading Quartz properties file: doesnotexist.properties", e.getCause().getMessage());
         }
     }
 

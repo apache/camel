@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -57,7 +58,7 @@ public class CamelFilterWrapper implements Filter {
             //but the MultiPartFilter requires it (will NPE if not set) so we'll 
             //go ahead and set it to the default tmp dir on the system.
             try {
-                File file = File.createTempFile("camel", "");
+                File file = Files.createTempFile("camel", "").toFile();
                 file.delete();
                 config.getServletContext().setAttribute("javax.servlet.context.tempdir",
                                                         file.getParentFile());

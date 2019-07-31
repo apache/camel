@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,10 +28,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,14 +41,13 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
     @Mock
     private IQueue<String> queue;
 
-    private ArgumentCaptor<ItemListener> argument;
+    @Captor
+    private ArgumentCaptor<ItemListener<String>> argument;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.<String>getQueue("foo")).thenReturn(queue);
-        argument = ArgumentCaptor.forClass(ItemListener.class);
-        when(queue.addItemListener(argument.capture(), eq(true))).thenReturn("foo");
+        when(queue.addItemListener(any(), eq(true))).thenReturn("foo");
     }
 
     @Override
@@ -58,12 +58,12 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void add() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
-        final ItemEvent<String> event = new ItemEvent<String>("foo", ItemEventType.ADDED, "foo", null);
+        verify(queue).addItemListener(argument.capture(), eq(true));
+        final ItemEvent<String> event = new ItemEvent<>("foo", ItemEventType.ADDED, "foo", null);
         argument.getValue().itemAdded(event);
 
 
@@ -73,12 +73,12 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void remove() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
-        final ItemEvent<String> event = new ItemEvent<String>("foo", ItemEventType.REMOVED, "foo", null);
+        verify(queue).addItemListener(argument.capture(), eq(true));
+        final ItemEvent<String> event = new ItemEvent<>("foo", ItemEventType.REMOVED, "foo", null);
         argument.getValue().itemRemoved(event);
 
         assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
@@ -90,7 +90,7 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast:%sfoo", HazelcastConstants.QUEUE_PREFIX)).log("object...").choice().when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
+                from(String.format("hazelcast-%sfoo", HazelcastConstants.QUEUE_PREFIX)).log("object...").choice().when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
                         .log("...added").to("mock:added").when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED)).log("...removed").to("mock:removed").otherwise()
                         .log("fail!");
             }

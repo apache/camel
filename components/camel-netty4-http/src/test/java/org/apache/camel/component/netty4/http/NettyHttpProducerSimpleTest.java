@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,11 +17,9 @@
 package org.apache.camel.component.netty4.http;
 
 import io.netty.handler.codec.http.HttpResponse;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-
 import org.junit.Test;
 
 public class NettyHttpProducerSimpleTest extends BaseNettyTest {
@@ -66,7 +64,7 @@ public class NettyHttpProducerSimpleTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4-http:http://0.0.0.0:{{port}}/foo")
+                from("netty4-http:http://localhost:{{port}}/foo")
                     .to("mock:input")
                     .transform().constant("Bye World");
             }

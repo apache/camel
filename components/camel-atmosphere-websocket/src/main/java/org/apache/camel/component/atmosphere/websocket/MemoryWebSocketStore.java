@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,22 +34,22 @@ public class MemoryWebSocketStore implements WebSocketStore {
     private Map<WebSocket, String> keys;
     
     public MemoryWebSocketStore() {
-        values = new ConcurrentHashMap<String, WebSocket>();
-        keys = new ConcurrentHashMap<WebSocket, String>();
+        values = new ConcurrentHashMap<>();
+        keys = new ConcurrentHashMap<>();
     }
     
     /* (non-Javadoc)
      * @see org.apache.camel.Service#start()
      */
     @Override
-    public void start() throws Exception {
+    public void start() {
     }
 
     /* (non-Javadoc)
      * @see org.apache.camel.Service#stop()
      */
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         values.clear();
         keys.clear();
     }

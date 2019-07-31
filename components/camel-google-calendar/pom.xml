@@ -1,277 +1,276 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>components</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
-  </parent>
-
-  <artifactId>camel-google-calendar</artifactId>
-  <packaging>jar</packaging>
-  <name>Camel :: GoogleCalendar</name>
-  <description>Camel Component for GoogleCalendar</description>
-
-  <properties>
-    <schemeName>google-calendar</schemeName>
-    <componentName>GoogleCalendar</componentName>
-    <componentPackage>org.apache.camel.component.google.calendar</componentPackage>
-    <outPackage>org.apache.camel.component.google.calendar.internal</outPackage>
-    <camel.osgi.private.pkg>org.apache.camel.component.google.calendar.internal</camel.osgi.private.pkg>
-    <camel.osgi.export.pkg>org.apache.camel.component.google.calendar</camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-          org.apache.camel.spi.ComponentResolver;component=google-calendar
-    </camel.osgi.export.service>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.google.api-client</groupId>
-        <artifactId>google-api-client</artifactId>
-        <version>${google-api-client-version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.google.oauth-client</groupId>
-        <artifactId>google-oauth-client-jetty</artifactId>
-        <version>${google-api-client-version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.google.http-client</groupId>
-        <artifactId>google-http-client-jackson2</artifactId>
-        <version>${google-api-client-version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.google.apis</groupId>
-        <artifactId>google-api-services-calendar</artifactId>
-        <version>${google-api-services-calendar-version}</version>
-    </dependency>
-
-    <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- Component API javadoc in provided scope to read API signatures -->
-    <dependency>
-        <groupId>com.google.apis</groupId>
-        <artifactId>google-api-services-calendar</artifactId>
-        <version>${google-api-services-calendar-version}</version>
-      <classifier>javadoc</classifier>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- logging -->   
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <defaultGoal>install</defaultGoal>
-
-    <plugins>
-
-      <!-- generate Component source and test source -->
-      <plugin>
+    <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-api-component-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-test-component-classes</id>
-            <goals>
-              <goal>fromApis</goal>
-            </goals>
-            <configuration>
-              <apis>
-                <api>
-                  <apiName>acl</apiName>
-                  <proxyClass>com.google.api.services.calendar.Calendar$Acl</proxyClass>
-                  <fromJavadoc />
-                </api>
-                <api>
-                  <apiName>list</apiName>
-                  <proxyClass>com.google.api.services.calendar.Calendar$CalendarList</proxyClass>
-                  <fromJavadoc />
-                </api>
-                <api>
-                  <apiName>calendars</apiName>
-                  <proxyClass>com.google.api.services.calendar.Calendar$Calendars</proxyClass>
-                  <fromJavadoc />
-                </api>
-                <api>
-                  <apiName>channels</apiName>
-                  <proxyClass>com.google.api.services.calendar.Calendar$Channels</proxyClass>
-                  <fromJavadoc />
-                </api>
-                <api>
-                  <apiName>colors</apiName>
-                  <proxyClass>com.google.api.services.calendar.Calendar$Colors</proxyClass>
-                  <fromJavadoc />
-                </api>
-                <api>
-                  <apiName>freebusy</apiName>
-                  <proxyClass>com.google.api.services.calendar.Calendar$Freebusy</proxyClass>
-                  <fromJavadoc />
-                </api>
-                <api>
-                  <apiName>events</apiName>
-                  <proxyClass>com.google.api.services.calendar.Calendar$Events</proxyClass>
-                  <fromJavadoc />
-                </api>                  
-                <api>
-                  <apiName>settings</apiName>
-                  <proxyClass>com.google.api.services.calendar.Calendar$Settings</proxyClass>
-                  <fromJavadoc />
-                </api>                                                                          
-              </apis>
-                  <substitutions>
-                    <substitution>
-                      <method>^.+$</method>
-                      <argName>content</argName>
-                      <argType>com.google.api.services.calendar.model.Channel</argType>
-                      <replacement>contentChannel</replacement>
-                    </substitution>
-                  </substitutions>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+        <artifactId>components</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-      <!-- add generated source and test source to build -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.8</version>
-        <executions>
-          <execution>
-            <id>add-generated-sources</id>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/generated-sources/camel-component</source>
-              </sources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>add-generated-test-sources</id>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/generated-test-sources/camel-component</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+    <artifactId>camel-google-calendar</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: Google Calendar</name>
+    <description>Camel Component for GoogleCalendar</description>
 
-    </plugins>
+    <properties>
+        <schemeName>google-calendar</schemeName>
+        <componentName>GoogleCalendar</componentName>
+        <componentPackage>org.apache.camel.component.google.calendar</componentPackage>
+        <outPackage>org.apache.camel.component.google.calendar.internal</outPackage>
+        <camel.osgi.private.pkg>org.apache.camel.component.google.calendar.internal</camel.osgi.private.pkg>
+    </properties>
 
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-api-component-maven-plugin</artifactId>
-          <version>${project.version}</version>
-          <configuration>
-            <scheme>${schemeName}</scheme>
-            <componentName>${componentName}</componentName>
-            <componentPackage>${componentPackage}</componentPackage>
-            <outPackage>${outPackage}</outPackage>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>${google-api-client-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client-jetty</artifactId>
+            <version>${google-api-client-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-jackson2</artifactId>
+            <version>${google-api-client-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-calendar</artifactId>
+            <version>${google-api-services-calendar-version}</version>
+        </dependency>
 
-  </build>
+        <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>spi-annotations</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-api-component-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <scheme>${schemeName}</scheme>
-          <componentName>${componentName}</componentName>
-          <componentPackage>${componentPackage}</componentPackage>
-          <outPackage>${outPackage}</outPackage>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
+        <!-- Component API javadoc in provided scope to read API signatures -->
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-calendar</artifactId>
+            <version>${google-api-services-calendar-version}</version>
+            <type>javadoc</type>
+            <scope>provided</scope>
+        </dependency>
 
-  <profiles>
-    <profile>
-      <id>google-calendar-test</id>
-      <build>
+        <!-- logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+
         <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <childDelegation>false</childDelegation>
-              <useFile>true</useFile>
-              <forkCount>1</forkCount>
-	      <reuseForks>true</reuseForks>
-              <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-              <excludes>
-                <exclude>**/*XXXTest.java</exclude>
-              </excludes>
-              <includes>
-                <include>**/*Test.java</include>
-              </includes>
-            </configuration>
-          </plugin>
+
+            <!-- generate Component source and test source -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-api-component-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-test-component-classes</id>
+                        <goals>
+                            <goal>fromApis</goal>
+                        </goals>
+                        <configuration>
+                            <apis>
+                                <api>
+                                    <apiName>acl</apiName>
+                                    <proxyClass>com.google.api.services.calendar.Calendar$Acl</proxyClass>
+                                    <fromJavadoc/>
+                                </api>
+                                <api>
+                                    <apiName>list</apiName>
+                                    <proxyClass>com.google.api.services.calendar.Calendar$CalendarList</proxyClass>
+                                    <fromJavadoc/>
+                                </api>
+                                <api>
+                                    <apiName>calendars</apiName>
+                                    <proxyClass>com.google.api.services.calendar.Calendar$Calendars</proxyClass>
+                                    <fromJavadoc/>
+                                </api>
+                                <api>
+                                    <apiName>channels</apiName>
+                                    <proxyClass>com.google.api.services.calendar.Calendar$Channels</proxyClass>
+                                    <fromJavadoc/>
+                                </api>
+                                <api>
+                                    <apiName>colors</apiName>
+                                    <proxyClass>com.google.api.services.calendar.Calendar$Colors</proxyClass>
+                                    <fromJavadoc/>
+                                </api>
+                                <api>
+                                    <apiName>freebusy</apiName>
+                                    <proxyClass>com.google.api.services.calendar.Calendar$Freebusy</proxyClass>
+                                    <fromJavadoc/>
+                                </api>
+                                <api>
+                                    <apiName>events</apiName>
+                                    <proxyClass>com.google.api.services.calendar.Calendar$Events</proxyClass>
+                                    <fromJavadoc/>
+                                </api>
+                                <api>
+                                    <apiName>settings</apiName>
+                                    <proxyClass>com.google.api.services.calendar.Calendar$Settings</proxyClass>
+                                    <fromJavadoc/>
+                                </api>
+                            </apis>
+                            <substitutions>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.calendar.model.Channel</argType>
+                                    <replacement>contentChannel</replacement>
+                                </substitution>
+                            </substitutions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- add generated source and test source to build -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>add-generated-sources</id>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/camel-component</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-generated-test-sources</id>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-test-sources/camel-component</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
-      </build>
-    </profile>
-  </profiles>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-api-component-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                    <configuration>
+                        <scheme>${schemeName}</scheme>
+                        <componentName>${componentName}</componentName>
+                        <componentPackage>${componentPackage}</componentPackage>
+                        <outPackage>${outPackage}</outPackage>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-api-component-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <scheme>${schemeName}</scheme>
+                    <componentName>${componentName}</componentName>
+                    <componentPackage>${componentPackage}</componentPackage>
+                    <outPackage>${outPackage}</outPackage>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <profile>
+            <id>google-calendar-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <childDelegation>false</childDelegation>
+                            <useFile>true</useFile>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                            <excludes>
+                                <exclude>**/*XXXTest.java</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

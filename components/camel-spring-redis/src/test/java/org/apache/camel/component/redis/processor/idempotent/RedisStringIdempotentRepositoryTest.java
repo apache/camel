@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.redis.processor.idempotent;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
@@ -27,48 +31,52 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RedisStringIdempotentRepositoryTest {
 
     private static final String REPOSITORY = "testRepository";
+    private static final String REPOSITORY_NOEXPIRY = "testRepositoryNoExpiry";
     private static final String KEY = "KEY";
-    private RedisTemplate redisTemplate;
+
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
+    @Mock
     private RedisConnectionFactory redisConnectionFactory;
+    @Mock
     private RedisConnection redisConnection;
-    private RedisOperations redisOperations;
-    private ValueOperations valueOperations;
+    @Mock
+    private RedisOperations<String, String> redisOperations;
+    @Mock
+    private ValueOperations<String, String> valueOperations;
+
     private RedisStringIdempotentRepository idempotentRepository;
+    private RedisStringIdempotentRepository idempotentRepositoryNoExpiry;
 
     @Before
     public void setUp() throws Exception {
-        redisTemplate = mock(RedisTemplate.class);
-        valueOperations = mock(ValueOperations.class);
-        redisConnection = mock(RedisConnection.class);
-        redisOperations = mock(RedisOperations.class);
-        redisConnectionFactory = mock(RedisConnectionFactory.class);
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(redisTemplate.getConnectionFactory()).thenReturn(redisConnectionFactory);
-        when(valueOperations.getOperations()).thenReturn(redisOperations);
-        when(redisTemplate.getConnectionFactory().getConnection()).thenReturn(redisConnection);
         idempotentRepository = new RedisStringIdempotentRepository(redisTemplate, REPOSITORY);
         idempotentRepository.setExpiry(1000L);
+        idempotentRepositoryNoExpiry = new RedisStringIdempotentRepository(redisTemplate, REPOSITORY_NOEXPIRY);
     }
 
     @Test
     public void shouldAddKey() {
         idempotentRepository.add(KEY);
-        verify(valueOperations).setIfAbsent(idempotentRepository.createRedisKey(KEY), KEY);
-        verify(redisOperations)
-                .expire(idempotentRepository.createRedisKey(KEY), 1000L, TimeUnit.SECONDS);
+        verify(valueOperations).setIfAbsent(idempotentRepository.createRedisKey(KEY), KEY, Duration.ofSeconds(1000L));
+        idempotentRepositoryNoExpiry.add(KEY);
+        verify(valueOperations).setIfAbsent(idempotentRepositoryNoExpiry.createRedisKey(KEY), KEY);
     }
 
     @Test
     public void shoulCheckForMembers() {
         idempotentRepository.contains(KEY);
         verify(valueOperations).get(idempotentRepository.createRedisKey(KEY));
+        idempotentRepositoryNoExpiry.contains(KEY);
+        verify(valueOperations).get(idempotentRepositoryNoExpiry.createRedisKey(KEY));       
     }
 
 
@@ -76,6 +84,8 @@ public class RedisStringIdempotentRepositoryTest {
     public void shouldReturnProcessorName() {
         String processorName = idempotentRepository.getProcessorName();
         assertEquals(REPOSITORY, processorName);
+        String processorNameNoExpiry = idempotentRepositoryNoExpiry.getProcessorName();
+        assertEquals(REPOSITORY_NOEXPIRY, processorNameNoExpiry);
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf;
 
 import org.w3c.dom.Document;
@@ -58,7 +57,7 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport 
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     @Before
@@ -90,7 +89,7 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport 
                         // easier
                         .convertBodyTo(String.class);
                 // This route just returns the test message
-                from("cxf:bean:serviceEndpoint?dataFormat=MESSAGE").setBody().constant(RESPONSE_MESSAGE);
+                from("cxf:bean:serviceEndpoint?dataFormat=RAW").setBody().constant(RESPONSE_MESSAGE);
             }
         };
     }

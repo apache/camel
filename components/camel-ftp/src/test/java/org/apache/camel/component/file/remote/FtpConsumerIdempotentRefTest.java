@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.IdempotentRepository;
 import org.junit.Test;
 
@@ -28,17 +28,13 @@ import org.junit.Test;
 public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
 
     private static boolean invoked;
+    
+    @BindToRegistry("myRepo")
+    private MyIdempotentRepository myIdempotentRepo = new MyIdempotentRepository();
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort()
                 + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&delete=true";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myRepo", new MyIdempotentRepository());
-        return jndi;
     }
 
     @Test
@@ -77,7 +73,7 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         };
     }
 
-    public class MyIdempotentRepository implements IdempotentRepository<String> {
+    public class MyIdempotentRepository implements IdempotentRepository {
 
         public boolean add(String messageId) {
             // will return true 1st time, and false 2nd time
@@ -103,10 +99,10 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
             return;  
         }
 
-        public void start() throws Exception {
+        public void start() {
         }
 
-        public void stop() throws Exception {
+        public void stop() {
         }
     }
 }

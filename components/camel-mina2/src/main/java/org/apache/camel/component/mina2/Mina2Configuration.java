@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 
@@ -35,11 +35,11 @@ import org.apache.mina.filter.codec.ProtocolCodecFactory;
 @UriParams
 public class Mina2Configuration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String protocol;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private int port;
     @UriParam(defaultValue = "true")
     private boolean sync = true;
@@ -51,6 +51,8 @@ public class Mina2Configuration implements Cloneable {
     private ProtocolCodecFactory codec;
     @UriParam(label = "codec")
     private String encoding;
+    @UriParam(defaultValue = "10000")
+    private long writeTimeout = 10000;
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;
     @UriParam(label = "producer,advanced", defaultValue = "true")
@@ -198,6 +200,17 @@ public class Mina2Configuration implements Cloneable {
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public long getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    /**
+     * Maximum amount of time it should take to send data to the MINA session. Default is 10000 milliseconds.
+     */
+    public void setWriteTimeout(long writeTimeout) {
+        this.writeTimeout = writeTimeout;
     }
 
     public long getTimeout() {

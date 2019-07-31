@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,9 +26,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class XmlConfigTestSupport extends TestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBeanTest.class);
 
@@ -41,9 +38,7 @@ public class XmlConfigTestSupport extends TestSupport {
         assertEquals("One Route should be found", 1, routes.size());
 
         for (RouteDefinition route : routes) {
-            List<FromDefinition> inputs = route.getInputs();
-            assertEquals("Number of inputs", 1, inputs.size());
-            FromDefinition fromType = inputs.get(0);
+            FromDefinition fromType = route.getInput();
             assertEquals("from URI", "seda:test.a", fromType.getUri());
 
             List<?> outputs = route.getOutputs();

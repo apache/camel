@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,25 +30,23 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.netty4.NettyConfiguration;
 import org.apache.camel.component.netty4.NettyEndpoint;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Netty HTTP server and client using the Netty 4.x library.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "netty4-http", extendsScheme = "netty4", title = "Netty4 HTTP",
-        syntax = "netty4-http:protocol:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http", lenientProperties = true,
+@UriEndpoint(firstVersion = "2.14.0", scheme = "netty4-http,netty-http", extendsScheme = "netty4", title = "Netty4 HTTP",
+        syntax = "netty4-http:protocol:host:port/path",  label = "http", lenientProperties = true,
         excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
-                + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast")
+                + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager")
 public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     @UriParam
     private NettyHttpConfiguration configuration;
     @UriParam(label = "advanced", name = "configuration", javaType = "org.apache.camel.component.netty4.http.NettyHttpConfiguration",
@@ -87,13 +85,13 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
 
         if (nettySharedHttpServer != null) {
             answer.setNettyServerBootstrapFactory(nettySharedHttpServer.getServerBootstrapFactory());
-            LOG.info("NettyHttpConsumer: {} is using NettySharedHttpServer on port: {}", answer, nettySharedHttpServer.getPort());
+            log.info("NettyHttpConsumer: {} is using NettySharedHttpServer on port: {}", answer, nettySharedHttpServer.getPort());
         } else {
             // reuse pipeline factory for the same address
             HttpServerBootstrapFactory factory = getComponent().getOrCreateHttpNettyServerBootstrapFactory(answer);
             // force using our server bootstrap factory
             answer.setNettyServerBootstrapFactory(factory);
-            LOG.debug("Created NettyHttpConsumer: {} using HttpServerBootstrapFactory: {}", answer, factory);
+            log.debug("Created NettyHttpConsumer: {} using HttpServerBootstrapFactory: {}", answer, factory);
         }
         return answer;
     }
@@ -249,14 +247,14 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
         ObjectHelper.notNull(headerFilterStrategy, "headerFilterStrategy", this);
 
         if (securityConfiguration != null) {
-            ObjectHelper.notEmpty(securityConfiguration.getRealm(), "realm", securityConfiguration);
-            ObjectHelper.notEmpty(securityConfiguration.getConstraint(), "restricted", securityConfiguration);
+            StringHelper.notEmpty(securityConfiguration.getRealm(), "realm", securityConfiguration);
+            StringHelper.notEmpty(securityConfiguration.getConstraint(), "restricted", securityConfiguration);
 
             if (securityConfiguration.getSecurityAuthenticator() == null) {
                 // setup default JAAS authenticator if none was configured
                 JAASSecurityAuthenticator jaas = new JAASSecurityAuthenticator();
                 jaas.setName(securityConfiguration.getRealm());
-                LOG.info("No SecurityAuthenticator configured, using JAASSecurityAuthenticator as authenticator: {}", jaas);
+                log.info("No SecurityAuthenticator configured, using JAASSecurityAuthenticator as authenticator: {}", jaas);
                 securityConfiguration.setSecurityAuthenticator(jaas);
             }
         }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Message;
@@ -26,11 +27,10 @@ import javax.jms.Session;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -43,16 +43,13 @@ import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Component</a>
- *
- * @version 
  */
+@Component("jms")
 public class JmsComponent extends HeaderFilterStrategyComponent implements ApplicationContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JmsComponent.class);
 
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
 
@@ -68,19 +65,10 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     private MessageCreatedStrategy messageCreatedStrategy;
 
     public JmsComponent() {
-        super(JmsEndpoint.class);
-    }
-
-    public JmsComponent(Class<? extends Endpoint> endpointClass) {
-        super(endpointClass);
     }
 
     public JmsComponent(CamelContext context) {
-        super(context, JmsEndpoint.class);
-    }
-
-    public JmsComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
-        super(context, endpointClass);
+        super(context);
     }
 
     public JmsComponent(JmsConfiguration configuration) {
@@ -133,13 +121,11 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
         return jmsComponentTransacted(connectionFactory, transactionManager);
     }
 
-    @SuppressWarnings("deprecation")
     public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory,
                                                       PlatformTransactionManager transactionManager) {
         JmsConfiguration template = new JmsConfiguration(connectionFactory);
         template.setTransactionManager(transactionManager);
         template.setTransacted(true);
-        template.setTransactedInOut(true);
         return jmsComponent(template);
     }
 
@@ -241,7 +227,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
      */
     @Metadata(label = "consumer",
             description = "The JMS acknowledgement mode defined as an Integer. Allows you to set vendor-specific extensions to the acknowledgment mode."
-                    + "For the regular modes, it is preferable to use the acknowledgementModeName instead.")
+                    + " For the regular modes, it is preferable to use the acknowledgementModeName instead.")
     public void setAcknowledgementMode(int consumerAcknowledgementMode) {
         getConfiguration().setAcknowledgementMode(consumerAcknowledgementMode);
     }
@@ -363,6 +349,13 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     }
 
     /**
+     * Gets the connection factory to be used.
+     */
+    public ConnectionFactory getConnectionFactory() {
+        return getConfiguration().getConnectionFactory();
+    }
+
+    /**
      * The connection factory to be use. A connection factory must be configured either on the component or endpoint.
      */
     @Metadata(description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
@@ -396,7 +389,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     }
 
     /**
-     * Specifies the delivery mode to be used. Possible values are
+     * Specifies the delivery mode to be used.
      * Possibles values are those defined by javax.jms.DeliveryMode.
      * NON_PERSISTENT = 1 and PERSISTENT = 2.
      */
@@ -577,23 +570,25 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
 
     /**
      * When sending, specifies whether message IDs should be added. This is just an hint to the JMS Broker.
-     * If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, the message ID must be set to its normal unique value
+     * If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, the message ID must be set to its normal unique value.
      */
     @Metadata(defaultValue = "true", label = "advanced",
             description = "When sending, specifies whether message IDs should be added. This is just an hint to the JMS broker."
-                    + "If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, "
-                    + "the message ID must be set to its normal unique value")
+                    + " If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, "
+                    + "the message ID must be set to its normal unique value.")
     public void setMessageIdEnabled(boolean messageIdEnabled) {
         getConfiguration().setMessageIdEnabled(messageIdEnabled);
     }
 
     /**
-     * Specifies whether timestamps should be enabled by default on sending messages.
+     * Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS broker.
+     * If the JMS provider accepts this hint, these messages must have the timestamp set to zero;
+     * if the provider ignores the hint the timestamp must be set to its normal value.
      */
     @Metadata(defaultValue = "true", label = "advanced",
             description = "Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS broker."
-                    + "If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint "
-                    + "the timestamp must be set to its normal value")
+                    + " If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint "
+                    + "the timestamp must be set to its normal value.")
     public void setMessageTimestampEnabled(boolean messageTimestampEnabled) {
         getConfiguration().setMessageTimestampEnabled(messageTimestampEnabled);
     }
@@ -601,12 +596,12 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     /**
      * If true, Camel will always make a JMS message copy of the message when it is passed to the producer for sending.
      * Copying the message is needed in some situations, such as when a replyToDestinationSelectorName is set
-     * (incidentally, Camel will set the alwaysCopyMessage option to true, if a replyToDestinationSelectorName is set)
+     * (incidentally, Camel will set the alwaysCopyMessage option to true, if a replyToDestinationSelectorName is set).
      */
     @Metadata(label = "producer,advanced",
             description = "If true, Camel will always make a JMS message copy of the message when it is passed to the producer for sending."
                     + " Copying the message is needed in some situations, such as when a replyToDestinationSelectorName is set"
-                    + " (incidentally, Camel will set the alwaysCopyMessage option to true, if a replyToDestinationSelectorName is set)")
+                    + " (incidentally, Camel will set the alwaysCopyMessage option to true, if a replyToDestinationSelectorName is set).")
     public void setAlwaysCopyMessage(boolean alwaysCopyMessage) {
         getConfiguration().setAlwaysCopyMessage(alwaysCopyMessage);
     }
@@ -658,14 +653,6 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
                     + " The default is 5000 ms, that is, 5 seconds.")
     public void setRecoveryInterval(long recoveryInterval) {
         getConfiguration().setRecoveryInterval(recoveryInterval);
-    }
-
-    /**
-     * Deprecated: Enabled by default, if you specify a durableSubscriptionName and a clientId.
-     */
-    @Deprecated
-    public void setSubscriptionDurable(boolean subscriptionDurable) {
-        getConfiguration().setSubscriptionDurable(subscriptionDurable);
     }
 
     /**
@@ -859,24 +846,6 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     }
 
     /**
-     * If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,
-     * then the fault flag on {@link org.apache.camel.Message#isFault()} will be send back in the response as a JMS header with the key
-     * {@link JmsConstants#JMS_TRANSFER_FAULT}.
-     * If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}.
-     * <p/>
-     * You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.
-     */
-    @Metadata(label = "advanced",
-            description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,"
-                    + " then the fault flag on Message#isFault() will be send back in the response as a JMS header with the key"
-                    + " org.apache.camel.component.jms.JmsConstants#JMS_TRANSFER_FAULT#JMS_TRANSFER_FAULT."
-                    + " If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}."
-                    + " You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.")
-    public void setTransferFault(boolean transferFault) {
-        getConfiguration().setTransferFault(transferFault);
-    }
-
-    /**
      * Allows you to use your own implementation of the org.springframework.jms.core.JmsOperations interface.
      * Camel uses JmsTemplate as default. Can be used for testing purpose, but not used much as stated in the spring API docs.
      */
@@ -1050,6 +1019,19 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     }
 
     /**
+     * This option is used to allow additional headers which may have values that are invalid according to JMS specification.
+     * For example some message systems such as WMQ do this with header names using prefix JMS_IBM_MQMD_ containing values with byte array or other invalid types.
+     * You can specify multiple header names separated by comma, and use * as suffix for wildcard matching.
+     */
+    @Metadata(label = "producer,advanced",
+        description = "This option is used to allow additional headers which may have values that are invalid according to JMS specification."
+            + " For example some message systems such as WMQ do this with header names using prefix JMS_IBM_MQMD_ containing values with byte array or other invalid types."
+            + " You can specify multiple header names separated by comma, and use * as suffix for wildcard matching.")
+    public void setAllowAdditionalHeaders(String allowAdditionalHeaders) {
+        getConfiguration().setAllowAdditionalHeaders(allowAdditionalHeaders);
+    }
+
+    /**
      * Sets the Spring ApplicationContext to use
      */
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -1125,6 +1107,123 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
                     + " will be generated if not supplied in the header of the message under the same name.")
     public void setCorrelationProperty(final String correlationProperty) {
         getConfiguration().setCorrelationProperty(correlationProperty);
+    }
+
+    // JMS 2.0 API
+    // -------------------------------------------------------------------------
+
+    public boolean isSubscriptionDurable() {
+        return getConfiguration().isSubscriptionDurable();
+    }
+
+    /**
+     * Set whether to make the subscription durable. The durable subscription name
+     * to be used can be specified through the "subscriptionName" property.
+     * <p>Default is "false". Set this to "true" to register a durable subscription,
+     * typically in combination with a "subscriptionName" value (unless
+     * your message listener class name is good enough as subscription name).
+     * <p>Only makes sense when listening to a topic (pub-sub domain),
+     * therefore this method switches the "pubSubDomain" flag as well.
+     */
+    @Metadata(label = "consumer", description = "Set whether to make the subscription durable. The durable subscription name"
+        + " to be used can be specified through the subscriptionName property."
+        + " Default is false. Set this to true to register a durable subscription,"
+        + " typically in combination with a subscriptionName value (unless"
+        + " your message listener class name is good enough as subscription name)."
+        + " Only makes sense when listening to a topic (pub-sub domain),"
+        + " therefore this method switches the pubSubDomain flag as well.")
+    public void setSubscriptionDurable(boolean subscriptionDurable) {
+        getConfiguration().setSubscriptionDurable(subscriptionDurable);
+    }
+
+    public boolean isSubscriptionShared() {
+        return getConfiguration().isSubscriptionShared();
+    }
+
+    /**
+     * Set whether to make the subscription shared. The shared subscription name
+     * to be used can be specified through the "subscriptionName" property.
+     * <p>Default is "false". Set this to "true" to register a shared subscription,
+     * typically in combination with a "subscriptionName" value (unless
+     * your message listener class name is good enough as subscription name).
+     * Note that shared subscriptions may also be durable, so this flag can
+     * (and often will) be combined with "subscriptionDurable" as well.
+     * <p>Only makes sense when listening to a topic (pub-sub domain),
+     * therefore this method switches the "pubSubDomain" flag as well.
+     * <p><b>Requires a JMS 2.0 compatible message broker.</b>
+     */
+    @Metadata(label = "consumer", description = "Set whether to make the subscription shared. The shared subscription name"
+        + " to be used can be specified through the subscriptionName property."
+        + " Default is false. Set this to true to register a shared subscription,"
+        + " typically in combination with a subscriptionName value (unless"
+        + " your message listener class name is good enough as subscription name)."
+        + " Note that shared subscriptions may also be durable, so this flag can"
+        + " (and often will) be combined with subscriptionDurable as well."
+        + " Only makes sense when listening to a topic (pub-sub domain),"
+        + " therefore this method switches the pubSubDomain flag as well."
+        + " Requires a JMS 2.0 compatible message broker.")
+    public void setSubscriptionShared(boolean subscriptionShared) {
+        getConfiguration().setSubscriptionShared(subscriptionShared);
+    }
+
+    public String getSubscriptionName() {
+        return getConfiguration().getSubscriptionName();
+    }
+
+    /**
+     * Set the name of a subscription to create. To be applied in case
+     * of a topic (pub-sub domain) with a shared or durable subscription.
+     * <p>The subscription name needs to be unique within this client's
+     * JMS client id. Default is the class name of the specified message listener.
+     * <p>Note: Only 1 concurrent consumer (which is the default of this
+     * message listener container) is allowed for each subscription,
+     * except for a shared subscription (which requires JMS 2.0).
+     */
+    @Metadata(label = "consumer", description = "Set the name of a subscription to create. To be applied in case"
+        + " of a topic (pub-sub domain) with a shared or durable subscription."
+        + " The subscription name needs to be unique within this client's"
+        + " JMS client id. Default is the class name of the specified message listener."
+        + " Note: Only 1 concurrent consumer (which is the default of this"
+        + " message listener container) is allowed for each subscription,"
+        + " except for a shared subscription (which requires JMS 2.0).")
+    public void setSubscriptionName(String subscriptionName) {
+        getConfiguration().setSubscriptionName(subscriptionName);
+    }
+
+
+    public boolean isStreamMessageTypeEnabled() {
+        return getConfiguration().isStreamMessageTypeEnabled();
+    }
+
+    /**
+     * Sets whether StreamMessage type is enabled or not.
+     * Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage.
+     * This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory.
+     * By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data.
+     */
+    @Metadata(label = "producer,advanced", description = "Sets whether StreamMessage type is enabled or not."
+        + " Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage."
+        + " This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory."
+        + " By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data.")
+    public void setStreamMessageTypeEnabled(boolean streamMessageTypeEnabled) {
+        getConfiguration().setStreamMessageTypeEnabled(streamMessageTypeEnabled);
+    }
+
+    /**
+     * Gets whether date headers should be formatted according to the ISO 8601
+     * standard.
+     */
+    public boolean isFormatDateHeadersToIso8601() {
+        return getConfiguration().isFormatDateHeadersToIso8601();
+    }
+
+    /**
+     * Sets whether date headers should be formatted according to the ISO 8601
+     * standard.
+     */
+    @Metadata(label = "producer", description = "Sets whether date headers should be formatted according to the ISO 8601 standard.")
+    public void setFormatDateHeadersToIso8601(boolean formatDateHeadersToIso8601) {
+        getConfiguration().setFormatDateHeadersToIso8601(formatDateHeadersToIso8601);
     }
 
     // Implementation methods
@@ -1211,9 +1310,9 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
         String cfUsername = getAndRemoveParameter(parameters, "username", String.class, getConfiguration().getUsername());
         String cfPassword = getAndRemoveParameter(parameters, "password", String.class, getConfiguration().getPassword());
         if (cfUsername != null && cfPassword != null) {
-            cf = endpoint.getConfiguration().getConnectionFactory();
+            cf = endpoint.getConfiguration().getOrCreateConnectionFactory();
             ObjectHelper.notNull(cf, "ConnectionFactory");
-            LOG.debug("Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******", cfUsername);
+            log.debug("Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******", cfUsername);
             UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();
             ucfa.setTargetConnectionFactory(cf);
             ucfa.setPassword(cfPassword);
@@ -1252,8 +1351,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
             endpoint.setMessageListenerContainerFactory(messageListenerContainerFactory);
         }
 
-        setProperties(endpoint.getConfiguration(), parameters);
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        setProperties(endpoint.getConfiguration(), parameters);
 
         return endpoint;
     }

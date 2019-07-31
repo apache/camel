@@ -1,6 +1,0 @@
-<!-- { "a": 1, "b": true, "c": "foo" } -->
-<root>
-	<a type="number">1</a>
-	<b type="boolean">true</b>
-	<c>foo</c>
-</root>

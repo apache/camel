@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,12 +25,9 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
-import org.apache.camel.util.ExchangeHelper;
 
-/**
- * @version 
- */
 public class GroovyExpression extends ExpressionSupport {
     private final String text;
 
@@ -86,7 +83,7 @@ public class GroovyExpression extends ExpressionSupport {
     }
 
     private Binding createBinding(Exchange exchange) {
-        Map<String, Object> variables = new HashMap<String, Object>();
+        Map<String, Object> variables = new HashMap<>();
         ExchangeHelper.populateVariableMap(exchange, variables);
         return new Binding(variables);
     }

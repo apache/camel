@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,34 +16,41 @@
  */
 package org.apache.camel.component.cmis;
 
+import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
-import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.component.cmis.exception.CamelCmisException;
+import org.apache.camel.component.cmis.exception.CamelCmisObjectNotFoundException;
+import org.apache.camel.component.cmis.exception.CamelCmisUnauthorizedException;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.ReflectionHelper;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The CMIS producer.
  */
 public class CMISProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(CMISProducer.class);
+
     private final CMISSessionFacadeFactory sessionFacadeFactory;
     private CMISSessionFacade sessionFacade;
 
@@ -59,12 +66,15 @@ public class CMISProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        CmisObject cmisObject = createNode(exchange);
-        LOG.debug("Created node with id: {}", cmisObject.getId());
 
-        // copy the header of in message to the out message
+        CamelCMISActions action = exchange.getIn().getHeader(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.class);
+
+        Class[] paramMethod = {Exchange.class};
+        Method method = ReflectionHelper.findMethod(this.getClass(), action.getMethodName(), paramMethod);
+        Object object = ObjectHelper.invokeMethod(method, this, exchange);
+
         exchange.getOut().copyFrom(exchange.getIn());
-        exchange.getOut().setBody(cmisObject.getId());
+        exchange.getOut().setBody(object);
     }
 
     private Map<String, Object> filterTypeProperties(Map<String, Object> properties) throws Exception {
@@ -94,12 +104,18 @@ public class CMISProducer extends DefaultProducer {
         return result;
     }
 
-    private CmisObject createNode(Exchange exchange) throws Exception {
+    /**
+     * This method is called via reflection.
+     * It is not safe to delete it or rename it!
+     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     */
+    @SuppressWarnings("unused")
+    public CmisObject createNode(Exchange exchange) throws Exception {
         validateRequiredHeader(exchange, PropertyIds.NAME);
 
         Message message = exchange.getIn();
-        String parentFolderPath = parentFolderPathFor(message);
-        Folder parentFolder = getFolderOnPath(exchange, parentFolderPath);
+        String parentFolderId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
+        Folder parentFolder = (Folder) getSessionFacade().getObjectById(parentFolderId);
         Map<String, Object> cmisProperties = filterTypeProperties(message.getHeaders());
 
         if (isDocument(exchange)) {
@@ -115,29 +131,249 @@ public class CMISProducer extends DefaultProducer {
         }
     }
 
-    private Folder getFolderOnPath(Exchange exchange, String path) throws Exception {
-        try {
-            return (Folder) getSessionFacade().getObjectByPath(path);
-        } catch (CmisObjectNotFoundException e) {
-            throw new RuntimeExchangeException("Path not found " + path, exchange, e);
+    /**
+     * This method is called via reflection.
+     * It is not safe to delete it or rename it!
+     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     */
+    @SuppressWarnings("unused")
+    public List<String> deleteFolder(Exchange exchange) throws Exception {
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_OBJECT_ID);
+
+        Message message = exchange.getIn();
+
+        String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
+        Folder folder = (Folder) getSessionFacade().getObjectById(objectId);
+        return folder.deleteTree(true, UnfileObject.DELETE, true);
+    }
+
+    /**
+     * This method is called via reflection.
+     * It is not safe to delete it or rename it!
+     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     */
+    @SuppressWarnings("unused")
+    public void deleteDocument(Exchange exchange) throws Exception {
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_OBJECT_ID);
+
+        Message message = exchange.getIn();
+
+        String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
+        Document document = (Document) getSessionFacade().getObjectById(objectId);
+
+        document.deleteAllVersions();
+    }
+
+    /**
+     * This method is called via reflection.
+     * It is not safe to delete it or rename it!
+     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     */
+    @SuppressWarnings("unused")
+    public void moveDocument(Exchange exchange) throws Exception {
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID);
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_SOURCE_FOLDER_ID);
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_OBJECT_ID);
+
+        Message message = exchange.getIn();
+
+        String destinationFolderId = message.getHeader(CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID, String.class);
+        String sourceFolderId = message.getHeader(CamelCMISConstants.CMIS_SOURCE_FOLDER_ID, String.class);
+        String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
+
+
+        Folder sourceFolder = (Folder) getSessionFacade().getObjectById(sourceFolderId);
+        Folder targetFolder = (Folder) getSessionFacade().getObjectById(destinationFolderId);
+
+        Document document = (Document) getSessionFacade().getObjectById(objectId);
+
+        if (document != null) {
+            if (!document.getAllowableActions().getAllowableActions().contains(Action.CAN_MOVE_OBJECT)) {
+                throw new CamelCmisUnauthorizedException("Current user does not have permission to move " + objectId + document.getName());
+            }
+
+            try {
+                document.move(sourceFolder, targetFolder);
+                log.info("Moved document from " + sourceFolder.getName() + " to " + targetFolder.getName());
+            } catch (Exception e) {
+                throw new CamelCmisException("Cannot move document to folder " + targetFolder.getName() + " : " + e.getMessage(), e);
+            }
+        } else {
+            log.error("Document is null, cannot move!");
         }
     }
 
-    private String parentFolderPathFor(Message message) throws Exception {
-        String customPath = message.getHeader(CamelCMISConstants.CMIS_FOLDER_PATH, String.class);
-        if (customPath != null) {
-            return customPath;
-        }
+    /**
+     * This method is called via reflection.
+     * It is not safe to delete it or rename it!
+     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     */
+    @SuppressWarnings("unused")
+    public Map<String, String> moveFolder(Exchange exchange) throws Exception {
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID);
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_OBJECT_ID);
 
-        if (isFolder(message)) {
-            String path = (String) message.getHeader(PropertyIds.PATH);
-            String name = (String) message.getHeader(PropertyIds.NAME);
-            if (path != null && path.length() > name.length()) {
-                return path.substring(0, path.length() - name.length());
+        Message message = exchange.getIn();
+
+        String destinationFolderId = message.getHeader(CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID, String.class);
+        String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
+
+        Folder toBeMoved = (Folder) getSessionFacade().getObjectById(objectId);
+        Folder targetFolder = (Folder) getSessionFacade().getObjectById(destinationFolderId);
+
+        Map<String, String> folders = copyFolderRecursive(targetFolder, toBeMoved);
+        toBeMoved.deleteTree(true, UnfileObject.DELETE, true);
+
+        return folders;
+    }
+
+    /**
+     * This method is called via reflection.
+     * It is not safe to delete it or rename it!
+     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     */
+    @SuppressWarnings("unused")
+    public Document copyDocument(Exchange exchange) throws Exception {
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_OBJECT_ID);
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID);
+
+        Message message = exchange.getIn();
+
+        String destinationFolderId = message.getHeader(CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID, String.class);
+        String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
+        Folder destinationFolder = (Folder) getSessionFacade().getObjectById(destinationFolderId);
+
+        Document document = (Document) getSessionFacade().getObjectById(objectId);
+
+        return document.copy(destinationFolder);
+    }
+
+    /**
+     * This method is called via reflection.
+     * It is not safe to delete it or rename it!
+     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     */
+    @SuppressWarnings("unused")
+    public Map<String, String> copyFolder(Exchange exchange) throws Exception {
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID);
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_OBJECT_ID);
+
+        Message message = exchange.getIn();
+
+        String destinationFolderId = message.getHeader(CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID, String.class);
+        String toCopyFolderId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
+
+        Folder destinationFolder = (Folder) getSessionFacade().getObjectById(destinationFolderId);
+        Folder toCopyFolder = (Folder) getSessionFacade().getObjectById(toCopyFolderId);
+
+        return copyFolderRecursive(destinationFolder, toCopyFolder);
+    }
+
+    private Map<String, String> copyFolderRecursive(Folder destinationFolder, Folder toCopyFolder) {
+        Map<String, Object> folderProperties = new HashMap<>();
+        folderProperties.put(PropertyIds.NAME, toCopyFolder.getName());
+        folderProperties.put(PropertyIds.OBJECT_TYPE_ID, toCopyFolder.getBaseTypeId().value());
+        Map<String, String> folders = new HashMap<>();
+        Folder newFolder = destinationFolder.createFolder(folderProperties);
+        folders.put(toCopyFolder.getId(), newFolder.getId());
+        copyChildren(newFolder, toCopyFolder);
+        return folders;
+    }
+
+    private void copyChildren(Folder destinationFolder, Folder toCopyFolder) {
+        ItemIterable<CmisObject> immediateChildren = toCopyFolder.getChildren();
+        for (CmisObject child : immediateChildren) {
+            if (child instanceof Document) {
+                ((Document) child).copy(destinationFolder);
+            } else if (child instanceof Folder) {
+                copyFolderRecursive(destinationFolder, (Folder) child);
             }
         }
+    }
 
-        return "/";
+    /**
+     * This method is called via reflection.
+     * It is not safe to delete it or rename it!
+     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     */
+    @SuppressWarnings("unused")
+    public CmisObject rename(Exchange exchange) throws Exception {
+        validateRequiredHeader(exchange, PropertyIds.NAME);
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_OBJECT_ID);
+
+        Message message = exchange.getIn();
+
+        String newName = message.getHeader(PropertyIds.NAME, String.class);
+        String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
+        try {
+            CmisObject object = getSessionFacade().getObjectById(objectId);
+            CmisObject object1 = object.rename(newName);
+
+            return object;
+        } catch (Exception e) {
+            throw new CamelCmisObjectNotFoundException("Object with id: " + objectId + " can not be found!");
+        }
+    }
+
+    /**
+     * This method is called via reflection.
+     * It is not safe to delete it or rename it!
+     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     */
+    @SuppressWarnings("unused")
+    public void checkIn(Exchange exchange) throws Exception {
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_OBJECT_ID);
+
+        Message message = exchange.getIn();
+
+        String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
+        String checkInComment = message.getHeader(PropertyIds.CHECKIN_COMMENT, String.class);
+        String fileName = message.getHeader(PropertyIds.NAME, String.class);
+        String mimeType = getMimeType(message);
+        InputStream inputStream = (InputStream) message.getBody();
+
+        byte[] bytes = message.getBody(byte[].class);
+        Document document = (Document) getSessionFacade().getObjectById(objectId);
+        Map<String, Object> properties = filterTypeProperties(message.getHeaders());
+
+        ContentStream contentStream = getSessionFacade().createContentStream(fileName, bytes, mimeType);
+
+        document.checkIn(true, properties, contentStream, checkInComment);
+
+    }
+
+    /**
+     * This method is called via reflection.
+     * It is not safe to delete it or rename it!
+     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     */
+    @SuppressWarnings("unused")
+    public void checkOut(Exchange exchange) throws Exception {
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_OBJECT_ID);
+
+        Message message = exchange.getIn();
+
+        String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
+
+        Document document = (Document) getSessionFacade().getObjectById(objectId);
+        document.checkOut();
+    }
+
+    /**
+     * This method is called via reflection.
+     * It is not safe to delete it or rename it!
+     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     */
+    @SuppressWarnings("unused")
+    public void cancelCheckOut(Exchange exchange)throws Exception {
+        validateRequiredHeader(exchange, CamelCMISConstants.CMIS_OBJECT_ID);
+
+        Message message = exchange.getIn();
+
+        String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
+
+        Document document = (Document) getSessionFacade().getObjectById(objectId);
+        document.cancelCheckOut();
     }
 
     private boolean isFolder(Message message) throws Exception {
@@ -152,7 +388,7 @@ public class CMISProducer extends DefaultProducer {
         if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         }
-        LOG.debug("Creating folder with properties: {}", cmisProperties);
+        log.debug("Creating folder with properties: {}", cmisProperties);
         return parentFolder.createFolder(cmisProperties);
     }
 
@@ -165,7 +401,8 @@ public class CMISProducer extends DefaultProducer {
         if (getSessionFacade().isObjectTypeVersionable((String) cmisProperties.get(PropertyIds.OBJECT_TYPE_ID))) {
             versioningState = VersioningState.MAJOR;
         }
-        LOG.debug("Creating document with properties: {}", cmisProperties);
+        log.debug("Creating document with properties: {}", cmisProperties);
+
         return parentFolder.createDocument(cmisProperties, contentStream, versioningState);
     }
 
@@ -195,8 +432,11 @@ public class CMISProducer extends DefaultProducer {
 
     private CMISSessionFacade getSessionFacade() throws Exception {
         if (sessionFacade == null) {
-            sessionFacade = sessionFacadeFactory.create(getEndpoint());
+            CMISSessionFacade sessionFacade = sessionFacadeFactory.create(getEndpoint());
             sessionFacade.initSession();
+            // make sure to set sessionFacade to the field after successful initialisation
+            // so that it has a valid session
+            this.sessionFacade = sessionFacade;
         }
 
         return sessionFacade;

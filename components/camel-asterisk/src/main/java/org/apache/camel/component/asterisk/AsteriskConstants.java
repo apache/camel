@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,11 @@
 package org.apache.camel.component.asterisk;
 
 public final class AsteriskConstants {
-
     public static final String EVENT_NAME = "CamelAsteriskEventName";
     public static final String EXTENSION = "CamelAsteriskExtension";
     public static final String CONTEXT = "CamelAsteriskContext";
+    public static final String ACTION = "CamelAsteriskAction";
 
     private AsteriskConstants() {
     }
-
 }

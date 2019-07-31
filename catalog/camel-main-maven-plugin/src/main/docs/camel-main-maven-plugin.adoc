@@ -1,0 +1,183 @@
+= Camel Main Maven Plugin
+
+The Camel Main Maven Plugin supports the following goals
+
+ - camel-main:generate - To pre-scan your project and prepare autowiring and sprint boot tooling support by classpath scanning.
+
+== Autowiring
+
+To pre-scan your project and prepare autowiring by classpath scanning.
+The idea is to use this maven plugin at build/compile time and detect what's on the classpath
+and preconfigure some convention over configurations for using Camel Main with configuration.
+
+This is done by checking which Camel components are available on the classpath,
+and check if they have any component options that are complex objects (not string, number, booleans etc)
+and is an interface, which can be autowired from an implementation class that
+are also available on the classpath.
+
+A classic example is to setup JMS `ConnectionFactory` on the JMS component to which
+JMS client you are using. Another example is JDBC drivers etc. In other words
+its a bit like Spring Boot _starter_ JARs that also offers a similar concept, but
+without the phase of doing this during build time.
+
+== Spring Boot Tooling
+
+To pre-scan your project and builds spring boot tooling metafiles
+which fools tools to offer code completion for editing properties files.
+
+This will generate a Spring Boot tooling metadata file in `src/main/resouces/META-INF/spring-configuration-metadata.json`
+which contains all the options from Camel Main and the components from the classpath.
+
+For example if you have camel-jms on the classpath, then Java tools that has support for Spring Boot,
+can offer code completions when you edit `application.properties` file:
+
+----
+camel.component.jms.CURSOR HERE
+----
+
+Just press ctrl + space at the _CURSOR HERE_ location and you will get all the options you
+can configure on the JMS component.
+
+== Using the plugin
+
+----
+mvn camel-main:generate
+----
+
+You can also enable the plugin to automatic run as part of the build to catch these errors.
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-main-maven-plugin</artifactId>
+  <executions>
+    <execution>
+      <phase>process-classes</phase>
+      <goals>
+        <goal>generate</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+
+The phase determines when the plugin runs. In the sample above the phase is `process-classes` which runs after
+the compilation of the main source code.
+
+
+=== Include and Exclude properties or components
+
+By default the plugin will scan all the detected Camel components from the classpath.
+
+For example as shown below, there are 29 detected Camel components,
+and 1 mapping was created in the `autowire.properties` file
+
+[source,text]
+----
+[INFO] --- camel-main-maven-plugin:3.0.0-SNAPSHOT:generate (generate) @ camel-example-main-artemis ---
+[INFO] Detected Camel version used in project: 3.0.0-SNAPSHOT
+[INFO] Pre-scanning using Camel version: 3.0.0-SNAPSHOT
+[INFO] Discovered 29 Camel components from classpath: [bean, browse, class, controlbus, dataformat, dataset, dataset-test, direct, direct-vm, file, jms, language, log, mock, properties, quartz, quartz2, ref, rest, rest-api, saga, scheduler, seda, spring-event, stub, timer, validator, vm, xslt]
+[INFO] Created file: /Users/davsclaus/workspace/camel/examples/camel-example-main-artemis/target/classes/META-INF/services/org/apache/camel/autowire.properties (autowire by classpath: 1)
+----
+
+You can use exclude and include patterns to specify which properties and/or components to use.
+
+For example to only include the JMS component you can do:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-main-maven-plugin</artifactId>
+  <configuration>
+    <logClasspath>false</logClasspath>
+     <!-- just include only the jms component -->
+     <include>jms</include>
+  </configuration>
+  <executions>
+    <execution>
+      <phase>process-classes</phase>
+      <goals>
+        <goal>generate</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+
+For more advanced patterns you can use wildcards and regular expressions, for example to only include JMS or AMQP components:
+[source,xml]
+----
+<include>(jms|amqp)</include>
+----
+
+You can also work with property names, for example to only configure `ConnectionFactory` you can do:
+[source,xml]
+----
+<include>connection-factory</include>
+----
+
+You can also specify which Camel component this would apply, such as the JMS component:
+[source,xml]
+----
+<include>camel.component.jms.connection-factory</include>
+----
+
+NOTE: If you use excludes then they take precedence over include.
+
+=== Mappings
+
+Mappings are used for more complex mappings where you can specify the class type of the property value.
+For example one of the default mappings is as shown:
+[source,properties]
+----
+javax.jms.ConnectionFactory=org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory;org.apache.activemq.ActiveMQConnectionFactory
+----
+
+This tells the `generate` goal that if the value of the property is a `javax.jms.ConnectionFactory` type
+then we should only accept the following implementations when scanning the classpath:
+
+- `org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory`
+- `org.apache.activemq.ActiveMQConnectionFactory`
+
+This means when there for example are 8 implementations in the classpath for `javax.jms.ConnectionFactory` then
+this mapping will select the on of the 2 above if they are on the classpath in the given prioritized order.
+
+This allows us to have convention over configuration and just drop either the Apache Artemis JMS client or Apache ActiveMQ JMS client
+on the classpath, and the Camel JMS component will automatic be configured to use their `ConnectionFactory` classes.
+
+You can also specify the skip certain types, such as
+
+[source,properties]
+----
+org.springframework.jms.core.JmsOperations=#skip#
+----
+
+Which means the `generate` goal skips any property values that are of type `org.springframework.jms.core.JmsOperations`.
+
+=== Options
+
+The maven plugin *generate* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+
+|===
+| Parameter | Default Value | Description
+| autowireEnabled | true | Whether generating autowiring is enabled.
+| springBootEnabled | true | Whether generating spring boot tooling support is enabled.
+| logClasspath | false | Whether to log the classpath when starting
+| logUnmapped | false | When autowiring has detected multiple implementations (2 or more) of a given interface, which cannot be mapped, should they be logged so you can see and add manual mapping if needed.
+| downloadVersion | true | Whether to allow downloading Camel catalog version from the internet.
+  This is needed if the project * uses a different Camel version than this plugin is using by default.
+| downloadSourceJars | true | Whether to allow downloading -source JARs when generating spring boot tooling to include javadoc as description for discovered options.
+| exclude | | To exclude autowiring specific properties with these key names. You can also configure a single entry and separate the excludes with comma.
+| include | | To include autowiring specific properties with these key names. You can also configure a single entry and separate the includes with comma.
+| mappings | | To setup special mappings between known types as key=value pairs. You can also configure a single entry and separate the mappings with comma.
+| mappingsFile | | Optional mappings file loaded from classpath, with mapping that override any default mappings. Will by default load the file `camel-main-mappings.properties` from the classpath root.
+|===
+
+=== Examples
+
+You can find more details and a working example at `examples/camel-example-main-artemis`.
+
+

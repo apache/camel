@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,12 +28,13 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -55,39 +56,31 @@ import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
-import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNodeVisitor;
-
 
 /**
  * Generate Spring Boot starter for the component
- *
- * @goal prepare-spring-boot-starter
  */
+@Mojo(name = "prepare-spring-boot-starter", threadSafe = true,
+        requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class SpringBootStarterMojo extends AbstractMojo {
-
 
     private static final String[] IGNORE_MODULES = {
         /* OSGi -> */ "camel-blueprint", "camel-core-osgi", "camel-eventadmin", "camel-paxlogging",
+        /* extended core */ "camel-attachments",
         /* Java EE -> */ "camel-cdi", "camel-ejb",
-        /* deprecated (and not working perfectly) -> */ "camel-swagger", "camel-mina", "camel-ibatis", "camel-quartz",
-        /* currently incompatible */ "camel-jclouds", "camel-spark-rest",
-        /* others (not managed) -> */ "camel-zipkin"};
+        /* Microprofile -> */ "camel-microprofile-config",
+        /* deprecated (and not working perfectly) -> */ "camel-swagger", "camel-mina", "camel-ibatis",
+        /* currently incompatible */ "camel-spark-rest",
+        /* others (not managed) -> */ "camel-core-xml"};
 
     private static final boolean IGNORE_TEST_MODULES = true;
 
@@ -98,61 +91,21 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * Allows using the existing pom.xml file if present.
-     *
-     * @parameter property="reuseExistingPom" default-value="true"
      */
+    @Parameter(property = "reuseExistingPom", defaultValue = "true")
     protected boolean reuseExistingPom;
 
     /**
      * The project directory
-     *
-     * @parameter default-value="${basedir}"
      */
+    @Parameter(defaultValue = "${basedir}")
     protected File baseDir;
-
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
-    protected ArtifactFactory artifactFactory;
-
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
-    protected ArtifactMetadataSource artifactMetadataSource;
-
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
-    protected ArtifactCollector artifactCollector;
-
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
-    protected DependencyTreeBuilder treeBuilder;
-
-    /**
-     * @parameter default-value="${localRepository}"
-     * @readonly
-     * @required
-     */
-    protected ArtifactRepository localRepository;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -170,6 +123,8 @@ public class SpringBootStarterMojo extends AbstractMojo {
             if (!starterDir.exists()) {
                 starterDir.mkdirs();
             }
+
+
 
             // create the base pom.xml
             Document pom = createBasePom();
@@ -271,7 +226,9 @@ public class SpringBootStarterMojo extends AbstractMojo {
     private void fixAdditionalRepositories(Document pom) throws Exception {
 
         if (project.getFile() != null) {
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            DocumentBuilder builder = dbf.newDocumentBuilder();
             Document originalPom = builder.parse(project.getFile());
 
             XPath xpath = XPathFactory.newInstance().newXPath();
@@ -322,6 +279,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
         loggingImpl.add("ch.qos.logback:logback-classic");
 
         loggingImpl.add("org.apache.logging.log4j:log4j");
+        loggingImpl.add("org.apache.logging.log4j:log4j-jcl");
         loggingImpl.add("org.apache.logging.log4j:log4j-core");
         loggingImpl.add("org.apache.logging.log4j:log4j-slf4j-impl");
 
@@ -383,31 +341,11 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
     }
 
-    private Set<String> filterIncludedArtifacts(Set<String> artifacts) throws DependencyTreeBuilderException {
+    private Set<String> filterIncludedArtifacts(Set<String> artifacts) {
         Set<String> included = new TreeSet<>();
 
-        ArtifactFilter artifactFilter = new ScopeArtifactFilter(null);
-
-        DependencyNode node = treeBuilder.buildDependencyTree(project, localRepository, artifactFactory, artifactMetadataSource, artifactFilter, artifactCollector);
-
-        CollectingDependencyNodeVisitor visitor = new CollectingDependencyNodeVisitor();
-
-        node.accept(visitor);
-
-        List<DependencyNode> nodes = visitor.getNodes();
-        for (DependencyNode dependencyNode : nodes) {
-            Artifact artifact = dependencyNode.getArtifact();
-
-            getLog().debug("Found dependency node: " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() + " - scope=" + artifact.getScope());
-
-            if (!Artifact.SCOPE_TEST.equals(artifact.getScope()) && !Artifact.SCOPE_PROVIDED.equals(artifact.getScope())) {
-                String canonicalName = artifact.getGroupId() + ":" + artifact.getArtifactId();
-                if (artifacts.contains(canonicalName)) {
-                    getLog().debug(canonicalName + " marked for exclusion");
-                    included.add(canonicalName);
-                }
-            }
-        }
+        included.addAll(project.getArtifactMap().keySet());
+        included.retainAll(artifacts);
 
         return included;
     }
@@ -465,7 +403,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
                             pom = builder.parse(contentIn);
                         }
 
-                        getLog().info("Reusing the existing pom.xml for the starter");
+                        getLog().debug("Reusing the existing pom.xml for the starter");
                         return pom;
                     }
                 }
@@ -568,7 +506,8 @@ public class SpringBootStarterMojo extends AbstractMojo {
             }
         }
 
-        if (IGNORE_TEST_MODULES && (project.getArtifactId().startsWith("camel-test") || project.getArtifactId().startsWith("camel-testng"))) {
+        if (IGNORE_TEST_MODULES && (project.getArtifactId().startsWith("camel-test")
+            || project.getArtifactId().startsWith("camel-testcontainers"))) {
             getLog().debug("Test components are ignored");
             return false;
         }
@@ -585,6 +524,10 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
         // Build a starter for all components under the 'components' dir and include submodules ending with '-component'
         if (baseDir.getParentFile().getName().equals("components") || baseDir.getName().endsWith("-component")) {
+            return true;
+        }
+
+        if (baseDir.getName().equals("camel-jaxp")) {
             return true;
         }
 
@@ -611,7 +554,9 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
         pom.setXmlStandalone(true);
 
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,20 +24,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RecipientListErrorHandlingIssueTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         // use a wrong password so we cannot login and get an exception so we
         // can test that the error handler kick in and we know which endpoint failed
         return "ftp://admin@localhost:" + getPort() + "/recipientlist?password=denied";
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 
     @Test
@@ -67,7 +59,7 @@ public class RecipientListErrorHandlingIssueTest extends FtpServerTestSupport {
 
         String foo = "direct:foo," + getFtpUrl();
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", foo);
         headers.put(Exchange.FILE_NAME, "hello.txt");
 
@@ -97,7 +89,7 @@ public class RecipientListErrorHandlingIssueTest extends FtpServerTestSupport {
 
         String foo = "direct:foo," + getFtpUrl();
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", foo);
         headers.put(Exchange.FILE_NAME, "hello.txt");
 

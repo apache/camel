@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,14 +21,12 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.Test;
+
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
-/**
- * @version 
- */
 public class JmsThrottlingInflightRoutePolicyTest extends CamelTestSupport {
 
     private int size = 200;
@@ -75,3 +73,4 @@ public class JmsThrottlingInflightRoutePolicyTest extends CamelTestSupport {
     }
 
 }
+

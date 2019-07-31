@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,27 @@
  */
 package org.apache.camel.test.cxf.blueprint;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.ws.rs.ProcessingException;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class CxfRsEndpointBeansTest extends CamelBlueprintTestSupport {
+
+    @Produce("direct:startURLOverride")
+    private ProducerTemplate pT;
 
     @Override
     protected String getBlueprintDescriptor() {
@@ -43,7 +57,40 @@ public class CxfRsEndpointBeansTest extends CamelBlueprintTestSupport {
         JAXRSClientFactoryBean client = serviceEndpoint.createJAXRSClientFactoryBean();
         assertEquals("These cxfrs endpoints don't share the same bus", server.getBus().getId(), client.getBus().getId());
     }
-    
 
+    @Test
+    public void testDestinationOverrideURLHandling() {
+
+        try {
+            context.getRouteController().startRoute("url-override-route");
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        List<String> expected = Arrays.asList(
+                                              "foo1",
+                                              "foo2",
+                                              "foo1",
+                                              "foo2",
+                                              "foo1");
+
+        expected.forEach(host -> pT.send(exchange -> {
+            Message in = exchange.getIn();
+            in.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, false);
+            in.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
+            in.setBody("Scott");
+            in.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+            in.setHeader(Exchange.DESTINATION_OVERRIDE_URL, "http://" + host);
+            in.setHeader(Exchange.HTTP_METHOD, "GET");
+        }));
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:resultURLOverride");
+        Assert.assertArrayEquals(expected.toArray(),
+                                 mockEndpoint.getExchanges().stream()
+                                     .map(exchange -> exchange.getProperty(Exchange.EXCEPTION_CAUGHT, ProcessingException.class).getCause().toString())
+                                     .map(exceptionMessage -> exceptionMessage.split("\\: ")[1])
+                                     .collect(Collectors.toList()).toArray());
+
+    }
 
 }

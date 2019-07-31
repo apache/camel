@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,17 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.junit.Test;
 
 public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNettyTest {
+
+    @BindToRegistry("customHeaderFilterStrategy")
+    private CustomHeaderFilterStrategy customHeaderFilterStrategy = new CustomHeaderFilterStrategy();
 
     @Test
     public void testEndpointUriWithCustomHeaderStrategy() throws Exception {
@@ -39,32 +42,24 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
         assertNull(date);
     }
 
-    @Override protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("customHeaderFilterStrategy", new CustomHeaderFilterStrategy());
-        return registry;
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:request")
-                    .setHeader("Date", constant("31-03-2014"))
+                from("direct:request").setHeader("Date", constant("31-03-2014"))
                     .to("netty4-http:http://localhost:{{port}}/myapp/mytest?headerFilterStrategy=#customHeaderFilterStrategy");
 
-                from("netty4-http:http://localhost:{{port}}/myapp/mytest")
-                    .to("mock:outbound")
-                    .setHeader("sub-date", constant("31-05-2014"));
+                from("netty4-http:http://localhost:{{port}}/myapp/mytest").to("mock:outbound").setHeader("sub-date", constant("31-05-2014"));
             }
         };
     }
 
     private class CustomHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         CustomHeaderFilterStrategy() {
-            // allow all outbound headers to pass through but only filter out below inbound header 
+            // allow all outbound headers to pass through but only filter out
+            // below inbound header
             getInFilter().add("sub-date");
-        }   
+        }
     }
 }

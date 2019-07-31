@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ import io.undertow.server.handlers.PathHandler;
  * Extended PathHandler to monitor add/remove handlers.
  */
 public class CamelPathHandler extends PathHandler {
-    private Map<String, HttpHandler> handlers = new HashMap<String, HttpHandler>();
+    private Map<String, HttpHandler> handlers = new HashMap<>();
     private String handlerString;
 
     public CamelPathHandler(HttpHandler defaultHandler) {

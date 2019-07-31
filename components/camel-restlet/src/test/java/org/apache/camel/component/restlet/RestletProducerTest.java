@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,15 +21,18 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestletProducerTest extends RestletTestSupport {
 
     @Test
     public void testRestletProducerGet() throws Exception {
         String out = template.requestBodyAndHeader("direct:start", null, "id", 123, String.class);
         assertEquals("123;Donald Duck", out);
+    }
+    
+    @Test
+    public void testRestletProducerGetWithPathQueryParams() throws Exception {
+        String out = template.requestBodyAndHeader("direct:startWithPathQueryParams", null, "id", 123, String.class);
+        assertEquals("1235;Donald Duck", out);
     }
     
     @Test
@@ -43,9 +46,11 @@ public class RestletProducerTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/123/basic").to("log:reply");
+                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/{id}/basic").to("log:reply");
                 
-                from("direct:delete").to("restlet:http://localhost:" + portNum + "/users/123/basic?restletMethod=DELETE");
+                from("direct:startWithPathQueryParams").to("restlet:http://localhost:" + portNum + "/users/{id}/basic?id=1235").to("log:reply");
+                
+                from("direct:delete").to("restlet:http://localhost:" + portNum + "/users/{id}/basic?restletMethod=DELETE");
 
                 from("restlet:http://localhost:" + portNum + "/users/{id}/basic?restletMethods=GET,DELETE")
                     .process(new Processor() {

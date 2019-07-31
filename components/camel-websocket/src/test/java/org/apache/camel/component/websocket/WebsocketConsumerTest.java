@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.net.InetSocketAddress;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -25,23 +27,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-/**
- *
- */
 @RunWith(MockitoJUnitRunner.class)
 public class WebsocketConsumerTest {
 
     private static final String CONNECTION_KEY = "random-connection-key";
     private static final String MESSAGE = "message";
+    private static final InetSocketAddress ADDRESS = InetSocketAddress.createUnresolved("127.0.0.1", 12345);
 
     @Mock
     private WebsocketEndpoint endpoint;
@@ -68,7 +68,7 @@ public class WebsocketConsumerTest {
         when(endpoint.createExchange()).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(outMessage);
 
-        websocketConsumer.sendMessage(CONNECTION_KEY, MESSAGE);
+        websocketConsumer.sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS);
 
         InOrder inOrder = inOrder(endpoint, exceptionHandler, processor, exchange, outMessage);
         inOrder.verify(endpoint, times(1)).createExchange();
@@ -88,7 +88,7 @@ public class WebsocketConsumerTest {
         doThrow(exception).when(processor).process(exchange);
         when(exchange.getException()).thenReturn(exception);
 
-        websocketConsumer.sendMessage(CONNECTION_KEY, MESSAGE);
+        websocketConsumer.sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS);
 
         InOrder inOrder = inOrder(endpoint, exceptionHandler, processor, exchange, outMessage);
         inOrder.verify(endpoint, times(1)).createExchange();
@@ -98,7 +98,7 @@ public class WebsocketConsumerTest {
         inOrder.verify(outMessage, times(1)).setBody(MESSAGE);
         inOrder.verify(processor, times(1)).process(exchange);
         inOrder.verify(exchange, times(2)).getException();
-        inOrder.verify(exceptionHandler, times(1)).handleException(any(String.class), eq(exchange), eq(exception));
+        inOrder.verify(exceptionHandler, times(1)).handleException(any(), eq(exchange), eq(exception));
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -109,7 +109,7 @@ public class WebsocketConsumerTest {
         doThrow(exception).when(processor).process(exchange);
         when(exchange.getException()).thenReturn(null);
 
-        websocketConsumer.sendMessage(CONNECTION_KEY, MESSAGE);
+        websocketConsumer.sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS);
 
         InOrder inOrder = inOrder(endpoint, exceptionHandler, processor, exchange, outMessage);
         inOrder.verify(endpoint, times(1)).createExchange();

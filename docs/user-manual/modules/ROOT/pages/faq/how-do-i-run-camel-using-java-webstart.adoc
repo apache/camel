@@ -1,0 +1,83 @@
+[[HowdoIrunCamelusingJavaWebStart-HowdoIrunCamelusingJavaWebStart]]
+= How do I run Camel using Java WebStart?
+
+Camel 1.5 has support for starting using Java WebStart.
+
+[WARNING]
+====
+**Be Careful**
+
+However there is a restriction to *not* use the version attribute for
+*camel* jars.
+====
+
+What you need to have in mind is that Camel will scan for resources in
+.jar files on-the-fly and therefore the .jars is loaded using http.
+Therefore the http URLs in the .jnlp file must be complete in the *href*
+tag.
+
+[[HowdoIrunCamelusingJavaWebStart-Mavenconfiguration]]
+== Maven configuration
+
+If you use Maven to generate your *.jnlp* file then check out these
+links: http://mojo.codehaus.org/webstart/webstart-maven-plugin/
+
+You need to configure your maven to not output the jar version attribute
+(`outputJarVersion=false`) as started in this snippet:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.codehaus.mojo.webstart</groupId>
+  <artifactId>webstart-maven-plugin</artifactId>
+  .....
+  <configuration>
+    .....
+    <jnlpFiles>
+      <jnlpFile>
+      <templateFilename>jnlpTemplate.vm</templateFilename>
+        <outputFilename>appl.jnlp</outputFilename>
+        <jarResources>
+          <jarResource>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>${camel-version}</version>
+            <!-- set the outputJarVersion to false appends the version to the jar filename in the href -->
+            <outputJarVersion>false</outputJarVersion>
+          </jarResource>
+          <jarResource>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+            <version>${activemq-version}</version>
+            <outputJarVersion>false</outputJarVersion>
+          </jarResource>
+          .....
+        </jarResources>
+      <jnlpFile>
+    <jnlpFiles>
+    .....
+  <configuration>
+<plugin>
+----
+
+And a sample of the generated *appl.jnlp* file:
+
+[source,xml]
+----
+<jnlp .....>
+  .......
+  <resources>
+    .......
+    <jar href="camel-core-1.4.jar"/>
+    <jar href="activemq-core-5.1.jar"/>
+    .......
+    <jar href="spring-core.jar" version="2.5.5"/>
+  </resources>
+</jnlp>
+----
+
+*What to notice:*
+
+To let Camel run using Java WebStart the `<jar href>` tag must *not* use
+the version attribute for the *camel-xxx.jars*. See the difference
+between Camel and the spring jar.

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,15 +15,17 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
-
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class TransformWithExpressionTest extends SpringTestSupport {
     protected MockEndpoint endEndpoint;
 
+    @Test
     public void testTransforms() throws Exception {
         endEndpoint.expectedBodiesReceived("Some data plus ... extra data!");
 
@@ -33,7 +35,8 @@ public class TransformWithExpressionTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         endEndpoint = getMockEndpoint("mock:end");

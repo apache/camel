@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,10 @@
  */
 package org.apache.camel.opentracing;
 
+import java.util.Map;
+
 import io.opentracing.Span;
+import io.opentracing.propagation.TextMap;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.decorators.AbstractSpanDecorator;
@@ -38,6 +41,14 @@ public interface SpanDecorator {
         }
 
     };
+
+    /**
+     * This method indicates whether the component associated with the SpanDecorator
+     * should result in a new span being created.
+     *
+     * @return Whether a new span should be created
+     */
+    boolean newSpan();
 
     /**
      * The camel component associated with the decorator.
@@ -75,5 +86,41 @@ public interface SpanDecorator {
      * @param endpoint The endpoint
      */
     void post(Span span, Exchange exchange, Endpoint endpoint);
+
+    /**
+     * This method returns the 'span.kind' value for use when the component
+     * is initiating a communication.
+     *
+     * @return The kind
+     */
+    String getInitiatorSpanKind();
+
+    /**
+     * This method returns the 'span.kind' value for use when the component
+     * is receiving a communication.
+     *
+     * @return The kind
+     */
+    String getReceiverSpanKind();
+
+    /**
+     * This method returns the map to be used for headers extraction
+     * when the component is receiving a communication.
+     *
+     * @param map a map containing the objects
+     * @param encoding whether the headers are encoded
+     * @return The extraction map
+     */
+    TextMap getExtractAdapter(Map<String, Object> map, boolean encoding);
+
+    /**
+     * This method returns the map to be used for headers injection
+     *  when the component is receiving a communication.
+     *
+     * @param map a map containing the objects
+     * @param encoding whether the headers are encoded
+     * @return The injection map
+     */
+    TextMap getInjectAdapter(Map<String, Object> map, boolean encoding);
 
 }

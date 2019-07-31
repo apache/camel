@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.spring.security;
 
-import java.util.ArrayList;
+
+import java.util.Collections;
 import java.util.List;
 
 import javax.security.auth.Subject;
@@ -40,7 +41,21 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
     public void testAuthorizationPassed() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedBodiesReceived("hello world");
-        sendMessageWithAuthentication("jim", "jimspassword", "ROLE_USER", "ROLE_ADMIN");
+        sendMessageWithAuthentication("jim", "jimspassword");
+        end.assertIsSatisfied();
+    }
+
+    @Test
+    public void testAuthenticationFailed() throws Exception {
+        MockEndpoint end = getMockEndpoint("mock:end");
+        end.expectedMessageCount(0);
+        try {
+            sendMessageWithAuthentication("jim", "jimspassword2");
+            fail("we should get the access deny exception here");
+        } catch (Exception exception) {
+            // the exception should be caused by CamelAuthorizationException
+            assertTrue("Expect CamelAuthorizationException here", exception.getCause() instanceof CamelAuthorizationException);
+        }
         end.assertIsSatisfied();
     }
 
@@ -49,26 +64,11 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(0);
         try {
-            sendMessageWithAuthentication("bob", "bobspassword", "ROLE_USER");
+            sendMessageWithAuthentication("bob", "bobspassword");
             fail("we should get the access deny exception here");
         } catch (Exception exception) {
             // the exception should be caused by CamelAuthorizationException
             assertTrue("Expect CamelAuthorizationException here", exception.getCause() instanceof CamelAuthorizationException);
-        }
-        end.assertIsSatisfied();
-    }
-    
-    @Test
-    public void testAuthenticationFailed() throws Exception {
-        MockEndpoint end = getMockEndpoint("mock:end");
-        end.expectedMessageCount(0);
-        try {
-            sendMessageWithAuthentication("bob", "jimspassword");
-            fail("we should get the access deny exception here");
-        } catch (Exception exception) {
-            // the exception should be caused by CamelAuthorizationException
-            assertTrue("Expect CamelAuthorizationException here", exception.getCause() instanceof CamelAuthorizationException);
-            assertEquals("admin", ((CamelAuthorizationException) exception.getCause()).getPolicyId());
         }
         end.assertIsSatisfied();
     }
@@ -77,7 +77,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
     public void testGetAuthorizationTokenFromSecurityContextHolder() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedBodiesReceived("hello world");
-        Authentication authToken = createAuthenticationToken("jim", "jimspassword", "ROLE_USER", "ROLE_ADMIN");
+        Authentication authToken = new UsernamePasswordAuthenticationToken("jim", "jimspassword");
         SecurityContextHolder.getContext().setAuthentication(authToken);
         template.sendBody("direct:start", "hello world");
         end.assertIsSatisfied();
@@ -85,23 +85,30 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         
     }
     
-    private Authentication createAuthenticationToken(String username, String password, String... roles) {
-        Authentication authToken;
-        if (roles != null && roles.length > 0) {
-            List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(roles.length);
-            for (String role : roles) {
-                authorities.add(new SimpleGrantedAuthority(role));
-            }
-            authToken = new UsernamePasswordAuthenticationToken(username, password, authorities);
-        } else {
-            authToken = new UsernamePasswordAuthenticationToken(username, password);
+    @Test
+    public void testAuthorizationFailedWithWrongExplicitRole() throws Exception {
+        MockEndpoint end = getMockEndpoint("mock:end");
+        end.expectedMessageCount(0);
+        try {
+            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_BAD"));
+
+            Authentication authToken = new UsernamePasswordAuthenticationToken("jim", "jimspassword", authorities);
+            
+            Subject subject = new Subject();
+            subject.getPrincipals().add(authToken);
+
+            template.sendBodyAndHeader("direct:start", "hello world", Exchange.AUTHENTICATION, subject);
+            fail("we should get the access deny exception here");
+        } catch (Exception exception) {
+            // the exception should be caused by CamelAuthorizationException
+            assertTrue("Expect CamelAuthorizationException here", exception.getCause() instanceof CamelAuthorizationException);
         }
-        return authToken;
+        end.assertIsSatisfied();
     }
 
-    private void sendMessageWithAuthentication(String username, String password, String... roles) {
+    private void sendMessageWithAuthentication(String username, String password) {
 
-        Authentication authToken = createAuthenticationToken(username, password, roles);
+        Authentication authToken = new UsernamePasswordAuthenticationToken(username, password);
         
         Subject subject = new Subject();
         subject.getPrincipals().add(authToken);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +23,7 @@ import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 
 /**
  *
@@ -31,25 +32,28 @@ public class HazelcastTopicProducer extends HazelcastDefaultProducer {
 
     private ITopic<Object> topic;
 
-    public HazelcastTopicProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String topicName) {
+    public HazelcastTopicProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String topicName, boolean reliable) {
         super(endpoint);
-        this.topic = hazelcastInstance.getTopic(topicName);
+        if (!reliable) {
+            this.topic = hazelcastInstance.getTopic(topicName);
+        } else {
+            this.topic = hazelcastInstance.getReliableTopic(topicName);
+        }
     }
 
     public void process(Exchange exchange) throws Exception {
-        final int operation = lookupOperationNumber(exchange);
+        final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
-        case -1:
-            // default operation to publish
-        case HazelcastConstants.PUBLISH_OPERATION:
+
+        case PUBLISH:
             this.publish(exchange);
             break;
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the TOPIC cache.", operation, HazelcastConstants.OPERATION));
         }
 
-        // finally copy headers
+         // finally copy headers
         HazelcastComponentHelper.copyHeaders(exchange);
     }
 

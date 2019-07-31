@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,11 +22,13 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EventObject;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.newSetFromMap;
@@ -74,8 +76,9 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.event.AbstractExchangeEvent;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteContainer;
+import org.apache.camel.spi.CamelEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +121,7 @@ public class CdiCamelExtension implements Extension {
 
     private final Set<Annotation> eventQualifiers = newSetFromMap(new ConcurrentHashMap<>());
 
-    private final Set<ImportResource> resources = newSetFromMap(new ConcurrentHashMap<>());
+    private final Map<AnnotatedType<?>, ImportResource> resources = new ConcurrentHashMap<>();
 
     private final CdiCamelConfigurationEvent configuration = new CdiCamelConfigurationEvent();
 
@@ -148,7 +151,7 @@ public class CdiCamelExtension implements Extension {
             eagerBeans.add(pat.getAnnotatedType());
         }
         if (hasAnnotation(pat.getAnnotatedType(), ImportResource.class)) {
-            resources.add(pat.getAnnotatedType().getAnnotation(ImportResource.class));
+            resources.put(pat.getAnnotatedType(), pat.getAnnotatedType().getAnnotation(ImportResource.class));
         }
     }
 
@@ -201,11 +204,11 @@ public class CdiCamelExtension implements Extension {
                 .collect(toSet())));
     }
 
-    private <T extends EventObject> void camelEventNotifiers(@Observes ProcessObserverMethod<T, ?> pom) {
+    private <T extends CamelEvent> void camelEventNotifiers(@Observes ProcessObserverMethod<T, ?> pom) {
         // Only activate Camel event notifiers for explicit Camel event observers, that is, an observer method for a super type won't activate notifiers.
         Type type = pom.getObserverMethod().getObservedType();
         // Camel events are raw types
-        if (type instanceof Class && Class.class.cast(type).getPackage().equals(AbstractExchangeEvent.class.getPackage())) {
+        if (type instanceof Class && CamelEvent.class.isAssignableFrom(Class.class.cast(type))) {
             Set<Annotation> qualifiers = pom.getObserverMethod().getObservedQualifiers();
             if (qualifiers.isEmpty()) {
                 eventQualifiers.add(ANY);
@@ -245,11 +248,12 @@ public class CdiCamelExtension implements Extension {
         Set<SyntheticBean<?>> extraBeans = new HashSet<>();
 
         // Add beans from Camel XML resources
-        for (ImportResource resource : resources) {
+        for (AnnotatedType<?> annotatedType: resources.keySet()) {
             XmlCdiBeanFactory factory = XmlCdiBeanFactory.with(manager, environment, this);
+            ImportResource resource = resources.get(annotatedType);
             for (String path : resource.value()) {
                 try {
-                    extraBeans.addAll(factory.beansFrom(path));
+                    extraBeans.addAll(factory.beansFrom(path, annotatedType));
                 } catch (NoClassDefFoundError cause) {
                     if (cause.getMessage().contains("AbstractCamelContextFactoryBean")) {
                         logger.error("Importing Camel XML requires to have the 'camel-core-xml' dependency in the classpath!");
@@ -258,7 +262,7 @@ public class CdiCamelExtension implements Extension {
                 } catch (Exception cause) {
                     abd.addDefinitionError(
                         new InjectionException(
-                            "Error while importing resource [" + getResource(path) + "]", cause));
+                            "Error while importing resource [" + getResource(path, annotatedType.getJavaClass().getClassLoader()) + "]", cause));
                 }
             }
         }
@@ -269,17 +273,6 @@ public class CdiCamelExtension implements Extension {
             .map(Bean::getQualifiers)
             .forEach(contextQualifiers::addAll);
 
-        // From the @ContextName qualifiers on RoutesBuilder and RouteContainer beans
-        cdiBeans.stream()
-            .filter(hasType(RoutesBuilder.class).or(hasType(RouteContainer.class)))
-            .map(Bean::getQualifiers)
-            .flatMap(Set::stream)
-            .filter(isAnnotationType(ContextName.class))
-            .filter(name -> !contextQualifiers.contains(name))
-            .peek(contextQualifiers::add)
-            .map(name -> camelContextBean(manager, ANY, name, APPLICATION_SCOPED))
-            .forEach(extraBeans::add);
-
         Set<Bean<?>> allBeans = concat(cdiBeans.stream(), extraBeans.stream())
             .collect(toSet());
         Set<Bean<?>> contexts = allBeans.stream()
@@ -288,7 +281,7 @@ public class CdiCamelExtension implements Extension {
 
         if (contexts.size() == 0 && shouldDeployDefaultCamelContext(allBeans)) {
             // Add @Default Camel context bean if any
-            extraBeans.add(camelContextBean(manager, ANY, DEFAULT, APPLICATION_SCOPED));
+            extraBeans.add(camelContextBean(manager, null, ANY, DEFAULT, APPLICATION_SCOPED));
         } else if (contexts.size() == 1) {
             // Add the @Default qualifier if there is only one Camel context bean
             Bean<?> context = contexts.iterator().next();
@@ -342,11 +335,11 @@ public class CdiCamelExtension implements Extension {
             .flatMap(Set::stream)
             .map(Annotated::getAnnotations)
             .flatMap(Set::stream)
-            .anyMatch(isAnnotationType(Consume.class).and(a -> ((Consume) a).context().isEmpty())
-                .or(isAnnotationType(BeanInject.class).and(a -> ((BeanInject) a).context().isEmpty()))
-                .or(isAnnotationType(EndpointInject.class).and(a -> ((EndpointInject) a).context().isEmpty()))
-                .or(isAnnotationType(Produce.class).and(a -> ((Produce) a).context().isEmpty()))
-                .or(isAnnotationType(PropertyInject.class).and(a -> ((PropertyInject) a).context().isEmpty())))
+            .anyMatch(isAnnotationType(Consume.class)
+                .or(isAnnotationType(BeanInject.class))
+                .or(isAnnotationType(EndpointInject.class))
+                .or(isAnnotationType(Produce.class))
+                .or(isAnnotationType(PropertyInject.class)))
             // Or an injection point for Camel primitives?
             || beans.stream()
             // Excluding internal components...
@@ -356,12 +349,12 @@ public class CdiCamelExtension implements Extension {
             .filter(ip -> getRawType(ip.getType()).getName().startsWith("org.apache.camel"))
             .map(InjectionPoint::getQualifiers)
             .flatMap(Set::stream)
-            .anyMatch(isAnnotationType(Uri.class).or(isAnnotationType(Mock.class)).or(isEqual(DEFAULT)));
+            .anyMatch(isAnnotationType(Uri.class).or(isEqual(DEFAULT)));
     }
 
-    private SyntheticBean<?> camelContextBean(BeanManager manager, Annotation... qualifiers) {
+    private SyntheticBean<?> camelContextBean(BeanManager manager, Class<?> beanClass, Annotation... qualifiers) {
         SyntheticAnnotated annotated = new SyntheticAnnotated(DefaultCamelContext.class,
-            manager.createAnnotatedType(DefaultCamelContext.class).getTypeClosure(), qualifiers);
+            manager.createAnnotatedType(DefaultCamelContext.class).getTypeClosure(), beanClass, qualifiers);
         return new SyntheticBean<>(manager, annotated, DefaultCamelContext.class,
             environment.camelContextInjectionTarget(
                 new SyntheticInjectionTarget<>(DefaultCamelContext::new), annotated, manager, this), bean ->
@@ -379,9 +372,9 @@ public class CdiCamelExtension implements Extension {
         }
 
         // Add type converters to Camel contexts
-        CdiTypeConverterLoader loader = new CdiTypeConverterLoader();
-        for (Class<?> converter : converters) {
-            for (CamelContext context : contexts) {
+        for (CamelContext context : contexts) {
+            CdiTypeConverterLoader loader = new CdiTypeConverterLoader();
+            for (Class<?> converter : converters) {
                 loader.loadConverterMethods(context.getTypeConverterRegistry(), converter);
             }
         }
@@ -415,15 +408,17 @@ public class CdiCamelExtension implements Extension {
             .forEach(bean -> getReference(manager, bean.getBeanClass(), bean).toString());
 
         // Start Camel contexts
-        for (CamelContext context : contexts) {
-            if (ServiceStatus.Started.equals(context.getStatus())) {
-                continue;
-            }
-            logger.info("Camel CDI is starting Camel context [{}]", context.getName());
-            try {
-                context.start();
-            } catch (Exception exception) {
-                adv.addDeploymentProblem(exception);
+        if (configuration.autoStartContexts()) {
+            for (CamelContext context : contexts) {
+                if (ServiceStatus.Started.equals(context.getStatus())) {
+                    continue;
+                }
+                logger.info("Camel CDI is starting Camel context [{}]", context.getName());
+                try {
+                    context.start();
+                } catch (Exception exception) {
+                    adv.addDeploymentProblem(exception);
+                }
             }
         }
 
@@ -440,7 +435,7 @@ public class CdiCamelExtension implements Extension {
                 if (route instanceof RoutesBuilder) {
                     context.addRoutes((RoutesBuilder) route);
                 } else if (route instanceof RouteContainer) {
-                    context.addRouteDefinitions(((RouteContainer) route).getRoutes());
+                    context.getExtension(Model.class).addRouteDefinitions(((RouteContainer) route).getRoutes());
                 } else {
                     throw new IllegalArgumentException(
                         "Invalid routes type [" + routeBean.getBeanClass().getName() + "], "

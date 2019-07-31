@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.mail;
 
 import java.util.Enumeration;
 import java.util.UUID;
+
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;

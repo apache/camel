@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -52,9 +52,6 @@ public class PersonProcessor implements Processor {
             personFault.setPersonId("");
             org.apache.camel.wsdl_first.UnknownPersonFault fault =
                 new org.apache.camel.wsdl_first.UnknownPersonFault("Get the null value of person name", personFault);
-            // Since camel has its own exception handler framework, we can't throw the exception to trigger it
-            // We just set the fault message in the exchange for camel-cxf component handling and return
-            exchange.getOut().setFault(true);
             exchange.getOut().setBody(fault);
             return;
         }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,8 +42,6 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
- * 
- * @version 
  */
 @ContextConfiguration
 public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTests {
@@ -76,8 +74,8 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
             return;
         }
 
-        Holder<byte[]> photo = new Holder<byte[]>(MtomTestHelper.REQ_PHOTO_DATA);
-        Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
+        Holder<byte[]> photo = new Holder<>(MtomTestHelper.REQ_PHOTO_DATA);
+        Holder<Image> image = new Holder<>(getImage("/java.jpg"));
 
         Hello port = getPort();
 

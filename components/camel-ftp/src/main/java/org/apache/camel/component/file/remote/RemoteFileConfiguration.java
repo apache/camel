@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +23,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Configuration of the FTP server
@@ -40,7 +41,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
 
     // component name is implied as the protocol, eg ftp/ftps etc
     private String protocol;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
     @UriPath
     private int port;
@@ -105,8 +106,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         String username = uri.getUserInfo();
         String pw = null;
         if (username != null && username.contains(":")) {
-            pw = ObjectHelper.after(username, ":");
-            username = ObjectHelper.before(username, ":");
+            pw = StringHelper.after(username, ":");
+            username = StringHelper.before(username, ":");
         }
         if (username != null) {
             setUsername(username);
@@ -254,7 +255,10 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Sets the so timeout
      * <p/>
-     * Used only by FTPClient
+     * FTP and FTPS Only for Camel 2.4. SFTP for Camel 2.14.3/2.15.3/2.16 onwards.
+     * Is the SocketOptions.SO_TIMEOUT value in millis.
+     * Recommended option is to set this to 300000 so as not have a hanged connection.
+     * On SFTP this option is set as timeout on the JSCH Session instance.
      */
     public void setSoTimeout(int soTimeout) {
         this.soTimeout = soTimeout;
@@ -295,9 +299,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Sets optional site command(s) to be executed after successful login.
      * <p/>
-     * Multiple site commands can be separated using a new line character (\n).
-     *
-     * @param siteCommand the site command(s).
+     * Multiple site commands can be separated using a new line character.
      */
     public void setSiteCommand(String siteCommand) {
         this.siteCommand = siteCommand;
@@ -358,6 +360,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      * Default is <tt>true</tt>. In some use cases you may want to download
      * a specific file and are not allowed to use the LIST command, and therefore
      * you can set this option to <tt>false</tt>.
+     * Notice when using this option, then the specific file to download does <b>not</b>
+     * include meta-data information such as file size, timestamp, permissions etc, because
+     * those information is only possible to retrieve when LIST command is in use.
      */
     public void setUseList(boolean useList) {
         this.useList = useList;
@@ -368,9 +373,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     }
 
     /**
-     * Whether to ignore when trying to download a file which does not exist or due to permission error.
+     * Whether to ignore when (trying to list files in directories or when downloading a file), which does not exist or due to permission error.
      * <p/>
-     * By default when a file does not exists or insufficient permission, then an exception is thrown.
+     * By default when a directory or file does not exists or insufficient permission, then an exception is thrown.
      * Setting this option to <tt>true</tt> allows to ignore that instead.
      */
     public void setIgnoreFileNotFoundOrPermissionError(boolean ignoreFileNotFoundOrPermissionError) {

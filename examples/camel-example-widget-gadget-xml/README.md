@@ -14,7 +14,7 @@ The example is implemented in Spring XML only without using any kind of _applica
 * camel-core
 * camel-spring
 * camel-jms
-* activemq-camel
+* camel-activemq
 
 ### Build
 
@@ -26,7 +26,7 @@ You will need to build this example first:
 
 This example requires an existing Apache ActiveMQ broker running.
 
-To setup and run Apache ActiveMQ then download it from the []ActiveMQ website](http://activemq.apache.org/).
+To setup and run Apache ActiveMQ then download it from the [ActiveMQ website](http://activemq.apache.org/).
 
 Then extract the download such as (the .tar)
 

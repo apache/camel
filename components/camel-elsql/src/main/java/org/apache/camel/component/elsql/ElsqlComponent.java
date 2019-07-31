@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,14 +21,16 @@ import javax.sql.DataSource;
 
 import com.opengamma.elsql.ElSqlConfig;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-public class ElsqlComponent extends UriEndpointComponent {
+@Component("elsql")
+public class ElsqlComponent extends DefaultComponent {
 
     private ElSqlDatabaseVendor databaseVendor;
     private DataSource dataSource;
@@ -37,7 +39,6 @@ public class ElsqlComponent extends UriEndpointComponent {
     private String resourceUri;
 
     public ElsqlComponent() {
-        super(ElsqlEndpoint.class);
     }
 
     @Override
@@ -62,7 +63,8 @@ public class ElsqlComponent extends UriEndpointComponent {
         }
 
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(target);
-        IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
+        Map<String, Object> params = IntrospectionSupport.extractProperties(parameters, "template.");
+        PropertyBindingSupport.bindProperties(getCamelContext(), jdbcTemplate, params);
 
         String elsqlName = remaining;
         String resUri = resourceUri;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -53,7 +53,7 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
         sendAMessageToOneTopicWithTwoSubscribers();
 
         // now stop route A
-        context.stopRoute("a");
+        context.getRouteController().stopRoute("a");
 
         // send new message should go to B only
         resetMocks();
@@ -69,7 +69,7 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
         resetMocks();
 
         // now start route A
-        context.startRoute("a");
+        context.getRouteController().startRoute("a");
 
         sendAMessageToOneTopicWithTwoSubscribers();
     }
@@ -79,7 +79,7 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
         sendAMessageToOneTopicWithTwoSubscribers();
 
         // now stop and remove route A
-        context.stopRoute("a");
+        context.getRouteController().stopRoute("a");
         assertTrue(context.removeRoute("a"));
 
         // send new message should go to B only

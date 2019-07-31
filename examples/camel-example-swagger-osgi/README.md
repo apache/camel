@@ -8,9 +8,9 @@ This is an example that uses the rest-dsl to define a rest services which provid
 - GET user/findAll  - Find all users
 
 ### Build
-You will need to compile this example first:
+You will need to install this example first:
 
-	mvn compile
+	mvn install
 
 ### Run
 This example needs to be deployed on Apache Karaf/SerivceMix first:
@@ -23,28 +23,28 @@ This example needs to be deployed on Apache Karaf/SerivceMix first:
 
 And then install the example
 
-   install -s mvn:org.apache.camel/camel-example-swagger-osgi/${version}
+   install -s mvn:org.apache.camel.example/camel-example-swagger-osgi/${version}
 
 
 The rest service can be accessed from the following url
 
-	curl http://0.0.0.0:8080/camel-example-swagger-osgi/rest/user
+	curl http://127.0.0.1:8080/camel-example-swagger-osgi/rest/user
 
-<http://0.0.0.0:8080/camel-example-swagger-osgi/rest/user>
+<http://127.0.0.1:8080/camel-example-swagger-osgi/rest/user>
 
 For example to get a user with id 123
 
-	curl http://0.0.0.0:8080/camel-example-swagger-osgi/rest/user/123
+	curl http://127.0.0.1:8080/camel-example-swagger-osgi/rest/user/123
 
-<http://0.0.0.0:8080/camel-example-swagger-osgi/rest/user/123>
+<http://127.0.0.1:8080/camel-example-swagger-osgi/rest/user/123>
 
 The rest services provides Swagger API in json or yaml format
 which can be accessed from the following url
 
-    curl http://0.0.0.0:8080/camel-example-swagger-osgi/rest/api-docs/myCamel/swagger.json
-    curl http://0.0.0.0:8080/camel-example-swagger-osgi/rest/api-docs/myCamel/swagger.yaml
+    curl http://127.0.0.1:8080/camel-example-swagger-osgi/rest/api-docs/myCamel/swagger.json
+    curl http://127.0.0.1:8080/camel-example-swagger-osgi/rest/api-docs/myCamel/swagger.yaml
 
-<http://0.0.0.0:8080/camel-example-swagger-osgi/rest/api-docs/myCamel/swagger.json>
+<http://127.0.0.1:8080/camel-example-swagger-osgi/rest/api-docs/myCamel/swagger.json>
 
 
 ### Forum, Help, etc

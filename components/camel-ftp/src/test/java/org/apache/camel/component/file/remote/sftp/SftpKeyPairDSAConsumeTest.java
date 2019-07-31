@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,11 +27,21 @@ import java.security.KeyPairGenerator;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
+
+    private static KeyPair keyPair;
+
+    @BeforeClass
+    public static void createKeys() throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
+        keyGen.initialize(1024);
+        keyPair = keyGen.generateKeyPair();
+    }
 
     @Test
     public void testSftpSimpleConsume() throws Exception {
@@ -49,7 +59,7 @@ public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.expectedBodiesReceived(expected);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }
@@ -63,20 +73,15 @@ public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
-        keyGen.initialize(1024);
-        KeyPair pair = keyGen.generateKeyPair();
-        registry.bind("keyPair", pair);
-        registry.bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
-
-        return registry;
+    protected PublickeyAuthenticator getPublickeyAuthenticator() {
+        return (username, key, session) -> key.equals(keyPair.getPublic());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        context.getRegistry().bind("keyPair", keyPair);
+        context.getRegistry().bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

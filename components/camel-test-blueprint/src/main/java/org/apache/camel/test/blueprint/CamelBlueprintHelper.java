@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,12 +45,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarInputStream;
 
-import org.apache.camel.impl.DefaultClassResolver;
+import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 import org.apache.felix.connect.PojoServiceRegistryFactoryImpl;
 import org.apache.felix.connect.felix.framework.util.Util;
 import org.apache.felix.connect.launch.BundleDescriptor;
@@ -107,7 +107,7 @@ public final class CamelBlueprintHelper {
     
     public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle,
                                                     String bundleFilter, String testBundleVersion, String testBundleDirectives,
-                                                    String[] ... configAdminPidFiles) throws Exception {
+                                                    String[]... configAdminPidFiles) throws Exception {
         return createBundleContext(name, descriptors, includeTestBundle,
                 bundleFilter, testBundleVersion, testBundleDirectives,
                 null,
@@ -117,7 +117,7 @@ public final class CamelBlueprintHelper {
     public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle,
                                                     String bundleFilter, String testBundleVersion, String testBundleDirectives,
                                                     ClassLoader loader,
-                                                    String[] ... configAdminPidFiles) throws Exception {
+                                                    String[]... configAdminPidFiles) throws Exception {
         TinyBundle bundle = null;
         TinyBundle configAdminInitBundle = null;
 
@@ -191,7 +191,7 @@ public final class CamelBlueprintHelper {
         }
 
         // setup felix-connect to use our bundles
-        Map<String, Object> config = new HashMap<String, Object>();
+        Map<String, Object> config = new HashMap<>();
         config.put(PojoServiceRegistryFactory.BUNDLE_DESCRIPTORS, bundles);
 
         // create pojorsr osgi service registry
@@ -202,7 +202,7 @@ public final class CamelBlueprintHelper {
     public static void disposeBundleContext(BundleContext bundleContext) throws BundleException {
         try {
             if (bundleContext != null) {
-                List<Bundle> bundles = new ArrayList<Bundle>();
+                List<Bundle> bundles = new ArrayList<>();
                 bundles.addAll(Arrays.asList(bundleContext.getBundles()));
                 Collections.reverse(bundles);
                 for (Bundle bundle : bundles) {
@@ -211,7 +211,7 @@ public final class CamelBlueprintHelper {
                 }
             }
         } catch (Exception e) {
-            IllegalStateException ise = ObjectHelper.getException(IllegalStateException.class, e);
+            IllegalStateException ise = org.apache.camel.util.ObjectHelper.getException(IllegalStateException.class, e);
             if (ise != null) {
                 // we dont care about illegal state exception as that may happen from OSGi
                 LOG.debug("Error during disposing BundleContext. This exception will be ignored.", e);
@@ -299,7 +299,7 @@ public final class CamelBlueprintHelper {
                 flt = "(" + Constants.OBJECTCLASS + "=" + type.getName() + ")";
             }
             Filter osgiFilter = FrameworkUtil.createFilter(flt);
-            tracker = new ServiceTracker<T, T>(bundleContext, osgiFilter, null);
+            tracker = new ServiceTracker<>(bundleContext, osgiFilter, null);
             tracker.open(true);
             // Note that the tracker is not closed to keep the reference
             // This is buggy, as the service reference may change i think
@@ -368,7 +368,7 @@ public final class CamelBlueprintHelper {
         }
     }
 
-    protected static TinyBundle createConfigAdminInitBundle(String[] ... configAdminPidFiles) throws IOException {
+    protected static TinyBundle createConfigAdminInitBundle(String[]... configAdminPidFiles) throws IOException {
         TinyBundle bundle = TinyBundles.newBundle();
         StringWriter configAdminInit = null;
         for (String[] configAdminPidFile : configAdminPidFiles) {
@@ -432,7 +432,7 @@ public final class CamelBlueprintHelper {
      * Provides an iterable collection of references, even if the original array is <code>null</code>.
      */
     private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
-        return references  == null ? new ArrayList<ServiceReference>(0) : Arrays.asList(references);
+        return references  == null ? new ArrayList<>(0) : Arrays.asList(references);
     }
 
     /**
@@ -454,10 +454,10 @@ public final class CamelBlueprintHelper {
      * @throws FileNotFoundException is thrown if a bundle descriptor cannot be found
      */
     protected static Collection<URL> getBlueprintDescriptors(String descriptors) throws FileNotFoundException, MalformedURLException {
-        List<URL> answer = new ArrayList<URL>();
+        List<URL> answer = new ArrayList<>();
         if (descriptors != null) {
             // there may be more resources separated by comma
-            Iterator<Object> it = ObjectHelper.createIterator(descriptors);
+            Iterator<?> it = ObjectHelper.createIterator(descriptors);
             while (it.hasNext()) {
                 String s = (String) it.next();
                 LOG.trace("Resource descriptor: {}", s);
@@ -469,7 +469,7 @@ public final class CamelBlueprintHelper {
                 if (s.endsWith("*.xml")) {
                     String packageName = s.substring(0, s.length() - 5);
                     // remove trailing / to be able to load resource from the classpath
-                    Enumeration<URL> urls = ObjectHelper.loadResourcesAsURL(packageName);
+                    Enumeration<URL> urls = org.apache.camel.util.ObjectHelper.loadResourcesAsURL(packageName);
                     while (urls.hasMoreElements()) {
                         URL url = urls.nextElement();
                         File dir = new File(url.getFile());
@@ -480,7 +480,7 @@ public final class CamelBlueprintHelper {
                                     if (file.isFile() && file.exists() && file.getName().endsWith(".xml")) {
                                         String name = packageName + file.getName();
                                         LOG.debug("Resolving resource: {}", name);
-                                        URL xmlUrl = ObjectHelper.loadResourceAsURL(name);
+                                        URL xmlUrl = org.apache.camel.util.ObjectHelper.loadResourceAsURL(name);
                                         if (xmlUrl != null) {
                                             answer.add(xmlUrl);
                                         }
@@ -528,7 +528,7 @@ public final class CamelBlueprintHelper {
         try {
             fis = new FileInputStream(file);
             jis = new JarInputStream(fis);
-            Map<String, String> headers = new HashMap<String, String>();
+            Map<String, String> headers = new HashMap<>();
             for (Map.Entry<Object, Object> entry : jis.getManifest().getMainAttributes().entrySet()) {
                 headers.put(entry.getKey().toString(), entry.getValue().toString());
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,13 +22,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
+import org.quartz.Scheduler;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Tests a Quartz based cluster setup of two Camel Apps being triggered through {@link CronScheduledRoutePolicy}.
- * 
- * @version
  */
 public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
 
@@ -36,15 +35,12 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
     public void testQuartzPersistentStoreClusteredApp() throws Exception {
         // boot up the database the two apps are going to share inside a clustered quartz setup
         AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzClusteredAppDatabase.xml");
-        db.start();
 
         // now launch the first clustered app which will acquire the quartz database lock and become the master
         AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzClusteredAppOne.xml");
-        app.start();
 
         // as well as the second one which will run in slave mode as it will not be able to acquire the same lock
         AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzClusteredAppTwo.xml");
-        app2.start();
 
         CamelContext camel = app.getBean("camelContext", CamelContext.class);
 
@@ -61,6 +57,10 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
 
         // now let's simulate a crash of the first app (the quartz instance 'app-one')
         log.warn("The first app is going to crash NOW!");
+        // we need to stop the Scheduler first as the CamelContext will gracefully shutdown and
+        // delete all scheduled jobs, so there would be nothing for the second CamelContext to
+        // failover from
+        app.getBean(Scheduler.class).shutdown();
         IOHelper.close(app);
 
         log.warn("Crashed...");

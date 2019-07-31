@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,7 +39,7 @@ public final class PackageHelper {
     }
 
     public static Map<String, File> findJsonFiles(File rootDir) {
-        Map<String, File> results = new HashMap<String, File>();
+        Map<String, File> results = new HashMap<>();
         findJsonFiles0(rootDir, results, new CamelComponentsModelFilter());
         return results;
     }

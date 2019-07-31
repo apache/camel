@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,18 +21,18 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.manager.DefaultCacheManager;
 
 @ManagedResource(description = "Infinispan based message id repository")
-public class InfinispanIdempotentRepository extends ServiceSupport implements IdempotentRepository<Object> {
+public class InfinispanIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     private final String cacheName;
     private final BasicCacheContainer cacheContainer;
     private final boolean isManagedCacheContainer;
-    private BasicCache<Object, Boolean> cache;
+    private BasicCache<String, Boolean> cache;
 
     public InfinispanIdempotentRepository(BasicCacheContainer cacheContainer, String cacheName) {
         this.cacheContainer = cacheContainer;
@@ -50,8 +50,7 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
         this(null);
     }
 
-    public static InfinispanIdempotentRepository infinispanIdempotentRepository(
-            BasicCacheContainer cacheContainer, String processorName) {
+    public static InfinispanIdempotentRepository infinispanIdempotentRepository(BasicCacheContainer cacheContainer, String processorName) {
         return new InfinispanIdempotentRepository(cacheContainer, processorName);
     }
 
@@ -65,20 +64,26 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
 
     @Override
     @ManagedOperation(description = "Adds the key to the store")
-    public boolean add(Object key) {
+    public boolean add(String key) {
+        // need to check first as put will update the entry lifetime so it can not expire its cache lifespan
+        if (getCache().containsKey(key)) {
+            // there is already an entry so return false
+            return false;
+        }
+        
         Boolean put = getCache().put(key, true);
         return put == null;
     }
 
     @Override
     @ManagedOperation(description = "Does the store contain the given key")
-    public boolean contains(Object key) {
+    public boolean contains(String key) {
         return getCache().containsKey(key);
     }
 
     @Override
     @ManagedOperation(description = "Remove the key from the store")
-    public boolean remove(Object key) {
+    public boolean remove(String key) {
         return getCache().remove(key) != null;
     }
     
@@ -94,7 +99,7 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
     }
 
     @Override
-    public boolean confirm(Object key) {
+    public boolean confirm(String key) {
         return true;
     }
 
@@ -117,7 +122,7 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
         super.doShutdown();
     }
 
-    private BasicCache<Object, Boolean> getCache() {
+    private BasicCache<String, Boolean> getCache() {
         if (cache == null) {
             // By default, previously existing values for java.util.Map operations
             // are not returned for remote caches but idempotent repository needs

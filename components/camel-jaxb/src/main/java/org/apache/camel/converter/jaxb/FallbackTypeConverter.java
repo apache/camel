@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,6 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -41,52 +40,45 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
+import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.Processor;
+import org.apache.camel.FallbackConverter;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.jaxp.StaxConverter;
-import org.apache.camel.spi.TypeConverterAware;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version
- */
-public class FallbackTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterAware, CamelContextAware {
+@Converter(loader = true)
+public class FallbackTypeConverter {
 
     public static final String PRETTY_PRINT = "CamelJaxbPrettyPrint";
     public static final String OBJECT_FACTORY = "CamelJaxbObjectFactory";
 
     private static final Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
+
     private final Map<AnnotatedElement, JAXBContext> contexts = new HashMap<>();
     private final StaxConverter staxConverter = new StaxConverter();
-    private TypeConverter parentTypeConverter;
-    private boolean prettyPrint = true;
-    private boolean objectFactory;
-    private CamelContext camelContext;
+    private boolean defaultPrettyPrint = true;
+    private boolean defaultObjectFactory;
 
     public boolean isPrettyPrint() {
-        return prettyPrint;
+        return defaultPrettyPrint;
     }
 
     /**
      * Whether the JAXB converter should use pretty print or not (default is true)
      */
     public void setPrettyPrint(boolean prettyPrint) {
-        this.prettyPrint = prettyPrint;
+        this.defaultPrettyPrint = prettyPrint;
     }
 
-
     public boolean isObjectFactory() {
-        return objectFactory;
+        return defaultObjectFactory;
     }
 
     /**
@@ -94,71 +86,53 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
      * This only applies to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.
      */
     public void setObjectFactory(boolean objectFactory) {
-        this.objectFactory = objectFactory;
+        this.defaultObjectFactory = objectFactory;
     }
 
-    public boolean allowNull() {
-        return false;
-    }
+    @FallbackConverter
+    @Converter(fallback = true)
+    public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
 
-    public void setTypeConverter(TypeConverter parentTypeConverter) {
-        this.parentTypeConverter = parentTypeConverter;
-    }
-
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-
-        if (camelContext != null) {
-            // configure pretty print
-            String property = camelContext.getProperty(PRETTY_PRINT);
-            if (property != null) {
-                if (property.equalsIgnoreCase("false")) {
-                    setPrettyPrint(false);
-                } else {
-                    setPrettyPrint(true);
-                }
-            }
-
-            // configure object factory
-            property = camelContext.getProperty(OBJECT_FACTORY);
-            if (property != null) {
-                if (property.equalsIgnoreCase("false")) {
-                    setObjectFactory(false);
-                } else {
-                    setObjectFactory(true);
-                }
+        boolean prettyPrint = defaultPrettyPrint;
+        String property = exchange != null ? exchange.getContext().getGlobalOption(PRETTY_PRINT) : null;
+        if (property != null) {
+            if (property.equalsIgnoreCase("false")) {
+                prettyPrint = false;
+            } else {
+                prettyPrint = true;
             }
         }
-    }
 
-    public <T> T convertTo(Class<T> type, Object value) {
-        return convertTo(type, null, value);
-    }
+        // configure object factory
+        boolean objectFactory = defaultObjectFactory;
+        property = exchange != null ? exchange.getContext().getGlobalOption(OBJECT_FACTORY) : null;
+        if (property != null) {
+            if (property.equalsIgnoreCase("false")) {
+                objectFactory = false;
+            } else {
+                objectFactory = true;
+            }
+        }
 
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        if (BeanInvocation.class.isAssignableFrom(type) || Processor.class.isAssignableFrom(type)) {
-            // JAXB cannot convert to a BeanInvocation / Processor, so we need to indicate this
-            // to avoid Camel trying to do this when using beans with JAXB payloads
-            return null;
+        TypeConverter converter = null;
+        if (registry instanceof TypeConverter) {
+            converter = (TypeConverter) registry;
+        } else if (exchange != null) {
+            converter = exchange.getContext().getTypeConverter();
         }
 
         try {
-            if (isJaxbType(type)) {
-                return unmarshall(type, exchange, value);
+            if (isJaxbType(type, exchange, objectFactory)) {
+                return unmarshall(type, exchange, value, converter);
             }
             if (value != null && isNotStreamCacheType(type)) {
                 if (hasXmlRootElement(value.getClass())) {
-                    return marshall(type, exchange, value, null);
+                    return marshall(type, exchange, value, converter, null, prettyPrint);
                 }
-                if (isObjectFactory()) {
-                    CamelContext context = exchange != null ? exchange.getContext() : camelContext;
-                    Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(context, value.getClass());
+                if (objectFactory) {
+                    Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(exchange.getContext(), value.getClass());
                     if (objectFactoryMethod != null) {
-                        return marshall(type, exchange, value, objectFactoryMethod);
+                        return marshall(type, exchange, value, converter, objectFactoryMethod, prettyPrint);
                     }
                 }
             }
@@ -170,51 +144,13 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
         return null;
     }
 
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
-        return mandatoryConvertTo(type, null, value);
-    }
-
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
-        T answer = convertTo(type, exchange, value);
-        if (answer == null) {
-            throw new NoTypeConversionAvailableException(value, type);
-        }
-        return answer;
-    }
-
-    public <T> T tryConvertTo(Class<T> type, Object value) {
-        try {
-            return convertTo(type, null, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        try {
-            return convertTo(type, exchange, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        LOG.info("Jaxb FallbackTypeConverter[prettyPrint={}, objectFactory={}]", prettyPrint, objectFactory);
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        contexts.clear();
-    }
-
     private <T> boolean hasXmlRootElement(Class<T> type) {
         return type.getAnnotation(XmlRootElement.class) != null;
     }
 
-    protected <T> boolean isJaxbType(Class<T> type) {
-        if (isObjectFactory()) {
-            return hasXmlRootElement(type) || JaxbHelper.getJaxbElementFactoryMethod(camelContext, type) != null;
+    protected <T> boolean isJaxbType(Class<T> type, Exchange exchange, boolean objectFactory) {
+        if (objectFactory) {
+            return hasXmlRootElement(type) || JaxbHelper.getJaxbElementFactoryMethod(exchange.getContext(), type) != null;
         } else {
             return hasXmlRootElement(type);
         }
@@ -231,7 +167,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
     /**
      * Lets try parse via JAXB
      */
-    protected <T> T unmarshall(Class<T> type, Exchange exchange, Object value) throws Exception {
+    protected <T> T unmarshall(Class<T> type, Exchange exchange, Object value, TypeConverter converter) throws Exception {
         LOG.trace("Unmarshal to {} with value {}", type, value);
 
         if (value == null) {
@@ -240,10 +176,10 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
 
         Unmarshaller unmarshaller = getUnmarshaller(type);
 
-        if (parentTypeConverter != null) {
+        if (converter != null) {
             if (!needFiltering(exchange)) {
                 // we cannot filter the XMLStreamReader if necessary
-                XMLStreamReader xmlReader = parentTypeConverter.convertTo(XMLStreamReader.class, exchange, value);
+                XMLStreamReader xmlReader = converter.convertTo(XMLStreamReader.class, exchange, value);
                 if (xmlReader != null) {
                     try {
                         Object unmarshalled = unmarshal(unmarshaller, exchange, xmlReader);
@@ -254,17 +190,17 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
                     }
                 }
             }
-            InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, exchange, value);
+            InputStream inputStream = converter.convertTo(InputStream.class, exchange, value);
             if (inputStream != null) {
                 Object unmarshalled = unmarshal(unmarshaller, exchange, inputStream);
                 return castJaxbType(unmarshalled, type);
             }
-            Reader reader = parentTypeConverter.convertTo(Reader.class, exchange, value);
+            Reader reader = converter.convertTo(Reader.class, exchange, value);
             if (reader != null) {
                 Object unmarshalled = unmarshal(unmarshaller, exchange, reader);
                 return castJaxbType(unmarshalled, type);
             }
-            Source source = parentTypeConverter.convertTo(Source.class, exchange, value);
+            Source source = converter.convertTo(Source.class, exchange, value);
             if (source != null) {
                 Object unmarshalled = unmarshal(unmarshaller, exchange, source);
                 return castJaxbType(unmarshalled, type);
@@ -282,12 +218,13 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
         return null;
     }
 
-    protected <T> T marshall(Class<T> type, Exchange exchange, Object value, Method objectFactoryMethod)
-        throws JAXBException, XMLStreamException, FactoryConfigurationError, TypeConversionException {
+    protected <T> T marshall(Class<T> type, Exchange exchange, Object value, TypeConverter converter,
+                             Method objectFactoryMethod, boolean prettyPrint)
+        throws JAXBException, FactoryConfigurationError, TypeConversionException {
         LOG.trace("Marshal from value {} to type {}", value, type);
 
         T answer = null;
-        if (parentTypeConverter != null) {
+        if (converter != null) {
             // lets convert the object to a JAXB source and try convert that to
             // the required source
             JAXBContext context = createContext(value.getClass());
@@ -295,11 +232,12 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
             Marshaller marshaller = context.createMarshaller();
             Writer buffer = new StringWriter();
 
-            if (isPrettyPrint()) {
+            if (prettyPrint) {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             }
-            if (exchange != null && exchange.getProperty(Exchange.CHARSET_NAME, String.class) != null) {
-                marshaller.setProperty(Marshaller.JAXB_ENCODING, exchange.getProperty(Exchange.CHARSET_NAME, String.class));
+            String charset = exchange != null ? exchange.getProperty(Exchange.CHARSET_NAME, String.class) : null;
+            if (charset != null) {
+                marshaller.setProperty(Marshaller.JAXB_ENCODING, charset);
             }
             Object toMarshall = value;
             if (objectFactoryMethod != null) {
@@ -313,14 +251,14 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
                 }
             }
             if (needFiltering(exchange)) {
-                XMLStreamWriter writer = parentTypeConverter.convertTo(XMLStreamWriter.class, buffer);
-                FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer);
+                XMLStreamWriter writer = converter.convertTo(XMLStreamWriter.class, buffer);
+                FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer, charset);
                 marshaller.marshal(toMarshall, filteringWriter);
             } else {
                 marshaller.marshal(toMarshall, buffer);
             }
             // we need to pass the exchange
-            answer = parentTypeConverter.convertTo(type, exchange, buffer.toString());
+            answer = converter.convertTo(type, exchange, buffer.toString());
         }
         return answer;
     }
@@ -333,7 +271,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
                 xmlReader = (XMLStreamReader) value;
             } else if (value instanceof InputStream) {
                 if (needFiltering(exchange)) {
-                    xmlReader = staxConverter.createXMLStreamReader(new NonXmlFilterReader(new InputStreamReader((InputStream)value, IOHelper.getCharsetName(exchange))));
+                    xmlReader = staxConverter.createXMLStreamReader(new NonXmlFilterReader(new InputStreamReader((InputStream)value, ExchangeHelper.getCharsetName(exchange))));
                 } else {
                     xmlReader = staxConverter.createXMLStreamReader((InputStream)value, exchange);
                 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,23 +27,24 @@ import org.apache.avro.Protocol;
 import org.apache.avro.reflect.ReflectData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.URISupport;
 
-public class AvroComponent extends UriEndpointComponent {
+@Component("avro")
+public class AvroComponent extends DefaultComponent {
 
-    private ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<String, AvroListener>();
+    private ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<>();
 
     @Metadata(label = "advanced")
     private AvroConfiguration configuration;
 
     public AvroComponent() {
-        super(AvroEndpoint.class);
     }
 
     public AvroComponent(CamelContext context) {
-        super(context, AvroEndpoint.class);
+        super(context);
     }
 
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,18 +25,19 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.lightcouch.Response;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CouchDbProducerTest {
 
     @Mock
@@ -58,12 +59,10 @@ public class CouchDbProducerTest {
 
     @Before
     public void before() {
-        initMocks(this);
         producer = new CouchDbProducer(endpoint, client);
         when(exchange.getIn()).thenReturn(msg);
     }
 
-    @SuppressWarnings("unchecked")
     @Test(expected = InvalidPayloadException.class)
     public void testBodyMandatory() throws Exception {
         when(msg.getMandatoryBody()).thenThrow(InvalidPayloadException.class);
@@ -89,7 +88,6 @@ public class CouchDbProducerTest {
         verify(msg).setHeader(CouchDbConstants.HEADER_DOC_REV, rev);
     }
 
-    @SuppressWarnings("unchecked")
     @Test(expected = InvalidPayloadException.class)
     public void testNullSaveResponseThrowsError() throws Exception {
         when(exchange.getIn().getMandatoryBody()).thenThrow(InvalidPayloadException.class);
@@ -116,11 +114,27 @@ public class CouchDbProducerTest {
         verify(msg).setHeader(CouchDbConstants.HEADER_DOC_ID, id);
         verify(msg).setHeader(CouchDbConstants.HEADER_DOC_REV, rev);
     }
+    
+    @Test
+    public void testGetResponse() throws Exception {
+        String id = UUID.randomUUID().toString();
+
+        JsonObject doc = new JsonObject();
+        doc.addProperty("_id", id);
+
+        when(msg.getHeader(CouchDbConstants.HEADER_METHOD, String.class)).thenReturn("GET");
+        when(msg.getHeader(CouchDbConstants.HEADER_DOC_ID, String.class)).thenReturn(id);
+        when(msg.getMandatoryBody()).thenReturn(doc);
+        when(client.get(id)).thenReturn(response);
+
+        producer.process(exchange);
+        verify(msg).getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
+    }
 
     @Test
     public void testStringBodyIsConvertedToJsonTree() throws Exception {
         when(msg.getMandatoryBody()).thenReturn("{ \"name\" : \"coldplay\" }");
-        when(client.save(anyObject())).thenAnswer(new Answer<Response>() {
+        when(client.save(any())).thenAnswer(new Answer<Response>() {
 
             @Override
             public Response answer(InvocationOnMock invocation) throws Throwable {

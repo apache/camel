@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,10 +27,9 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.netty4.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory  {
         try {
             this.sslContext = createSSLContext(producer);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -94,7 +93,6 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory  {
         addToPipeline("handler", channelPipeline, new ClientChannelHandler(producer));
 
         LOG.trace("Created ChannelPipeline: {}", channelPipeline);
-        
     }
 
     private void addToPipeline(String name, ChannelPipeline pipeline, ChannelHandler handler) {
@@ -127,7 +125,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory  {
             SSLEngineFactory sslEngineFactory;
             if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
                 sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(producer.getContext().getClassResolver(),
+                answer = sslEngineFactory.createSSLContext(producer.getContext(),
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         "file:" + configuration.getKeyStoreFile().getPath(),
@@ -135,7 +133,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory  {
                         configuration.getPassphrase().toCharArray());
             } else {
                 sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(producer.getContext().getClassResolver(),
+                answer = sslEngineFactory.createSSLContext(producer.getContext(),
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         configuration.getKeyStoreResource(),

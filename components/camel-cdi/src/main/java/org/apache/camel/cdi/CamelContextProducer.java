@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,17 +33,19 @@ import javax.inject.Named;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultCamelContextNameStrategy;
-import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
+import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
+import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextNameStrategy;
+import org.apache.camel.support.DefaultRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 import static org.apache.camel.cdi.AnyLiteral.ANY;
+import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
 import static org.apache.camel.cdi.CdiSpiHelper.getRawType;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 final class CamelContextProducer<T extends CamelContext> extends DelegateProducer<T> {
 
@@ -64,7 +66,7 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
 
     @Override
     public T produce(CreationalContext<T> ctx) {
-        T context = super.produce(ctx);
+        T context = createCamelContextWithTCCL(() -> super.produce(ctx), annotated);
 
         // Do not override the name if it's been already set (in the bean constructor for example)
         if (context.getNameStrategy() instanceof DefaultCamelContextNameStrategy) {
@@ -74,7 +76,7 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
         // Add bean registry and Camel injector
         if (context instanceof DefaultCamelContext) {
             DefaultCamelContext adapted = context.adapt(DefaultCamelContext.class);
-            adapted.setRegistry(new CdiCamelRegistry(manager));
+            adapted.setRegistry(new DefaultRegistry(new CdiCamelBeanRepository(manager)));
             adapted.setInjector(new CdiCamelInjector(context.getInjector(), manager));
         } else {
             // Fail fast for the time being to avoid side effects by the time these two methods get declared on the CamelContext interface
@@ -113,9 +115,7 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
     }
 
     private static CamelContextNameStrategy nameStrategy(Annotated annotated) {
-        if (annotated.isAnnotationPresent(ContextName.class)) {
-            return new ExplicitCamelContextNameStrategy(annotated.getAnnotation(ContextName.class).value());
-        } else if (annotated.isAnnotationPresent(Named.class)) {
+        if (annotated.isAnnotationPresent(Named.class)) {
             // TODO: support stereotype with empty @Named annotation
             String name = annotated.getAnnotation(Named.class).value();
             if (name.isEmpty()) {

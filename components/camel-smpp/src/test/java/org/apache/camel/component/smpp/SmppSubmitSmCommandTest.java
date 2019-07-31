@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.smpp;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -25,7 +24,7 @@ import java.util.TimeZone;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.ESMClass;
@@ -43,15 +42,13 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.aryEq;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isNull;
-import static org.easymock.EasyMock.not;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 public class SmppSubmitSmCommandTest {
 
@@ -77,8 +74,9 @@ public class SmppSubmitSmCommandTest {
 
     @Before
     public void setUp() {
-        session = createMock(SMPPSession.class);
+        session = mock(SMPPSession.class);
         config = new SmppConfiguration();
+        config.setServiceType("CMT");
 
         command = new SmppSubmitSmCommand(session, config);
     }
@@ -89,18 +87,14 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitSm");
         exchange.getIn().setHeader(SmppConstants.ID, "1");
         exchange.getIn().setBody("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()), eq((byte) 0), eq((byte) 1),
                 (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq(ReplaceIfPresentFlag.DEFAULT.value()),
                 eq(DataCodings.newInstance((byte) 0)), eq((byte) 0),
-                aryEq("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890".getBytes())))
-                .andReturn("1");
-
-        replay(session);
+                eq("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890".getBytes())))
+                .thenReturn("1");
 
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
@@ -119,22 +113,18 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitSm");
         exchange.getIn().setHeader(SmppConstants.ID, "1");
         exchange.getIn().setBody("12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901");
-        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()), eq((byte) 0), eq((byte) 1),
                 (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq(ReplaceIfPresentFlag.DEFAULT.value()),
-                eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), aryEq(firstSM)))
-                .andReturn("1");
-        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+                eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), eq(firstSM)))
+                .thenReturn("1");
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()), eq((byte) 0), eq((byte) 1),
                 (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq(ReplaceIfPresentFlag.DEFAULT.value()),
                 eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), eq(secondSM)))
-                .andReturn("2");
-
-        replay(session);
+                .thenReturn("2");
 
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals(Arrays.asList("1", "2"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(2, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
@@ -153,22 +143,18 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.ID, "1");
         exchange.getIn().setHeader(SmppConstants.SPLITTING_POLICY, "REJECT");
         exchange.getIn().setBody("12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901");
-        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()), eq((byte) 0), eq((byte) 1),
                 (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq(ReplaceIfPresentFlag.DEFAULT.value()),
-                eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), aryEq(firstSM)))
-                .andReturn("1");
-        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+                eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), eq(firstSM)))
+                .thenReturn("1");
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()), eq((byte) 0), eq((byte) 1),
                 (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq(ReplaceIfPresentFlag.DEFAULT.value()),
                 eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), eq(secondSM)))
-                .andReturn("2");
-
-        replay(session);
+                .thenReturn("2");
 
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals(Arrays.asList("1", "2"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(2, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
@@ -186,17 +172,13 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.ID, "1");
         exchange.getIn().setHeader(SmppConstants.SPLITTING_POLICY, "TRUNCATE");
         exchange.getIn().setBody("12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901");
-        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()), eq((byte) 0), eq((byte) 1),
                 (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq(ReplaceIfPresentFlag.DEFAULT.value()),
-                eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), aryEq(firstSM)))
-                .andReturn("1");
-
-        replay(session);
+                eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), eq(firstSM)))
+                .thenReturn("1");
 
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
@@ -220,17 +202,13 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
         exchange.getIn().setBody("short message body");
-        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
                 eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100+"), eq("-300101003702200+"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
-                eq(ReplaceIfPresentFlag.REPLACE.value()), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes())))
-                .andReturn("1");
-
-        replay(session);
+                eq(ReplaceIfPresentFlag.REPLACE.value()), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), eq("short message body".getBytes())))
+                .thenReturn("1");
 
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
@@ -254,7 +232,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
         exchange.getIn().setBody("short message body");
-        Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
+        Map<String, String> optionalParameters = new LinkedHashMap<>();
         optionalParameters.put("SOURCE_SUBADDRESS", "1292");
         optionalParameters.put("ADDITIONAL_STATUS_INFO_TEXT", "urgent");
         optionalParameters.put("DEST_ADDR_SUBUNIT", "4");
@@ -262,21 +240,17 @@ public class SmppSubmitSmCommandTest {
         optionalParameters.put("QOS_TIME_TO_LIVE", "3600000");
         optionalParameters.put("ALERT_ON_MESSAGE_DELIVERY", null);
         exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
-        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
                 eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100+"), eq("-300101003702200+"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
                 eq(ReplaceIfPresentFlag.REPLACE.value()), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0),
-                aryEq("short message body".getBytes()), eq(new OptionalParameter.Source_subaddress("1292".getBytes())),
+                eq("short message body".getBytes()), eq(new OptionalParameter.Source_subaddress("1292".getBytes())),
                 eq(new OptionalParameter.Additional_status_info_text("urgent".getBytes())), eq(new OptionalParameter.Dest_addr_subunit((byte) 4)),
                 eq(new OptionalParameter.Dest_telematics_id((short) 2)), eq(new OptionalParameter.Qos_time_to_live(3600000)),
                 eq(new OptionalParameter.Alert_on_message_delivery((byte) 0))))
-                .andReturn("1");
-
-        replay(session);
+                .thenReturn("1");
 
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
@@ -300,7 +274,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
         exchange.getIn().setBody("short message body");
-        Map<Short, Object> optionalParameters = new LinkedHashMap<Short, Object>();
+        Map<Short, Object> optionalParameters = new LinkedHashMap<>();
         // standard optional parameter
         optionalParameters.put(Short.valueOf((short) 0x0202), "1292".getBytes("UTF-8"));
         optionalParameters.put(Short.valueOf((short) 0x001D), "urgent");
@@ -316,11 +290,11 @@ public class SmppSubmitSmCommandTest {
         optionalParameters.put(Short.valueOf((short) 0x2154), Integer.valueOf(7400000));
         optionalParameters.put(Short.valueOf((short) 0x2155), null);
         exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETER, optionalParameters);
-        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
                 eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100+"), eq("-300101003702200+"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
                 eq(ReplaceIfPresentFlag.REPLACE.value()), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0),
-                aryEq("short message body".getBytes()),
+                eq("short message body".getBytes()),
                 eq(new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292")),
                 eq(new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent")),
                 eq(new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 4)),
@@ -333,13 +307,9 @@ public class SmppSubmitSmCommandTest {
                 eq(new OptionalParameter.Short((short) 0x2153, (short) 9)),
                 eq(new OptionalParameter.Int((short) 0x2154, 7400000)),
                 eq(new OptionalParameter.Null((short) 0x2155))))
-                .andReturn("1");
-
-        replay(session);
+                .thenReturn("1");
 
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
@@ -363,17 +333,13 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
         exchange.getIn().setBody("short message body");
-        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
                 eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100+"), eq("000003000000000R"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
-                eq(ReplaceIfPresentFlag.REPLACE.value()), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes())))
-                .andReturn("1");
-
-        replay(session);
+                eq(ReplaceIfPresentFlag.REPLACE.value()), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), eq("short message body".getBytes())))
+                .thenReturn("1");
 
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
@@ -388,16 +354,14 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitSm");
         exchange.getIn().setHeader(SmppConstants.ALPHABET, Alphabet.ALPHA_8_BIT.value());
         exchange.getIn().setBody(body);
-        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN),
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN),
                 eq("1717"), eq(new ESMClass()), eq((byte) 0), eq((byte) 1), (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                eq(ReplaceIfPresentFlag.DEFAULT.value()), not(eq(DataCodings.newInstance(incorrectDataCoding))), eq((byte) 0), aryEq(body)))
-                .andReturn("1");
-
-        replay(session);
+                eq(ReplaceIfPresentFlag.DEFAULT.value()), argThat(not(DataCodings.newInstance(incorrectDataCoding))), eq((byte) 0), eq(body)))
+                .thenReturn("1");
 
         command.execute(exchange);
 
-        verify(session);
+        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -410,7 +374,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitSm");
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, dataCoding);
         exchange.getIn().setBody(body);
-        expect(session.submitShortMessage(eq("CMT"),
+        when(session.submitShortMessage(eq("CMT"),
                                           eq(TypeOfNumber.UNKNOWN),
                                           eq(NumberingPlanIndicator.UNKNOWN),
                                           eq("1616"),
@@ -426,14 +390,12 @@ public class SmppSubmitSmCommandTest {
                                           eq(ReplaceIfPresentFlag.DEFAULT.value()),
                                           eq(DataCodings.newInstance(dataCoding)),
                                           eq((byte) 0),
-                                          aryEq(bodyNarrowed)))
-            .andReturn("1");
-
-        replay(session);
+                                          eq(bodyNarrowed)))
+            .thenReturn("1");
 
         command.execute(exchange);
 
-        verify(session);
+        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -446,7 +408,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitSm");
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, dataCoding);
         exchange.getIn().setBody(body);
-        expect(session.submitShortMessage(eq("CMT"),
+        when(session.submitShortMessage(eq("CMT"),
                                           eq(TypeOfNumber.UNKNOWN),
                                           eq(NumberingPlanIndicator.UNKNOWN),
                                           eq("1616"),
@@ -462,14 +424,12 @@ public class SmppSubmitSmCommandTest {
                                           eq(ReplaceIfPresentFlag.DEFAULT.value()),
                                           eq(DataCodings.newInstance(dataCoding)),
                                           eq((byte) 0),
-                                          aryEq(bodyNarrowed)))
-            .andReturn("1");
-
-        replay(session);
+                                          eq(bodyNarrowed)))
+            .thenReturn("1");
 
         command.execute(exchange);
 
-        verify(session);
+        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -481,7 +441,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitSm");
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, dataCoding);
         exchange.getIn().setBody(body);
-        expect(session.submitShortMessage(eq("CMT"),
+        when(session.submitShortMessage(eq("CMT"),
                                           eq(TypeOfNumber.UNKNOWN),
                                           eq(NumberingPlanIndicator.UNKNOWN),
                                           eq("1616"),
@@ -497,14 +457,12 @@ public class SmppSubmitSmCommandTest {
                                           eq(ReplaceIfPresentFlag.DEFAULT.value()),
                                           eq(DataCodings.newInstance(dataCoding)),
                                           eq((byte) 0),
-                                          aryEq(body)))
-            .andReturn("1");
-
-        replay(session);
+                                          eq(body)))
+            .thenReturn("1");
 
         command.execute(exchange);
 
-        verify(session);
+        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -516,7 +474,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitSm");
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, dataCoding);
         exchange.getIn().setBody(body);
-        expect(session.submitShortMessage(eq("CMT"),
+        when(session.submitShortMessage(eq("CMT"),
                                           eq(TypeOfNumber.UNKNOWN),
                                           eq(NumberingPlanIndicator.UNKNOWN),
                                           eq("1616"),
@@ -532,14 +490,12 @@ public class SmppSubmitSmCommandTest {
                                           eq(ReplaceIfPresentFlag.DEFAULT.value()),
                                           eq(DataCodings.newInstance(dataCoding)),
                                           eq((byte) 0),
-                                          aryEq(body)))
-            .andReturn("1");
-
-        replay(session);
+                                          eq(body)))
+            .thenReturn("1");
 
         command.execute(exchange);
 
-        verify(session);
+        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -552,7 +508,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.ALPHABET, Alphabet.ALPHA_DEFAULT.value());
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, binDataCoding);
         exchange.getIn().setBody(body);
-        expect(session.submitShortMessage(eq("CMT"),
+        when(session.submitShortMessage(eq("CMT"),
                                           eq(TypeOfNumber.UNKNOWN),
                                           eq(NumberingPlanIndicator.UNKNOWN),
                                           eq("1616"),
@@ -568,14 +524,12 @@ public class SmppSubmitSmCommandTest {
                                           eq(ReplaceIfPresentFlag.DEFAULT.value()),
                                           eq(DataCodings.newInstance(binDataCoding)),
                                           eq((byte) 0),
-                                          aryEq(body)))
-            .andReturn("1");
-
-        replay(session);
+                                          eq(body)))
+            .thenReturn("1");
 
         command.execute(exchange);
 
-        verify(session);
+        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -589,7 +543,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.ALPHABET, Alphabet.ALPHA_8_BIT.value());
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, latin1DataCoding);
         exchange.getIn().setBody(body);
-        expect(session.submitShortMessage(eq("CMT"),
+        when(session.submitShortMessage(eq("CMT"),
                                           eq(TypeOfNumber.UNKNOWN),
                                           eq(NumberingPlanIndicator.UNKNOWN),
                                           eq("1616"),
@@ -605,13 +559,11 @@ public class SmppSubmitSmCommandTest {
                                           eq(ReplaceIfPresentFlag.DEFAULT.value()),
                                           eq(DataCodings.newInstance(latin1DataCoding)),
                                           eq((byte) 0),
-                                          aryEq(bodyNarrowed)))
-            .andReturn("1");
-
-        replay(session);
+                                          eq(bodyNarrowed)))
+            .thenReturn("1");
 
         command.execute(exchange);
 
-        verify(session);
+        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
     }
 }

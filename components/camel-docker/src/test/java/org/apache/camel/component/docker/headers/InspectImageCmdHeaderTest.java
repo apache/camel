@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,11 @@ import com.github.dockerjava.api.command.InspectImageCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Inspect Image Request headers are parsed properly
@@ -45,13 +47,13 @@ public class InspectImageCmdHeaderTest extends BaseDockerHeaderTest<InspectImage
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 
-        Mockito.verify(dockerClient, Mockito.times(1)).inspectImageCmd(Matchers.eq(imageId));
+        Mockito.verify(dockerClient, Mockito.times(1)).inspectImageCmd(eq(imageId));
 
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.inspectImageCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.inspectImageCmd(anyString())).thenReturn(mockObject);
 
 
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,16 +37,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * password: password
  * <br/>
  * A SMSC for test is available here: http://www.seleniumsoftware.com/downloads.html
- * 
- * @version 
  */
 @Ignore("Must be manually tested")
 public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
     
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private Endpoint start;
     
     @Test

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.scp;
 
+import java.io.File;
+import java.nio.file.Files;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Assume;
@@ -108,5 +112,37 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
         template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    @Ignore("Fails on CI servers")
+    public void testScpProducePrivateKeyFromClasspath() throws Exception {
+        Assume.assumeTrue(this.isSetupComplete());
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        String uri = getScpUri() + "?username=admin&privateKeyFile=classpath:camel-key.priv&privateKeyFilePassphrase=password&knownHostsFile=" + getKnownHostsFile();
+        template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
+
+        assertMockEndpointsSatisfied();
+    }
+  
+    @Test
+    @Ignore("Fails on CI servers")
+    public void testScpProducePrivateKeyByte() throws Exception {
+        Assume.assumeTrue(this.isSetupComplete());
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        String uri = getScpUri() + "?username=admin&privateKeyBytes=#privKey&privateKeyFilePassphrase=password&knownHostsFile=" + getKnownHostsFile();
+        template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
+
+        assertMockEndpointsSatisfied();
+    }
+    
+    @BindToRegistry("privKey")
+    public byte[] loadPrivateKey() throws Exception {
+        byte[] privKey = Files.readAllBytes(new File("src/test/resources/camel-key.priv").toPath());
+        return privKey;
     }
 }

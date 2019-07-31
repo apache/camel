@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,24 +19,24 @@ package org.apache.camel.component.event;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * The spring-event component allows to listen for Spring Application Events.
  */
-@UriEndpoint(firstVersion = "1.4.0", scheme = "spring-event", title = "Spring Event", syntax = "spring-event:name", consumerClass = EventConsumer.class, label = "spring,eventbus")
+@UriEndpoint(firstVersion = "1.4.0", scheme = "spring-event", title = "Spring Event", syntax = "spring-event:name", label = "spring,eventbus")
 public class EventEndpoint extends DefaultEndpoint implements ApplicationContextAware {
     private LoadBalancer loadBalancer;
     private ApplicationContext applicationContext;
@@ -48,16 +48,6 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
         super(endpointUri, component);
         this.applicationContext = component.getApplicationContext();
         this.name = name;
-    }
-
-    /**
-     * <b>Note:</b> It is preferred to create endpoints using the associated
-     * component.
-     * @deprecated
-     */
-    @Deprecated
-    public EventEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -74,10 +64,6 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     public Producer createProducer() throws Exception {
@@ -127,12 +113,12 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
     // -------------------------------------------------------------------------
     public synchronized void consumerStarted(EventConsumer consumer) {
         getComponent().consumerStarted(this);
-        getLoadBalancer().addProcessor(consumer.getProcessor());
+        getLoadBalancer().addProcessor(consumer.getAsyncProcessor());
     }
 
     public synchronized void consumerStopped(EventConsumer consumer) {
         getComponent().consumerStopped(this);
-        getLoadBalancer().removeProcessor(consumer.getProcessor());
+        getLoadBalancer().removeProcessor(consumer.getAsyncProcessor());
     }
 
     protected LoadBalancer createLoadBalancer() {

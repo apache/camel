@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,15 +30,17 @@ import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.log.CommonsLogLogChute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Transforms the message using a Velocity template.
@@ -60,11 +62,6 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
     public VelocityEndpoint(String uri, VelocityComponent component, String resourceUri) {
         super(uri, component, resourceUri);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override
@@ -90,15 +87,17 @@ public class VelocityEndpoint extends ResourceEndpoint {
             properties.setProperty(RuntimeConstants.RESOURCE_LOADER, "file, class");
             properties.setProperty("class.resource.loader.description", "Camel Velocity Classpath Resource Loader");
             properties.setProperty("class.resource.loader.class", CamelVelocityClasspathResourceLoader.class.getName());
-            properties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
-            properties.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
+            final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
+            properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
+            
+          
 
             // load the velocity properties from property file which may overrides the default ones
             if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
                 InputStream reader = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
                 try {
                     properties.load(reader);
-                    log.info("Loaded the velocity configuration file " + getPropertiesFile());
+                    log.info("Loaded the velocity configuration file {}", getPropertiesFile());
                 } finally {
                     IOHelper.close(reader, getPropertiesFile(), log);
                 }
@@ -188,7 +187,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
             exchange.getIn().removeHeader(VelocityConstants.VELOCITY_TEMPLATE);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{getResourceUri(), path, getEndpointUri()});
+                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
             }
             reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());
         }
@@ -218,6 +217,5 @@ public class VelocityEndpoint extends ResourceEndpoint {
         Message out = exchange.getOut();
         out.setBody(buffer.toString());
         out.setHeaders(exchange.getIn().getHeaders());
-        out.setAttachments(exchange.getIn().getAttachments());
     }
 }

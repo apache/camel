@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xquery;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,15 +26,13 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.query.StaticQueryContext;
 import org.apache.camel.Component;
-import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ResourceHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Transforms the message using a XQuery template using Saxon.
@@ -41,11 +40,9 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "1.0.0", scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri", label = "transformation")
 public class XQueryEndpoint extends ProcessorEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(XQueryEndpoint.class);
-
     private volatile XQueryBuilder xquery;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String resourceUri;
     @UriParam(label = "advanced")
     private Configuration configuration;
@@ -54,9 +51,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     @UriParam(label = "advanced")
     private StaticQueryContext staticQueryContext;
     @UriParam(label = "advanced")
-    private Map<String, Object> parameters = new HashMap<String, Object>();
+    private Map<String, Object> parameters = new HashMap<>();
     @UriParam
-    private Map<String, String> namespacePrefixes = new HashMap<String, String>();
+    private Map<String, String> namespacePrefixes = new HashMap<>();
     @UriParam(defaultValue = "DOM")
     private ResultFormat resultsFormat = ResultFormat.DOM;
     @UriParam(label = "advanced")
@@ -223,10 +220,10 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
-        LOG.debug("{} using schema resource: {}", this, resourceUri);
-        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), resourceUri);
+        log.debug("{} using schema resource: {}", this, resourceUri);
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
 
-        this.xquery = XQueryBuilder.xquery(url);
+        this.xquery = XQueryBuilder.xquery(is);
         this.xquery.setConfiguration(getConfiguration());
         this.xquery.setConfigurationProperties(getConfigurationProperties());
         this.xquery.setStaticQueryContext(getStaticQueryContext());
@@ -238,6 +235,7 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         this.xquery.setStripsAllWhiteSpace(isStripsAllWhiteSpace());
         this.xquery.setAllowStAX(isAllowStAX());
         this.xquery.setHeaderName(getHeaderName());
+        this.xquery.setModuleURIResolver(getModuleURIResolver());
 
         setProcessor(xquery);
 

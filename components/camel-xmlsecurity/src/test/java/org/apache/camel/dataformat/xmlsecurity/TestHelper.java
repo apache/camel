@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,6 +25,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -34,16 +35,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.diff.Diff;
 
 public class TestHelper {
     
-    protected static final String NS_XML_FRAGMENT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + "<ns1:cheesesites xmlns:ns1=\"http://cheese.xmlsecurity.camel.apache.org/\">" 
+    protected static final String NS_XML_FRAGMENT = "<ns1:cheesesites xmlns:ns1=\"http://cheese.xmlsecurity.camel.apache.org/\">" 
         + "<netherlands>"
         + "<source>cow</source>"
         + "<cheese>gouda</cheese>"
@@ -58,8 +58,7 @@ public class TestHelper {
         + "</france>"
         + "</ns1:cheesesites>";
     
-    protected static final String XML_FRAGMENT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + "<cheesesites>"
+    protected static final String XML_FRAGMENT = "<cheesesites>"
         + "<netherlands>"
         + "<source>cow</source>"
         + "<cheese>gouda</cheese>"
@@ -144,7 +143,6 @@ public class TestHelper {
         testEncryption(XML_FRAGMENT, context);
     }
     
-    
     protected void testDecryption(String fragment, CamelContext context) throws Exception {
         MockEndpoint resultEndpoint = context.getEndpoint("mock:decrypted", MockEndpoint.class);
         resultEndpoint.setExpectedMessageCount(1);
@@ -160,14 +158,26 @@ public class TestHelper {
         Assert.assertFalse("The XML message has encrypted data.", hasEncryptedData(inDoc));
         
         // verify that the decrypted message matches what was sent
-        Document fragmentDoc = createDocumentfromInputStream(new ByteArrayInputStream(fragment.getBytes()), context);
-        Diff xmlDiff = XMLUnit.compareXML(fragmentDoc, inDoc);
+        Diff xmlDiff = DiffBuilder.compare(fragment).withTest(inDoc).checkForIdentical().build();
         
-        Assert.assertTrue("The decrypted document does not match the control document.", xmlDiff.identical());            
+        Assert.assertFalse("The decrypted document does not match the control document:\n" + xmlDiff.toString(), xmlDiff.hasDifferences());
     }
     
     protected void testDecryption(CamelContext context) throws Exception {
         testDecryption(XML_FRAGMENT, context);
+    }
+    
+    protected void testDecryptionNoEncryptedKey(CamelContext context) throws Exception {
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:decrypted", MockEndpoint.class);
+        resultEndpoint.setExpectedMessageCount(1);
+        context.start();
+        resultEndpoint.assertIsSatisfied(100);
+        Exchange exchange = resultEndpoint.getExchanges().get(0);
+        Document inDoc = getDocumentForInMessage(exchange);
+        XmlConverter converter = new XmlConverter();
+        String xmlStr = converter.toString(inDoc, exchange);
+        log.info(xmlStr);
+        Assert.assertFalse("The XML message has encrypted data.", hasEncryptedData(inDoc));
     }
     
     private boolean hasEncryptedData(Document doc) throws Exception {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,12 +31,11 @@ import org.jsmpp.util.MessageId;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class MessageReceiverListenerImplTest {
     
@@ -47,9 +46,9 @@ public class MessageReceiverListenerImplTest {
     
     @Before
     public void setUp() {
-        endpoint = createMock(SmppEndpoint.class);
-        processor = createMock(Processor.class);
-        exceptionHandler = createMock(ExceptionHandler.class);
+        endpoint = mock(SmppEndpoint.class);
+        processor = mock(Processor.class);
+        exceptionHandler = mock(ExceptionHandler.class);
         
         listener = new MessageReceiverListenerImpl(endpoint, processor, exceptionHandler);
         listener.setMessageIDGenerator(new MessageIDGenerator() {
@@ -65,57 +64,51 @@ public class MessageReceiverListenerImplTest {
 
     @Test
     public void onAcceptAlertNotificationSuccess() throws Exception {
-        AlertNotification alertNotification = createMock(AlertNotification.class);
-        Exchange exchange = createMock(Exchange.class);
+        AlertNotification alertNotification = mock(AlertNotification.class);
+        Exchange exchange = mock(Exchange.class);
         
-        expect(endpoint.createOnAcceptAlertNotificationExchange(alertNotification))
-            .andReturn(exchange);
-        processor.process(exchange);
-        expect(exchange.getException()).andReturn(null);
-        
-        replay(endpoint, processor, exceptionHandler, alertNotification, exchange);
+        when(endpoint.createOnAcceptAlertNotificationExchange(alertNotification))
+            .thenReturn(exchange);
+        when(exchange.getException()).thenReturn(null);
         
         listener.onAcceptAlertNotification(alertNotification);
         
-        verify(endpoint, processor, exceptionHandler, alertNotification, exchange);
+        verify(endpoint).createOnAcceptAlertNotificationExchange(alertNotification);
+        verify(processor).process(exchange);
     }
     
     @Test
     public void onAcceptDeliverSmException() throws Exception {
-        DeliverSm deliverSm = createMock(DeliverSm.class);
-        Exchange exchange = createMock(Exchange.class);
+        DeliverSm deliverSm = mock(DeliverSm.class);
+        Exchange exchange = mock(Exchange.class);
         
-        expect(endpoint.createOnAcceptDeliverSmExchange(deliverSm))
-            .andReturn(exchange);
-        processor.process(exchange);
-        expect(exchange.getException()).andReturn(null);
+        when(endpoint.createOnAcceptDeliverSmExchange(deliverSm))
+            .thenReturn(exchange);
+        when(exchange.getException()).thenReturn(null);
 
-        replay(endpoint, processor, exceptionHandler, deliverSm, exchange);
-        
         listener.onAcceptDeliverSm(deliverSm);
         
-        verify(endpoint, processor, exceptionHandler, deliverSm, exchange);
+        verify(endpoint).createOnAcceptDeliverSmExchange(deliverSm);
+        verify(processor).process(exchange);
     }
     
     @Test
     public void onAcceptDataSmSuccess() throws Exception {
-        SMPPSession session = createMock(SMPPSession.class);
-        DataSm dataSm = createMock(DataSm.class);
-        Exchange exchange = createMock(Exchange.class);
+        SMPPSession session = mock(SMPPSession.class);
+        DataSm dataSm = mock(DataSm.class);
+        Exchange exchange = mock(Exchange.class);
         OptionalParameter[] optionalParameters = new OptionalParameter[]{};
         
-        expect(endpoint.createOnAcceptDataSm(dataSm, "1"))
-            .andReturn(exchange);
-        processor.process(exchange);
-        expect(exchange.getException()).andReturn(null);
-        expect(dataSm.getOptionalParameters())
-            .andReturn(optionalParameters);
-        
-        replay(endpoint, processor, exceptionHandler, session, dataSm, exchange);
+        when(endpoint.createOnAcceptDataSm(dataSm, "1"))
+            .thenReturn(exchange);
+        when(exchange.getException()).thenReturn(null);
+        when(dataSm.getOptionalParameters())
+            .thenReturn(optionalParameters);
         
         DataSmResult result = listener.onAcceptDataSm(dataSm, session);
         
-        verify(endpoint, processor, exceptionHandler, session, dataSm, exchange);
+        verify(endpoint).createOnAcceptDataSm(dataSm, "1");
+        verify(processor).process(exchange);
         
         assertEquals("1", result.getMessageId());
         assertSame(optionalParameters, result.getOptionalParameters());

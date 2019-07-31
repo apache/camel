@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
+import org.apache.camel.test.spring.CamelSpringRunner;
 import org.apache.camel.test.spring.MockEndpoints;
 import org.junit.After;
 import org.junit.Before;
@@ -49,26 +49,26 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@RunWith(CamelSpringJUnit4ClassRunner.class)
+@RunWith(CamelSpringRunner.class)
 @ContextConfiguration(
         classes = { CounterRouteTest.TestConfig.class },
         loader = CamelSpringDelegatingTestContextLoader.class)
 @MockEndpoints
 public class CounterRouteTest {
 
-    @EndpointInject(uri = "mock:out")
+    @EndpointInject("mock:out")
     private MockEndpoint endpoint;
 
-    @Produce(uri = "direct:in-1")
+    @Produce("direct:in-1")
     private ProducerTemplate producer1;
 
-    @Produce(uri = "direct:in-2")
+    @Produce("direct:in-2")
     private ProducerTemplate producer2;
 
-    @Produce(uri = "direct:in-3")
+    @Produce("direct:in-3")
     private ProducerTemplate producer3;
 
-    @Produce(uri = "direct:in-4")
+    @Produce("direct:in-4")
     private ProducerTemplate producer4;
 
     private MetricRegistry mockRegistry;
@@ -154,7 +154,7 @@ public class CounterRouteTest {
     public void testOverrideIncrementAndDecrement() throws Exception {
         when(mockRegistry.counter("A")).thenReturn(mockCounter);
         endpoint.expectedMessageCount(1);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(HEADER_COUNTER_INCREMENT, 912L);
         headers.put(HEADER_COUNTER_DECREMENT, 43219L);
         producer1.sendBodyAndHeaders(new Object(), headers);

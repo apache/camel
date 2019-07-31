@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,10 +29,10 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LoggingExceptionHandler;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +57,11 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
     public DisruptorConsumer(final DisruptorEndpoint endpoint, final Processor processor) {
         this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
+    }
+
+    @Override
+    public AsyncProcessor getProcessor() {
+        return processor;
     }
 
     public ExceptionHandler getExceptionHandler() {
@@ -96,7 +101,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
     }
 
     Set<LifecycleAwareExchangeEventHandler> createEventHandlers(final int concurrentConsumers) {
-        final Set<LifecycleAwareExchangeEventHandler> eventHandlers = new HashSet<LifecycleAwareExchangeEventHandler>();
+        final Set<LifecycleAwareExchangeEventHandler> eventHandlers = new HashSet<>();
 
         for (int i = 0; i < concurrentConsumers; ++i) {
             eventHandlers.add(new ConsumerEventHandler(i, concurrentConsumers));

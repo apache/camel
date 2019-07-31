@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,10 +29,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class HttpMethodsTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -50,11 +46,12 @@ public class HttpMethodsTest extends BaseHttpTest {
                 registerHandler("/patch", new BasicValidationHandler("PATCH", null, null, getExpectedContent())).
                 registerHandler("/patch1", new BasicValidationHandler("PATCH", null, "rocks camel?", getExpectedContent())).
                 registerHandler("/post", new BasicValidationHandler("POST", null, null, getExpectedContent())).
-                registerHandler("/post1", new BasicValidationHandler("POST", null, null, getExpectedContent())).
+                registerHandler("/post1", new BasicValidationHandler("POST", null, "rocks camel?", getExpectedContent())).
                 registerHandler("/put", new BasicValidationHandler("PUT", null, null, getExpectedContent())).
                 registerHandler("/trace", new BasicValidationHandler("TRACE", null, null, getExpectedContent())).
                 registerHandler("/options", new BasicValidationHandler("OPTIONS", null, null, getExpectedContent())).
                 registerHandler("/delete", new BasicValidationHandler("DELETE", null, null, getExpectedContent())).
+                registerHandler("/delete1", new BasicValidationHandler("DELETE", null, null, getExpectedContent())).
                 registerHandler("/head", new BasicValidationHandler("HEAD", null, null, getExpectedContent())).create();
         localServer.start();
 
@@ -76,6 +73,18 @@ public class HttpMethodsTest extends BaseHttpTest {
 
         Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/get", new Processor() {
             public void process(Exchange exchange) throws Exception {
+            }
+        });
+
+        assertExchange(exchange);
+    }
+    
+    @Test
+    public void httpGetWithUriParam() throws Exception {
+
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/get?httpMethod=GET", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
             }
         });
 
@@ -195,6 +204,21 @@ public class HttpMethodsTest extends BaseHttpTest {
     }
 
     @Test
+    public void httpDeleteWithBody() throws Exception {
+
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/delete1?deleteWithBody=true", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "DELETE");
+                exchange.getIn().setBody("rocks camel?");
+            }
+        });
+
+        assertExchange(exchange);
+
+        // the http4 server will not provide body on HTTP DELETE so we cannot test the server side
+    }
+
+    @Test
     public void httpHead() throws Exception {
 
         Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/head", new Processor() {
@@ -210,4 +234,5 @@ public class HttpMethodsTest extends BaseHttpTest {
         assertHeaders(out.getHeaders());
         assertNull(out.getBody(String.class));
     }
+
 }

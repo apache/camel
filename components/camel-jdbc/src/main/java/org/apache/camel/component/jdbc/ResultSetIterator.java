@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -56,7 +56,10 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
             int columnNumber = i + 1;
             String columnName = getColumnName(metaData, columnNumber, isJDBC4);
             int columnType = metaData.getColumnType(columnNumber);
-            if (columnType == Types.CLOB || columnType == Types.BLOB) {
+
+            if (columnType == Types.CLOB) {
+                columns[i] = new ClobColumn(columnName, columnNumber);
+            } else if (columnType == Types.BLOB) {
                 columns[i] = new BlobColumn(columnName, columnNumber);
             } else {
                 columns[i] = new DefaultColumn(columnName, columnNumber);
@@ -78,7 +81,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         }
 
         try {
-            Map<String, Object> row = new LinkedHashMap<String, Object>();
+            Map<String, Object> row = new LinkedHashMap<>();
             for (Column column : columns) {
                 if (useGetBytes && column instanceof BlobColumn) {
                     row.put(column.getName(), ((BlobColumn) column).getBytes(resultSet));
@@ -101,7 +104,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
 
     public Set<String> getColumnNames() {
         // New copy each time in order to ensure immutability
-        Set<String> columnNames = new LinkedHashSet<String>(columns.length);
+        Set<String> columnNames = new LinkedHashSet<>(columns.length);
         for (Column column : columns) {
             columnNames.add(column.getName());
         }
@@ -130,7 +133,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         try {
             resultSet.close();
         } catch (SQLException e) {
-            LOG.warn("Error by closing result set: " + e, e);
+            LOG.warn("Error by closing result set: {}", e, e);
         }
     }
 
@@ -138,7 +141,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         try {
             statement.close();
         } catch (SQLException e) {
-            LOG.warn("Error by closing statement: " + e, e);
+            LOG.warn("Error by closing statement: {}", e, e);
         }
     }
 
@@ -146,7 +149,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         try {
             connection.close();
         } catch (SQLException e) {
-            LOG.warn("Error by closing connection: " + e, e);
+            LOG.warn("Error by closing connection: {}", e, e);
         }
     }
 
@@ -207,11 +210,31 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
 
         @Override
         public Object getValue(ResultSet resultSet) throws SQLException {
-            return resultSet.getString(columnNumber);
+            return resultSet.getBlob(columnNumber);
         }
 
         public Object getBytes(ResultSet resultSet) throws SQLException {
             return resultSet.getBytes(columnNumber);
+        }
+    }
+
+    private static final class ClobColumn implements Column {
+        private final int columnNumber;
+        private final String name;
+
+        private ClobColumn(String name, int columnNumber) {
+            this.name = name;
+            this.columnNumber = columnNumber;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public Object getValue(ResultSet resultSet) throws SQLException {
+            return resultSet.getClob(columnNumber);
         }
     }
 }

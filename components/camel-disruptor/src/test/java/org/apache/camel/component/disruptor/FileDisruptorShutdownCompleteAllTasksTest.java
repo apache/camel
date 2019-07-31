@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,20 +15,18 @@
  * limitations under the License.
  */
 package org.apache.camel.component.disruptor;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class FileDisruptorShutdownCompleteAllTasksTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/disruptor");
         super.setUp();
@@ -69,10 +67,5 @@ public class FileDisruptorShutdownCompleteAllTasksTest extends CamelTestSupport 
 
         // should route all 5
         assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf;
 
 import java.util.HashMap;
@@ -82,7 +81,7 @@ public class CxfConsumerTest extends CamelTestSupport {
                         // Put the result back
                         exchange.getOut().setBody(result);
                         // set up the response context which force start document
-                        Map<String, Object> map = new HashMap<String, Object>();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("org.apache.cxf.stax.force-start-document", Boolean.TRUE);
                         exchange.getOut().setHeader(Client.RESPONSE_CONTEXT, map);
                     }

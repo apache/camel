@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.atmos;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atmos.integration.consumer.AtmosScheduledPollGetConsumer;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -25,25 +26,23 @@ import org.junit.Test;
 
 public class AtmosConsumerTest extends CamelTestSupport {
 
+    @EndpointInject("atmos:foo/get?remotePath=/path&fullTokenId=fakeToken&secretKey=fakeSecret&uri=https://fake/uri")
+    private AtmosEndpoint atmosEndpoint;
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("atmos:foo/get?remotePath=/path").to("mock:test");
+                from(atmosEndpoint)
+                    .to("mock:test");
             }
         };
     }
 
     @Test
     public void shouldCreateGetConsumer() throws Exception {
-        // Given
-        AtmosEndpoint atmosEndpoint = context.getEndpoint("atmos:foo/get?remotePath=/path", AtmosEndpoint.class);
-
-        // When
         Consumer consumer = atmosEndpoint.createConsumer(null);
-
-        // Then
         Assert.assertTrue(consumer instanceof AtmosScheduledPollGetConsumer);
         assertEquals("foo", atmosEndpoint.getConfiguration().getName());
     }

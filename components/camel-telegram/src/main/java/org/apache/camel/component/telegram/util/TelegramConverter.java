@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.telegram.TelegramConstants;
 import org.apache.camel.component.telegram.TelegramMediaType;
+import org.apache.camel.component.telegram.TelegramParseMode;
 import org.apache.camel.component.telegram.model.IncomingMessage;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
@@ -32,7 +33,7 @@ import org.apache.camel.component.telegram.model.Update;
 /**
  * Utilities for converting between Telegram APIs and standard java objects.
  */
-@Converter
+@Converter(loader = true)
 public final class TelegramConverter {
 
     private TelegramConverter() {
@@ -83,6 +84,12 @@ public final class TelegramConverter {
         case TEXT: {
             OutgoingTextMessage txt = new OutgoingTextMessage();
             txt.setText(message);
+
+            TelegramParseMode parseMode = getParseMode(exchange);
+            if (parseMode != null) {
+                txt.setParseMode(parseMode.getCode());
+            }
+
             result = txt;
             break;
         }
@@ -172,6 +179,18 @@ public final class TelegramConverter {
         }
 
         return result;
+    }
+
+    private static TelegramParseMode getParseMode(Exchange exchange) {
+        TelegramParseMode mode = null;
+        Object parseMode = exchange.getIn().getHeader(TelegramConstants.TELEGRAM_PARSE_MODE);
+        if (parseMode instanceof String) {
+            mode = TelegramParseMode.valueOf((String) parseMode);
+        } else {
+            mode = (TelegramParseMode) parseMode;
+        }
+
+        return mode;
     }
 
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,13 +20,13 @@ import groovy.lang.GroovyShell;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -38,7 +38,7 @@ public class GroovyShellFactoryTest extends CamelTestSupport {
         GroovyShellFactory groovyShellFactory = mock(GroovyShellFactory.class);
         given(groovyShellFactory.createGroovyShell(any(Exchange.class))).willReturn(new GroovyShell());
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("groovyShellFactory", groovyShellFactory);
+        registry.bind("groovyShellFactory", groovyShellFactory);
         CamelContext camelContext = new DefaultCamelContext(registry);
 
         // When

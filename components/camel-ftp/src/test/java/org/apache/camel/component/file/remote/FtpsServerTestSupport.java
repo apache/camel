@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,13 +26,11 @@ import org.apache.ftpserver.ssl.SslConfigurationFactory;
 
 /**
  * Abstract base class for unit testing using a secure FTP Server (over SSL/TLS)
- * 
- * @version 
  */
 public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
     
-    protected static final String AUTH_VALUE_SSL = "SSL";
-    protected static final String AUTH_VALUE_TLS = "TLS";
+    protected static final String AUTH_VALUE_SSL = "SSLv3";
+    protected static final String AUTH_VALUE_TLS = "TLSv1.2";
 
     protected static final File FTPSERVER_KEYSTORE = new File("./src/test/resources/server.jks");
     protected static final String FTPSERVER_KEYSTORE_PASSWORD = "password";

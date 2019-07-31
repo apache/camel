@@ -1,0 +1,34 @@
+[[HowdoIinvokeCamelroutesfromJBI-HowdoIinvokeCamelroutesfromJBI]]
+= How do I invoke Camel routes from JBI?
+
+When you use the JBI endpoint as follows:
+
+[source,java]
+----
+from("jbi:endpoint:http://foo.bar.org/MyService/MyEndpoint")
+----
+
+you automatically expose the endpoint to the NMR bus where service qname
+is:
+
+----
+{http://foo.bar.org}MyService
+----
+
+and endpoint name is `MyEndpoint`.
+
+Then if you send a message via the JBI NMR to this JBI endpoint then it
+will be sent to the above Camel route.
+
+Sending works in the same way. You use:
+
+[source,java]
+----
+to("jbi:endpoint:http://foo.bar.org/MyService/MyEndpoint") 
+----
+
+to send messages to JBI endpoint deployed to the bus.
+
+I noticed that people are used to somehow 'declaring' endpoints in SMX.
+In Camel it is enough to simply start a flow from a jbi endpoint and
+Camel will create it automatically.

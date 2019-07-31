@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,10 +24,10 @@ import java.util.Properties;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ResourceLeakDetector;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.logging.log4j.core.LogEvent;
@@ -35,7 +35,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  *
@@ -84,15 +83,15 @@ public class BaseNettyTest extends CamelTestSupport {
 
     @AfterClass
     public static void verifyNoLeaks() throws Exception {
-        //Force GC to bring up leaks
+        // Force GC to bring up leaks
         System.gc();
-        //Kick leak detection logging
+        // Kick leak detection logging
         ByteBufAllocator.DEFAULT.buffer(1).release();
         Collection<LogEvent> events = LogCaptureAppender.getEvents();
         if (!events.isEmpty()) {
             String message = "Leaks detected while running tests: " + events;
             // Just write the message into log to help debug
-            for (LogEvent event: events) {
+            for (LogEvent event : events) {
                 LOG.info(event.getMessage().getFormattedMessage());
             }
             LogCaptureAppender.reset();
@@ -107,15 +106,13 @@ public class BaseNettyTest extends CamelTestSupport {
         return context;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("prop")
+    public Properties loadProperties() throws Exception {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
-        jndi.bind("prop", prop);
 
-        return jndi;
+        return prop;
     }
 
     protected int getNextPort() {
@@ -139,8 +136,7 @@ public class BaseNettyTest extends CamelTestSupport {
         byte data[] = new byte[hexstr.length() / 2];
         int i = 0;
         for (int n = hexstr.length(); i < n; i += 2) {
-            data[i / 2] = (Integer.decode("0x" + hexstr.charAt(i)
-                    + hexstr.charAt(i + 1))).byteValue();
+            data[i / 2] = (Integer.decode("0x" + hexstr.charAt(i) + hexstr.charAt(i + 1))).byteValue();
         }
         return data;
     }

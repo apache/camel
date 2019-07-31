@@ -1,0 +1,47 @@
+[[HowdoIuselog4j-HowdoIuseLog4j]]
+= How do I use Log4j?
+
+Camel uses http://www.slf4j.org/[sfl4j] which allows you to configure
+logging via, among others:
+
+* http://logging.apache.org/log4j/[Log4j]
+* http://logback.qos.ch/[Logback]
+* https://docs.oracle.com/javase/8/docs/api/java/util/logging/package-summary.html[JDK Util Logging logging]
+
+The quick way to enable Log4j is to add log4j to your classpath or maven
+`pom.xml`. For example the following in your `pom.xml` should do the trick:
+
+[source,xml]
+----
+  <dependencies>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+  </dependencies>
+----
+
+Then to configure log4j you need to add a `log4j.properties` or
+`log4j.xml` to your classpath (so they go in a directory which is on
+your classpath).
+
+Here's an example `log4j.properties` file:
+
+[source,java]
+----
+log4j.rootLogger=INFO, out
+
+#
+# uncomment the following line to enable debugging of Camel
+#
+#log4j.logger.org.apache.camel=DEBUG
+
+log4j.appender.out=org.apache.log4j.ConsoleAppender
+log4j.appender.out.layout=org.apache.log4j.PatternLayout
+log4j.appender.out.layout.ConversionPattern=[%30.30t] %-30.30c{1} %-5p %m%n
+#log4j.appender.out.layout.ConversionPattern=%d [%-15.15t] %-5p %-30.30c{1} - %m%n
+----

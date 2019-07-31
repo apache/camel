@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,19 +32,18 @@ import org.w3c.dom.NodeList;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.xpath.XPathEvaluator;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.StringSource;
-import org.apache.camel.builder.xml.DefaultNamespaceContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.language.xpath.DefaultNamespaceContext;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.xml.StringSource;
 import org.junit.Before;
 import org.junit.Test;
 
 public class SaxonConverterTest extends CamelTestSupport {
     private static final String CONTENT = "<a xmlns=\"http://www.apache.org/test\"><b foo=\"bar\">test</b><c><d>foobar</d></c></a>";
     private static final String CONTENT_B = "<b xmlns=\"http://www.apache.org/test\" foo=\"bar\">test</b>";
-    private static final NamespaceContext NS_CONTEXT = (new DefaultNamespaceContext()).add("ns1", "http://www.apache.org/test");
+    private static final NamespaceContext NS_CONTEXT = new DefaultNamespaceContext().add("ns1", "http://www.apache.org/test");
 
     private Exchange exchange;
     private XPathEvaluator evaluator;
@@ -106,7 +105,7 @@ public class SaxonConverterTest extends CamelTestSupport {
 
     @Test
     public void convertToNodeList() throws XPathException {
-        List<NodeInfo> nil = new LinkedList<NodeInfo>();
+        List<NodeInfo> nil = new LinkedList<>();
         nil.add(doc);
         NodeList nodeList = context.getTypeConverter().convertTo(NodeList.class, exchange, nil);
         assertNotNull(nodeList);

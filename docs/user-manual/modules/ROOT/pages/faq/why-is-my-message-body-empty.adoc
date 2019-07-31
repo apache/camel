@@ -1,0 +1,19 @@
+[[Whyismymessagebodyempty-Whyismymessageempty]]
+= Why is my message empty?
+
+In Camel the message body can be of any types. Some types are safely
+readable multiple times, and therefore do not 'suffer' from becoming
+'empty'.
+So when you message body suddenly is empty, then that is often related
+to using a message type that is no re-readable; in other words, the
+message
+body can only be read once. On subsequent reads the body is now empty.
+This happens with types that are streaming based, such as
+`java.util.InputStream`, etc.
+
+A number of Camel components supports and use streaming types out of the
+box. For example the HTTP related components, CXF, etc.
+
+Camel offers a functionality xref:stream-caching.adoc[Stream caching];
+that caches the stream, so it can be re-readable. By enabling this
+cache, the message body would no longer be empty.

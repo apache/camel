@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,14 +17,15 @@
 package org.apache.camel.karaf.commands.internal;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.commands.AbstractLocalCamelController;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -47,7 +48,7 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
 
     @Override
     public List<CamelContext> getLocalCamelContexts() {
-        List<CamelContext> camelContexts = new ArrayList<CamelContext>();
+        List<CamelContext> camelContexts = new ArrayList<>();
         try {
             ServiceReference<?>[] references = bundleContext.getServiceReferences(CamelContext.class.getName(), null);
             if (references != null) {
@@ -61,34 +62,30 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Cannot retrieve the list of Camel contexts.", e);
+            LOG.warn("Cannot retrieve the list of Camel contexts. This exception is ignored.", e);
         }
 
         // sort the list
-        Collections.sort(camelContexts, new Comparator<CamelContext>() {
-            @Override
-            public int compare(CamelContext o1, CamelContext o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
+        camelContexts.sort(Comparator.comparing(CamelContext::getName));
 
         return camelContexts;
     }
 
     @Override
     public List<Map<String, String>> getCamelContexts() throws Exception {
-        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> answer = new ArrayList<>();
 
         List<CamelContext> camelContexts = getLocalCamelContexts();
         for (CamelContext camelContext : camelContexts) {
-            Map<String, String> row = new LinkedHashMap<String, String>();
+            Map<String, String> row = new LinkedHashMap<>();
             row.put("name", camelContext.getName());
             row.put("state", camelContext.getStatus().name());
             row.put("uptime", camelContext.getUptime());
-            if (camelContext.getManagedCamelContext() != null) {
-                row.put("exchangesTotal", "" + camelContext.getManagedCamelContext().getExchangesTotal());
-                row.put("exchangesInflight", "" + camelContext.getManagedCamelContext().getExchangesInflight());
-                row.put("exchangesFailed", "" + camelContext.getManagedCamelContext().getExchangesFailed());
+            ManagedCamelContext mcc = camelContext.getExtension(ManagedCamelContext.class);
+            if (mcc != null && mcc.getManagedCamelContext() != null) {
+                row.put("exchangesTotal", "" + mcc.getManagedCamelContext().getExchangesTotal());
+                row.put("exchangesInflight", "" + mcc.getManagedCamelContext().getExchangesInflight());
+                row.put("exchangesFailed", "" + mcc.getManagedCamelContext().getExchangesFailed());
             } else {
                 row.put("exchangesTotal", "0");
                 row.put("exchangesInflight", "0");
@@ -98,6 +95,57 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
         }
 
         return answer;
+    }
+
+    @Override
+    public void startContext(String camelContextName) throws Exception {
+        final CamelContext context = getLocalCamelContext(camelContextName);
+        if (context != null) {
+            ObjectHelper.callWithTCCL(() -> {
+                context.start();
+                return null;
+            }, getClassLoader(context));
+        }
+    }
+
+    @Override
+    public void resumeContext(String camelContextName) throws Exception {
+        final CamelContext context = getLocalCamelContext(camelContextName);
+        if (context != null) {
+            ObjectHelper.callWithTCCL(() -> {
+                context.resume();
+                return null;
+            }, getClassLoader(context));
+        }
+    }
+
+    @Override
+    public void startRoute(String camelContextName, final String routeId) throws Exception {
+        final CamelContext context = getLocalCamelContext(camelContextName);
+        if (context != null) {
+            ObjectHelper.callWithTCCL(() -> {
+                context.getRouteController().startRoute(routeId);
+                return null;
+            }, getClassLoader(context));
+        }
+    }
+
+    @Override
+    public void resumeRoute(String camelContextName, final String routeId) throws Exception {
+        final CamelContext context = getLocalCamelContext(camelContextName);
+        if (context != null) {
+            ObjectHelper.callWithTCCL(() -> {
+                context.getRouteController().resumeRoute(routeId);
+                return null;
+            }, getClassLoader(context));
+        }
+    }
+
+    /**
+     * Gets classloader associated with {@link CamelContext}
+     */
+    private ClassLoader getClassLoader(CamelContext context) {
+        return context.getApplicationContextClassLoader();
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,6 @@ package org.apache.camel.commands;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * CamelController interface defines the expected behaviors to manipulate Camel resources (context, route, etc).
@@ -192,6 +191,17 @@ public interface CamelController {
     String getRouteStatsAsXml(String routeId, String camelContextName, boolean fullStats, boolean includeProcessors) throws Exception;
 
     /**
+     * Returns detailed step statistics as XML identified by a ID and a Camel context.
+     *
+     * @param routeId           the route ID.
+     * @param camelContextName  the Camel context.
+     * @param fullStats         whether to include verbose stats
+     * @return the step statistics as XML
+     * @throws java.lang.Exception can be thrown
+     */
+    String getStepStatsAsXml(String routeId, String camelContextName, boolean fullStats) throws Exception;
+
+    /**
      * Return the endpoints
      *
      * @param camelContextName the Camel context.
@@ -237,138 +247,6 @@ public interface CamelController {
     List<Map<String, String>> getRestServices(String camelContextName) throws Exception;
 
     /**
-     * Explains an endpoint uri
-     *
-     * @param camelContextName the Camel context.
-     * @param uri              the endpoint uri
-     * @param allOptions       whether to explain all options, or only the explicit configured options from the uri
-     * @return a JSON schema with explanation of the options
-     * @throws java.lang.Exception can be thrown
-     */
-    String explainEndpointAsJSon(String camelContextName, String uri, boolean allOptions) throws Exception;
-
-    /**
-     * Explains an EIP
-     *
-     * @param camelContextName the Camel context.
-     * @param nameOrId         the name of the EIP ({@link org.apache.camel.NamedNode#getShortName()} or a node id to refer to a specific node from the routes.
-     * @param allOptions       whether to explain all options, or only the explicit configured options from the uri
-     * @return a JSON schema with explanation of the options
-     * @throws java.lang.Exception can be thrown
-     */
-    String explainEipAsJSon(String camelContextName, String nameOrId, boolean allOptions) throws Exception;
-
-    /**
-     * Lists Components which are in use or available on the classpath and include information
-     *
-     * @param camelContextName the Camel context.
-     * @return a list of key/value pairs with component information
-     * @throws java.lang.Exception can be thrown
-     */
-    List<Map<String, String>> listComponents(String camelContextName) throws Exception;
-
-    /**
-     * Lists all EIPs from the Camel EIP catalog
-     *
-     * @param filter optional filter to filter by labels
-     * @return a list of key/value pairs with model information
-     * @throws java.lang.Exception can be thrown
-     */
-    List<Map<String, String>> listEipsCatalog(String filter) throws Exception;
-
-    /**
-     * Lists all the labels from the Camel EIP catalog
-     *
-     * @return a map which key is the label, and the set is the models names that has the given label
-     * @throws java.lang.Exception can be thrown
-     */
-    Map<String, Set<String>> listEipsLabelCatalog() throws Exception;
-
-    /**
-     * Collects information about a Camel component from catalog
-     *
-     * @param name the component name
-     * @return a map of key/value pairs with component information
-     * @throws java.lang.Exception can be thrown
-     */
-    Map<String, Object> componentInfo(String name) throws Exception;
-
-    /**
-     * Lists all components from the Camel components catalog
-     *
-     * @param filter optional filter to filter by labels
-     * @return a list of key/value pairs with component information
-     * @throws java.lang.Exception can be thrown
-     */
-    List<Map<String, String>> listComponentsCatalog(String filter) throws Exception;
-
-    /**
-     * Lists all the labels from the Camel components catalog
-     *
-     * @return a map which key is the label, and the set is the component names that has the given label
-     * @throws java.lang.Exception can be thrown
-     */
-    Map<String, Set<String>> listComponentsLabelCatalog() throws Exception;
-
-    /**
-     * Lists all data formats from the Camel components catalog
-     *
-     * @param filter optional filter to filter by labels
-     * @return a list of key/value pairs with data format information
-     * @throws java.lang.Exception can be thrown
-     */
-    List<Map<String, String>> listDataFormatsCatalog(String filter) throws Exception;
-
-    /**
-     * Lists all the labels from the Camel data formats catalog
-     *
-     * @return a map which key is the label, and the set is the data format names that has the given label
-     * @throws java.lang.Exception can be thrown
-     */
-    Map<String, Set<String>> listDataFormatsLabelCatalog() throws Exception;
-
-    /**
-     * Lists all languages from the Camel components catalog
-     *
-     * @param filter optional filter to filter by labels
-     * @return a list of key/value pairs with language information
-     * @throws java.lang.Exception can be thrown
-     */
-    List<Map<String, String>> listLanguagesCatalog(String filter) throws Exception;
-
-    /**
-     * Lists all the labels from the Camel languages catalog
-     *
-     * @return a map which key is the label, and the set is the language names that has the given label
-     * @throws java.lang.Exception can be thrown
-     */
-    Map<String, Set<String>> listLanguagesLabelCatalog() throws Exception;
-
-    /**
-     * Gets the component ascii documentation from the Camel catalog.
-     *
-     * @param name the name of the component
-     * @throws java.lang.Exception can be thrown
-     */
-    String catalogComponentAsciiDoc(String name) throws Exception;
-
-    /**
-     * Gets the data format ascii documentation from the Camel catalog.
-     *
-     * @param name the name of the data format
-     * @throws java.lang.Exception can be thrown
-     */
-    String catalogDataFormatAsciiDoc(String name) throws Exception;
-
-    /**
-     * Gets the language ascii documentation from the Camel catalog.
-     *
-     * @param name the name of the language
-     * @throws java.lang.Exception can be thrown
-     */
-    String catalogLanguageAsciiDoc(String name) throws Exception;
-
-    /**
      * Return the transformers
      *
      * @param camelContextName the Camel context.
@@ -376,4 +254,13 @@ public interface CamelController {
      * @throws java.lang.Exception can be thrown
      */
     List<Map<String, String>> getTransformers(String camelContextName) throws Exception;
+
+    /**
+     * Return the validators
+     *
+     * @param camelContextName the Camel context.
+     * @return a list of key/value pairs with validator information
+     * @throws java.lang.Exception can be thrown
+     */
+    List<Map<String, String>> getValidators(String camelContextName) throws Exception;
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.sjms.support;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Properties;
+
 import javax.jms.Connection;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
@@ -31,11 +35,10 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
+import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 
 /**
  * A support class that builds up and tears down an ActiveMQ instance to be used
@@ -46,12 +49,15 @@ public class JmsTestSupport extends CamelTestSupport {
     @Produce
     protected ProducerTemplate template;
     protected String brokerUri;
+    protected boolean externalAmq;
+    protected Properties properties;
+
     private BrokerService broker;
     private Connection connection;
     private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
 
-    /** 
+    /**
      * Set up the Broker
      *
      * @see org.apache.camel.test.junit4.CamelTestSupport#doPreSetup()
@@ -61,12 +67,29 @@ public class JmsTestSupport extends CamelTestSupport {
     @Override
     protected void doPreSetup() throws Exception {
         deleteDirectory("target/activemq-data");
-        broker = new BrokerService();
-        int port = AvailablePortFinder.getNextAvailable(33333);
-        brokerUri = "tcp://localhost:" + port;
-        broker.getManagementContext().setConnectorPort(AvailablePortFinder.getNextAvailable(port + 1));
-        configureBroker(broker);
-        startBroker();
+        properties = new Properties();
+        final URL url = getClass().getResource("/test-options.properties");
+        int port;
+        String host;
+        try (InputStream inStream = url.openStream()) {
+            properties.load(inStream);
+            if (Boolean.valueOf(properties.getProperty("amq.external"))) {
+                log.info("Using external AMQ");
+                port = Integer.parseInt(properties.getProperty("amq.port"));
+                host = properties.getProperty("amq.host");
+                externalAmq = true;
+            } else {
+                port = AvailablePortFinder.getNextAvailable(33333);
+                host = "localhost";
+            }
+        }
+        brokerUri = String.format("tcp://%s:%s", host, port);
+        if (!externalAmq) {
+            broker = new BrokerService();
+            broker.getManagementContext().setConnectorPort(AvailablePortFinder.getNextAvailable(port + 1));
+            configureBroker(broker);
+            startBroker();
+        }
     }
 
     protected void configureBroker(BrokerService broker) throws Exception {
@@ -74,6 +97,13 @@ public class JmsTestSupport extends CamelTestSupport {
         broker.setPersistent(false);
         broker.deleteAllMessages();
         broker.addConnector(brokerUri);
+    }
+
+    protected void setupFactoryExternal(ActiveMQConnectionFactory factory) {
+        if (externalAmq) {
+            factory.setUserName(properties.getProperty("amq.username"));
+            factory.setPassword(properties.getProperty("amq.password"));
+        }
     }
 
     private void startBroker() throws Exception {
@@ -85,7 +115,7 @@ public class JmsTestSupport extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
         DefaultCamelContext dcc = (DefaultCamelContext)context;
-        while (!dcc.isStopped()) {
+        while (broker != null && !dcc.isStopped()) {
             log.info("Waiting on the Camel Context to stop");
         }
         log.info("Closing JMS Session");
@@ -114,6 +144,7 @@ public class JmsTestSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUri);
+        setupFactoryExternal(connectionFactory);
         connection = connectionFactory.createConnection();
         connection.start();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -144,10 +175,10 @@ public class JmsTestSupport extends CamelTestSupport {
     }
 
     public MessageConsumer createQueueConsumer(String destination) throws Exception {
-        return JmsObjectFactory.createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, false), null, false, null);
+        return new Jms11ObjectFactory().createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, false), null, false, null, true, false);
     }
 
     public MessageConsumer createTopicConsumer(String destination, String messageSelector) throws Exception {
-        return JmsObjectFactory.createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null);
+        return new Jms11ObjectFactory().createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, true, false);
     }
 }

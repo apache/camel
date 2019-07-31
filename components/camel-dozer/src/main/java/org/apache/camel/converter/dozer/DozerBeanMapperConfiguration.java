@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,17 +19,19 @@ package org.apache.camel.converter.dozer;
 import java.util.List;
 import java.util.Map;
 
-import org.dozer.CustomConverter;
-import org.dozer.CustomFieldMapper;
-import org.dozer.DozerEventListener;
+import com.github.dozermapper.core.CustomConverter;
+import com.github.dozermapper.core.CustomFieldMapper;
+import com.github.dozermapper.core.events.EventListener;
+import com.github.dozermapper.core.loader.api.BeanMappingBuilder;
 
 public class DozerBeanMapperConfiguration {
 
     private List<String> mappingFiles;
     private List<CustomConverter> customConverters;
-    private List<DozerEventListener> eventListeners;
+    private List<EventListener> eventListeners;
     private Map<String, CustomConverter> customConvertersWithId;
     private CustomFieldMapper customFieldMapper;
+    private List<BeanMappingBuilder> beanMappingBuilders;
 
     public List<String> getMappingFiles() {
         return mappingFiles;
@@ -47,11 +49,11 @@ public class DozerBeanMapperConfiguration {
         this.customConverters = customConverters;
     }
 
-    public List<DozerEventListener> getEventListeners() {
+    public List<EventListener> getEventListeners() {
         return eventListeners;
     }
 
-    public void setEventListeners(List<DozerEventListener> eventListeners) {
+    public void setEventListeners(List<EventListener> eventListeners) {
         this.eventListeners = eventListeners;
     }
 
@@ -69,5 +71,13 @@ public class DozerBeanMapperConfiguration {
 
     public void setCustomFieldMapper(CustomFieldMapper customFieldMapper) {
         this.customFieldMapper = customFieldMapper;
+    }
+
+    public List<BeanMappingBuilder> getBeanMappingBuilders() {
+        return beanMappingBuilders;
+    }
+
+    public void setBeanMappingBuilders(List<BeanMappingBuilder> beanMappingBuilders) {
+        this.beanMappingBuilders = beanMappingBuilders;
     }
 }

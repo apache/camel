@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,42 +19,26 @@ package org.apache.camel.spring.boot.util;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.annotation.ConditionContext;
+import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 public class GroupCondition extends SpringBootCondition {
     private final String group;
     private final String single;
-    private final boolean groupDefault;
-    private final boolean singleDefault;
 
     public GroupCondition(String group, String single) {
-        this(group, true, single, true);
-    }
-
-    public GroupCondition(String group, boolean groupDefault, String single, boolean singleDefault) {
-        this.group = group.endsWith(".") ? group : group + ".";
-        this.groupDefault = groupDefault;
-
-        this.single = group.endsWith(".") ? single : single + ".";
-        this.singleDefault = singleDefault;
+        this.group = group;
+        this.single = single;
     }
 
     @Override
     public ConditionOutcome getMatchOutcome(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
-        boolean groupEnabled = isEnabled(conditionContext, this.group, true);
-        ConditionMessage.Builder message = ConditionMessage.forCondition(this.single);
+        final ConditionMessage.Builder message = ConditionMessage.forCondition(this.single);
+        final Environment environment = conditionContext.getEnvironment();
 
-        if (isEnabled(conditionContext, this.single, groupEnabled)) {
-            return ConditionOutcome.match(message.because("enabled"));
-        }
-
-        return ConditionOutcome.noMatch(message.because("not enabled"));
-    }
-
-    public static boolean isEnabled(ConditionContext context, String prefix, boolean defaultValue) {
-        RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(context.getEnvironment(), prefix);
-        return resolver.getProperty("enabled", Boolean.class, defaultValue);
+        return HierarchicalPropertiesEvaluator.evaluate(environment, this.group, this.single)
+            ? ConditionOutcome.match(message.because("enabled"))
+            : ConditionOutcome.noMatch(message.because("not enabled"));
     }
 }

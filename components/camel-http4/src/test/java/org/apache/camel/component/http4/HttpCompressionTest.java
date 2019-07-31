@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -52,10 +52,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version
- */
 public class HttpCompressionTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -63,7 +59,7 @@ public class HttpCompressionTest extends BaseHttpTest {
     @Before
     @Override
     public void setUp() throws Exception {
-        Map<String, String> expectedHeaders = new HashMap<String, String>();
+        Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("Content-Type", "text/plain");
         expectedHeaders.put("Content-Encoding", "gzip");
         
@@ -112,9 +108,9 @@ public class HttpCompressionTest extends BaseHttpTest {
 
     @Override
     protected HttpProcessor getBasicHttpProcessor() {
-        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<HttpRequestInterceptor>();
+        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<>();
         requestInterceptors.add(new RequestDecompressingInterceptor());
-        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<HttpResponseInterceptor>();
+        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
         responseInterceptors.add(new ResponseCompressingInterceptor());
         responseInterceptors.add(new ResponseBasicUnauthorized());
         ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,10 +38,10 @@ import static org.mockito.Mockito.when;
 public class HipchatComponentConsumerTest extends CamelTestSupport {
     private CloseableHttpResponse closeableHttpResponse = mock(CloseableHttpResponse.class);
 
-    @EndpointInject(uri = "hipchat:http:api.hipchat.com?authToken=anything&consumeUsers=@AUser")
+    @EndpointInject("hipchat:http:api.hipchat.com?authToken=anything&consumeUsers=@AUser")
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Test

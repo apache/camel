@@ -16,6 +16,7 @@ There are many ways you can help make Camel a better piece of software - please 
 - [If you find a bug or problem](#if-you-find-a-bug-or-problem)
 - [Working on the code](#working-on-the-code)
 - [Running checkstyle](#running-checkstyle)
+- [Checking Karaf and Spring Boot Integration Tests](#checking-karaf-and-spring-boot-integration-tests)
 - [Apache Camel committers should work on the ASF git repo](#apache-camel-committers-should-work-on-the—asf-git-repo)
 - [Creating patches](#creating-patches)
 - [Pull request at Github](#pull-request-at-github)
@@ -38,14 +39,17 @@ There are various ways of communicating with the Camel community.
 
 Documentation is massively important to help users make the most of Apache Camel and its probably the area that needs the most help!
 So if you are interested in helping the documentation effort; whether its just to fix a page here or there, correct a link or even write a tutorial or improve what documentation is already there please do dive in and help!
-Most of the documentation is stored on the wiki. We are currently moving the documentation into the code (AsciiDoc). From there it is automatically converted to the wiki. So before editing the wiki check the code because otherwise your changes may be lost. This transition is work-in-progress.
+We moved the documentation into the code (AsciiDoc). We are not using the wiki system anymore.
 
-See [How does the website work](http://camel.apache.org/how-does-the-website-work.html) or [How do I edit the website for more details](http://camel.apache.org/how-do-i-edit-the-website.html).
-To be able to edit the wiki you need
-- an appropriate licence agreement on file with the ASF
-- an account on the wiki (on the bottom of each page there is an edit button, that allows you to create an account)
-- karma - mail the dev list asking for permission (to prevent spam we only offer access to the wiki by folks sending mail to the mailing list).
+To edit the documentation:
+- It's easy as opening a Pull Request
+- You'll find on each component under src/main/docs an .adoc file
+   - This file contains a static part and a dynamically generated part: the former can be edited directly in the .adoc file, while the latter needs your intervention on the javadoc
+   - Once you modify the javadoc, you'll need to rebuild the component and the .adoc will be automatically updated
+   - Create a commit and raise a Pull Request
+- If you want to add more documentation check for .adoc in codebase 
 
+For more information see [How does the website work](https://github.com/apache/camel/blob/master/docs/user-manual/en/faq/how-does-the-website-work.adoc) or [How do I edit the website for more details](https://github.com/apache/camel/blob/master/docs/user-manual/en/faq/how-do-i-edit-the-website.adoc).
 
 ## If you find a bug or problem
 
@@ -81,12 +85,29 @@ Please remember to run this check on your code changes before submitting a patch
     cd camel-ftp
     mvn clean install -Psourcecheck
 
+## Checking Karaf and Spring Boot Integration Tests
+
+Apache Camel source code has a set of Integration Test for Karaf and Spring Boot platform.
+If your contribution modifies dependencies of a specific component, you can check the behavior on these two platforms in this way:
+
+    cd tests/camel-itest-karaf
+    mvn clean test -Dtest=Camel<component_name>Test
+
+And for Spring Boot:
+
+    cd tests/camel-itest-spring-boot
+    mvn clean test -Dtest=Camel<component_name>Test
 
 ## Apache Camel committers should work on the ASF git repo
 
 If you are an Apache Camel committer then clone the ASF git repo at
 
-    git clone https://git-wip-us.apache.org/repos/asf/camel.git
+    git clone https://gitbox.apache.org/repos/asf/camel.git
+    cd camel
+
+or 
+
+    git clone https://github.com/apache/camel.git
     cd camel
 
 Build the project (without testing).
@@ -150,6 +171,6 @@ The first step is contributing to the project; if you want to take that a step f
 ## More resources
 
 Git is not a brand new technology and therefore Camel is not the only ASF project thinking about using it. So here are some more resources you mind find useful:
+- [https://gitbox.apache.org/repos/asf/camel.git](https://gitbox.apache.org/repos/asf/camel.git): Apache Camel GitBox repository
 - [http://wiki.apache.org/general/GitAtApache](http://wiki.apache.org/general/GitAtApache): Some basic notes about git@asf
-- [http://git.apache.org/](http://git.apache.org/): List of mgit-mirrors at ASF
-- [https://git-wip-us.apache.org/](https://git-wip-us.apache.org/): More Git infos from Apache
+- [http://git.apache.org/](http://git.apache.org/): List of git-mirrors at ASF

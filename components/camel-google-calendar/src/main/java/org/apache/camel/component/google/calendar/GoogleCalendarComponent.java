@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,17 +16,22 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.api.services.calendar.Calendar;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.component.AbstractApiComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.component.AbstractApiComponent;
 
 /**
  * Represents the component that manages {@link GoogleCalendarEndpoint}.
  */
+@Component("google-calendar")
 public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendarApiName, GoogleCalendarConfiguration, GoogleCalendarApiCollection> {
 
     @Metadata(label = "advanced")
@@ -49,8 +54,15 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
 
     public Calendar getClient(GoogleCalendarConfiguration config) {
         if (client == null) {
+
+            List<String> list = null;
+            if (config.getScopes() != null) {
+                String[] arr = config.getScopes().split(",");
+                list = Arrays.asList(arr);
+            }
+
             client = getClientFactory().makeClient(config.getClientId(),
-                    config.getClientSecret(), config.getScopes(),
+                    config.getClientSecret(), list,
                     config.getApplicationName(), config.getRefreshToken(),
                     config.getAccessToken(), config.getEmailAddress(),
                     config.getP12FileName(), config.getUser());

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,20 +16,57 @@
  */
 package org.apache.camel.http.common;
 
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import java.util.Map;
+
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 
 public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
     protected HttpBinding httpBinding;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use the shared HttpConfiguration as base configuration.")
     protected HttpConfiguration httpConfiguration;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object."
+        + " This is by default turned off. "
+        + " If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.")
     protected boolean allowJavaSerializedObject;
 
-    public HttpCommonComponent(Class<? extends HttpCommonEndpoint> endpointClass) {
-        super(endpointClass);
+    public HttpCommonComponent() {
+    }
+
+    /**
+     * Gets the parameter. This method doesn't resolve reference parameters in the registry.
+     *
+     * @param parameters    the parameters
+     * @param key           the key
+     * @param type          the requested type to convert the value from the parameter
+     * @return  the converted value parameter
+     */
+    public <T> T getParameter(Map<String, Object> parameters, String key, Class<T> type) {
+        return getParameter(parameters, key, type, null);
+    }
+
+    /**
+     * Gets the parameter. This method doesn't resolve reference parameters in the registry.
+     *
+     * @param parameters    the parameters
+     * @param key           the key
+     * @param type          the requested type to convert the value from the parameter
+     * @param defaultValue  use this default value if the parameter does not contain the key
+     * @return  the converted value parameter
+     */
+    public <T> T getParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
+        Object value = parameters.get(key);
+        if (value == null) {
+            value = defaultValue;
+        }
+        if (value == null) {
+            return null;
+        }
+
+        return CamelContextHelper.convertTo(getCamelContext(), type, value);
     }
 
     /**
@@ -48,6 +85,16 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
      * @throws Exception can be thrown
      */
     public void disconnect(HttpConsumer consumer) throws Exception {
+    }
+
+    /**
+     * Checks whether the consumer is possible to connect to the endoint.
+     *
+     * @param consumer the consumer
+     * @throws Exception can be thrown
+     */
+    public boolean canConnect(HttpConsumer consumer) throws Exception {
+        return true;
     }
 
     @Override

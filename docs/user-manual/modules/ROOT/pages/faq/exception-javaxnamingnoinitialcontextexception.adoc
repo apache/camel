@@ -1,0 +1,36 @@
+[[Exception-javax.naming.NoInitialContextException-Exceptionjavax.naming.NoInitialContextException]]
+= Exception: `javax.naming.NoInitialContextException`
+
+If you try to use Camel without xref:components::spring.adoc[Spring] using code
+something like this:
+
+[source,java]
+----
+CamelContext context = new DefaultCamelContext();
+context.addRoutes(new MyRouteBuilder());
+
+context.start();
+----
+
+You might get an exception like this:
+
+----
+     [java] Caused by: javax.naming.NoInitialContextException: Need to specify class name in environment or system property, or as an applet parameter, or in an application resource file:  java.naming.factory.initial
+     [java]     at javax.naming.spi.NamingManager.getInitialContext(NamingManager.java:645)
+     [java]     at javax.naming.InitialContext.getDefaultInitCtx(InitialContext.java:247)
+     [java]     at javax.naming.InitialContext.getURLOrDefaultInitCtx(InitialContext.java:284)
+     [java]     at javax.naming.InitialContext.lookup(InitialContext.java:351)
+     [java]     at org.apache.camel.impl.JndiRegistry.lookup(JndiRegistry.java:51)
+----
+
+This is because if you are not using Spring then the default
+xref:registry.adoc[Registry] implementation uses xref:jndi.adoc[JNDI].
+
+A simple workaround for this is to specify a JNDI provider. An easy fix
+is to create a file called `jndi.properties` on the classpath and give
+it this content...
+
+[source,java]
+----
+java.naming.factory.initial = org.apache.camel.util.jndi.CamelInitialContextFactory
+----

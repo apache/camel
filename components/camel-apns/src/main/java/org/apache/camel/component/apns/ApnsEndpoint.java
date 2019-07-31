@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,19 +23,19 @@ import com.notnoop.apns.ApnsService;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * For sending notifications to Apple iOS devices.
  */
-@UriEndpoint(firstVersion = "2.8.0", scheme = "apns", title = "APNS", syntax = "apns:name", consumerClass = ApnsConsumer.class, label = "eventbus,mobile")
+@UriEndpoint(firstVersion = "2.8.0", scheme = "apns", title = "APNS", syntax = "apns:name", label = "eventbus,mobile")
 public class ApnsEndpoint extends ScheduledPollEndpoint {
 
-    private final CopyOnWriteArraySet<DefaultConsumer> consumers = new CopyOnWriteArraySet<DefaultConsumer>();
+    private final CopyOnWriteArraySet<DefaultConsumer> consumers = new CopyOnWriteArraySet<>();
 
     @UriPath(description = "Name of the endpoint")
     private String name;
@@ -71,10 +71,6 @@ public class ApnsEndpoint extends ScheduledPollEndpoint {
 
     public ApnsService getApnsService() {
         return getApnsComponent().getApnsService();
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     protected Set<DefaultConsumer> getConsumers() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,9 +29,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.restlet.data.MediaType.APPLICATION_OCTET_STREAM;
 import static org.restlet.data.MediaType.AUDIO_MPEG;
 
-/**
- * @version
- */
 public class RestletProducerBinaryStreamTest extends RestletTestSupport {
 
     @Test

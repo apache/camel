@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,35 +29,35 @@ import org.asteriskjava.manager.response.ManagerResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AsteriskConnection {
+public final class AsteriskConnection {
     private static final Logger LOG = LoggerFactory.getLogger(AsteriskConnection.class);
 
-    private String host;
-    private String username;
-    private String password;
-
+    private final String host;
+    private final String username;
+    private final String password;
     private ManagerConnection managerConnection;
 
     public AsteriskConnection(String host, String username, String password) {
         this.host = host;
         this.username = username;
         this.password = password;
-
-        this.connect();
     }
 
-    private void connect() {
+    public void connect() {
         if (managerConnection == null) {
             LOG.debug("asterisk connection attempt to {} username: {}", host, username);
 
             ManagerConnectionFactory factory = new ManagerConnectionFactory(host, username, password);
             managerConnection = factory.createManagerConnection();
-            
+
             LOG.debug("asterisk connection established!");
         }
     }
-    
+
     public void login() throws IllegalStateException, IOException, AuthenticationFailedException, TimeoutException, CamelAsteriskException {
+        // Lazy connect if not done before
+        connect();
+
         if (managerConnection != null && (managerConnection.getState() == ManagerConnectionState.DISCONNECTED || managerConnection.getState() == ManagerConnectionState.INITIAL)) {
             managerConnection.login("on");
         
@@ -87,10 +87,19 @@ public class AsteriskConnection {
         }
     }
 
+    public void removeListener(ManagerEventListener listener) throws CamelAsteriskException {
+        if (managerConnection != null) {
+            managerConnection.removeEventListener(listener);
+
+            LOG.debug("asterisk removed listener {}", listener);
+        } else {
+            throw new CamelAsteriskException("Add listener operation, managerConnection is empty!");
+        }
+    }
+
     public ManagerResponse sendAction(ManagerAction action) throws IllegalArgumentException, IllegalStateException, IOException, TimeoutException {
         ManagerResponse response = managerConnection.sendAction(action);
 
         return response;
     }
-
 }

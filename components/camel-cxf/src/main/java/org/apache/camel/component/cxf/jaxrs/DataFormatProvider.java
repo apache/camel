@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,7 +37,7 @@ import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 
 public class DataFormatProvider<T> implements MessageBodyWriter<T>, MessageBodyReader<T> {
 
-    private Map<String, DataFormat> formats = new HashMap<String, DataFormat>();
+    private Map<String, DataFormat> formats = new HashMap<>();
 
     @Override
     public boolean isReadable(Class<?> cls, Type type, Annotation[] anns, MediaType mt) {

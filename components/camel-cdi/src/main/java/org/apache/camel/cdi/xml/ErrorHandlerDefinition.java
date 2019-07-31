@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,16 +42,13 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     private Boolean deadLetterHandleNewException;
 
     @XmlAttribute
-    private LoggingLevel level;
-
-    @XmlAttribute
     private LoggingLevel rollbackLoggingLevel;
 
     @XmlAttribute
-    private String logName;
+    private Boolean useOriginalMessage;
 
     @XmlAttribute
-    private Boolean useOriginalMessage;
+    private Boolean useOriginalBody;
 
     @XmlAttribute
     private String transactionTemplateRef;
@@ -104,14 +101,6 @@ public class ErrorHandlerDefinition extends IdentifiedType {
         this.deadLetterHandleNewException = deadLetterHandleNewException;
     }
 
-    public LoggingLevel getLevel() {
-        return level;
-    }
-
-    public void setLevel(LoggingLevel level) {
-        this.level = level;
-    }
-
     public LoggingLevel getRollbackLoggingLevel() {
         return rollbackLoggingLevel;
     }
@@ -120,20 +109,20 @@ public class ErrorHandlerDefinition extends IdentifiedType {
         this.rollbackLoggingLevel = rollbackLoggingLevel;
     }
 
-    public String getLogName() {
-        return logName;
-    }
-
-    public void setLogName(String logName) {
-        this.logName = logName;
-    }
-
     public Boolean getUseOriginalMessage() {
         return useOriginalMessage;
     }
 
     public void setUseOriginalMessage(Boolean useOriginalMessage) {
         this.useOriginalMessage = useOriginalMessage;
+    }
+
+    public Boolean getUseOriginalBody() {
+        return useOriginalBody;
+    }
+
+    public void setUseOriginalBody(Boolean useOriginalBody) {
+        this.useOriginalBody = useOriginalBody;
     }
 
     public String getTransactionTemplateRef() {

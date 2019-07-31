@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,10 +27,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
@@ -41,7 +42,8 @@ import org.apache.commons.net.ftp.FTPSClient;
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "ftps", extendsScheme = "file", title = "FTPS",
         syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName",
-        consumerClass = FtpConsumer.class, label = "file")
+        label = "file")
+@ManagedResource(description = "Managed FtpsEndpoint")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     @UriParam
     protected FtpsConfiguration configuration;
@@ -167,7 +169,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         dataTimeout = getConfiguration().getTimeout();
 
         if (ftpClientParameters != null) {
-            Map<String, Object> localParameters = new HashMap<String, Object>(ftpClientParameters);
+            Map<String, Object> localParameters = new HashMap<>(ftpClientParameters);
             // setting soTimeout has to be done later on FTPClient (after it has connected)
             Object timeout = localParameters.remove("soTimeout");
             if (timeout != null) {
@@ -176,7 +178,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             // and we want to keep data timeout so we can log it later
             timeout = localParameters.remove("dataTimeout");
             if (timeout != null) {
-                dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, dataTimeout);
+                dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
             }
             setProperties(client, localParameters);
         }
@@ -186,7 +188,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             if (ftpClientConfig == null) {
                 ftpClientConfig = new FTPClientConfig();
             }
-            Map<String, Object> localConfigParameters = new HashMap<String, Object>(ftpClientConfigParameters);
+            Map<String, Object> localConfigParameters = new HashMap<>(ftpClientConfigParameters);
             setProperties(ftpClientConfig, localConfigParameters);
         }
 
@@ -195,7 +197,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Created FTPClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
+            log.debug("Created FTPSClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
                             + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
                     new Object[]{client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
                             client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client});

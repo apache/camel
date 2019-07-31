@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,110 +16,89 @@
  */
 package org.apache.camel.component.ehcache;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.function.ThrowingHelper;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
-import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.config.Configuration;
 import org.ehcache.event.EventFiring;
 import org.ehcache.event.EventOrdering;
 import org.ehcache.event.EventType;
-import org.ehcache.xml.XmlConfiguration;
 
 @UriParams
-public class EhcacheConfiguration {
-    public static final String PREFIX_CONF = "conf.";
-    public static final String PREFIX_POOL = "pool.";
-
-    private final CamelContext context;
-    private final String cacheName;
-
-    @UriParam
-    private String configUri;
-
+public class EhcacheConfiguration implements Cloneable {
     @UriParam(defaultValue = "true")
     private boolean createCacheIfNotExist = true;
-
     @UriParam(label = "producer")
     private String action;
     @UriParam(label = "producer")
     private Object key;
-
     @UriParam
     private CacheManager cacheManager;
+    @UriParam
+    private Configuration cacheManagerConfiguration;
+    @UriParam
+    private String configurationUri;
     @UriParam(label = "advanced")
-    private CacheConfiguration<?, ?> configuration;
-
+    private CacheConfiguration configuration;
+    @UriParam(label = "advanced")
+    private Map<String, CacheConfiguration> configurations;
     @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> keyType = Object.class;
+    private Class<?> keyType;
     @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> valueType = Object.class;
-
-    @UriParam(
-        label = "consumer",
-        enums = "ORDERED,UNORDERED",
-        defaultValue = "ORDERED")
+    private Class<?> valueType;
+    @UriParam(label = "consumer", defaultValue = "ORDERED")
     private EventOrdering eventOrdering = EventOrdering.ORDERED;
-
-    @UriParam(
-        label = "consumer",
-        enums = "ASYNCHRONOUS,SYNCHRONOUS",
-        defaultValue = "ASYNCHRONOUS")
+    @UriParam(label = "consumer", defaultValue = "ASYNCHRONOUS")
     private EventFiring eventFiring = EventFiring.ASYNCHRONOUS;
-
-    @UriParam(
-        label = "consumer",
-        enums = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED",
-        defaultValue = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED")
+    @UriParam(label = "consumer", enums = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED", defaultValue = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED")
     private Set<EventType> eventTypes = EnumSet.of(EventType.values()[0], EventType.values());
 
-    EhcacheConfiguration(String cacheName) {
-        this(null, cacheName);
-    }
-
-    EhcacheConfiguration(CamelContext context, String cacheName) {
-        this.context = context;
-        this.cacheName = cacheName;
-
-        Stream.of(EventType.values()).map(EventType::name).collect(Collectors.joining(", "));
-    }
-
-    public CamelContext getContext() {
-        return context;
-    }
-
-    public String getCacheName() {
-        return cacheName;
-    }
-
-    public String getConfigUri() {
-        return configUri;
-    }
-
-    public URL getConfigUriAsUrl() throws IOException {
-        return context != null
-            ? ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(), configUri)
-            : new URL(configUri);
+    public EhcacheConfiguration() {
     }
 
     /**
      * URI pointing to the Ehcache XML configuration file's location
      */
+    public void setConfigurationUri(String configurationUri) {
+        this.configurationUri = configurationUri;
+    }
+
+    public String getConfigurationUri() {
+        return configurationUri;
+    }
+
+    public boolean hasConfigurationUri() {
+        return ObjectHelper.isNotEmpty(configurationUri);
+    }
+
+    /**
+     * @deprecated use {@link #getConfigurationUri()} instead
+     */
+    @Deprecated
+    public String getConfigUri() {
+        return getConfigurationUri();
+    }
+
+    /**
+     * URI pointing to the Ehcache XML configuration file's location
+     *
+     * @deprecated use {@link #setConfigurationUri(String)} instead
+     */
+    @Deprecated
+    @Metadata(deprecationNote = "use configurationUri instead")
     public void setConfigUri(String configUri) {
-        this.configUri = configUri;
+        setConfigurationUri(configUri);
     }
 
     public boolean isCreateCacheIfNotExist() {
@@ -173,12 +152,27 @@ public class EhcacheConfiguration {
         return this.cacheManager != null;
     }
 
+    public Configuration getCacheManagerConfiguration() {
+        return cacheManagerConfiguration;
+    }
+
+    /**
+     * The cache manager configuration
+     */
+    public void setCacheManagerConfiguration(Configuration cacheManagerConfiguration) {
+        this.cacheManagerConfiguration = cacheManagerConfiguration;
+    }
+
+    public boolean hasCacheManagerConfiguration() {
+        return this.cacheManagerConfiguration != null;
+    }
+
     public EventOrdering getEventOrdering() {
         return eventOrdering;
     }
 
     /**
-     * Set the the delivery mode (ordered, unordered)
+     * Set the delivery mode (ordered, unordered)
      */
     public void setEventOrdering(String eventOrdering) {
         setEventOrdering(EventOrdering.valueOf(eventOrdering));
@@ -193,7 +187,7 @@ public class EhcacheConfiguration {
     }
 
     /**
-     * Set the the delivery mode (synchronous, asynchronous)
+     * Set the delivery mode (synchronous, asynchronous)
      */
     public void setEventFiring(String eventFiring) {
         setEventFiring(EventFiring.valueOf(eventFiring));
@@ -231,16 +225,39 @@ public class EhcacheConfiguration {
     /**
      * The default cache configuration to be used to create caches.
      */
-    public <K, V> void setConfiguration(CacheConfiguration<K, V> configuration) {
+    public void setConfiguration(CacheConfiguration<?, ?> configuration) {
         this.configuration = configuration;
     }
 
-    public <K, V> CacheConfiguration<K, V> getConfiguration() {
-        return (CacheConfiguration<K, V>)configuration;
+    public CacheConfiguration<?, ?> getConfiguration() {
+        return configuration;
     }
 
-    public <K, V> CacheConfiguration<K, V> getMandatoryConfiguration() {
-        return ObjectHelper.notNull(getConfiguration(), "CacheConfiguration");
+    public boolean hasConfiguration() {
+        return ObjectHelper.isNotEmpty(configuration);
+    }
+
+    public boolean hasConfiguration(String name) {
+        return ThrowingHelper.applyIfNotEmpty(configurations, c -> c.containsKey(name), () -> false);
+    }
+
+    /**
+     * A map of cache configuration to be used to create caches.
+     */
+    public Map<String, CacheConfiguration> getConfigurations() {
+        return configurations;
+    }
+
+    public void setConfigurations(Map<String, CacheConfiguration> configurations) {
+        this.configurations = Map.class.cast(configurations);
+    }
+
+    public void addConfigurations(Map<String, CacheConfiguration> configurations) {
+        if (this.configurations == null) {
+            this.configurations = new HashMap<>();
+        }
+
+        this.configurations.putAll(configurations);
     }
 
     public Class<?> getKeyType() {
@@ -248,14 +265,10 @@ public class EhcacheConfiguration {
     }
 
     /**
-     * The cache key type, default Object.class
+     * The cache key type, default "java.lang.Object"
      */
     public void setKeyType(Class<?> keyType) {
         this.keyType = keyType;
-    }
-
-    public void setKeyType(String keyType) throws ClassNotFoundException {
-        setKeyType(context.getClassResolver().resolveMandatoryClass(keyType));
     }
 
     public Class<?> getValueType() {
@@ -263,44 +276,21 @@ public class EhcacheConfiguration {
     }
 
     /**
-     * The cache value type, default Object.class
+     * The cache value type, default "java.lang.Object"
      */
     public void setValueType(Class<?> valueType) {
         this.valueType = valueType;
     }
 
-    public void setValueType(String valueType) throws ClassNotFoundException {
-        setValueType(context.getClassResolver().resolveMandatoryClass(valueType));
-    }
-
     // ****************************
-    // Helpers
+    // Cloneable
     // ****************************
 
-    static EhcacheConfiguration create(CamelContext context, String remaining, Map<String, Object> parameters) throws Exception {
-        EhcacheConfiguration configuration = new EhcacheConfiguration(context, remaining);
-        EndpointHelper.setReferenceProperties(context, configuration, parameters);
-        EndpointHelper.setProperties(context, configuration, parameters);
-
-        return configuration;
-    }
-
-    CacheManager createCacheManager() throws IOException {
-        CacheManager manager;
-
-        if (cacheManager != null) {
-            manager = cacheManager;
-        } else if (configUri != null) {
-            manager = CacheManagerBuilder.newCacheManager(new XmlConfiguration(getConfigUriAsUrl()));
-        } else {
-            CacheManagerBuilder builder = CacheManagerBuilder.newCacheManagerBuilder();
-            if (configuration != null) {
-                builder.withCache(cacheName, configuration);
-            }
-
-            manager = builder.build();
+    public EhcacheConfiguration copy() {
+        try {
+            return (EhcacheConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
         }
-
-        return manager;
     }
 }

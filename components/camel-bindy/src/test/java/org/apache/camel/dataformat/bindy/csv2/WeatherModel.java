@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ public class WeatherModel {
     private int id;
     @DataField(pos = 2)
     private String date;
-    @DataField(pos = 3)
+    @DataField(pos = 3, defaultValue = "North Pole")
     private String place;
 
     public String getDate() {

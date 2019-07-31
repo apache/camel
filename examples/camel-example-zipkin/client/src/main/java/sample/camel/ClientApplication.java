@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,20 +16,19 @@
  */
 package sample.camel;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
-import org.apache.camel.cdi.ContextName;
-import org.apache.camel.management.event.CamelContextStartingEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.zipkin.ZipkinTracer;
 
-@ContextName("Server1")
+@ApplicationScoped
 public class ClientApplication {
 
     public void setupCamel(@Observes CamelContextStartingEvent event) {
         // create zipkin
         ZipkinTracer zipkin = new ZipkinTracer();
-        zipkin.setHostName("192.168.99.100");
-        zipkin.setPort(9410);
+        zipkin.setEndpoint("http://localhost:9411/api/v2/spans");
         zipkin.addClientServiceMapping("http://localhost:9090/service1", "service1");
         // capture 100% of all the events
         zipkin.setRate(1.0f);

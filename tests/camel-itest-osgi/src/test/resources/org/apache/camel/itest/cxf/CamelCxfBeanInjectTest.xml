@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cxf="http://camel.apache.org/schema/blueprint/cxf"
+           xmlns:httpj="http://cxf.apache.org/transports/http-jetty/configuration"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xsi:schemaLocation="
+             http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
+             http://camel.apache.org/schema/blueprint/cxf http://camel.apache.org/schema/blueprint/cxf/camel-cxf.xsd
+             http://cxf.apache.org/transports/http-jetty/configuration http://cxf.apache.org/schemas/configuration/http-jetty.xsd
+             http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+  <!-- blueprint property placeholders -->
+  <cm:property-placeholder persistent-id="my-placeholders" update-strategy="reload">
+    <cm:default-properties>
+      <cm:property name="router.address" value="http://localhost:9000/routerEndpoint" />
+      <cm:property name="router.port" value="9000" />
+    </cm:default-properties>
+  </cm:property-placeholder>
+
+  <!-- configuration for reverse proxy -->
+  <httpj:engine-factory bus="cxf">
+    <httpj:engine port="${router.port}">
+      <httpj:connector>
+        <bean id="connector" class="org.eclipse.jetty.server.ServerConnector">
+          <argument ref="server" />
+          <argument>
+            <array>
+              <ref component-id="httpConnectionFactory" />
+            </array>
+          </argument>
+          <property name="port" value="${router.port}" />
+        </bean>
+      </httpj:connector>
+    </httpj:engine>
+  </httpj:engine-factory>
+
+  <bean id="server" class="org.eclipse.jetty.server.Server" />
+
+  <bean id="httpConfiguration" class="org.eclipse.jetty.server.HttpConfiguration">
+    <property name="customizers">
+      <list>
+        <bean class="org.eclipse.jetty.server.ForwardedRequestCustomizer" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="httpConnectionFactory" class="org.eclipse.jetty.server.HttpConnectionFactory">
+    <argument ref="httpConfiguration" />
+  </bean>
+
+  <cxf:cxfEndpoint id="routerEndpoint" address="{{router.address}}"
+                   serviceClass="org.apache.camel.itest.cxf.SimpleService" />
+
+  <bean id="routeBuilder" class="org.apache.camel.itest.cxf.BeanInjectRouteBuilder" />
+
+  <bean id="simpleBean" class="org.apache.camel.itest.cxf.SimpleBean" />
+
+  <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/blueprint">
+    <routeBuilder ref="routeBuilder" />
+  </camelContext>
+
+</blueprint>

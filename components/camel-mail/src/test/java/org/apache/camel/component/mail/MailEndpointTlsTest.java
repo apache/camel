@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,7 +47,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMailEndpointTslConfig() throws Exception {
+    public void testMailEndpointTlsConfig() throws Exception {
         Properties properties = new Properties();
         properties.setProperty("mail." + protocol + ".starttls.enable", "true");
 
@@ -62,13 +62,12 @@ public class MailEndpointTlsTest extends CamelTestSupport {
         assertTrue(cfg.isStartTlsEnabled());
 
         Properties javaMailProperties = cfg.createJavaMailSender().getJavaMailProperties();
-        assertNull(javaMailProperties.get("mail." + protocol + ".socketFactory"));
-        assertNull(javaMailProperties.get("mail." + protocol + ".socketFactory.fallback"));
-        assertNull(javaMailProperties.get("mail." + protocol + ".socketFactory.port"));
+        assertNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory"));
+        assertNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.port"));
     }
 
     @Test
-    public void testMailEndpointNoTslConfig() throws Exception {
+    public void testMailEndpointNoTlsConfig() throws Exception {
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
         cfg.setProtocol(protocol);
@@ -95,7 +94,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMailEndpointTslSslContextParametersConfig() throws Exception {
+    public void testMailEndpointTlsSslContextParametersConfig() throws Exception {
         Properties properties = new Properties();
         properties.setProperty("mail." + protocol + ".starttls.enable", "true");
 
@@ -111,30 +110,8 @@ public class MailEndpointTlsTest extends CamelTestSupport {
         assertTrue(cfg.isStartTlsEnabled());
 
         Properties javaMailProperties = cfg.createJavaMailSender().getJavaMailProperties();
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory"));
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory.fallback"));
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory.port"));
+        assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory"));
+        assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.port"));
     }
 
-    @Test
-    public void testMailEndpointTslDummyTrustManagerConfig() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty("mail." + protocol + ".starttls.enable", "true");
-
-        MailConfiguration cfg = new MailConfiguration();
-        cfg.setPort(21);
-        cfg.setProtocol(protocol);
-        cfg.setHost("myhost");
-        cfg.setUsername("james");
-        cfg.setPassword("secret");
-        cfg.setDummyTrustManager(true);
-        cfg.setAdditionalJavaMailProperties(properties);
-
-        assertTrue(cfg.isStartTlsEnabled());
-
-        Properties javaMailProperties = cfg.createJavaMailSender().getJavaMailProperties();
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory.class"));
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory.fallback"));
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory.port"));
-    }
 }

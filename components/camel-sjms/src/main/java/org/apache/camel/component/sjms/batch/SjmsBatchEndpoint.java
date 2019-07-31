@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,9 +17,11 @@
 package org.apache.camel.component.sjms.batch;
 
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.jms.Message;
 import javax.jms.Session;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -33,21 +35,19 @@ import org.apache.camel.component.sjms.jms.DestinationNameParser;
 import org.apache.camel.component.sjms.jms.JmsBinding;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.language.simple.SimpleLanguage;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The sjms-batch component is a specialized for highly performant, transactional batch consumption from a JMS queue.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "sjms-batch", title = "Simple JMS Batch", syntax = "sjms-batch:destinationName",
-        consumerClass = SjmsBatchComponent.class, label = "messaging", consumerOnly = true)
+        label = "messaging", consumerOnly = true)
 public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     public static final int DEFAULT_COMPLETION_SIZE = 200; // the default dispatch queue size in ActiveMQ
@@ -55,9 +55,9 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
 
     private JmsBinding binding;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String destinationName;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private AggregationStrategy aggregationStrategy;
     @UriParam(defaultValue = "1")
     private int consumerCount = 1;
@@ -93,6 +93,8 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     private boolean asyncStartListener;
     @UriParam(label = "advanced", defaultValue = "5000")
     private int recoveryInterval = 5000;
+    @UriParam(label = "advanced", defaultValue = "-1")
+    private int keepAliveDelay = -1;
 
     public SjmsBatchEndpoint() {
     }
@@ -106,11 +108,6 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
                     + "should use a regular JMS consumer with an aggregator.");
         }
         this.destinationName = parser.getShortName(remaining);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override
@@ -133,7 +130,7 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
 
     public Exchange createExchange(Message message, Session session) {
         Exchange exchange = createExchange(getExchangePattern());
-        exchange.setIn(new SjmsMessage(message, session, getBinding()));
+        exchange.setIn(new SjmsMessage(exchange, message, session, getBinding()));
         return exchange;
     }
 
@@ -244,7 +241,7 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
 
     public void setCompletionPredicate(String predicate) {
         // uses simple language
-        this.completionPredicate = SimpleLanguage.predicate(predicate);
+        this.completionPredicate = getCamelContext().resolveLanguage("simple").createPredicate(predicate);
     }
 
     public boolean isEagerCheckCompletion() {
@@ -404,4 +401,20 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     public void setRecoveryInterval(int recoveryInterval) {
         this.recoveryInterval = recoveryInterval;
     }
+
+    /**
+     * The delay in millis between attempts to re-establish a valid session.
+     * If this is a positive value the SjmsBatchConsumer will attempt to create a new session if it sees an IllegalStateException
+     * during message consumption. This delay value allows you to pause between attempts to prevent spamming the logs.
+     * If this is a negative value (default is -1) then the SjmsBatchConsumer will behave as it always has before - that is
+     * it will bail out and the route will shut down if it sees an IllegalStateException.
+     */
+    public void setKeepAliveDelay(int keepAliveDelay) {
+        this.keepAliveDelay = keepAliveDelay;
+    }
+
+    public int getKeepAliveDelay() {
+        return keepAliveDelay;
+    }
+
 }

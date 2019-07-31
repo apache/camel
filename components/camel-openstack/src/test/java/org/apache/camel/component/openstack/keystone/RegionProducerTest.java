@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,12 +21,15 @@ import java.util.List;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.keystone.producer.RegionProducer;
-import org.apache.camel.component.openstack.neutron.NeutronConstants;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.identity.v3.RegionService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Region;
 import org.openstack4j.model.network.Network;
@@ -35,12 +38,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RegionProducerTest extends KeystoneProducerTestSupport {
 
     private Region dummyRegion;
@@ -48,11 +52,22 @@ public class RegionProducerTest extends KeystoneProducerTestSupport {
     @Mock
     private Region testOSregion;
 
+    @Mock
+    private RegionService regionService;
+
+    @Captor
+    private ArgumentCaptor<Region> regionCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> regionIdCaptor;
+
     @Before
     public void setUp() {
+        when(identityService.regions()).thenReturn(regionService);
+
         producer = new RegionProducer(endpoint, client);
 
-        when(regionService.create(any(Region.class))).thenReturn(testOSregion);
+        when(regionService.create(any())).thenReturn(testOSregion);
         when(regionService.get(anyString())).thenReturn(testOSregion);
 
         List<Region> getAllList = new ArrayList<>();
@@ -72,10 +87,9 @@ public class RegionProducerTest extends KeystoneProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<Region> captor = ArgumentCaptor.forClass(Region.class);
-        verify(regionService).create(captor.capture());
+        verify(regionService).create(regionCaptor.capture());
 
-        assertEqualsRegion(dummyRegion, captor.getValue());
+        assertEqualsRegion(dummyRegion, regionCaptor.getValue());
     }
 
     @Test
@@ -86,10 +100,9 @@ public class RegionProducerTest extends KeystoneProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(regionService).get(captor.capture());
+        verify(regionService).get(regionIdCaptor.capture());
 
-        assertEquals(id, captor.getValue());
+        assertEquals(id, regionIdCaptor.getValue());
         assertEqualsRegion(testOSregion, msg.getBody(Region.class));
     }
 
@@ -113,16 +126,15 @@ public class RegionProducerTest extends KeystoneProducerTestSupport {
         final String newDescription = "ndesc";
         when(testOSregion.getDescription()).thenReturn(newDescription);
 
-        when(regionService.update(any(Region.class))).thenReturn(testOSregion);
+        when(regionService.update(any())).thenReturn(testOSregion);
         msg.setBody(testOSregion);
 
         producer.process(exchange);
 
-        ArgumentCaptor<Region> captor = ArgumentCaptor.forClass(Region.class);
-        verify(regionService).update(captor.capture());
+        verify(regionService).update(regionCaptor.capture());
 
-        assertEqualsRegion(testOSregion, captor.getValue());
-        assertNotNull(captor.getValue().getId());
+        assertEqualsRegion(testOSregion, regionCaptor.getValue());
+        assertNotNull(regionCaptor.getValue().getId());
         assertEquals(newDescription, msg.getBody(Region.class).getDescription());
     }
 
@@ -135,17 +147,8 @@ public class RegionProducerTest extends KeystoneProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(regionService).delete(captor.capture());
-        assertEquals(networkID, captor.getValue());
-        assertFalse(msg.isFault());
-
-        //in case of failure
-        final String failureMessage = "fail";
-        when(regionService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
-        producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failureMessage));
+        verify(regionService).delete(regionIdCaptor.capture());
+        assertEquals(networkID, regionIdCaptor.getValue());
     }
 
     private void assertEqualsRegion(Region old, Region newRegion) {

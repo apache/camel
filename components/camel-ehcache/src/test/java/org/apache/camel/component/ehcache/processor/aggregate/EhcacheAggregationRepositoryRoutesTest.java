@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,10 +36,10 @@ public class EhcacheAggregationRepositoryRoutesTest extends EhcacheTestSupport {
     private static final int SUM = IntStream.of(VALUES).reduce(0, (a, b) -> a + b);
     private static final String CORRELATOR = "CORRELATOR";
 
-    @EndpointInject(uri = ENDPOINT_MOCK)
+    @EndpointInject(ENDPOINT_MOCK)
     private MockEndpoint mock;
 
-    @Produce(uri = ENDPOINT_DIRECT)
+    @Produce(ENDPOINT_DIRECT)
     private ProducerTemplate producer;
 
     @Test

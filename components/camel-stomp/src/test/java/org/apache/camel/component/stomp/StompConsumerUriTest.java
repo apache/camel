@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -49,7 +49,7 @@ public class StompConsumerUriTest extends StompBaseTest {
 
         for (int i = 0; i < numberOfMessages; i++) {
             StompFrame frame = new StompFrame(SEND);
-            frame.addHeader(DESTINATION, StompFrame.encodeHeader("/queue/test"));
+            frame.addHeader(DESTINATION, StompFrame.encodeHeader("test"));
             frame.addHeader(MESSAGE_ID, StompFrame.encodeHeader("msg:" + i));
             frame.content(utf8("Important Message " + i));
             producerConnection.send(frame);
@@ -62,7 +62,7 @@ public class StompConsumerUriTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("stomp:queue:test?brokerURL=tcp://localhost:%d", getPort())
+                fromF("stomp:test?brokerURL=tcp://localhost:%d", getPort())
                     .transform(body().convertToString())
                     .to("mock:result");
             }

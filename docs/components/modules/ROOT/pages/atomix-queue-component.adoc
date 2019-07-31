@@ -1,0 +1,122 @@
+[[atomix-queue-component]]
+= Atomix Queue Component
+
+*Available as of Camel version 2.20*
+
+The camel Atomix-Queue component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/primitives/DistributedQueue/[Distributed Queue] collection.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,java]
+----
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-atomix</artifactId>
+        <version>${camel-version}</version>
+    </dependency>
+----
+
+== URI format
+
+[source,java]
+----
+    atomix-queue:queueName
+----
+
+// component options: START
+The Atomix Queue component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (common) | The shared component configuration |  | AtomixQueue Configuration
+| *atomix* (common) | The shared AtomixClient instance |  | AtomixClient
+| *nodes* (common) | The nodes the AtomixClient should connect to |  | List
+| *configurationUri* (common) | The path to the AtomixClient configuration |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Atomix Queue endpoint is configured using URI syntax:
+
+----
+atomix-queue:resourceName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceName* | *Required* The distributed resource name |  | String
+|===
+
+
+=== Query Parameters (18 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *atomix* (common) | The Atomix instance to use |  | Atomix
+| *configurationUri* (common) | The Atomix configuration uri. |  | String
+| *defaultAction* (common) | The default action. | ADD | Action
+| *nodes* (common) | The address of the nodes composing the cluster. |  | String
+| *resultHeader* (common) | The header that wil carry the result. |  | String
+| *transport* (common) | Sets the Atomix transport. | io.atomix.catalyst.transport.netty.NettyTransport | Transport
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *defaultResourceConfig* (advanced) | The cluster wide default resource configuration. |  | Properties
+| *defaultResourceOptions* (advanced) | The local default resource options. |  | Properties
+| *ephemeral* (advanced) | Sets if the local member should join groups as PersistentMember or not. If set to ephemeral the local member will receive an auto generated ID thus the local one is ignored. | false | boolean
+| *readConsistency* (advanced) | The read consistency level. |  | ReadConsistency
+| *resourceConfigs* (advanced) | Cluster wide resources configuration. |  | Map
+| *resourceOptions* (advanced) | Local resources configurations |  | Map
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-atomix-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.atomix-queue.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient type. |  | String
+| *camel.component.atomix-queue.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.atomix-queue.configuration-uri* | The path to the AtomixClient configuration |  | String
+| *camel.component.atomix-queue.configuration.default-action* | The default action. |  | AtomixQueue$Action
+| *camel.component.atomix-queue.configuration.result-header* | The header that wil carry the result. |  | String
+| *camel.component.atomix-queue.enabled* | Whether to enable auto configuration of the atomix-queue component. This is enabled by default. |  | Boolean
+| *camel.component.atomix-queue.nodes* | The nodes the AtomixClient should connect to |  | List
+| *camel.component.atomix-queue.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+

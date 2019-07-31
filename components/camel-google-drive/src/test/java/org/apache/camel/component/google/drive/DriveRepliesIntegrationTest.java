@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.google.api.services.drive.model.Comment;
 import com.google.api.services.drive.model.File;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.DriveRepliesApiMethod;
@@ -45,7 +44,7 @@ public class DriveRepliesIntegrationTest extends AbstractGoogleDriveTestSupport 
         String fileId = testFile.getId();
         
         // 2. comment on that file
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is com.google.api.services.drive.model.Comment
@@ -66,7 +65,7 @@ public class DriveRepliesIntegrationTest extends AbstractGoogleDriveTestSupport 
         String commentId = comment2.getCommentId();
         
         // 4. add reply
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
@@ -80,7 +79,7 @@ public class DriveRepliesIntegrationTest extends AbstractGoogleDriveTestSupport 
 
         // 5. list replies on comment to file
         
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String

@@ -1,0 +1,152 @@
+[[zendesk-component]]
+= Zendesk Component
+
+*Available as of Camel version 2.19*
+
+The Zendesk component provides access to all of the zendesk.com APIs accessible
+using https://github.com/cloudbees/zendesk-java-client[zendesk-java-client]. It
+allows producing messages to manage Zendesk ticket, user, organization, etc.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,java]
+-------------------------------------------
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-zendesk</artifactId>
+        <version>${camel-version}</version>
+    </dependency>
+-------------------------------------------
+
+== Zendesk Options
+
+// component options: START
+The Zendesk component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (common) | To use the shared configuration |  | ZendeskConfiguration
+| *zendesk* (advanced) | To use a shared Zendesk instance. |  | Zendesk
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Zendesk endpoint is configured using URI syntax:
+
+----
+zendesk:methodName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *methodName* | *Required* What operation to use |  | String
+|===
+
+
+=== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| *serverUrl* (common) | The server URL to connect. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *oauthToken* (security) | The OAuth token. |  | String
+| *password* (security) | The password. |  | String
+| *token* (security) | The security token. |  | String
+| *username* (security) | The user name. |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-zendesk-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.zendesk.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.zendesk.configuration.method-name* | What operation to use |  | String
+| *camel.component.zendesk.configuration.oauth-token* | The OAuth token. |  | String
+| *camel.component.zendesk.configuration.password* | The password. |  | String
+| *camel.component.zendesk.configuration.server-url* | The server URL to connect. |  | String
+| *camel.component.zendesk.configuration.token* | The security token. |  | String
+| *camel.component.zendesk.configuration.username* | The user name. |  | String
+| *camel.component.zendesk.enabled* | Enable zendesk component | true | Boolean
+| *camel.component.zendesk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.zendesk.zendesk* | To use a shared Zendesk instance. The option is a org.zendesk.client.v2.Zendesk type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+== URI format
+
+[source,java]
+--------------------------------------------
+    zendesk://endpoint?[options]
+--------------------------------------------
+
+
+== Producer Endpoints:
+
+Producer endpoints can use endpoint names and associated options described next. 
+
+
+== Consumer Endpoints:
+
+Any of the producer endpoints can be used as a consumer endpoint.
+Consumer endpoints can use
+http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
+Poll Consumer Options] with a `consumer.` prefix to schedule endpoint
+invocation. Consumer endpoints that return an array or collection will
+generate one exchange per element, and their routes will be executed
+once for each exchange.
+
+
+== Message header
+
+Any of the options can be provided in a message header for producer
+endpoints with *CamelZendesk.* prefix. In principal, parameter names are same as
+the arugument name of each API methods on the original `org.zendesk.client.v2.Zendesk`
+ class. However some of them are renamed to the other name to avoid confliction in the
+ camel API component framework. To see actual parameter name, please check `org.apache.camel.component.zendesk.internal.ZendeskApiMethod`.
+ 
+
+== Message body
+
+All result message bodies utilize objects provided by the Zendesk Java Client.
+Producer endpoints can specify the option name for incoming message body
+in the *inBody* endpoint parameter.

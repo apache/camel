@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,20 +18,22 @@ package org.apache.camel.component.netty4;
 
 import java.io.File;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettySSLClientCertHeadersTest extends BaseNettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("ksf", new File("src/test/resources/keystore.jks"));
-        registry.bind("tsf", new File("src/test/resources/keystore.jks"));
-        return registry;
+    @BindToRegistry("ksf")
+    public File loadKeystoreKsf() throws Exception {
+        return new File("src/test/resources/keystore.jks");
     }
-    
+
+    @BindToRegistry("tsf")
+    public File loadKeystoreTsf() throws Exception {
+        return new File("src/test/resources/keystore.jks");
+    }
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -47,25 +49,23 @@ public class NettySSLClientCertHeadersTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
         getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME,
-                "CN=arlu15, OU=Sun Java System Application Server, O=Sun Microsystems, L=Santa Clara, ST=California, C=US");
+                                                             "CN=arlu15, OU=Sun Java System Application Server, O=Sun Microsystems, L=Santa Clara, ST=California, C=US");
         getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME,
-                "CN=arlu15, OU=Sun Java System Application Server, O=Sun Microsystems, L=Santa Clara, ST=California, C=US");
+                                                             "CN=arlu15, OU=Sun Java System Application Server, O=Sun Microsystems, L=Santa Clara, ST=California, C=US");
         getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_SERIAL_NO, "1210701502");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                // needClientAuth=true so we can get the client certificate details
-                from("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf"
-                        + "&needClientAuth=true&sslClientCertHeaders=true")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                // needClientAuth=true so we can get the client certificate
+                // details
+                from("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf"
+                     + "&needClientAuth=true&sslClientCertHeaders=true").to("mock:input").transform().constant("Bye World");
             }
         });
         context.start();
 
-        String response = template.requestBody(
-                "netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf",
-                "Hello World", String.class);
+        String response = template.requestBody("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf",
+                                               "Hello World", String.class);
         assertEquals("Bye World", response);
 
         assertMockEndpointsSatisfied();

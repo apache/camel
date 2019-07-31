@@ -1,0 +1,20 @@
+[[HowdoIchangethelogging-HowdoIchangethelogging]]
+= How do I change the logging?
+
+We use https://commons.apache.org/proper/commons-logging/[commons-logging] to
+log information in the broker client and the broker itself so you can
+fully configure the logging levels desired, whether to log to files or
+the console, as well as the underlying logging implementation (Log4J,
+Java SE logger, etc.) you wish to use. For Log4J, full instructions are
+in its https://logging.apache.org/log4j/2.x/manual/index.html[manual], but in
+a nutshell:
+
+* Add `log4j.jar` to your classpath
+* Create a `log4j.properties` file specifying desired logging
+configuration (The Camel distribution has example `log4j.properties` files
+you can use -- see for example in the
+https://github.com/apache/camel/blob/master/examples/camel-example-as2/src/main/resources/[/examples/camel-example-as2/src/main/resources] folder.)
+* Place the `log4j.properties` file in the folder where the compiled
+`.class` files are located (typically the `classes` folder) -- this will
+place the properties file on the classpath, where it needs to be at
+runtime.

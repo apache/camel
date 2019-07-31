@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,10 +19,10 @@ package org.apache.camel.component.infinispan;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
@@ -41,44 +41,33 @@ import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.junit.Test;
 
 import static org.apache.camel.component.infinispan.InfinispanConstants.OPERATION;
-import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY;
 import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY_BUILDER;
-import static org.apache.camel.component.infinispan.InfinispanConstants.RESULT;
 import static org.apache.camel.component.infinispan.util.UserUtils.USERS;
 import static org.apache.camel.component.infinispan.util.UserUtils.createKey;
 import static org.apache.camel.component.infinispan.util.UserUtils.hasUser;
 
 public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 
+    @BindToRegistry("noResultQueryBuilder")
     private static final InfinispanQueryBuilder NO_RESULT_QUERY_BUILDER = new InfinispanQueryBuilder() {
         @Override
-        public Query build(QueryFactory<Query> queryFactory) {
+        public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%abc%")
-                .toBuilder().build();
+                .having("name").like("%abc%").build();
         }
     };
 
+    @BindToRegistry("withResultQueryBuilder")
     private static final InfinispanQueryBuilder WITH_RESULT_QUERY_BUILDER = new InfinispanQueryBuilder() {
         @Override
-        public Query build(QueryFactory<Query> queryFactory) {
+        public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%A")
-                .toBuilder().build();
+                .having("name").like("%A").build();
         }
     };
 
+    @BindToRegistry("myCustomContainer")
     private RemoteCacheManager manager;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("myCustomContainer", manager);
-        registry.bind("noResultQueryBuilder", NO_RESULT_QUERY_BUILDER);
-        registry.bind("withResultQueryBuilder", WITH_RESULT_QUERY_BUILDER);
-
-        return registry;
-    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -86,11 +75,11 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query");
+                    .to("infinispan:remote_query?cacheContainer=#myCustomContainer");
                 from("direct:noQueryResults")
-                    .to("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#noResultQueryBuilder");
+                    .to("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#noResultQueryBuilder");
                 from("direct:queryWithResults")
-                    .to("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#withResultQueryBuilder");
+                    .to("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#withResultQueryBuilder");
             }
         };
     }
@@ -105,19 +94,15 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 
         manager = new RemoteCacheManager(builder.build());
 
-        RemoteCache<String, String> metadataCache = manager
-                .getCache(ProtobufMetadataManagerConstants.PROTOBUF_METADATA_CACHE_NAME);
-        metadataCache
-                .put("sample_bank_account/bank.proto",
-                        Util.read(InfinispanRemoteQueryProducerIT.class
-                                .getResourceAsStream("/sample_bank_account/bank.proto")));
-        MarshallerRegistration.registerMarshallers(ProtoStreamMarshaller
-                .getSerializationContext(manager));
+        RemoteCache<String, String> metadataCache = manager.getCache(ProtobufMetadataManagerConstants.PROTOBUF_METADATA_CACHE_NAME);
+        metadataCache.put(
+            "sample_bank_account/bank.proto",
+            Util.read(InfinispanRemoteQueryProducerIT.class.getResourceAsStream("/sample_bank_account/bank.proto"))
+        );
 
-        SerializationContext serCtx = ProtoStreamMarshaller
-                .getSerializationContext(manager);
-        serCtx.registerProtoFiles(FileDescriptorSource
-                .fromResources("/sample_bank_account/bank.proto"));
+        MarshallerRegistration.registerMarshallers(ProtoStreamMarshaller.getSerializationContext(manager));
+        SerializationContext serCtx = ProtoStreamMarshaller.getSerializationContext(manager);
+        serCtx.registerProtoFiles(FileDescriptorSource.fromResources("/sample_bank_account/bank.proto"));
         serCtx.registerMarshaller(new UserMarshaller());
         serCtx.registerMarshaller(new GenderMarshaller());
     }
@@ -144,12 +129,12 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         Exchange request = template.request("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(OPERATION, QUERY);
+                exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY);
             }
         });
         assertNull(request.getException());
 
-        List<User> queryResult = request.getIn().getHeader(RESULT, List.class);
+        List<User> queryResult = request.getIn().getBody(List.class);
         assertNull(queryResult);
     }
 
@@ -168,7 +153,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 
         assertNull(request.getException());
 
-        List<User> queryResult = request.getIn().getHeader(RESULT, List.class);
+        List<User> queryResult = request.getIn().getBody(List.class);
         assertNotNull(queryResult);
         assertEquals(0, queryResult.size());
     }
@@ -187,7 +172,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         Exchange request = template.request(endpoint, createQueryProcessor(builder));
         assertNull(request.getException());
 
-        List<User> queryResult = request.getIn().getHeader(RESULT, List.class);
+        List<User> queryResult = request.getIn().getBody(List.class);
         assertNotNull(queryResult);
         assertEquals(2, queryResult.size());
         assertTrue(hasUser(queryResult, "nameA", "surnameA"));
@@ -198,7 +183,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         return new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(OPERATION, QUERY);
+                exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY);
                 if (builder != null) {
                     exchange.getIn().setHeader(QUERY_BUILDER, builder);
                 }

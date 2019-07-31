@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,52 +39,6 @@ public class PayloadBuilder {
 
     public PayloadBuilder(String... strings) throws IOException {
         this.append(strings);
-    }
-
-    public PayloadBuilder append(byte b) throws IOException {
-        builderStream.write(b);
-
-        return this;
-    }
-
-    public PayloadBuilder append(byte[] bytes) throws IOException {
-        builderStream.write(bytes);
-
-        return this;
-    }
-
-    public PayloadBuilder append(char... chars) throws IOException {
-        if (chars != null) {
-            for (char c : chars) {
-                builderStream.write(c);
-            }
-        }
-
-        return this;
-    }
-
-    public PayloadBuilder append(String... strings) throws IOException {
-        if (strings != null) {
-            for (String s : strings) {
-                builderStream.write(s.getBytes());
-            }
-        }
-
-        return this;
-    }
-
-    public PayloadBuilder append(byte[] payload, int startPosition, int length) throws IOException {
-        builderStream.write(payload, startPosition, length);
-
-        return this;
-    }
-
-    public byte[] build() {
-        byte[] answer = builderStream.toByteArray();
-
-        builderStream.reset();
-
-        return answer;
     }
 
     public static byte[] build(byte b) {
@@ -154,8 +108,8 @@ public class PayloadBuilder {
     public static byte[] build(char start, String s) {
         try {
             return new PayloadBuilder(start)
-                    .append(s)
-                    .build();
+                .append(s)
+                .build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(String) failure", e);
         }
@@ -164,9 +118,9 @@ public class PayloadBuilder {
     public static byte[] build(char start, String s, char... end) {
         try {
             return new PayloadBuilder(start)
-                    .append(s)
-                    .append(end)
-                    .build();
+                .append(s)
+                .append(end)
+                .build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(char, String, char...) failure", e);
         }
@@ -175,8 +129,8 @@ public class PayloadBuilder {
     public static byte[] build(char start, byte[] bytes, char... end) {
         try {
             return new PayloadBuilder(start)
-                    .append(bytes)
-                    .append(end).build();
+                .append(bytes)
+                .append(end).build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(char, byte[], char...) failure", e);
         }
@@ -185,7 +139,7 @@ public class PayloadBuilder {
     public static byte[] build(String s, char... end) {
         try {
             return new PayloadBuilder(s)
-                    .append(end).build();
+                .append(end).build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(String, char...) failure", e);
         }
@@ -194,7 +148,7 @@ public class PayloadBuilder {
     public static byte[] build(byte[] bytes, char... end) {
         try {
             return new PayloadBuilder(bytes)
-                    .append(end).build();
+                .append(end).build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(byte[], char...) failure", e);
         }
@@ -203,9 +157,55 @@ public class PayloadBuilder {
     public static byte[] build(byte[] bytes, String s) {
         try {
             return new PayloadBuilder(bytes)
-                    .append(s).build();
+                .append(s).build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(byte[], String) failure", e);
         }
+    }
+
+    public PayloadBuilder append(byte b) throws IOException {
+        builderStream.write(b);
+
+        return this;
+    }
+
+    public PayloadBuilder append(byte[] bytes) throws IOException {
+        builderStream.write(bytes);
+
+        return this;
+    }
+
+    public PayloadBuilder append(char... chars) throws IOException {
+        if (chars != null) {
+            for (char c : chars) {
+                builderStream.write(c);
+            }
+        }
+
+        return this;
+    }
+
+    public PayloadBuilder append(String... strings) throws IOException {
+        if (strings != null) {
+            for (String s : strings) {
+                builderStream.write(s.getBytes());
+            }
+        }
+
+        return this;
+    }
+
+    public PayloadBuilder append(byte[] payload, int startPosition, int length) throws IOException {
+        builderStream.write(payload, startPosition, length);
+
+        return this;
+    }
+
+    public byte[] build() {
+        byte[] answer = builderStream.toByteArray();
+
+        builderStream.reset();
+
+        return answer;
     }
 }

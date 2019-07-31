@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,6 +38,8 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
         assertEquals(2000L, endpoint.getDelay());
         assertEquals(Integer.valueOf(10), config.getTimeout());
         assertEquals(Integer.valueOf(60), config.getLimit());
+        assertEquals("127.0.0.1", config.getProxyHost());
+        assertEquals(Integer.valueOf(1234), config.getProxyPort());
     }
 
 
@@ -48,7 +50,7 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
             public void configure() throws Exception {
 
                 from("direct:telegram")
-                        .to("telegram:bots/mock-token?chatId=12345&delay=2000&timeout=10&limit=60");
+                        .to("telegram:bots/mock-token?chatId=12345&delay=2000&timeout=10&limit=60&proxyHost=127.0.0.1&proxyPort=1234");
             }
         };
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ import java.util.Map.Entry;
  * and messing up the param names
  */
 public class JMXUriBuilder {
-    private Map<String, String> mQueryProps = new LinkedHashMap<String, String>();
+    private Map<String, String> mQueryProps = new LinkedHashMap<>();
     private String mServerName = "platform";
 
     public JMXUriBuilder() {

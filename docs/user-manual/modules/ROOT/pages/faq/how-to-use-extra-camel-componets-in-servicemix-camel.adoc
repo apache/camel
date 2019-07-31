@@ -1,0 +1,74 @@
+= How to use extra camel componets in servicemix-camel
+
+[[ConfluenceContent]]
+Since Servicemix3's component has same hierarchies of the class loaders
+with the J2EE application server, and the components the class loader is
+separated with the SU's. And Camel has lots of components, we just
+include the camel-core and camel-spring components in the
+servicemix-camel by default. When the user want to use other camel
+component, they always add the camel-xxx component into their SU lib. +
+In this way if there is a class which is loaded from the different SU
+classloader and registed into the camel-core's registry by
+servicemix-camel component , we will faced on the typical class cast
+exception in Servicemix3. Basically this exception is caused by the same
+class is loaded by different class loader.
+
+You may meet an issue of the class cast exception when deploying the
+same servicemix-camel component SU twice.
+
+In this case, when the SU is redeployed, it will create a new deployer
+which will create an application context with the class loader of
+servicemix-camel component, and then using the SU's class loader to
+create a camel context. +
+Since the SU is redeployed, Servicemix will create a new class loader to
+load the SU's lib jars and resources. +
+When the SU initial the rmi component, boom , we meet the situation of
+same component loaded with different class loader, The class cast
+exception is thrown out.
+
+Note, In Servicemix4's camel component , we will not get that kind of
+issue , since the OSGi will help us to manage the relationship of the
+jars.
+
+The solution is putting the camel-xxx components and third part jars
+into servicemix-camel component's lib. You need to check out the
+servicemix-camel component's pom.xml and recompile the servicemix-camel
+component by adding the camel-xxx component dependency.
+
+Let me take the latest servicemix-camel as an example
+
+\1. Checking out the servicemix-camel component's pom
+
+[source,syntaxhighlighter-pre]
+----
+svn co http://svn.apache.org/repos/asf/servicemix/components/engines/servicemix-camel/trunk/pom.xml
+----
+
+\2. If you need camel-rmi component , you just put the dependency into
+the pom.xml
+
+[source,syntaxhighlighter-pre]
+----
+<dependency>
+  <groupid>org.apache.camel</groupid>
+  <artifactid>camel-rmi</artifactid>
+  <version>${camel-version}</version>
+</dependency>
+----
+
+\3. Running "mvn install" and copy the servicemix-camel-*.zip into the
+deploy directory
+
+\4. Write your servicemix-camel SU, make sure you don't include any
+camel relates jars into the SU's lib, you can use the
+<scope>provided</scope> to not packing the artifact.
+
+[source,syntaxhighlighter-pre]
+----
+<dependency>
+  <groupid>org.apache.camel</groupid>
+  <artifactid>camel-rmi</artifactid>
+  <version>${camel-version}</version>
+  <scope>provided</scope>
+</dependency>
+----

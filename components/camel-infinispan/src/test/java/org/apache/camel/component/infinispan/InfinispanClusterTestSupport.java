@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,10 +18,11 @@ package org.apache.camel.component.infinispan;
 
 import java.util.List;
 
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.commons.time.TimeService;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.manager.EmbeddedCacheManager;
@@ -29,7 +30,6 @@ import org.infinispan.test.MultipleCacheManagersTest;
 import org.infinispan.test.TestingUtil;
 import org.infinispan.transaction.TransactionMode;
 import org.infinispan.util.ControlledTimeService;
-import org.infinispan.util.TimeService;
 import org.junit.Before;
 
 public class InfinispanClusterTestSupport extends CamelTestSupport {
@@ -94,6 +94,11 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
 
         super.setUp();
     }
+    
+    @BindToRegistry("cacheContainer")
+    public EmbeddedCacheManager loadContainer() {
+        return clusteredCacheContainers.get(0);
+    }
 
     @Override
     public void tearDown() throws Exception {
@@ -103,13 +108,6 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
         for (BasicCacheContainer container: clusteredCacheContainers) {
             container.stop();
         }
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("cacheContainer", clusteredCacheContainers.get(0));
-        return registry;
     }
 
     protected Cache<Object, Object> defaultCache() {

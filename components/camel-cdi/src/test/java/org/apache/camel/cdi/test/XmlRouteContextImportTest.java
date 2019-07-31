@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -83,10 +83,8 @@ public class XmlRouteContextImportTest {
         assertThat("Route context is incorrect!", routes, hasSize(1));
         RouteDefinition route = routes.get(0);
 
-        assertThat("Route input is incorrect!", route.getInputs(), hasSize(1));
-
         assertThat("Route is incorrect!",
-            route.getInputs().get(0).getEndpointUri(), is(equalTo("direct:inbound")));
+            route.getInput().getEndpointUri(), is(equalTo("direct:inbound")));
     }
 
     @Test

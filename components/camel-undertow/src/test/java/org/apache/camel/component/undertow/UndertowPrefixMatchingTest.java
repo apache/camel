@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -51,11 +51,11 @@ public class UndertowPrefixMatchingTest extends BaseUndertowTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("undertow:http://localhost:{{port}}/myapp/suffix?matchOnUriPrefix=false")
+                from("undertow:http://localhost:{{port}}/myapp/suffix")
                     .transform(bodyAs(String.class).append(" Must match exact path"))
                     .to("mock:myapp");
 
-                from("undertow:http://localhost:{{port}}/bar")
+                from("undertow:http://localhost:{{port}}/bar?matchOnUriPrefix=true")
                     .transform(bodyAs(String.class).append(" Matching prefix"))
                     .to("mock:bar");
             }

@@ -46,7 +46,7 @@ When the Camel application runs, you should see the following message being logg
 to the console, e.g.:
 
 ```
-2016-03-04 17:54:04,147 [cdi.Main.main()] INFO  route - Hello from camel-test-cdi at 05:54:04 PM!
+2016-03-04 17:54:04,147 [cdi.Main.main()] INFO  route - Hello from camel-test-cdi
 ```
 
 The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in the shell.
@@ -54,7 +54,7 @@ The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in th
 You should see the following message being logged to the console:
 
 ```
-2016-03-04 17:54:18,725 [Thread-1       ] INFO  route - Bye from camel-test-cdi at 05:54:18 PM!
+2016-03-04 17:54:18,725 [Thread-1       ] INFO  route - Bye from camel-test-cdi
 ```
 
 ### Forum, Help, etc

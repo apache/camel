@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,11 +37,11 @@ import org.junit.Test;
 public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
 
     private static final String ROUTE_ID = WebsocketProducerRouteRestartTest.class.getSimpleName();
-    private static List<Object> received = new ArrayList<Object>();
+    private static List<Object> received = new ArrayList<>();
     private static CountDownLatch latch;
     protected int port;
 
-    @Produce(uri = "direct:shop")
+    @Produce("direct:shop")
     private ProducerTemplate producer;
 
     @Override
@@ -55,15 +55,15 @@ public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
 
     @Test
     public void testWSSuspendResumeRoute() throws Exception {
-        context.suspendRoute(ROUTE_ID);
-        context.resumeRoute(ROUTE_ID);
+        context.getRouteController().resumeRoute(ROUTE_ID);
+        context.getRouteController().resumeRoute(ROUTE_ID);
         doTestWSHttpCall();
     }
 
     @Test
     public void testWSStopStartRoute() throws Exception {
-        context.stopRoute(ROUTE_ID);
-        context.startRoute(ROUTE_ID);
+        context.getRouteController().stopRoute(ROUTE_ID);
+        context.getRouteController().startRoute(ROUTE_ID);
         doTestWSHttpCall();
     }
 
@@ -71,7 +71,7 @@ public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
     public void testWSRemoveAddRoute() throws Exception {
         context.removeRoute(ROUTE_ID);
         context.addRoutes(createRouteBuilder());
-        context.startRoute(ROUTE_ID);
+        context.getRouteController().startRoute(ROUTE_ID);
         doTestWSHttpCall();
     }
 
@@ -122,7 +122,7 @@ public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
-                websocketComponent.setMaxThreads(20);
+                websocketComponent.setMaxThreads(25);
                 websocketComponent.setMinThreads(1);
                 from("direct:shop")
                     .id(ROUTE_ID)

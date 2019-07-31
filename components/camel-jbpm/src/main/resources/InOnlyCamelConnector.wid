@@ -1,0 +1,27 @@
+[
+        [
+            "name" : "InOnlyCamelConnector",
+            "displayName" : "InOnlyCamelConnector",
+            "category" : "Camel",
+            "description" : "",
+            "defaultHandler" : "mvel: new org.apache.camel.component.jbpm.workitem.InOnlyCamelWorkItemHandler()",
+            "documentation" : "camel-jbpm/index.html",
+
+            "parameters" : [
+                                "CamelEndpointId" : new StringDataType()
+
+            ],
+            "results" : [
+                                "Response" : new StringDataType()
+                ,"Message" : new StringDataType()
+
+            ],
+            "mavenDependencies" : [
+                                 "org.apache.camel:camel-jbpm:${project.version}"
+
+            ],
+            "icon" : "InOnlyCamelConnector.png"
+
+        ]
+
+]

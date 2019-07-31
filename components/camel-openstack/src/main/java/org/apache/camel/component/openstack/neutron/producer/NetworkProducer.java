@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.NeutronConstants;
 import org.apache.camel.component.openstack.neutron.NeutronEndpoint;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -69,7 +69,7 @@ public class NetworkProducer extends AbstractOpenstackProducer {
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NeutronConstants.NETWORK_ID, String.class), String.class);
-        ObjectHelper.notEmpty(id, "Network ID");
+        StringHelper.notEmpty(id, "Network ID");
         final Network out = os.networking().network().get(id);
         exchange.getIn().setBody(out);
     }
@@ -82,9 +82,9 @@ public class NetworkProducer extends AbstractOpenstackProducer {
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NeutronConstants.NETWORK_ID, String.class), String.class);
-        ObjectHelper.notEmpty(id, "Network ID");
+        StringHelper.notEmpty(id, "Network ID");
         final ActionResponse response = os.networking().network().delete(id);
-        checkFailure(response, msg, "Delete network" + id);
+        checkFailure(response, exchange, "Delete network" + id);
     }
 
     private Network messageToNetwork(Message message) {
@@ -93,7 +93,7 @@ public class NetworkProducer extends AbstractOpenstackProducer {
             Map headers = message.getHeaders();
             NetworkBuilder builder = Builders.network();
 
-            ObjectHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
+            StringHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
             builder.name(message.getHeader(OpenstackConstants.NAME, String.class));
 
             if (headers.containsKey(NeutronConstants.ADMIN_STATE_UP)) {

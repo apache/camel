@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,17 +27,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.splunk.event.SplunkEvent;
 import org.apache.camel.component.splunk.support.SplunkDataReader;
 import org.apache.camel.component.splunk.support.SplunkResultProcessor;
-import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Splunk consumer.
  */
 public class SplunkConsumer extends ScheduledBatchPollingConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(SplunkConsumer.class);
+
     private SplunkDataReader dataReader;
     private SplunkEndpoint endpoint;
 
@@ -68,11 +66,11 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
                         message.setBody(splunkEvent);
 
                         try {
-                            LOG.trace("Processing exchange [{}]...", exchange);
+                            log.trace("Processing exchange [{}]...", exchange);
                             getAsyncProcessor().process(exchange, new AsyncCallback() {
                                 @Override
                                 public void done(boolean doneSync) {
-                                    LOG.trace("Done processing exchange [{}]...", exchange);
+                                    log.trace("Done processing exchange [{}]...", exchange);
                                 }
                             });
                         } catch (Exception e) {
@@ -100,8 +98,8 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected Queue<Exchange> createExchanges(List<SplunkEvent> splunkEvents) {
-        LOG.trace("Received {} messages in this poll", splunkEvents.size());
-        Queue<Exchange> answer = new LinkedList<Exchange>();
+        log.trace("Received {} messages in this poll", splunkEvents.size());
+        Queue<Exchange> answer = new LinkedList<>();
         for (SplunkEvent splunkEvent : splunkEvents) {
             Exchange exchange = getEndpoint().createExchange();
             Message message = exchange.getIn();
@@ -121,7 +119,7 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
             exchange.setProperty(Exchange.BATCH_SIZE, total);
             exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
             try {
-                LOG.trace("Processing exchange [{}]...", exchange);
+                log.trace("Processing exchange [{}]...", exchange);
                 getProcessor().process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);

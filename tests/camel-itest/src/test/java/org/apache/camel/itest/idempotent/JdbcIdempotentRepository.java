@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,10 +21,7 @@ import javax.sql.DataSource;
 import org.apache.camel.spi.IdempotentRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-/**
- * @version 
- */
-public class JdbcIdempotentRepository implements IdempotentRepository<String> {
+public class JdbcIdempotentRepository implements IdempotentRepository {
 
     private JdbcTemplate jdbc;
 
@@ -60,11 +57,11 @@ public class JdbcIdempotentRepository implements IdempotentRepository<String> {
         jdbc.update("DELETE * FROM ProcessedPayments");
     }
 
-    public void start() throws Exception {
+    public void start() {
         // noop
     }
 
-    public void stop() throws Exception {
+    public void stop() {
         // noop
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,11 +29,9 @@ import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockitoAnnotations;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -42,8 +40,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.net.ssl.*", "javax.management.*"})
 public class BonitaAuthFilterConnectionTest {
 
     @Rule
@@ -54,6 +50,7 @@ public class BonitaAuthFilterConnectionTest {
 
     @Before
     public void setup() {
+        MockitoAnnotations.initMocks(this);
         Mockito.when(requestContext.getCookies()).thenReturn(new HashMap<String, Cookie>());
         Mockito.when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap());
     }

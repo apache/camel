@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -134,7 +134,7 @@ public class FreemarkerContentCacheTest extends CamelTestSupport {
         // clear the cache via the mbean server
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         Set<ObjectName> objNameSet = mbeanServer.queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"freemarker:*contentCache=true*\",*"), null);
-        ObjectName managedObjName = new ArrayList<ObjectName>(objNameSet).get(0);
+        ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);
         mbeanServer.invoke(managedObjName, "clearContentCache", null, null);
 
         // change content in the file in the classpath and try again

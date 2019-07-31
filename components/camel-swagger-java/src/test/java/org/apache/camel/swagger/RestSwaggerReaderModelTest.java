@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -46,16 +46,17 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
                 rest("/user").tag("dude").description("User rest service")
                     .consumes("application/json").produces("application/json")
 
-                    .get("/{id}").description("Find user by id").outType(User.class)
+                    .get("/{id}/{date}").description("Find user by id and date").outType(User.class)
                         .responseMessage().message("The user returned").endResponseMessage()
-                        .param().name("id").type(RestParamType.path).description("The id of the user to get").dataType("integer").endParam()
+                        .param().name("id").type(RestParamType.path).description("The id of the user to get").endParam()
+                        .param().name("date").type(RestParamType.path).description("The date").dataFormat("date").endParam()
                         .to("bean:userService?method=getUser(${header.id})")
 
                     .put().description("Updates or create a user").type(User.class)
                         .param().name("body").type(RestParamType.body).description("The user to update or create").endParam()
                         .to("bean:userService?method=updateUser")
 
-                    .get("/findAll").description("Find all users").outTypeList(User.class)
+                    .get("/findAll").description("Find all users").outType(User[].class)
                         .responseMessage().message("All the found users").endResponseMessage()
                         .to("bean:userService?method=listUsers");
             }
@@ -88,6 +89,8 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
         assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
         assertTrue(json.contains("\"x-className\""));
         assertTrue(json.contains("\"format\" : \"org.apache.camel.swagger.User\""));
+        assertTrue(json.contains("\"type\" : \"string\""));
+        assertTrue(json.contains("\"format\" : \"date\""));
         assertFalse(json.contains("\"enum\""));
         context.stop();
     }

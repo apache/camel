@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -68,11 +68,11 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:no-operation").to(String.format("hazelcast:%sbar", HazelcastConstants.TOPIC_PREFIX));
+                from("direct:no-operation").to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
 
-                from("direct:publishInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast:%sbar", HazelcastConstants.TOPIC_PREFIX));
+                from("direct:publishInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
 
-                from("direct:publish").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUBLISH_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.TOPIC_PREFIX));
+                from("direct:publish").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUBLISH)).to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
             }
         };
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,8 +29,8 @@ import org.w3c.dom.Text;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.BusFactory;
@@ -94,10 +94,10 @@ public class CxfConsumerPayloadXPathClientServerTest extends CamelTestSupport {
                         //build some dummy response 
                         XmlConverter converter = new XmlConverter();
                         Document outDocument = converter.toDOMDocument(ECHO_RESPONSE, exchange);
-                        List<Source> outElements = new ArrayList<Source>();
+                        List<Source> outElements = new ArrayList<>();
                         outElements.add(new DOMSource(outDocument.getDocumentElement()));
                         // set the payload header with null
-                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements, null);
+                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<>(null, outElements, null);
                         exchange.getOut().setBody(responsePayload);
                     }
                 });

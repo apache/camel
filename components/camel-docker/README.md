@@ -23,7 +23,7 @@ All URI option can be passed as Header properties. Values found in a message hea
 
 Options on the Docker Endpoint mapped to a *DockerConfiguration* POJO. This object contains the values integral to the communication with the Docker sever as first order attributes along with a Map of additional parameters based on the options for each type of interaction.
 
-The following are the the primary options for communicating with the Docker server
+The following are the primary options for communicating with the Docker server
 
 | Option | Header | Description | Default Value |
 |-----------|-----------|-----------------|-------------------|
@@ -38,6 +38,7 @@ The following are the the primary options for communicating with the Docker serv
 |serverAddress | CamelDockerServerAddress | Address of the Docker registry server (If not specified, *host* will be used) | https://index.docker.io/v1/ |
 |maxTotalConnections | CamelDockerMaxTotalConnections | Maximum number of total connections | 100 |
 |maxPerRouteConnections | CamelDockerMaxPerRouteConnections | Maximum number of connections per route | 100 |
+| cmdExecFactory | CamelDockerCmdExecFactory | The fully qualified class name of the DockerCmdExecFactory implementation to use |  com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory |
 
 
 ## Consumer Operations

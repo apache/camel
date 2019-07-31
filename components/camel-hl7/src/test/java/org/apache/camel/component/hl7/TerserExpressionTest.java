@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.segment.PID;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import static org.apache.camel.component.hl7.HL7.terser;
+import static org.apache.camel.component.hl7.HL7.hl7terser;
 
 
 public class TerserExpressionTest extends CamelTestSupport {
@@ -85,10 +83,10 @@ public class TerserExpressionTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:test1").transform(terser("PID-3-1")).to("mock:test1");
-                from("direct:test2").filter(terser("PID-3-1").isEqualTo(PATIENT_ID)).to("mock:test2");
-                from("direct:test3").filter(terser("PID-4-1").isNull()).to("mock:test3");
-                from("direct:test4").filter(terser("blorg gablorg").isNull()).to("mock:test3");
+                from("direct:test1").transform(hl7terser("PID-3-1")).to("mock:test1");
+                from("direct:test2").filter(hl7terser("PID-3-1").isEqualTo(PATIENT_ID)).to("mock:test2");
+                from("direct:test3").filter(hl7terser("PID-4-1").isNull()).to("mock:test3");
+                from("direct:test4").filter(hl7terser("blorg gablorg").isNull()).to("mock:test3");
                 from("direct:test5").bean(terserBean).to("mock:test5");
             }
         };
@@ -108,7 +106,7 @@ public class TerserExpressionTest extends CamelTestSupport {
     }
 
     public class TerserBean {
-        public String patientId(@Terser(value = "PID-3-1") String patientId) {
+        public String patientId(@Hl7Terser(value = "PID-3-1") String patientId) {
             return patientId;
         }
     }

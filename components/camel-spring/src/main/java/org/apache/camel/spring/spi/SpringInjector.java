@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,15 +16,16 @@
  */
 package org.apache.camel.spring.spi;
 
-import org.apache.camel.IsSingleton;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Injector;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * A Spring implementation of {@link Injector} allowing Spring to be used to dependency inject newly created POJOs
- *
- * @version 
  */
 public class SpringInjector implements Injector {
     private final ConfigurableApplicationContext applicationContext;
@@ -36,18 +37,39 @@ public class SpringInjector implements Injector {
     }
 
     public <T> T newInstance(Class<T> type) {
-        Object value = applicationContext.getBeanFactory().createBean(type, autowireMode, dependencyCheck);
+        return newInstance(type, true);
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> type, String factoryMethod) {
+        T answer = null;
+        try {
+            // lookup factory method
+            Method fm = type.getMethod(factoryMethod);
+            if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers()) && fm.getReturnType() == type) {
+                Object obj = fm.invoke(null);
+                answer = type.cast(obj);
+            }
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + type, e);
+        }
+        return answer;
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> type, boolean postProcessBean) {
+        Object value;
+        if (postProcessBean) {
+            value = applicationContext.getBeanFactory().createBean(type, autowireMode, dependencyCheck);
+        } else {
+            value = applicationContext.getBeanFactory().createBean(type, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
+        }
         return type.cast(value);
     }
 
-    public <T> T newInstance(Class<T> type, Object instance) {
-        if (instance instanceof IsSingleton) {
-            boolean singleton = ((IsSingleton) instance).isSingleton();
-            if (singleton) {
-                return type.cast(instance);
-            }
-        }
-        return newInstance(type);
+    @Override
+    public boolean supportsAutoWiring() {
+        return true;
     }
 
     public int getAutowireMode() {

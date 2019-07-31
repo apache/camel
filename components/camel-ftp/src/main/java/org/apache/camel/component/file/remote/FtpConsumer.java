@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,30 +17,45 @@
 package org.apache.camel.component.file.remote;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
+import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
  * FTP consumer
  */
+@ManagedResource(description = "Managed FtpConsumer")
 public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     protected String endpointPath;
-   
+
     private transient String ftpConsumerToString;
 
-    public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations) {
-        super(endpoint, processor, fileOperations);
+    public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations, GenericFileProcessStrategy processStrategy) {
+        super(endpoint, processor, fileOperations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
+    }
+
+    @Override
+    protected FtpOperations getOperations() {
+        return (FtpOperations) super.getOperations();
     }
 
     @Override
@@ -58,7 +73,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 } catch (GenericFileOperationFailedException e) {
                     // log a WARN as we want to start the consumer.
                     log.warn("Error auto creating directory: " + endpoint.getConfiguration().getDirectory()
-                            + " due " + e.getMessage() + ". This exception is ignored.", e);
+                        + " due " + e.getMessage() + ". This exception is ignored.", e);
                 }
             }
         } finally {
@@ -106,32 +121,40 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         dirName = FileUtil.stripTrailingSeparator(dirName);
 
         // compute dir depending on stepwise is enabled or not
-        String dir;
-        if (isStepwise()) {
-            dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
-            operations.changeCurrentDirectory(dir);
-        } else {
-            dir = absolutePath;
-        }
-
-        log.trace("Polling directory: {}", dir);
+        String dir = null;
         List<FTPFile> files = null;
-        if (isUseList()) {
+        try {
             if (isStepwise()) {
-                files = operations.listFiles();
+                dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
+                operations.changeCurrentDirectory(dir);
             } else {
-                files = operations.listFiles(dir);
+                dir = absolutePath;
             }
-        } else {
-            // we cannot use the LIST command(s) so we can only poll a named file
-            // so created a pseudo file with that name
-            FTPFile file = new FTPFile();
-            file.setType(FTPFile.FILE_TYPE);
-            fileExpressionResult = evaluateFileExpression();
-            if (fileExpressionResult != null) {
-                file.setName(fileExpressionResult);
-                files = new ArrayList<FTPFile>(1);
-                files.add(file);
+
+            log.trace("Polling directory: {}", dir);
+            if (isUseList()) {
+                if (isStepwise()) {
+                    files = operations.listFiles();
+                } else {
+                    files = operations.listFiles(dir);
+                }
+            } else {
+                // we cannot use the LIST command(s) so we can only poll a named file
+                // so created a pseudo file with that name
+                FTPFile file = new FTPFile();
+                file.setType(FTPFile.FILE_TYPE);
+                fileExpressionResult = evaluateFileExpression();
+                if (fileExpressionResult != null) {
+                    file.setName(fileExpressionResult);
+                    files = new ArrayList<>(1);
+                    files.add(file);
+                }
+            }
+        } catch (GenericFileOperationFailedException e) {
+            if (ignoreCannotRetrieveFile(null, null, e)) {
+                log.debug("Cannot list files in directory {} due directory does not exists or file permission error.", dir);
+            } else {
+                throw e;
             }
         }
 
@@ -144,10 +167,14 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             log.trace("Found {} in directory: {}", files.size(), dir);
         }
 
+        if (getEndpoint().isPreSort()) {
+            Collections.sort(files, (a, b) -> a.getName().compareTo(b.getName()));
+        }
+
         for (FTPFile file : files) {
 
             if (log.isTraceEnabled()) {
-                log.trace("FtpFile[name={}, dir={}, file={}]", new Object[]{file.getName(), file.isDirectory(), file.isFile()});
+                log.trace("FtpFile[name={}, dir={}, file={}]", file.getName(), file.isDirectory(), file.isFile());
             }
 
             // check if we can continue polling in files
@@ -160,7 +187,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getName();
-                    String path = absolutePath + "/" + subDirectory;
+                    String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
                     boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
                     if (!canPollMore) {
                         return false;
@@ -173,7 +200,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                     fileList.add(remote);
                 }
             } else {
-                log.debug("Ignoring unsupported remote file type: " + file);
+                log.debug("Ignoring unsupported remote file type: {}", file);
             }
         }
 
@@ -204,7 +231,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                     return true;
                 }
             }
-            if (cause != null && cause instanceof GenericFileOperationFailedException) {
+            if (cause instanceof GenericFileOperationFailedException) {
                 GenericFileOperationFailedException generic = ObjectHelper.getException(GenericFileOperationFailedException.class, cause);
                 //exchange is null and cause has the reason for failure to read directories
                 if (generic.getCode() == 550) {
@@ -216,7 +243,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file, String charset) {
-        RemoteFile<FTPFile> answer = new RemoteFile<FTPFile>();
+        RemoteFile<FTPFile> answer = new RemoteFile<>();
 
         answer.setCharset(charset);
         answer.setEndpointPath(endpointPath);
@@ -235,7 +262,11 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
         // create a pseudo absolute name
         String dir = FileUtil.stripTrailingSeparator(absolutePath);
-        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + file.getName());
+        String fileName = file.getName();
+        if (((FtpConfiguration) endpoint.getConfiguration()).isHandleDirectoryParserAbsoluteResult()) {
+            fileName = FtpUtils.extractDirNameFromAbsolutePath(file.getName());
+        }
+        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + fileName);
         // if absolute start with a leading separator otherwise let it be relative
         if (absolute) {
             absoluteFileName = "/" + absoluteFileName;
@@ -243,7 +274,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         answer.setAbsoluteFilePath(absoluteFileName);
 
         // the relative filename, skip the leading endpoint configured path
-        String relativePath = ObjectHelper.after(absoluteFileName, endpointPath);
+        String relativePath = StringHelper.after(absoluteFileName, endpointPath);
         // skip leading /
         relativePath = FileUtil.stripLeadingSeparator(relativePath);
         answer.setRelativeFilePath(relativePath);
@@ -276,6 +307,48 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     private boolean isUseList() {
         RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isUseList();
+    }
+
+    @ManagedAttribute(description = "Summary of last FTP activity (download only)")
+    public String getLastFtpActivity() {
+        FTPClient client = getOperations().getFtpClient();
+        FtpClientActivityListener listener = (FtpClientActivityListener) client.getCopyStreamListener();
+        if (listener != null) {
+            String log = listener.getLastLogActivity();
+            if (log != null) {
+                long since = listener.getLastLogActivityTimestamp();
+                if (since > 0) {
+                    StopWatch watch = new StopWatch(new Date(since));
+                    long delta = watch.taken();
+                    String human = TimeUtils.printDuration(delta);
+                    return log + " " + human + " ago";
+                } else {
+                    return log;
+                }
+            }
+        }
+        return null;
+    }
+
+    @ManagedAttribute(description = "Summary of last FTP activity (all)")
+    public String getLastFtpActivityVerbose() {
+        FTPClient client = getOperations().getFtpClient();
+        FtpClientActivityListener listener = (FtpClientActivityListener) client.getCopyStreamListener();
+        if (listener != null) {
+            String log = listener.getLastVerboseLogActivity();
+            if (log != null) {
+                long since = listener.getLastVerboseLogActivityTimestamp();
+                if (since > 0) {
+                    StopWatch watch = new StopWatch(new Date(since));
+                    long delta = watch.taken();
+                    String human = TimeUtils.printDuration(delta);
+                    return log + " " + human + " ago";
+                } else {
+                    return log;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

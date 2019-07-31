@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,70 @@
  */
 package org.apache.camel.dataformat.protobuf;
 
+import org.apache.camel.CamelException;
+import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos;
+import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
+
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class ProtobufMarshalAndUnmarshalSpringTest extends ProtobufMarshalAndUnmarshallTest {
+public class ProtobufMarshalAndUnmarshalSpringTest extends CamelSpringTestSupport {
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/protobuf/springDataFormat.xml");
     }
+    
+    @Test
+    public void testMarshalAndUnmarshalWithDataFormat() throws Exception {
+        marshalAndUnmarshal("direct:in", "direct:back");
+    }
 
+    @Test
+    public void testMarshalAndUnmarshalWithDSL1() throws Exception {
+        marshalAndUnmarshal("direct:marshal", "direct:unmarshalA");
+    }
+
+    @Test
+    public void testMarshalAndUnmarshalWithDSL2() throws Exception {
+        marshalAndUnmarshal("direct:marshal", "direct:unmarshalB");
+    }
+
+    @Test
+    public void testMarshalAndUnmarshalWithDSL3() throws Exception {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:unmarshalC").unmarshal().protobuf(new CamelException("wrong instance")).to("mock:reverse");
+                }
+            });
+            fail("Expect the exception here");
+        } catch (Exception ex) {
+            assertTrue("Expect FailedToCreateRouteException", ex instanceof FailedToCreateRouteException);
+            assertTrue("Get a wrong reason", ex.getCause() instanceof IllegalArgumentException);
+        }
+    }
+
+    private void marshalAndUnmarshal(String inURI, String outURI) throws Exception {
+        AddressBookProtos.Person input = AddressBookProtos.Person.newBuilder().setName("Martin").setId(1234).build();
+
+        MockEndpoint mock = getMockEndpoint("mock:reverse");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(Person.class);
+        mock.message(0).body().isEqualTo(input);
+
+        Object marshalled = template.requestBody(inURI, input);
+
+        template.sendBody(outURI, marshalled);
+
+        mock.assertIsSatisfied();
+
+        Person output = mock.getReceivedExchanges().get(0).getIn().getBody(Person.class);
+        assertEquals("Martin", output.getName());
+    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,31 +16,29 @@
  */
 package org.apache.camel.component.nagios;
 
-import java.util.EventObject;
-
-import com.googlecode.jsendnsca.core.Level;
-import com.googlecode.jsendnsca.core.MessagePayload;
-import com.googlecode.jsendnsca.core.NagiosPassiveCheckSender;
-import com.googlecode.jsendnsca.core.NagiosSettings;
-import org.apache.camel.management.event.CamelContextStartupFailureEvent;
-import org.apache.camel.management.event.CamelContextStopFailureEvent;
-import org.apache.camel.management.event.ExchangeFailedEvent;
-import org.apache.camel.management.event.ExchangeFailureHandledEvent;
-import org.apache.camel.management.event.ExchangeRedeliveryEvent;
-import org.apache.camel.management.event.ServiceStartupFailureEvent;
-import org.apache.camel.management.event.ServiceStopFailureEvent;
+import com.googlecode.jsendnsca.Level;
+import com.googlecode.jsendnsca.MessagePayload;
+import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.NagiosSettings;
+import com.googlecode.jsendnsca.PassiveCheckSender;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartupFailureEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStopFailureEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeFailureHandledEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeRedeliveryEvent;
+import org.apache.camel.spi.CamelEvent.ServiceStartupFailureEvent;
+import org.apache.camel.spi.CamelEvent.ServiceStopFailureEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * An {@link org.apache.camel.spi.EventNotifier} which sends alters to Nagios.
- *
- * @version 
  */
 public class NagiosEventNotifier extends EventNotifierSupport {
 
     private NagiosSettings nagiosSettings;
     private NagiosConfiguration configuration;
-    private NagiosPassiveCheckSender sender;
+    private PassiveCheckSender sender;
     private String serviceName = "Camel";
     private String hostName = "localhost";
 
@@ -48,15 +46,15 @@ public class NagiosEventNotifier extends EventNotifierSupport {
 
     }
 
-    public NagiosEventNotifier(NagiosPassiveCheckSender sender) {
+    public NagiosEventNotifier(PassiveCheckSender sender) {
         this.sender = sender;
     }
 
-    public void notify(EventObject eventObject) throws Exception {
+    public void notify(CamelEvent eventObject) throws Exception {
         // create message payload to send
         String message = eventObject.toString();
         Level level = determineLevel(eventObject);
-        MessagePayload payload = new MessagePayload(getHostName(), level.ordinal(), getServiceName(), message);
+        MessagePayload payload = new MessagePayload(getHostName(), level, getServiceName(), message);
 
         if (log.isInfoEnabled()) {
             log.info("Sending notification to Nagios: {}", payload.getMessage());
@@ -65,11 +63,11 @@ public class NagiosEventNotifier extends EventNotifierSupport {
         log.trace("Sending notification done");
     }
 
-    public boolean isEnabled(EventObject eventObject) {
+    public boolean isEnabled(CamelEvent eventObject) {
         return true;
     }
 
-    protected Level determineLevel(EventObject eventObject) {
+    protected Level determineLevel(CamelEvent eventObject) {
         // failures is considered critical
         if (eventObject instanceof ExchangeFailedEvent
                 || eventObject instanceof CamelContextStartupFailureEvent
@@ -134,7 +132,7 @@ public class NagiosEventNotifier extends EventNotifierSupport {
             sender = new NagiosPassiveCheckSender(nagiosSettings);
         }
 
-        log.info("Using " + configuration);
+        log.info("Using {}", configuration);
     }
 
     @Override

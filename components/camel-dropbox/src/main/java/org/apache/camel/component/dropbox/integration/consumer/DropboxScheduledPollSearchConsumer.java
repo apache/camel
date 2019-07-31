@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.dropbox.integration.consumer;
 
-import com.dropbox.core.DbxEntry;
+import com.dropbox.core.v2.files.SearchMatch;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
@@ -43,15 +43,15 @@ public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollCons
                 .search(configuration.getRemotePath(), configuration.getQuery());
 
         StringBuilder fileExtracted = new StringBuilder();
-        for (DbxEntry entry : result.getFound()) {
-            fileExtracted.append(entry.name).append("-").append(entry.path).append("\n");
+        for (SearchMatch entry : result.getFound()) {
+            fileExtracted.append(entry.getMetadata().getName()).append("-").append(entry.getMetadata().getPathDisplay()).append("\n");
         }
 
         exchange.getIn().setHeader(DropboxResultHeader.FOUND_FILES.name(), fileExtracted.toString());
         exchange.getIn().setBody(result.getFound());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Downloaded: {}", result.toString());
+            LOG.debug("Downloaded: {}", result);
         }
 
         try {

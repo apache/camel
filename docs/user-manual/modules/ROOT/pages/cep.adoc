@@ -1,0 +1,38 @@
+[[CEP-CamelCEP]]
+= Camel CEP
+
+http://en.wikipedia.org/wiki/Complex_event_processing[Complex Event
+Processing] or
+http://en.wikipedia.org/wiki/Event_stream_processing[Event Stream
+Processing] are approaches of processing streams of events, usually from
+multiple sources.
+
+Another approach to CEP with Camel is to use Camel RX
+which provides a typesafe DSL in Java, Scala, Groovy, clojure for
+processing events in a natural collection-like way (while being high
+performance and asynchronous under the covers). Camel RX
+uses the https://github.com/Netflix/RxJava/wiki[RxJava]
+http://netflix.github.com/RxJava/javadoc/[API] which is a JVM port of
+the https://rx.codeplex.com/[Reactive Extensions]
+
+[[CEP-CEPwithCamelRX]]
+== CEP with Camel RX
+
+Camel RX provides various ways to get an
+http://netflix.github.com/RxJava/javadoc/rx/Observable.html[Observable<T>]
+which provides the typesafe DSL for processing events on a single
+stream.
+
+Once you have an
+http://netflix.github.com/RxJava/javadoc/rx/Observable.html[Observable<T>]
+you can then:
+
+* https://github.com/Netflix/RxJava/wiki/Filtering-Operators[filter
+events]
+*
+https://github.com/Netflix/RxJava/wiki/Transformative-Operators[transform
+events]
+* https://github.com/Netflix/RxJava/wiki/Combinatorial-Operators[combine
+event streams]
+* https://github.com/Netflix/RxJava/wiki/Utility-Operators[other utility
+methods]

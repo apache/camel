@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -44,14 +44,15 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
             public void configure() throws Exception {
                 rest("/hello").consumes("application/json").produces("application/json")
                         .get("/hi/{name}").description("Saying hi")
-                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
+                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam()
                             .to("log:hi")
                         .get("/bye/{name}").description("Saying bye")
-                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
-                            .responseMessage().code(200).message("A reply message").endResponseMessage()
+                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam()
+                            .responseMessage().code(200).message("A reply number").responseModel(float.class)
+                                .example("success", "123").example("error", "-1").endResponseMessage()
                             .to("log:bye")
                         .post("/bye").description("To update the greeting message").consumes("application/xml").produces("application/xml")
-                            .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").endParam()
+                            .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").example("application/xml", "<hello>Hi</hello>").endParam()
                             .to("log:bye");
             }
         };
@@ -81,6 +82,13 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"summary\" : \"To update the greeting message\""));
         assertTrue(json.contains("\"/hello/bye/{name}\""));
         assertTrue(json.contains("\"/hello/hi/{name}\""));
+        assertTrue(json.contains("\"type\" : \"number\""));
+        assertTrue(json.contains("\"format\" : \"float\""));
+        assertTrue(json.contains("\"application/xml\" : \"<hello>Hi</hello>\""));
+        assertTrue(json.contains("\"x-example\" : \"Donald Duck\""));
+        assertTrue(json.contains("\"success\" : \"123\""));
+        assertTrue(json.contains("\"error\" : \"-1\""));
+        assertTrue(json.contains("\"type\" : \"string\""));
 
         context.stop();
     }

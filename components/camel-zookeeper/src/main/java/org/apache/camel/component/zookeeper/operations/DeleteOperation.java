@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -44,9 +44,9 @@ public class DeleteOperation extends ZooKeeperOperation<Boolean> {
                     LOG.debug(format("Set data of node '%s'", node));
                 }
             }
-            return new OperationResult<Boolean>(true, null, true);
+            return new OperationResult<>(true, null, true);
         } catch (Exception e) {
-            return new OperationResult<Boolean>(e);
+            return new OperationResult<>(e);
         }
     }
 

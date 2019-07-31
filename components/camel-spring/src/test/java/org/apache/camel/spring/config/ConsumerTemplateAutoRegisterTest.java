@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,15 +18,12 @@ package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
-import org.apache.camel.impl.DefaultConsumerTemplate;
+import org.apache.camel.impl.engine.DefaultConsumerTemplate;
 import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-/**
- * @version 
- */
 @ContextConfiguration
 public class ConsumerTemplateAutoRegisterTest extends SpringRunWithTestSupport {
 

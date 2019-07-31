@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,14 +22,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.camel.language.LanguageAnnotation;
-import org.apache.camel.language.NamespacePrefix;
+import org.apache.camel.support.language.LanguageAnnotation;
+import org.apache.camel.support.language.NamespacePrefix;
 
 /**
  * An annotation for injection of an XQuery expressions into a field, property, method or parameter when using
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>.
- *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

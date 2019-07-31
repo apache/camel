@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 
@@ -28,10 +29,11 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
      * Connects to the remote server
      *
      * @param configuration configuration
+     * @param exchange the exchange that trigger the connect (if any)
      * @return <tt>true</tt> if connected
      * @throws GenericFileOperationFailedException can be thrown
      */
-    boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException;
+    boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException;
 
     /**
      * Returns whether we are connected to the remote server or not
@@ -47,6 +49,13 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException can be thrown
      */
     void disconnect() throws GenericFileOperationFailedException;
+
+    /**
+     * Forces a hard disconnect from the remote server and cause the client to be re-created on next poll.
+     *
+     * @throws GenericFileOperationFailedException can be thrown
+     */
+    void forceDisconnect() throws GenericFileOperationFailedException;
 
     /**
      * Sends a noop command to the remote server

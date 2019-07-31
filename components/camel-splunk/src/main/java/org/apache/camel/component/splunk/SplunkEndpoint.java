@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,18 +25,15 @@ import com.splunk.Service;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * The splunk component allows to publish or search for events in Splunk.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name", consumerClass = SplunkConsumer.class, label = "log,monitoring")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name", label = "log,monitoring")
 public class SplunkEndpoint extends ScheduledPollEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);
 
     private static final Pattern SPLUNK_SCHEMA_PATTERN = Pattern.compile("splunk:(//)*");
     private static final Pattern SPLUNK_OPTIONS_PATTER = Pattern.compile("\\?.*");
@@ -76,10 +73,6 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
         throw new IllegalArgumentException("Cannot create any consumer with uri " + getEndpointUri() + ". A consumer type was not provided (or an incorrect pairing was used).");
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     protected void doStop() throws Exception {
         service = null;
@@ -107,7 +100,7 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
     public synchronized boolean reset(Exception e) {
         boolean answer = false;
         if ((e instanceof RuntimeException && ((RuntimeException)e).getCause() instanceof ConnectException) || ((e instanceof SocketException) || (e instanceof SSLException))) {
-            LOG.warn("Got exception from Splunk. Service will be reset.");
+            log.warn("Got exception from Splunk. Service will be reset.");
             this.service = null;
             answer = true;
         }

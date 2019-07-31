@@ -1,0 +1,181 @@
+[[bean-language]]
+= Bean method Language
+== Bean Language
+*Available as of Camel version 1.3*
+
+The purpose of the Bean Language is to be able to implement an
+xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] using
+a simple method on a bean. The bean name is resolved using a xref:manual::registry.adoc[Registry], such as the
+xref:manual::spring.adoc[Spring] *`ApplicationContext`*, then a method is
+invoked to evaluate the xref:manual::expression.adoc[Expression] or
+xref:manual::predicate.adoc[Predicate]. If no method name is provided then one
+is chosen using the rules for xref:manual::bean-binding.adoc[Bean Binding];
+using the type of the message body and using any annotations on the bean
+methods.
+
+The xref:manual::bean-binding.adoc[Bean Binding] rules are used to bind the
+xref:manual::message.adoc[Message] Exchange to the method parameters; so you can
+annotate the bean to extract headers or other expressions such as
+xref:components::xpath-language.adoc[XPath] or xref:components::xquery-language.adoc[XQuery] from the message.
+
+== Bean Language options
+
+// language options: START
+The Bean method language supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| ref |  | String | Reference to bean to lookup in the registry
+| method |  | String | Name of method to call
+| beanType |  | String | Class name of the bean to use
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|===
+// language options: END
+
+
+[[BeanLanguage-UsingBeanExpressionsinJava]]
+== Using Bean Expressions in Java
+
+[source,syntaxhighlighter-pre]
+----
+from("activemq:topic:OrdersTopic")
+  .filter().method("myBean", "isGoldCustomer")
+    .to("activemq:BigSpendersQueue");
+----
+
+[[BeanLanguage-UsingBeanExpressionsinSpringXML]]
+== Using Bean Expressions in Spring XML
+
+[source,syntaxhighlighter-pre]
+----
+<route>
+  <from uri="activemq:topic:OrdersTopic"/>
+  <filter>
+    <method ref="myBean" method="isGoldCustomer"/>
+    <to uri="activemq:BigSpendersQueue"/>
+  </filter>
+</route>
+----
+
+[WARNING]
+====
+ **Bean Attribute Now Deprecated**
+
+The *`bean`* attribute of the method expression element is now
+deprecated. Use the *`ref`* attribute instead.
+
+====
+
+[[BeanLanguage-WritingtheExpressionBean]]
+== Writing the Expression Bean
+
+The bean in the above examples is just any old Java Bean with a method
+called *`isGoldCustomer()`* that returns some object that is easily
+converted to a *`boolean`* value in this case, as its used as a
+predicate.
+
+Example:
+
+[source,syntaxhighlighter-pre]
+----
+public class MyBean {
+  public boolean isGoldCustomer(Exchange exchange) {
+     // ...
+  }
+}
+----
+
+We can also use the xref:manual::bean-integration.adoc[Bean Integration]
+annotations.
+
+Example:
+
+[source,syntaxhighlighter-pre]
+----
+public boolean isGoldCustomer(String body) {...}
+----
+
+or
+
+[source,syntaxhighlighter-pre]
+----
+public boolean isGoldCustomer(@Header(name = "foo") Integer fooHeader) {...}
+----
+
+So you can bind parameters of the method to the Exchange, the
+xref:manual::message.adoc[Message] or individual headers, properties, the body
+or other expressions.
+
+[[BeanLanguage-Non-RegistryBeans]]
+== Non-Registry Beans
+
+The xref:bean-language.adoc[Bean Language] also supports invoking beans
+that isn't registered in the xref:manual::registry.adoc[Registry]. This is
+usable for quickly to invoke a bean from Java DSL where you don't need
+to register the bean in the xref:manual::registry.adoc[Registry] such as the
+xref:spring.adoc[Spring] *`ApplicationContext`*. Camel can instantiate
+the bean and invoke the method if given a class or invoke an already
+existing instance.
+
+Example:
+
+[source,syntaxhighlighter-pre]
+----
+from("activemq:topic:OrdersTopic")
+  .filter().expression(BeanLanguage(MyBean.class, "isGoldCustomer"))
+  .to("activemq:BigSpendersQueue");
+----
+
+The 2nd parameter *`isGoldCustomer`* is an optional parameter to
+explicit set the method name to invoke. If not provided Camel will try
+to invoke the most suitable method. If case of ambiguity Camel will
+thrown an Exception. In these situations the 2nd parameter can solve
+this problem. Also the code is more readable if the method name is
+provided. The 1st parameter can also be an existing instance of a Bean
+such as:
+
+[source,syntaxhighlighter-pre]
+----
+private MyBean my;
+
+from("activemq:topic:OrdersTopic")
+  .filter().expression(BeanLanguage.bean(my, "isGoldCustomer"))
+  .to("activemq:BigSpendersQueue");
+----
+
+In *Camel 2.2*: you can avoid the *`BeanLanguage`* and have it just as:
+
+[source,syntaxhighlighter-pre]
+----
+private MyBean my;
+
+from("activemq:topic:OrdersTopic")
+  .filter().expression(bean(my, "isGoldCustomer"))
+  .to("activemq:BigSpendersQueue");
+----
+
+Which also can be done in a bit shorter and nice way:
+
+[source,syntaxhighlighter-pre]
+----
+private MyBean my;
+
+from("activemq:topic:OrdersTopic")
+  .filter().method(my, "isGoldCustomer")
+  .to("activemq:BigSpendersQueue");
+----
+
+[[BeanLanguage-OtherExamples]]
+== Other Examples
+
+We have some test cases you can look at if it'll help
+
+* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/MethodFilterTest.java[MethodFilterTest]
+is a JUnit test case showing the Java xref:manual::dsl.adoc[DSL] use of the bean
+expression being used in a filter
+* https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/aggregator.xml[aggregator.xml]
+is a Spring XML test case for the xref:manual::aggregate-eip.adoc[Aggregator] which
+uses a bean method call to test for the completion of the aggregation.

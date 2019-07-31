@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,20 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.bonita.producer;
 
 import org.apache.camel.component.bonita.BonitaConfiguration;
 import org.apache.camel.component.bonita.BonitaEndpoint;
-import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultProducer;
 
 /**
  * The bonita producer.
  */
 public abstract class BonitaProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(BonitaProducer.class);
 
     protected BonitaEndpoint endpoint;
     protected BonitaConfiguration configuration;

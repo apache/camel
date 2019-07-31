@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,14 +22,12 @@ import org.junit.Test;
 
 /**
  * Test the ftps component over SSL (explicit) and without client authentication
- * 
- * @version 
  */
 public class FileToFtpsWithCustomTrustStorePropertiesTest extends FtpsServerExplicitSSLWithoutClientAuthTestSupport {
     
     private String getFtpUrl() {
         return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=2000&disableSecureDataChannelDefaults=true"
-                + "&securityProtocol=SSL&isImplicit=false&ftpClient.trustStore.file=./src/test/resources/server.jks&ftpClient.trustStore.type=JKS"
+                + "&securityProtocol=SSLv3&isImplicit=false&ftpClient.trustStore.file=./src/test/resources/server.jks&ftpClient.trustStore.type=JKS"
                 + "&ftpClient.trustStore.algorithm=SunX509&ftpClient.trustStore.password=password&delete=true";
     }
     

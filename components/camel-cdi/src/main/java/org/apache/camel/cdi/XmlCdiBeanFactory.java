@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,6 +35,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
 
 import javax.enterprise.inject.CreationException;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.xml.bind.JAXBException;
@@ -61,6 +62,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.ApplicationScopedLiteral.APPLICATION_SCOPED;
+import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 import static org.apache.camel.cdi.ResourceHelper.getResource;
 import static org.apache.camel.cdi.Startup.Literal.STARTUP;
@@ -87,16 +89,16 @@ final class XmlCdiBeanFactory {
         return new XmlCdiBeanFactory(manager, environment, extension);
     }
 
-    Set<SyntheticBean<?>> beansFrom(String path) throws JAXBException, IOException {
-        URL url = getResource(path);
+    Set<SyntheticBean<?>> beansFrom(String path, AnnotatedType<?> annotatedType) throws JAXBException, IOException {
+        URL url = getResource(path, annotatedType.getJavaClass().getClassLoader());
         if (url == null) {
             logger.warn("Unable to locate resource [{}] for import!", path);
             return emptySet();
         }
-        return beansFrom(url);
+        return beansFrom(url, annotatedType);
     }
 
-    Set<SyntheticBean<?>> beansFrom(URL url) throws JAXBException, IOException {
+    Set<SyntheticBean<?>> beansFrom(URL url, AnnotatedType<?> annotatedType) throws JAXBException, IOException {
         try (InputStream xml = url.openStream()) {
             Object node = XmlCdiJaxbContexts.CAMEL_CDI.instance()
                 .createUnmarshaller()
@@ -108,7 +110,7 @@ final class XmlCdiBeanFactory {
                 ApplicationContextFactoryBean app = (ApplicationContextFactoryBean) node;
                 Set<SyntheticBean<?>> beans = new HashSet<>();
                 for (CamelContextFactoryBean factory : app.getContexts()) {
-                    SyntheticBean<?> bean = camelContextBean(factory, url);
+                    SyntheticBean<?> bean = camelContextBean(factory, url, annotatedType);
                     beans.add(bean);
                     beans.addAll(camelContextBeans(factory, bean, url));
                 }
@@ -119,7 +121,7 @@ final class XmlCdiBeanFactory {
                     // Get the base URL as imports are relative to this
                     String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
                     String base = url.getProtocol() + "://" + url.getHost() + path;
-                    beans.addAll(beansFrom(base + "/" + definition.getResource()));
+                    beans.addAll(beansFrom(base + "/" + definition.getResource(), annotatedType));
                 }
                 for (RestContextDefinition factory : app.getRestContexts()) {
                     beans.add(restContextBean(factory, url));
@@ -136,7 +138,7 @@ final class XmlCdiBeanFactory {
             } else if (node instanceof CamelContextFactoryBean) {
                 CamelContextFactoryBean factory = (CamelContextFactoryBean) node;
                 Set<SyntheticBean<?>> beans = new HashSet<>();
-                SyntheticBean<?> bean = camelContextBean(factory, url);
+                SyntheticBean<?> bean = camelContextBean(factory, url, annotatedType);
                 beans.add(bean);
                 beans.addAll(camelContextBeans(factory, bean, url));
                 return beans;
@@ -151,12 +153,11 @@ final class XmlCdiBeanFactory {
         return emptySet();
     }
 
-    private SyntheticBean<?> camelContextBean(CamelContextFactoryBean factory, URL url) {
+    private SyntheticBean<?> camelContextBean(CamelContextFactoryBean factory, URL url, AnnotatedType annotatedType) {
         Set<Annotation> annotations = new HashSet<>();
         annotations.add(ANY);
         if (hasId(factory)) {
-            addAll(annotations,
-                ContextName.Literal.of(factory.getId()), NamedLiteral.of(factory.getId()));
+            addAll(annotations, NamedLiteral.of(factory.getId()));
         } else {
             annotations.add(DEFAULT);
             factory.setImplicitId(true);
@@ -166,11 +167,13 @@ final class XmlCdiBeanFactory {
         annotations.add(APPLICATION_SCOPED);
         SyntheticAnnotated annotated = new SyntheticAnnotated(DefaultCamelContext.class,
             manager.createAnnotatedType(DefaultCamelContext.class).getTypeClosure(),
+            annotatedType.getJavaClass(),
             annotations);
+
         return new SyntheticBean<>(manager, annotated, DefaultCamelContext.class,
             environment.camelContextInjectionTarget(
                 new SyntheticInjectionTarget<>(() -> {
-                    DefaultCamelContext context = new DefaultCamelContext();
+                    DefaultCamelContext context = createCamelContextWithTCCL(DefaultCamelContext::new, annotated);
                     factory.setContext(context);
                     factory.setBeanManager(manager);
                     return context;
@@ -246,7 +249,6 @@ final class XmlCdiBeanFactory {
 
         Set<Annotation> annotations = new HashSet<>();
         annotations.add(ANY);
-        // FIXME: should add @ContextName if the Camel context bean has it
         annotations.add(hasId(factory) ? NamedLiteral.of(factory.getId()) : DEFAULT);
 
         // TODO: should that be @Singleton to enable injection points with bean instance type?
@@ -266,10 +268,9 @@ final class XmlCdiBeanFactory {
     }
 
     private SyntheticBean<?> proxyFactoryBean(Bean<?> context, CamelProxyFactoryDefinition proxy, URL url) {
-        if (isEmpty(proxy.getServiceRef()) && isEmpty(proxy.getServiceUrl())) {
+        if (isEmpty(proxy.getServiceUrl())) {
             throw new CreationException(
-                format("Missing [%s] or [%s] attribute for imported bean [%s] from resource [%s]",
-                    "serviceRef", "serviceUrl", proxy.getId(), url));
+                format("Missing serviceUrl attribute for imported bean [%s] from resource [%s]", proxy.getId(), url));
         }
 
         return new XmlProxyFactoryBean<>(manager,
@@ -399,56 +400,44 @@ final class XmlCdiBeanFactory {
         }
 
         if (isNotEmpty(definition.getUseOriginalMessage())
-            && (type.equals(ErrorHandlerType.LoggingErrorHandler)
-            || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("useOriginalMessage", type, definition.getId());
         }
 
+        if (isNotEmpty(definition.getUseOriginalBody())
+            && type.equals(ErrorHandlerType.NoErrorHandler)) {
+            throw attributeNotSupported("useOriginalBody", type, definition.getId());
+        }
+
         if (isNotEmpty(definition.getOnRedeliveryRef())
-            && (type.equals(ErrorHandlerType.LoggingErrorHandler)
-            || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("onRedeliveryRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getOnExceptionOccurredRef())
-            && (type.equals(ErrorHandlerType.LoggingErrorHandler)
-            || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("onExceptionOccurredRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getOnPrepareFailureRef())
             && (type.equals(ErrorHandlerType.TransactionErrorHandler)
-            || type.equals(ErrorHandlerType.LoggingErrorHandler)
             || type.equals(ErrorHandlerType.NoErrorHandler))) {
             throw attributeNotSupported("onPrepareFailureRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getRetryWhileRef())
-            && (type.equals(ErrorHandlerType.LoggingErrorHandler)
-            || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("retryWhileRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getOnRedeliveryRef())
-            && (type.equals(ErrorHandlerType.LoggingErrorHandler)
-            || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("redeliveryPolicyRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getExecutorServiceRef())
-            && (type.equals(ErrorHandlerType.LoggingErrorHandler)
-            || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("executorServiceRef", type, definition.getId());
-        }
-
-        if (isNotEmpty(definition.getLogName())
-            && (!type.equals(ErrorHandlerType.LoggingErrorHandler))) {
-            throw attributeNotSupported("logName", type, definition.getId());
-        }
-
-        if (isNotEmpty(definition.getLevel())
-            && (!type.equals(ErrorHandlerType.LoggingErrorHandler))) {
-            throw attributeNotSupported("level", type, definition.getId());
         }
 
         return new XmlErrorHandlerFactoryBean(manager,

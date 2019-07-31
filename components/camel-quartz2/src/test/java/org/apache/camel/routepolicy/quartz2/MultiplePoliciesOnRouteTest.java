@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,25 +22,20 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz2.QuartzComponent;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
     private String url = "seda:foo?concurrentConsumers=20";
     private int size = 100;
-    
+
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = new JndiRegistry(createJndiContext());
+    protected void bindToRegistry(Registry registry) throws Exception {
         registry.bind("startPolicy", createRouteStartPolicy());
         registry.bind("throttlePolicy", createThrottlePolicy());
-        return registry;
     }
     
     @Override
@@ -81,7 +76,7 @@ public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
         });
         context.start();
 
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
             Thread.sleep(3);

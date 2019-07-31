@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,8 +28,6 @@ import org.springframework.util.StringUtils;
 
 /**
  * A base class for a parser for a bean.
- *
- * @version 
  */
 public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
     private final Class<?> type;

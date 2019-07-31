@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,18 +25,18 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import static org.apache.camel.component.avro.AvroConstants.AVRO_MESSAGE_NAME_SEPARATOR;
 
 @UriParams
 public class AvroConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private AvroTransport transport;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private int port;
     @UriPath
     private String messageName;
@@ -119,12 +119,15 @@ public class AvroConfiguration implements Cloneable {
     }
 
     /**
-     * Transport to use
+     * Transport to use, can be either http or netty
      */
     public void setTransport(String transport) {
         this.transport = AvroTransport.valueOf(transport);
     }
 
+    /**
+     * Transport to use, can be either http or netty
+     */
     public void setTransport(AvroTransport transport) {
         this.transport = transport;
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,21 +35,11 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
-    @EndpointInject(uri = "mock://result")
+    @EndpointInject("mock://result")
     MockEndpoint result;
 
-    @EndpointInject(uri = "mock://on-completion-result")
+    @EndpointInject("mock://on-completion-result")
     MockEndpoint onCompletionResult;
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
-
-        context.setUseMDCLogging(true);
-        context.setName(this.getClass().getSimpleName());
-
-        return context;
-    }
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -62,6 +52,16 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
         mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
 
         super.doPreSetup();
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
+
+        context.setUseMDCLogging(true);
+        context.setName(this.getClass().getSimpleName());
+
+        return context;
     }
 
     @Test
@@ -128,7 +128,7 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
         assertNull("Should NOT have header" + MllpConstants.MLLP_VERSION_ID, message.getHeader(MllpConstants.MLLP_VERSION_ID));
     }
 
-    void addTestRoute(boolean hl7Headers) throws Exception {
+    void addTestRoute(final boolean hl7Headers) throws Exception {
         RouteBuilder builder = new RouteBuilder() {
             int connectTimeout = 500;
             int responseTimeout = 5000;
@@ -138,15 +138,15 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
                 String routeId = "mllp-test-receiver-route";
 
                 onCompletion()
-                        .to("mock://on-completion-result")
-                        .toF("log:%s?level=INFO&showAll=true", routeId)
-                        .log(LoggingLevel.INFO, routeId, "Test route complete");
+                    .to("mock://on-completion-result")
+                    .toF("log:%s?level=INFO&showAll=true", routeId)
+                    .log(LoggingLevel.INFO, routeId, "Test route complete");
 
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d&hl7Headers=%b",
-                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout, hl7Headers)
-                        .routeId(routeId)
-                        .log(LoggingLevel.INFO, routeId, "Test route received message")
-                        .to(result);
+                    mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout, hl7Headers)
+                    .routeId(routeId)
+                    .log(LoggingLevel.INFO, routeId, "Test route received message")
+                    .to(result);
 
             }
         };

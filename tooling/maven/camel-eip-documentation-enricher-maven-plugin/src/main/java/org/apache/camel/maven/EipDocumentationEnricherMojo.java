@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,6 +35,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.util.FileUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -66,13 +67,13 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     /**
      * Path to camel core project root directory.
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../camel-core")
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core")
     public File camelCoreDir;
 
     /**
      * Path to camel core xml project root directory.
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-core-xml")
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-xml")
     public File camelCoreXmlDir;
 
     /**
@@ -99,11 +100,24 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     @Parameter(defaultValue = "target/classes/org/apache/camel/spring")
     public String pathToSpringModelDir;
 
+    /**
+     * Optional file pattern to delete files after the documentation enrichment is complete.
+     */
+    @Parameter
+    public String deleteFilesAfterRun;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (pathToModelDir == null) {
             throw new MojoExecutionException("pathToModelDir parameter must not be null");
         }
+
+        // skip if input file does not exists
+        if (inputCamelSchemaFile == null || !inputCamelSchemaFile.exists()) {
+            getLog().info("Input Camel schema file: " + inputCamelSchemaFile + " does not exist. Skip EIP document enrichment");
+            return;
+        }
+
         validateExists(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateIsFile(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateExists(camelCoreDir, "camelCoreDir");
@@ -116,6 +130,9 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
             runPlugin();
         } catch (Exception e) {
             throw new MojoExecutionException("Error during plugin execution", e);
+        }
+        if (deleteFilesAfterRun != null) {
+            deleteFilesAfterDone(deleteFilesAfterRun);
         }
     }
 
@@ -139,7 +156,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         NodeList elementsAndTypes = domFinder.findElementsAndTypes();
         documentationEnricher.enrichTopLevelElementsDocumentation(elementsAndTypes, jsonFiles);
         Map<String, String> typeToNameMap = buildTypeToNameMap(elementsAndTypes);
-        Set<String> injectedTypes = new LinkedHashSet<String>();
+        Set<String> injectedTypes = new LinkedHashSet<>();
 
         getLog().info("Found " + typeToNameMap.size() + " models to use when enriching the XSD schema");
 
@@ -159,6 +176,14 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     private boolean jsonFileExistsForElement(Map<String, File> jsonFiles,
                                              String elementName) {
         return jsonFiles.containsKey(elementName);
+    }
+
+    private void deleteFilesAfterDone(String deleteFiles) {
+        String[] names = deleteFiles.split(",");
+        for (String name : names) {
+            File file = new File(name);
+            FileUtil.deleteFile(file);
+        }
     }
 
     /**
@@ -187,7 +212,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     }
 
     private Map<String, String> buildTypeToNameMap(NodeList elementsAndTypes) {
-        Map<String, String> typeToNameMap = new LinkedHashMap<String, String>();
+        Map<String, String> typeToNameMap = new LinkedHashMap<>();
         for (int i = 0; i < elementsAndTypes.getLength(); i++) {
             Element item = (Element) elementsAndTypes.item(i);
             String name = item.getAttribute(Constants.NAME_ATTRIBUTE_NAME);

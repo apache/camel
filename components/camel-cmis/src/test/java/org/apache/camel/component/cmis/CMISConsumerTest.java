@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class CMISConsumerTest extends CMISTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Test
@@ -88,11 +88,6 @@ public class CMISConsumerTest extends CMISTestSupport {
         //L2              |_____Folder2
         //                        ||
         //L3            Doc2.1___||___Doc2.2
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 
     @Override

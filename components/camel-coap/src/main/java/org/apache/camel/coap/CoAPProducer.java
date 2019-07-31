@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,23 @@
  */
 package org.apache.camel.coap;
 
+import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.elements.tcp.TcpClientConnector;
+import org.eclipse.californium.elements.tcp.TlsClientConnector;
+import org.eclipse.californium.scandium.DTLSConnector;
 
 /**
  * The CoAP producer.
@@ -44,37 +53,26 @@ public class CoAPProducer extends DefaultProducer {
             //?default?
             ct = "application/octet-stream";
         }
-        String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
-        if (method == null) {
-            method = endpoint.getCoapMethod();
-        }
-        if (method == null) {
-            Object body = exchange.getIn().getBody();
-            if (body == null) {
-                method = "GET";
-            } else {
-                method = "POST";
-            }
-        }
+        String method = CoAPHelper.getDefaultMethod(exchange, client);
         int mediaType = MediaTypeRegistry.parse(ct);
         CoapResponse response = null;
         boolean pingResponse = false;
         switch (method) {
-        case "GET":
+        case CoAPConstants.METHOD_GET:
             response = client.get();
             break;
-        case "DELETE":
+        case CoAPConstants.METHOD_DELETE:
             response = client.delete();
             break;
-        case "POST":
+        case CoAPConstants.METHOD_POST:
             byte[] bodyPost = exchange.getIn().getBody(byte[].class);
             response = client.post(bodyPost, mediaType);
             break;
-        case "PUT":
+        case CoAPConstants.METHOD_PUT:
             byte[] bodyPut = exchange.getIn().getBody(byte[].class);
             response = client.put(bodyPut, mediaType);
             break;
-        case "PING":
+        case CoAPConstants.METHOD_PING:
             pingResponse = client.ping();
             break;
         default:
@@ -85,22 +83,52 @@ public class CoAPProducer extends DefaultProducer {
             Message resp = exchange.getOut();
             String mt = MediaTypeRegistry.toString(response.getOptions().getContentFormat());
             resp.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, mt);
+            resp.setHeader(CoAPConstants.COAP_RESPONSE_CODE, response.getCode().toString());
             resp.setBody(response.getPayload());
         }
-        
-        if (method.equalsIgnoreCase("PING")) {
+
+        if (method.equalsIgnoreCase(CoAPConstants.METHOD_PING)) {
             Message resp = exchange.getOut();
             resp.setBody(pingResponse);
         }
     }
 
-    private synchronized CoapClient getClient(Exchange exchange) {
+    private synchronized CoapClient getClient(Exchange exchange) throws IOException, GeneralSecurityException {
         if (client == null) {
-            URI uri = exchange.getIn().getHeader("coapUri", URI.class);
+            URI uri = exchange.getIn().getHeader(CoAPConstants.COAP_URI, URI.class);
             if (uri == null) {
                 uri = endpoint.getUri();
             }
             client = new CoapClient(uri);
+
+            // Configure TLS and / or TCP
+            if (CoAPEndpoint.enableDTLS(uri)) {
+                DTLSConnector connector = endpoint.createDTLSConnector(null, true);
+                CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
+                coapBuilder.setConnector(connector);
+
+                client.setEndpoint(coapBuilder.build());
+            } else if (CoAPEndpoint.enableTCP(endpoint.getUri())) {
+                NetworkConfig config = NetworkConfig.createStandardWithoutFile();
+                int tcpThreads = config.getInt(NetworkConfig.Keys.TCP_WORKER_THREADS);
+                int tcpConnectTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECT_TIMEOUT);
+                int tcpIdleTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT);
+                TcpClientConnector tcpConnector = null;
+
+                // TLS + TCP
+                if (endpoint.getUri().getScheme().startsWith("coaps")) {
+                    SSLContext sslContext = endpoint.getSslContextParameters().createSSLContext(endpoint.getCamelContext());
+                    tcpConnector = new TlsClientConnector(sslContext, tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+                } else {
+                    tcpConnector = new TcpClientConnector(tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+                }
+
+                CoapEndpoint.Builder tcpBuilder = new CoapEndpoint.Builder();
+                tcpBuilder.setConnector(tcpConnector);
+
+                client.setEndpoint(tcpBuilder.build());
+            }
+
         }
         return client;
     }

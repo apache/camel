@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,10 @@ package org.apache.camel.converter.soap.name;
 import javax.xml.namespace.QName;
 
 import com.example.customerservice.GetCustomersByName;
-
 import org.apache.camel.dataformat.soap.name.QNameStrategy;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * 
- */
 public class QNameStrategyTest {
     
     /**

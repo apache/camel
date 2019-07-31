@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ import java.net.UnknownHostException;
 import static junit.framework.TestCase.assertNotNull;
 
 import org.influxdb.InfluxDB;
-import org.influxdb.InfluxDBFactory;
+import org.influxdb.impl.InfluxDBImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +41,7 @@ public class MockedInfluxDbConfiguration {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating new instance of a mocked influx db connection");
         }
-        InfluxDB mockedDbConnection = mock(InfluxDB.class);
+        InfluxDB mockedDbConnection = mock(InfluxDBImpl.class);
         //InfluxDB mockedDbConnection = InfluxDBFactory.connect("http://127.0.0.1:8086", "root", "root");
         assertNotNull(mockedDbConnection);
         return mockedDbConnection;

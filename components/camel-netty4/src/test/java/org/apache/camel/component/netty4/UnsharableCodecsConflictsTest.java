@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
@@ -41,25 +41,18 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
     private int port1;
     private int port2;
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    @BindToRegistry("length-decoder")
+    private ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 
-        // we can share the decoder between multiple netty consumers, because they have the same configuration
-        // and we use a ChannelHandlerFactory
-        ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
-        registry.bind("length-decoder", decoder);
-        registry.bind("length-decoder2", decoder);
-
-        return registry;
-    }
+    @BindToRegistry("length-decoder2")
+    private ChannelHandlerFactory decoder2 = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 
     @Test
     public void canSupplyMultipleCodecsToEndpointPipeline() throws Exception {
         byte[] sPort1 = new byte[8192];
         byte[] sPort2 = new byte[16383];
-        Arrays.fill(sPort1, (byte) 0x38);
-        Arrays.fill(sPort2, (byte) 0x39);
+        Arrays.fill(sPort1, (byte)0x38);
+        Arrays.fill(sPort2, (byte)0x39);
         byte[] bodyPort1 = (new String(LENGTH_HEADER) + new String(sPort1)).getBytes();
         byte[] bodyPort2 = (new String(LENGTH_HEADER) + new String(sPort2)).getBytes();
 
@@ -89,12 +82,9 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
                 port1 = getPort();
                 port2 = getNextPort();
 
-                from("netty4:tcp://localhost:" + port1 + "?decoder=#length-decoder&sync=false")
-                        .process(processor);
+                from("netty4:tcp://localhost:" + port1 + "?decoders=#length-decoder&sync=false").process(processor);
 
-                from("netty4:tcp://localhost:" + port2 + "?decoder=#length-decoder2&sync=false")
-                        .process(processor)
-                        .to("mock:result");
+                from("netty4:tcp://localhost:" + port2 + "?decoders=#length-decoder2&sync=false").process(processor).to("mock:result");
             }
         };
     }

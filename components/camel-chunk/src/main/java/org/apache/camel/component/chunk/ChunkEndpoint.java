@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,7 +32,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.commons.io.IOUtils;
 
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_ENDPOINT_URI_PREFIX;
@@ -69,11 +69,6 @@ public class ChunkEndpoint extends ResourceEndpoint {
 
     public ChunkEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override
@@ -119,7 +114,6 @@ public class ChunkEndpoint extends ResourceEndpoint {
             Message out = exchange.getOut();
             out.setBody(newChunk.toString());
             out.setHeaders(exchange.getIn().getHeaders());
-            out.setAttachments(exchange.getIn().getAttachments());
         } else {
             exchange.getIn().removeHeader(ChunkConstants.CHUNK_RESOURCE_URI);
             ChunkEndpoint newEndpoint = getCamelContext().getEndpoint(CHUNK_ENDPOINT_URI_PREFIX + newResourceUri, ChunkEndpoint.class);
@@ -179,6 +173,11 @@ public class ChunkEndpoint extends ResourceEndpoint {
             }
             if (encoding != null) {
                 theme.setEncoding(encoding);
+            }
+
+            ClassLoader apcl = getCamelContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                theme.setJarContext(apcl);
             }
         }
         return theme;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,8 +24,8 @@ import java.util.Set;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import org.apache.aries.blueprint.NamespaceHandler;
 import org.apache.aries.blueprint.ParserContext;
+import org.apache.cxf.helpers.BaseNamespaceHandler;
 import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
 
@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class CamelTransportNameSpaceHandler implements NamespaceHandler {
+public class CamelTransportNameSpaceHandler extends BaseNamespaceHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTransportNameSpaceHandler.class);
 
     public ComponentMetadata decorate(Node node, ComponentMetadata componentMetadata, ParserContext parserContext) {
@@ -42,11 +42,14 @@ public class CamelTransportNameSpaceHandler implements NamespaceHandler {
 
     @SuppressWarnings("rawtypes")
     public Set<Class> getManagedClasses() {
-        return new HashSet<Class>(Arrays.asList(CamelTransportNameSpaceHandler.class));
+        return new HashSet<>(Arrays.asList(CamelTransportNameSpaceHandler.class));
     }
 
     public URL getSchemaLocation(String s) {
-        return getClass().getClassLoader().getResource("schema/blueprint/camel.xsd");
+        if ("http://cxf.apache.org/transports/camel/blueprint".equals(s)) {
+            return getClass().getClassLoader().getResource("schema/blueprint/camel.xsd");
+        }
+        return super.findCoreSchemaLocation(s);
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -73,8 +73,8 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureInvalidKeyException;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureNoKeyException;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
-import org.apache.camel.processor.validation.DefaultValidationErrorHandler;
-import org.apache.camel.processor.validation.ValidatorErrorHandler;
+import org.apache.camel.support.processor.validation.DefaultValidationErrorHandler;
+import org.apache.camel.support.processor.validation.ValidatorErrorHandler;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -536,7 +536,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             // should not happen because has been checked before
             throw new IllegalStateException("No element found for element ID " + elementId);
         }
-        LOG.debug("Sibling element of the detached XML Signature with reference URI {}: {}  {} ",
+        LOG.debug("Sibling element of the detached XML Signature with reference URI {}: {}  {}",
                 new Object[] {referenceUri, el.getLocalName(), el.getNamespaceURI() });
         Element result = getParentElement(el);
         if (result != null) {
@@ -575,7 +575,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         int propsRefsSize = properties == null || properties.getReferences() == null || properties.getReferences().isEmpty() ? 0
                 : properties.getReferences().size();
         int size = keyInfoRef == null ? propsRefsSize + 1 : propsRefsSize + 2;
-        List<Reference> referenceList = new ArrayList<Reference>(size);
+        List<Reference> referenceList = new ArrayList<>(size);
         referenceList.add(ref);
         if (keyInfoRef != null) {
             referenceList.add(keyInfoRef);
@@ -604,7 +604,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         if (properties == null || properties.getObjects() == null || properties.getObjects().isEmpty()) {
             return Collections.singletonList(obj);
         }
-        List<XMLObject> result = new ArrayList<XMLObject>(properties.getObjects().size() + 1);
+        List<XMLObject> result = new ArrayList<>(properties.getObjects().size() + 1);
         result.add(obj);
         result.addAll(properties.getObjects());
         return result;
@@ -701,7 +701,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             // should not happen, has already been checked earlier
             throw new IllegalStateException("List of XPATHs to ID attributes is empty in detached signature case");
         }
-        List<ComparableNode> result = new ArrayList<ComparableNode>(xpathsToIdAttributes.size());
+        List<ComparableNode> result = new ArrayList<>(xpathsToIdAttributes.size());
         for (XPathFilterParameterSpec xp : xpathsToIdAttributes) {
             XPathExpression exp;
             try {
@@ -775,19 +775,19 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                 // add enveloped transform if necessary
                 if (configuredTrafos.size() > 0) {
                     if (!containsEnvelopedTransform(configuredTrafos)) {
-                        configuredTrafos = new ArrayList<AlgorithmMethod>(configuredTrafos.size() + 1);
+                        configuredTrafos = new ArrayList<>(configuredTrafos.size() + 1);
                         configuredTrafos.add(XmlSignatureHelper.getEnvelopedTransform());
                         configuredTrafos.addAll(getConfiguration().getTransformMethods());
                     }
                 } else {
                     // add enveloped and C14N trafo
-                    configuredTrafos = new ArrayList<AlgorithmMethod>(2);
+                    configuredTrafos = new ArrayList<>(2);
                     configuredTrafos.add(XmlSignatureHelper.getEnvelopedTransform());
                     configuredTrafos.add(XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
                 }
             }
 
-            List<Transform> transforms = new ArrayList<Transform>(configuredTrafos.size());
+            List<Transform> transforms = new ArrayList<>(configuredTrafos.size());
             for (AlgorithmMethod trafo : configuredTrafos) {
                 Transform transform = fac.newTransform(trafo.getAlgorithm(), (TransformParameterSpec) trafo.getParameterSpec());
                 transforms.add(transform);
@@ -797,7 +797,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         } else {
             LOG.debug("Header {} with value '{}' found", XmlSignatureConstants.HEADER_TRANSFORM_METHODS, transformMethodsHeaderValue);
             String[] transformAlgorithms = transformMethodsHeaderValue.split(",");
-            List<Transform> transforms = new ArrayList<Transform>(transformAlgorithms.length);
+            List<Transform> transforms = new ArrayList<>(transformAlgorithms.length);
             for (String transformAlgorithm : transformAlgorithms) {
                 transformAlgorithm = transformAlgorithm.trim();
                 Transform transform = fac.newTransform(transformAlgorithm, (TransformParameterSpec) null);
@@ -860,7 +860,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
 
         LOG.debug("Creating reference to key info element with Id: {}", keyInfoId);
-        List<Transform> transforms = new ArrayList<Transform>(1);
+        List<Transform> transforms = new ArrayList<>(1);
         Transform transform = fac.newTransform(CanonicalizationMethod.INCLUSIVE, (TransformParameterSpec) null);
         transforms.add(transform);
         return fac.newReference("#" + keyInfoId, fac.newDigestMethod(digestAlgorithm, null), transforms, null, null);
@@ -1057,7 +1057,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
 
         static List<String> getReferenceUris(List<ComparableNode> input) {
-            List<String> result = new ArrayList<String>(input.size());
+            List<String> result = new ArrayList<>(input.size());
             for (ComparableNode cn : input) {
                 result.add(cn.getReferenceUri());
             }

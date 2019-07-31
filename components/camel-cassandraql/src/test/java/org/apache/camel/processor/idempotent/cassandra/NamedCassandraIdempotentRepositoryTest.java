@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,14 +36,14 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
 
     private Cluster cluster;
     private Session session;
-    private CassandraIdempotentRepository<String> idempotentRepository;
+    private CassandraIdempotentRepository idempotentRepository;
 
     @Before
     public void setUp() throws Exception {
         if (canTest()) {
             cluster = CassandraUnitUtils.cassandraCluster();
             session = cluster.connect(CassandraUnitUtils.KEYSPACE);
-            idempotentRepository = new NamedCassandraIdempotentRepository<String>(session, "ID");
+            idempotentRepository = new NamedCassandraIdempotentRepository(session, "ID");
             idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
             idempotentRepository.start();
         }
@@ -138,7 +138,7 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
         // When
         boolean result = idempotentRepository.contains(key);
         // Then
-        // assertFalse(result);
+        assertFalse(result);
     }
 
     @Test

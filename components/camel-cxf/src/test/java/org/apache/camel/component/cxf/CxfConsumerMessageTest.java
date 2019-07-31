@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -53,7 +53,7 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(simpleEndpointURI + "&dataFormat=MESSAGE").process(new Processor() {
+                from(simpleEndpointURI + "&dataFormat=RAW").process(new Processor() {
                     public void process(final Exchange exchange) {
                         Message in = exchange.getIn();
                         // check the content-length header is filtered 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,6 @@ package org.apache.camel.component.telegram.service;
 
 import java.util.List;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -27,7 +26,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
+import org.apache.camel.component.telegram.model.MessageResult;
+import org.apache.camel.component.telegram.model.OutgoingTextMessage;
+import org.apache.camel.component.telegram.model.SendLocationMessage;
+import org.apache.camel.component.telegram.model.SendVenueMessage;
+import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
+import org.apache.camel.component.telegram.model.WebhookInfo;
+import org.apache.camel.component.telegram.model.WebhookResult;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 
 /**
@@ -47,42 +54,65 @@ public interface RestBotAPI {
             @QueryParam("limit") Integer limit,
             @QueryParam("timeout") Integer timeoutSeconds);
 
+    @POST
+    @Path("/bot{authorizationToken}/setWebhook")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    WebhookResult setWebhook(@PathParam("authorizationToken") String authorizationToken, WebhookInfo webhookInfo);
 
     @POST
     @Path("/bot{authorizationToken}/sendMessage")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    void sendMessage(
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    MessageResult sendMessage(
             @PathParam("authorizationToken") String authorizationToken,
-            @FormParam("chat_id") String chatId,
-            @FormParam("text") String text,
-            @FormParam("parse_mode") String parseMode,
-            @FormParam("disable_web_page_preview") Boolean disableWebPagePreview,
-            @FormParam("disable_notification") Boolean disableNotification,
-            @FormParam("reply_to_message_id") Long replyToMessageId);
-
+            OutgoingTextMessage message);
 
     @POST
     @Path("/bot{authorizationToken}/sendPhoto")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    void sendPhoto(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
-
+    MessageResult sendPhoto(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
 
     @POST
     @Path("/bot{authorizationToken}/sendAudio")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    void sendAudio(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
+    MessageResult sendAudio(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
 
     @POST
     @Path("/bot{authorizationToken}/sendVideo")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    void sendVideo(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
+    MessageResult sendVideo(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
 
     @POST
     @Path("/bot{authorizationToken}/sendDocument")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    void sendDocument(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
+    MessageResult sendDocument(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
+
+    @POST
+    @Path("/bot{authorizationToken}/sendLocation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    MessageResult sendLocation(@PathParam("authorizationToken") String authorizationToken, SendLocationMessage location);
+
+    @POST
+    @Path("/bot{authorizationToken}/editMessageLiveLocation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    MessageResult editMessageLiveLocation(@PathParam("authorizationToken") String authorizationToken, EditMessageLiveLocationMessage message);
+
+    @POST
+    @Path("/bot{authorizationToken}/stopMessageLiveLocation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    MessageResult stopMessageLiveLocation(@PathParam("authorizationToken") String authorizationToken, StopMessageLiveLocationMessage message);
+
+    @POST
+    @Path("/bot{authorizationToken}/sendVenue")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    MessageResult sendVenue(@PathParam("authorizationToken") String authorizationToken, SendVenueMessage location);
 }

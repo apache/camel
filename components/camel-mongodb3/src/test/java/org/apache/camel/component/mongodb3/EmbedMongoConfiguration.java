@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,17 +23,19 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
-
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.config.IMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.config.Storage;
 
+import org.bson.Document;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static com.mongodb.MongoClientOptions.builder;
+import static com.mongodb.ServerAddress.defaultHost;
 import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
 import static de.flapdoodle.embed.process.runtime.Network.localhostIsIPv6;
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
@@ -45,9 +47,19 @@ public class EmbedMongoConfiguration {
 
     static {
         try {
-            IMongodConfig mongodConfig = new MongodConfigBuilder().version(PRODUCTION).net(new Net(PORT, localhostIsIPv6())).build();
+            IMongodConfig mongodConfig = new MongodConfigBuilder()
+                    .version(PRODUCTION)
+                    .net(new Net(PORT, localhostIsIPv6()))
+                    .replication(new Storage(null, "replicationName", 5000))
+                    .build();
+
             MongodExecutable mongodExecutable = MongodStarter.getDefaultInstance().prepare(mongodConfig);
             mongodExecutable.start();
+
+            // init replica set
+            MongoClient client = new MongoClient("localhost", PORT);
+            client.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -55,7 +67,7 @@ public class EmbedMongoConfiguration {
 
     @Bean
     public MongoClient myDb() throws UnknownHostException {
-        return new MongoClient("0.0.0.0", PORT);
+        return new MongoClient(defaultHost(), PORT);
     }
 
     @Bean

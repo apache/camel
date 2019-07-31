@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -91,7 +91,7 @@ public class SchematronProcessorTest {
         TransformerFactory factory = new TransformerFactoryImpl();
         factory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, clientResolver));
         Templates rules = TemplatesFactory.newInstance().getTemplates(ClassLoader.getSystemResourceAsStream(schematron), factory);
-        return SchematronProcessorFactory.newScehamtronEngine(rules);
+        return SchematronProcessorFactory.newSchematronEngine(rules);
     }
 
     class ClientUriResolver implements URIResolver {

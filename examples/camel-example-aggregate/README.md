@@ -23,7 +23,6 @@ The persistent datastore is located in the `data/hawtdb.dat` file. Its automatic
 #### Camel component used in this example
 
 * camel-core
-* camel-hawtdb
 * camel-spring
 * camel-stream
 

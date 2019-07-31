@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,11 +23,10 @@ import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
 import org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.springframework.util.StringUtils;
 import org.springframework.ws.WebServiceMessageFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -37,8 +36,6 @@ import org.springframework.ws.transport.WebServiceMessageSender;
 
 @UriParams
 public class SpringWebserviceConfiguration {
-
-    private XmlConverter xmlConverter;
 
     @UriPath(label = "producer")
     private String webServiceEndpointUri;
@@ -234,14 +231,6 @@ public class SpringWebserviceConfiguration {
      */
     public void setEndpointDispatcher(CamelEndpointDispatcher endpointDispatcher) {
         this.endpointDispatcher = endpointDispatcher;
-    }
-
-    public XmlConverter getXmlConverter() {
-        return xmlConverter;
-    }
-
-    public void setXmlConverter(XmlConverter xmlConverter) {
-        this.xmlConverter = xmlConverter;
     }
 
     public static String encode(String uri) {

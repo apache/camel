@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,7 +39,9 @@ public final class MongoDbConstants {
     public static final String FROM_TAILABLE = "CamelMongoDbTailable";
     public static final String WRITERESULT = "CamelMongoWriteResult";
     public static final String OID = "CamelMongoOid";
-
+    public static final String DISTINCT_QUERY_FIELD = "CamelMongoDbDistinctQueryField";
+    public static final String ALLOW_DISK_USE = "CamelMongoDbAllowDiskUse";
+    public static final String BULK_ORDERED = "CamelMongoDbBulkOrdered";
     public static final String MONGO_ID = "_id"; // default id field
 
     private MongoDbConstants() {

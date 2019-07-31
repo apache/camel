@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,9 +29,6 @@ import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JpaProducerConcurrentTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
@@ -52,7 +49,7 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         // we access the responses Map below only inside the main thread,
         // so no need for a thread-safe Map implementation
-        Map<Integer, Future<SendEmail>> responses = new HashMap<Integer, Future<SendEmail>>();
+        Map<Integer, Future<SendEmail>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<SendEmail> out = executor.submit(new Callable<SendEmail>() {

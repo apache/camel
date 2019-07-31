@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,19 +47,19 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
     @Rule
     public CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     ProducerTemplate producerTemplate;
 
-    @Produce(uri = "direct:inputNoParameter")
+    @Produce("direct:inputNoParameter")
     ProducerTemplate noParameterProducerTemplate;
 
-    @Produce(uri = "direct:inputNotConsistent")
+    @Produce("direct:inputNotConsistent")
     ProducerTemplate notConsistentProducerTemplate;
 
-    @Produce(uri = "direct:loadBalancingPolicy")
+    @Produce("direct:loadBalancingPolicy")
     ProducerTemplate loadBalancingPolicyTemplate;
 
-    @Produce(uri = "direct:inputNoEndpointCql")
+    @Produce("direct:inputNoEndpointCql")
     ProducerTemplate producerTemplateNoEndpointCql;
 
     @Override
@@ -87,7 +87,7 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
             return;
         }
 
-        Object response = producerTemplate.requestBody(Arrays.asList("w_jiang", "Willem", "Jiang"));
+        producerTemplate.requestBody(Arrays.asList("w_jiang", "Willem", "Jiang"));
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
@@ -110,7 +110,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
         assertNotNull(response);
         assertIsInstanceOf(List.class, response);
-        List<Row> rows = (List<Row>) response;
     }
 
     @Test
@@ -123,7 +122,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
         assertNotNull(response);
         assertIsInstanceOf(List.class, response);
-        List<Row> rows = (List<Row>) response;
     }
 
     @Test
@@ -132,8 +130,8 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
             return;
         }
 
-        Object response = producerTemplate.requestBodyAndHeader(new Object[]{"Claus 2", "Ibsen 2", "c_ibsen"},
-                CassandraConstants.CQL_QUERY, "update camel_user set first_name=?, last_name=? where login=?");
+        producerTemplate.requestBodyAndHeader(new Object[] {"Claus 2", "Ibsen 2", "c_ibsen"}, CassandraConstants.CQL_QUERY,
+                                              "update camel_user set first_name=?, last_name=? where login=?");
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
@@ -152,8 +150,8 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
             return;
         }
 
-        Object response = loadBalancingPolicyTemplate.requestBodyAndHeader(new Object[]{"Claus 2", "Ibsen 2", "c_ibsen"},
-                CassandraConstants.CQL_QUERY, "update camel_user set first_name=?, last_name=? where login=?");
+        loadBalancingPolicyTemplate.requestBodyAndHeader(new Object[] {"Claus 2", "Ibsen 2", "c_ibsen"}, CassandraConstants.CQL_QUERY,
+                                                         "update camel_user set first_name=?, last_name=? where login=?");
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
@@ -179,8 +177,7 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
                 .with(set("first_name", bindMarker()))
                 .and(set("last_name", bindMarker()))
                 .where(eq("login", bindMarker()));
-        Object response = producerTemplate.requestBodyAndHeader(new Object[]{"Claus 2", "Ibsen 2", "c_ibsen"},
-                CassandraConstants.CQL_QUERY, update);
+        producerTemplate.requestBodyAndHeader(new Object[] {"Claus 2", "Ibsen 2", "c_ibsen"}, CassandraConstants.CQL_QUERY, update);
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
@@ -205,8 +202,7 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
         Update.Where updateFirstName = update("camel_user")
                 .with(set("first_name", bindMarker()))
                 .where(eq("login", bindMarker()));
-        @SuppressWarnings("unused")
-        Object response1 = producerTemplateNoEndpointCql.requestBodyAndHeader(new Object[]{"Claus 2", "c_ibsen"},
+        producerTemplateNoEndpointCql.sendBodyAndHeader(new Object[]{"Claus 2", "c_ibsen"},
                 CassandraConstants.CQL_QUERY, updateFirstName);
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
@@ -220,8 +216,7 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
         Update.Where updateLastName = update("camel_user")
                 .with(set("last_name", bindMarker()))
                 .where(eq("login", bindMarker()));
-        @SuppressWarnings("unused")
-        Object response2 = producerTemplateNoEndpointCql.requestBodyAndHeader(new Object[]{"Ibsen 2", "c_ibsen"},
+        producerTemplateNoEndpointCql.sendBodyAndHeader(new Object[]{"Ibsen 2", "c_ibsen"},
                 CassandraConstants.CQL_QUERY, updateLastName);
 
         ResultSet resultSet2 = session.execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
@@ -243,6 +238,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
         CassandraEndpoint endpoint = getMandatoryEndpoint(NOT_CONSISTENT_URI, CassandraEndpoint.class);
         assertEquals(ConsistencyLevel.ANY, endpoint.getConsistencyLevel());
 
-        Object response = notConsistentProducerTemplate.requestBody(Arrays.asList("j_anstey", "Jonathan", "Anstey"));
+        notConsistentProducerTemplate.requestBody(Arrays.asList("j_anstey", "Jonathan", "Anstey"));
     }
 }

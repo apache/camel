@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,8 +33,8 @@ import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.component.bean.ProxyHelper.createProxy;
+import static org.apache.camel.support.service.ServiceHelper.startService;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-import static org.apache.camel.util.ServiceHelper.startService;
 
 final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
 
@@ -59,25 +59,15 @@ final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
                 : getReference(manager, CamelContext.class, this.context);
 
             Endpoint endpoint;
-            if (isNotEmpty(proxy.getServiceRef())) {
-                endpoint = context.getRegistry().lookupByNameAndType(proxy.getServiceRef(), Endpoint.class);
+            if (isNotEmpty(proxy.getServiceUrl())) {
+                endpoint = context.getEndpoint(proxy.getServiceUrl());
             } else {
-                if (isNotEmpty(proxy.getServiceUrl())) {
-                    endpoint = context.getEndpoint(proxy.getServiceUrl());
-                } else {
-                    throw new IllegalStateException("serviceUrl or serviceRef must not be empty!");
-                }
+                throw new IllegalStateException("serviceUrl must not be empty!");
             }
 
             if (endpoint == null) {
-                throw new UnsatisfiedResolutionException("Could not resolve endpoint: "
-                    + (isNotEmpty(proxy.getServiceRef())
-                    ? proxy.getServiceRef()
-                    : proxy.getServiceUrl()));
+                throw new UnsatisfiedResolutionException("Could not resolve endpoint: " + proxy.getServiceUrl());
             }
-
-            // binding is enabled by default
-            boolean bind = proxy.getBinding() != null ? proxy.getBinding() : true;
 
             try {
                 // Start the endpoint before we create the producer
@@ -85,7 +75,7 @@ final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
                 Producer producer = endpoint.createProducer();
                 // Add and start the producer
                 context.addService(producer, true, true);
-                return createProxy(endpoint, bind, producer, (Class<T>) proxy.getServiceInterface());
+                return createProxy(endpoint, true, producer, (Class<T>) proxy.getServiceInterface());
             } catch (Exception cause) {
                 throw new FailedToCreateProducerException(endpoint, cause);
             }

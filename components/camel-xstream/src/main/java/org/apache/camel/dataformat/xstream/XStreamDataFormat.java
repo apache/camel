@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,18 +29,17 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.util.IOHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using XStream to marshal to and from XML
- *
- * @version 
  */
+@Dataformat("xstream")
 public class XStreamDataFormat extends AbstractXStreamWrapper  {
     private String encoding;
     
@@ -80,6 +79,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     /**
      * A factory method which takes a collection of types to be annotated
      */
+    @Deprecated
     public static XStreamDataFormat processAnnotations(ClassResolver resolver, Iterable<Class<?>> types) {
         XStreamDataFormat answer = new XStreamDataFormat();
         XStream xstream = answer.getXStream(resolver);
@@ -92,6 +92,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     /**
      * A factory method which takes a number of types to be annotated
      */
+    @Deprecated
     public static XStreamDataFormat processAnnotations(ClassResolver resolver, Class<?>... types) {
         XStreamDataFormat answer = new XStreamDataFormat();
         XStream xstream = answer.getXStream(resolver);
@@ -113,7 +114,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         if (getXstreamDriver() != null) {
             return getXstreamDriver().createWriter(stream);
         }
-        XMLStreamWriter xmlWriter = getStaxConverter().createXMLStreamWriter(stream, exchange);
+        XMLStreamWriter xmlWriter = exchange.getContext().getTypeConverter().convertTo(XMLStreamWriter.class, exchange, stream);
         return new StaxWriter(new QNameMap(), xmlWriter);
     }
 
@@ -122,7 +123,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         if (getXstreamDriver() != null) {
             return getXstreamDriver().createReader(stream);
         }
-        XMLStreamReader xmlReader = getStaxConverter().createXMLStreamReader(stream, exchange);
+        XMLStreamReader xmlReader = exchange.getContext().getTypeConverter().convertTo(XMLStreamReader.class, exchange, stream);
         return new StaxReader(new QNameMap(), xmlReader);
     }
 }

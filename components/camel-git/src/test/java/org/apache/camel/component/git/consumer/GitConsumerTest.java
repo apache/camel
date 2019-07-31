@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -52,7 +52,6 @@ public class GitConsumerTest extends GitTestSupport {
         status = git.status().call();
         assertTrue(status.getAdded().contains(filenameBranchToAdd));
         git.commit().setMessage("Test test Commit").call();
-        Iterable<RevCommit> logs = git.log().call();
         validateGitLogs(git, "Test test Commit", commitMessage);
         // Test
         mockResultCommit.assertIsSatisfied();

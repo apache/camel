@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,16 +16,22 @@
  */
 package org.apache.camel.swagger;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
+import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,18 +41,27 @@ import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import io.swagger.models.License;
+import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import io.swagger.util.Json;
 import io.swagger.util.Yaml;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.CamelVersionHelper;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.util.xml.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.swagger.SwaggerHelper.clearVendorExtensions;
 
 /**
  * A support class for that allows SPI to plugin
@@ -54,6 +69,11 @@ import org.slf4j.LoggerFactory;
  * such as servlet/jetty/netty4-http to offer Swagger API listings with minimal effort.
  */
 public class RestSwaggerSupport {
+
+    static final String HEADER_X_FORWARDED_PREFIX = "X-Forwarded-Prefix";
+    static final String HEADER_X_FORWARDED_HOST = "X-Forwarded-Host";
+    static final String HEADER_X_FORWARDED_PROTO = "X-Forwarded-Proto";
+    static final String HEADER_HOST = "Host";
 
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerSupport.class);
     private RestSwaggerReader reader = new RestSwaggerReader();
@@ -124,6 +144,48 @@ public class RestSwaggerSupport {
         swaggerConfig.setInfo(info);
     }
 
+    public List<RestDefinition> getRestDefinitions(CamelContext camelContext) throws Exception {
+        Model model = camelContext.getExtension(Model.class);
+        List<RestDefinition> rests = model.getRestDefinitions();
+        if (rests.isEmpty()) {
+            return null;
+        }
+
+        // use a routes definition to dump the rests
+        RestsDefinition def = new RestsDefinition();
+        def.setRests(rests);
+        String xml = ModelHelper.dumpModelAsXml(camelContext, def);
+
+        // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
+        final AtomicBoolean changed = new AtomicBoolean();
+        InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+        Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
+            @Override
+            public String transform(String text) {
+                try {
+                    String after = camelContext.resolvePropertyPlaceholders(text);
+                    if (!changed.get()) {
+                        changed.set(!text.equals(after));
+                    }
+                    return after;
+                } catch (Exception e) {
+                    // ignore
+                    return text;
+                }
+            }
+        });
+        // okay there were some property placeholder replaced so re-create the model
+        if (changed.get()) {
+            xml = camelContext.getTypeConverter().mandatoryConvertTo(String.class, dom);
+            def = ModelHelper.createModelFromXml(camelContext, xml, RestsDefinition.class);
+            if (def != null) {
+                return def.getRests();
+            }
+        }
+
+        return rests;
+    }
+
     public List<RestDefinition> getRestDefinitions(String camelId) throws Exception {
         ObjectName found = null;
         boolean supportResolvePlaceholder = false;
@@ -191,25 +253,40 @@ public class RestSwaggerSupport {
         return answer;
     }
 
-    public void renderResourceListing(RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, boolean json, boolean yaml,
-                                      ClassResolver classResolver, RestConfiguration configuration) throws Exception {
+    public void renderResourceListing(CamelContext camelContext, RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, boolean json, boolean yaml,
+                                      Map<String, Object> headers, ClassResolver classResolver, RestConfiguration configuration) throws Exception {
         LOG.trace("renderResourceListing");
+        
+        ObjectMapper mapper = Json.mapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         if (cors) {
             setupCorsHeaders(response, configuration.getCorsHeaders());
         }
 
-        List<RestDefinition> rests = getRestDefinitions(contextId);
+        List<RestDefinition> rests = null;
+        if (camelContext != null && camelContext.getName().equals(contextId)) {
+            rests = getRestDefinitions(camelContext);
+        } else {
+            rests = getRestDefinitions(contextId);
+        }
+
         if (rests != null) {
+            final Map<String, Object> apiProperties = configuration.getApiProperties() != null ? configuration.getApiProperties() : new HashMap<>();
             if (json) {
-                response.setHeader(Exchange.CONTENT_TYPE, "application/json");
+                response.setHeader(Exchange.CONTENT_TYPE, (String) apiProperties.getOrDefault("api.specification.contentType.json", "application/json"));
 
                 // read the rest-dsl into swagger model
                 Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
+                if (configuration.isUseXForwardHeaders()) {
+                    setupXForwardedHeaders(swagger, headers);
+                }
 
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);
-                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                if (!configuration.isApiVendorExtension()) {
+                    clearVendorExtensions(swagger);
+                }
+                
                 byte[] bytes = mapper.writeValueAsBytes(swagger);
 
                 int len = bytes.length;
@@ -217,14 +294,18 @@ public class RestSwaggerSupport {
 
                 response.writeBytes(bytes);
             } else {
-                response.setHeader(Exchange.CONTENT_TYPE, "text/yaml");
+                response.setHeader(Exchange.CONTENT_TYPE, (String) apiProperties.getOrDefault("api.specification.contentType.yaml", "text/yaml"));
 
                 // read the rest-dsl into swagger model
                 Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
+                if (configuration.isUseXForwardHeaders()) {
+                    setupXForwardedHeaders(swagger, headers);
+                }
 
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);
-                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                if (!configuration.isApiVendorExtension()) {
+                    clearVendorExtensions(swagger);
+                }
+
                 byte[] jsonData = mapper.writeValueAsBytes(swagger);
 
                 // json to yaml
@@ -264,7 +345,7 @@ public class RestSwaggerSupport {
                 if ("#name#".equals(contextIdPattern)) {
                     match = name.equals(contextId);
                 } else {
-                    match = EndpointHelper.matchPattern(name, contextIdPattern);
+                    match = PatternHelper.matchPattern(name, contextIdPattern);
                 }
                 if (!match) {
                     it.remove();
@@ -332,6 +413,35 @@ public class RestSwaggerSupport {
         response.setHeader("Access-Control-Allow-Methods", allowMethods);
         response.setHeader("Access-Control-Allow-Headers", allowHeaders);
         response.setHeader("Access-Control-Max-Age", maxAge);
+    }
+
+    static void setupXForwardedHeaders(Swagger swagger, Map<String, Object> headers) {
+
+        String host = (String) headers.get(HEADER_HOST);
+        if (ObjectHelper.isNotEmpty(host)) {
+            swagger.setHost(host);
+        }
+
+        String forwardedPrefix = (String) headers.get(HEADER_X_FORWARDED_PREFIX);
+        if (ObjectHelper.isNotEmpty(forwardedPrefix)) {
+            swagger.setBasePath(URISupport.joinPaths(forwardedPrefix, swagger.getBasePath()));
+        }
+
+        String forwardedHost = (String) headers.get(HEADER_X_FORWARDED_HOST);
+        if (ObjectHelper.isNotEmpty(forwardedHost)) {
+            swagger.setHost(forwardedHost);
+        }
+
+        String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
+        if (ObjectHelper.isNotEmpty(proto)) {
+            String[] schemes = proto.split(",");
+            for (String scheme : schemes) {
+                String trimmedScheme = scheme.trim();
+                if (ObjectHelper.isNotEmpty(trimmedScheme)) {
+                    swagger.addScheme(Scheme.forValue(trimmedScheme));
+                }
+            }
+        }
     }
 
 }

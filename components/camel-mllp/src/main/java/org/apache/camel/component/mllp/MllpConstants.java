@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mllp;
 
+/**
+ * Constants for the MLLP Protocol and the Camel MLLP component.
+ */
 public final class MllpConstants {
     public static final String MLLP_LOCAL_ADDRESS = "CamelMllpLocalAddress";
     public static final String MLLP_REMOTE_ADDRESS = "CamelMllpRemoteAddress";
@@ -23,6 +26,7 @@ public final class MllpConstants {
     public static final String MLLP_ACKNOWLEDGEMENT = "CamelMllpAcknowledgement";
     public static final String MLLP_ACKNOWLEDGEMENT_STRING = "CamelMllpAcknowledgementString";
     public static final String MLLP_ACKNOWLEDGEMENT_TYPE = "CamelMllpAcknowledgementType";
+    public static final String MLLP_ACKNOWLEDGEMENT_MSA_TEXT = "CamelMllpAcknowledgementMsaText";
 
     public static final String MLLP_ACKNOWLEDGEMENT_EXCEPTION = "CamelMllpAcknowledgementException";
     public static final String MLLP_AUTO_ACKNOWLEDGE = "CamelMllpAutoAcknowledge";
@@ -63,5 +67,7 @@ public final class MllpConstants {
     // MSH-18
     public static final String MLLP_CHARSET = "CamelMllpCharset";
 
-    private MllpConstants() { }
+    private MllpConstants() {
+        //utility class, never constructed
+    }
 }

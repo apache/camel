@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
     
     @Test
@@ -51,7 +51,7 @@ public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         // we access the responses Map below only inside the main thread,
         // so no need for a thread-safe Map implementation
-        Map<Integer, Future<List<?>>> responses = new HashMap<Integer, Future<List<?>>>();
+        Map<Integer, Future<List<?>>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<List<?>> out = executor.submit(new Callable<List<?>>() {

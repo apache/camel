@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -65,7 +65,7 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
         Exchange exchange = null;
         Throwable throwable = promise.getException();
 
-        if (throwable != null && throwable instanceof EtcdException) {
+        if (throwable instanceof EtcdException) {
             EtcdException exception = (EtcdException) throwable;
             // Etcd only keeps the responses of the most recent 1000 events
             // across all etcd keys so if we wait for a cleared index, we

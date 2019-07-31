@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,6 +26,19 @@ public class DestinationNameParser {
             throw new IllegalArgumentException("destinationName is null");
         }
         return destinationName.startsWith("topic:");
+    }
+    
+    public boolean isNamedReplyToTopic(String namedReplyTo, boolean isDestinationTopic) {
+        if (namedReplyTo == null) {
+            throw new IllegalArgumentException("namedReplyTo is null");
+        }
+        if (namedReplyTo.startsWith("topic:")) {
+            return true;
+        } else if (namedReplyTo.startsWith("queue:")) {
+            return false;
+        } else {
+            return isDestinationTopic;
+        }
     }
 
     public String getShortName(String destinationName) {

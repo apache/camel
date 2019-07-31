@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,12 +25,11 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.component.netty4.NettyConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 
-@Converter
+@Converter(loader = true)
 public final class NettyHttpConverter {
 
     private NettyHttpConverter() {
@@ -39,7 +38,7 @@ public final class NettyHttpConverter {
     /**
      * A fallback converter that allows us to easily call Java beans and use the raw Netty {@link HttpRequest} as parameter types.
      */
-    @FallbackConverter
+    @Converter(fallback = true)
     public static Object convertToHttpRequest(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // if we want to covert to HttpRequest
         if (value != null && HttpRequest.class.isAssignableFrom(type)) {
@@ -67,7 +66,7 @@ public final class NettyHttpConverter {
     /**
      * A fallback converter that allows us to easily call Java beans and use the raw Netty {@link HttpRequest} as parameter types.
      */
-    @FallbackConverter
+    @Converter(fallback = true)
     public static Object convertToHttpResponse(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // if we want to covert to convertToHttpResponse
         if (value != null && HttpResponse.class.isAssignableFrom(type)) {

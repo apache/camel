@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,12 +25,12 @@ import net.fortuna.ical4j.model.property.DateProperty;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * ICal related converter.
  */
-@Converter
+@Converter(loader = true)
 public final class ICalConverter {
     private ICalConverter() {
         // Helper class
@@ -43,7 +43,7 @@ public final class ICalConverter {
 
     @Converter
     public static ByteArrayInputStream toStream(Calendar calendar, Exchange exchange) throws UnsupportedEncodingException {
-        return new ByteArrayInputStream(calendar.toString().getBytes(IOHelper.getCharsetName(exchange)));
+        return new ByteArrayInputStream(calendar.toString().getBytes(ExchangeHelper.getCharsetName(exchange)));
     }
 
 }

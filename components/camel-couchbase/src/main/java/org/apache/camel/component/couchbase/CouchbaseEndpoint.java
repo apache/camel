@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,11 +31,11 @@ import com.couchbase.client.CouchbaseConnectionFactoryBuilder;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_PUT;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_URI_ERROR;
@@ -57,17 +57,18 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VI
  * Represents a Couchbase endpoint that can query Views with a Poll strategy
  * and/or produce various type of operations.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:url", consumerClass = CouchbaseConsumer.class, label = "database,nosql")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol:hostname:port", label = "database,nosql")
 public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String protocol;
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String hostname;
-    @UriParam(defaultValue = "8091")
+    @UriPath(defaultValue = "8091")
     private int port;
+
     @UriParam
     private String bucket;
 
@@ -179,11 +180,6 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new CouchbaseConsumer(this, createClient(), processor);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     public String getProtocol() {
@@ -544,10 +540,10 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
             hosts[i] = hosts[i].trim();
         }
 
-        List<String> hostList = new ArrayList<String>();
+        List<String> hostList = new ArrayList<>();
         hostList.add(hostname);
         hostList.addAll(Arrays.asList(hosts));
-        Set<String> hostSet = new LinkedHashSet<String>(hostList);
+        Set<String> hostSet = new LinkedHashSet<>(hostList);
         hosts = hostSet.toArray(new String[hostSet.size()]);
 
         URI[] uriArray = new URI[hosts.length];

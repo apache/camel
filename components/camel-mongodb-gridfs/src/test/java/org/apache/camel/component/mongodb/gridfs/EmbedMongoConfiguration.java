@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static com.mongodb.ServerAddress.defaultHost;
 import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
 import static de.flapdoodle.embed.process.runtime.Network.localhostIsIPv6;
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
@@ -39,7 +40,7 @@ import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 @Configuration
 public class EmbedMongoConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmbedMongoConfiguration.class);
-    private static final int PORT = findAvailableTcpPort();
+    private static final int PORT = findAvailableTcpPort(18500); // 1024 is too low on CI servers to find free ports
 
     static {
         try {
@@ -60,6 +61,6 @@ public class EmbedMongoConfiguration {
 
     @Bean
     public MongoClient myDb() throws UnknownHostException {
-        return new MongoClient("0.0.0.0", PORT);
+        return new MongoClient(defaultHost(), PORT);
     }
 }

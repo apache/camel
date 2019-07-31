@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,13 +17,14 @@
 package org.apache.camel.swagger;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 import io.swagger.jaxrs.config.BeanConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class RestSwaggerProcessor implements Processor {
 
         String contextId = exchange.getContext().getName();
         String route = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
-        String accept = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, String.class);
+        String accept = exchange.getIn().getHeader("Accept", String.class);
 
         RestApiResponseAdapter adapter = new ExchangeRestApiResponseAdapter(exchange);
 
@@ -71,8 +72,8 @@ public class RestSwaggerProcessor implements Processor {
             route = route.substring(0, route.length() - 13);
         }
         if (accept != null && !json && !yaml) {
-            json = accept.contains("json");
-            yaml = accept.contains("yaml");
+            json = accept.toLowerCase(Locale.US).contains("json");
+            yaml = accept.toLowerCase(Locale.US).contains("yaml");
         }
         if (!json && !yaml) {
             // json is default
@@ -105,17 +106,18 @@ public class RestSwaggerProcessor implements Processor {
                     if ("#name#".equals(contextIdPattern)) {
                         match = name.equals(contextId);
                     } else {
-                        match = EndpointHelper.matchPattern(name, contextIdPattern);
+                        match = PatternHelper.matchPattern(name, contextIdPattern);
                     }
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Match contextId: {} with pattern: {} -> {}", new Object[]{name, contextIdPattern, match});
+                        LOG.debug("Match contextId: {} with pattern: {} -> {}", name, contextIdPattern, match);
                     }
                 }
 
                 if (!match) {
                     adapter.noContent();
                 } else {
-                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, exchange.getContext().getClassResolver(), configuration);
+                    support.renderResourceListing(exchange.getContext(), adapter, swaggerConfig, name, route, json, yaml,
+                        exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
                 }
             }
         } catch (Exception e) {

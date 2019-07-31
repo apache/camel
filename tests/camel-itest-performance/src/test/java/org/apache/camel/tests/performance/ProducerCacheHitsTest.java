@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -54,13 +54,13 @@ public class ProducerCacheHitsTest extends CamelTestSupport {
     }
     
     protected Object runTest(String uri, String body, int iterations, int threads) {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(PerformanceTestComponent.HEADER_ITERATIONS, iterations);
         headers.put(PerformanceTestComponent.HEADER_THREADS, threads);
         
         StopWatch watch = new StopWatch();
         Object result = template.requestBodyAndHeaders(uri, body, headers);
-        template.sendBody("mock:results", new TestResult(uri, iterations, threads, watch.stop()));
+        template.sendBody("mock:results", new TestResult(uri, iterations, threads, watch.taken()));
         return result;
     }
     

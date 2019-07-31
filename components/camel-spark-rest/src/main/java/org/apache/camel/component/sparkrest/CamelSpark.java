@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,7 @@
 package org.apache.camel.component.sparkrest;
 
 import spark.Route;
-import spark.Spark;
+import spark.Service;
 
 public final class CamelSpark {
 
@@ -25,106 +25,78 @@ public final class CamelSpark {
     }
 
     /**
-     * Stops the Spark Server
-     */
-    public static void stop() {
-        Spark.stop();
-    }
-
-    /**
-     * Configures the port number to use
-     */
-    public static void port(int port) {
-        Spark.port(port);
-    }
-
-    /**
-     * Configures the IP address to use
-     */
-    public static void ipAddress(String ip) {
-        Spark.ipAddress(ip);
-    }
-
-    /**
      * Configures the thread pool
      */
-    public static void threadPool(int minThreads, int maxThreads, int timeOutMillis) {
+    public static void threadPool(Service sparkInstance, int minThreads, int maxThreads, int timeOutMillis) {
         int min = minThreads > 0 ? minThreads : -1;
         int max = maxThreads > 0 ? maxThreads : -1;
         int idle = timeOutMillis > 0 ? timeOutMillis : -1;
-
-        Spark.threadPool(max, min, idle);
-    }
-
-    /**
-     * Configures connection to be secure
-     */
-    public static void security(String keystoreFile, String keystorePassword, String truststoreFile, String truststorePassword) {
-        Spark.secure(keystoreFile, keystorePassword, truststoreFile, truststorePassword);
+        sparkInstance.threadPool(max, min, idle);
     }
 
     /**
      * Adds a Spark REST verb that routes to the given spark route
      *
+     * @param sparkInstance the SPARK instance
      * @param verb   the HTTP verb
      * @param path   the context path
      * @param accept the accept header
      * @param route  the spark route (we call a Camel route from here)
      */
-    public static void spark(String verb, String path, String accept, Route route) {
+    public static void spark(Service sparkInstance, String verb, String path, String accept, Route route) {
         if ("get".equals(verb)) {
             if (accept != null) {
-                Spark.get(path, accept, route);
+                sparkInstance.get(path, accept, route);
             } else {
-                Spark.get(path, route);
+                sparkInstance.get(path, route);
             }
         } else if ("post".equals(verb)) {
             if (accept != null) {
-                Spark.post(path, accept, route);
+                sparkInstance.post(path, accept, route);
             } else {
-                Spark.post(path, route);
+                sparkInstance.post(path, route);
             }
         } else if ("put".equals(verb)) {
             if (accept != null) {
-                Spark.put(path, accept, route);
+                sparkInstance.put(path, accept, route);
             } else {
-                Spark.put(path, route);
+                sparkInstance.put(path, route);
             }
         } else if ("patch".equals(verb)) {
             if (accept != null) {
-                Spark.patch(path, accept, route);
+                sparkInstance.patch(path, accept, route);
             } else {
-                Spark.patch(path, route);
+                sparkInstance.patch(path, route);
             }
         } else if ("delete".equals(verb)) {
             if (accept != null) {
-                Spark.delete(path, accept, route);
+                sparkInstance.delete(path, accept, route);
             } else {
-                Spark.delete(path, route);
+                sparkInstance.delete(path, route);
             }
         } else if ("head".equals(verb)) {
             if (accept != null) {
-                Spark.head(path, accept, route);
+                sparkInstance.head(path, accept, route);
             } else {
-                Spark.head(path, route);
+                sparkInstance.head(path, route);
             }
         } else if ("trace".equals(verb)) {
             if (accept != null) {
-                Spark.trace(path, accept, route);
+                sparkInstance.trace(path, accept, route);
             } else {
-                Spark.trace(path, route);
+                sparkInstance.trace(path, route);
             }
         } else if ("connect".equals(verb)) {
             if (accept != null) {
-                Spark.connect(path, accept, route);
+                sparkInstance.connect(path, accept, route);
             } else {
-                Spark.connect(path, route);
+                sparkInstance.connect(path, route);
             }
         } else if ("options".equals(verb)) {
             if (accept != null) {
-                Spark.options(path, accept, route);
+                sparkInstance.options(path, accept, route);
             } else {
-                Spark.options(path, route);
+                sparkInstance.options(path, route);
             }
         }
     }

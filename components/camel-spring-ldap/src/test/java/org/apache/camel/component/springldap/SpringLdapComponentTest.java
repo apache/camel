@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,21 +29,44 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Captor;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SpringLdapComponentTest extends CamelSpringTestSupport {
 
     private LdapTemplate ldapTemplate;
     private ProducerTemplate producer;
     private Map<String, Object> body;
+
+    @Captor
+    private ArgumentCaptor<String> dnCaptor;
+
+    @Captor
+    private ArgumentCaptor<Attributes> attributesCaptor;
+
+    @Captor
+    private ArgumentCaptor<Object> objectToBindCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> filterCaptor;
+
+    @Captor
+    private ArgumentCaptor<Integer> scopeCaptor;
+
+    @Captor
+    private ArgumentCaptor<AttributesMapper<String>> mapperCaptor;
 
     @Test
     public void testUnbind() throws Exception {
@@ -54,8 +77,7 @@ public class SpringLdapComponentTest extends CamelSpringTestSupport {
                 + SpringLdapTestConfiguration.LDAP_MOCK_NAME
                 + "?operation=unbind", body);
 
-        ArgumentCaptor<String> dnCaptor = ArgumentCaptor.forClass(String.class);
-        Mockito.verify(ldapTemplate).unbind(dnCaptor.capture());
+        verify(ldapTemplate).unbind(dnCaptor.capture());
         assertEquals(dnToUnbind, dnCaptor.getValue());
     }
 
@@ -73,14 +95,7 @@ public class SpringLdapComponentTest extends CamelSpringTestSupport {
                 + SpringLdapTestConfiguration.LDAP_MOCK_NAME
                 + "?operation=bind", body);
 
-        ArgumentCaptor<String> dnCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Attributes> attributesCaptor = ArgumentCaptor
-                .forClass(Attributes.class);
-        ArgumentCaptor<Object> objectToBindCaptor = ArgumentCaptor
-                .forClass(Object.class);
-
-        Mockito.verify(ldapTemplate).bind(dnCaptor.capture(),
-                objectToBindCaptor.capture(), attributesCaptor.capture());
+        verify(ldapTemplate).bind(dnCaptor.capture(), objectToBindCaptor.capture(), attributesCaptor.capture());
         assertEquals(dnToBind, dnCaptor.getValue());
         assertNull(objectToBindCaptor.getValue());
         assertEquals(attributes, attributesCaptor.getValue());
@@ -95,34 +110,17 @@ public class SpringLdapComponentTest extends CamelSpringTestSupport {
 
         body.put(SpringLdapProducer.FILTER, filter);
 
-        ArgumentCaptor<String> dnCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> filterCaptor = ArgumentCaptor
-                .forClass(String.class);
-        ArgumentCaptor<Integer> scopeCaptor = ArgumentCaptor
-                .forClass(Integer.class);
-        ArgumentCaptor<AttributesMapper> mapperCaptor = ArgumentCaptor
-                .forClass(AttributesMapper.class);
+        List<String> searchResult = Collections.singletonList("some search result");
+        when(ldapTemplate.search(any(String.class), any(String.class), any(Integer.class), ArgumentMatchers.<AttributesMapper<String>> any())).thenReturn(searchResult);
 
-        List<String> searchResult = Collections
-                .singletonList("some search result");
-        when(
-                ldapTemplate.search(any(String.class), any(String.class),
-                        any(Integer.class), any(AttributesMapper.class)))
-                .thenReturn(searchResult);
-
-        MockEndpoint resultEndpoint = (MockEndpoint) context
-                .getEndpoint("mock:result");
-        resultEndpoint.expectedBodiesReceived(Collections
-                .singletonList(searchResult));
+        MockEndpoint resultEndpoint = (MockEndpoint)context.getEndpoint("mock:result");
+        resultEndpoint.expectedBodiesReceived(Collections.singletonList(searchResult));
 
         producer.sendBody("direct:start", body);
 
-        Mockito.verify(ldapTemplate).search(dnCaptor.capture(),
-                filterCaptor.capture(), scopeCaptor.capture(),
-                mapperCaptor.capture());
+        verify(ldapTemplate).search(dnCaptor.capture(), filterCaptor.capture(), scopeCaptor.capture(), mapperCaptor.capture());
         assertEquals(dnToSearch, dnCaptor.getValue());
-        assertEquals((Integer) SearchControls.ONELEVEL_SCOPE,
-                scopeCaptor.getValue());
+        assertEquals((Integer)SearchControls.ONELEVEL_SCOPE, scopeCaptor.getValue());
         assertEquals(filter, filterCaptor.getValue());
 
         resultEndpoint.assertIsSatisfied();
@@ -151,12 +149,11 @@ public class SpringLdapComponentTest extends CamelSpringTestSupport {
     }
 
     private void initializeTest(String dn) {
-        ldapTemplate = context.getRegistry().lookupByNameAndType(
-                SpringLdapTestConfiguration.LDAP_MOCK_NAME, LdapTemplate.class);
+        ldapTemplate = context.getRegistry().lookupByNameAndType(SpringLdapTestConfiguration.LDAP_MOCK_NAME, LdapTemplate.class);
 
         producer = context.createProducerTemplate();
 
-        body = new HashMap<String, Object>();
+        body = new HashMap<>();
         body.put(SpringLdapProducer.DN, dn);
     }
 }

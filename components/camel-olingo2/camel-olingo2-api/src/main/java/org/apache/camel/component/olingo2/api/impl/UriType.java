@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -116,7 +116,7 @@ public enum UriType {
      */
     URI50B(SystemQueryOption.$filter, SystemQueryOption.$orderby, SystemQueryOption.$skip, SystemQueryOption.$top);
 
-    private ArrayList<SystemQueryOption> whiteList = new ArrayList<SystemQueryOption>();
+    private ArrayList<SystemQueryOption> whiteList = new ArrayList<>();
 
     UriType(final SystemQueryOption... compatibleQueryOptions) {
         for (SystemQueryOption queryOption : compatibleQueryOptions) {

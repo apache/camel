@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,8 +20,8 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.quartz2.QuartzComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
@@ -45,12 +45,12 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
         try {
             doOnInit(route);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
     protected void doOnInit(Route route) throws Exception {
-        QuartzComponent quartz = route.getRouteContext().getCamelContext().getComponent("quartz2", QuartzComponent.class);
+        QuartzComponent quartz = route.getCamelContext().getComponent("quartz2", QuartzComponent.class);
         setScheduler(quartz.getScheduler());
 
         // Important: do not start scheduler as QuartzComponent does that automatic
@@ -66,7 +66,7 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
 
         // validate time options has been configured
         if ((getRouteStartDate() == null) && (getRouteStopDate() == null) && (getRouteSuspendDate() == null) && (getRouteResumeDate() == null)) {
-            throw new IllegalArgumentException("Scheduled Route Policy for route {} has no start/stop/suspend/resume times specified");
+            throw new IllegalArgumentException("Scheduled Route Policy for route " + route.getId() + " has no start/stop/suspend/resume times specified");
         }
 
         registerRouteToScheduledRouteDetails(route);

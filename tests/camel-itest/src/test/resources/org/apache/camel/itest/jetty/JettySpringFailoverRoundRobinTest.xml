@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,13 +8,14 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -29,6 +31,10 @@
         <endpoint id="bad2" uri="jetty:http://localhost:{{JettySpringFailoverRoundRobinTest.port2}}/bad2"/>
         <endpoint id="good" uri="jetty:http://localhost:{{JettySpringFailoverRoundRobinTest.port3}}/good"/>
         <endpoint id="good2" uri="jetty:http://localhost:{{JettySpringFailoverRoundRobinTest.port4}}/good2"/>
+        <endpoint id="hbad" uri="http://localhost:{{JettySpringFailoverRoundRobinTest.port1}}/bar"/>
+        <endpoint id="hbad2" uri="http://localhost:{{JettySpringFailoverRoundRobinTest.port2}}/bad2"/>
+        <endpoint id="hgood" uri="http://localhost:{{JettySpringFailoverRoundRobinTest.port3}}/good"/>
+        <endpoint id="hgood2" uri="http://localhost:{{JettySpringFailoverRoundRobinTest.port4}}/good2"/>
 
         <!-- START SNIPPET: e1 -->
         <route>
@@ -39,36 +45,36 @@
             <loadBalance inheritErrorHandler="false">
                 <failover roundRobin="true"/>
                 <!-- and this is the four endpoints we will load balance with failover -->
-                <to ref="bad"/>
-                <to ref="bad2"/>
-                <to ref="good"/>
-                <to ref="good2"/>
+                <to uri="ref:hbad"/>
+                <to uri="ref:hbad2"/>
+                <to uri="ref:hgood"/>
+                <to uri="ref:hgood2"/>
             </loadBalance>
         </route>
         <!-- END SNIPPET: e1 -->
 
         <route>
-            <from ref="bad"/>
+            <from uri="ref:bad"/>
             <to uri="mock:bad"/>
-            <setHeader headerName="CamelHttpResponseCode"><constant>500</constant></setHeader>
+            <setHeader name="CamelHttpResponseCode"><constant>500</constant></setHeader>
             <setBody><constant>Something bad happened</constant></setBody>
         </route>
 
         <route>
-            <from ref="bad2"/>
+            <from uri="ref:bad2"/>
             <to uri="mock:bad2"/>
-            <setHeader headerName="CamelHttpResponseCode"><constant>404</constant></setHeader>
+            <setHeader name="CamelHttpResponseCode"><constant>404</constant></setHeader>
             <setBody><constant>Not found</constant></setBody>
         </route>
 
         <route>
-            <from ref="good"/>
+            <from uri="ref:good"/>
             <to uri="mock:good"/>
             <setBody><constant>Good</constant></setBody>
         </route>
 
         <route>
-            <from ref="good2"/>
+            <from uri="ref:good2"/>
             <to uri="mock:good2"/>
             <setBody><constant>Also good</constant></setBody>
         </route>

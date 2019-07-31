@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,10 +28,11 @@ import org.apache.camel.component.hazelcast.listener.MapEntryListener;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,13 +41,13 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
     @Mock
     private IMap<Object, Object> map;
 
-    private ArgumentCaptor<MapEntryListener> argument;
+    @Captor
+    private ArgumentCaptor<MapEntryListener<Object, Object>> argument;
 
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.getMap("foo")).thenReturn(map);
-        argument = ArgumentCaptor.forClass(MapEntryListener.class);
-        when(map.addEntryListener(argument.capture(), eq(true))).thenReturn("foo");
+        when(map.addEntryListener(any(), eq(true))).thenReturn("foo");
     }
 
     @Override
@@ -56,12 +57,12 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testAdd() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
+        verify(map).addEntryListener(argument.capture(), eq(true));
+        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
         argument.getValue().entryAdded(event);
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
 
@@ -69,24 +70,24 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testEnict() throws InterruptedException {
         MockEndpoint out = super.getMockEndpoint("mock:evicted");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
+        verify(map).addEntryListener(argument.capture(), eq(true));
+        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
         argument.getValue().entryEvicted(event);
 
         assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testUpdate() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:updated");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.UPDATED.getType(), "4711", "my-foo");
+        verify(map).addEntryListener(argument.capture(), eq(true));
+        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.UPDATED.getType(), "4711", "my-foo");
         argument.getValue().entryUpdated(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
@@ -95,12 +96,12 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
     }
     
     @Test
-    @SuppressWarnings("unchecked")
     public void testEvict() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:evicted");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
+        verify(map).addEntryListener(argument.capture(), eq(true));
+        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
         argument.getValue().entryEvicted(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
@@ -109,12 +110,12 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testRemove() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
+        verify(map).addEntryListener(argument.capture(), eq(true));
+        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
         argument.getValue().entryRemoved(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
@@ -126,7 +127,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX)).log("object...").choice().when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
+                from(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX)).log("object...").choice().when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
                         .log("...added").to("mock:added").when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.EVICTED)).log("...evicted").to("mock:evicted")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.UPDATED)).log("...updated").to("mock:updated")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED)).log("...removed").to("mock:removed").otherwise().log("fail!");

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,17 +20,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.dropbox.core.DbxEntry;
+import com.dropbox.core.v2.files.SearchMatch;
 
 public class DropboxSearchResult {
 
-    private final List<DbxEntry> found;
+    private final List<SearchMatch> found;
 
-    public DropboxSearchResult(List<DbxEntry> found) {
+    public DropboxSearchResult(List<SearchMatch> found) {
         this.found = new ArrayList<>(found);
     }
 
-    public List<DbxEntry> getFound() {
+    public List<SearchMatch> getFound() {
         return Collections.unmodifiableList(found);
     }
 

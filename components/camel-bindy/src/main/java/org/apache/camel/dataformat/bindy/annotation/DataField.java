@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -146,4 +146,12 @@ public @interface DataField {
      */
      String rounding() default "CEILING";
 
+     /**
+      * Method name to call to apply such customization
+      * on DataField. This must be the method on the datafield
+      * itself or you must provide static fully qualified name of
+      * the class's method e.g: see unit test 
+      * org.apache.camel.dataformat.bindy.csv.BindySimpleCsvFunctionWithExternalMethodTest.replaceToBar
+      */
+     String method() default ""; 
 }

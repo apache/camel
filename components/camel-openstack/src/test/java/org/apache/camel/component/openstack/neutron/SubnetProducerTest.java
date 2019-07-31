@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,13 @@ import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.producer.SubnetProducer;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.networking.SubnetService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.Subnet;
@@ -35,12 +39,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SubnetProducerTest extends NeutronProducerTestSupport {
 
     private Subnet dummySubnet;
@@ -48,10 +53,21 @@ public class SubnetProducerTest extends NeutronProducerTestSupport {
     @Mock
     private Subnet testOSsubnet;
 
+    @Mock
+    private SubnetService subnetService;
+
+    @Captor
+    private ArgumentCaptor<Subnet> subnetCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> subnetIdCaptor;
+
     @Before
     public void setUp() {
+        when(networkingService.subnet()).thenReturn(subnetService);
+
         producer = new SubnetProducer(endpoint, client);
-        when(subnetService.create(any(Subnet.class))).thenReturn(testOSsubnet);
+        when(subnetService.create(any())).thenReturn(testOSsubnet);
         when(subnetService.get(anyString())).thenReturn(testOSsubnet);
 
         List<Subnet> getAllList = new ArrayList<>();
@@ -74,10 +90,9 @@ public class SubnetProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<Subnet> captor = ArgumentCaptor.forClass(Subnet.class);
-        verify(subnetService).create(captor.capture());
+        verify(subnetService).create(subnetCaptor.capture());
 
-        assertEqualsSubnet(dummySubnet, captor.getValue());
+        assertEqualsSubnet(dummySubnet, subnetCaptor.getValue());
         assertNotNull(msg.getBody(Subnet.class).getId());
     }
 
@@ -89,10 +104,9 @@ public class SubnetProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(subnetService).get(captor.capture());
+        verify(subnetService).get(subnetIdCaptor.capture());
 
-        assertEquals(subnetID, captor.getValue());
+        assertEquals(subnetID, subnetIdCaptor.getValue());
         assertEqualsSubnet(testOSsubnet, msg.getBody(Subnet.class));
     }
 
@@ -116,17 +130,8 @@ public class SubnetProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(subnetService).delete(captor.capture());
-        assertEquals(subnetID, captor.getValue());
-        assertFalse(msg.isFault());
-
-        //in case of failure
-        final String failureMessage = "fail";
-        when(subnetService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
-        producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failureMessage));
+        verify(subnetService).delete(subnetIdCaptor.capture());
+        assertEquals(subnetID, subnetIdCaptor.getValue());
     }
 
     private Subnet createSubnet() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,6 +31,6 @@ public class WordSplitStrategyTest {
     public void testSplit() throws Exception {
         Collection<String> split = wordSplitStrategy.split("Hello World\n Foo Bar");
         assertEquals(4, split.size());
-        assertEquals("Bar", new ArrayList<String>(split).get(3));
+        assertEquals("Bar", new ArrayList<>(split).get(3));
     }
 }

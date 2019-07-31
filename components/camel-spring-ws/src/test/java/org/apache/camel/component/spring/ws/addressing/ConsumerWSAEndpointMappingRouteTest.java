@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,31 +39,31 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
 
     private final String xmlBody = "<GetQuote xmlns=\"http://www.stockquotes.edu/\"><symbol>GOOG</symbol></GetQuote>";
 
-    @EndpointInject(uri = "mock:testAction")
+    @EndpointInject("mock:testAction")
     private MockEndpoint resultEndpointAction;
 
-    @EndpointInject(uri = "mock:testTo")
+    @EndpointInject("mock:testTo")
     private MockEndpoint resultEndpointTo;
 
-    @EndpointInject(uri = "mock:testActionAndTo")
+    @EndpointInject("mock:testActionAndTo")
     private MockEndpoint resultEndpointActionAndTo;
 
-    @EndpointInject(uri = "mock:testToAndAction")
+    @EndpointInject("mock:testToAndAction")
     private MockEndpoint resultEndpointToAndAction;
 
-    @EndpointInject(uri = "mock:testToMoreSpecific")
+    @EndpointInject("mock:testToMoreSpecific")
     private MockEndpoint resultEndpointToMoreSpecific;
 
-    @EndpointInject(uri = "mock:testActionMoreSpecific")
+    @EndpointInject("mock:testActionMoreSpecific")
     private MockEndpoint resultEndpointActionMoreSpecific;
 
-    @EndpointInject(uri = "mock:testOutputAndFault")
+    @EndpointInject("mock:testOutputAndFault")
     private MockEndpoint resultOutputAndFault;
 
-    @EndpointInject(uri = "mock:testOutputAndFault2")
+    @EndpointInject("mock:testOutputAndFault2")
     private MockEndpoint resultOutputAndFault2;
 
-    @EndpointInject(uri = "mock:testSoapAction")
+    @EndpointInject("mock:testSoapAction")
     private MockEndpoint resultSoapAction;
 
     private WebServiceTemplate webServiceTemplate;

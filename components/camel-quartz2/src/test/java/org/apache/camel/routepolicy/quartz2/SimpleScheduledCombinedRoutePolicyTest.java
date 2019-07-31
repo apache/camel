@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import java.util.Date;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -36,7 +37,8 @@ public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
     public void testScheduledStartAndStopRoutePolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);        
         success.expectedMessageCount(1);
-        
+
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
         context.getComponent("quartz2", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz2/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {   
@@ -59,10 +61,10 @@ public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
         context.start();
         
         Thread.sleep(5000);
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
         template.sendBody("direct:start", "Ready or not, Here, I come");
         Thread.sleep(5000);
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Stopped);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
         
         context.getComponent("quartz2", QuartzComponent.class).stop();
         success.assertIsSatisfied();

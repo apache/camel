@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -86,7 +86,7 @@ public class CxfRsEndpointTest extends CamelTestSupport {
 
         CxfRsComponent component = new CxfRsComponent(context);
         CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint(endpointUri);
-        JSONProvider<?> jsonProvider = new JSONProvider<Object>();
+        JSONProvider<?> jsonProvider = new JSONProvider<>();
         jsonProvider.setDropRootElement(true);
         jsonProvider.setSupportUnwrapped(true);
         endpoint.setProvider(jsonProvider);

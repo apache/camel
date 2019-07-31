@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,6 @@ package org.apache.camel.component.mllp;
  * Abstract base for all MLLP Negative Acknowledgements
  */
 public abstract class MllpNegativeAcknowledgementException extends MllpAcknowledgementException {
-
     public MllpNegativeAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
         super(message, hl7Message, hl7Acknowledgement);
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,45 +16,38 @@
  */
 package org.apache.camel.component.asterisk;
 
-import java.io.IOException;
-
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.asteriskjava.manager.AuthenticationFailedException;
-import org.asteriskjava.manager.ManagerEventListener;
-import org.asteriskjava.manager.TimeoutException;
-import org.asteriskjava.manager.action.ManagerAction;
-import org.asteriskjava.manager.event.ManagerEvent;
-import org.asteriskjava.manager.response.ManagerResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * The asterisk component is used to interact with Asterisk PBX Server <a href="http://www.asterisk.org">Asterisk PBX Server</a>.
+ * The asterisk component is used to interact with Asterisk PBX Server.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", consumerClass = AsteriskConsumer.class, label = "voip")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", label = "voip")
 public class AsteriskEndpoint extends DefaultEndpoint {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = LoggerFactory.getLogger(AsteriskProducer.class);
-
-    private AsteriskConnection asteriskConnection;
-
-    @UriPath(description = "Name of component") @Metadata(required = "true")
+    @UriPath(description = "Name of component")
+    @Metadata(required = true)
     private String name;
+
     @UriParam
+    @Metadata(required = true)
     private String hostname;
+
     @UriParam(label = "producer")
-    private AsteriskActionEnum action;
+    private AsteriskAction action;
+
     @UriParam(secret = true)
+    @Metadata(required = true)
     private String username;
+
     @UriParam(secret = true)
+    @Metadata(required = true)
     private String password;
 
     public AsteriskEndpoint(String uri, AsteriskComponent component) {
@@ -63,57 +56,20 @@ public class AsteriskEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
-        asteriskConnection = new AsteriskConnection(hostname, username, password);
+        // Validate mandatory option
+        ObjectHelper.notNull(hostname, "hostname");
+        ObjectHelper.notNull(username, "username");
+        ObjectHelper.notNull(password, "password");
     }
 
     @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        // do not exist disconnect operation!!!
-        asteriskConnection = null;
-    }
-
     public Producer createProducer() throws Exception {
-        if (action == null) {
-            throw new IllegalArgumentException("Missing required action parameter");
-        }
-        
         return new AsteriskProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new AsteriskConsumer(this, processor);
-    }
-
-    public boolean isSingleton() {
-        // TODO: prefer to be singleton and do not have state on the endpoint
-        // the asteriskConnection should be createed on the consumer / producer instance and be private there
-        return false;
-    }
-
-    public void addListener(ManagerEventListener listener) throws CamelAsteriskException {
-        asteriskConnection.addListener(listener);
-    }
-
-    public void login() throws IllegalStateException, IOException, AuthenticationFailedException, TimeoutException, CamelAsteriskException {
-        asteriskConnection.login();
-    }
-
-    public void logoff() throws CamelAsteriskException {
-        asteriskConnection.logoff();
-    }
-
-    public Exchange createExchange(ManagerEvent event) {
-        Exchange exchange = super.createExchange();
-        exchange.getIn().setHeader(AsteriskConstants.EVENT_NAME, event.getClass().getSimpleName());
-        exchange.getIn().setBody(event);
-        return exchange;
-    }
-
-    public ManagerResponse sendAction(ManagerAction action) throws IllegalArgumentException, IllegalStateException, IOException, TimeoutException {
-        return asteriskConnection.sendAction(action);
     }
 
     public String getUsername() {
@@ -138,14 +94,14 @@ public class AsteriskEndpoint extends DefaultEndpoint {
         this.password = password;
     }
 
-    public AsteriskActionEnum getAction() {
+    public AsteriskAction getAction() {
         return action;
     }
 
     /**
      * What action to perform such as getting queue status, sip peers or extension state.
      */
-    public void setAction(AsteriskActionEnum action) {
+    public void setAction(AsteriskAction action) {
         this.action = action;
     }
 
@@ -154,7 +110,7 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The hostname of the asterix server
+     * The hostname of the asterisk server
      */
     public void setHostname(String hostname) {
         this.hostname = hostname;

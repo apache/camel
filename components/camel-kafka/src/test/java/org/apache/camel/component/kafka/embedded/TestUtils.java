@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,22 +20,28 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.Random;
+
+import org.apache.commons.lang.RandomStringUtils;
+
 
 final class TestUtils {
 
-    private static final Random RANDOM = new Random();
+    private static final String TMPDIR = System.getProperty("java.io.tmpdir");
 
     private TestUtils() {
     }
 
-    public static File constructTempDir(String dirPrefix) {
-        File file = new File(System.getProperty("java.io.tmpdir"), dirPrefix + RANDOM.nextInt(10000000));
+    public static File constructTempDir(String suffix) {
+        File file = new File(TMPDIR + File.separator + suffix);
         if (!file.mkdirs()) {
             throw new RuntimeException("could not create temp directory: " + file.getAbsolutePath());
         }
         file.deleteOnExit();
         return file;
+    }
+
+    public static String perTest(String directory) {
+        return RandomStringUtils.randomAlphanumeric(8) + "-" + directory;
     }
 
     public static int getAvailablePort() {

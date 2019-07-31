@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,11 +18,16 @@ package org.apache.camel.opentracing;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import io.opentracing.Span;
+import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
 import io.opentracing.mock.MockTracer.Propagator;
 import io.opentracing.tag.Tags;
@@ -52,6 +57,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
 
         OpenTracingTracer ottracer = new OpenTracingTracer();
         ottracer.setTracer(tracer);
+        ottracer.setExcludePatterns(getExcludePatterns());
 
         ottracer.init(context);
 
@@ -62,50 +68,86 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         return tracer;
     }
 
+    protected Set<String> getExcludePatterns() {
+        return new HashSet<>();
+    }
+
     protected void verify() {
+        verify(false);
+    }
+
+    protected void verify(boolean async) {
         assertEquals("Incorrect number of spans", testdata.length, tracer.finishedSpans().size());
 
+        verifySameTrace();
+
+        List<MockSpan> spans = tracer.finishedSpans();
+        if (async) {
+            final List<MockSpan> unsortedSpans = spans;
+            spans = Arrays.asList(testdata).stream()
+                    .map(td -> findSpan(td, unsortedSpans)).distinct().collect(Collectors.toList());
+            assertEquals("Incorrect number of spans after sorting", testdata.length, spans.size());
+        }
+
         for (int i = 0; i < testdata.length; i++) {
-            if (i > 0) {
-                assertEquals(testdata[i].getLabel(), tracer.finishedSpans().get(0).context().traceId(),
-                    tracer.finishedSpans().get(i).context().traceId());
-            }
-
-            String component = (String) tracer.finishedSpans().get(i).tags().get(Tags.COMPONENT.getKey());
-            assertNotNull(component);
-            assertEquals(testdata[i].getLabel(),
-                SpanDecorator.CAMEL_COMPONENT + URI.create((String) testdata[i].getUri()).getScheme(),
-                component);
-
-            // If span associated with TestSEDASpanDecorator, check that 'testop' and pre/post tags have been defined
-            if ("camel-seda".equals(component)) {
-                assertEquals("testop", tracer.finishedSpans().get(i).operationName());
-                assertTrue(tracer.finishedSpans().get(i).tags().containsKey("pre"));
-                assertTrue(tracer.finishedSpans().get(i).tags().containsKey("post"));
-            } else {
-                assertEquals(testdata[i].getLabel(), testdata[i].getUri(), tracer.finishedSpans().get(i).operationName());
-            }
-
-            assertEquals(testdata[i].getLabel(), testdata[i].getKind(),
-                tracer.finishedSpans().get(i).tags().get(Tags.SPAN_KIND.getKey()));
-
-            if (testdata[i].getParentId() != -1) {
-                assertEquals(testdata[i].getLabel(),
-                    tracer.finishedSpans().get(testdata[i].getParentId()).context().spanId(),
-                    tracer.finishedSpans().get(i).parentId());
-            }
-
+            verifySpan(i, testdata, spans);
         }
     }
 
+    protected MockSpan findSpan(SpanTestData testdata, List<MockSpan> spans) {
+        return spans.stream().filter(s -> s.operationName().equals(testdata.getOperation())
+                && s.tags().get("camel.uri").equals(testdata.getUri())
+                && s.tags().get(Tags.SPAN_KIND.getKey()).equals(testdata.getKind())).findFirst().orElse(null);
+    }
+
+    protected void verifySpan(int index, SpanTestData[] testdata, List<MockSpan> spans) {
+        MockSpan span = spans.get(index);
+        SpanTestData td = testdata[index];
+
+        String component = (String) span.tags().get(Tags.COMPONENT.getKey());
+        assertNotNull(component);
+        assertEquals(td.getLabel(),
+            SpanDecorator.CAMEL_COMPONENT + URI.create(td.getUri()).getScheme(),
+            component);
+        assertEquals(td.getLabel(), td.getUri(), span.tags().get("camel.uri"));
+
+        // If span associated with TestSEDASpanDecorator, check that pre/post tags have been defined
+        if ("camel-seda".equals(component)) {
+            assertTrue(span.tags().containsKey("pre"));
+            assertTrue(span.tags().containsKey("post"));
+        }
+
+        assertEquals(td.getLabel(), td.getOperation(), span.operationName());
+
+        assertEquals(td.getLabel(), td.getKind(),
+                span.tags().get(Tags.SPAN_KIND.getKey()));
+
+        if (td.getParentId() != -1) {
+            assertEquals(td.getLabel(),
+                spans.get(td.getParentId()).context().spanId(),
+                span.parentId());
+        }
+
+        if (!td.getLogMessages().isEmpty()) {
+            assertEquals("Number of log messages", td.getLogMessages().size(), span.logEntries().size());
+            for (int i = 0; i < td.getLogMessages().size(); i++) {
+                assertEquals(td.getLogMessages().get(i), span.logEntries().get(i).fields().get("message"));
+            }
+        }
+    }
+
+    protected void verifySameTrace() {
+        assertEquals(1, tracer.finishedSpans().stream().map(s -> s.context().traceId()).distinct().count());
+    }
+
     protected void verifyTraceSpanNumbers(int numOfTraces, int numSpansPerTrace) {
-        Map<Long, List<Span>> traces = new HashMap<Long, List<Span>>();
+        Map<Long, List<Span>> traces = new HashMap<>();
 
         // Sort spans into separate traces
         for (int i = 0; i < getTracer().finishedSpans().size(); i++) {
             List<Span> spans = traces.get(getTracer().finishedSpans().get(i).context().traceId());
             if (spans == null) {
-                spans = new ArrayList<Span>();
+                spans = new ArrayList<>();
                 traces.put(getTracer().finishedSpans().get(i).context().traceId(), spans);
             }
             spans.add(getTracer().finishedSpans().get(i));

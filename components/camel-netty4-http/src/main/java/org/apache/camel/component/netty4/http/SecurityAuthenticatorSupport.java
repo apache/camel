@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,8 +18,8 @@ package org.apache.camel.component.netty4.http;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Iterator;
 import java.util.Locale;
+
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -27,7 +27,7 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +67,7 @@ public abstract class SecurityAuthenticatorSupport implements SecurityAuthentica
         }
 
         // check each role class name if they match the principal class name
-        Iterator<Object> it = ObjectHelper.createIterator(roleClassNames);
-        while (it.hasNext()) {
-            String name = it.next().toString().trim();
+        for (String name : ObjectHelper.createIterable(roleClassNames)) {
             if (principal.getClass().getName().equals(name)) {
                 return true;
             }

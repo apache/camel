@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,10 +30,6 @@ import org.apache.cxf.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @version 
- */
 public class DefaultCxfMessageMapper implements CxfMessageMapper {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfMessageMapper.class);
     private static final String CXF_HTTP_REQUEST = "HTTP.REQUEST";
@@ -156,6 +152,9 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
 
         if (answer == null) {
             answer = camelExchange.getFromEndpoint().getEndpointUri();
+            // remove leading scheme before the http(s) transport so we build a correct base path
+            answer = answer.replaceFirst("^\\w+:http", "http");
+            answer = answer.replaceFirst("^\\w+:https", "https");
         }
         
         return answer;

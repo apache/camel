@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,10 +26,13 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.DefaultAddressedEnvelope;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Sharable
 public class DatagramPacketObjectEncoder extends
         MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
+    private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketObjectEncoder.class);
     private ObjectEncoder delegateObjectEncoder;
     public DatagramPacketObjectEncoder() {
         delegateObjectEncoder = new ObjectEncoder();
@@ -42,10 +45,11 @@ public class DatagramPacketObjectEncoder extends
             ByteBuf buf = ctx.alloc().buffer();
             delegateObjectEncoder.encode(ctx, payload, buf);
             AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = 
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(buf, msg.recipient(), msg.sender());
+                new DefaultAddressedEnvelope<>(buf, msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
+        } else {
+            LOG.debug("Ignoring message content as it is not a java.io.Serializable instance.");
         }
-        
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,11 +25,6 @@ import org.junit.Test;
  * Unit test to verify that Camel can build remote directory on FTP server if missing (full or part of).
  */
 public class FtpProducerTempPrefixTest extends FtpServerTestSupport {
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/upload/user/claus?binary=false&password=admin&tempPrefix=.uploading";

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4.http;
-
 import java.net.URL;
+
 import javax.annotation.Resource;
 
-import junit.framework.TestCase;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +33,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/org/apache/camel/component/netty4/http/SpringNettyHttpSSLTest.xml"})
-public class SpringNettyHttpSSLTest extends TestCase {
+public class SpringNettyHttpSSLTest extends Assert {
 
     @Produce
     private ProducerTemplate template;
 
-    @EndpointInject(uri = "mock:input")
+    @EndpointInject("mock:input")
     private MockEndpoint mockEndpoint;
 
     private Integer port;
@@ -53,16 +53,18 @@ public class SpringNettyHttpSSLTest extends TestCase {
     }
 
     @BeforeClass
-    public static void setUpJaas() throws Exception {
-        // ensure jsse clients can validate the self signed dummy localhost cert,
+    public static void setUpJSSE() throws Exception {
+        // ensure JSSE clients can validate the self signed dummy localhost cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = NettyHttpSSLTest.class.getClassLoader().getResource("jsse/localhost.ks");
         System.setProperty("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
+        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
     }
 
     @AfterClass
-    public static void tearDownJaas() throws Exception {
-        System.clearProperty("java.security.auth.login.config");
+    public static void tearDownJSSE() throws Exception {
+        System.clearProperty("javax.net.ssl.trustStore");
+        System.clearProperty("javax.net.ssl.trustStorePassword");
     }
 
     @Test

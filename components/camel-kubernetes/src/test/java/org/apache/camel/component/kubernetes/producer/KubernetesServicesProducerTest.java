@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,153 +16,94 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.IntOrString;
+import io.fabric8.kubernetes.api.model.PodListBuilder;
 import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.ServicePort;
-import io.fabric8.kubernetes.api.model.ServiceSpec;
+import io.fabric8.kubernetes.api.model.ServiceBuilder;
+import io.fabric8.kubernetes.api.model.ServiceListBuilder;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class KubernetesServicesProducerTest extends KubernetesTestSupport {
 
+    @Rule
+    public KubernetesServer server = new KubernetesServer();
+
+    @BindToRegistry("kubernetesClient")
+    public KubernetesClient getClient() throws Exception {
+        return server.getClient();
+    }
+
     @Test
     public void listTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        List<Service> result = template.requestBody("direct:list", "",
-                List.class);
+        server.expect().withPath("/api/v1/services").andReturn(200, new ServiceListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        List<Service> result = template.requestBody("direct:list", "", List.class);
 
-        boolean fabric8Exists = false;
-
-        Iterator<Service> it = result.iterator();
-        while (it.hasNext()) {
-            Service service = it.next();
-            if ("fabric8".equalsIgnoreCase(service.getMetadata().getName())) {
-                fabric8Exists = true;
-            }
-        }
-
-        assertTrue(fabric8Exists);
+        assertEquals(3, result.size());
     }
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+        server.expect().withPath("/api/v1/services?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
+            .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("component", "elasticsearch");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
             }
         });
 
         List<Service> result = ex.getOut().getBody(List.class);
-
-        boolean serviceExists = false;
-        Iterator<Service> it = result.iterator();
-        while (it.hasNext()) {
-            Service service = it.next();
-            if ("elasticsearch".equalsIgnoreCase(service.getMetadata()
-                    .getName())) {
-                serviceExists = true;
-            }
-        }
-
-        assertFalse(serviceExists);
+        assertEquals(3, result.size());
     }
 
     @Test
     public void getServiceTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+        Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and().build();
+
+        server.expect().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();
         Exchange ex = template.request("direct:getServices", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_NAME,
-                        "elasticsearch");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "se1");
             }
         });
 
         Service result = ex.getOut().getBody(Service.class);
 
-        assertNull(result);
+        assertNotNull(result);
     }
 
     @Test
     public void createAndDeleteService() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        Exchange ex = template.request("direct:createService", new Processor() {
+        Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and().build();
+
+        server.expect().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();
+
+        Exchange ex = template.request("direct:deleteService", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
-                ServiceSpec serviceSpec = new ServiceSpec();
-                List<ServicePort> lsp = new ArrayList<ServicePort>();
-                ServicePort sp = new ServicePort();
-                sp.setPort(8080);
-                sp.setTargetPort(new IntOrString(8080));
-                sp.setProtocol("TCP");
-                lsp.add(sp);
-                serviceSpec.setPorts(lsp);
-                Map<String, String> selectorMap = new HashMap<String, String>();
-                selectorMap.put("containter", "test");
-                serviceSpec.setSelector(selectorMap);
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_SPEC,
-                        serviceSpec);
-            }
-        });
-
-        Service serv = ex.getOut().getBody(Service.class);
-
-        assertEquals(serv.getMetadata().getName(), "test");
-
-        ex = template.request("direct:deleteService", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "se1");
             }
         });
 
@@ -176,21 +117,10 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServices",
-                                host, authToken);
-                from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServicesByLabels",
-                                host, authToken);
-                from("direct:getServices")
-                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=getService",
-                                host, authToken);
-                from("direct:createService")
-                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=createService",
-                                host, authToken);
-                from("direct:deleteService")
-                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=deleteService",
-                                host, authToken);
+                from("direct:list").to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServices");
+                from("direct:listByLabels").to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServicesByLabels");
+                from("direct:getServices").to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=getService");
+                from("direct:deleteService").to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=deleteService");
             }
         };
     }

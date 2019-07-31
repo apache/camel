@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -52,7 +52,7 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
         template.sendBodyAndHeader(ironMQEndpoint, null, IronMQConstants.OPERATION, IronMQConstants.CLEARQUEUE);
         long start = System.currentTimeMillis();
         int noOfBlocks = 0;
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (int i = 1; i <= NO_OF_MESSAGES; i++) {
             String payloadToSend = PAYLOAD.replace("#", "" + i);
             list.add(payloadToSend);
@@ -77,7 +77,7 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
     @Test
     public void testConcurrentConsumers() throws Exception {
         long start = System.currentTimeMillis();
-        context.startRoute("iron");
+        context.getRouteController().startRoute("iron");
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(NO_OF_MESSAGES);
         assertMockEndpointsSatisfied(4, TimeUnit.MINUTES);

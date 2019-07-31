@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,9 +18,9 @@ package org.apache.camel.component.quartz2;
 
 import java.util.Date;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 import org.quartz.Calendar;
 import org.quartz.Scheduler;
@@ -38,7 +38,7 @@ public class QuartzCustomCalendarFireTest extends BaseQuartzTest {
 
         QuartzComponent component = context.getComponent("quartz2", QuartzComponent.class);
         Scheduler scheduler = component.getScheduler();
-        
+
         Calendar c = scheduler.getCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
         Date now = new Date();
         java.util.Calendar tomorrow = java.util.Calendar.getInstance();
@@ -48,10 +48,9 @@ public class QuartzCustomCalendarFireTest extends BaseQuartzTest {
         assertEquals(true, c.isTimeIncluded(now.getTime()));
         assertMockEndpointsSatisfied();
     }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+
+    @BindToRegistry("calendar")
+    public HolidayCalendar loadCalendar() throws Exception {
 
         HolidayCalendar cal = new HolidayCalendar();
         java.util.Calendar tomorrow = java.util.Calendar.getInstance();
@@ -59,10 +58,9 @@ public class QuartzCustomCalendarFireTest extends BaseQuartzTest {
         tomorrow.add(java.util.Calendar.DAY_OF_MONTH, 1);
         cal.addExcludedDate(tomorrow.getTime());
 
-        jndi.bind("calendar", cal);
-        return jndi;
+        return cal;
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

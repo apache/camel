@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -50,6 +50,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
 import org.xml.sax.SAXException;
 
 import org.apache.camel.Exchange;
@@ -66,6 +67,7 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
 import org.apache.camel.component.xmlsecurity.util.TestKeystore;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -78,8 +80,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
     
     static {
         boolean includeNewLine = true;
-        if (System.getProperty("java.version") != null
-            && System.getProperty("java.version").startsWith("1.9")) {
+        if (TestSupport.getJavaMajorVersion() >= 9) {
             includeNewLine = false;
         }
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -223,6 +224,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         //DataObjectFormat
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:Description/text()", prefix2Namespace, "invoice");
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:MimeType/text()", prefix2Namespace, "text/xml");
+        checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/@ObjectReference", prefix2Namespace, "#", true);
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:ObjectIdentifier/etsi:Identifier/text()",
                 prefix2Namespace, "1.2.840.113549.1.9.16.6.2");
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:ObjectIdentifier/etsi:Identifier/@Qualifier",
@@ -409,7 +411,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
         Document doc = testEnveloping();
 
-        Map<String, String> prefix2Namespace = new TreeMap<String, String>();
+        Map<String, String> prefix2Namespace = new TreeMap<>();
         prefix2Namespace.put("ds", XMLSignature.XMLNS);
         prefix2Namespace.put("etsi", XAdESSignatureProperties.HTTP_URI_ETSI_ORG_01903_V1_1_1);
 
@@ -423,7 +425,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
     @Test
     public void headers() throws Exception {
-        Map<String, Object> header = new TreeMap<String, Object>();
+        Map<String, Object> header = new TreeMap<>();
 
         header.put(XmlSignatureConstants.HEADER_XADES_PREFIX, "ns1");
         header.put(XmlSignatureConstants.HEADER_XADES_NAMESPACE, XAdESSignatureProperties.HTTP_URI_ETSI_ORG_01903_V1_2_2);
@@ -442,7 +444,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
         Document doc = testEnveloping("direct:enveloping", header);
 
-        Map<String, String> prefix2Namespace = new TreeMap<String, String>();
+        Map<String, String> prefix2Namespace = new TreeMap<>();
         prefix2Namespace.put("ds", XMLSignature.XMLNS);
         prefix2Namespace.put("etsi", XAdESSignatureProperties.HTTP_URI_ETSI_ORG_01903_V1_2_2);
 
@@ -503,7 +505,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         sendBody("direct:enveloping", payload, Collections.<String, Object> emptyMap());
         assertMockEndpointsSatisfied();
         checkThrownException(mock, XmlSignatureException.class,
-                "The XAdES-EPES confguration is invalid. The signature policy identifier is missing.", null);
+                "The XAdES-EPES configuration is invalid. The signature policy identifier is missing.", null);
     }
 
     @Test
@@ -525,7 +527,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         sendBody("direct:enveloping", payload, Collections.<String, Object> emptyMap());
         assertMockEndpointsSatisfied();
         checkThrownException(mock, XmlSignatureException.class,
-                "The XAdES-EPES confguration is invalid. The digest value for the signature policy is missing.", null);
+                "The XAdES-EPES configuration is invalid. The digest value for the signature policy is missing.", null);
     }
 
     @Test
@@ -547,7 +549,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         sendBody("direct:enveloping", payload, Collections.<String, Object> emptyMap());
         assertMockEndpointsSatisfied();
         checkThrownException(mock, XmlSignatureException.class,
-                "The XAdES-EPES confguration is invalid. The digest algorithm for the signature policy is missing.", null);
+                "The XAdES-EPES configuration is invalid. The digest algorithm for the signature policy is missing.", null);
     }
 
     @Test
@@ -562,7 +564,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
-                "The XAdES confguration is invalid. The list of the claimed roles contains the invalid entry '<ClaimedRole>wrong XML fragment<ClaimedRole>'. An entry must either be a text or"
+                "The XAdES configuration is invalid. The list of the claimed roles contains the invalid entry '<ClaimedRole>wrong XML fragment<ClaimedRole>'. An entry must either be a text or"
                         + " an XML fragment with the root element 'ClaimedRole' with the namespace 'http://uri.etsi.org/01903/v1.3.2#'.",
                 null);
     }
@@ -579,7 +581,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
-                "The XAdES confguration is invalid. The list of the commitment type qualifiers contains the invalid entry '<CommitmentTypeQualifier>wrong XML fragment<CommitmentTypeQualifier>'."
+                "The XAdES configuration is invalid. The list of the commitment type qualifiers contains the invalid entry '<CommitmentTypeQualifier>wrong XML fragment<CommitmentTypeQualifier>'."
                         + " An entry must either be a text or an XML fragment with the root element 'CommitmentTypeQualifier' with the namespace 'http://uri.etsi.org/01903/v1.3.2#'.",
                 null);
     }
@@ -596,7 +598,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
-                "The XAdES confguration is invalid. The list of the signatue policy qualifiers contains the invalid entry '<SigPolicyQualifier>wrong XML fragment<SigPolicyQualifier>'."
+                "The XAdES configuration is invalid. The list of the signatue policy qualifiers contains the invalid entry '<SigPolicyQualifier>wrong XML fragment<SigPolicyQualifier>'."
                         + " An entry must either be a text or an XML fragment with the root element 'SigPolicyQualifier' with the namespace 'http://uri.etsi.org/01903/v1.3.2#'.",
                 null);
     }
@@ -614,7 +616,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
-                "The XAdES confguration is invalid. The root element 'SigPolicyQualifier' of the provided XML fragment "
+                "The XAdES configuration is invalid. The root element 'SigPolicyQualifier' of the provided XML fragment "
                         + "'<SigPolicyQualifier xmlns=\"http://invalid.com\">XML fragment with wrong namespace for root element</SigPolicyQualifier>' has the invalid namespace 'http://invalid.com'."
                         + " The correct namespace is 'http://uri.etsi.org/01903/v1.3.2#'.", null);
     }
@@ -731,7 +733,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
     }
 
     static Map<String, String> getPrefix2NamespaceMap() {
-        Map<String, String> prefix2Namespace = new TreeMap<String, String>();
+        Map<String, String> prefix2Namespace = new TreeMap<>();
         prefix2Namespace.put("ds", XMLSignature.XMLNS);
         prefix2Namespace.put("etsi", XAdESSignatureProperties.HTTP_URI_ETSI_ORG_01903_V1_3_2);
         return prefix2Namespace;
@@ -834,11 +836,18 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
     static void checkXpath(Document doc, String xpathString, final Map<String, String> prefix2Namespace, String expectedResult)
         throws XPathExpressionException {
+        checkXpath(doc, xpathString, prefix2Namespace, expectedResult, false);
+    }
+        
+    static void checkXpath(Document doc, String xpathString, final Map<String, String> prefix2Namespace, String expectedResult, boolean startsWith)
+            throws XPathExpressionException {
 
         XPathExpression expr = getXpath(xpathString, prefix2Namespace);
         String result = (String) expr.evaluate(doc, XPathConstants.STRING);
         assertNotNull("The xpath " + xpathString + " returned a null value", result);
-        if (NOT_EMPTY.equals(expectedResult)) {
+        if (startsWith) {
+            assertTrue(result.startsWith(expectedResult));
+        } else if (NOT_EMPTY.equals(expectedResult)) {
             assertTrue("Not empty result for xpath " + xpathString + " expected", !result.isEmpty());
         } else {
             assertEquals(expectedResult, result);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,6 @@ package org.apache.camel.processor.jpa;
 import javax.persistence.EntityManager;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.component.jpa.JpaComponent;
 import org.apache.camel.component.jpa.JpaConstants;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,9 +26,6 @@ import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JpaRouteTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
@@ -42,9 +38,8 @@ public class JpaRouteTest extends AbstractJpaTest {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        ValueBuilder header = mock.message(0).header(JpaConstants.ENTITYMANAGER);
-        header.isNotNull();
-        header.isInstanceOf(EntityManager.class);
+        mock.message(0).header(JpaConstants.ENTITY_MANAGER).isNotNull();
+        mock.message(0).header(JpaConstants.ENTITY_MANAGER).isInstanceOf(EntityManager.class);
 
         template.sendBody("direct:start", new SendEmail("someone@somewhere.org"));
 

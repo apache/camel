@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,18 +24,15 @@ import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-/**
- * @version 
- */
 @ContextConfiguration
 public class ProduceTest extends SpringRunWithTestSupport {
     
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected MyListener producer;
 
     @Test
     public void testInvokeServiceWithMessageHeader() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("greeter", "Nihao ");
         String response = producer.greet(headers, "Willem");
         assertEquals("response is wrong", "Nihao Willem", response);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import com.mongodb.client.MongoCollection;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
 import org.junit.Test;

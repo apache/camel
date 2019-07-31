@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,8 +32,8 @@ import org.slf4j.LoggerFactory;
 public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(JCacheIdempotentRepositoryTest.class);
 
-    private JCacheManager<Object, Boolean> cacheManager;
-    private Cache<Object, Boolean> cache;
+    private JCacheManager<String, Boolean> cacheManager;
+    private Cache<String, Boolean> cache;
     private JCacheIdempotentRepository repository;
 
     @Before

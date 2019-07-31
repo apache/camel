@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,8 @@ public enum MongoDbOperation {
     findAll,
     // group,       // future operation see aggregate
     // mapReduce,   // future operation
-    
+    findDistinct,
+
     // create/update operations
     insert,
     save, 
@@ -32,7 +33,10 @@ public enum MongoDbOperation {
     
     // delete operations
     remove, 
-    
+
+    //Bulk operations
+    bulkWrite,
+
     // aggregate
     aggregate,
     

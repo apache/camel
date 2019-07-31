@@ -1,0 +1,27 @@
+[[EndpointCompleter-EndpointCompleter]]
+= EndpointCompleter
+
+As of *Camel 2.12*.
+This API is an optional SPI interface for xref:component.adoc[Component]
+implementors. It provides a completion hook; rather like bash tab
+completion, or the completion in the
+http://karaf.apache.org/manual/latest/#_using_the_console[Karaf
+shell] when typing commands.
+
+Nice behaving components should implement EndpointCompleter and its
+completion method. The method is given a
+ComponentConfiguration object which wraps up all the various configuration values (and can be
+used to create a new Endpoint instance if required - or inject values
+into an exemplar internal instance).
+
+The *completeEndpointPath()* method then returns a list of Strings of
+the matching values available.
+
+For example here's the
+https://github.com/apache/camel/blob/master/camel-core/src/main/java/org/apache/camel/component/file/FileComponent.java#L78[implementation
+code in the FileComponent to implement completeEndpointPath()].
+
+Some example implementations include:
+
+* xref:components::file-component.adoc[File]
+

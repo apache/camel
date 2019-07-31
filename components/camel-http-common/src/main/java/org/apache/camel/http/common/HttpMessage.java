@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,19 +22,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * @version 
- */
 public class HttpMessage extends DefaultMessage {
 
-    private HttpServletRequest request;
-    private HttpServletResponse response;
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
+    private final HttpCommonEndpoint endpoint;
 
-    public HttpMessage(Exchange exchange, HttpServletRequest request, HttpServletResponse response) {
-        setExchange(exchange);
+    public HttpMessage(Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) {
+        super(exchange);
+        this.endpoint = endpoint;
+
         this.request = request;
         this.response = response;
         // Put the request and response into the message header
@@ -49,13 +49,14 @@ public class HttpMessage extends DefaultMessage {
 
         // use binding to read the request allowing end users to use their
         // implementation of the binding
-        getEndpoint().getHttpBinding().readRequest(request, this);
+        endpoint.getHttpBinding().readRequest(request, this);
     }
 
-    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange) {
+    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange, HttpCommonEndpoint endpoint) {
+        super(exchange);
         this.request = request;
         this.response = response;
-        setExchange(getExchange());
+        this.endpoint = endpoint;
     }
 
     public HttpServletRequest getRequest() {
@@ -69,7 +70,7 @@ public class HttpMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         try {
-            return getEndpoint().getHttpBinding().parseBody(this);
+            return endpoint.getHttpBinding().parseBody(this);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
@@ -77,11 +78,7 @@ public class HttpMessage extends DefaultMessage {
 
     @Override
     public HttpMessage newInstance() {
-        return new HttpMessage(request, response, getExchange());
-    }
-
-    private HttpCommonEndpoint getEndpoint() {
-        return (HttpCommonEndpoint) getExchange().getFromEndpoint();
+        return new HttpMessage(request, response, getExchange(), endpoint);
     }
 
     @Override

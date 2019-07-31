@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -110,10 +110,5 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
         long t2 = new File("target/keep/out/hello.txt").lastModified();
 
         assertNotSame("Timestamp should NOT have been kept", t1, t2);
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 }

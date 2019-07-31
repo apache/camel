@@ -1,0 +1,122 @@
+[[ipfs-component]]
+= IPFS Component
+
+*Available as of Camel version 2.23*
+
+The IPFS component provides access to the Interplanetary File System https://ipfs.io/[(IPFS)].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ipfs</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+---------------------------------
+ipfs://cmd?options
+---------------------------------
+
+== Options
+
+// component options: START
+The IPFS component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The IPFS endpoint is configured using URI syntax:
+
+----
+ipfs:ipfsHost:ipfsPort/ipfsCmd
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *ipfsHost* | The ipfs host |  | String
+| *ipfsPort* | The ipfs port |  | int
+| *ipfsCmd* | The ipfs command |  | String
+|===
+
+
+=== Query Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *outdir* (producer) | The ipfs output directory |  | Path
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-ipfs-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.ipfs.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.ipfs.enabled* | Whether to enable auto configuration of the ipfs component. This is enabled by default. |  | Boolean
+| *camel.component.ipfs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+== Karaf support
+
+Actually this component is not supported in Karaf
+
+== Message Headers
+
+[TODO]
+
+== Samples
+
+In this sample we add a file to IPFS, get a file from IPFS and finally access the content of an IPFS file. 
+
+[source,java]
+---------------------------------------------------------------------------------------------
+from("direct:start").to("ipfs:add")
+from("direct:start").to("ipfs:get?outdir=target")
+from("direct:start").to("ipfs:cat");
+---------------------------------------------------------------------------------------------

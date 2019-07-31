@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
 
     private static final CountDownLatch LATCH = new CountDownLatch(3);
@@ -70,7 +67,7 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
         // below the String elements are added in the context of different threads so that we should make
         // sure that this's done in a thread-safe manner, that's no two threads should call the data.add()
         // method below concurrently, so why we use Vector here and not e.g. ArrayList
-        private final List<String> data = new Vector<String>();
+        private final List<String> data = new Vector<>();
 
         @Override
         public void onComplete(Exchange exchange) {

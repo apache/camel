@@ -1,0 +1,54 @@
+[[HowdoIretrievethethrownExceptionduringprocessinganExchange-HowdoIretrievethethrownExceptionduringprocessinganExchange]]
+= How do I retrieve the thrown Exception during processing an Exchange?
+
+You have send an Exchange to Camel but it fails during processing caused
+by a thrown Exception. How do I retrieve this Exception?
+
+If you are using CamelTemplate (or CamelProducer), then its common to
+use the sendBody/requestBody methods that returns the exchange body
+response *only*. So if there was a thrown exception during processing
+Camel is not rethrowing this Exception. To remedy this you can use the
+plain send/request methods that accepts an Exchange object and returns
+an Exchange object.
+
+From the returned Exchange you can test if its failed and get the caused
+exception. This is illustrated in the code sample:
+
+[source,java]
+----
+@Test
+public void testBeanInvocation() {
+    int result = (Integer) template.sendBody("direct:input", ExchangePattern.InOut, "Hello London");
+    assertEquals(1, result);
+}
+
+@Test
+public void testBeanInvocationFailure() {
+    // must create an exchange to get the result as an exchange where we can get the caused exception
+    Exchange exchange = getMandatoryEndpoint("direct:input").createExchange(ExchangePattern.InOut);
+    exchange.getIn().setBody("Hello Paris");
+
+    Exchange out = template.send("direct:input", exchange);
+    assertTrue("Should be failed", out.isFailed());
+    assertTrue("Should be IllegalArgumentException", out.getException() instanceof IllegalArgumentException);
+    assertEquals("Forced exception", out.getException().getMessage());
+}
+
+protected RouteBuilder createRouteBuilder() throws Exception {
+    return new RouteBuilder() {
+        public void configure() throws Exception {
+            from("direct:input").bean(new ExceptionBean());
+        }
+    };
+}
+
+public static class ExceptionBean {
+    public int doSomething(String request) throws Exception {
+        if (request.equals("Hello London")) {
+            return 1;
+        } else {
+            throw new IllegalArgumentException("Forced exception");
+        }
+    }
+}
+----

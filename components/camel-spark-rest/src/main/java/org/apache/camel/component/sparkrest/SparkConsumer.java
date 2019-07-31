@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,8 @@ package org.apache.camel.component.sparkrest;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
+import spark.Service;
 
 public class SparkConsumer extends DefaultConsumer {
 
@@ -46,26 +47,26 @@ public class SparkConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
+        Service sparkInstance = getEndpoint().getComponent().getSparkInstance();
         String verb = getEndpoint().getVerb();
         String path = getEndpoint().getPath();
         String accept = getEndpoint().getAccept();
         boolean matchOnUriPrefix = getEndpoint().getSparkConfiguration().isMatchOnUriPrefix();
 
         if (accept != null) {
-            log.debug("Spark-rest: {}({}) accepting: {}", new Object[]{verb, path, accept});
+            log.debug("Spark-rest: {}({}) accepting: {}", verb, path, accept);
         } else {
             log.debug("Spark-rest: {}({})", verb, path);
         }
-        CamelSpark.spark(verb, path, accept, route);
+        CamelSpark.spark(sparkInstance, verb, path, accept, route);
 
         // special if cors is enabled in rest-dsl then we need a spark-route to trigger cors support
         if (enableCors && !"options".equals(verb)) {
-            CamelSpark.spark("options", path, accept, route);
+            CamelSpark.spark(sparkInstance, "options", path, accept, route);
         }
 
         if (matchOnUriPrefix) {
-            CamelSpark.spark(verb, path + "/*", accept, route);
+            CamelSpark.spark(sparkInstance, verb, path + "/*", accept, route);
         }
     }
 

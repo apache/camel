@@ -1,0 +1,23 @@
+{
+  "update_id": 178312874,
+  "message": {
+    "message_id": 22,
+    "from": {
+      "id": 158584902,
+      "is_bot": false,
+      "first_name": "Nicola",
+      "last_name": "Ferraro",
+      "username": "nferraro",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 158584902,
+      "first_name": "Nicola",
+      "last_name": "Ferraro",
+      "username": "nferraro",
+      "type": "private"
+    },
+    "date": 1554890836,
+    "text": "aho"
+  }
+}

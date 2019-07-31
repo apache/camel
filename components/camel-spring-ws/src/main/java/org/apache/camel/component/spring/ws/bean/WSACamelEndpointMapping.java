@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -46,7 +46,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
 
     private static final Logger LOG = LoggerFactory.getLogger(WSACamelEndpointMapping.class);
 
-    private Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<EndpointMappingKey, MessageEndpoint>();
+    private Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<>();
 
     private String outputActionSuffix = AnnotationActionEndpointMapping.DEFAULT_OUTPUT_ACTION_SUFFIX;
 
@@ -71,7 +71,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
             }
             // lookup for specific endpoint
             if (compositeOrSimpleKey != null && key.getLookupKey().equals(compositeOrSimpleKey)) {
-                LOG.debug("Found mapping for key" + key);
+                LOG.debug("Found mapping for key {}", key);
                 return endpoints.get(key);
             }
         }
@@ -97,7 +97,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
             }
             // look up for less specific endpoint
             if (simpleKey != null && key.getLookupKey().equals(simpleKey)) {
-                LOG.debug("Found mapping for key" + key);
+                LOG.debug("Found mapping for key {}", key);
                 return endpoints.get(key);
             }
         }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,12 +20,16 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 @UriParams
 public class HipchatConfiguration {
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = true)
     private String protocol;
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = true)
     private String host = HipchatConstants.DEFAULT_HOST;
     @UriPath(defaultValue = "" + HipchatConstants.DEFAULT_PORT)
     private Integer port = HipchatConstants.DEFAULT_PORT;
@@ -33,6 +37,8 @@ public class HipchatConfiguration {
     private String authToken;
     @UriParam
     private String consumeUsers;
+    @UriParam(description = "The CloseableHttpClient reference from registry to be used during API HTTP requests.", defaultValue = "CloseableHttpClient default from HttpClient library")
+    private CloseableHttpClient httpClient = HttpClients.createDefault();
 
     public String getHost() {
         return host;
@@ -101,5 +107,13 @@ public class HipchatConfiguration {
 
     public String withAuthToken(String urlPath) {
         return urlPath + HipchatApiConstants.AUTH_TOKEN_PREFIX + getAuthToken();
+    }
+
+    public CloseableHttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public void setHttpClient(CloseableHttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 }

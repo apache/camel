@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,11 +20,12 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
@@ -34,20 +35,21 @@ import org.junit.Test;
  */
 public class HL7MLLPNettyCodecBoundaryTest extends HL7TestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("hl7decoder")
+    public HL7MLLPNettyDecoderFactory addNettyDecoder() throws Exception {
 
-        // START SNIPPET: e1
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
-        jndi.bind("hl7decoder", decoder);
 
+        return decoder;
+
+    }
+
+    @BindToRegistry("hl7encoder")
+    public HL7MLLPNettyEncoderFactory addNettyEncoder() throws Exception {
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
-        decoder.setCharset("iso-8859-1");
-        jndi.bind("hl7encoder", encoder);
-        // END SNIPPET: e1
-
-        return jndi;
+        encoder.setCharset("iso-8859-1");
+        return encoder;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -63,7 +65,7 @@ public class HL7MLLPNettyCodecBoundaryTest extends HL7TestSupport {
         };
     }
 
-    @Test 
+    @Test
     public void testSendHL7Message() throws Exception {
         BufferedReader in = IOHelper.buffered(new InputStreamReader(getClass().getResourceAsStream("/mdm_t02-1022.txt")));
         String line = "";

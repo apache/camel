@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,7 @@ package org.apache.camel.component.mongodb3;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 /**
  * The MongoDb consumer.
@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultConsumer;
 public class MongoDbTailableCursorConsumer extends DefaultConsumer {
     private final MongoDbEndpoint endpoint;
     private ExecutorService executor;
-    private MongoDbTailingProcess tailingProcess;
+    private MongoDbTailingThread tailingThread;
 
     public MongoDbTailableCursorConsumer(MongoDbEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -37,8 +37,8 @@ public class MongoDbTailableCursorConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (tailingProcess != null) {
-            tailingProcess.stop();
+        if (tailingThread != null) {
+            tailingThread.stop();
         }
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
@@ -51,15 +51,14 @@ public class MongoDbTailableCursorConsumer extends DefaultConsumer {
         super.doStart();
         executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), 1);
         MongoDbTailTrackingManager trackingManager = initTailTracking();
-        tailingProcess = new MongoDbTailingProcess(endpoint, this, trackingManager);
-        tailingProcess.initializeProcess();
-        executor.execute(tailingProcess);
+        tailingThread = new MongoDbTailingThread(endpoint, this, trackingManager);
+        tailingThread.init();
+        executor.execute(tailingThread);
     }
 
-    protected MongoDbTailTrackingManager initTailTracking() throws Exception {
+    protected MongoDbTailTrackingManager initTailTracking() {
         MongoDbTailTrackingManager answer = new MongoDbTailTrackingManager(endpoint.getMongoConnection(), endpoint.getTailTrackingConfig());
         answer.initialize();
         return answer;
     }
-
 }

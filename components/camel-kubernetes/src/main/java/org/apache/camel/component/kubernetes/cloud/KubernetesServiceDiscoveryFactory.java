@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,8 +20,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.CloudServiceFactory;
 import org.apache.camel.util.ObjectHelper;
 
+@CloudServiceFactory("kubernetes-service-discovery")
 public class KubernetesServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private final KubernetesConfiguration configuration;
     private String lookup;
@@ -166,6 +168,22 @@ public class KubernetesServiceDiscoveryFactory implements ServiceDiscoveryFactor
         configuration.setDnsDomain(dnsDomain);
     }
 
+    public String getPortName() {
+        return configuration.getPortName();
+    }
+
+    public void setPortName(String portName) {
+        configuration.setPortName(portName);
+    }
+
+    public String getPortProtocol() {
+        return configuration.getPortProtocol();
+    }
+
+    public void setPortProtocol(String portProtocol) {
+        configuration.setPortProtocol(portProtocol);
+    }
+
     public String getLookup() {
         return lookup;
     }
@@ -182,6 +200,8 @@ public class KubernetesServiceDiscoveryFactory implements ServiceDiscoveryFactor
     public ServiceDiscovery newInstance(CamelContext camelContext) throws Exception {
         if (ObjectHelper.equal("dns", lookup)) {
             return new KubernetesDnsServiceDiscovery(configuration);
+        } else if (ObjectHelper.equal("dnssrv", lookup)) {
+            return new KubernetesDnsSrvServiceDiscovery(configuration);
         } else if (ObjectHelper.equal("client", lookup)) {
             return new KubernetesClientServiceDiscovery(configuration);
         }

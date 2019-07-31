@@ -25,7 +25,7 @@
 <!--
   =======================================================================
 
-   Copyright (c) 2008 The Apache Software Foundation.  
+   Copyright (c) 2018 The Apache Software Foundation.
    All rights reserved.
 
   =======================================================================
@@ -36,26 +36,25 @@
     <name>Apache Camel</name>
     <homepage rdf:resource="http://camel.apache.org/" />
     <asfext:pmc rdf:resource="http://camel.apache.org/" />
-    <shortdesc>Apache Camel is a powerful open source integration framework based on known Enterprise Integration Patterns.</shortdesc>
-    <description>Apache Camel is a powerful open source integration framework based on known Enterprise Integration Patterns.
-Rules for Camel's routing and mediation engine can be defined in either a Java based DSL, XML or using DSLs for dynamic languages such as Groovy or Scala.</description>
+    <shortdesc>Apache Camel is a powerful open source integration library.</shortdesc>
+    <description>Apache Camel is a powerful open source integration library based on Enterprise Integration Patterns.
+Rules for Camel's routing engine can be defined in either a Java based DSL or XML.</description>
     <bug-database rdf:resource="http://issues.apache.org/activemq/browse/CAMEL" />
     <mailing-list rdf:resource="http://camel.apache.org/mailing-lists.html" />
     <download-page rdf:resource="http://camel.apache.org/download.html" />
 
     <programming-language>Java</programming-language>
     <programming-language>XML</programming-language>
-    <programming-language>Python</programming-language>
-    <programming-language>Groovy</programming-language>
-    <programming-language>JavaScript</programming-language>
-    <programming-language>Ruby</programming-language>
-    <programming-language>SQL</programming-language>
-    <programming-language>Scala</programming-language>
-    <programming-language>PHP</programming-language>
 
     <category rdf:resource="http://projects.apache.org/category/osgi" />
     <category rdf:resource="http://projects.apache.org/category/network-server" />
     <category rdf:resource="http://projects.apache.org/category/network-client" />
+    <category rdf:resource="http://projects.apache.org/category/integration" />
+    <category rdf:resource="http://projects.apache.org/category/big-data" />
+    <category rdf:resource="http://projects.apache.org/category/cloud" />
+    <category rdf:resource="http://projects.apache.org/category/iot" />
+    <category rdf:resource="http://projects.apache.org/category/java" />
+    <category rdf:resource="http://projects.apache.org/category/library" />
     <maintainer>
       <foaf:Person>
         <foaf:name>Christian Mueller</foaf:name>

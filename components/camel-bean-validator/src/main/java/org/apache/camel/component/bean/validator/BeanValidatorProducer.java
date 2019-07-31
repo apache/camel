@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,11 +17,12 @@
 package org.apache.camel.component.bean.validator;
 
 import java.util.Set;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.ValidatorFactory;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 /**
  * Bean validator that uses the JSR 303 reference implementation (Hibernate Validator).

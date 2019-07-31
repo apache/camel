@@ -1,0 +1,155 @@
+[[iec60870-client-component]]
+= IEC 60870 Client Component
+
+*Available as of Camel version 2.20*
+
+The IEC 60870-5-104 Client component provides access to IEC 60870 servers using the
+http://eclipse.org/eclipsescada[Eclipse NeoSCADA™] implementation.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-iec60870</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+// component options: START
+The IEC 60870 Client component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *defaultConnection Options* (common) | Default connection options |  | ClientOptions
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+
+
+
+
+== URI format
+
+The URI syntax of the endpoint is: 
+
+[source]
+----
+iec60870-client:host:port/00-01-02-03-04
+----
+
+The information object address is encoded in the path in the syntax shows above. Please
+note that always the full, 5 octet address format is being used. Unused octets have to be filled
+with zero.
+
+== URI options
+
+
+// endpoint options: START
+The IEC 60870 Client endpoint is configured using URI syntax:
+
+----
+iec60870-client:uriPath
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uriPath* | *Required* The object information address |  | ObjectAddress
+|===
+
+
+=== Query Parameters (21 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *dataModuleOptions* (common) | Data module options |  | DataModuleOptions
+| *protocolOptions* (common) | Protocol options |  | ProtocolOptions
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *acknowledgeWindow* (connection) | Parameter W - Acknowledgment window. | 10 | short
+| *adsuAddressType* (connection) | The common ASDU address size. May be either SIZE_1 or SIZE_2. |  | ASDUAddressType
+| *causeOfTransmissionType* (connection) | The cause of transmission type. May be either SIZE_1 or SIZE_2. |  | CauseOfTransmission Type
+| *informationObjectAddress Type* (connection) | The information address size. May be either SIZE_1, SIZE_2 or SIZE_3. |  | InformationObject AddressType
+| *maxUnacknowledged* (connection) | Parameter K - Maximum number of un-acknowledged messages. | 15 | short
+| *timeout1* (connection) | Timeout T1 in milliseconds. | 15000 | int
+| *timeout2* (connection) | Timeout T2 in milliseconds. | 10000 | int
+| *timeout3* (connection) | Timeout T3 in milliseconds. | 20000 | int
+| *causeSourceAddress* (data) | Whether to include the source address | true | boolean
+| *ignoreBackgroundScan* (data) | Whether background scan transmissions should be ignored. | true | boolean
+| *ignoreDaylightSavingTime* (data) | Whether to ignore or respect DST | false | boolean
+| *timeZone* (data) | The timezone to use. May be any Java time zone string | UTC | TimeZone
+| *connectionId* (id) | An identifier grouping connection instances |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-iec60870-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.iec60870-client.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.iec60870-client.default-connection-options.cause-source-address* | Whether to include the source address |  | Byte
+| *camel.component.iec60870-client.default-connection-options.data-module-options* | Whether to include the source address |  | DataModuleOptions
+| *camel.component.iec60870-client.default-connection-options.ignore-background-scan* | Whether to include the source address | true | Boolean
+| *camel.component.iec60870-client.enabled* | Whether to enable auto configuration of the iec60870-client component. This is enabled by default. |  | Boolean
+| *camel.component.iec60870-client.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+A connection instance if identified by the host and port part of the URI, plus all parameters in the "id" group.
+If a new connection id is encountered the connection options will be evaluated and the connection instance
+is created with those options.
+
+
+[NOTE]
+If two URIs specify the same connection (host, port, …) but different connection options, then it is
+undefined which of those connection options will be used. 
+
+
+The final connection options will be evaluated in the following order:
+
+* If present, the +connectionOptions+ parameter will be used
+* Otherwise the +defaultConnectionOptions+ instance is copied and customized in the following steps
+* Apply +protocolOptions+ if present
+* Apply +dataModuleOptions+ if present
+* Apply all explicit connection parameters (e.g. +timeZone+)

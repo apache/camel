@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,6 +35,8 @@ public class FtpConfiguration extends RemoteFileConfiguration {
     private String activePortRange;
     @UriParam(label = "producer,advanced")
     private String chmod;
+    @UriParam(label = "consumer,advanced")
+    private boolean handleDirectoryParserAbsoluteResult;
 
     public FtpConfiguration() {
         setProtocol("ftp");
@@ -82,5 +84,20 @@ public class FtpConfiguration extends RemoteFileConfiguration {
 
     public String getChmod() {
         return chmod;
+    }
+
+    public boolean isHandleDirectoryParserAbsoluteResult() {
+        return handleDirectoryParserAbsoluteResult;
+    }
+
+    /**
+     * Allows you to set how the consumer will handle subfolders and files
+     * in the path if the directory parser results in with absolute paths
+     * The reason for this is that some FTP servers may return file names 
+     * with absolute paths, and if so then the FTP component needs to handle
+     * this by converting the returned path into a relative path.
+     */
+    public void setHandleDirectoryParserAbsoluteResult(boolean handleDirectoryParserAbsoluteResult) {
+        this.handleDirectoryParserAbsoluteResult = handleDirectoryParserAbsoluteResult;
     }
 }

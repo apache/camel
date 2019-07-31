@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,10 +22,8 @@ import java.io.InputStream;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.GZIPHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.GZIPHelper;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
@@ -34,7 +32,7 @@ import org.apache.http.entity.InputStreamEntity;
 /**
  * Some converter methods to make it easier to convert the body to RequestEntity types.
  */
-@Converter
+@Converter(loader = true)
 public final class HttpEntityConverter {
 
     private HttpEntityConverter() {
@@ -69,14 +67,7 @@ public final class HttpEntityConverter {
             entity = new InputStreamEntity(stream, stream instanceof ByteArrayInputStream
                 ? stream.available() != 0 ? stream.available() : -1 : -1);
         } else {
-            Message inMessage = exchange.getIn();
-            String length = inMessage.getHeader(Exchange.CONTENT_LENGTH, String.class);
-            
-            if (ObjectHelper.isEmpty(length)) {
-                entity = new InputStreamEntity(in, -1);
-            } else {
-                entity = new InputStreamEntity(in, Long.parseLong(length));
-            }
+            entity = new InputStreamEntity(in, -1);
         }
         if (exchange != null) {
             String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);

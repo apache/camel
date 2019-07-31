@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,8 +28,7 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketByteListener;
-import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +55,7 @@ public class TestClient {
     }
 
     public TestClient(String url, AsyncHttpClientConfig conf, int count) {
-        this.received = new ArrayList<Object>();
+        this.received = new ArrayList<>();
         this.latch = new CountDownLatch(count);
         this.client = conf == null ? new DefaultAsyncHttpClient() : new DefaultAsyncHttpClient(conf);
         this.url = url;
@@ -69,11 +68,11 @@ public class TestClient {
     }
 
     public void sendTextMessage(String message) {
-        websocket.sendMessage(message);
+        websocket.sendTextFrame(message);
     }
 
     public void sendBytesMessage(byte[] message) {
-        websocket.sendMessage(message);
+        websocket.sendBinaryFrame(message);
     }
 
     public boolean await(int secs) throws InterruptedException {
@@ -90,7 +89,7 @@ public class TestClient {
     }
 
     public <T> List<T> getReceived(Class<T> cls) {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         for (Object o : received) {
             list.add(getValue(o, cls));
         }
@@ -116,11 +115,11 @@ public class TestClient {
     }
     
     public void close() throws IOException {
-        websocket.close();
+        websocket.sendCloseFrame();
         client.close();
     }
 
-    private class TestWebSocketListener implements WebSocketTextListener, WebSocketByteListener {
+    private class TestWebSocketListener implements WebSocketListener {
 
         @Override
         public void onOpen(WebSocket websocket) {
@@ -128,7 +127,7 @@ public class TestClient {
         }
 
         @Override
-        public void onClose(WebSocket websocket) {
+        public void onClose(WebSocket websocket, int code, String reason) {
             LOG.info("[ws] closed");
         }
 
@@ -138,7 +137,7 @@ public class TestClient {
         }
 
         @Override
-        public void onMessage(byte[] message) {
+        public void onBinaryFrame(byte[] message, boolean finalFragment, int rsv) {
             received.add(message);
             LOG.info("[ws] received bytes --> " + Arrays.toString(message));
             latch.countDown();
@@ -146,7 +145,7 @@ public class TestClient {
 
         
         @Override
-        public void onMessage(String message) {
+        public void onTextFrame(String message, boolean finalFragment, int rsv) {
             received.add(message);
             LOG.info("[ws] received --> " + message);
             latch.countDown();

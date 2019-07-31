@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,14 +24,14 @@ import java.util.Map;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.slack.helper.SlackMessage;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.json.simple.JSONObject;
 
 public class SlackProducer extends DefaultProducer {
 
@@ -46,7 +46,7 @@ public class SlackProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         // Create an HttpClient and Post object
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost httpPost = new HttpPost(slackEndpoint.getWebhookUrl());
 
         // Build Helper object
@@ -64,7 +64,7 @@ public class SlackProducer extends DefaultProducer {
         slackMessage.setIconEmoji(slackEndpoint.getIconEmoji());
 
         // use charset from exchange or fallback to the default charset
-        String charset = IOHelper.getCharsetName(exchange, true);
+        String charset = ExchangeHelper.getCharsetName(exchange, true);
 
         // Set the post body
         String json = asJson(slackMessage);
@@ -101,11 +101,8 @@ public class SlackProducer extends DefaultProducer {
             buildAttachmentJson(jsonMap, attachments);
         }
 
-        // Generate a JSONObject
-        JSONObject jsonObject = new JSONObject(jsonMap);
-
         // Return the string based on the JSON Object
-        return JSONObject.toJSONString(jsonObject);
+        return new JsonObject(jsonMap).toJson();
     }
 
     private void buildAttachmentJson(Map<String, Object> jsonMap, List<SlackMessage.Attachment> attachments) {

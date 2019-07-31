@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,13 +29,13 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-/**
- * @version
- */
 public class SqlProducerExpressionParameterTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint result;
+
+    @EndpointInject("mock:result-simple")
+    MockEndpoint resultSimple;
 
     private EmbeddedDatabase db;
 
@@ -69,13 +69,29 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
         assertEquals("AMQ", row.get("PROJECT"));
     }
 
+    @Test
+    public void testNamedParameterFromSimpleExpression() throws Exception {
+        resultSimple.expectedMessageCount(1);
+
+        template.sendBodyAndProperty("direct:start-simple", "This is a dummy body", "license", "XXX");
+
+        resultSimple.assertIsSatisfied();
+
+        List<?> received = assertIsInstanceOf(List.class, resultSimple.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(1, received.size());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("Linux", row.get("PROJECT"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("direct:start").to("sql:select * from projects where license = :#${property.license} order by id").to("mock:result");
+                from("direct:start").to("sql:select * from projects where license = :#${exchangeProperty.license} order by id").to("mock:result");
+
+                from("direct:start-simple").to("sql:select * from projects where license = :#$simple{exchangeProperty.license} order by id").to("mock:result-simple");
             }
         };
     }

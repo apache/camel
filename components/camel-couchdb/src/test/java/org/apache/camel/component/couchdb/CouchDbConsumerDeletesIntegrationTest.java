@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,10 +32,10 @@ import org.lightcouch.Response;
 
 public class CouchDbConsumerDeletesIntegrationTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "couchdb:http://localhost:5984/camelcouchdb?updates=false")
+    @EndpointInject("couchdb:http://localhost:5984/camelcouchdb?updates=false")
     private Endpoint from;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint to;
 
     private CouchDbClient client;

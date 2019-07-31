@@ -1,0 +1,17 @@
+[[IsCamelanESB-IsCamelanESB]]
+= Is Camel an ESB?
+
+Typically vendors claim practically everything is an ESB these days, so
+the answer is probably yes :smile:
+
+However our view is that an ESB is more of a container of integration
+components, so we view http://servicemix.apache.org[Apache ServiceMix]
+to be a true ESB based around OSGi (and optionally JBI) to provide a
+standards based integration platform of components.
+
+We view Camel as being a rule based routing & mediation engine which can
+be used inside a full blown ESB, a message broker or a web services
+smart client. Though if you want to, you could consider that Camel is a
+small, lightweight embeddable ESB since it can provide many of the
+common ESB services like smart routing, transformation, mediation,
+monitoring, orchestration, etc.

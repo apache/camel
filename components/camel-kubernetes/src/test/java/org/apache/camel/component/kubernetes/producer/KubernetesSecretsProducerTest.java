@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,120 +20,89 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.Secret;
+import io.fabric8.kubernetes.api.model.SecretBuilder;
+import io.fabric8.kubernetes.api.model.SecretListBuilder;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.codec.binary.Base64;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
 
+    @Rule
+    public KubernetesServer server = new KubernetesServer();
+
+    @BindToRegistry("kubernetesClient")
+    public KubernetesClient getClient() throws Exception {
+        return server.getClient();
+    }
+
     @Test
     public void listTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        List<Secret> result = template.requestBody("direct:list", "",
-                List.class);
+        server.expect().withPath("/api/v1/secrets").andReturn(200, new SecretListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        List<Secret> result = template.requestBody("direct:list", "", List.class);
 
-        assertTrue(result.size() != 0);
+        assertEquals(3, result.size());
     }
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (authToken == null) {
-            return;
-        }
+        server.expect().withPath("/api/v1/secrets?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
+            .andReturn(200, new SecretListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("component", "elasticsearch");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRETS_LABELS, labels);
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, labels);
             }
         });
 
         List<Secret> result = ex.getOut().getBody(List.class);
+
+        assertEquals(3, result.size());
     }
 
     @Test
     public void getSecretTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+        Secret sc1 = new SecretBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
+
+        server.expect().withPath("/api/v1/namespaces/test/secrets/sc1").andReturn(200, sc1).once();
         Exchange ex = template.request("direct:get", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRET_NAME,
-                        "builder-token-191oc");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SECRET_NAME, "sc1");
             }
         });
 
         Secret result = ex.getOut().getBody(Secret.class);
+
+        assertNotNull(result);
     }
 
     @Test
     public void createAndDeleteSecret() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        Exchange ex = template.request("direct:create", new Processor() {
+        Secret sc1 = new SecretBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
+
+        server.expect().withPath("/api/v1/namespaces/test/secrets/sc1").andReturn(200, sc1).once();
+        Exchange ex = template.request("direct:delete", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRET_NAME, "test");
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRETS_LABELS, labels);
-                Secret s = new Secret();
-                s.setKind("Secret");
-                Map<String, String> mp = new HashMap<String, String>();
-                mp.put("username", Base64.encodeBase64String("pippo".getBytes()));
-                mp.put("password", Base64.encodeBase64String("password".getBytes()));
-                s.setData(mp);
-
-                ObjectMeta meta = new ObjectMeta();
-                meta.setName("test");
-                s.setMetadata(meta);
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRET, s);
-            }
-        });
-
-        Secret sec = ex.getOut().getBody(Secret.class);
-
-        assertEquals(sec.getMetadata().getName(), "test");
-
-        ex = template.request("direct:delete", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRET_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SECRET_NAME, "sc1");
             }
         });
 
@@ -147,21 +116,11 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=listSecrets",
-                                host, authToken);
-                from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=listSecretsByLabels",
-                                host, authToken);
-                from("direct:get")
-                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=getSecret",
-                                host, authToken);
-                from("direct:create")
-                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=createSecret",
-                                host, authToken);
-                from("direct:delete")
-                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=deleteSecret",
-                                host, authToken);
+                from("direct:list").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=listSecrets");
+                from("direct:listByLabels").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=listSecretsByLabels");
+                from("direct:get").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=getSecret");
+                from("direct:create").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=createSecret");
+                from("direct:delete").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=deleteSecret");
             }
         };
     }

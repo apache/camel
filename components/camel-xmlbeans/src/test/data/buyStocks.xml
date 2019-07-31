@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xsd:buyStocks xmlns:xsd="http://services.samples/xsd"><order><symbol>IBM</symbol><buyerID>cmueller</buyerID><price>140.34</price><volume>2000</volume></order></xsd:buyStocks>

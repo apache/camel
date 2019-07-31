@@ -1,0 +1,34 @@
+[[HowdoIsettheMEPwheninteractingwithJBI-HowdoIsettheMEPwheninteractingwithJBI]]
+= How do I set the MEP when interacting with JBI?
+
+[[HowdoIsettheMEPwheninteractingwithJBI-Problem]]
+== Problem
+
+If you are using the Camel JBI integration to send a
+`MessageExchange` to another JBI component from within your Camel route,
+Camel uses the MEP of the underlying Camel Exchange to determine the MEP
+of the JBI `MessageExchange`. An example:
+
+[source,java]
+----
+from(""timer://foo").to("jbi:endpoint:urn:translator:endpoint").to("log:test"); //THIS WON'T WORK...
+----
+
+If the timer endpoint that starts the route sends a Camel exchange with
+an in-only MEP, the MEP for interacting with JBI will also be InOnly.
+Now imagine that the target JBI endpoint is in fact a
+http://servicemix.apache.org/servicemix-saxon.html[servicemix-saxon xslt endpoint],
+that really expects an InOut MEP. This would break the Camel
+route above.
+
+[[HowdoIsettheMEPwheninteractingwithJBI-Solution]]
+== Solution
+
+For this case, you can override the MEP used from the Camel route
+like this, making sure that a JBI InOut `MessageExchange` is being used to
+interact with the `"urn:translation:endpoint"` endpoint.
+
+[source,java]
+----
+from("timer://foo").to("jbi:endpoint:urn:translator:endpoint?mep=in-out").to("log:test"); //...BUT THIS WILL
+----

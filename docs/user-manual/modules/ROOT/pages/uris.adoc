@@ -1,0 +1,17 @@
+[[URIs-URIs]]
+= URIs
+
+Camel makes extensive use of URIs to allow you to refer to endpoints
+which are lazily created by a xref:component.adoc[Component] if you
+refer to them within xref:routes.adoc[Routes].
+
+[IMPORTANT]
+====
+Make sure to read
+xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints]
+to learn more about configuring endpoints. For
+example how to refer to beans in the xref:registry.adoc[Registry] or how
+to use raw values for password options, and using
+xref:using-propertyplaceholder.adoc[property placeholders] etc.
+====
+

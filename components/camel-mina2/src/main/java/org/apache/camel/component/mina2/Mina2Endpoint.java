@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,16 +22,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.mina.core.session.IoSession;
 
 /**
  * Socket level networking using TCP or UDP with the Apache Mina 2.x library.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "mina2", title = "Mina2", syntax = "mina2:protocol:host:port", consumerClass = Mina2Consumer.class, label = "networking,tcp,udp")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "mina2,mina", title = "Mina2", syntax = "mina2:protocol:host:port", label = "networking,tcp,udp")
 public class Mina2Endpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam
@@ -66,11 +66,6 @@ public class Mina2Endpoint extends DefaultEndpoint implements MultipleConsumersS
         exchange.getIn().setHeader(Mina2Constants.MINA_REMOTE_ADDRESS, session.getRemoteAddress());
         Mina2PayloadHelper.setIn(exchange, payload);
         return exchange;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.RuntimeCamelException;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -48,12 +48,12 @@ public class CamelSparkRoute implements Route {
             exchange.setException(e);
         }
 
-        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message msg = exchange.getMessage();
 
         try {
             endpoint.getSparkBinding().toSparkResponse(msg, response, endpoint.getSparkConfiguration());
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         if (exchange.hasOut()) {

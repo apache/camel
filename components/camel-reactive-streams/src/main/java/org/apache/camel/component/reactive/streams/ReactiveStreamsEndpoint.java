@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,26 +19,30 @@ package org.apache.camel.component.reactive.streams;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The Camel reactive-streams endpoint.
+ * Reactive Camel using reactive streams
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "reactive-streams", title = "Reactive Streams", syntax = "reactive-streams:stream",
-        consumerClass = ReactiveStreamsConsumer.class, label = "reactive,streams")
+        label = "reactive,streams")
+@ManagedResource(description = "Managed ReactiveStreamsEndpoint")
 public class ReactiveStreamsEndpoint extends DefaultEndpoint {
 
     @UriPath
     private String stream;
 
-    @UriParam
-    private String serviceName;
-
     @UriParam(label = "consumer", defaultValue = "128")
     private Integer maxInflightExchanges = 128;
+
+    @UriParam(label = "consumer", defaultValue = "0.25")
+    private double exchangesRefillLowWatermark = 0.25;
 
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
@@ -57,20 +61,16 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public Producer createProducer() throws Exception {
-        return new ReactiveStreamsProducer(this, stream);
+        return new ReactiveStreamsProducer(this, stream, getReactiveStreamsService());
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new ReactiveStreamsConsumer(this, processor);
+        return new ReactiveStreamsConsumer(this, processor, getReactiveStreamsService());
     }
 
+    @ManagedAttribute(description = "Name of the stream channel used by the endpoint to exchange messages")
     public String getStream() {
         return stream;
     }
@@ -82,6 +82,7 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
         this.stream = stream;
     }
 
+    @ManagedAttribute(description = "Maximum number of exchanges concurrently being processed by Camel")
     public Integer getMaxInflightExchanges() {
         return maxInflightExchanges;
     }
@@ -102,19 +103,9 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     /**
      * Number of threads used to process exchanges in the Camel route.
      */
+    @ManagedAttribute(description = "Number of threads used to process exchanges in the Camel route")
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    /**
-     * Allows using an alternative CamelReactiveStreamService implementation. The implementation is looked up from the registry.
-     */
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
     }
 
     public ReactiveStreamsBackpressureStrategy getBackpressureStrategy() {
@@ -128,6 +119,7 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
         this.backpressureStrategy = backpressureStrategy;
     }
 
+    @ManagedAttribute(description = "Determines if onComplete events should be pushed to the Camel route")
     public boolean isForwardOnComplete() {
         return forwardOnComplete;
     }
@@ -139,6 +131,7 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
         this.forwardOnComplete = forwardOnComplete;
     }
 
+    @ManagedAttribute(description = "Determines if onError events should be pushed to the Camel route")
     public boolean isForwardOnError() {
         return forwardOnError;
     }
@@ -149,6 +142,26 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
      */
     public void setForwardOnError(boolean forwardOnError) {
         this.forwardOnError = forwardOnError;
+    }
+
+    @ManagedAttribute(description = "The percentage of maxInflightExchanges below which new items can be requested to the source subscription")
+    public double getExchangesRefillLowWatermark() {
+        return exchangesRefillLowWatermark;
+    }
+
+    /**
+     * Set the low watermark of requested exchanges to the active subscription as percentage of the maxInflightExchanges.
+     * When the number of pending items from the upstream source is lower than the watermark, new items can be requested to the subscription.
+     * If set to 0, the subscriber will request items in batches of maxInflightExchanges, only after all items of the previous batch have been processed.
+     * If set to 1, the subscriber can request a new item each time an exchange is processed (chatty).
+     * Any intermediate value can be used.
+     */
+    public void setExchangesRefillLowWatermark(double exchangesRefillLowWatermark) {
+        this.exchangesRefillLowWatermark = exchangesRefillLowWatermark;
+    }
+
+    CamelReactiveStreamsService getReactiveStreamsService() {
+        return ((ReactiveStreamsComponent)getComponent()).getReactiveStreamsService();
     }
 
 }

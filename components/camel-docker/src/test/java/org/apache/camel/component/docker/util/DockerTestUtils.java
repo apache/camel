@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ public final class DockerTestUtils {
     }
     
     public static Map<String, Object> getDefaultParameters(String host, Integer port, DockerConfiguration dockerConfiguration) {
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put(DockerConstants.DOCKER_HOST, host);
         parameters.put(DockerConstants.DOCKER_PORT, port);
         parameters.put(DockerConstants.DOCKER_EMAIL, dockerConfiguration.getEmail());
@@ -40,6 +40,7 @@ public final class DockerTestUtils {
         parameters.put(DockerConstants.DOCKER_SECURE, dockerConfiguration.isSecure());
         parameters.put(DockerConstants.DOCKER_TLSVERIFY, dockerConfiguration.isTlsVerify());
         parameters.put(DockerConstants.DOCKER_SOCKET_ENABLED, dockerConfiguration.isSocket());
+        parameters.put(DockerConstants.DOCKER_CMD_EXEC_FACTORY, dockerConfiguration.getCmdExecFactory());
 
         return parameters;
     }
@@ -55,6 +56,7 @@ public final class DockerTestUtils {
         clientProfile.setSecure(dockerConfiguration.isSecure());
         clientProfile.setTlsVerify(dockerConfiguration.isTlsVerify());
         clientProfile.setSocket(dockerConfiguration.isSocket());
+        clientProfile.setCmdExecFactory(dockerConfiguration.getCmdExecFactory());
         
         return clientProfile;
     }

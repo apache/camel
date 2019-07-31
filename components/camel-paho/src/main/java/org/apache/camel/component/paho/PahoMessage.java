@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,17 +16,16 @@
  */
 package org.apache.camel.component.paho;
 
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.CamelContext;
+import org.apache.camel.support.DefaultMessage;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class PahoMessage extends DefaultMessage {
 
     private transient MqttMessage mqttMessage;
 
-    public PahoMessage() {
-    }
-
-    public PahoMessage(MqttMessage mqttMessage) {
+    public PahoMessage(CamelContext camelContext, MqttMessage mqttMessage) {
+        super(camelContext);
         this.mqttMessage = mqttMessage;
     }
 
@@ -40,8 +39,7 @@ public class PahoMessage extends DefaultMessage {
 
     @Override
     public PahoMessage newInstance() {
-        return new PahoMessage(mqttMessage);
+        return new PahoMessage(getCamelContext(), mqttMessage);
     }
-
 
 }

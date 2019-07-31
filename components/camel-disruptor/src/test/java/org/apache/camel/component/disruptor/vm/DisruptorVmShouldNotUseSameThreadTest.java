@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.vm.AbstractVmTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test to verify continuing using NOT same thread on the consumer side.
@@ -28,8 +28,9 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
 public class DisruptorVmShouldNotUseSameThreadTest extends AbstractVmTestSupport {
 
     private static long id;
-    private final ThreadLocal<String> local = new ThreadLocal<String>();
+    private final ThreadLocal<String> local = new ThreadLocal<>();
 
+    @Test
     public void testNotUseSameThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

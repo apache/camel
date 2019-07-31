@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,7 +45,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
     private PrintRequestAttributeSet printRequestAttributeSet;
     private Doc doc;
 
-    public PrinterOperations() throws PrintException {        
+    public PrinterOperations() throws PrintException {
         printService = PrintServiceLookup.lookupDefaultPrintService();
         if (printService == null) {
             throw new PrintException("Printer lookup failure. No default printer set up for this host");
@@ -63,46 +63,42 @@ public class PrinterOperations implements PrinterOperationsInterface {
         this.setPrintRequestAttributeSet(printRequestAttributeSet);
     }
 
-    public void print(Doc doc, int copies, boolean sendToPrinter, String mimeType, String jobName) throws PrintException {
-        LOG.trace("Print Service: " + this.printService.getName());
-        LOG.trace("About to print " + copies + " copy(s)");
-        
-        for (int i = 0; i < copies; i++) {
-            if (!sendToPrinter) {
-                LOG.debug("Print flag is set to false. This job will not be printed until this setting remains in effect."
-                        + " Please set the flag to true or remove the setting.");
+    public void print(Doc doc, boolean sendToPrinter, String mimeType, String jobName) throws PrintException {
+        LOG.trace("Print Service: {}", this.printService.getName());
 
-                File file;
-                if (mimeType.equalsIgnoreCase("GIF") || mimeType.equalsIgnoreCase("RENDERABLE_IMAGE")) {
-                    file = new File("./target/TestPrintJobNo" + i + "_" + UUID.randomUUID() + ".gif");
-                } else if (mimeType.equalsIgnoreCase("JPEG")) {
-                    file = new File("./target/TestPrintJobNo" + i + "_" + UUID.randomUUID() + ".jpeg");
-                } else if (mimeType.equalsIgnoreCase("PDF")) {
-                    file = new File("./target/TestPrintJobNo" + i + "_" + UUID.randomUUID() + ".pdf");
-                } else {
-                    file = new File("./target/TestPrintJobNo" + i + "_" + UUID.randomUUID() + ".txt");
-                }
+        if (!sendToPrinter) {
+            LOG.debug("Print flag is set to false. This job will not be printed as long as this setting remains in effect. Please set the flag to true or remove the setting.");
 
-                LOG.debug("Writing print job to file: " + file.getAbsolutePath());
-                try {
-                    InputStream in = doc.getStreamForBytes();
-                    FileOutputStream fos = new FileOutputStream(file);
-                    IOHelper.copyAndCloseInput(in, fos);
-                    IOHelper.close(fos);
-                } catch (Exception e) {
-                    throw new PrintException("Error writing Document to the target file " + file.getAbsolutePath());
-                }    
+            File file;
+            if (mimeType.equalsIgnoreCase("GIF") || mimeType.equalsIgnoreCase("RENDERABLE_IMAGE")) {
+                file = new File("./target/PrintOutput_" + UUID.randomUUID() + ".gif");
+            } else if (mimeType.equalsIgnoreCase("JPEG")) {
+                file = new File("./target/PrintOutput_" + UUID.randomUUID() + ".jpeg");
+            } else if (mimeType.equalsIgnoreCase("PDF")) {
+                file = new File("./target/PrintOutput_" + UUID.randomUUID() + ".pdf");
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Issuing Job {} to Printer: {}", i, this.printService.getName());
-                }
-                print(doc, jobName);
+                file = new File("./target/PrintOutput_" + UUID.randomUUID() + ".txt");
             }
+
+            LOG.debug("Writing print job to file: {}", file.getAbsolutePath());
+            try {
+                InputStream in = doc.getStreamForBytes();
+                FileOutputStream fos = new FileOutputStream(file);
+                IOHelper.copyAndCloseInput(in, fos);
+                IOHelper.close(fos);
+            } catch (Exception e) {
+                throw new PrintException("Error writing Document to the target file " + file.getAbsolutePath());
+            }
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Issuing Job to Printer: {}", this.printService.getName());
+            }
+            print(doc, jobName);
         }
     }
-        
+
     public void print(Doc doc, String jobName) throws PrintException {
-        // we need create a new job for each print 
+        // we need create a new job for each print
         DocPrintJob job = getPrintService().createPrintJob();
         PrintRequestAttributeSet attrs = new HashPrintRequestAttributeSet(printRequestAttributeSet);
         attrs.add(new JobName(jobName, Locale.getDefault()));
@@ -116,7 +112,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
     public void setPrintService(PrintService printService) {
         this.printService = printService;
     }
-    
+
     public DocFlavor getFlavor() {
         return flavor;
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,12 @@ public interface QueueServiceConstants {
     String QUEUE_CLIENT = "AzureQueueClient";
     
     String SERVICE_URI_SEGMENT = ".queue.core.windows.net";
-    String ACCESS_CONDITION = "BlobAccessCondition";
-    String BLOB_REQUEST_OPTIONS = "BlobRequestOptions";
-    String OPERATION_CONTEXT = "BlobOperationContext";
+    String QUEUE_SERVICE_REQUEST_OPTIONS = "QueueServiceRequestOptions";
+    String QUEUE_REQUEST_OPTIONS = "QueueRequestOptions";
+    String OPERATION_CONTEXT = "QueueOperationContext";
+    String MESSAGE_UPDATE_FIELDS = "QueueMessageUpdateFields";
+    String QUEUE_LISTING_DETAILS = "QueueListingDetails";
+    
+    String QUEUE_CREATED = "QueueCreated";
+    
 }

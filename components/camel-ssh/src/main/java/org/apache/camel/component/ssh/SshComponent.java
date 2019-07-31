@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,30 +20,27 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.sshd.common.KeyPairProvider;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
 
 /**
  * Represents the component that manages {@link SshEndpoint}.
  */
-public class SshComponent extends UriEndpointComponent {
+@Component("ssh")
+public class SshComponent extends DefaultComponent {
     @Metadata(label = "advanced")
-    private SshConfiguration configuration;
+    private SshConfiguration configuration = new SshConfiguration();
 
     public SshComponent() {
-        super(SshEndpoint.class);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SshConfiguration newConfig;
-
-        if (configuration == null) {
-            newConfig = new SshConfiguration(new URI(uri));
-        } else {
-            newConfig = configuration.copy();
-        }
+        URI u = new URI(uri);
+        SshConfiguration newConfig = configuration.copy();
+        newConfig.configure(u);
 
         SshEndpoint endpoint = new SshEndpoint(uri, this, newConfig);
         setProperties(endpoint.getConfiguration(), parameters);
@@ -51,9 +48,6 @@ public class SshComponent extends UriEndpointComponent {
     }
 
     public SshConfiguration getConfiguration() {
-        if (configuration == null) {
-            configuration = new SshConfiguration();
-        }
         return configuration;
     }
 
@@ -182,25 +176,6 @@ public class SshComponent extends UriEndpointComponent {
         getConfiguration().setTimeout(timeout);
     }
 
-    /**
-     * @deprecated As of version 2.11, replaced by {@link #getCertResource()}
-     */
-    @Deprecated
-    public String getCertFilename() {
-        return getConfiguration().getCertFilename();
-    }
-
-    /**
-     * Sets the resource path of the certificate to use for Authentication.
-     *
-     * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
-     */
-    @Deprecated
-    @Metadata(label = "security")
-    public void setCertFilename(String certFilename) {
-        getConfiguration().setCertFilename(certFilename);
-    }
-
     public String getCertResource() {
         return getConfiguration().getCertResource();
     }
@@ -214,5 +189,58 @@ public class SshComponent extends UriEndpointComponent {
     @Metadata(label = "security")
     public void setCertResource(String certResource) {
         getConfiguration().setCertResource(certResource);
+    }
+
+    public String getCertResourcePassword() {
+        return getConfiguration().getCertResourcePassword();
+    }
+
+    /**
+     * Sets the password to use in loading certResource, if certResource is an encrypted key.
+     *
+     * @param certResourcePassword
+     *            String representing password use to load the certResource key
+     */
+    @Metadata(label = "security", secret = true)
+    public void setCertResourcePassword(String certResourcePassword) {
+        getConfiguration().setCertResourcePassword(certResourcePassword);
+    }
+
+    /**
+     * Sets the channel type to pass to the Channel as part of command execution.
+     * Defaults to "exec".
+     *
+     * @param channelType
+     *            String defining the type of Channel to use for command execution.
+     *
+     * @see org.apache.sshd.common.channel.Channel
+     */
+    @Metadata(label = "advanced")
+    public void setChannelType(String channelType) {
+        getConfiguration().setChannelType(channelType);
+    }
+
+    /**
+     * Sets the shellPrompt to be dropped when response is read after command execution
+     *
+     * @param shellPrompt
+     *            String defining ending string of command line which has to be dropped when response is
+     *            read after command execution.
+     */
+    @Metadata(label = "advanced")
+    public void setShellPrompt(String shellPrompt) {
+        getConfiguration().setShellPrompt(shellPrompt);
+    }
+
+    /**
+     * Sets the sleep period in milliseconds to wait reading response from shell prompt.
+     * Defaults to 100 milliseconds.
+     *
+     * @param sleepForShellPrompt
+     *            long milliseconds to wait.
+     */
+    @Metadata(label = "advanced")
+    public void setSleepForShellPrompt(long sleepForShellPrompt) {
+        getConfiguration().setSleepForShellPrompt(sleepForShellPrompt);
     }
 }

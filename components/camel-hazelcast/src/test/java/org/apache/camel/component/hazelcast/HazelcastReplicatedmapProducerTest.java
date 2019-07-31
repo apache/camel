@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -128,29 +128,29 @@ public class HazelcastReplicatedmapProducerTest extends HazelcastCamelTestSuppor
             @Override
             public void configure() throws Exception {
 
-                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast:%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
+                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
 
-                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
+                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT)).to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
 
-                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX))
+                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET)).to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DELETE_OPERATION))
-                        .to(String.format("hazelcast:%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
+                from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
 
-                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION))
-                        .to(String.format("hazelcast:%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
+                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CLEAR))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
                 
-                from("direct:containsKey").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CONTAINS_KEY_OPERATION))
-                        .to(String.format("hazelcast:%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX))
+                from("direct:containsKey").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_KEY))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX))
                         .to("seda:out");
         
-                from("direct:containsValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CONTAINS_VALUE_OPERATION))
-                        .to(String.format("hazelcast:%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX))
+                from("direct:containsValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_VALUE))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX))
                         .to("seda:out");
                 
-                from("direct:putWithOperationNumber").toF("hazelcast:%sbar?operation=%s", HazelcastConstants.REPLICATEDMAP_PREFIX, HazelcastConstants.PUT_OPERATION);
-                from("direct:putWithOperationName").toF("hazelcast:%sbar?operation=put", HazelcastConstants.REPLICATEDMAP_PREFIX);
+                from("direct:putWithOperationNumber").toF("hazelcast-%sbar?operation=%s", HazelcastConstants.REPLICATEDMAP_PREFIX, HazelcastOperation.PUT);
+                from("direct:putWithOperationName").toF("hazelcast-%sbar?operation=PUT", HazelcastConstants.REPLICATEDMAP_PREFIX);
             }
         };
     }

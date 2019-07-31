@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.xquery;
 
-import javax.naming.Context;
-
 import org.apache.camel.Handler;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSupport {
@@ -35,12 +33,10 @@ public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSuppor
         assertEquals("bean userName: " + myBean, "Alan", myBean.userName);
         assertEquals("bean date:  " + myBean, "26/08/2012", myBean.date);
     }
-    
+
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-        answer.bind("myBean", myBean);
-        return answer;
+    protected void bindToRegistry(Registry registry) throws Exception {
+        registry.bind("myBean", myBean);
     }
 
     public static class MyBean {

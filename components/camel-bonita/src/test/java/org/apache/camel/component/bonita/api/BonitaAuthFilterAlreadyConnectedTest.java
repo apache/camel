@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.bonita.api;
 
 import java.util.HashMap;
@@ -27,12 +26,10 @@ import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockitoAnnotations;
 
-@RunWith(PowerMockRunner.class)
 public class BonitaAuthFilterAlreadyConnectedTest {
 
     @Mock
@@ -40,6 +37,7 @@ public class BonitaAuthFilterAlreadyConnectedTest {
 
     @Before
     public void setup() {
+        MockitoAnnotations.initMocks(this);
         Map<String, Cookie> resultCookies = new HashMap<>();
         resultCookies.put("JSESSIONID", new Cookie("JSESSIONID", "something"));
         Mockito.when(requestContext.getCookies()).thenReturn(resultCookies);

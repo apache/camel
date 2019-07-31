@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,11 +18,10 @@ package org.apache.camel.itest;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.util.Locale;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.itest.typeconverter.MyConverter;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.karaf.AbstractFeatureTest;
 import org.apache.camel.test.karaf.CamelKarafTestSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -36,8 +35,6 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.tinybundles.core.InnerClassStrategy;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
-import org.ops4j.pax.tinybundles.core.TinyBundles;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 @RunWith(PaxExam.class)
@@ -46,23 +43,14 @@ public class CamelTypeConverterTest extends AbstractFeatureTest {
     @Test
     public void testTypeConverterInSameBundleAsCamelRoute() throws Exception {
         // install the camel blueprint xml file and the Camel converter we use in this test
-        TinyBundle bundle = TinyBundles.bundle();
-        // install blueprint
         URL blueprintUrl = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelTypeConverterTest.xml", CamelTypeConverterTest.class.getClassLoader());
-        String name = "CamelTypeConverterTest";
-        bundle.add("OSGI-INF/blueprint/blueprint-" + name.toLowerCase(Locale.ENGLISH) + ".xml", blueprintUrl);
-        // install converter
-        bundle.add("META-INF/services/org/apache/camel/TypeConverter", new ByteArrayInputStream("org.apache.camel.itest.typeconverter.MyConverter".getBytes()));
-        bundle.add(MyConverter.class, InnerClassStrategy.NONE);
-        // set bundle headers
-        bundle.set("Manifest-Version", "2")
-                .set("Bundle-ManifestVersion", "2")
-                .set("Bundle-SymbolicName", name)
-                .set("Bundle-Version", "1.0.0")
+        installBlueprintAsBundle("CamelTypeConverterTest", blueprintUrl, true, bundle -> {
+            // install converter
+            ((TinyBundle) bundle)
+                .add("META-INF/services/org/apache/camel/TypeConverter", new ByteArrayInputStream("org.apache.camel.itest.typeconverter.MyConverter".getBytes()))
+                .add(MyConverter.class, InnerClassStrategy.NONE)
                 .set(Constants.DYNAMICIMPORT_PACKAGE, "*");
-        // start bundle
-        Bundle answer = this.bundleContext.installBundle(name, bundle.build());
-        answer.start();
+        });
 
         // lookup Camel from OSGi
         CamelContext camel = getOsgiService(bundleContext, CamelContext.class);
@@ -90,9 +78,5 @@ public class CamelTypeConverterTest extends AbstractFeatureTest {
         probe.setHeader(Constants.EXPORT_PACKAGE, "org.apache.camel.itest");
         return probe;
     }
-
-
-
-
 
 }

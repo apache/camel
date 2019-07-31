@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,11 +22,11 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 /**
@@ -39,23 +39,15 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
     private Processor processor = new P();
     private int port;
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        // create a single decoder
-        ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
-        registry.bind("length-decoder", decoder);
-
-        return registry;
-    }
+    @BindToRegistry("length-decoder")
+    private ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 
     @Test
     public void unsharableCodecsConflictsTest() throws Exception {
         byte[] data1 = new byte[8192];
         byte[] data2 = new byte[16383];
-        Arrays.fill(data1, (byte) 0x38);
-        Arrays.fill(data2, (byte) 0x39);
+        Arrays.fill(data1, (byte)0x38);
+        Arrays.fill(data2, (byte)0x39);
         byte[] body1 = (new String(LENGTH_HEADER) + new String(data1)).getBytes();
         byte[] body2 = (new String(LENGTH_HEADER) + new String(data2)).getBytes();
 
@@ -85,9 +77,7 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
             public void configure() throws Exception {
                 port = getPort();
 
-                from("netty4:tcp://localhost:{{port}}?decoder=#length-decoder&sync=false")
-                        .process(processor)
-                        .to("mock:result");
+                from("netty4:tcp://localhost:{{port}}?decoders=#length-decoder&sync=false").process(processor).to("mock:result");
             }
         };
     }

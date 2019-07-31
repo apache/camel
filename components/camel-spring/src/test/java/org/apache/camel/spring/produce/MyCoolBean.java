@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,9 @@ package org.apache.camel.spring.produce;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 
-/**
- * @version 
- */
 public class MyCoolBean {
 
-    @Produce(uri = "log:foo")
+    @Produce("log:foo")
     protected ProducerTemplate producer;
 
     public void sendMsg() {

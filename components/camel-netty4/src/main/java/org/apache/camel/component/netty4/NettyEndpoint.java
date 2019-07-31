@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,23 +25,22 @@ import javax.security.cert.X509Certificate;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.SslHandler;
-
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Socket level networking using TCP or UDP with the Netty 4.x library.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "netty4", title = "Netty4", syntax = "netty4:protocol:host:port", consumerClass = NettyConsumer.class, label = "networking,tcp,udp")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "netty4,netty", title = "Netty4", syntax = "netty4:protocol:host:port", label = "networking,tcp,udp")
 public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam
     private NettyConfiguration configuration;
@@ -76,10 +75,6 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return exchange;
     }
     
-    public boolean isSingleton() {
-        return true;
-    }
-
     @Override
     public NettyComponent getComponent() {
         return (NettyComponent) super.getComponent();

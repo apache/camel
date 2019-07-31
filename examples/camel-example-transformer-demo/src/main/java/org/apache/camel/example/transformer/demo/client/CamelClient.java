@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,9 +21,12 @@ import java.io.File;
 import java.io.FileReader;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.example.transformer.demo.Order;
 import org.apache.camel.example.transformer.demo.OrderResponse;
+import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.DataTypeAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -68,17 +71,21 @@ public final class CamelClient {
         
         String orderXml = "<order orderId=\"Order-XML-0001\" itemId=\"MIKAN\" quantity=\"365\"/>";
         LOG.info("---> Sending '{}' to 'direct:xml'", orderXml);
-        String responseXml = producer.requestBody("direct:xml", orderXml, String.class);
+        Exchange answerXml = producer.send("direct:xml", ex -> {
+            ((DataTypeAware)ex.getIn()).setBody(orderXml, new DataType("xml:XMLOrder"));
+        });
         Thread.sleep(1000);
-        LOG.info("---> Received '{}'", responseXml);
+        LOG.info("---> Received '{}'", answerXml.getOut().getBody(String.class));
         LOG.info("---> CSV log now contains:{}", getCsvLog());
         Thread.sleep(1000);
         
         String orderJson = "{\"orderId\":\"Order-JSON-0001\", \"itemId\":\"MIZUYO-KAN\", \"quantity\":\"16350\"}";
         LOG.info("---> Sending '{}' to 'direct:json'", orderJson);
-        String responseJson = producer.requestBody("direct:json", orderJson, String.class);
+        Exchange answerJson = producer.send("direct:json", ex -> {
+            ((DataTypeAware)ex.getIn()).setBody(orderJson, new DataType("json"));
+        });
         Thread.sleep(1000);
-        LOG.info("---> Received '{}'", responseJson);
+        LOG.info("---> Received '{}'", answerJson.getOut().getBody(String.class));
         LOG.info("---> CSV log now contains:{}", getCsvLog());
         Thread.sleep(1000);
         

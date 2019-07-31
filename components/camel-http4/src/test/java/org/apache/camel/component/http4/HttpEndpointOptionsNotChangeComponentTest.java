@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,19 +16,23 @@
  */
 package org.apache.camel.component.http4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHeaderFilterStrategy;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Having custom endpoint options should not override or change any component configured options.
- *
- * @version 
  */
 public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport {
+
+    @BindToRegistry("other")
+    private MyOtherBinding binding = new MyOtherBinding();
+
+    @BindToRegistry("myStrategy")
+    private MyHeaderFilterStrategy strategy = new MyHeaderFilterStrategy();
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -45,14 +49,6 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
         http.start();
 
         return context;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("other", new MyOtherBinding());
-        jndi.bind("myStrategy", new MyHeaderFilterStrategy());
-        return jndi;
     }
 
     @Test

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,8 @@ package org.apache.camel.maven.packaging.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.maven.packaging.StringHelper;
+
 import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
 
 public class ComponentModel {
@@ -35,14 +37,16 @@ public class ComponentModel {
     private String firstVersion;
     private String label;
     private String deprecated;
+    private String deprecationNote;
     private String consumerOnly;
     private String producerOnly;
     private String javaType;
     private String groupId;
     private String artifactId;
     private String version;
-    private final List<ComponentOptionModel> componentOptions = new ArrayList<ComponentOptionModel>();
-    private final List<EndpointOptionModel> endpointOptions = new ArrayList<EndpointOptionModel>();
+    private final List<ComponentOptionModel> componentOptions = new ArrayList<>();
+    private final List<EndpointOptionModel> endpointPathOptions = new ArrayList<>();
+    private final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
 
     public ComponentModel(boolean coreOnly) {
         this.coreOnly = coreOnly;
@@ -128,6 +132,14 @@ public class ComponentModel {
         this.deprecated = deprecated;
     }
 
+    public String getDeprecationNote() {
+        return deprecationNote;
+    }
+
+    public void setDeprecationNote(String deprecationNote) {
+        this.deprecationNote = deprecationNote;
+    }
+
     public String getConsumerOnly() {
         return consumerOnly;
     }
@@ -188,29 +200,44 @@ public class ComponentModel {
         return endpointOptions;
     }
 
+    public List<EndpointOptionModel> getEndpointPathOptions() {
+        return endpointPathOptions;
+    }
+
     public void addEndpointOption(EndpointOptionModel option) {
         endpointOptions.add(option);
     }
 
+    public void addEndpointPathOption(EndpointOptionModel option) {
+        endpointPathOptions.add(option);
+    }
+
     public String getShortJavaType() {
-        if (javaType.startsWith("java.util.Map")) {
-            return "Map";
-        } else if (javaType.startsWith("java.util.Set")) {
-            return "Set";
-        } else if (javaType.startsWith("java.util.List")) {
-            return "List";
-        }
-        int pos = javaType.lastIndexOf(".");
-        if (pos != -1) {
-            return javaType.substring(pos + 1);
-        } else {
-            return javaType;
-        }
+        return StringHelper.getClassShortName(javaType);
     }
 
     public String getDocLink() {
+        // special for these components
+        if ("camel-as2".equals(artifactId)) {
+            return "camel-as2/camel-as2-component/src/main/docs";
+        } else if ("camel-box".equals(artifactId)) {
+            return "camel-box/camel-box-component/src/main/docs";
+        } else if ("camel-fhir".equals(artifactId)) {
+            return "camel-fhir/camel-fhir-component/src/main/docs";
+        } else if ("camel-linkedin".equals(artifactId)) {
+            return "camel-linkedin/camel-linkedin-component/src/main/docs";
+        } else if ("camel-olingo2".equals(artifactId)) {
+            return "camel-olingo2/camel-olingo2-component/src/main/docs";
+        } else if ("camel-olingo4".equals(artifactId)) {
+            return "camel-olingo4/camel-olingo4-component/src/main/docs";
+        } else if ("camel-salesforce".equals(artifactId)) {
+            return "camel-salesforce/camel-salesforce-component/src/main/docs";
+        } else if ("camel-servicenow".equals(artifactId)) {
+            return "camel-servicenow/camel-servicenow-component/src/main/docs";
+        }
+
         if ("camel-core".equals(artifactId)) {
-            return coreOnly ? "src/main/docs" : "../camel-core/src/main/docs";
+            return coreOnly ? "src/main/docs" : "../core/camel-core/src/main/docs";
         } else {
             return artifactId + "/src/main/docs";
         }

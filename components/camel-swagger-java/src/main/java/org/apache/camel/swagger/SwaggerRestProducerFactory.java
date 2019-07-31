@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,13 +27,14 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.parser.SwaggerParser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.ResourceHelper.resolveMandatoryResourceAsInputStream;
+import static org.apache.camel.support.ResourceHelper.resolveMandatoryResourceAsInputStream;
 
 public class SwaggerRestProducerFactory implements RestProducerFactory {
 
@@ -42,7 +43,7 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
                                    String verb, String basePath, String uriTemplate, String queryParameters,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         String apiDoc = (String) parameters.get("apiDoc");
         // load json model
@@ -179,8 +180,8 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
                 basePath = path;
                 uriTemplate = null;
             }
-
-            return factory.createProducer(camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes, produces, parameters);
+            RestConfiguration config = camelContext.getRestConfiguration(componentName, true);   
+            return factory.createProducer(camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes, produces, config, parameters);
 
         } else {
             throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");

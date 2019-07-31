@@ -1,0 +1,10 @@
+[[Memoryleakwhenaddingandremovingroutesatruntime-Memoryleakwhenaddingandremovingroutesatruntime]]
+= Memory leak when adding and removing routes at runtime
+
+If you add and remove many routes at runtime, then take notice that
+xref:components::jmx-component.adoc[JMX] may take up memory when routes is added.
+As Camel cannot 100% reclaim all MBeans when removing a route (some
+resources may be shared by other routes, etc.).
+
+Therefore it's advised to disable JMX for new routes, by setting
+`registerNewRoutes=false`. See details at xref:components::jmx-component.adoc[JMX].

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kubernetes.cloud;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
@@ -42,10 +40,8 @@ public class ServiceCallEnvironmentRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                KubernetesConfiguration kubernetesConfiguration = new KubernetesConfiguration();
-
                 ServiceCallConfigurationDefinition config = new ServiceCallConfigurationDefinition();
-                config.setServiceDiscovery(new KubernetesEnvServiceDiscovery(kubernetesConfiguration));
+                config.kubernetesEnvServiceDiscovery();
 
                 // register configuration
                 context.setServiceCallConfiguration(config);

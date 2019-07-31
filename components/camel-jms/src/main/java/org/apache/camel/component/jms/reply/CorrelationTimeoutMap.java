@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,130 +18,54 @@ package org.apache.camel.component.jms.reply;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.BiConsumer;
 
 import org.apache.camel.support.DefaultTimeoutMap;
+
+import static org.apache.camel.TimeoutMap.Listener.Type.*;
 
 /**
  * A {@link org.apache.camel.TimeoutMap} which is used to track reply messages which
  * has been timed out, and thus should trigger the waiting {@link org.apache.camel.Exchange} to
- * timeout as well.
- *
- * @version 
+ * timeout as well. Zero (or negative) timeout means infinite but is actually encoded as {@link Integer#MAX_VALUE}
+ * which is 24 days.
  */
-public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
+class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
-    private CorrelationListener listener;
-    private ExecutorService executorService;
+    private final BiConsumer<ReplyHandler, String> evictionTask;
 
-    public CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, ExecutorService executorService) {
+    CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, ExecutorService executorService) {
         super(executor, requestMapPollTimeMillis);
-        this.executorService = executorService;
+        // Support synchronous or asynchronous handling of evictions
+        evictionTask = executorService == null
+                ? ReplyHandler::onTimeout
+                : (handler, key) -> executorService.submit(() -> handler.onTimeout(key));
+        addListener(this::listener);
     }
 
-    public void setListener(CorrelationListener listener) {
-        // there is only one listener needed
-        this.listener = listener;
+    private static long encode(long timeoutMillis) {
+        return timeoutMillis > 0 ? timeoutMillis : Integer.MAX_VALUE; // TODO why not Long.MAX_VALUE!
     }
 
-    public boolean onEviction(final String key, final ReplyHandler value) {
-        try {
-            if (listener != null) {
-                listener.onEviction(key);
-            }
-        } catch (Throwable e) {
-            // ignore
+    private void listener(Listener.Type type, String key, ReplyHandler handler) {
+        if (type == Put) {
+            log.trace("Added correlationID: {}", key);
+        } else if (type == Remove) {
+            log.trace("Removed correlationID: {}", key);
+        } else if (type == Evict) {
+            evictionTask.accept(handler, key);
+            log.trace("Evicted correlationID: {}", key);
         }
-
-        final Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                // trigger timeout
-                try {
-                    value.onTimeout(key);
-                } catch (Throwable e) {
-                    // must ignore so we ensure we evict the element
-                    log.warn("Error processing onTimeout for correlationID: " + key + " due: " + e.getMessage() + ". This exception is ignored.", e);
-                }
-            }
-        };
-        if (executorService != null) {
-            executorService.submit(task);
-        } else {
-            // run task synchronously
-            task.run();
-        }
-
-        // return true to remove the element
-        log.trace("Evicted correlationID: {}", key);
-        return true;
-    }
-
-    @Override
-    public ReplyHandler get(String key) {
-        ReplyHandler answer = super.get(key);
-        log.trace("Get correlationID: {} -> {}", key, answer != null);
-        return answer;
     }
 
     @Override
     public ReplyHandler put(String key, ReplyHandler value, long timeoutMillis) {
-        try {
-            if (listener != null) {
-                listener.onPut(key);
-            }
-        } catch (Throwable e) {
-            // ignore
-        }
-
-        ReplyHandler result;
-        if (timeoutMillis <= 0) {
-            // no timeout (must use Integer.MAX_VALUE)
-            result = super.put(key, value, Integer.MAX_VALUE);
-        } else {
-            result = super.put(key, value, timeoutMillis);
-        }
-        log.trace("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
-        return result;
+        return super.put(key, value, encode(timeoutMillis));
     }
 
     @Override
     public ReplyHandler putIfAbsent(String key, ReplyHandler value, long timeoutMillis) {
-        try {
-            if (listener != null) {
-                listener.onPut(key);
-            }
-        } catch (Throwable e) {
-            // ignore
-        }
-
-        ReplyHandler result;
-        if (timeoutMillis <= 0) {
-            // no timeout (must use Integer.MAX_VALUE)
-            result = super.putIfAbsent(key, value, Integer.MAX_VALUE);
-        } else {
-            result = super.putIfAbsent(key, value, timeoutMillis);
-        }
-        if (result == null) {
-            log.trace("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
-        } else {
-            log.trace("Duplicate correlationID: {} detected", key);
-        }
-        return result;
-    }
-
-    @Override
-    public ReplyHandler remove(String key) {
-        try {
-            if (listener != null) {
-                listener.onRemove(key);
-            }
-        } catch (Throwable e) {
-            // ignore
-        }
-
-        ReplyHandler answer = super.remove(key);
-        log.trace("Removed correlationID: {} -> {}", key, answer != null);
-        return answer;
+        return super.putIfAbsent(key, value, encode(timeoutMillis));
     }
 
 }

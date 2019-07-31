@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,23 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.mongodb.gridfs;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.mongodb.gridfs.GridFS;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
 import org.junit.Test;
 
-/**
- * 
- */
 public class GridFsConsumerTest extends AbstractMongoDbTest {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -72,7 +66,7 @@ public class GridFsConsumerTest extends AbstractMongoDbTest {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(data);
         
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         String fn = "filename.for.db.txt";
         assertEquals(0, gridfs.find(fn).size());
         

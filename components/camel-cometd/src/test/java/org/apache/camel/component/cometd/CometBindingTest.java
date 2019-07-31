@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.BayeuxServerImpl;
@@ -28,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -56,11 +58,13 @@ public class CometBindingTest {
     @Mock
     private ServerMessage cometdMessage;
 
+    private final CamelContext camelContext = new DefaultCamelContext();
+
     @Before
     public void before() {
         testObj = new CometdBinding(bayeux);
 
-        Set<String> attributeNames = new HashSet<String>(Arrays.asList(STRING_ATTR_NAME, INTEGER_ATTR_NAME,
+        Set<String> attributeNames = new HashSet<>(Arrays.asList(STRING_ATTR_NAME, INTEGER_ATTR_NAME,
                                                                        LONG_ATTR_NAME, DOUBLE_ATTR_NAME,
                                                                        FOO_ATTR_NAME, BOOLEAN_ATT_NAME));
         when(remote.getAttributeNames()).thenReturn(attributeNames);
@@ -79,7 +83,7 @@ public class CometBindingTest {
         testObj = new CometdBinding(bayeux, true);
 
         // act
-        Message result = testObj.createCamelMessage(remote, cometdMessage, null);
+        Message result = testObj.createCamelMessage(camelContext, remote, cometdMessage, null);
 
         // assert
         assertEquals(6, result.getHeaders().size());
@@ -94,7 +98,7 @@ public class CometBindingTest {
     @Test
     public void testBindingHonorsFlagForSessionAttributtes() {
         // act
-        Message result = testObj.createCamelMessage(remote, cometdMessage, null);
+        Message result = testObj.createCamelMessage(camelContext, remote, cometdMessage, null);
 
         // assert
         assertEquals(1, result.getHeaders().size());
@@ -114,7 +118,7 @@ public class CometBindingTest {
             .thenReturn(expectedSubscriptionInfo);
 
         // act
-        Message result = testObj.createCamelMessage(remote, cometdMessage, null);
+        Message result = testObj.createCamelMessage(camelContext, remote, cometdMessage, null);
 
         // assert
         assertEquals(2, result.getHeaders().size());

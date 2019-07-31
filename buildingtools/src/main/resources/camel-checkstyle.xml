@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one
-  or more contributor license agreements. See the NOTICE file
-  distributed with this work for additional information
-  regarding copyright ownership. The ASF licenses this file
-  to you under the Apache License, Version 2.0 (the
-  "License"); you may not use this file except in compliance
-  with the License. You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing,
-  software distributed under the License is distributed on an
-  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  KIND, either express or implied. See the License for the
-  specific language governing permissions and limitations
-  under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
 <!DOCTYPE module PUBLIC
     "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
@@ -29,6 +29,8 @@ lengths, if/try depths, etc...
 -->
 
 <module name="Checker">
+    <property name="fileExtensions" value="java,groovy,scala,xml,properties"/>
+
     <!-- Checks whether files end with a new line.                        -->
     <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
     <!--
@@ -42,18 +44,39 @@ lengths, if/try depths, etc...
     <!--<module name="StrictDuplicateCode"/>-->
     
     <!-- Header checks -->
+    <!--
+         The values for `header-*` are inserted at build time by Maven
+         from the corresponding `header-*.txt` files. We need to do
+         this instead of using `headerFile` property as Maven
+         Checkstyle plugin has support for one `headerLocation`
+         property. This also might help IDEs not to search for header
+         files.
+    -->
     <module name="Header">
-    	<property name="header"
-        	value="/**\n * Licensed to the Apache Software Foundation (ASF) under one or more\n * contributor license agreements.  See the NOTICE file distributed with\n * this work for additional information regarding copyright ownership.\n * The ASF licenses this file to You under the Apache License, Version 2.0\n * (the &quot;License&quot;); you may not use this file except in compliance with\n * the License.  You may obtain a copy of the License at\n *\n *      http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n"/>
+        <!-- the `header-java` is replaced during build -->
+        <property name="header" value="${header-java}"/>
+        <property name="fileExtensions" value="java,groovy,scala"/>
     </module>
-    
+
+    <module name="Header">
+        <!-- the `header-properties` is replaced during build -->
+        <property name="header" value="${header-properties}"/>
+        <property name="fileExtensions" value="properties"/>
+    </module>
+   
+    <module name="RegexpHeader">
+        <!-- the `header-xml` is replaced during build -->
+        <property name="header" value="^&lt;\?xml.*&gt;\n${header-xml}"/>
+        <property name="fileExtensions" value="xml,xsd"/>
+    </module>
+
     <module name="RegexpMultiline">
         <property name="format" value="(\bgpl\b)|(\bgplv2\b)|(\bgnu\sgeneral\spublic\s*license\b)|(\bwww\.gnu\.org\/licenses\/gpl\.txt\b)"/>
         <property name="ignoreCase"  value="true"/>
     </module>
     
     <module name="FileLength">
-        <property name="max" value="4500"/>
+        <property name="max" value="10000"/>
     </module>
     
     <module name="FileTabCharacter">
@@ -128,13 +151,13 @@ lengths, if/try depths, etc...
             <property name="max" value="200"/>
         </module>
         <module name="ExecutableStatementCount">
-            <property name="max" value="100"/>
+            <property name="max" value="180"/>
         </module>
         <module name="LineLength">
-            <property name="max" value="200"/>
+            <property name="max" value="250"/>
         </module>
         <module name="MethodLength">
-            <property name="max" value="200"/>
+            <property name="max" value="250"/>
             <property name="countEmpty" value="false"/>
         </module>
         <!-- We should try to get this enabled soon..
@@ -170,7 +193,9 @@ lengths, if/try depths, etc...
         <!-- Modifier Checks                                    -->
         <!-- See http://checkstyle.sf.net/config_modifiers.html -->
         <module name="ModifierOrder"/>
-        <module name="RedundantModifier"/>
+        <module name="RedundantModifier">
+            <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF, INTERFACE_DEF, CLASS_DEF, ENUM_DEF"/>
+        </module>
 
 
         <!-- Checks for blocks. You know, those {}'s         -->
@@ -239,7 +264,8 @@ lengths, if/try depths, etc...
         <module name="JUnitTestCase"/>
         -->
         <module name="ReturnCount">
-            <property name="max" value="20"/>
+            <property name="max" value="21"/>
+            <property name="maxForVoid" value="25"/>
         </module>
 
         <!-- Um.. we tend to use these alot.. perhaps enable this check later.

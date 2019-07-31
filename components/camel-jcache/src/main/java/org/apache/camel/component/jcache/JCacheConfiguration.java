@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,24 +31,22 @@ import javax.cache.integration.CacheLoader;
 import javax.cache.integration.CacheWriter;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.EndpointHelper;
 
 @UriParams
 public class JCacheConfiguration {
-    @UriParam(label = "advanced")
-    @Metadata(required = "true")
+    @UriParam(label = "common")
     private String cachingProvider;
 
-    @UriParam(label = "advanced")
+    @UriParam
     private Configuration cacheConfiguration;
 
-    @UriParam(label = "advanced")
+    @UriParam
     private Properties cacheConfigurationProperties;
 
-    @UriParam(label = "advanced")
+    @UriParam
     private String configurationUri;
 
     @UriParam(label = "advanced")
@@ -314,7 +312,7 @@ public class JCacheConfiguration {
     }
 
     /**
-     * if the the event listener should block the thread causing the event
+     * if the event listener should block the thread causing the event
      */
     public boolean isSynchronous() {
         return synchronous;

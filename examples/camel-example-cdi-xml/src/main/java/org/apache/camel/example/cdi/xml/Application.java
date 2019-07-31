@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Handler;
 import org.apache.camel.Processor;
 import org.apache.camel.cdi.ImportResource;
-import org.apache.camel.management.event.RouteStoppedEvent;
+import org.apache.camel.spi.CamelEvent.RouteStoppedEvent;
 
 import static org.apache.camel.builder.Builder.simple;
 
@@ -50,7 +50,7 @@ public class Application {
     @Named
     @Produces
     Processor tracer = exchange -> exchange.getIn()
-        .setHeader("location", simple("exchangeProperty.CamelFailureRouteId"));
+        .setHeader("location", simple("${exchangeProperty.CamelFailureRouteId}"));
 
     void login(@Observes @Initialized(ApplicationScoped.class) Object event) {
         System.out.println(

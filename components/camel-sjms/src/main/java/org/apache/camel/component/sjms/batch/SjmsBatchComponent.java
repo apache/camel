@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,13 +18,16 @@ package org.apache.camel.component.sjms.batch;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.ObjectHelper;
 
+@Component("sjms-batch")
 public class SjmsBatchComponent extends HeaderFilterStrategyComponent {
 
     private ExecutorService asyncStartStopExecutorService;
@@ -37,7 +40,6 @@ public class SjmsBatchComponent extends HeaderFilterStrategyComponent {
     private int recoveryInterval = 5000;
 
     public SjmsBatchComponent() {
-        super(SjmsBatchEndpoint.class);
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,165 +16,70 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Namespace;
+import io.fabric8.kubernetes.api.model.NamespaceBuilder;
+import io.fabric8.kubernetes.api.model.NamespaceListBuilder;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
+    @Rule
+    public KubernetesServer server = new KubernetesServer();
+
+    @BindToRegistry("kubernetesClient")
+    public KubernetesClient getClient() throws Exception {
+        return server.getClient();
+    }
+
     @Test
     public void listTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        List<Namespace> result = template.requestBody("direct:list", "",
-                List.class);
-
-        boolean defaultExists = false;
-
-        Iterator<Namespace> it = result.iterator();
-        while (it.hasNext()) {
-            Namespace namespace = it.next();
-            if ("default".equalsIgnoreCase(namespace.getMetadata().getName())) {
-                defaultExists = true;
-            }
-        }
-
-        assertTrue(defaultExists);
+        server.expect().withPath("/api/v1/namespaces").andReturn(200, new NamespaceListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        List<Namespace> result = template.requestBody("direct:list", "", List.class);
+        assertEquals(3, result.size());
     }
 
     @Test
     public void getNamespace() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+        ObjectMeta meta = new ObjectMeta();
+        meta.setName("test");
+        server.expect().withPath("/api/v1/namespaces/test").andReturn(200, new NamespaceBuilder().withMetadata(meta).build()).once();
         Exchange ex = template.request("direct:getNs", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             }
         });
 
         Namespace ns = ex.getOut().getBody(Namespace.class);
 
-        assertEquals(ns.getMetadata().getName(), "default");
+        assertEquals(ns.getMetadata().getName(), "test");
 
     }
 
     @Test
     public void createAndDeleteNamespace() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        Exchange ex = template.request("direct:createNamespace",
-                new Processor() {
+        Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build();
+        server.expect().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
 
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setHeader(
-                                KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                                "test");
-                        Map<String, String> labels = new HashMap<String, String>();
-                        labels.put("this", "rocks");
-                        exchange.getIn()
-                                .setHeader(
-                                        KubernetesConstants.KUBERNETES_NAMESPACE_LABELS,
-                                        labels);
-                    }
-                });
-
-        Namespace ns = ex.getOut().getBody(Namespace.class);
-
-        assertEquals(ns.getMetadata().getName(), "test");
-
-        
-        ex = template.request("direct:deleteNamespace", new Processor() {
+        Exchange ex = template.request("direct:deleteNamespace", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-            }
-        });
-
-        boolean nsDeleted = ex.getOut().getBody(Boolean.class);
-
-        assertTrue(nsDeleted);
-    }
-
-    @Test
-    public void createListByLabelsAndDeleteNamespace() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        Exchange ex = template.request("direct:createNamespace",
-                new Processor() {
-
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setHeader(
-                                KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                                "test");
-                        Map<String, String> labels = new HashMap<String, String>();
-                        labels.put("this", "rocks");
-                        exchange.getIn()
-                                .setHeader(
-                                        KubernetesConstants.KUBERNETES_NAMESPACE_LABELS,
-                                        labels);
-                    }
-                });
-
-        Namespace ns = ex.getOut().getBody(Namespace.class);
-
-        assertEquals(ns.getMetadata().getName(), "test");
-
-        ex = template.request("direct:listByLabels", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("this", "rocks");
-                exchange.getIn()
-                        .setHeader(
-                                KubernetesConstants.KUBERNETES_NAMESPACE_LABELS,
-                                labels);
-            }
-        });
-
-        List<Namespace> result = ex.getOut().getBody(List.class);
-
-        boolean testExists = false;
-
-        Iterator<Namespace> it = result.iterator();
-        while (it.hasNext()) {
-            Namespace namespace = it.next();
-            if ("test".equalsIgnoreCase(namespace.getMetadata().getName())) {
-                testExists = true;
-            }
-        }
-
-        assertTrue(testExists);
-
-        ex = template.request("direct:deleteNamespace", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1");
             }
         });
 
@@ -188,21 +93,9 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=listNamespaces",
-                                host, authToken);
-                from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=listNamespacesByLabels",
-                                host, authToken);
-                from("direct:getNs")
-                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=getNamespace",
-                                host, authToken);
-                from("direct:createNamespace")
-                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=createNamespace",
-                                host, authToken);
-                from("direct:deleteNamespace")
-                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=deleteNamespace",
-                                host, authToken);
+                from("direct:list").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespaces");
+                from("direct:getNs").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=getNamespace");
+                from("direct:deleteNamespace").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=deleteNamespace");
             }
         };
     }

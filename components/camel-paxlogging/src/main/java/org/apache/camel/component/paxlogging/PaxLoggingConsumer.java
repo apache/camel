@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,13 +22,10 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.ops4j.pax.logging.spi.PaxAppender;
 import org.ops4j.pax.logging.spi.PaxLoggingEvent;
 import org.osgi.framework.ServiceRegistration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 /**
  * Paxlogging consumer.
@@ -42,7 +39,6 @@ import org.slf4j.MDC;
  */
 public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PaxLoggingConsumer.class);
     private final PaxLoggingEndpoint endpoint;
     private ExecutorService executor;
     private ServiceRegistration registration;
@@ -55,25 +51,16 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
     public void doAppend(final PaxLoggingEvent paxLoggingEvent) {
         // in order to "force" the copy of properties (especially the MDC ones) in the local thread
         paxLoggingEvent.getProperties();
-        executor.execute(new Runnable() {
-            public void run() {
-                sendExchange(paxLoggingEvent);
-            }
-        });
+        sendExchange(paxLoggingEvent);
     }
 
-    protected void sendExchange(PaxLoggingEvent paxLoggingEvent) {
-        MDC.put(PaxLoggingConsumer.class.getName(), endpoint.getAppender());
-        if (paxLoggingEvent.getProperties().containsKey(PaxLoggingConsumer.class.getName())) {
-            return;
-        }
-
+    protected void sendExchange(final PaxLoggingEvent paxLoggingEvent) {
         Exchange exchange = endpoint.createExchange();
         // TODO: populate exchange headers
         exchange.getIn().setBody(paxLoggingEvent);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("PaxLogging {} is firing", endpoint.getAppender());
+        if (log.isTraceEnabled()) {
+            log.trace("PaxLogging {} is firing", endpoint.getAppender());
         }
         try {
             getProcessor().process(exchange);
@@ -93,7 +80,7 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
         // start the executor before the registration
         executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "PaxLoggingEventTask");
 
-        Dictionary<String, String> props = new Hashtable<String, String>();
+        Dictionary<String, String> props = new Hashtable<>();
         props.put("org.ops4j.pax.logging.appender.name", endpoint.getAppender());
         registration = endpoint.getComponent().getBundleContext().registerService(PaxAppender.class.getName(), this, props);
     }

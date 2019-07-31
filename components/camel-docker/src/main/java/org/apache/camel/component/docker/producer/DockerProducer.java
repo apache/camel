@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,10 +21,12 @@ import java.io.InputStream;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.AuthCmd;
 import com.github.dockerjava.api.command.CommitCmd;
+import com.github.dockerjava.api.command.ConnectToNetworkCmd;
 import com.github.dockerjava.api.command.ContainerDiffCmd;
-import com.github.dockerjava.api.command.CopyFileFromContainerCmd;
+import com.github.dockerjava.api.command.CopyArchiveFromContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateImageCmd;
+import com.github.dockerjava.api.command.CreateNetworkCmd;
 import com.github.dockerjava.api.command.ExecCreateCmd;
 import com.github.dockerjava.api.command.InfoCmd;
 import com.github.dockerjava.api.command.InspectContainerCmd;
@@ -36,6 +38,7 @@ import com.github.dockerjava.api.command.PauseContainerCmd;
 import com.github.dockerjava.api.command.PingCmd;
 import com.github.dockerjava.api.command.RemoveContainerCmd;
 import com.github.dockerjava.api.command.RemoveImageCmd;
+import com.github.dockerjava.api.command.RemoveNetworkCmd;
 import com.github.dockerjava.api.command.RestartContainerCmd;
 import com.github.dockerjava.api.command.SearchImagesCmd;
 import com.github.dockerjava.api.command.StartContainerCmd;
@@ -49,6 +52,7 @@ import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.ExposedPorts;
 import com.github.dockerjava.api.model.HostConfig;
+import com.github.dockerjava.api.model.Mount;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.Volumes;
 import com.github.dockerjava.api.model.VolumesFrom;
@@ -62,10 +66,12 @@ import org.apache.camel.component.docker.DockerEndpoint;
 import org.apache.camel.component.docker.DockerHelper;
 import org.apache.camel.component.docker.DockerOperation;
 import org.apache.camel.component.docker.exception.DockerException;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
 
 /**
  * The Docker producer.
@@ -164,6 +170,15 @@ public class DockerProducer extends DefaultProducer {
             break;
         case UNPAUSE_CONTAINER:
             result = executeUnpauseContainerRequest(client, message).exec();
+            break;
+        case CREATE_NETWORK:
+            result = executeCreateNetworkRequest(client, message).exec();
+            break;
+        case REMOVE_NETWORK:
+            result = executeRemoveNetworkRequest(client, message).exec();
+            break;
+        case CONNECT_NETWORK:
+            result = executeConnectToNetworkRequest(client, message).exec();
             break;
         case EXEC_CREATE:
             result = executeExecCreateRequest(client, message).exec();
@@ -587,7 +602,7 @@ public class DockerProducer extends DefaultProducer {
      * @param message
      * @return
      */
-    private CopyFileFromContainerCmd executeCopyFileContainerRequest(DockerClient client, Message message) {
+    private CopyArchiveFromContainerCmd executeCopyFileContainerRequest(DockerClient client, Message message) {
 
         LOGGER.debug("Executing Docker Copy File/Folder Container Request");
 
@@ -598,15 +613,15 @@ public class DockerProducer extends DefaultProducer {
             throw new IllegalArgumentException("Container ID and Resource must be specified");
         }
 
-        CopyFileFromContainerCmd copyFileContainerCmd = client.copyFileFromContainerCmd(containerId, resource);
+        CopyArchiveFromContainerCmd copyArchiveFromContainerCmd = client.copyArchiveFromContainerCmd(containerId, resource);
 
         String hostPath = DockerHelper.getProperty(DockerConstants.DOCKER_HOST_PATH, configuration, message, String.class);
 
         if (hostPath != null) {
-            copyFileContainerCmd.withHostPath(hostPath);
+            copyArchiveFromContainerCmd.withHostPath(hostPath);
         }
 
-        return copyFileContainerCmd;
+        return copyArchiveFromContainerCmd;
 
     }
 
@@ -626,6 +641,7 @@ public class DockerProducer extends DefaultProducer {
         ObjectHelper.notNull(image, "Image must be specified");
 
         CreateContainerCmd createContainerCmd = client.createContainerCmd(image);
+        createContainerCmd.withHostConfig(newHostConfig());
 
         Boolean attachStdErr = DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_ERR, configuration, message, Boolean.class);
 
@@ -648,13 +664,13 @@ public class DockerProducer extends DefaultProducer {
         Capability[] capAdd = DockerHelper.getArrayProperty(DockerConstants.DOCKER_CAP_ADD, message, Capability.class);
 
         if (capAdd != null) {
-            createContainerCmd.withCapAdd(capAdd);
+            createContainerCmd.getHostConfig().withCapAdd(capAdd);
         }
 
         Capability[] capDrop = DockerHelper.getArrayProperty(DockerConstants.DOCKER_CAP_DROP, message, Capability.class);
 
         if (capDrop != null) {
-            createContainerCmd.withCapDrop(capDrop);
+            createContainerCmd.getHostConfig().withCapDrop(capDrop);
         }
 
         String[] cmd = DockerHelper.parseDelimitedStringHeader(DockerConstants.DOCKER_CMD, message);
@@ -666,7 +682,7 @@ public class DockerProducer extends DefaultProducer {
         Integer cpuShares = DockerHelper.getProperty(DockerConstants.DOCKER_CPU_SHARES, configuration, message, Integer.class);
 
         if (cpuShares != null) {
-            createContainerCmd.withCpuShares(cpuShares);
+            createContainerCmd.getHostConfig().withCpuShares(cpuShares);
         }
 
         Boolean disableNetwork = DockerHelper.getProperty(DockerConstants.DOCKER_DISABLE_NETWORK, configuration, message, Boolean.class);
@@ -678,7 +694,7 @@ public class DockerProducer extends DefaultProducer {
         String[] dns = DockerHelper.parseDelimitedStringHeader(DockerConstants.DOCKER_DNS, message);
 
         if (dns != null) {
-            createContainerCmd.withDns(dns);
+            createContainerCmd.getHostConfig().withDns(dns);
         }
 
         String domainName = DockerHelper.getProperty(DockerConstants.DOCKER_DOMAIN_NAME, configuration, message, String.class);
@@ -720,13 +736,13 @@ public class DockerProducer extends DefaultProducer {
         Long memoryLimit = DockerHelper.getProperty(DockerConstants.DOCKER_MEMORY_LIMIT, configuration, message, Long.class);
 
         if (memoryLimit != null) {
-            createContainerCmd.withMemory(memoryLimit);
+            createContainerCmd.getHostConfig().withMemory(memoryLimit);
         }
 
         Long memorySwap = DockerHelper.getProperty(DockerConstants.DOCKER_MEMORY_SWAP, configuration, message, Long.class);
 
         if (memorySwap != null) {
-            createContainerCmd.withMemorySwap(memorySwap);
+            createContainerCmd.getHostConfig().withMemorySwap(memorySwap);
         }
 
         String name = DockerHelper.getProperty(DockerConstants.DOCKER_NAME, configuration, message, String.class);
@@ -774,7 +790,7 @@ public class DockerProducer extends DefaultProducer {
         VolumesFrom[] volumesFrom = DockerHelper.getArrayProperty(DockerConstants.DOCKER_VOLUMES_FROM, message, VolumesFrom.class);
 
         if (volumesFrom != null) {
-            createContainerCmd.withVolumesFrom(volumesFrom);
+            createContainerCmd.getHostConfig().withVolumesFrom(volumesFrom);
         }
 
         String workingDir = DockerHelper.getProperty(DockerConstants.DOCKER_WORKING_DIR, configuration, message, String.class);
@@ -1019,7 +1035,7 @@ public class DockerProducer extends DefaultProducer {
      */
     private StopContainerCmd executeStopContainerRequest(DockerClient client, Message message) {
 
-        LOGGER.debug("Executing Docker Kill Container Request");
+        LOGGER.debug("Executing Docker Stop Container Request");
 
         String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
@@ -1080,6 +1096,71 @@ public class DockerProducer extends DefaultProducer {
         UnpauseContainerCmd unpauseContainerCmd = client.unpauseContainerCmd(containerId);
 
         return unpauseContainerCmd;
+
+    }
+
+    /**
+     * Produces a network create request
+     *
+     * @param client
+     * @param message
+     * @return
+     */
+    private CreateNetworkCmd executeCreateNetworkRequest(DockerClient client, Message message) {
+
+        LOGGER.debug("Executing Docker Network Create Request");
+
+        String networkName = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
+
+        ObjectHelper.notNull(networkName, "Network Name must be specified");
+
+        CreateNetworkCmd createNetworkCmd = client.createNetworkCmd().withName(networkName);
+
+        return createNetworkCmd;
+
+    }
+
+    /**
+    * Produces a network remove request
+    *
+    * @param client
+    * @param message
+    * @return
+    */
+    private RemoveNetworkCmd executeRemoveNetworkRequest(DockerClient client, Message message) {
+
+        LOGGER.debug("Executing Docker Network Remove Request");
+
+        String networkId = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
+
+        ObjectHelper.notNull(networkId, "Network ID must be specified");
+
+        RemoveNetworkCmd removeNetworkCmd = client.removeNetworkCmd(networkId);
+
+        return removeNetworkCmd;
+
+    }
+
+    /**
+     * Produces a network connect request
+     *
+     * @param client
+     * @param message
+     * @return
+     */
+    private ConnectToNetworkCmd executeConnectToNetworkRequest(DockerClient client, Message message) {
+
+        LOGGER.debug("Executing Docker Network Connect Request");
+
+        String networkId = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
+        String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+
+        ObjectHelper.notNull(networkId, "Network ID must be specified");
+        ObjectHelper.notNull(containerId, "Container ID must be specified");
+
+        ConnectToNetworkCmd connectToNetworkCmd = client.connectToNetworkCmd().withNetworkId(networkId).withContainerId(containerId);
+
+        return connectToNetworkCmd;
 
     }
 

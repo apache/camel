@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,11 @@
 package org.apache.camel.component.xquery;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.net.URL;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -44,7 +44,9 @@ import org.w3c.dom.Node;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
+import net.sf.saxon.om.AllElementsSpaceStrippingRule;
 import net.sf.saxon.om.DocumentInfo;
+import net.sf.saxon.om.IgnorableSpaceStrippingRule;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
@@ -52,9 +54,13 @@ import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.BooleanValue;
+import net.sf.saxon.value.DoubleValue;
+import net.sf.saxon.value.FloatValue;
+import net.sf.saxon.value.Int64Value;
+import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.ObjectValue;
-import net.sf.saxon.value.Whitespace;
-import org.apache.camel.BytesSource;
+import net.sf.saxon.value.StringValue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -62,13 +68,12 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExpressionException;
-import org.apache.camel.StringSource;
-import org.apache.camel.component.bean.BeanInvocation;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.xml.BytesSource;
+import org.apache.camel.util.xml.StringSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,17 +81,15 @@ import org.slf4j.LoggerFactory;
  * Creates an XQuery builder.
  * <p/>
  * The XQueryExpression, as you would expect, can be executed repeatedly, as often as you want, in the same or in different threads.
- *
- * @version 
  */
 public abstract class XQueryBuilder implements Expression, Predicate, NamespaceAware, Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XQueryBuilder.class);
     private Configuration configuration;
-    private Map<String, Object> configurationProperties = new HashMap<String, Object>();
+    private Map<String, Object> configurationProperties = new HashMap<>();
     private XQueryExpression expression;
     private StaticQueryContext staticQueryContext;
-    private Map<String, Object> parameters = new HashMap<String, Object>();
-    private Map<String, String> namespacePrefixes = new HashMap<String, String>();
+    private Map<String, Object> parameters = new HashMap<>();
+    private Map<String, String> namespacePrefixes = new HashMap<>();
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
     private Class<?> resultType;
@@ -251,7 +254,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return new XQueryBuilder() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
                 throws XPathException, IOException {
-                return staticQueryContext.compileQuery(reader);
+                try {
+                    return staticQueryContext.compileQuery(reader);
+                } finally {
+                    IOHelper.close(reader);
+                }
             }
         };
     }
@@ -259,26 +266,27 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     public static XQueryBuilder xquery(final InputStream in, final String characterSet) {
         return new XQueryBuilder() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
-                throws XPathException, IOException {
-                return staticQueryContext.compileQuery(in, characterSet);
+                throws XPathException {
+                try {
+                    return staticQueryContext.compileQuery(in, characterSet);
+                } finally {
+                    IOHelper.close(in);
+                }
             }
         };
     }
 
-    public static XQueryBuilder xquery(File file, String characterSet) throws IOException {
-        return xquery(IOConverter.toInputStream(file), characterSet);
-    }
-
-    public static XQueryBuilder xquery(URL url, String characterSet) throws IOException {
-        return xquery(IOConverter.toInputStream(url), characterSet);
-    }
-
-    public static XQueryBuilder xquery(File file) throws IOException {
-        return xquery(IOConverter.toInputStream(file), ObjectHelper.getDefaultCharacterSet());
-    }
-
-    public static XQueryBuilder xquery(URL url) throws IOException {
-        return xquery(IOConverter.toInputStream(url), ObjectHelper.getDefaultCharacterSet());
+    public static XQueryBuilder xquery(final InputStream in) {
+        return new XQueryBuilder() {
+            protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
+                throws XPathException {
+                try {
+                    return staticQueryContext.compileQuery(in, ObjectHelper.getDefaultCharacterSet());
+                } finally {
+                    IOHelper.close(in);
+                }
+            }
+        };
     }
 
     // Fluent API
@@ -518,18 +526,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                     source = getSource(exchange, body);
                 }
 
-                // special for bean invocation
-                if (source == null) {
-                    if (body instanceof BeanInvocation) {
-                        // if its a null bean invocation then handle that
-                        BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, body);
-                        if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
-                            // its a null argument from the bean invocation so use null as answer
-                            source = null;
-                        }
-                    }
-                }
-
                 if (source == null) {
                     // indicate it was not possible to convert to a Source type
                     throw new NoTypeConversionAvailableException(body, Source.class);
@@ -623,19 +619,19 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         addParameters(dynamicQueryContext, exchange.getIn().getHeaders(), "in.headers.");
         dynamicQueryContext.setParameter(
             StructuredQName.fromClarkName("in.body"),
-            new ObjectValue(exchange.getIn().getBody())
+            getAsParameter(exchange.getIn().getBody())
         );
 
         addParameters(dynamicQueryContext, getParameters());
 
         dynamicQueryContext.setParameter(
             StructuredQName.fromClarkName("exchange"),
-            new ObjectValue(exchange)
+            getAsParameter(exchange)
         );
         if (exchange.hasOut() && exchange.getPattern().isOutCapable()) {
             dynamicQueryContext.setParameter(
                 StructuredQName.fromClarkName("out.body"),
-                new ObjectValue(exchange.getOut().getBody())
+                getAsParameter(exchange.getOut().getBody())
             );
 
             addParameters(dynamicQueryContext, exchange.getOut().getHeaders(), "out.headers.");
@@ -653,9 +649,28 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             if (entry.getValue() != null) {
                 dynamicQueryContext.setParameter(
                         StructuredQName.fromClarkName(parameterPrefix + entry.getKey()),
-                        new ObjectValue(entry.getValue())
+                        getAsParameter(entry.getValue())
                 );
             }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Item getAsParameter(Object value) {
+        if (value instanceof String) {
+            return new StringValue((CharSequence) value);
+        } else if (value instanceof Boolean) {
+            return BooleanValue.get((Boolean) value);
+        } else if (value instanceof Long) {
+            return Int64Value.makeIntegerValue((Long) value);
+        } else if (value instanceof BigInteger) {
+            return IntegerValue.makeIntegerValue((BigInteger) value);
+        } else if (value instanceof Double) {
+            return DoubleValue.makeDoubleValue((double) value);
+        } else if (value instanceof Float) {
+            return FloatValue.makeFloatValue((float) value);
+        } else {
+            return new ObjectValue(value);
         }
     }
 
@@ -672,7 +687,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             LOG.debug("Initializing XQueryBuilder {}", this);
             if (configuration == null) {
                 configuration = new Configuration();
-                configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
+                configuration.getParseOptions().setSpaceStrippingRule(isStripsAllWhiteSpace() ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance());
                 LOG.debug("Created new Configuration {}", configuration);
             } else {
                 LOG.debug("Using existing Configuration {}", configuration);
@@ -692,8 +707,13 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             for (Map.Entry<String, String> entry : entries) {
                 String prefix = entry.getKey();
                 String uri = entry.getValue();
-                staticQueryContext.declareNamespace(prefix, uri);
-                staticQueryContext.setInheritNamespaces(true);
+                // skip invalid prefix or uri according to XQuery spec
+                boolean invalid = "xml".equals(prefix) || "xmlns".equals(prefix);
+                if (!invalid) {
+                    LOG.debug("Declaring namespace [prefix: {}, uri: {}]", prefix, uri);
+                    staticQueryContext.declareNamespace(prefix, uri);
+                    staticQueryContext.setInheritNamespaces(true);
+                }
             }
             expression = createQueryExpression(staticQueryContext);
 

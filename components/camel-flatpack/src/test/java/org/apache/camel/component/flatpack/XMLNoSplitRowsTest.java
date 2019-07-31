@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,15 +34,13 @@ import static org.junit.Assert.fail;
 
 /**
  * Unit test to verify that splitRows=false option works with XML Conversion.
- *
- * @version
  */
 @ContextConfiguration
 public class XMLNoSplitRowsTest extends AbstractJUnit4SpringContextTests {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLNoSplitRowsTest.class);
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
     protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,8 +27,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.linkedin.api.LinkedInException;
 import org.apache.camel.component.linkedin.api.model.Error;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
-import org.apache.camel.util.component.AbstractApiConsumer;
-import org.apache.camel.util.component.ApiMethod;
+import org.apache.camel.support.component.AbstractApiConsumer;
+import org.apache.camel.support.component.ApiMethod;
 
 /**
  * The LinkedIn consumer.

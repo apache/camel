@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,7 @@ import org.apache.tika.exception.TikaException;
 public class TikaConfiguration {
 
     @UriPath(description = "Operation type")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private TikaOperation operation;
     @UriParam(defaultValue = "xml")
     private TikaParseOutputFormat tikaParseOutputFormat = TikaParseOutputFormat.xml;

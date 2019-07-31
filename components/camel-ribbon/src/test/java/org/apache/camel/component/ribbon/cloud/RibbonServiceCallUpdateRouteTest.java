@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,26 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.ribbon.cloud;
-
-import java.util.Collections;
-
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.junit.Before;
 import org.junit.Test;
 
 public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
     private final StaticServiceDiscovery servers = new StaticServiceDiscovery();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         // setup a static ribbon server list with these 2 servers to start with
-        servers.addServer("localhost", 9090);
-        servers.addServer("localhost", 9091);
+        servers.addServer("myService@localhost:9090");
+        servers.addServer("myService@localhost:9091");
 
         super.setUp();
     }
@@ -52,8 +51,8 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // stop the first server and remove it from the known list of servers
-        context.stopRoute("9090");
-        servers.removeServer("localhost", 9090);
+        context.getRouteController().stopRoute("9090");
+        servers.removeServer(s -> ObjectHelper.equal("localhost", s.getHost()) && 9090 == s.getPort());
 
         // call the other active server
         String out3 = template.requestBody("direct:start", null, String.class);
@@ -76,15 +75,16 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 RibbonConfiguration configuration = new RibbonConfiguration();
                 // lets update quick so we do not have to sleep so much in the tests
-                configuration.setClientConfig(Collections.singletonMap("ServerListRefreshInterval", "250"));
-                RibbonLoadBalancer loadBalancer = new RibbonLoadBalancer(configuration);
+                configuration.addProperty("ServerListRefreshInterval", "250");
+                RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
 
                 from("direct:start")
                     .serviceCall()
                         .name("myService")
+                        .component("http")
                         .loadBalancer(loadBalancer)
                         .serviceDiscovery(servers)
-                        .end()
+                    .end()
                     .to("mock:result");
                 from("jetty:http://localhost:9090").routeId("9090")
                     .to("mock:9090")

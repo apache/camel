@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,18 +19,21 @@ package org.apache.camel.component.hazelcast.list;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 
 /**
- * Hazelcast List {@link Endpoint} implementation.
+ * The hazelcast-list component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed list.
  */
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-list", title = "Hazelcast List", syntax = "hazelcast-list:cacheName", label = "cache,datagrid")
 public class HazelcastListEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastListEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
         super(hazelcastInstance, endpointUri, component, cacheName);
+        setCommand(HazelcastCommand.list);
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.example.cdi.metrics;
 
 import java.util.concurrent.TimeUnit;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
@@ -32,9 +33,8 @@ import io.astefanutti.metrics.cdi.MetricsConfiguration;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.metrics.MetricsConstants;
-import org.apache.camel.management.event.CamelContextStartedEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 
 /**
  * This example registers the following meters into the Metrics registry:
@@ -54,7 +54,7 @@ import org.apache.camel.management.event.CamelContextStartedEvent;
  */
 class Application {
 
-    @ContextName("camel-example-metrics-cdi")
+    @ApplicationScoped
     static class MetricsRoute extends RouteBuilder {
 
         @Override

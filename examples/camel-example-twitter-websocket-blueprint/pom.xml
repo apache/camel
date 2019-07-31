@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,42 +8,43 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>examples</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel.example</groupId>
+        <artifactId>examples</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-example-twitter-websocket-blueprint</artifactId>
-  <name>Camel :: Example :: Twitter WebSocket using OSGi Blueprint</name>
-  <description>An example that pushes new tweets to a web page using web-socket</description>
-  <packaging>jar</packaging>
+    <artifactId>camel-example-twitter-websocket-blueprint</artifactId>
+    <name>Camel :: Example :: Twitter WebSocket :: OSGi</name>
+    <description>An example that pushes new tweets to a web page using web-socket</description>
+    <packaging>jar</packaging>
 
-  <properties>
-    <category>Social</category>
+    <properties>
+        <category>Social</category>
 
-    <camel.osgi.import.pkg>
-      *
-    </camel.osgi.import.pkg>
-    <camel.osgi.export.pkg>
-      *
-    </camel.osgi.export.pkg>
-  </properties>
+        <camel.osgi.import.pkg>
+            *
+        </camel.osgi.import.pkg>
+        <camel.osgi.export.pkg>
+            *
+        </camel.osgi.export.pkg>
+    </properties>
 
-  <!-- there are no maven dependencies needed as the Camel application has no Java code,
-       and its all defined in the src/main/resources/OSGI-INF/blueprint/camel-twitter.xml file -->
+    <!-- there are no maven dependencies needed as the Camel application has no Java code,
+         and its all defined in the src/main/resources/OSGI-INF/blueprint/camel-twitter.xml file -->
 
 </project>

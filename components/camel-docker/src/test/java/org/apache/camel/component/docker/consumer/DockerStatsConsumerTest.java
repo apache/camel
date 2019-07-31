@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,17 +27,16 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Consumer test for statistics on Docker Platform
  */
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
+@RunWith(MockitoJUnitRunner.class)
 public class DockerStatsConsumerTest extends CamelTestSupport {
     private String host = "localhost";
     private Integer port = 2375;
@@ -52,7 +51,7 @@ public class DockerStatsConsumerTest extends CamelTestSupport {
     private DockerClient dockerClient;
 
     public void setupMocks() {
-        Mockito.when(dockerClient.statsCmd(Matchers.anyString())).thenReturn(statsCmd);
+        Mockito.when(dockerClient.statsCmd(anyString())).thenReturn(statsCmd);
     }
 
     @Test

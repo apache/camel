@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,14 +18,11 @@ package org.apache.camel.component.mongodb3.converters;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -47,14 +44,10 @@ import org.bson.json.JsonReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Converter
+@Converter(loader = true)
 public final class MongoDbBasicConverters {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbBasicConverters.class);
-
-    // Jackson's ObjectMapper is thread-safe, so no need to create a pool nor
-    // synchronize access to it
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private MongoDbBasicConverters() {
     }
@@ -71,23 +64,16 @@ public final class MongoDbBasicConverters {
 
     @Converter
     public static Document fromStringToDocument(String s) {
-        Document answer = null;
-        try {
-            answer = Document.parse(s);
-        } catch (Exception e) {
-            LOG.warn("String -> Document conversion selected, but the following exception occurred. Returning null.", e);
-        }
-
-        return answer;
+        return Document.parse(s);
     }
 
     @Converter
-    public static Document fromFileToDocument(File f, Exchange exchange) throws FileNotFoundException {
+    public static Document fromFileToDocument(File f, Exchange exchange) throws Exception {
         return fromInputStreamToDocument(new FileInputStream(f), exchange);
     }
 
     @Converter
-    public static Document fromInputStreamToDocument(InputStream is, Exchange exchange) {
+    public static Document fromInputStreamToDocument(InputStream is, Exchange exchange) throws Exception {
         Document answer = null;
         try {
             byte[] input = IOConverter.toBytes(is);
@@ -100,8 +86,6 @@ public final class MongoDbBasicConverters {
             } else {
                 answer = Document.parse(IOConverter.toString(input, exchange));
             }
-        } catch (Exception e) {
-            LOG.warn("String -> Document conversion selected, but the following exception occurred. Returning null.", e);
         } finally {
             // we need to make sure to close the input stream
             IOHelper.close(is, "InputStream", LOG);
@@ -122,23 +106,10 @@ public final class MongoDbBasicConverters {
             } else if (!Character.isWhitespace(input[i])) {
                 return true;
             }
+
+            i++;
         }
         return true;
-    }
-
-    @Converter
-    public static Document fromAnyObjectToDocument(Object value) {
-        Document answer;
-        try {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> m = OBJECT_MAPPER.convertValue(value, Map.class);
-            answer = new Document(m);
-        } catch (Exception e) {
-            LOG.warn("Conversion has fallen back to generic Object -> Document, but unable to convert type {}. Returning null. {}", value.getClass().getCanonicalName(),
-                     e.getClass().getCanonicalName() + ": " + e.getMessage());
-            return null;
-        }
-        return answer;
     }
 
     @Converter

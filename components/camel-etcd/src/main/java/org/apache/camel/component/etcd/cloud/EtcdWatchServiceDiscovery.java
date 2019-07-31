@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.etcd.cloud;
 
 import java.util.List;
@@ -53,7 +52,7 @@ public class EtcdWatchServiceDiscovery
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         List<ServiceDefinition> servers = serversRef.get();
         if (servers == null) {
             serversRef.set(getServices());
@@ -76,7 +75,7 @@ public class EtcdWatchServiceDiscovery
         }
 
         Throwable throwable = promise.getException();
-        if (throwable != null && throwable instanceof EtcdException) {
+        if (throwable instanceof EtcdException) {
             EtcdException exception = (EtcdException) throwable;
             if (EtcdHelper.isOutdatedIndexException(exception)) {
                 LOGGER.debug("Outdated index, key={}, cause={}", servicePath, exception.etcdCause);

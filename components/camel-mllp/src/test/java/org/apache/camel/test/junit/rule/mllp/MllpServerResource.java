@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,22 +30,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.camel.component.mllp.MllpProtocolConstants;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_BLOCK;
-import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_DATA;
-import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_STREAM;
-import static org.apache.camel.component.mllp.MllpEndpoint.MESSAGE_TERMINATOR;
-import static org.apache.camel.component.mllp.MllpEndpoint.SEGMENT_DELIMITER;
-import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
-
 /**
  * MLLP Test Server packaged as a JUnit Rule
  *
- * The server can be configured to simulate a large number
- * of error conditions.
+ * The server can be configured to simulate a large number of error conditions.
  */
 public class MllpServerResource extends ExternalResource {
     Logger log = LoggerFactory.getLogger(this.getClass());
@@ -86,7 +79,7 @@ public class MllpServerResource extends ExternalResource {
 
     String acknowledgementString;
 
-    ServerSocketThread serverSocketThread;
+    AcceptSocketThread acceptSocketThread;
 
     public MllpServerResource() {
     }
@@ -139,24 +132,26 @@ public class MllpServerResource extends ExternalResource {
         this.active = true;
 
         if (null != listenHost) {
-            serverSocketThread = new ServerSocketThread(listenHost, listenPort, backlog);
+            acceptSocketThread = new AcceptSocketThread(listenHost, listenPort, backlog);
         } else {
-            serverSocketThread = new ServerSocketThread(listenPort, backlog);
-            listenHost = serverSocketThread.getListenHost();
+            acceptSocketThread = new AcceptSocketThread(listenPort, backlog);
+            listenHost = acceptSocketThread.getListenHost();
         }
 
         if (0 >= listenPort) {
-            listenPort = serverSocketThread.listenPort;
+            listenPort = acceptSocketThread.listenPort;
         }
 
-        serverSocketThread.setDaemon(true);
-        serverSocketThread.start();
+        acceptSocketThread.setDaemon(true);
+        acceptSocketThread.start();
     }
 
     public void shutdown() {
         this.active = false;
-        serverSocketThread.shutdown();
-        serverSocketThread = null;
+        if (acceptSocketThread != null) {
+            acceptSocketThread.shutdown();
+            acceptSocketThread = null;
+        }
     }
 
 
@@ -173,7 +168,7 @@ public class MllpServerResource extends ExternalResource {
     }
 
     public void interrupt() {
-        serverSocketThread.interrupt();
+        acceptSocketThread.interrupt();
     }
 
     public int getDelayBeforeStartOfBlock() {
@@ -303,21 +298,15 @@ public class MllpServerResource extends ExternalResource {
     }
 
     /**
-     * Set the modulus used to determine when to include the bMLLP_ENVELOPE_START_OF_BLOCK
-     * portion of the MLLP Envelope.
+     * Set the modulus used to determine when to include the START_OF_BLOCK portion of the MLLP Envelope.
      * <p/>
-     * If this value is less than or equal to 0, the bMLLP_ENVELOPE_START_OF_BLOCK portion
-     * of the MLLP Envelope will always be included.
-     * If the value is 1, the bMLLP_ENVELOPE_START_OF_BLOCK portion of the MLLP Envelope will
-     * never be included.
-     * Otherwise, if the result of evaluating message count % value is greater
-     * than 0, the bMLLP_ENVELOPE_START_OF_BLOCK portion of the MLLP Envelope will not be
-     * included.  Effectively leaving the bMLLP_ENVELOPE_START_OF_BLOCK portion of the MLLP Envelope
-     * out of every n-th message.
+     * If this value is less than or equal to 0, the START_OF_BLOCK portion of the MLLP Envelope will always be
+     * included. If the value is 1, the START_OF_BLOCK portion of the MLLP Envelope will never be
+     * included. Otherwise, if the result of evaluating message availableByteCount % value is greater than 0, the
+     * START_OF_BLOCK portion of the MLLP Envelope will not be included.  Effectively leaving the
+     * START_OF_BLOCK portion of the MLLP Envelope out of every n-th message.
      *
-     * @param excludeStartOfBlockModulus exclude on every n-th message
-     *                                   0 => Never excluded
-     *                                   1 => Always excluded
+     * @param excludeStartOfBlockModulus exclude on every n-th message 0 => Never excluded 1 => Always excluded
      */
     public void setExcludeStartOfBlockModulus(int excludeStartOfBlockModulus) {
         if (0 > excludeStartOfBlockModulus) {
@@ -523,23 +512,29 @@ public class MllpServerResource extends ExternalResource {
         this.acknowledgementString = acknowledgementString;
     }
 
-    public ServerSocketThread getServerSocketThread() {
-        return serverSocketThread;
+    public AcceptSocketThread getAcceptSocketThread() {
+        return acceptSocketThread;
     }
 
-    public void setServerSocketThread(ServerSocketThread serverSocketThread) {
-        this.serverSocketThread = serverSocketThread;
+    public void setAcceptSocketThread(AcceptSocketThread acceptSocketThread) {
+        this.acceptSocketThread = acceptSocketThread;
+    }
+
+    public void checkClientConnections() {
+        if (acceptSocketThread != null) {
+            acceptSocketThread.checkClientConnections();
+        }
     }
 
     public void closeClientConnections() {
-        if (serverSocketThread != null) {
-            serverSocketThread.closeClientConnections();
+        if (acceptSocketThread != null) {
+            acceptSocketThread.closeClientConnections();
         }
     }
 
     public void resetClientConnections() {
-        if (serverSocketThread != null) {
-            serverSocketThread.resetClientConnections();
+        if (acceptSocketThread != null) {
+            acceptSocketThread.resetClientConnections();
         }
     }
 
@@ -548,13 +543,14 @@ public class MllpServerResource extends ExternalResource {
      *
      * @param hl7Message          HL7 message that is being acknowledged
      * @param acknowledgementCode AA, AE or AR
+     *
      * @return a HL7 Application Acknowledgement
      */
     protected String generateAcknowledgement(String hl7Message, String acknowledgementCode) {
         final String defaulNackMessage =
-                "MSH|^~\\&|||||||NACK||P|2.2" + SEGMENT_DELIMITER
-                        + "MSA|AR|" + SEGMENT_DELIMITER
-                        + MESSAGE_TERMINATOR;
+            "MSH|^~\\&|||||||NACK||P|2.2" + MllpProtocolConstants.SEGMENT_DELIMITER
+                + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
+                + MllpProtocolConstants.MESSAGE_TERMINATOR;
 
         if (hl7Message == null) {
             log.error("Invalid HL7 message for parsing operation. Please check your inputs");
@@ -565,9 +561,7 @@ public class MllpServerResource extends ExternalResource {
             throw new IllegalArgumentException("Acknowledgemnt Code must be AA, AE or AR: " + acknowledgementCode);
         }
 
-        String messageControlId;
-
-        int endOfMshSegment = hl7Message.indexOf(SEGMENT_DELIMITER);
+        int endOfMshSegment = hl7Message.indexOf(MllpProtocolConstants.SEGMENT_DELIMITER);
         if (-1 != endOfMshSegment) {
             String mshSegment = hl7Message.substring(0, endOfMshSegment);
             char fieldSeparator = mshSegment.charAt(3);
@@ -579,16 +573,16 @@ public class MllpServerResource extends ExternalResource {
                 StringBuilder ackBuilder = new StringBuilder(mshSegment.length() + 25);
                 // Build the MSH Segment
                 ackBuilder
-                        .append(mshFields[0]).append(fieldSeparator)
-                        .append(mshFields[1]).append(fieldSeparator)
-                        .append(mshFields[4]).append(fieldSeparator)
-                        .append(mshFields[5]).append(fieldSeparator)
-                        .append(mshFields[2]).append(fieldSeparator)
-                        .append(mshFields[3]).append(fieldSeparator)
-                        .append(mshFields[6]).append(fieldSeparator)
-                        .append(mshFields[7]).append(fieldSeparator)
-                        .append("ACK")
-                        .append(mshFields[8].substring(3));
+                    .append(mshFields[0]).append(fieldSeparator)
+                    .append(mshFields[1]).append(fieldSeparator)
+                    .append(mshFields[4]).append(fieldSeparator)
+                    .append(mshFields[5]).append(fieldSeparator)
+                    .append(mshFields[2]).append(fieldSeparator)
+                    .append(mshFields[3]).append(fieldSeparator)
+                    .append(mshFields[6]).append(fieldSeparator)
+                    .append(mshFields[7]).append(fieldSeparator)
+                    .append("ACK")
+                    .append(mshFields[8].substring(3));
                 for (int i = 9; i < mshFields.length; ++i) {
                     ackBuilder.append(fieldSeparator).append(mshFields[i]);
                 }
@@ -601,17 +595,17 @@ public class MllpServerResource extends ExternalResource {
                         --emptyFieldIndex;
                     }
                 }
-                ackBuilder.append(SEGMENT_DELIMITER);
+                ackBuilder.append(MllpProtocolConstants.SEGMENT_DELIMITER);
 
                 // Build the MSA Segment
                 ackBuilder
-                        .append("MSA").append(fieldSeparator)
-                        .append(acknowledgementCode).append(fieldSeparator)
-                        .append(mshFields[9]).append(fieldSeparator)
-                        .append(SEGMENT_DELIMITER);
+                    .append("MSA").append(fieldSeparator)
+                    .append(acknowledgementCode).append(fieldSeparator)
+                    .append(mshFields[9]).append(fieldSeparator)
+                    .append(MllpProtocolConstants.SEGMENT_DELIMITER);
 
                 // Terminate the message
-                ackBuilder.append(MESSAGE_TERMINATOR);
+                ackBuilder.append(MllpProtocolConstants.MESSAGE_TERMINATOR);
 
                 return ackBuilder.toString();
             }
@@ -625,13 +619,10 @@ public class MllpServerResource extends ExternalResource {
     /**
      * Nested class to accept TCP connections
      */
-    class ServerSocketThread extends Thread {
-        Logger log = LoggerFactory.getLogger(this.getClass());
-
+    class AcceptSocketThread extends Thread {
         final long bindTimeout = 30000;
         final long bindRetryDelay = 1000;
-
-
+        Logger log = LoggerFactory.getLogger(this.getClass());
         ServerSocket serverSocket;
         List<ClientSocketThread> clientSocketThreads = new LinkedList<>();
 
@@ -643,22 +634,22 @@ public class MllpServerResource extends ExternalResource {
 
         boolean raiseExceptionOnAcceptTimeout;
 
-        ServerSocketThread() throws IOException {
+        AcceptSocketThread() throws IOException {
             bind();
         }
 
-        ServerSocketThread(int listenPort) throws IOException {
+        AcceptSocketThread(int listenPort) throws IOException {
             this.listenPort = listenPort;
             bind();
         }
 
-        ServerSocketThread(int listenPort, int backlog) throws IOException {
+        AcceptSocketThread(int listenPort, int backlog) throws IOException {
             this.listenPort = listenPort;
             this.backlog = backlog;
             bind();
         }
 
-        ServerSocketThread(String listenHost, int listenPort, int backlog) throws IOException {
+        AcceptSocketThread(String listenHost, int listenPort, int backlog) throws IOException {
             this.listenHost = listenHost;
             this.listenPort = listenPort;
             this.backlog = backlog;
@@ -691,7 +682,7 @@ public class MllpServerResource extends ExternalResource {
                     serverSocket.bind(listenAddress, backlog);
                 } catch (BindException bindEx) {
                     if (System.currentTimeMillis() < startTicks + bindTimeout) {
-                        log.warn("Unable to bind to {} - retrying in {} milliseconds", listenAddress.toString(), bindRetryDelay);
+                        log.warn("Unable to bind to {} - retrying in {} milliseconds", listenAddress, bindRetryDelay);
                         try {
                             Thread.sleep(bindRetryDelay);
                         } catch (InterruptedException interruptedEx) {
@@ -708,6 +699,14 @@ public class MllpServerResource extends ExternalResource {
 
 
             log.info("Opened TCP Listener on port {}", serverSocket.getLocalPort());
+        }
+
+        void checkClientConnections() {
+            if (clientSocketThreads != null) {
+                for (ClientSocketThread clientSocketThread : clientSocketThreads) {
+                    clientSocketThread.checkConnection();
+                }
+            }
         }
 
         void closeClientConnections() {
@@ -731,7 +730,7 @@ public class MllpServerResource extends ExternalResource {
          */
         public void run() {
             log.info("Accepting connections on port {}", serverSocket.getLocalPort());
-            this.setName("MllpServerResource$ServerSocketThread - " + serverSocket.getLocalSocketAddress().toString());
+            this.setName("MllpServerResource$AcceptSocketThread - " + serverSocket.getLocalSocketAddress().toString());
             while (!isInterrupted() && serverSocket.isBound() && !serverSocket.isClosed()) {
                 Socket clientSocket = null;
                 try {
@@ -815,9 +814,10 @@ public class MllpServerResource extends ExternalResource {
 
         /**
          * Enable/disable a timeout while waiting for a TCP connection, in milliseconds. With this option set to a
-         * non-zero timeout, the ServerSocketThread will block for only this amount of time while waiting for a tcp
-         * connection. If the timeout expires and raiseExceptionOnAcceptTimeout is set to true, a MllpJUnitResourceTimeoutException
-         * is raised. Otherwise, the ServerSocketThread will continue to poll for new TCP connections.
+         * non-zero timeout, the AcceptSocketThread will block for only this amount of time while
+         * waiting for a tcp connection. If the timeout expires and raiseExceptionOnAcceptTimeout is set
+         * to true, a MllpJUnitResourceTimeoutException is raised. Otherwise, the AcceptSocketThread will
+         * continue to poll for new TCP connections.
          *
          * @param acceptTimeout the timeout in milliseconds - zero is interpreted as an infinite timeout
          */
@@ -830,13 +830,16 @@ public class MllpServerResource extends ExternalResource {
         }
 
         /**
-         * Enable/Disable the generation of MllpJUnitResourceTimeoutException if the ServerSocket.accept()
-         * call raises a SocketTimeoutException.
+         * Enable/Disable the generation of MllpJUnitResourceTimeoutException if the ServerSocket.accept() call raises a SocketTimeoutException.
          *
          * @param raiseExceptionOnAcceptTimeout true enables exceptions on an accept timeout
          */
         public void setRaiseExceptionOnAcceptTimeout(boolean raiseExceptionOnAcceptTimeout) {
             this.raiseExceptionOnAcceptTimeout = raiseExceptionOnAcceptTimeout;
+        }
+
+        public void close() {
+
         }
 
         @Override
@@ -855,25 +858,12 @@ public class MllpServerResource extends ExternalResource {
             super.interrupt();
         }
 
-        public void close() {
-
-        }
     }
 
     /**
      * Nested class that handles the established TCP connections
      */
     class ClientSocketThread extends Thread {
-        /*
-        final char cCARRIAGE_RETURN = 13;
-        final char cLINE_FEED = 10;
-        final char cSEGMENT_DELIMITER = cCARRIAGE_RETURN;
-        final String sMESSAGE_TERMINATOR = "" + cCARRIAGE_RETURN + cLINE_FEED;
-        final byte bMLLP_ENVELOPE_START_OF_BLOCK = 0x0b;
-        final byte bMLLP_ENVELOPE_END_OF_BLOCK = 0x1c;
-        final byte bMLLP_ENVELOPE_END_OF_DATA = 0x0d;
-        final int iEND_OF_TRANSMISSION = -1;
-        */
         Logger log = LoggerFactory.getLogger(this.getClass());
 
         Socket clientSocket;
@@ -882,6 +872,28 @@ public class MllpServerResource extends ExternalResource {
 
         ClientSocketThread(Socket clientSocket) {
             this.clientSocket = clientSocket;
+        }
+
+        void checkConnection() {
+            if (clientSocket == null) {
+                throw new MllpJUnitResourceException("checkConnection failed - clientSocket is null");
+            }
+
+            if (clientSocket.isClosed()) {
+                throw new MllpJUnitResourceException("checkConnection failed - clientSocket is closed");
+            }
+
+            if (!clientSocket.isConnected()) {
+                throw new MllpJUnitResourceException("checkConnection failed - clientSocket is not connected");
+            }
+
+            try {
+                if (MllpProtocolConstants.END_OF_STREAM == clientSocket.getInputStream().read()) {
+                    throw new MllpJUnitResourceException("checkConnection failed - read() returned END_OF_STREAM");
+                }
+            } catch (IOException ioEx) {
+                throw new MllpJUnitResourceException("checkConnection failed - read() failure", ioEx);
+            }
         }
 
         void closeConnection() {
@@ -914,10 +926,108 @@ public class MllpServerResource extends ExternalResource {
         }
 
         /**
+         * Read a MLLP-Framed message
+         *
+         * @param anInputStream source input stream
+         *
+         * @return the MLLP payload
+         *
+         * @throws IOException when the underlying Java Socket calls raise these exceptions
+         */
+        public String getMessage(InputStream anInputStream) throws IOException {
+            try {
+                boolean waitingForStartOfBlock = true;
+                while (waitingForStartOfBlock) {
+                    int potentialStartCharacter = anInputStream.read();
+                    switch (potentialStartCharacter) {
+                    case MllpProtocolConstants.END_OF_STREAM:
+                        return null;
+                    case MllpProtocolConstants.START_OF_BLOCK:
+                        waitingForStartOfBlock = false;
+                        break;
+                    default:
+                        log.warn("START_OF_BLOCK character has not been received.  Out-of-band character received: {}", potentialStartCharacter);
+                    }
+                }
+            } catch (SocketException socketEx) {
+                if (clientSocket != null) {
+                    if (clientSocket.isClosed()) {
+                        log.info("Client socket closed while waiting for START_OF_BLOCK");
+                    } else if (clientSocket.isConnected()) {
+                        log.info("SocketException encountered while waiting for START_OF_BLOCK");
+                        resetConnection();
+                    } else {
+                        log.error("Unable to read from socket stream when expected START_OF_BLOCK - resetting connection ", socketEx);
+                        resetConnection();
+                    }
+                }
+                return null;
+            }
+
+            boolean endOfMessage = false;
+            StringBuilder parsedMessage = new StringBuilder(anInputStream.available() + 10);
+            while (!endOfMessage) {
+                int characterReceived = anInputStream.read();
+
+                switch (characterReceived) {
+                case MllpProtocolConstants.START_OF_BLOCK:
+                    log.error("Received START_OF_BLOCK before END_OF_DATA.  Discarding data: {}", parsedMessage);
+                    return null;
+                case MllpProtocolConstants.END_OF_STREAM:
+                    log.error("Received END_OF_STREAM without END_OF_DATA.  Discarding data: {}", parsedMessage);
+                    return null;
+                case MllpProtocolConstants.END_OF_BLOCK:
+                    characterReceived = anInputStream.read();
+                    if (characterReceived != MllpProtocolConstants.END_OF_DATA) {
+                        log.error("Received {} when expecting END_OF_DATA after END_OF_BLOCK.  Discarding Hl7TestMessageGenerator: {}",
+                            characterReceived, parsedMessage.toString());
+                        return null;
+                    }
+                    endOfMessage = true;
+                    break;
+                default:
+                    parsedMessage.append((char) characterReceived);
+                }
+
+            }
+
+            return parsedMessage.toString();
+        }
+
+        /**
+         * Generates a HL7 Application Accept Acknowledgement
+         *
+         * @param hl7Message HL7 message that is being acknowledged
+         *
+         * @return a HL7 Application Accept Acknowlegdement
+         */
+        private String generateAcknowledgementMessage(String hl7Message) {
+            return generateAcknowledgementMessage(hl7Message, "AA");
+        }
+
+        /**
+         * Generates a HL7 Application Acknowledgement
+         *
+         * @param hl7Message          HL7 message that is being acknowledged
+         * @param acknowledgementCode AA, AE or AR
+         *
+         * @return a HL7 Application Acknowledgement
+         */
+        private String generateAcknowledgementMessage(String hl7Message, String acknowledgementCode) {
+            return generateAcknowledgement(hl7Message, acknowledgementCode);
+        }
+
+        private void uncheckedSleep(long milliseconds) {
+            try {
+                Thread.sleep(milliseconds);
+            } catch (InterruptedException e) {
+                log.warn("Sleep interrupted", e);
+            }
+
+        }        /**
          * Receives HL7 messages and replies with HL7 Acknowledgements.
          *
-         * The exact behaviour of this method is very configurable, allowing simulation of varies
-         * error conditions.
+         * The exact behaviour of this method is very configurable, allowing simulation of varies error conditions.
          */
         public void run() {
             String localAddress = clientSocket.getLocalAddress().toString();
@@ -987,14 +1097,14 @@ public class MllpServerResource extends ExternalResource {
                         BufferedOutputStream outstream = new BufferedOutputStream(clientSocket.getOutputStream());
 
                         if (sendOutOfBandData(messageCounter)) {
-                            byte[] outOfBandDataBytes = "Out Of Band Hl7MessageGenerator".getBytes();
+                            byte[] outOfBandDataBytes = "Out Of Band Hl7TestMessageGenerator".getBytes();
                             outstream.write(outOfBandDataBytes, 0, outOfBandDataBytes.length);
                         }
 
                         if (excludeStartOfBlock(messageCounter)) {
                             log.warn("NOT sending START_OF_BLOCK");
                         } else {
-                            outstream.write(START_OF_BLOCK);
+                            outstream.write(MllpProtocolConstants.START_OF_BLOCK);
                             if (delayBeforeStartOfBlock > 0) {
                                 uncheckedSleep(delayBeforeStartOfBlock);
                                 uncheckedFlush(outstream);
@@ -1026,9 +1136,9 @@ public class MllpServerResource extends ExternalResource {
                         }
 
                         if (excludeEndOfBlock(messageCounter)) {
-                            log.warn("NOT sending bMLLP_ENVELOPE_END_OF_BLOCK");
+                            log.warn("NOT sending END_OF_BLOCK");
                         } else {
-                            outstream.write(END_OF_BLOCK);
+                            outstream.write(MllpProtocolConstants.END_OF_BLOCK);
                             if (delayAfterEndOfBlock > 0) {
                                 uncheckedFlush(outstream);
                                 uncheckedSleep(delayAfterEndOfBlock);
@@ -1036,9 +1146,9 @@ public class MllpServerResource extends ExternalResource {
                         }
 
                         if (excludeEndOfData(messageCounter)) {
-                            log.warn("NOT sending bMLLP_ENVELOPE_END_OF_DATA");
+                            log.warn("NOT sending END_OF_DATA");
                         } else {
-                            outstream.write(END_OF_DATA);
+                            outstream.write(MllpProtocolConstants.END_OF_DATA);
                         }
 
                         log.debug("Writing Acknowledgement\n\t{}", acknowledgmentMessage.replace('\r', '\n'));
@@ -1072,93 +1182,16 @@ public class MllpServerResource extends ExternalResource {
             log.debug("Client Connection Finished: {} -> {}", localAddress, remoteAddress);
         }
 
-        /**
-         * Read a MLLP-Framed message
-         *
-         * @param anInputStream source input stream
-         * @return the MLLP payload
-         * @throws IOException when the underlying Java Socket calls raise these exceptions
-         */
-        public String getMessage(InputStream anInputStream) throws IOException {
+        private void uncheckedFlush(OutputStream outputStream) {
             try {
-                boolean waitingForStartOfBlock = true;
-                while (waitingForStartOfBlock) {
-                    int potentialStartCharacter = anInputStream.read();
-                    switch (potentialStartCharacter) {
-                    case END_OF_STREAM:
-                        return null;
-                    case START_OF_BLOCK:
-                        waitingForStartOfBlock = false;
-                        break;
-                    default:
-                        log.warn("START_OF_BLOCK character has not been received.  Out-of-band character received: {}", potentialStartCharacter);
-                    }
-                }
-            } catch (SocketException socketEx) {
-                if (clientSocket != null) {
-                    if (clientSocket.isClosed()) {
-                        log.info("Client socket closed while waiting for MLLP_ENVELOPE_START_OF_BLOCK");
-                    } else if (clientSocket.isConnected()) {
-                        log.info("SocketException encountered while waiting for MLLP_ENVELOPE_START_OF_BLOCK");
-                        resetConnection();
-                    } else {
-                        log.error("Unable to read from socket stream when expected bMLLP_ENVELOPE_START_OF_BLOCK - resetting connection ", socketEx);
-                        resetConnection();
-                    }
-                }
-                return null;
+                outputStream.flush();
+            } catch (IOException e) {
+                log.warn("Ignoring exception caught while flushing output stream", e);
             }
-
-            boolean endOfMessage = false;
-            StringBuilder parsedMessage = new StringBuilder(anInputStream.available() + 10);
-            while (!endOfMessage) {
-                int characterReceived = anInputStream.read();
-
-                switch (characterReceived) {
-                case START_OF_BLOCK:
-                    log.error("Received START_OF_BLOCK before END_OF_DATA.  Discarding data: {}", parsedMessage.toString());
-                    return null;
-                case END_OF_STREAM:
-                    log.error("Received END_OF_STREAM without END_OF_DATA.  Discarding data: {}", parsedMessage.toString());
-                    return null;
-                case END_OF_BLOCK:
-                    characterReceived = anInputStream.read();
-                    if (characterReceived != END_OF_DATA) {
-                        log.error("Received {} when expecting END_OF_DATA after END_OF_BLOCK.  Discarding Hl7MessageGenerator: {}",
-                                characterReceived, parsedMessage.toString());
-                        return null;
-                    }
-                    endOfMessage = true;
-                    break;
-                default:
-                    parsedMessage.append((char) characterReceived);
-                }
-
-            }
-
-            return parsedMessage.toString();
         }
 
-        /**
-         * Generates a HL7 Application Accept Acknowledgement
-         *
-         * @param hl7Message HL7 message that is being acknowledged
-         * @return a HL7 Application Accept Acknowlegdement
-         */
-        private String generateAcknowledgementMessage(String hl7Message) {
-            return generateAcknowledgementMessage(hl7Message, "AA");
-        }
 
-        /**
-         * Generates a HL7 Application Acknowledgement
-         *
-         * @param hl7Message          HL7 message that is being acknowledged
-         * @param acknowledgementCode AA, AE or AR
-         * @return a HL7 Application Acknowledgement
-         */
-        private String generateAcknowledgementMessage(String hl7Message, String acknowledgementCode) {
-            return generateAcknowledgement(hl7Message, acknowledgementCode);
-        }
+
 
         @Override
         public void interrupt() {
@@ -1172,22 +1205,6 @@ public class MllpServerResource extends ExternalResource {
             super.interrupt();
         }
 
-        private void uncheckedSleep(long milliseconds) {
-            try {
-                Thread.sleep(milliseconds);
-            } catch (InterruptedException e) {
-                log.warn("Sleep interrupted", e);
-            }
-
-        }
-
-        private void uncheckedFlush(OutputStream outputStream) {
-            try {
-                outputStream.flush();
-            } catch (IOException e) {
-                log.warn("Ignoring exception caught while flushing output stream", e);
-            }
-        }
     }
 
 }

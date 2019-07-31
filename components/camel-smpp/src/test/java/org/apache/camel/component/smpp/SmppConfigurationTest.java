@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,9 +18,9 @@ package org.apache.camel.component.smpp;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.HashMap;
 import java.util.Map;
+
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
@@ -35,16 +35,15 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConfiguration</code>
- * 
- * @version 
  */
 public class SmppConfigurationTest {
-    
+
     private SmppConfiguration configuration;
 
     @Before
     public void setUp() {
         configuration = new SmppConfiguration();
+        configuration.setServiceType("CMT");
     }
 
     @Test
@@ -55,7 +54,7 @@ public class SmppConfigurationTest {
         assertEquals("", configuration.getAddressRange());
         assertEquals(new Integer(5000), configuration.getEnquireLinkTimer());
         assertEquals("localhost", configuration.getHost());
-        assertEquals("password", configuration.getPassword());
+        assertEquals(null, configuration.getPassword());
         assertEquals(new Integer(2775), configuration.getPort());
         assertEquals(0x01, configuration.getPriorityFlag());
         assertEquals(0x00, configuration.getProtocolId());
@@ -66,7 +65,7 @@ public class SmppConfigurationTest {
         assertEquals(0x00, configuration.getSourceAddrNpi());
         assertEquals(0x00, configuration.getSourceAddrTon());
         assertEquals("smppclient", configuration.getSystemId());
-        assertEquals("cp", configuration.getSystemType());
+        assertEquals("", configuration.getSystemType());
         assertEquals(new Integer(10000), configuration.getTransactionTimer());
         assertEquals("ISO-8859-1", configuration.getEncoding());
         assertEquals(0x00, configuration.getNumberingPlanIndicator());
@@ -80,11 +79,11 @@ public class SmppConfigurationTest {
         assertEquals(null, configuration.getHttpProxyPassword());
         assertEquals(null, configuration.getSessionStateListener());
     }
-    
+
     @Test
     public void getterShouldReturnTheSetValues() {
         setNoneDefaultValues(configuration);
-        
+
         assertEquals("1919", configuration.getDestAddr());
         assertEquals(0x08, configuration.getDestAddrNpi());
         assertEquals(0x02, configuration.getDestAddrTon());
@@ -120,17 +119,30 @@ public class SmppConfigurationTest {
     @Test
     public void getterShouldReturnTheConfigureValuesFromURI() throws URISyntaxException {
         configuration.configureFromURI(new URI("smpp://client@127.0.0.1:2776"));
-        
+
         assertEquals("127.0.0.1", configuration.getHost());
         assertEquals(new Integer(2776), configuration.getPort());
         assertEquals("client", configuration.getSystemId());
     }
-    
+
+    @Test
+    public void hostPortAndSystemIdFromComponentConfigurationShouldBeUsedIfAbsentFromUri() throws URISyntaxException {
+        configuration.setHost("host");
+        configuration.setPort(123);
+        configuration.setSystemId("systemId");
+
+        configuration.configureFromURI(new URI("smpp://?password=pw"));
+
+        assertEquals("host", configuration.getHost());
+        assertEquals(new Integer(123), configuration.getPort());
+        assertEquals("systemId", configuration.getSystemId());
+    }
+
     @Test
     public void cloneShouldReturnAnEqualInstance() {
         setNoneDefaultValues(configuration);
         SmppConfiguration config = configuration.copy();
-        
+
         assertEquals(config.getDestAddr(), configuration.getDestAddr());
         assertEquals(config.getDestAddrNpi(), configuration.getDestAddrNpi());
         assertEquals(config.getDestAddrTon(), configuration.getDestAddrTon());
@@ -162,17 +174,17 @@ public class SmppConfigurationTest {
         assertEquals(config.getSessionStateListener(), configuration.getSessionStateListener());
         assertEquals(config.getProxyHeaders(), configuration.getProxyHeaders());
     }
-    
+
     @Test
     public void toStringShouldListAllInstanceVariables() {
         String expected = "SmppConfiguration["
                 + "usingSSL=false, "
                 + "enquireLinkTimer=5000, "
                 + "host=localhost, "
-                + "password=password, "
+                + "password=null, "
                 + "port=2775, "
                 + "systemId=smppclient, "
-                + "systemType=cp, "
+                + "systemType=, "
                 + "dataCoding=0, "
                 + "alphabet=0, "
                 + "encoding=ISO-8859-1, "
@@ -238,7 +250,7 @@ public class SmppConfigurationTest {
             public void onStateChange(SessionState arg0, SessionState arg1, Session arg2) {
             }
         });
-        Map<String, String> proxyHeaders = new HashMap<String, String>();
+        Map<String, String> proxyHeaders = new HashMap<>();
         proxyHeaders.put("X-Proxy-Header", "1");
         config.setProxyHeaders(proxyHeaders);
     }

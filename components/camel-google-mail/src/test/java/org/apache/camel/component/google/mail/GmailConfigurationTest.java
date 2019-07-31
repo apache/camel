@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,8 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages}
- * APIs.
+ * Test class for {@link GoogleMailConfiguration}.
  */
 public class GmailConfigurationTest extends AbstractGoogleMailTestSupport {
 

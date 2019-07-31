@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,14 +23,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 
 /**
  * Represents the component that manages {@link FacebookEndpoint}.
  */
-public class FacebookComponent extends UriEndpointComponent {
+@Component("facebook")
+public class FacebookComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private FacebookConfiguration configuration;
@@ -48,7 +51,7 @@ public class FacebookComponent extends UriEndpointComponent {
     }
 
     public FacebookComponent(CamelContext context, FacebookConfiguration configuration) {
-        super(context, FacebookEndpoint.class);
+        super(context);
         this.configuration = configuration;
     }
 
@@ -69,12 +72,12 @@ public class FacebookComponent extends UriEndpointComponent {
     }
 
     private FacebookEndpointConfiguration copyComponentProperties() throws Exception {
-        Map<String, Object> componentProperties = new HashMap<String, Object>();
+        Map<String, Object> componentProperties = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, componentProperties, null, false);
 
         // create endpoint configuration with component properties
         FacebookEndpointConfiguration config = new FacebookEndpointConfiguration();
-        IntrospectionSupport.setProperties(config, componentProperties);
+        PropertyBindingSupport.bindProperties(getCamelContext(), config, componentProperties);
         return config;
     }
 

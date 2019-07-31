@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,13 +22,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultPollingEndpoint;
 import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
@@ -45,13 +43,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     public static final int DEFAULT_SNMP_RETRIES = 2;
     public static final int DEFAULT_SNMP_TIMEOUT = 1500;
 
-    private static final Logger LOG = LoggerFactory.getLogger(SnmpEndpoint.class);
-
     private transient String address;
 
-    @UriPath(description = "Hostname of the SNMP enabled device") @Metadata(required = "true")
+    @UriPath(description = "Hostname of the SNMP enabled device") @Metadata(required = true)
     private String host;
-    @UriPath(description = "Port number of the SNMP enabled device") @Metadata(required = "true")
+    @UriPath(description = "Port number of the SNMP enabled device") @Metadata(required = true)
     private Integer port;
     @UriParam(defaultValue = "udp", enums = "tcp,udp")
     private String protocol = "udp";
@@ -85,6 +81,8 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private String snmpContextEngineId;
     @UriParam(javaType = "java.lang.String")
     private OIDList oids = new OIDList();
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean treeList;
 
     /**
      * creates a snmp endpoint
@@ -111,14 +109,14 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new SnmpProducer(this);
+        if (this.type == SnmpActionType.TRAP) {
+            return new SnmpTrapProducer(this);
+        } else {
+            return new SnmpProducer(this);
+        }
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    /**
+/**
      * creates an exchange for the given message
      *
      * @param pdu the pdu
@@ -126,7 +124,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      */
     public Exchange createExchange(PDU pdu) {
         Exchange exchange = super.createExchange();
-        exchange.setIn(new SnmpMessage(pdu));
+        exchange.setIn(new SnmpMessage(getCamelContext(), pdu));
         return exchange;
     }
 
@@ -139,7 +137,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      */
     public Exchange createExchange(PDU pdu, CommandResponderEvent event) {
         Exchange exchange = super.createExchange();
-        exchange.setIn(new SnmpMessage(pdu, event));
+        exchange.setIn(new SnmpMessage(getCamelContext(), pdu, event));
         return exchange;
     }
 
@@ -278,7 +276,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
 
         // set the address
         String address = String.format("%s:%s/%d", getProtocol(), host, port);
-        LOG.debug("Using snmp address {}", address);
+        log.debug("Using snmp address {}", address);
         setAddress(address);
     }
 
@@ -381,6 +379,18 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      */
     public void setSnmpContextEngineId(String snmpContextEngineId) {
         this.snmpContextEngineId = snmpContextEngineId;
+    }
+
+    public boolean isTreeList() {
+        return treeList;
+    }
+
+    /**
+     * Sets the flag whether the scoped PDU will be displayed as the list
+     * if it has child elements in its tree
+     */
+    public void setTreeList(boolean treeList) {
+        this.treeList = treeList;
     }
 
     @Override

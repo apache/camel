@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import org.xbill.DNS.Record;
 /**
  * A converter for all the DNS objects used by the DNS component.
  */
-@Converter
+@Converter(loader = true)
 public final class DnsConverter {
 
     private DnsConverter() {
@@ -42,7 +42,7 @@ public final class DnsConverter {
 
     @Converter
     public static List<String> toList(Record[] records) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (Record rec : records) {
             list.add(toString(rec));
         }

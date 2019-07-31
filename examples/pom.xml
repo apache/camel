@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,249 +8,293 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
-    <relativePath>../parent</relativePath>
-  </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>examples</artifactId>
-  <name>Camel :: Example</name>
-  <description>Camel Examples</description>
-  <packaging>pom</packaging>
-
-  <modules>
-    <module>camel-example-activemq-tomcat</module>
-    <module>camel-example-aggregate</module>
-    <module>camel-example-bam</module>
-    <module>camel-example-box-osgi</module>
-    <module>camel-example-cafe</module>
-    <module>camel-example-cdi</module>
-    <module>camel-example-cdi-aws-s3</module>
-    <module>camel-example-cdi-cassandraql</module>
-    <module>camel-example-cdi-kubernetes</module>
-    <module>camel-example-cdi-metrics</module>
-    <module>camel-example-cdi-osgi</module>
-    <module>camel-example-cdi-properties</module>
-    <module>camel-example-cdi-rest-servlet</module>
-    <module>camel-example-cdi-test</module>
-    <module>camel-example-cdi-xml</module>
-    <module>camel-example-cxf</module>
-    <module>camel-example-cxf-blueprint</module>
-    <module>camel-example-cxf-osgi</module>
-    <module>camel-example-cxf-proxy</module>
-    <module>camel-example-cxf-tomcat</module>
-    <module>camel-example-console</module>
-    <module>camel-example-etl</module>
-    <module>camel-example-ftp</module>
-    <module>camel-example-guice-jms</module>
-    <module>camel-example-groovy</module>
-    <module>camel-example-hystrix</module>
-    <module>camel-example-java8</module>
-    <module>camel-example-java8-rx</module>
-    <module>camel-example-jdbc</module>
-    <module>camel-example-jmx</module>
-    <module>camel-example-jms-file</module>
-	  <module>camel-example-kafka</module>
-    <module>camel-example-loadbalancing</module>
-    <module>camel-example-loan-broker-cxf</module>
-    <module>camel-example-loan-broker-jms</module>
-    <module>camel-example-management</module>
-    <module>camel-example-mybatis</module>
-    <module>camel-example-netty-http</module>
-    <module>camel-example-opentracing</module>
-    <module>camel-example-osgi-rmi</module>
-    <module>camel-example-pojo-messaging</module>
-    <module>camel-example-reactive-streams</module>
-    <module>camel-example-reload</module>
-    <module>camel-example-reportincident</module>
-    <module>camel-example-reportincident-wssecurity</module>
-    <module>camel-example-restlet-jdbc</module>
-    <module>camel-example-route-throttling</module>
-    <module>camel-example-scala</module>
-    <module>camel-example-servlet-rest-blueprint</module>
-    <module>camel-example-servlet-tomcat</module>
-    <module>camel-example-servlet-tomcat-no-spring</module>
-    <module>camel-example-simplejirabot</module>
-    <module>camel-example-spark-rest</module>
-    <module>camel-example-splunk</module>
-    <module>camel-example-spring</module>
-    <module>camel-example-spring-boot</module>
-    <module>camel-example-spring-boot-live-reload</module>
-    <module>camel-example-spring-boot-metrics</module>
-    <module>camel-example-spring-boot-rest-jpa</module>
-    <module>camel-example-spring-dm</module>
-    <module>camel-example-spring-javaconfig</module>
-    <module>camel-example-spring-jms</module>
-    <module>camel-example-spring-ws</module>
-    <module>camel-example-spring-xquery</module>
-    <module>camel-example-spring-security</module>
-    <module>camel-example-ssh</module>
-    <module>camel-example-ssh-security</module>
-    <module>camel-example-sql</module>
-    <module>camel-example-sql-blueprint</module>
-    <module>camel-example-swagger-cdi</module>
-    <module>camel-example-swagger-osgi</module>
-    <module>camel-example-swagger-xml</module>
-    <module>camel-example-tracer</module>
-    <module>camel-example-transformer-blueprint</module>
-    <module>camel-example-transformer-cdi</module>
-    <module>camel-example-transformer-demo</module>
-    <module>camel-example-twitter-salesforce</module>
-    <module>camel-example-twitter-websocket</module>
-    <module>camel-example-twitter-websocket-blueprint</module>
-    <module>camel-example-widget-gadget-cdi</module>
-    <module>camel-example-widget-gadget-java</module>
-    <module>camel-example-widget-gadget-xml</module>
-    <module>camel-example-zipkin</module>
-  </modules>
-
-  <properties>
-    <!-- for symbolicName in OSGi examples we only want the artifactId, eg camel-example-sql -->
-    <!-- as having org.apache.camel as prefix is not needed and makes the name very long -->
-    <camel.osgi.symbolic.name>${project.artifactId}</camel.osgi.symbolic.name>
-    <skip.starting.camel.context>false</skip.starting.camel.context>
-    <camel.osgi.export.pkg/>
-  </properties>
-
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>resources</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- update readme file -->
-      <plugin>
+    <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>prepare-example</goal>
-            </goals>
-            <phase>process-resources</phase>
-          </execution>
-        </executions>
-      </plugin>
+        <artifactId>camel-parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+        <relativePath>../parent</relativePath>
+    </parent>
 
-      <!-- to validate Camel endpoints: mvn camel:validate -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <failOnError>false</failOnError>
-          <includeTest>true</includeTest>
-          <includeXml>true</includeXml>
-          <ignoreLenientProperties>false</ignoreLenientProperties>
-        </configuration>
-      </plugin>
+    <artifactId>examples</artifactId>
+    <name>Camel :: Example</name>
+    <groupId>org.apache.camel.example</groupId>
+    <description>Camel Examples</description>
+    <packaging>pom</packaging>
 
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkCount>1</forkCount>
-          <reuseForks>false</reuseForks>
-          <systemPropertyVariables>
-            <skipStartingCamelContext>${skip.starting.camel.context}</skipStartingCamelContext>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
-    </plugins>
-    <pluginManagement>
-      <plugins>
-        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <versionRange>[2.3.7,)</versionRange>
-                    <goals>
-                      <goal>cleanVersions</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+    <modules>
+        <module>camel-example-activemq-tomcat</module>
+        <module>camel-example-aggregate</module>
+        <module>camel-example-artemis</module>
+        <module>camel-example-artemis-amqp-blueprint</module>
+        <module>camel-example-artemis-large-messages</module>
+        <module>camel-example-as2</module>
+        <module>camel-example-billboard-aggr</module>
+        <module>camel-example-bigxml-split</module>
+        <module>camel-example-cafe</module>
+        <module>camel-example-cafe-endpointdsl</module>
+        <module>camel-example-cassandra-kubernetes</module>
+        <module>camel-example-cdi</module>
+        <module>camel-example-cdi-aws-s3</module>
+        <module>camel-example-cdi-cassandraql</module>
+        <module>camel-example-fhir</module>
+        <module>camel-example-fhir-auth-tx-spring-boot</module>
+        <module>camel-example-fhir-osgi</module>
+        <module>camel-example-fhir-spring-boot</module>
+        <module>camel-example-cdi-kubernetes</module>
+        <module>camel-example-cdi-metrics</module>
+        <module>camel-example-cdi-properties</module>
+        <module>camel-example-cdi-rest-servlet</module>
+        <module>camel-example-cdi-test</module>
+        <module>camel-example-cdi-xml</module>
+        <module>camel-example-cxf</module>
+        <module>camel-example-cxf-blueprint</module>
+        <module>camel-example-cxf-proxy</module>
+        <module>camel-example-cxf-tomcat</module>
+        <module>camel-example-cxf-ws-security-signature</module>
+        <module>camel-example-console</module>
+        <module>camel-example-ehcache-blueprint</module>
+        <module>camel-example-ftp</module>
+        <module>camel-example-google-pubsub</module>
+        <module>camel-example-grpc-kubernetes</module>
+        <module>camel-example-hazelcast-kubernetes</module>
+        <module>camel-example-hystrix</module>
+        <module>camel-example-java8</module>
+        <module>camel-example-jdbc</module>
+        <module>camel-example-jira</module>
+        <module>camel-example-jmx</module>
+        <module>camel-example-jms-file</module>
+        <module>camel-example-jooq</module>
+        <module>camel-example-kafka</module>
+        <module>camel-example-kafka-offsetrepository</module>
+        <module>camel-example-kotlin</module>
+        <module>camel-example-loadbalancing</module>
+        <module>camel-example-loan-broker-cxf</module>
+        <module>camel-example-loan-broker-jms</module>
+        <module>camel-example-main</module>
+        <module>camel-example-main-artemis</module>
+        <module>camel-example-main-tiny</module>
+        <module>camel-example-management</module>
+        <module>camel-example-micrometer</module>
+        <module>camel-example-mybatis</module>
+        <module>camel-example-netty-custom-correlation</module>
+        <module>camel-example-netty-http</module>
+        <module>camel-example-olingo4-blueprint</module>
+        <module>camel-example-opentracing</module>
+        <module>camel-example-pojo-messaging</module>
+        <module>camel-example-rabbitmq</module>
+        <module>camel-example-reactive-executor-vertx</module>
+        <module>camel-example-reactive-streams</module>
+        <module>camel-example-rest-producer</module>
+        <module>camel-example-rest-swagger</module>
+        <module>camel-example-restlet-jdbc</module>
+        <module>camel-example-route-throttling</module>
+        <module>camel-example-servlet-rest-blueprint</module>
+        <module>camel-example-servlet-tomcat</module>
+        <module>camel-example-spark-rest</module>
+        <module>camel-example-splunk</module>
+        <module>camel-example-spring</module>
+        <module>camel-example-spring-boot</module>
+        <module>camel-example-spring-boot-activemq</module>
+        <module>camel-example-spring-boot-amqp</module>
+        <module>camel-example-spring-boot-clustered-route-controller</module>
+        <module>camel-example-spring-boot-geocoder</module>
+        <module>camel-example-spring-boot-grpc</module>
+        <module>camel-example-spring-boot-health-checks</module>
+        <module>camel-example-spring-boot-infinispan</module>
+        <module>camel-example-spring-boot-master</module>
+        <module>camel-example-spring-boot-metrics</module>
+        <module>camel-example-spring-boot-pojo</module>
+        <module>camel-example-spring-boot-rest-jpa</module>
+        <module>camel-example-spring-boot-rest-swagger</module>
+        <module>camel-example-spring-boot-servicecall</module>
+        <module>camel-example-spring-boot-supervising-route-controller</module>
+        <module>camel-example-spring-boot-xml</module>
+        <module>camel-example-spring-cloud-servicecall</module>
+        <module>camel-example-spring-cloud-serviceregistry</module>
+        <module>camel-example-spring-javaconfig</module>
+        <module>camel-example-spring-jms</module>
+        <module>camel-example-spring-pulsar</module>
+        <module>camel-example-spring-ws</module>
+        <module>camel-example-spring-xquery</module>
+        <module>camel-example-spring-security</module>
+        <module>camel-example-ssh</module>
+        <module>camel-example-ssh-security</module>
+        <module>camel-example-sql-blueprint</module>
+        <module>camel-example-swagger-cdi</module>
+        <module>camel-example-swagger-osgi</module>
+        <module>camel-example-telegram</module>
+        <module>camel-example-transformer-blueprint</module>
+        <module>camel-example-transformer-cdi</module>
+        <module>camel-example-transformer-demo</module>
+        <module>camel-example-twitter-salesforce</module>
+        <module>camel-example-twitter-websocket</module>
+        <module>camel-example-twitter-websocket-blueprint</module>
+        <module>camel-example-validator-spring-boot</module>
+        <module>camel-example-webhook</module>
+        <module>camel-example-widget-gadget-cdi</module>
+        <module>camel-example-widget-gadget-java</module>
+        <module>camel-example-widget-gadget-xml</module>
+        <module>camel-example-zipkin</module>
+    </modules>
 
-  <profiles>
-    <profile>
-      <id>container-test</id>
-      <properties>
-        <skip.starting.camel.context>true</skip.starting.camel.context>
-      </properties>
-    </profile>
-    <!-- 
-      This profile allows you to add a repository to the repo list so that 
-      you can test the examples out against a staged version of the camel distribution 
-    -->
-    <profile>
-      <id>add-remote-repo</id>
-      <activation>
-        <property>
-          <name>remoteRepo</name>
-        </property>
-      </activation>
+    <properties>
+        <!-- for symbolicName in OSGi examples we only want the artifactId, eg camel-example-sql -->
+        <!-- as having org.apache.camel as prefix is not needed and makes the name very long -->
+        <camel.osgi.symbolic.name>${project.artifactId}</camel.osgi.symbolic.name>
+        <skip.starting.camel.context>false</skip.starting.camel.context>
+        <javax.servlet.api.version>4.0.1</javax.servlet.api.version>
+        <camel.osgi.export.pkg/>
+    </properties>
 
-      <repositories>
-        <repository>
-          <id>dynamic.repo</id>
-          <name>Repository Dynamically Added Via the Command Line</name>
-          <url>$remoteRepo</url>
-        </repository>
-      </repositories>
-      <pluginRepositories>
-        <pluginRepository>
-          <id>dynamic.repo</id>
-          <name>Repository Dynamically Added Via the Command Line</name>
-          <url>$remoteRepo</url>
-        </pluginRepository>
-      </pluginRepositories>
+    <dependencyManagement>
+        <dependencies>
+            <!--
+              CAMEL-13084 Fix the spring-boot examples start up error by overriding servlet API version from camel-parent
+              Wqe need to clean it up once camel-parent upgrade the servlet api version.
+            -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${javax.servlet.api.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-    </profile>
-  </profiles>
+    <build>
+        <!--<resources>-->
+        <!--<resource>-->
+        <!--<directory>src/main/resources</directory>-->
+        <!--<filtering>true</filtering>-->
+        <!--</resource>-->
+        <!--</resources>-->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <!-- update readme file -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-example</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- to validate Camel endpoints: mvn camel-report:validate -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-report-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                    <includeTest>true</includeTest>
+                    <includeXml>true</includeXml>
+                    <ignoreLenientProperties>false</ignoreLenientProperties>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <systemPropertyVariables>
+                        <skipStartingCamelContext>${skip.starting.camel.context}</skipStartingCamelContext>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.felix</groupId>
+                                        <artifactId>maven-bundle-plugin</artifactId>
+                                        <versionRange>[2.3.7,)</versionRange>
+                                        <goals>
+                                            <goal>cleanVersions</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>container-test</id>
+            <properties>
+                <skip.starting.camel.context>true</skip.starting.camel.context>
+            </properties>
+        </profile>
+        <!--
+          This profile allows you to add a repository to the repo list so that
+          you can test the examples out against a staged version of the camel distribution
+        -->
+        <profile>
+            <id>add-remote-repo</id>
+            <activation>
+                <property>
+                    <name>remoteRepo</name>
+                </property>
+            </activation>
+
+            <repositories>
+                <repository>
+                    <id>dynamic.repo</id>
+                    <name>Repository Dynamically Added Via the Command Line</name>
+                    <url>$remoteRepo</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>dynamic.repo</id>
+                    <name>Repository Dynamically Added Via the Command Line</name>
+                    <url>$remoteRepo</url>
+                </pluginRepository>
+            </pluginRepositories>
+
+        </profile>
+    </profiles>
 
 </project>

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,10 +21,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class DebugTest extends CamelTestSupport {
 
     // START SNIPPET: e1
@@ -43,6 +41,7 @@ public class DebugTest extends CamelTestSupport {
     }
     // END SNIPPET: e1
 
+    @Test
     public void testDebugger() throws Exception {
         // set mock expectations
         getMockEndpoint("mock:a").expectedMessageCount(1);
@@ -55,6 +54,7 @@ public class DebugTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTwo() throws Exception {
         // set mock expectations
         getMockEndpoint("mock:a").expectedMessageCount(2);

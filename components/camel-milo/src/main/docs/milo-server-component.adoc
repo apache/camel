@@ -1,0 +1,171 @@
+[[milo-server-component]]
+= OPC UA Server Component
+
+*Available as of Camel version 2.19*
+
+The Milo Server component provides an OPC UA server using the
+http://eclipse.org/milo[Eclipse Milo™] implementation.
+
+*Java 8*: This component requires Java 8 at runtime. 
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-milo</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+Messages sent to the endpoint from Camel will be available from the OPC UA server to OPC UA Clients.
+Value write requests from OPC UA Client will trigger messages which are sent into Apache Camel.
+
+
+// component options: START
+The OPC UA Server component supports 21 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *namespaceUri* (common) | The URI of the namespace, defaults to urn:org:apache:camel |  | String
+| *applicationName* (common) | The application name |  | String
+| *applicationUri* (common) | The application URI |  | String
+| *productUri* (common) | The product URI |  | String
+| *bindPort* (common) | The TCP port the server binds to |  | int
+| *strictEndpointUrls Enabled* (common) | Set whether strict endpoint URLs are enforced | false | boolean
+| *serverName* (common) | Server name |  | String
+| *hostname* (common) | Server hostname |  | String
+| *securityPolicies* (common) | Security policies |  | Set
+| *securityPoliciesById* (common) | Security policies by URI or name |  | Collection
+| *userAuthentication Credentials* (common) | Set user password combinations in the form of user1:pwd1,user2:pwd2 Usernames and passwords will be URL decoded |  | String
+| *enableAnonymous Authentication* (common) | Enable anonymous authentication, disabled by default | false | boolean
+| *usernameSecurityPolicy Uri* (common) | Set the UserTokenPolicy used when |  | SecurityPolicy
+| *bindAddresses* (common) | Set the addresses of the local addresses the server should bind to |  | String
+| *buildInfo* (common) | Server build info |  | BuildInfo
+| *serverCertificate* (common) | Server certificate |  | Result
+| *certificateManager* (common) | Server certificate manager |  | CertificateManager
+| *certificateValidator* (common) | Validator for client certificates |  | Supplier
+| *defaultCertificate Validator* (common) | Validator for client certificates using default file based approach |  | File
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+
+
+
+
+
+
+
+
+== URI format
+
+[source,java]
+------------------------
+milo-server:itemId[?options]
+------------------------
+
+== URI options
+
+
+
+// endpoint options: START
+The OPC UA Server endpoint is configured using URI syntax:
+
+----
+milo-server:itemId
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *itemId* | *Required* ID of the item |  | String
+|===
+
+
+=== Query Parameters (6 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-milo-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 22 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.milo-server.application-name* | The application name |  | String
+| *camel.component.milo-server.application-uri* | The application URI |  | String
+| *camel.component.milo-server.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.milo-server.bind-addresses* | Set the addresses of the local addresses the server should bind to |  | String
+| *camel.component.milo-server.bind-port* | The TCP port the server binds to |  | Integer
+| *camel.component.milo-server.build-info* | Server build info. The option is a org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo type. |  | String
+| *camel.component.milo-server.certificate-manager* | Server certificate manager. The option is a org.eclipse.milo.opcua.stack.core.application.CertificateManager type. |  | String
+| *camel.component.milo-server.certificate-validator* | Validator for client certificates. The option is a java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.application.CertificateValidator> type. |  | String
+| *camel.component.milo-server.default-certificate-validator* | Validator for client certificates using default file based approach |  | File
+| *camel.component.milo-server.enable-anonymous-authentication* | Enable anonymous authentication, disabled by default | false | Boolean
+| *camel.component.milo-server.enabled* | Enable milo-server component | true | Boolean
+| *camel.component.milo-server.hostname* | Server hostname |  | String
+| *camel.component.milo-server.namespace-uri* | The URI of the namespace, defaults to urn:org:apache:camel |  | String
+| *camel.component.milo-server.product-uri* | The product URI |  | String
+| *camel.component.milo-server.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.milo-server.security-policies* | Security policies |  | Set
+| *camel.component.milo-server.security-policies-by-id* | Security policies by URI or name |  | Collection
+| *camel.component.milo-server.server-certificate* | Server certificate. The option is a org.apache.camel.component.milo.KeyStoreLoader.Result type. |  | String
+| *camel.component.milo-server.server-name* | Server name |  | String
+| *camel.component.milo-server.strict-endpoint-urls-enabled* | Set whether strict endpoint URLs are enforced | false | Boolean
+| *camel.component.milo-server.user-authentication-credentials* | Set user password combinations in the form of user1:pwd1,user2:pwd2 Usernames and passwords will be URL decoded |  | String
+| *camel.component.milo-server.username-security-policy-uri* | Set the UserTokenPolicy used when |  | SecurityPolicy
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+
+
+== See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

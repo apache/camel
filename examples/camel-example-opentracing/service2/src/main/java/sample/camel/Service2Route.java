@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,14 +17,13 @@
 package sample.camel;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.opentracing.OpenTracingTracer;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Service2Route extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        OpenTracingTracer ottracer = new OpenTracingTracer();
-        ottracer.init(getContext());
 
         from("undertow:http://0.0.0.0:7070/service2").routeId("service2").streamCaching()
                 .log(" Service2 request: ${body}")

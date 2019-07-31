@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,9 +19,9 @@ package org.apache.camel.component.elsql;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Test;
@@ -31,20 +31,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 public class ElSqlComponentTest extends CamelTestSupport {
 
-    private EmbeddedDatabase db;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        // this is the database we create with some initial data for our unit test
-        db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-
-        jndi.bind("dataSource", db);
-
-        return jndi;
-    }
+    @BindToRegistry("dataSource")
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
     @Test
     public void testSimpleBody() throws Exception {
@@ -61,7 +49,8 @@ public class ElSqlComponentTest extends CamelTestSupport {
         // and each row in the list is a Map
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
 
-        // and we should be able the get the project from the map that should be Linux
+        // and we should be able the get the project from the map that should be
+        // Linux
         assertEquals("Linux", row.get("PROJECT"));
     }
 
@@ -79,9 +68,7 @@ public class ElSqlComponentTest extends CamelTestSupport {
                 getContext().getComponent("elsql", ElsqlComponent.class).setDataSource(db);
                 getContext().getComponent("elsql", ElsqlComponent.class).setResourceUri("elsql/projects.elsql");
 
-                from("direct:simple")
-                        .to("elsql:projectsById")
-                        .to("mock:result");
+                from("direct:simple").to("elsql:projectsById").to("mock:result");
             }
         };
     }

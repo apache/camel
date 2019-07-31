@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,16 +31,16 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration
 public class JmsConsumerShutdownTest extends AbstractJUnit4SpringContextTests {
 
-    @Produce(uri = "activemq:start")
+    @Produce("activemq:start")
     protected ProducerTemplate activemq;
 
-    @Produce(uri = "seda:start")
+    @Produce("seda:start")
     protected ProducerTemplate seda;
 
-    @EndpointInject(uri = "mock:end")
+    @EndpointInject("mock:end")
     protected MockEndpoint end;
 
-    @EndpointInject(uri = "mock:exception")
+    @EndpointInject("mock:exception")
     protected MockEndpoint exception;
 
     @Test

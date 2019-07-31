@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,11 +23,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.component.AbstractApiComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.component.AbstractApiComponent;
 
 /**
  * Represents the component that manages {@link GoogleMailEndpoint}.
  */
+@Component("google-mail")
 public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName, GoogleMailConfiguration, GoogleMailApiCollection> {
 
     @Metadata(label = "advanced")
@@ -37,10 +39,12 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
 
     public GoogleMailComponent() {
         super(GoogleMailEndpoint.class, GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
+        registerExtension(new GoogleMailComponentVerifierExtension());
     }
 
     public GoogleMailComponent(CamelContext context) {
         super(context, GoogleMailEndpoint.class, GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
+        registerExtension(new GoogleMailComponentVerifierExtension());
     }
 
     @Override
@@ -51,7 +55,7 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
     public Gmail getClient(GoogleMailConfiguration googleMailConfiguration) {
         if (client == null) {
             client = getClientFactory().makeClient(googleMailConfiguration.getClientId(), googleMailConfiguration.getClientSecret(), 
-                    googleMailConfiguration.getScopes(), googleMailConfiguration.getApplicationName(),
+                    googleMailConfiguration.getApplicationName(),
                     googleMailConfiguration.getRefreshToken(), googleMailConfiguration.getAccessToken());
         }
         return client;

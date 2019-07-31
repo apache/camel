@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -71,19 +71,19 @@ public class Jt400Configuration {
 
     private final AS400ConnectionPool connectionPool;
 
-    @UriPath @Metadata(required = "true", secret = true)
+    @UriPath @Metadata(required = true, secret = true)
     private String userID;
 
-    @UriPath @Metadata(required = "true", secret = true)
+    @UriPath @Metadata(required = true, secret = true)
     private String password;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String systemName;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String objectPath;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private Jt400Type type;
 
     @UriParam
@@ -115,6 +115,9 @@ public class Jt400Configuration {
 
     @UriParam(label = "consumer", defaultValue = "30000")
     private int readTimeout = 30000;
+
+    @UriParam(label = "procedureName")
+    private String procedureName;
 
     public Jt400Configuration(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
         ObjectHelper.notNull(endpointUri, "endpointUri", this);
@@ -313,6 +316,17 @@ public class Jt400Configuration {
      */
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
+    }
+
+    public String getProcedureName() {
+        return procedureName;
+    }
+
+    /**
+     * Procedure name from a service program to call
+     */
+    public void setProcedureName(String procedureName) {
+        this.procedureName = procedureName;
     }
 
     public void setOutputFieldsIdx(String outputFieldsIdx) {

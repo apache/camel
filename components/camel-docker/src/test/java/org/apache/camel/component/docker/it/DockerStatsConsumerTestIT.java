@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,17 +20,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Integration test consuming statistics on Docker Platform
  */
-public class DockerStatsConsumerTestIT extends CamelTestSupport {
+public class DockerStatsConsumerTestIT extends DockerITTestSupport {
 
-    private String host = "192.168.59.103";
-    private String port = "2376";
-    private String containerId = "470b9b823e6c";
+    private static final String CONTAINER_ID = "470b9b823e6c";
 
     @Test
     public void testDocker() throws Exception {
@@ -45,9 +42,9 @@ public class DockerStatsConsumerTestIT extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("docker://stats?host=" + host + "&port=" + port + "&certPath=/Users/cameluser/.docker/boot2docker-vm&secure=true&containerId=" + containerId)
-                        .log("${body}")
-                        .to("mock:result");
+                fromF("docker://stats?containerId=%s", CONTAINER_ID)
+                    .log("${body}")
+                    .to("mock:result");
             }
         };
     }

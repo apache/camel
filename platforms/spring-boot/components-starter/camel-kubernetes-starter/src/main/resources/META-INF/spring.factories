@@ -1,20 +1,54 @@
-#
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+## ---------------------------------------------------------------------------
+## Licensed to the Apache Software Foundation (ASF) under one or more
+## contributor license agreements.  See the NOTICE file distributed with
+## this work for additional information regarding copyright ownership.
+## The ASF licenses this file to You under the Apache License, Version 2.0
+## (the "License"); you may not use this file except in compliance with
+## the License.  You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.kubernetes.springboot.KubernetesComponentAutoConfiguration,\
-org.apache.camel.component.kubernetes.springboot.cloud.KubernetesCloudAutoConfiguration
+org.apache.camel.component.kubernetes.services.springboot.KubernetesServicesComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.namespaces.springboot.KubernetesNamespacesComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.resources_quota.springboot.KubernetesResourcesQuotaComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.nodes.springboot.KubernetesNodesComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.pods.springboot.KubernetesPodsComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.secrets.springboot.KubernetesSecretsComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.springboot.cloud.KubernetesServiceDiscoveryAutoConfiguration,\
+org.apache.camel.component.kubernetes.springboot.cluster.KubernetesClusterServiceAutoConfiguration,\
+org.apache.camel.component.kubernetes.replication_controllers.springboot.KubernetesReplicationControllersComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.persistent_volumes.springboot.KubernetesPersistentVolumesComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.config_maps.springboot.KubernetesConfigMapsComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.persistent_volumes_claims.springboot.KubernetesPersistentVolumesClaimsComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.deployments.springboot.KubernetesDeploymentsComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.service_accounts.springboot.KubernetesServiceAccountsComponentAutoConfiguration,\
+org.apache.camel.component.openshift.builds.springboot.OpenshiftBuildsComponentAutoConfiguration,\
+org.apache.camel.component.openshift.build_configs.springboot.OpenshiftBuildConfigsComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.hpa.springboot.KubernetesHPAComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.job.springboot.KubernetesJobComponentAutoConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

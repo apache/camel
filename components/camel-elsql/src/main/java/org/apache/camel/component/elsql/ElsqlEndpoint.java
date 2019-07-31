@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,6 +26,7 @@ import com.opengamma.elsql.ElSqlConfig;
 import com.opengamma.elsql.SpringSqlParams;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.sql.DefaultSqlEndpoint;
@@ -36,28 +37,23 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 /**
  * The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "elsql", title = "ElSQL", syntax = "elsql:elsqlName:resourceUri", consumerClass = ElsqlConsumer.class,
+@UriEndpoint(firstVersion = "2.16.0", scheme = "elsql", title = "ElSQL", syntax = "elsql:elsqlName:resourceUri",
         label = "database,sql")
 public class ElsqlEndpoint extends DefaultSqlEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ElsqlEndpoint.class);
 
     private ElSql elSql;
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String elsqlName;
     @UriPath
     private String resourceUri;
@@ -82,9 +78,10 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         final SqlProcessingStrategy proStrategy = new ElsqlSqlProcessingStrategy(elSql);
         final SqlPrepareStatementStrategy preStategy = new ElsqlSqlPrepareStatementStrategy();
 
-        final SqlParameterSource param = new EmptySqlParameterSource();
+        final Exchange dummy = createExchange();
+        final SqlParameterSource param = new ElsqlSqlMapSource(dummy, null);
         final String sql = elSql.getSql(elsqlName, new SpringSqlParams(param));
-        LOG.debug("ElsqlConsumer @{} using sql: {}", elsqlName, sql);
+        log.debug("ElsqlConsumer @{} using sql: {}", elsqlName, sql);
 
         final ElsqlConsumer consumer = new ElsqlConsumer(this, processor, namedJdbcTemplate, sql, param, preStategy, proStrategy);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
@@ -110,7 +107,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
-        ObjectHelper.notNull(resourceUri, "resourceUri", this);
+        org.apache.camel.util.ObjectHelper.notNull(resourceUri, "resourceUri", this);
 
         if (elSqlConfig == null && databaseVendor != null) {
             elSqlConfig = databaseVendor.asElSqlConfig();
@@ -120,7 +117,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
         // there can be multiple resources
         // so we have all this lovely code to turn that into an URL[]
-        final List<URL> list = new ArrayList<URL>();
+        final List<URL> list = new ArrayList<>();
         final Iterable it = ObjectHelper.createIterable(resourceUri);
         for (final Object path : it) {
             final URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), path.toString());

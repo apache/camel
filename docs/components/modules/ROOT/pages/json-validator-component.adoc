@@ -1,0 +1,171 @@
+[[json-validator-component]]
+= JSON Schema Validator Component
+
+*Available as of Camel version 2.20*
+
+The JSON Schema Validator component performs bean validation of the message body
+against JSON Schemas v4 draft using the NetworkNT JSON Schema library
+(https://github.com/networknt/json-schema-validator).
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-json-validator</artifactId>
+    <version>x.y.z</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+== URI format
+
+[source]
+----
+json-validator:resourceUri[?options]
+----
+
+
+Where *resourceUri* is some URL to a local resource on the classpath or a 
+full URL to a remote resource or resource on the file system which contains 
+the JSON Schema to validate against.
+ 
+== URI Options
+
+// component options: START
+The JSON Schema Validator component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+
+
+// endpoint options: START
+The JSON Schema Validator endpoint is configured using URI syntax:
+
+----
+json-validator:resourceUri
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
+|===
+
+
+=== Query Parameters (9 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *failOnNullBody* (producer) | Whether to fail if no body exists. | true | boolean
+| *failOnNullHeader* (producer) | Whether to fail if no header exists when validating against a header. | true | boolean
+| *headerName* (producer) | To validate against a header instead of the message body. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *errorHandler* (advanced) | To use a custom ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | JsonValidatorError Handler
+| *schemaLoader* (advanced) | To use a custom schema loader allowing for adding custom format validation. The default implementation will create a schema loader with draft v4 support. |  | JsonSchemaLoader
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-json-validator-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.json-validator.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.json-validator.enabled* | Whether to enable auto configuration of the json-validator component. This is enabled by default. |  | Boolean
+| *camel.component.json-validator.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Example
+
+Assumed we have the following JSON Schema
+
+*myschema.json*
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#", 
+  "definitions": {}, 
+  "id": "my-schema",
+  "properties": {
+    "id": {
+      "default": 1, 
+      "description": "An explanation about the purpose of this instance.", 
+      "id": "/properties/id", 
+      "title": "The id schema", 
+      "type": "integer"
+    }, 
+    "name": {
+      "default": "A green door", 
+      "description": "An explanation about the purpose of this instance.", 
+      "id": "/properties/name", 
+      "title": "The name schema", 
+      "type": "string"
+    }, 
+    "price": {
+      "default": 12.5, 
+      "description": "An explanation about the purpose of this instance.", 
+      "id": "/properties/price", 
+      "title": "The price schema", 
+      "type": "number"
+    }
+  }, 
+  "required": [
+    "name", 
+    "id", 
+    "price"
+  ], 
+  "type": "object"
+}
+----
+
+we can validate incoming JSON with the following Camel route, where `myschema.json` is loaded from the classpath.
+
+[source,java]
+----
+from("direct:start")
+  .to("json-validator:myschema.json")
+  .to("mock:end")
+----

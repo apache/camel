@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -70,7 +70,7 @@ public class JettyClassPathResource extends Resource {
 
     @Override
     public long length() {
-        return 0;
+        return -1;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class JettyClassPathResource extends Resource {
     }
 
     @Override
-    public Resource addPath(String path) throws IOException, MalformedURLException {
+    public Resource addPath(String path) throws IOException {
         return new JettyClassPathResource(resolver, this.path + "/" + path);
     }
 

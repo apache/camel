@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -24,83 +25,92 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 public interface RestClient {
 
     public interface ResponseCallback {
-        void onResponse(InputStream response, SalesforceException exception);
+        void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception);
     }
 
     /**
      * Lists summary information about each API version currently available,
      * including the version, label, and a link to each version's root.
      *
+     * @param headers  additional HTTP headers to send
      * @param callback {@link ResponseCallback} to handle response or exception
      */
-    void getVersions(ResponseCallback callback);
+    void getVersions(Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Lists available resources for the specified API version, including resource name and URI.
      *
+     * @param headers  additional HTTP headers to send
      * @param callback {@link ResponseCallback} to handle response or exception
      */
-    void getResources(ResponseCallback callback);
+    void getResources(Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Lists the available objects and their metadata for your organization's data.
      *
+     * @param headers  additional HTTP headers to send
      * @param callback {@link ResponseCallback} to handle response or exception
      */
-    void getGlobalObjects(ResponseCallback callback);
+    void getGlobalObjects(Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Describes the individual metadata for the specified object.
      *
      * @param sObjectName specified object name
+     * @param headers     additional HTTP headers to send
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void getBasicInfo(String sObjectName, ResponseCallback callback);
+    void getBasicInfo(String sObjectName, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Completely describes the individual metadata at all levels for the specified object.
      *
      * @param sObjectName specified object name
+     * @param headers     additional HTTP headers to send
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void getDescription(String sObjectName, ResponseCallback callback);
+    void getDescription(String sObjectName, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Retrieves a record for the specified object ID.
      *
      * @param sObjectName specified object name
      * @param id          object id
+     * @param headers     additional HTTP headers to send
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void getSObject(String sObjectName, String id, String[] fields, ResponseCallback callback);
+    void getSObject(String sObjectName, String id, String[] fields, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Creates a record for the specified object.
      *
      * @param sObjectName specified object name
+     * @param headers     additional HTTP headers to send
      * @param sObject     request entity
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void createSObject(String sObjectName, InputStream sObject, ResponseCallback callback);
+    void createSObject(String sObjectName, InputStream sObject, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Updates a record for the specified object ID.
      *
      * @param sObjectName specified object name
      * @param id          object id
+     * @param headers     additional HTTP headers to send
      * @param sObject     request entity
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void updateSObject(String sObjectName, String id, InputStream sObject, ResponseCallback callback);
+    void updateSObject(String sObjectName, String id, InputStream sObject, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Deletes a record for the specified object ID.
      *
      * @param sObjectName specified object name
      * @param id          object id
+     * @param headers     additional HTTP headers to send
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void deleteSObject(String sObjectName, String id, ResponseCallback callback);
+    void deleteSObject(String sObjectName, String id, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Retrieves a record for the specified external ID.
@@ -108,9 +118,11 @@ public interface RestClient {
      * @param sObjectName specified object name
      * @param fieldName   external field name
      * @param fieldValue  external field value
+     * @param headers     additional HTTP headers to send
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void getSObjectWithId(String sObjectName, String fieldName, String fieldValue, ResponseCallback callback);
+    void getSObjectWithId(String sObjectName, String fieldName, String fieldValue, Map<String, List<String>> headers,
+        ResponseCallback callback);
 
     /**
      * Creates or updates a record based on the value of a specified external ID field.
@@ -118,11 +130,12 @@ public interface RestClient {
      * @param sObjectName specified object name
      * @param fieldName   external field name
      * @param fieldValue  external field value
+     * @param headers     additional HTTP headers to send
      * @param sObject     input object to insert or update
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void upsertSObject(String sObjectName,
-                       String fieldName, String fieldValue, InputStream sObject, ResponseCallback callback);
+    void upsertSObject(String sObjectName, String fieldName, String fieldValue,
+            Map<String, List<String>> headers, InputStream sObject, ResponseCallback callback);
 
     /**
      * Deletes a record based on the value of a specified external ID field.
@@ -130,57 +143,60 @@ public interface RestClient {
      * @param sObjectName specified object name
      * @param fieldName   external field name
      * @param fieldValue  external field value
+     * @param headers     additional HTTP headers to send
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void deleteSObjectWithId(String sObjectName,
-                             String fieldName, String fieldValue, ResponseCallback callback);
+    void deleteSObjectWithId(String sObjectName, String fieldName, String fieldValue, Map<String, List<String>> headers,
+        ResponseCallback callback);
 
 
     /**
      * Retrieves the specified blob field from an individual record.
+     *
+     * @param sObjectName   specified object name
+     * @param id            identifier of the object
+     * @param blobFieldName name of the field holding the blob
+     * @param headers       additional HTTP headers to send
+     * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void getBlobField(String sObjectName, String id, String blobFieldName, ResponseCallback callback);
-
-/*
-    TODO
-    SObject User Password
-    /vXX.X/sobjects/User/user id/password
-    /vXX.X/sobjects/SelfServiceUser/self service user id/password
-
-    These methods set, reset, or get information about a user password.
-*/
+    void getBlobField(String sObjectName, String id, String blobFieldName, Map<String, List<String>> headers,
+        ResponseCallback callback);
 
     /**
      * Executes the specified SOQL query.
      *
      * @param soqlQuery SOQL query
+     * @param headers   additional HTTP headers to send
      * @param callback  {@link ResponseCallback} to handle response or exception
      */
-    void query(String soqlQuery, ResponseCallback callback);
+    void query(String soqlQuery, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Get SOQL query results using nextRecordsUrl.
      *
      * @param nextRecordsUrl URL for next records to fetch, returned by query()
+     * @param headers        additional HTTP headers to send
      * @param callback       {@link ResponseCallback} to handle response or exception
      */
-    void queryMore(String nextRecordsUrl, ResponseCallback callback);
+    void queryMore(String nextRecordsUrl, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Executes the specified SOQL query including deleted records.
      *
      * @param soqlQuery SOQL query
+     * @param headers   additional HTTP headers to send
      * @param callback  {@link ResponseCallback} to handle response or exception
      */
-    void queryAll(String soqlQuery, ResponseCallback callback);
+    void queryAll(String soqlQuery, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Executes the specified SOSL search.
      *
      * @param soslQuery SOSL query
+     * @param headers   additional HTTP headers to send
      * @param callback  {@link ResponseCallback} to handle response or exception
      */
-    void search(String soslQuery, ResponseCallback callback);
+    void search(String soslQuery, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Executes a user defined APEX REST API call.
@@ -189,10 +205,11 @@ public interface RestClient {
      * @param apexUrl       APEX api url.
      * @param queryParams   optional query parameters for GET methods, may be empty.
      * @param requestDto    optional input DTO for POST, etc. may be null.
+     * @param headers       additional HTTP headers to send
      * @param callback      {@link ResponseCallback} to handle response or exception
      */
     void apexCall(String httpMethod, String apexUrl, Map<String, Object> queryParams, InputStream requestDto,
-                  ResponseCallback callback);
+        Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Fetches recently viewed records.
@@ -201,31 +218,35 @@ public interface RestClient {
      *            optional limit that specifies the maximum number of records to be returned. If this parameter is not
      *            specified, the default maximum number of records returned is the maximum number of entries in
      *            RecentlyViewed, which is 200 records per object.
+     * @param headers additional HTTP headers to send
      * @param responseCallback
      *            {@link ResponseCallback} to handle response or exception
      */
-    void recent(Integer limit, ResponseCallback responseCallback);
+    void recent(Integer limit, Map<String, List<String>> headers, ResponseCallback responseCallback);
 
     /**
      * Fetches Organization Limits.
      *
+     * @param headers          additional HTTP headers to send
      * @param responseCallback {@link ResponseCallback} to handle response or exception
      */
-    void limits(ResponseCallback responseCallback);
+    void limits(Map<String, List<String>> headers, ResponseCallback responseCallback);
 
     /**
      * Submits, approves or rejects particular record.
      *
+     * @param headers   additional HTTP headers to send
      * @param callback
      *            {@link ResponseCallback} to handle response or exception
      */
-    void approval(InputStream request, ResponseCallback callback);
+    void approval(InputStream request, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Returns a list of all approval processes.
      *
+     * @param headers   additional HTTP headers to send
      * @param callback
      *            {@link ResponseCallback} to handle response or exception
      */
-    void approvals(ResponseCallback callback);
+    void approvals(Map<String, List<String>> headers, ResponseCallback callback);
 }

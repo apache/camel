@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,23 +18,14 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class FtpProducerMultipleSiteCommandTest extends FtpServerTestSupport {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("site", "help site\nhelp site");
-        return jndi;
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
+    @BindToRegistry("site")
+    private String site = "help site\nhelp site";
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=#site";

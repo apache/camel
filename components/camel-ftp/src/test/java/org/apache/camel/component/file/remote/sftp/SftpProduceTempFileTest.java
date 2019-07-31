@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,15 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.FileUtil;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SftpProduceTempFileTest extends SftpServerTestSupport {
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 
     @Test
     public void testSftpTempFile() throws Exception {

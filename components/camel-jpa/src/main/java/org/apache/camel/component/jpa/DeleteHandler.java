@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,8 +23,6 @@ import org.apache.camel.Exchange;
 /**
  * A strategy for deleting entity beans which have been processed; either by a real delete or by an update of some
  * application specific properties so that the entity bean will not be found in future polling queries.
- *
- * @version 
  */
 public interface DeleteHandler<T> {
 

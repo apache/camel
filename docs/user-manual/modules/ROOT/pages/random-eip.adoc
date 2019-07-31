@@ -1,0 +1,7 @@
+[[random-eip]]
+= Random EIP
+
+
+// eip options: START
+The Random EIP has no options.
+// eip options: END

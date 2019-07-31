@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -111,8 +111,8 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
             public void configure() {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setPort(port);
-//                websocketComponent.setMaxThreads(20);
-//                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(25);
+                websocketComponent.setMinThreads(1);
 
                 from("websocket://echo")
                     .log(">>> Message received from WebSocket Client : ${body}")

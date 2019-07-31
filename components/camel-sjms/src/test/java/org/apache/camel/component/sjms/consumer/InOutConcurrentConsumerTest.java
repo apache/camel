@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,7 +37,7 @@ import org.junit.Test;
  */
 public class InOutConcurrentConsumerTest extends JmsTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint result;
 
     @Test
@@ -51,7 +51,7 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
         result.expectsNoDuplicates(body());
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        final List<Future<String>> futures = new ArrayList<Future<String>>();
+        final List<Future<String>> futures = new ArrayList<>();
         for (int i = 0; i < messages; i++) {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,9 +18,6 @@ package org.apache.camel.component.properties.route;
 
 import org.apache.camel.spring.SpringRouteBuilder;
 
-/**
- * @version 
- */
 public class SpringSimpleRoute extends SpringRouteBuilder {
 
     @Override

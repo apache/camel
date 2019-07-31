@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,36 +25,34 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RedisHashTest extends RedisTestSupport {
-    private RedisTemplate redisTemplate;
-    private HashOperations hashOperations;
+
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
+    @Mock
+    private HashOperations<String, String, String> hashOperations;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        when(redisTemplate.opsForHash()).thenReturn(hashOperations);
+        when(redisTemplate.<String, String>opsForHash()).thenReturn(hashOperations);
 
         JndiRegistry registry = super.createRegistry();
         registry.bind("redisTemplate", redisTemplate);
         return registry;
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        redisTemplate = mock(RedisTemplate.class);
-        hashOperations = mock(HashOperations.class);
-        super.setUp();
     }
 
     @Test
@@ -208,7 +206,7 @@ public class RedisHashTest extends RedisTestSupport {
     public void shouldExecuteHMGET() throws Exception {
         List<String> fields = new ArrayList<>();
         fields.add("field1");
-        when(hashOperations.multiGet(anyString(), anyCollection())).thenReturn(fields);
+        when(hashOperations.multiGet(anyString(), anyList())).thenReturn(fields);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "HMGET",

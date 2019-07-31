@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.google.api.services.drive.model.Comment;
 import com.google.api.services.drive.model.File;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveCommentsApiMethod;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
@@ -45,7 +44,7 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
         String fileId = testFile.getId();
         
         // 2. comment on that file
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is com.google.api.services.drive.model.Comment
@@ -65,7 +64,7 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
         Comment comment2 = result1.getItems().get(0);
         
         // 4. now try and get that comment 
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
@@ -77,7 +76,7 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
         
         // 5. delete the comment
         
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
@@ -87,7 +86,7 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
 
         // 6. ensure the comment is gone
         
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,15 +22,12 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RecipientList;
 
-/**
- * @version 
- */
 public class RoutePojo {
 
-    @Produce(uri = "activemq:topic:audit")
+    @Produce("activemq:topic:audit")
     private ProducerTemplate topic;
 
-    @Consume(uri = "activemq:queue:inbox?concurrentConsumers=10")
+    @Consume("activemq:queue:inbox?concurrentConsumers=10")
     @RecipientList
     public String listen(Exchange exchange) {
         topic.send(exchange);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.sparkrest;
 
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.CamelContext;
+import org.apache.camel.support.DefaultMessage;
 import spark.Request;
 import spark.Response;
 
@@ -31,7 +32,8 @@ public class SparkMessage extends DefaultMessage {
     private final transient Request request;
     private final transient Response response;
 
-    public SparkMessage(Request request, Response response) {
+    public SparkMessage(CamelContext camelContext, Request request, Response response) {
+        super(camelContext);
         this.request = request;
         this.response = response;
     }
@@ -46,6 +48,6 @@ public class SparkMessage extends DefaultMessage {
 
     @Override
     public DefaultMessage newInstance() {
-        return new SparkMessage(request, response);
+        return new SparkMessage(getCamelContext(), request, response);
     }
 }

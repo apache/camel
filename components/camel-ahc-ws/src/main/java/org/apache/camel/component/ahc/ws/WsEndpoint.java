@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,27 +23,25 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ahc.AhcEndpoint;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.asynchttpclient.ws.DefaultWebSocketListener;
 import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * To exchange data with external Websocket servers using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "ahc-ws,ahc-wss", extendsScheme = "ahc,ahc", title = "AHC Websocket,AHC Secure Websocket",
-        syntax = "ahc-ws:httpUri", consumerClass = WsConsumer.class, label = "websocket")
+        syntax = "ahc-ws:httpUri", label = "websocket")
 public class WsEndpoint extends AhcEndpoint {
-    private static final transient Logger LOG = LoggerFactory.getLogger(WsEndpoint.class);
 
-    private final Set<WsConsumer> consumers = new HashSet<WsConsumer>();
+    private final Set<WsConsumer> consumers = new HashSet<>();
     private final WsListener listener = new WsListener();
     private transient WebSocket websocket;
 
@@ -68,7 +66,9 @@ public class WsEndpoint extends AhcEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new WsConsumer(this, processor);
+        WsConsumer consumer = new WsConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     WebSocket getWebSocket() throws Exception {
@@ -120,7 +120,7 @@ public class WsEndpoint extends AhcEndpoint {
     public void connect() throws Exception {
         String uri = getHttpUri().toASCIIString();
 
-        LOG.debug("Connecting to {}", uri);
+        log.debug("Connecting to {}", uri);
         websocket = getClient().prepareGet(uri).execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(listener).build()).get();
@@ -129,11 +129,11 @@ public class WsEndpoint extends AhcEndpoint {
     @Override
     protected void doStop() throws Exception {
         if (websocket != null && websocket.isOpen()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Disconnecting from {}", getHttpUri().toASCIIString());
+            if (log.isDebugEnabled()) {
+                log.debug("Disconnecting from {}", getHttpUri().toASCIIString());
             }
             websocket.removeWebSocketListener(listener);
-            websocket.close();
+            websocket.sendCloseFrame();
             websocket = null;
         }
         super.doStop();
@@ -151,31 +151,35 @@ public class WsEndpoint extends AhcEndpoint {
     void reConnect() throws Exception {
         if (websocket == null || !websocket.isOpen()) {
             String uri = getHttpUri().toASCIIString();
-            LOG.info("Reconnecting websocket: {}", uri);
+            log.info("Reconnecting websocket: {}", uri);
             connect();
         }
     }
 
-    class WsListener extends DefaultWebSocketListener {
+    class WsListener implements WebSocketListener {
 
         @Override
         public void onOpen(WebSocket websocket) {
-            LOG.debug("Websocket opened");
+            log.debug("Websocket opened");
         }
 
         @Override
-        public void onClose(WebSocket websocket) {
-            LOG.debug("websocket closed - reconnecting");
+        public void onClose(WebSocket websocket, int code, String reason) {
+            log.debug("websocket closed - reconnecting");
             try {
                 reConnect();
             } catch (Exception e) {
-                LOG.warn("Error re-connecting to websocket", e);
+                log.warn("Error re-connecting to websocket", e);
+                ExceptionHandler exceptionHandler = getExceptionHandler();
+                if (exceptionHandler != null) {
+                    exceptionHandler.handleException("Error re-connecting to websocket", e);
+                }
             }
         }
 
         @Override
         public void onError(Throwable t) {
-            LOG.debug("websocket on error", t);
+            log.debug("websocket on error", t);
             if (isSendMessageOnError()) {
                 for (WsConsumer consumer : consumers) {
                     consumer.sendMessage(t);
@@ -184,21 +188,25 @@ public class WsEndpoint extends AhcEndpoint {
         }
 
         @Override
-        public void onMessage(byte[] message) {
-            LOG.debug("Received message --> {}", message);
+        public void onBinaryFrame(byte[] message, boolean finalFragment, int rsv) {
+            log.debug("Received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);
             }
         }
 
         @Override
-        public void onMessage(String message) {
-            LOG.debug("Received message --> {}", message);
+        public void onTextFrame(String message, boolean finalFragment, int rsv) {
+            log.debug("Received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);
             }
         }
 
+        public void onPingFrame(byte[] payload) {
+            log.debug("Received ping --> {}", payload);
+            websocket.sendPongFrame(payload);
+        }
     }
 
 }

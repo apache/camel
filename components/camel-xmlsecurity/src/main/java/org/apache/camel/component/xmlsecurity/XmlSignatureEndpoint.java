@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,11 +25,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignatureConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * Used to sign and verify exchanges using the XML signature specification.
@@ -37,9 +37,9 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "xmlsecurity", title = "XML Security", syntax = "xmlsecurity:command:name", producerOnly = true, label = "security,transformation")
 public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private XmlCommand command;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
     // to include both kind of configuration params
     @UriParam
@@ -83,11 +83,6 @@ public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) {
         throw new UnsupportedOperationException("XML Signature endpoints are not meant to be consumed from.");
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     public Object getManagedObject(XmlSignatureEndpoint endpoint) {

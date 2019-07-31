@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,15 +19,15 @@ package org.apache.camel.component.rss;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-import javax.naming.Context;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
@@ -41,16 +41,13 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-
+    protected void bindToRegistry(Registry registry) throws Exception {
         // timestamp from the feed to use as base
         // Fri, 31 Oct 2008 12:02:21 -0500
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-5:00"));
         cal.set(2008, Calendar.OCTOBER, 31, 12, 02, 21);
 
-        answer.bind("myBean", new MyBean(cal.getTime()));
-        return answer;
+        registry.bind("myBean", new MyBean(cal.getTime()));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -72,7 +69,7 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
         public boolean isAfterDate(Exchange ex) {
             SyndFeed feed = ex.getIn().getBody(SyndFeed.class);
             assertTrue(feed.getEntries().size() == 1);
-            SyndEntry entry = (SyndEntry) feed.getEntries().get(0);
+            SyndEntry entry = feed.getEntries().get(0);
             return entry.getPublishedDate().after(time);
         }
     }

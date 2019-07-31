@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,13 +39,13 @@ public class RecipientListCxfTest extends CamelSpringTestSupport {
         System.setProperty("RecipientListCxfTest.port2", Integer.toString(port2));
     }
 
-    @EndpointInject(uri = "mock:reply")
+    @EndpointInject("mock:reply")
     protected MockEndpoint replyEndpoint;
 
-    @EndpointInject(uri = "mock:reply2")
+    @EndpointInject("mock:reply2")
     protected MockEndpoint reply2Endpoint;
 
-    @EndpointInject(uri = "mock:output")
+    @EndpointInject("mock:output")
     protected MockEndpoint outputEndpoint;
 
     @Override
@@ -59,7 +59,7 @@ public class RecipientListCxfTest extends CamelSpringTestSupport {
         reply2Endpoint.expectedBodiesReceived("Bye Claus", "Bye Jonathan", "Bye Freeman");
         outputEndpoint.expectedBodiesReceived("Hello Willem", "Bye Claus", "Bye Jonathan", "Hello Freeman");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(CxfConstants.OPERATION_NAME, "greetMe");
         headers.put("foo", "cxf:bean:serviceEndpoint");
 

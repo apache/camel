@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,9 +21,6 @@ import org.apache.camel.processor.XPathFilterTest;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringXPathFilterTest extends XPathFilterTest {
 
     @Override
@@ -33,7 +30,7 @@ public class SpringXPathFilterTest extends XPathFilterTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/spring/example/xpathFilter.xml"));
+        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/spring/example/xpathFilter.xml"), true);
     }
 
 }

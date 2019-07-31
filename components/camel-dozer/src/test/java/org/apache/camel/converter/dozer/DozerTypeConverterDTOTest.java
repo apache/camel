@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,32 +15,37 @@
  * limitations under the License.
  */
 package org.apache.camel.converter.dozer;
+import java.util.Arrays;
 
+import com.github.dozermapper.core.loader.api.BeanMappingBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.dozer.dto.CustomerDTO;
 import org.apache.camel.converter.dozer.model.Customer;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.dozer.DozerBeanMapper;
-import org.dozer.loader.api.BeanMappingBuilder;
+import org.junit.Before;
 import org.junit.Test;
 
-import static org.apache.camel.converter.dozer.DozerTestArtifactsFactory.createCleanMapper;
 import static org.apache.camel.converter.dozer.DozerTestArtifactsFactory.createDtoCustomer;
 
 public class DozerTypeConverterDTOTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
-        DozerBeanMapper mapper = createCleanMapper();
-        DozerTypeConverterLoader loader = new DozerTypeConverterLoader(context, mapper);
-        loader.addMapping(new BeanMappingBuilder() {
+
+        BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
             @Override
             protected void configure() {
                 mapping(CustomerDTO.class, Customer.class);
             }
-        });
+        };
+
+        DozerBeanMapperConfiguration config = new DozerBeanMapperConfiguration();
+        config.setBeanMappingBuilders(Arrays.asList(beanMappingBuilder));
+
+        new DozerTypeConverterLoader(context, config);
     }
 
     @Override

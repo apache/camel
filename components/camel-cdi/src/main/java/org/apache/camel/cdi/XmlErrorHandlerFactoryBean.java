@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,10 +30,9 @@ import javax.enterprise.inject.spi.BeanManager;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.cdi.xml.ErrorHandlerDefinition;
 import org.apache.camel.cdi.xml.RedeliveryPolicyFactoryBean;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -59,9 +58,6 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
             case DefaultErrorHandler:
             case DeadLetterChannel:
                 setProperties((DefaultErrorHandlerBuilder) builder);
-                break;
-            case LoggingErrorHandler:
-                setProperties((LoggingErrorHandlerBuilder) builder);
                 break;
             case NoErrorHandler:
                 // No configuration required
@@ -92,6 +88,9 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
         builder.setRetryWhileRef(handler.getRetryWhileRef());
         if (nonNull(handler.getUseOriginalMessage())) {
             builder.setUseOriginalMessage(handler.getUseOriginalMessage());
+        }
+        if (nonNull(handler.getUseOriginalBody())) {
+            builder.setUseOriginalBody(handler.getUseOriginalBody());
         }
 
         if (isNotEmpty(handler.getOnExceptionOccurredRef())) {
@@ -133,8 +132,4 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
         }
     }
 
-    private void setProperties(LoggingErrorHandlerBuilder builder) {
-        builder.setLevel(handler.getLevel());
-        builder.setLogName(handler.getLogName());
-    }
 }

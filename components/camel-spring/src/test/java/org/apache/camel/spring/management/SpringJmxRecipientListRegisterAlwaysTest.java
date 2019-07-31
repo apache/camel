@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,13 +21,16 @@ import javax.management.ObjectName;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringJmxRecipientListRegisterAlwaysTest extends SpringTestSupport {
+
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
@@ -38,6 +41,7 @@ public class SpringJmxRecipientListRegisterAlwaysTest extends SpringTestSupport 
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
+    @Test
     public void testJmxEndpointsAddedDynamicallyAlwaysRegister() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");

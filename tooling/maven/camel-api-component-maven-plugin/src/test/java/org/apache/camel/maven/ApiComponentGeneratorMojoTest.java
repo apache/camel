@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,13 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.component.test.TestProxy;
-import org.apache.camel.util.CastUtils;
 import org.apache.velocity.VelocityContext;
-import org.junit.Assert;
 import org.junit.Test;
-
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Tests {@link ApiComponentGeneratorMojo}
@@ -68,7 +63,7 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.apis[0].setExcludeConfigTypes("int");
         mojo.apis[0].setNullableOptions(new String[] {"namesList"});
 
-        List<ApiMethodAlias> aliases = new ArrayList<ApiMethodAlias>();
+        List<ApiMethodAlias> aliases = new ArrayList<>();
         aliases.add(new ApiMethodAlias("get(.+)", "$1"));
         aliases.add(new ApiMethodAlias("set(.+)", "$1"));
         mojo.apis[1] = new ApiProxy();

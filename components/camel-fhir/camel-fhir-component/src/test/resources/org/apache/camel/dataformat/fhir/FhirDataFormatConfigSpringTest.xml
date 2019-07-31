@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <from uri="direct:marshalJson"/>
+      <unmarshal><custom ref="fhirJson"/></unmarshal>
+      <to uri="mock:result"/>
+    </route>
+    <route>
+      <from uri="direct:marshalXml"/>
+      <marshal><custom ref="fhirXml"/></marshal>
+      <to uri="mock:result"/>
+    </route>
+  </camelContext>
+
+  <bean id="fhirXml" class="org.apache.camel.model.dataformat.FhirXmlDataFormat">
+    <property name="parserErrorHandler" ref="errorHandler" />
+    <property name="parserOptions" ref="parserOptions" />
+    <property name="forceResourceId" ref="forceResourceId" />
+    <property name="fhirContext" ref="fhirContext"/>
+    <property name="serverBaseUrl" value="serverBaseUrl"/>
+    <property name="prettyPrint" value="TRUE" />
+    <property name="omitResourceId" value="TRUE" />
+    <property name="encodeElementsAppliesToChildResourcesOnly" value="TRUE" />
+    <property name="stripVersionsFromReferences" value="TRUE" />
+    <property name="overrideResourceIdWithBundleEntryFullUrl" value="TRUE" />
+    <property name="summaryMode" value="TRUE" />
+    <property name="suppressNarratives" value="TRUE" />
+    <property name="dontStripVersionsFromReferencesAtPaths">
+      <list>
+        <value>foo</value>
+        <value>bar</value>
+      </list>
+    </property>
+    <property name="preferTypes">
+      <list>
+        <ref bean="patient"/>
+      </list>
+    </property>
+    <property name="encodeElements">
+      <set>
+        <value>foo</value>
+        <value>bar</value>
+      </set>
+    </property>
+    <property name="dontEncodeElements">
+      <set>
+        <value>foo</value>
+        <value>bar</value>
+      </set>
+    </property>
+  </bean>
+  <bean id="fhirJson" class="org.apache.camel.model.dataformat.FhirJsonDataFormat">
+    <property name="parserErrorHandler" ref="errorHandler" />
+    <property name="parserOptions" ref="parserOptions" />
+    <property name="forceResourceId" ref="forceResourceId" />
+    <property name="fhirContext" ref="fhirContext"/>
+    <property name="serverBaseUrl" value="serverBaseUrl"/>
+    <property name="prettyPrint" value="TRUE" />
+    <property name="omitResourceId" value="TRUE" />
+    <property name="encodeElementsAppliesToChildResourcesOnly" value="TRUE" />
+    <property name="stripVersionsFromReferences" value="TRUE" />
+    <property name="overrideResourceIdWithBundleEntryFullUrl" value="TRUE" />
+    <property name="summaryMode" value="TRUE" />
+    <property name="suppressNarratives" value="TRUE" />
+    <property name="dontStripVersionsFromReferencesAtPaths">
+      <list>
+        <value>foo</value>
+        <value>bar</value>
+      </list>
+    </property>
+    <property name="preferTypes">
+      <list>
+        <ref bean="patient"/>
+      </list>
+    </property>
+    <property name="encodeElements">
+      <set>
+        <value>foo</value>
+        <value>bar</value>
+      </set>
+    </property>
+    <property name="dontEncodeElements">
+      <set>
+        <value>foo</value>
+        <value>bar</value>
+      </set>
+    </property>
+  </bean>
+
+  <bean id="fhirContext" class="ca.uhn.fhir.context.FhirContext" factory-method="forDstu3"/>
+  <bean id ="errorHandler" class="ca.uhn.fhir.parser.LenientErrorHandler"/>
+  <bean id="parserOptions" class="ca.uhn.fhir.context.ParserOptions" />
+  <bean id="forceResourceId" class="org.hl7.fhir.dstu3.model.IdType" />
+  <bean id="patient" class="org.hl7.fhir.dstu3.model.Patient" />
+
+</beans>

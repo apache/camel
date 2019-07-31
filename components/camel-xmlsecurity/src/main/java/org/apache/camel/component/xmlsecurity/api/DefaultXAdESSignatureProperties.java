@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,12 +23,11 @@ import java.security.cert.X509Certificate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 
 /**
  * Default implementation for the XAdES signature properties which determines
  * the Signing Certificate from a keystore and an alias.
- * 
  */
 public class DefaultXAdESSignatureProperties 
     extends XAdESSignatureProperties implements CamelContextAware {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -44,15 +44,18 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
         db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.DERBY).addScript("sql/storedProcedureTest.sql").build();
         jdbcTemplate = new JdbcTemplate(db);
-        templateParser = new TemplateParser();
-        this.factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser);
         super.setUp();
     }
 
+    @Override
+    protected void startCamelContext() throws Exception {
+        super.startCamelContext();
+        templateParser = new TemplateParser(context().getClassResolver());
+        this.factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser, false);
+    }
 
     @Test
     public void shouldExecuteStoredProcedure() throws Exception {
-
         CallableStatementWrapper wrapper = new CallableStatementWrapper("SUBNUMBERS"
                 + "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsub)", factory);
 
@@ -72,9 +75,30 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
     }
 
     @Test
+    public void shouldExecuteStoredFunction() throws Exception {
+        CallableStatementWrapperFactory factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser, true);
+
+        CallableStatementWrapper wrapper = new CallableStatementWrapper("SUBNUMBERS_FUNCTION"
+                + "(OUT INTEGER resultofsub, INTEGER ${header.v1},INTEGER ${header.v2})", factory);
+
+        final Exchange exchange = createExchangeWithBody(null);
+        exchange.getIn().setHeader("v1", 1);
+        exchange.getIn().setHeader("v2", 2);
+
+        wrapper.call(new WrapperExecuteCallback() {
+            @Override
+            public void execute(StatementWrapper statementWrapper) throws SQLException, DataAccessException {
+                statementWrapper.populateStatement(null, exchange);
+
+                Map resultOfQuery = (Map) statementWrapper.executeStatement();
+                Assert.assertEquals(-1, resultOfQuery.get("resultofsub"));
+            }
+        });
+    }
+
+    @Test
     public void shouldExecuteNilacidProcedure() throws Exception {
         CallableStatementWrapper wrapper = new CallableStatementWrapper("NILADIC()", factory);
-
 
         wrapper.call(new WrapperExecuteCallback() {
             @Override

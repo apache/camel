@@ -1,0 +1,51 @@
+[[WhydoesmyfileconsumernotpickupthefileandhowdoIletthefileconsumerusetheCamelerrorhandler-WhydoesmyfileconsumernotpickupthefileandhowdoIletthefileconsumerusetheCamelerrorhandler]]
+= Why does my file consumer not pick up the file, and how do I let the file consumer use the Camel error handler?
+
+There could be several reasons why the xref:components::file-component.adoc[File] consumer is
+not picking up files. For example it may not run at all, or it cannot
+acquire a read lock on the file.
+xref:faq.adoc#FAQ-LoggingQuestions[Check the logs] for any exceptions or other
+informative messages. You can
+xref:faq/how-do-i-enable-debug-logging.adoc[turn on DEBUG logging] at
+`org.apache.camel.component.file` to see more detail.
+
+[[WhydoesmyfileconsumernotpickupthefileandhowdoIletthefileconsumerusetheCamelerrorhandler-HowtouseCamelsroutingerrorhandlerswiththefileconsumer]]
+== How to use Camel's routing error handlers with the file consumer
+
+Well, this is really a
+http://en.wikipedia.org/wiki/Chicken_or_the_egg["chicken or the egg"]
+question. The Camel xref:error-handling-in-camel.adoc[error handler]
+(e.g., in the routes) only applies when a message is being routed by the
+routing engine.
+Before this happens, a consumer must successfully receive a message,
+create a Camel xref:exchange.adoc[Exchange], populate the
+xref:exchange.adoc[Exchange] with message details (e.g., body and
+headers), and then pass the xref:exchange.adoc[Exchange] to the routing
+engine. Only at this point can the routing error handler deal with
+exceptions occurring. Before this point, any error handling is really
+xref:component.adoc[component]-specific.
+
+[NOTE]
+====
+**Bridge with error handler**
+
+From Camel 2.10 onwards the file and ftp consumers can now bridge to the
+Camel routing engine's error handler. See more details at the
+`consumer.bridgeErrorHandler` option on the xref:components::file-component.adoc[File]
+documentation.
+====
+
+If the component consumer extends the
+https://github.com/apache/camel/blob/master/camel-core/src/main/java/org/apache/camel/impl/DefaultConsumer.java[`DefaultConsumer`]
+from Camel, then it offers an
+https://github.com/apache/camel/blob/master/camel-core/src/main/java/org/apache/camel/spi/ExceptionHandler.java[`org.apache.camel.spi.ExceptionHandler`]
+hook for end users to plug-in a custom strategy. The default
+implementation from Camel is
+https://github.com/apache/camel/blob/master/camel-core/src/main/java/org/apache/camel/impl/LoggingExceptionHandler.java[`LoggingExceptionHandler`]
+that will log the exception at `ERROR`/`WARN` level, and then ignore the
+exception.
+
+See the xref:components::file-component.adoc[File] page in the bottom for an example how to
+use a custom `ExceptionHandler` that sends a new message to the Camel
+routing engine, which then allows the routing engine to trigger its own
+error handling to deal with the exception.

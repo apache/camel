@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.AbstractCamelRedeliveryPolicyFactoryBean;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.springframework.beans.factory.FactoryBean;
@@ -32,8 +32,6 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Configuration of redelivery policy.
- *
- * @version 
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "redeliveryPolicyProfile")

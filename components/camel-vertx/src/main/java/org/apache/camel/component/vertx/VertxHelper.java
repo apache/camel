@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,7 +27,7 @@ public final class VertxHelper {
     }
 
     public static Object getVertxBody(Exchange exchange) {
-        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message msg = exchange.getMessage();
         Object body = msg.getBody(JsonObject.class);
         if (body == null) {
             body = msg.getBody(JsonArray.class);

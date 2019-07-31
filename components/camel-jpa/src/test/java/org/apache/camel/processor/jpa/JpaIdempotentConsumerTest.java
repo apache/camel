@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,9 +37,6 @@ import org.springframework.transaction.support.TransactionCallback;
 
 import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
 
-/**
- * @version 
- */
 public class JpaIdempotentConsumerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "myProcessorName";
@@ -105,7 +102,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         assertMockEndpointsSatisfied();
 
         // all 3 messages should be in jpa repo
-        Set<String> ids = new HashSet<String>();
+        Set<String> ids = new HashSet<>();
         Query query = entityManager.createQuery(SELECT_ALL_STRING);
         query.setParameter(1, PROCESSOR_NAME);
         List<MessageProcessed> list = query.getResultList();
@@ -156,7 +153,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         assertMockEndpointsSatisfied();
 
         // only message 1 and 3 should be in jpa repo
-        Set<String> ids = new HashSet<String>();
+        Set<String> ids = new HashSet<>();
         Query query = entityManager.createQuery(SELECT_ALL_STRING);
         query.setParameter(1, PROCESSOR_NAME);
         List<MessageProcessed> list = query.getResultList();

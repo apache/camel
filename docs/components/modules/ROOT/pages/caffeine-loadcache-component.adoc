@@ -1,0 +1,142 @@
+[[caffeine-loadcache-component]]
+= Caffeine LoadCache Component
+
+*Available as of Camel version 2.20*
+
+The Caffeine Loadcache component enables you to perform caching operations using
+The Load cache from Caffeine.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-caffeine</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+-----------------------------
+caffeine-loadcache://cacheName[?options]
+-----------------------------
+
+You can append query options to the URI in the following
+format, `?option=value&option=#beanRef&...`
+
+== Options
+
+
+// component options: START
+The Caffeine LoadCache component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | Sets the global component configuration |  | CaffeineConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+
+
+// endpoint options: START
+The Caffeine LoadCache endpoint is configured using URI syntax:
+
+----
+caffeine-loadcache:cacheName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cacheName* | *Required* the cache name |  | String
+|===
+
+
+=== Query Parameters (21 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *createCacheIfNotExist* (common) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
+| *cache* (producer) | To configure an already instantiated cache to be used |  | Cache
+| *cacheLoader* (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
+| *evictionType* (producer) | Set the eviction Type for this cache | SIZE_BASED | EvictionType
+| *expireAfterAccessTime* (producer) | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | int
+| *expireAfterWriteTime* (producer) | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | int
+| *initialCapacity* (producer) | Set the initial Capacity for the cache | 10000 | int
+| *key* (producer) | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *maximumSize* (producer) | Set the maximum size for the cache | 10000 | int
+| *removalListener* (producer) | Set a specific removal Listener for the cache |  | RemovalListener
+| *statsCounter* (producer) | Set a specific Stats Counter for the cache stats |  | StatsCounter
+| *statsEnabled* (producer) | To enable stats on the cache | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *keyType* (advanced) | The cache key type, default java.lang.Object | java.lang.Object | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *valueType* (advanced) | The cache value type, default java.lang.Object | java.lang.Object | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-caffeine-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 18 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.caffeine-loadcache.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.caffeine-loadcache.configuration.action* | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
+| *camel.component.caffeine-loadcache.configuration.cache* | To configure an already instantiated cache to be used |  | Cache
+| *camel.component.caffeine-loadcache.configuration.cache-loader* | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
+| *camel.component.caffeine-loadcache.configuration.create-cache-if-not-exist* | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | Boolean
+| *camel.component.caffeine-loadcache.configuration.eviction-type* | Set the eviction Type for this cache |  | EvictionType
+| *camel.component.caffeine-loadcache.configuration.expire-after-access-time* | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | Integer
+| *camel.component.caffeine-loadcache.configuration.expire-after-write-time* | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | Integer
+| *camel.component.caffeine-loadcache.configuration.initial-capacity* | Set the initial Capacity for the cache | 10000 | Integer
+| *camel.component.caffeine-loadcache.configuration.key* | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
+| *camel.component.caffeine-loadcache.configuration.key-type* | The cache key type, default "java.lang.Object" |  | Class
+| *camel.component.caffeine-loadcache.configuration.maximum-size* | Set the maximum size for the cache | 10000 | Integer
+| *camel.component.caffeine-loadcache.configuration.removal-listener* | Set a specific removal Listener for the cache |  | RemovalListener
+| *camel.component.caffeine-loadcache.configuration.stats-counter* | Set a specific Stats Counter for the cache stats |  | StatsCounter
+| *camel.component.caffeine-loadcache.configuration.stats-enabled* | To enable stats on the cache | false | Boolean
+| *camel.component.caffeine-loadcache.configuration.value-type* | The cache value type, default "java.lang.Object" |  | Class
+| *camel.component.caffeine-loadcache.enabled* | Whether to enable auto configuration of the caffeine-loadcache component. This is enabled by default. |  | Boolean
+| *camel.component.caffeine-loadcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+

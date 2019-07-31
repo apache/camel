@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>components</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>camel-google-sheets</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: Google Sheets</name>
+    <description>Camel Component for Google Sheets</description>
+
+    <properties>
+        <schemeName>google-sheets</schemeName>
+        <componentName>GoogleSheets</componentName>
+        <componentPackage>org.apache.camel.component.google.sheets</componentPackage>
+        <outPackage>org.apache.camel.component.google.sheets.internal</outPackage>
+        <camel.osgi.private.pkg>org.apache.camel.component.google.sheets.internal</camel.osgi.private.pkg>
+        <spring-security-oauth2-version>2.3.6.RELEASE</spring-security-oauth2-version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Test dependencies -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-web</artifactId>
+                <version>${spring-security-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>${spring-security-oauth2-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.consol.citrus</groupId>
+                <artifactId>citrus-core</artifactId>
+                <version>${citrus.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.consol.citrus</groupId>
+                <artifactId>citrus-java-dsl</artifactId>
+                <version>${citrus.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.consol.citrus</groupId>
+                <artifactId>citrus-http</artifactId>
+                <version>${citrus.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>${google-api-client-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client</artifactId>
+            <version>${google-api-client-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-jackson2</artifactId>
+            <version>${google-api-client-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-sheets</artifactId>
+            <version>${google-api-services-sheets-version}</version>
+        </dependency>
+
+        <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>spi-annotations</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Component API javadoc in provided scope to read API signatures -->
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-sheets</artifactId>
+            <version>${google-api-services-sheets-version}</version>
+            <type>javadoc</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-mock</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.consol.citrus</groupId>
+            <artifactId>citrus-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.consol.citrus</groupId>
+            <artifactId>citrus-java-dsl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.consol.citrus</groupId>
+            <artifactId>citrus-http</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+
+        <plugins>
+
+            <!-- generate Component source and test source -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-api-component-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-test-component-classes</id>
+                        <goals>
+                            <goal>fromApis</goal>
+                        </goals>
+                        <configuration>
+                            <apis>
+                                <api>
+                                    <apiName>spreadsheets</apiName>
+                                    <proxyClass>com.google.api.services.sheets.v4.Sheets$Spreadsheets</proxyClass>
+                                    <fromJavadoc/>
+                                </api>
+                                <api>
+                                    <apiName>data</apiName>
+                                    <proxyClass>com.google.api.services.sheets.v4.Sheets$Spreadsheets$Values
+                                    </proxyClass>
+                                    <fromJavadoc/>
+                                </api>
+                            </apis>
+                            <substitutions>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.ValueRange</argType>
+                                    <replacement>values</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
+                                    </argType>
+                                    <replacement>batchUpdateSpreadsheetRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest
+                                    </argType>
+                                    <replacement>getSpreadsheetByDataFilterRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.ClearValuesRequest</argType>
+                                    <replacement>clearValuesRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.BatchClearValuesRequest</argType>
+                                    <replacement>batchClearValuesRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>
+                                        com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest
+                                    </argType>
+                                    <replacement>batchUpdateValuesByDataFilterRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest
+                                    </argType>
+                                    <replacement>batchGetValuesByDataFilterRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest</argType>
+                                    <replacement>batchUpdateValuesRequest</replacement>
+                                </substitution>
+                            </substitutions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- add generated source and test source to build -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>add-generated-sources</id>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/camel-component</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-generated-test-sources</id>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-test-sources/camel-component</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-api-component-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                    <configuration>
+                        <scheme>${schemeName}</scheme>
+                        <componentName>${componentName}</componentName>
+                        <componentPackage>${componentPackage}</componentPackage>
+                        <outPackage>${outPackage}</outPackage>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-api-component-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <scheme>${schemeName}</scheme>
+                    <componentName>${componentName}</componentName>
+                    <componentPackage>${componentPackage}</componentPackage>
+                    <outPackage>${outPackage}</outPackage>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <profile>
+            <id>google-sheets-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <childDelegation>false</childDelegation>
+                            <useFile>true</useFile>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                            <excludes>
+                                <exclude>**/*XXXTest.java</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,21 +24,21 @@ import org.junit.Test;
 public class ClientRecipientListRouteTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("seda:a server").setUri("seda://a")
+        new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
             .setKind(Tags.SPAN_KIND_SERVER).setParentId(1),
-        new SpanTestData().setLabel("seda:a client").setUri("seda://a")
+        new SpanTestData().setLabel("seda:a client").setUri("seda://a").setOperation("a")
             .setKind(Tags.SPAN_KIND_CLIENT).setParentId(6),
-        new SpanTestData().setLabel("seda:b server").setUri("seda://b")
+        new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
             .setKind(Tags.SPAN_KIND_SERVER).setParentId(3),
-        new SpanTestData().setLabel("seda:b client").setUri("seda://b")
+        new SpanTestData().setLabel("seda:b client").setUri("seda://b").setOperation("b")
             .setKind(Tags.SPAN_KIND_CLIENT).setParentId(6),
-        new SpanTestData().setLabel("seda:c server").setUri("seda://c")
+        new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
             .setKind(Tags.SPAN_KIND_SERVER).setParentId(5),
-        new SpanTestData().setLabel("seda:c client").setUri("seda://c")
+        new SpanTestData().setLabel("seda:c client").setUri("seda://c").setOperation("c")
             .setKind(Tags.SPAN_KIND_CLIENT).setParentId(6),
-        new SpanTestData().setLabel("direct:start server").setUri("direct://start")
+        new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
             .setKind(Tags.SPAN_KIND_SERVER).setParentId(7),
-        new SpanTestData().setLabel("direct:start client").setUri("direct://start")
+        new SpanTestData().setLabel("direct:start client").setUri("direct://start").setOperation("start")
             .setKind(Tags.SPAN_KIND_CLIENT)
     };
 

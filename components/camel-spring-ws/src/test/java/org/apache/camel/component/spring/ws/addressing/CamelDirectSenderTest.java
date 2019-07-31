@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,7 +40,7 @@ public class CamelDirectSenderTest extends AbstractWSATests {
 
     private OutputChannelReceiver customChannel;
 
-    @EndpointInject(uri = "mock:camelDirect")
+    @EndpointInject("mock:camelDirect")
     private MockEndpoint endpointCamelDirect;
 
     @Before

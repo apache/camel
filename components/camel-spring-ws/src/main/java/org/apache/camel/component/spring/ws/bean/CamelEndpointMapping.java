@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,23 +16,21 @@
  */
 package org.apache.camel.component.spring.ws.bean;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -50,7 +48,6 @@ import org.springframework.ws.transport.WebServiceConnection;
 import org.springframework.ws.transport.context.TransportContext;
 import org.springframework.ws.transport.context.TransportContextHolder;
 import org.springframework.xml.xpath.XPathExpression;
-
 
 /**
  * Spring {@link EndpointMapping} for mapping messages to corresponding Camel
@@ -82,17 +79,27 @@ import org.springframework.xml.xpath.XPathExpression;
  * @see org.springframework.ws.server.endpoint.mapping.XPathPayloadEndpointMapping
  * @see org.springframework.ws.soap.server.endpoint.mapping.SoapActionEndpointMapping
  */
-public class CamelEndpointMapping extends AbstractEndpointMapping implements InitializingBean, CamelSpringWSEndpointMapping, SoapEndpointMapping {
+public class CamelEndpointMapping extends AbstractEndpointMapping implements InitializingBean, CamelSpringWSEndpointMapping, SoapEndpointMapping, CamelContextAware {
 
     private static final String DOUBLE_QUOTE = "\"";
     private static final String URI_PATH_WILDCARD = "*";
-    private Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<EndpointMappingKey, MessageEndpoint>();
+    private Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<>();
     private TransformerFactory transformerFactory;
-    private XmlConverter xmlConverter;
+    private CamelContext camelContext;
 
     private String[] actorsOrRoles;
 
     private boolean isUltimateReceiver = true;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     protected Object getEndpointInternal(MessageContext messageContext) throws Exception {
@@ -126,7 +133,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
             default:
                 throw new RuntimeCamelException("Invalid mapping type specified. Supported types are: root QName, SOAP action, XPath expression and URI");
             }
-            if (messageKey != null && key.getLookupKey().equals(messageKey)) {
+            if (key.getLookupKey().equals(messageKey)) {
                 return endpoints.get(key);
             }
         }
@@ -138,7 +145,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
         for (EndpointMappingKey key : endpoints.keySet()) {
             if (EndpointMappingType.SOAP_ACTION.equals(key.getType())) {
                 Object messageKey = getSoapAction(messageContext);
-                if (messageKey != null && key.getLookupKey().equals(messageKey)) {
+                if (key.getLookupKey().equals(messageKey)) {
                     return new SoapEndpointInvocationChain(endpoint, interceptors, actorsOrRoles, isUltimateReceiver);
                 }
             }
@@ -186,15 +193,14 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
         return null;
     }
 
-    private String getRootQName(MessageContext messageContext) throws TransformerException, XMLStreamException {
+    private String getRootQName(MessageContext messageContext) throws TransformerException {
         QName qName = PayloadRootUtils.getPayloadRootQName(messageContext.getRequest().getPayloadSource(), transformerFactory);
         return qName != null ? qName.toString() : null;
     }
 
-    private String getXPathResult(MessageContext messageContext, XPathExpression expression) throws TransformerException, XMLStreamException, ParserConfigurationException,
-        IOException, SAXException {
+    private String getXPathResult(MessageContext messageContext, XPathExpression expression) {
         if (expression != null) {
-            Node domNode = xmlConverter.toDOMNode(messageContext.getRequest().getPayloadSource());
+            Node domNode = camelContext.getTypeConverter().convertTo(Node.class, messageContext.getRequest().getPayloadSource());
             if (domNode != null) {
                 return expression.evaluateAsString(domNode.getFirstChild());
             }
@@ -204,9 +210,6 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
 
     /**
      * Used by Camel Spring Web Services endpoint to register consumers
-     * 
-     * @param key unique consumer key
-     * @param endpoint consumer
      */
     public void addConsumer(EndpointMappingKey key, MessageEndpoint endpoint) {
         endpoints.put(key, endpoint);
@@ -214,8 +217,6 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
 
     /**
      * Used by Camel Spring Web Services endpoint to unregister consumers
-     * 
-     * @param key unique consumer key
      */
     public void removeConsumer(Object key) {
         endpoints.remove(key);
@@ -223,8 +224,6 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
 
     /**
      * Gets the configured TransformerFactory
-     * 
-     * @return instance of TransformerFactory
      */
     public TransformerFactory getTransformerFactory() {
         return transformerFactory;
@@ -232,44 +231,28 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
 
     /**
      * Optional setter to override default TransformerFactory
-     * 
-     * @param transformerFactory non-default TransformerFactory
      */
     public void setTransformerFactory(TransformerFactory transformerFactory) {
         this.transformerFactory = transformerFactory;
     }
 
     public void afterPropertiesSet() throws Exception {
-        xmlConverter = new XmlConverter();
-        if (transformerFactory != null) {
-            xmlConverter.setTransformerFactory(transformerFactory);
-        } else {
+        if (transformerFactory == null) {
             transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         }
     }
 
-    /**
-     * @see {@link AbstractAddressingEndpointMapping}
-     * @param actorOrRole
-     */
     public final void setActorOrRole(String actorOrRole) {
         Assert.notNull(actorOrRole, "actorOrRole must not be null");
         actorsOrRoles = new String[] {actorOrRole};
     }
 
-    /**
-     * @see {@link AbstractAddressingEndpointMapping}
-     * @param actorsOrRoles
-     */
     public final void setActorsOrRoles(String[] actorsOrRoles) {
         Assert.notEmpty(actorsOrRoles, "actorsOrRoles must not be empty");
         this.actorsOrRoles = actorsOrRoles;
     }
 
-    /**
-     * @see {@link AbstractAddressingEndpointMapping}
-     * @param ultimateReceiver
-     */
     public final void setUltimateReceiver(boolean ultimateReceiver) {
         this.isUltimateReceiver = ultimateReceiver;
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.component.disruptor.DisruptorComponent;
 import org.apache.camel.component.disruptor.DisruptorReference;
+import org.apache.camel.spi.annotations.Component;
 
 /**
  * An implementation of the <a href="http://camel.apache.org/vm.html">VM components</a>
@@ -30,8 +31,9 @@ import org.apache.camel.component.disruptor.DisruptorReference;
  * the camel-disruptor.jar. i.e. to handle communicating across CamelContext instances and possibly across
  * web application contexts, providing that camel-disruptor.jar is on the system classpath.
  */
+@Component("disruptor-vm")
 public class DisruptorVmComponent extends DisruptorComponent {
-    protected static final Map<String, DisruptorReference> DISRUPTORS = new HashMap<String, DisruptorReference>();
+    protected static final Map<String, DisruptorReference> DISRUPTORS = new HashMap<>();
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
     @Override

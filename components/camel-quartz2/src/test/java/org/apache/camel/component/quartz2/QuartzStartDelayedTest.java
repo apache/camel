@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ public class QuartzStartDelayedTest extends BaseQuartzTest {
     @Test
     public void testStartDelayed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.setMinimumResultWaitTime(1900);
+        mock.setResultMinimumWaitTime(1900);
         mock.setResultWaitTime(3000);
         mock.expectedMessageCount(2);
 

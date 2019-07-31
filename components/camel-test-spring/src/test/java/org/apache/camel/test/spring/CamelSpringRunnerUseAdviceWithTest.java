@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,11 +30,8 @@ public class CamelSpringRunnerUseAdviceWithTest extends CamelSpringRunnerPlainTe
     
     @Before
     public void testContextStarted() throws Exception {
-        
         assertEquals(ServiceStatus.Stopped, camelContext.getStatus());
-        assertEquals(ServiceStatus.Stopped, camelContext2.getStatus());
         camelContext.start();
-        camelContext2.start();
 
         // just sleep a little to simulate testing take a bit time
         Thread.sleep(1000);

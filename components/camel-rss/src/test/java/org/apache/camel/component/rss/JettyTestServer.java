@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,8 @@ package org.apache.camel.component.rss;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
+import org.eclipse.jetty.security.UserStore;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -85,7 +88,9 @@ public final class JettyTestServer {
 
     private SecurityHandler basicAuth(String username, String password, String realm) {
         HashLoginService l = new HashLoginService();
-        l.putUser(username, Credential.getCredential(password), new String[]{"user"});
+        UserStore us = new UserStore();
+        us.addUser(username, Credential.getCredential(password), new String[]{"user"});
+        l.setUserStore(us);
         l.setName(realm);
 
         Constraint constraint = new Constraint();
@@ -119,7 +124,7 @@ public final class JettyTestServer {
 
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            resp.getWriter().write(FileUtils.readFileToString(new File("src/test/data/rss20.xml")));
+            resp.getWriter().write(FileUtils.readFileToString(new File("src/test/data/rss20.xml"), StandardCharsets.UTF_8));
         }
     }
 

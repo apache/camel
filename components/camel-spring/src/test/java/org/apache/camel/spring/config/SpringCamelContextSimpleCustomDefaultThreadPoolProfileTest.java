@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,9 +17,10 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,6 +30,7 @@ public class SpringCamelContextSimpleCustomDefaultThreadPoolProfileTest extends 
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextSimpleCustomDefaultThreadPoolProfileTest.xml");
     }
 
+    @Test
     public void testDefaultThreadPoolProfile() throws Exception {
         CamelContext context = getMandatoryBean(CamelContext.class, "camel-B");
 

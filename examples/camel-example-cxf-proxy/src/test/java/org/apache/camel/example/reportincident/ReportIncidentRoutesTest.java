@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.example.reportincident;
-
 import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.spring.Main;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.util.FileUtil;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,6 +55,12 @@ public class ReportIncidentRoutesTest {
         fos.close();
 
         url = "http://localhost:" + port + "/camel-example-cxf-proxy/webservices/incident";
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        File custom = new File("target/custom.properties");
+        FileUtil.deleteFile(custom);
     }
 
     protected void startCamel() throws Exception {

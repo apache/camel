@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,59 +19,39 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.Collections;
-import java.util.Properties;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
+import static org.apache.camel.maven.packaging.PackageHelper.loadText;
+
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
- *
- * @goal generate-components-list
  */
-public class PackageComponentMojo extends AbstractMojo {
-
-    /**
-     * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
+@Mojo(name = "generate-components-list", threadSafe = true)
+public class PackageComponentMojo extends AbstractGeneratorMojo {
 
     /**
      * The output directory for generated components file
-     *
-     * @parameter default-value="${project.build.directory}/generated/camel/components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated/camel/components")
     protected File componentOutDir;
 
     /**
-     * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
+     * The project build directory
      */
-    private MavenProjectHelper projectHelper;
-
-    /**
-     * build context to check changed files and mark them for refresh (used for
-     * m2e compatibility)
-     * 
-     * @component
-     * @readonly
-     */
-    private BuildContext buildContext;
+    @Parameter(defaultValue = "${project.build.directory}")
+    protected File buildDir;
 
     /**
      * Execute goal.
@@ -81,10 +61,10 @@ public class PackageComponentMojo extends AbstractMojo {
      * @throws MojoFailureException something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareComponent(getLog(), project, projectHelper, componentOutDir, buildContext);
+        prepareComponent(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext);
     }
 
-    public static void prepareComponent(Log log, MavenProject project, MavenProjectHelper projectHelper, File componentOutDir, BuildContext buildContext) throws MojoExecutionException {
+    public static int prepareComponent(Log log, MavenProject project, MavenProjectHelper projectHelper, File buildDir, File componentOutDir, BuildContext buildContext) throws MojoExecutionException {
 
         File camelMetaDir = new File(componentOutDir, "META-INF/services/org/apache/camel/");
 
@@ -95,86 +75,81 @@ public class PackageComponentMojo extends AbstractMojo {
         }
 
         if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/component")) {
-            return;
+            return 0;
         }
 
         StringBuilder buffer = new StringBuilder();
         int count = 0;
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/component");
 
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        // skip directories as there may be a sub .resolver directory
-                        if (file.isDirectory()) {
-                            continue;
+        Set<String> components = new HashSet<>();
+        File f = new File(project.getBasedir(), "target/classes");
+        f = new File(f, "META-INF/services/org/apache/camel/component");
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // skip directories as there may be a sub .resolver directory
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    String name = file.getName();
+                    if (name.charAt(0) != '.') {
+                        count++;
+                        if (buffer.length() > 0) {
+                            buffer.append(" ");
                         }
-                        String name = file.getName();
-                        if (name.charAt(0) != '.') {
-                            count++;
-                            if (buffer.length() > 0) {
-                                buffer.append(" ");
-                            }
-                            buffer.append(name);
-                        }
+                        buffer.append(name);
+                        components.add(file.getName());
                     }
                 }
             }
         }
 
         if (count > 0) {
-            Properties properties = new Properties();
+            // we need to enrich the component json files with data we know have from this plugin
+            enrichComponentJsonFiles(log, project, buildDir, components);
+        }
+
+        if (count > 0) {
             String names = buffer.toString();
-            properties.put("components", names);
-            properties.put("groupId", project.getGroupId());
-            properties.put("artifactId", project.getArtifactId());
-            properties.put("version", project.getVersion());
-            properties.put("projectName", project.getName());
-            if (project.getDescription() != null) {
-                properties.put("projectDescription", project.getDescription());
-            }
-
-            camelMetaDir.mkdirs();
-            File outFile = new File(camelMetaDir, "component.properties");
-
-            // check if the existing file has the same content, and if so then leave it as is so we do not write any changes
-            // which can cause a re-compile of all the source code
-            if (outFile.exists()) {
-                try {
-                    Properties existing = new Properties();
-
-                    InputStream is = new FileInputStream(outFile);
-                    existing.load(is);
-                    is.close();
-
-                    // are the content the same?
-                    if (existing.equals(properties)) {
-                        log.debug("No component changes detected");
-                        return;
-                    }
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-
-            try {
-                OutputStream os = buildContext.newFileOutputStream(outFile);
-                properties.store(os, "Generated by camel-package-maven-plugin");
-                os.close();
-
-                log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "components: " : "component: ") + names);
-
-            } catch (IOException e) {
-                throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
-            }
+            Path outFile = camelMetaDir.toPath().resolve("component.properties");
+            String properties = createProperties(project, "components", names);
+            updateResource(buildContext, outFile, properties);
+            log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "components: " : "component: ") + names);
         } else {
             log.debug("No META-INF/services/org/apache/camel/component directory found. Are you sure you have created a Camel component?");
+        }
+
+        return count;
+    }
+
+    private static void enrichComponentJsonFiles(Log log, MavenProject project, File buildDir, Set<String> components) throws MojoExecutionException {
+        final Set<File> files = PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json"));
+
+        for (File file : files) {
+            // clip the .json suffix
+            String name = file.getName().substring(0, file.getName().length() - 5);
+            if (components.contains(name)) {
+                log.debug("Enriching component: " + name);
+                try {
+                    String text = loadText(new FileInputStream(file));
+                    text = text.replace("@@@DESCRIPTION@@@", project.getDescription());
+                    text = text.replace("@@@GROUPID@@@", project.getGroupId());
+                    text = text.replace("@@@ARTIFACTID@@@", project.getArtifactId());
+                    text = text.replace("@@@VERSIONID@@@", project.getVersion());
+
+                    // special for deprecated where you can quickly specify that in the pom.xml name
+                    boolean deprecated = project.getName().contains("(deprecated)");
+                    if (deprecated) {
+                        // must start with 4 leading spaces as we want to replace the marker in the top of the file
+                        text = text.replaceFirst(" {4}\"deprecated\": false,", "    \"deprecated\": true,");
+                    }
+
+                    updateResource(null, file.toPath(), text);
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Failed to update file " + file + ". Reason: " + e, e);
+                }
+            }
         }
     }
 

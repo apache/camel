@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,13 +26,10 @@ import java.util.concurrent.Future;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultProducerTemplate;
+import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorConcurrentTest extends CamelTestSupport {
     @Test
     public void testDisruptorConcurrentInOnly() throws Exception {
@@ -40,7 +37,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
         mock.expectedMessageCount(20);
 
         // should at least take 3 sec
-        mock.setMinimumResultWaitTime(3000);
+        mock.setResultMinimumWaitTime(3000);
 
         for (int i = 0; i < 20; i++) {
             template.sendBody("disruptor:foo", "Message " + i);
@@ -55,7 +52,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
         mock.expectedMessageCount(20);
 
         // should at least take 3 sec
-        mock.setMinimumResultWaitTime(3000);
+        mock.setResultMinimumWaitTime(3000);
 
         for (int i = 0; i < 20; i++) {
             template.asyncSendBody("disruptor:foo", "Message " + i);
@@ -71,10 +68,10 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
         mock.allMessages().body().startsWith("Bye");
 
         // should at least take 3 sec
-        mock.setMinimumResultWaitTime(3000);
+        mock.setResultMinimumWaitTime(3000);
 
         final ExecutorService executors = Executors.newFixedThreadPool(10);
-        final List<Object> replies = new ArrayList<Object>(20);
+        final List<Object> replies = new ArrayList<>(20);
         for (int i = 0; i < 20; i++) {
             final int num = i;
             final Object out = executors.submit(new Callable<Object>() {
@@ -99,7 +96,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
         mock.allMessages().body().startsWith("Bye");
 
         // should at least take 3 sec
-        mock.setMinimumResultWaitTime(3000);
+        mock.setResultMinimumWaitTime(3000);
 
         // use our own template that has a higher thread pool than default camel that uses 5
         final ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -107,7 +104,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
         // must start the template
         pt.start();
 
-        final List<Future<Object>> replies = new ArrayList<Future<Object>>(20);
+        final List<Future<Object>> replies = new ArrayList<>(20);
         for (int i = 0; i < 20; i++) {
             final Future<Object> out = pt.asyncRequestBody("disruptor:bar", "Message " + i);
             replies.add(out);
@@ -129,9 +126,9 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("disruptor:foo?concurrentConsumers=10").to("mock:before").delay(2000).to("mock:result");
+                from("disruptor:foo?concurrentConsumers=10").to("mock:before").delay(2000).syncDelayed().to("mock:result");
 
-                from("disruptor:bar?concurrentConsumers=10").to("mock:before").delay(2000)
+                from("disruptor:bar?concurrentConsumers=10").to("mock:before").delay(2000).syncDelayed()
                         .transform(body().prepend("Bye ")).to("mock:result");
             }
         };

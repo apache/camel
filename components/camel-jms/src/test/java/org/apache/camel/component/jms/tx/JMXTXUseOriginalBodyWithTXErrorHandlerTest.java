@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,27 +27,24 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class JMXTXUseOriginalBodyWithTXErrorHandlerTest extends JMXTXUseOriginalBodyTest {
 
-    @EndpointInject(uri = "mock:end")
+    @EndpointInject("mock:end")
     protected MockEndpoint endpoint;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     protected MockEndpoint error;
 
-    @EndpointInject(uri = "mock:checkpoint1")
+    @EndpointInject("mock:checkpoint1")
     protected MockEndpoint checkpoint1;
 
-    @EndpointInject(uri = "mock:checkpoint2")
+    @EndpointInject("mock:checkpoint2")
     protected MockEndpoint checkpoint2;
 
-    @Produce(uri = "activemq:start")
+    @Produce("activemq:start")
     protected ProducerTemplate start;
 
-    @Produce(uri = "activemq:broken")
+    @Produce("activemq:broken")
     protected ProducerTemplate broken;
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,18 +26,16 @@ import org.junit.Test;
 
 /**
  * Tests bridging between two mqtt topic using Camel
- * 
- * @version
  */
 public class MQTTBrigeTest extends MQTTBaseTest {
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
-    @Produce(uri = "direct:startWorkaround")
+    @Produce("direct:startWorkaround")
     protected ProducerTemplate workaroundTemplate;
 
     @Test

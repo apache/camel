@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,7 @@
 package org.apache.camel.example.websocket;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.twitter.TwitterComponent;
+import org.apache.camel.component.twitter.search.TwitterSearchComponent;
 import org.apache.camel.component.websocket.WebsocketComponent;
 
 /**
@@ -99,14 +99,14 @@ public class TwitterWebSocketRoute extends RouteBuilder {
         wc.setStaticResources("classpath:.");
 
         // setup Twitter component
-        TwitterComponent tc = getContext().getComponent("twitter", TwitterComponent.class);
+        TwitterSearchComponent tc = getContext().getComponent("twitter-search", TwitterSearchComponent.class);
         tc.setAccessToken(accessToken);
         tc.setAccessTokenSecret(accessTokenSecret);
         tc.setConsumerKey(consumerKey);
         tc.setConsumerSecret(consumerSecret);
 
         // poll twitter search for new tweets
-        fromF("twitter://search?delay=%s&keywords=%s", delay, searchTerm)
+        fromF("twitter-search://%s?delay=%s", searchTerm, delay)
             .to("log:tweet")
             // and push tweets to all web socket subscribers on camel-tweet
             .to("websocket:camel-tweet?sendToAll=true");

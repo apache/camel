@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,10 +34,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version
- */
 public class HttpCamelHeadersTest extends BaseHttpTest {
 
     protected HttpServer localServer;
@@ -45,7 +41,7 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
     @Before
     @Override
     public void setUp() throws Exception {
-        Map<String, String> expectedHeaders = new HashMap<String, String>();
+        Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("TestHeader", "test");
         expectedHeaders.put("Accept-Language", "pl");
 

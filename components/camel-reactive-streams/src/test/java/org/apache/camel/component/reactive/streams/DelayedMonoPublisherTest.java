@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Flowable;
-
 import org.apache.camel.component.reactive.streams.engine.DelayedMonoPublisher;
 import org.apache.camel.component.reactive.streams.support.TestSubscriber;
 import org.junit.After;
@@ -84,9 +83,11 @@ public class DelayedMonoPublisherTest {
         CountDownLatch latch = new CountDownLatch(1);
 
         Flowable.fromPublisher(pub)
-                .doOnError(exceptions::add)
-                .doOnError(e -> latch.countDown())
-                .subscribe();
+                .subscribe(item -> {
+                }, e -> {
+                    exceptions.add(e);
+                    latch.countDown();
+                });
 
         assertTrue(latch.await(1, TimeUnit.SECONDS));
 
@@ -207,17 +208,21 @@ public class DelayedMonoPublisherTest {
         CountDownLatch latch = new CountDownLatch(2);
 
         Flowable.fromPublisher(pub)
-                .doOnError(exceptions::add)
-                .doOnError(e -> latch.countDown())
-                .subscribe();
+                .subscribe(item -> {
+                }, e -> {
+                    exceptions.add(e);
+                    latch.countDown();
+                });
 
         Thread.sleep(200);
         pub.setException(ex);
 
         Flowable.fromPublisher(pub)
-                .doOnError(exceptions::add)
-                .doOnError(e -> latch.countDown())
-                .subscribe();
+                .subscribe(item -> {
+                }, e -> {
+                    exceptions.add(e);
+                    latch.countDown();
+                });
 
         assertTrue(latch.await(1, TimeUnit.SECONDS));
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,6 +26,7 @@ import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -119,7 +120,7 @@ public final class UndertowHelper {
             if (existing instanceof List) {
                 list = (List<Object>) existing;
             } else {
-                list = new ArrayList<Object>();
+                list = new ArrayList<>();
                 list.add(existing);
             }
             list.add(value);
@@ -157,6 +158,8 @@ public final class UndertowHelper {
         String m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
         if (m != null) {
             // always use what end-user provides in a header
+            // must be in upper case
+            m = m.toUpperCase();
             answer = new HttpString(m);
         } else if (queryString != null) {
             // if a query string is provided then use GET
@@ -167,6 +170,32 @@ public final class UndertowHelper {
         }
 
         return answer;
+    }
+
+    public static URI makeHttpURI(String httpURI) {
+        return makeHttpURI(
+            URI.create(UnsafeUriCharactersEncoder.encodeHttpURI(httpURI))
+        );
+    }
+
+    public static URI makeHttpURI(URI httpURI) {
+        if (ObjectHelper.isEmpty(httpURI.getPath())) {
+            try {
+                return new URI(
+                    httpURI.getScheme(),
+                    httpURI.getUserInfo(),
+                    httpURI.getHost(),
+                    httpURI.getPort(),
+                    "/",
+                    httpURI.getQuery(),
+                    httpURI.getFragment()
+                );
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException(e);
+            }
+        } else {
+            return httpURI;
+        }
     }
 
 }

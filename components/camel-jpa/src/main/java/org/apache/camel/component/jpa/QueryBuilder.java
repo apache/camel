@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,8 +26,6 @@ import javax.persistence.Query;
 
 /**
  * A builder of query expressions
- * 
- * @version 
  */
 public abstract class QueryBuilder implements QueryFactory {
     ParameterBuilder parameterBuilder;

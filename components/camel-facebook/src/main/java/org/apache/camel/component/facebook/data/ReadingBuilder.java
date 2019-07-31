@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,7 +40,7 @@ public final class ReadingBuilder {
         final LinkedHashMap<String, String> source = (LinkedHashMap<String, String>) field.get(reading);
         // create another reading, and add all fields from source
         Reading copy = new Reading();
-        final LinkedHashMap<String, String> copyMap = new LinkedHashMap<String, String>();
+        final LinkedHashMap<String, String> copyMap = new LinkedHashMap<>();
         copyMap.putAll(source);
         if (skipSinceUtil) {
             copyMap.remove("since");

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpConsumerFileSplitTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
@@ -47,7 +44,7 @@ public class FtpConsumerFileSplitTest extends FtpServerTestSupport {
             public void configure() throws Exception {
                 from(getFtpUrl())
                     .to("log:file")
-                    .split(body().tokenize("\n"))
+                    .split(body().tokenize(LS))
                         .to("log:line")
                         .to("mock:result");
             }

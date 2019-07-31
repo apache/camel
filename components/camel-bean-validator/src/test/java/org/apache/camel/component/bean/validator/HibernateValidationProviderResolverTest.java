@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.bean.validator;
 
+import javax.validation.ValidationProviderResolver;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -27,8 +29,11 @@ public class HibernateValidationProviderResolverTest extends CamelTestSupport {
 
     // Routing fixtures
 
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     MockEndpoint mockEndpoint;
+    
+    @BindToRegistry("myValidationProviderResolver")
+    ValidationProviderResolver validationProviderResolver = new HibernateValidationProviderResolver();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -41,13 +46,6 @@ public class HibernateValidationProviderResolverTest extends CamelTestSupport {
                     to("bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("myValidationProviderResolver", new HibernateValidationProviderResolver());
-        return registry;
     }
 
     // Tests

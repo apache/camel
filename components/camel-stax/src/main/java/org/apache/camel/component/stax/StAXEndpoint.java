@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,13 +18,13 @@ package org.apache.camel.component.stax;
 
 import org.xml.sax.ContentHandler;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ProcessorEndpoint;
 
 /**
  * The stax component allows messages to be process through a SAX ContentHandler.
@@ -32,11 +32,11 @@ import org.apache.camel.util.EndpointHelper;
 @UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true, label = "transformation")
 public class StAXEndpoint extends ProcessorEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String contentHandlerClass;
 
-    public StAXEndpoint(String endpointUri, CamelContext context) {
-        super(endpointUri, context, null);
+    public StAXEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
     }
 
     public String getContentHandlerClass() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances on the classpath
- *
- * @version 
  */
 public class PackageScanRouteBuilderFinder {
     private static final Logger LOG = LoggerFactory.getLogger(PackageScanRouteBuilderFinder.class);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -33,7 +32,7 @@ import org.apache.velocity.VelocityContext;
  * Generates Camel Component based on a collection of APIs.
  */
 @Mojo(name = "fromApis", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     /**
@@ -61,77 +60,67 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
     private List<ApiMethodAlias> aliases = Collections.emptyList();
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void executeInternal() throws MojoExecutionException {
         if (apis == null || apis.length == 0) {
             throw new MojoExecutionException("One or more API proxies are required");
         }
 
-        // starting with a new project
-        clearSharedProjectState();
-        setSharedProjectState(true);
-
-        try {
-            // fix apiName for single API use-case since Maven configurator sets empty parameters as null!!!
-            if (apis.length == 1 && apis[0].getApiName() == null) {
-                apis[0].setApiName("");
-            }
-
-            // generate API methods for each API proxy
-            for (ApiProxy api : apis) {
-                // validate API configuration
-                api.validate();
-
-                // create the appropriate code generator if signatureFile or fromJavaDoc are specified
-                // this way users can skip generating API classes for duplicate proxy class references
-                final AbstractApiMethodGeneratorMojo apiMethodGenerator = getApiMethodGenerator(api);
-
-                if (apiMethodGenerator != null) {
-                    // configure API method properties and generate Proxy classes
-                    configureMethodGenerator(apiMethodGenerator, api);
-                    try {
-                        apiMethodGenerator.execute();
-                    } catch (Exception e) {
-                        final String msg = "Error generating source for " + api.getProxyClass() + ": " + e.getMessage();
-                        throw new MojoExecutionException(msg, e);
-                    }
-                } else {
-                    // make sure the proxy class is being generated elsewhere
-                    final String proxyClass = api.getProxyClass();
-                    boolean found = false;
-                    for (ApiProxy other : apis) {
-                        if (other != api && proxyClass.equals(other.getProxyClass())) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        throw new MojoExecutionException("Missing one of fromSignatureFile or fromJavadoc for "
-                                + proxyClass);
-                    }
-                }
-
-                // set common aliases if needed
-                if (!aliases.isEmpty() && api.getAliases().isEmpty()) {
-                    api.setAliases(aliases);
-                }
-
-                // set common nullable options if needed
-                if (api.getNullableOptions() == null) {
-                    api.setNullableOptions(nullableOptions);
-                }
-            }
-
-            // generate ApiCollection
-            mergeTemplate(getApiContext(), getApiCollectionFile(), "/api-collection.vm");
-
-            // generate ApiName
-            mergeTemplate(getApiContext(), getApiNameFile(), "/api-name-enum.vm");
-
-        } finally {
-            // clear state for next Mojo
-            setSharedProjectState(false);
-            clearSharedProjectState();
+        // fix apiName for single API use-case since Maven configurator sets empty parameters as null!!!
+        if (apis.length == 1 && apis[0].getApiName() == null) {
+            apis[0].setApiName("");
         }
+
+        // generate API methods for each API proxy
+        for (ApiProxy api : apis) {
+            // validate API configuration
+            api.validate();
+
+            // create the appropriate code generator if signatureFile or fromJavaDoc are specified
+            // this way users can skip generating API classes for duplicate proxy class references
+            final AbstractApiMethodGeneratorMojo apiMethodGenerator = getApiMethodGenerator(api);
+
+            if (apiMethodGenerator != null) {
+                // configure API method properties and generate Proxy classes
+                configureMethodGenerator(apiMethodGenerator, api);
+                try {
+                    apiMethodGenerator.setProjectClassLoader(getProjectClassLoader()); // supply pre-constructed ClassLoader
+                    apiMethodGenerator.executeInternal(); // Call internal execute method
+                } catch (Exception e) {
+                    final String msg = "Error generating source for " + api.getProxyClass() + ": " + e.getMessage();
+                    throw new MojoExecutionException(msg, e);
+                }
+            } else {
+                // make sure the proxy class is being generated elsewhere
+                final String proxyClass = api.getProxyClass();
+                boolean found = false;
+                for (ApiProxy other : apis) {
+                    if (other != api && proxyClass.equals(other.getProxyClass())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    throw new MojoExecutionException("Missing one of fromSignatureFile or fromJavadoc for "
+                                                     + proxyClass);
+                }
+            }
+
+            // set common aliases if needed
+            if (!aliases.isEmpty() && api.getAliases().isEmpty()) {
+                api.setAliases(aliases);
+            }
+
+            // set common nullable options if needed
+            if (api.getNullableOptions() == null) {
+                api.setNullableOptions(nullableOptions);
+            }
+        }
+
+        // generate ApiCollection
+        mergeTemplate(getApiContext(), getApiCollectionFile(), "/api-collection.vm");
+
+        // generate ApiName
+        mergeTemplate(getApiContext(), getApiNameFile(), "/api-name-enum.vm");
     }
     
     private void configureMethodGenerator(AbstractApiMethodGeneratorMojo mojo, ApiProxy apiProxy) {

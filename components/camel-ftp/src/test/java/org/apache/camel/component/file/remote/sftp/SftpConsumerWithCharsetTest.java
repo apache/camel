@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,7 +47,7 @@ public class SftpConsumerWithCharsetTest extends SftpServerTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(SAMPLE_FILE_PAYLOAD);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         // Check that expectations are satisfied
         assertMockEndpointsSatisfied();

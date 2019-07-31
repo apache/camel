@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,78 +16,26 @@
  */
 package org.apache.camel.component.sjms.jms;
 
-import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.jms.Topic;
 
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.Endpoint;
 
-/**
- *
- */
-public final class JmsObjectFactory {
+public interface JmsObjectFactory {
+    MessageConsumer createMessageConsumer(Session session, Endpoint endpoint) throws Exception;
 
-    private JmsObjectFactory() {
-        //Helper class
-    }
+    MessageConsumer createMessageConsumer(Session session, Destination destination,
+            String messageSelector, boolean topic, String subscriptionId, boolean durable,
+            boolean shared) throws Exception;
 
-    public static MessageConsumer createMessageConsumer(
-            Session session,
-            Destination destination,
-            String messageSelector,
-            boolean topic,
-            String durableSubscriptionId) throws Exception {
-        // noLocal is default false accordingly to JMS spec
-        return createMessageConsumer(session, destination, messageSelector, topic, durableSubscriptionId, false);
-    }
+    MessageConsumer createMessageConsumer(Session session, Destination destination,
+            String messageSelector, boolean topic, String subscriptionId, boolean durable,
+            boolean shared, boolean noLocal) throws Exception;
 
-    public static MessageConsumer createMessageConsumer(
-            Session session,
-            Destination destination,
-            String messageSelector,
-            boolean topic,
-            String durableSubscriptionId,
-            boolean noLocal) throws Exception {
-        MessageConsumer messageConsumer;
+    MessageProducer createMessageProducer(Session session, Endpoint endpoint) throws Exception;
 
-        if (topic) {
-            if (ObjectHelper.isNotEmpty(durableSubscriptionId)) {
-                if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    messageConsumer = session.createDurableSubscriber((Topic) destination, durableSubscriptionId,
-                            messageSelector, noLocal);
-                } else {
-                    messageConsumer = session.createDurableSubscriber((Topic) destination, durableSubscriptionId);
-                }
-            } else {
-                if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    messageConsumer = session.createConsumer(destination, messageSelector, noLocal);
-                } else {
-                    messageConsumer = session.createConsumer(destination);
-                }
-            }
-        } else {
-            if (ObjectHelper.isNotEmpty(messageSelector)) {
-                messageConsumer = session.createConsumer(destination, messageSelector);
-            } else {
-                messageConsumer = session.createConsumer(destination);
-            }
-        }
-        return messageConsumer;
-    }
-
-    public static MessageProducer createMessageProducer(
-            Session session,
-            Destination destination,
-            boolean persistent,
-            long ttl) throws Exception {
-        MessageProducer messageProducer = session.createProducer(destination);
-        messageProducer.setDeliveryMode(persistent ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
-        if (ttl > 0) {
-            messageProducer.setTimeToLive(ttl);
-        }
-        return messageProducer;
-    }
+    MessageProducer createMessageProducer(Session session, Destination destination,
+            boolean persistent, long ttl) throws Exception;
 }

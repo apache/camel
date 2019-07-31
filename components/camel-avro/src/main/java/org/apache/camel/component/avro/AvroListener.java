@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,15 +22,15 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.avro.Protocol;
 import org.apache.avro.Schema;
-import org.apache.avro.ipc.HttpServer;
-import org.apache.avro.ipc.NettyServer;
 import org.apache.avro.ipc.Server;
+import org.apache.avro.ipc.jetty.HttpServer;
+import org.apache.avro.ipc.netty.NettyServer;
 import org.apache.avro.ipc.specific.SpecificResponder;
 import org.apache.avro.specific.SpecificData;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.lang.StringUtils;
-import org.mortbay.log.Log;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.log.Log;
 
 import static org.apache.camel.component.avro.AvroConstants.AVRO_HTTP_TRANSPORT;
 import static org.apache.camel.component.avro.AvroConstants.AVRO_NETTY_TRANSPORT;
@@ -42,7 +42,7 @@ import static org.apache.camel.component.avro.AvroConstants.AVRO_NETTY_TRANSPORT
  */
 public class AvroListener {
 
-    private ConcurrentMap<String, AvroConsumer> consumerRegistry = new ConcurrentHashMap<String, AvroConsumer>();
+    private ConcurrentMap<String, AvroConsumer> consumerRegistry = new ConcurrentHashMap<>();
     private AvroConsumer defaultConsumer;
     private final Server server;
 
@@ -113,7 +113,7 @@ public class AvroListener {
     public boolean unregister(String messageName) {
         if (!StringUtils.isEmpty(messageName)) {
             if (consumerRegistry.remove(messageName) == null) {
-                Log.warn("Consumer with message name " + messageName + " was already unregistered.");
+                Log.getLog().warn("Consumer with message name {} was already unregistered.", messageName);
             }
         } else {
             defaultConsumer = null;

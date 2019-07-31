@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,7 +39,7 @@ public class RabbitMQDeclareSupport {
     private void declareAndBindDeadLetterExchangeWithQueue(final Channel channel) throws IOException {
         if (endpoint.getDeadLetterExchange() != null) {
             // TODO Do we need to setup the args for the DeadLetter?
-            declareExchange(channel, endpoint.getDeadLetterExchange(), endpoint.getDeadLetterExchangeType(), Collections.<String, Object>emptyMap());
+            declareExchange(channel, endpoint.getDeadLetterExchange(), endpoint.getDeadLetterExchangeType(), Collections.<String, Object> emptyMap());
             declareAndBindQueue(channel, endpoint.getDeadLetterQueue(), endpoint.getDeadLetterExchange(), endpoint.getDeadLetterRoutingKey(), null, null);
         }
     }
@@ -50,7 +50,8 @@ public class RabbitMQDeclareSupport {
         }
 
         if (shouldDeclareQueue()) {
-            // need to make sure the queueDeclare is same with the exchange declare
+            // need to make sure the queueDeclare is same with the exchange
+            // declare
             declareAndBindQueue(channel, endpoint.getQueue(), endpoint.getExchangeName(), endpoint.getRoutingKey(), resolvedQueueArguments(), endpoint.getBindingArgs());
         }
     }
@@ -58,27 +59,43 @@ public class RabbitMQDeclareSupport {
     private Map<String, Object> resolvedQueueArguments() {
         Map<String, Object> queueArgs = new HashMap<>();
         populateQueueArgumentsFromDeadLetterExchange(queueArgs);
-        populateQueueArgumentsFromConfigurer(queueArgs);
         queueArgs.putAll(endpoint.getQueueArgs());
+        formatSpecialQueueArguments(queueArgs);
         return queueArgs;
     }
 
-    private Map<String, Object> populateQueueArgumentsFromDeadLetterExchange(final Map<String, Object> queueArgs) {
+    private void formatSpecialQueueArguments(Map<String, Object> queueArgs) {
+        // some arguments must be in numeric values so we need to fix this
+        Object queueLengthLimit = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY);
+        if (queueLengthLimit instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY, Long.parseLong((String) queueLengthLimit));
+        }
+        
+        Object queueMaxPriority = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY);
+        if (queueMaxPriority instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY, Integer.parseInt((String) queueMaxPriority));
+        }
+
+        Object queueMessageTtl = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY);
+        if (queueMessageTtl instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY, Long.parseLong((String) queueMessageTtl));
+        }
+
+        Object queueExpiration = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY);
+        if (queueExpiration instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, Long.parseLong((String) queueExpiration));
+        }
+    }
+
+    private void populateQueueArgumentsFromDeadLetterExchange(final Map<String, Object> queueArgs) {
         if (endpoint.getDeadLetterExchange() != null) {
             queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_EXCHANGE, endpoint.getDeadLetterExchange());
             queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_ROUTING_KEY, endpoint.getDeadLetterRoutingKey());
         }
-
-        return queueArgs;
     }
 
     private Map<String, Object> resolvedExchangeArguments() {
-        Map<String, Object> exchangeArgs = new HashMap<>();
-        if (endpoint.getExchangeArgsConfigurer() != null) {
-            endpoint.getExchangeArgsConfigurer().configurArgs(exchangeArgs);
-        }
-        exchangeArgs.putAll(endpoint.getExchangeArgs());
-        return exchangeArgs;
+        return endpoint.getExchangeArgs();
     }
 
     private boolean shouldDeclareQueue() {
@@ -93,25 +110,24 @@ public class RabbitMQDeclareSupport {
         return !endpoint.isSkipQueueBind();
     }
 
-    private void populateQueueArgumentsFromConfigurer(final Map<String, Object> queueArgs) {
-        if (endpoint.getQueueArgsConfigurer() != null) {
-            endpoint.getQueueArgsConfigurer().configurArgs(queueArgs);
+    private void declareExchange(final Channel channel, final String exchange, final String exchangeType, final Map<String, Object> exchangeArgs) throws IOException {
+        if (endpoint.isPassive()) {
+            channel.exchangeDeclarePassive(exchange);
+        } else {
+            channel.exchangeDeclare(exchange, exchangeType, endpoint.isDurable(), endpoint.isAutoDelete(), exchangeArgs);
         }
     }
 
-    private void declareExchange(final Channel channel, final String exchange, final String exchangeType, final Map<String, Object> exchangeArgs) throws IOException {
-        channel.exchangeDeclare(exchange, exchangeType, endpoint.isDurable(), endpoint.isAutoDelete(), exchangeArgs);
-    }
-
-    private void declareAndBindQueue(final Channel channel,
-                                     final String queue,
-                                     final String exchange,
-                                     final String routingKey,
-                                     final Map<String, Object> queueArgs,
+    private void declareAndBindQueue(final Channel channel, final String queue, final String exchange, final String routingKey, final Map<String, Object> queueArgs,
                                      final Map<String, Object> bindingArgs)
 
-            throws IOException {
-        channel.queueDeclare(queue, endpoint.isDurable(), endpoint.isExclusive(), endpoint.isAutoDelete(), queueArgs);
+        throws IOException {
+
+        if (endpoint.isPassive()) {
+            channel.queueDeclarePassive(queue);
+        } else {
+            channel.queueDeclare(queue, endpoint.isDurable(), endpoint.isExclusive(), endpoint.isAutoDelete(), queueArgs);
+        }
         if (shouldBindQueue()) {
             channel.queueBind(queue, exchange, emptyIfNull(routingKey), bindingArgs);
         }

@@ -1,0 +1,281 @@
+[[soroush-component]]
+= Soroush Component
+
+*Available as of Camel version 3.0*
+
+The Soroush component provides access to the https://soroush-app.ir/developer.html[Soroush Bot API].
+It allows a Camel-based application to send and receive messages by acting as a Bot, i.e. participating in direct conversation with normal users and send and receive message and files
+
+A Soroush Bot must be created before using this component, following the
+instruction at the
+https://soroush-app.ir/developer.html[Soroush Bot Developers home].
+when a new Bot is created, the https://sapp.ir/mrbot[MrBot] provides
+an **authorization token** corresponding to the Bot. The authorization token is a mandatory parameter for camel-soroush endpoint.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-soroush</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+Soroush Component supports 4 types of endpoint that can be specified in
+uri path:
+
+[width="100%",cols="2,5",options="header"]
+|===
+|Type| Description
+|*getMessage* (Consumer)
+|With this endpoint you can receive messages from users.
+
+|*sendMessage* (Producer)
+|By sending exchange to this endpoint, you can send messages to users.
+
+|*downloadFile* (Producer)
+|By sending a message to this endpoint the component tries to download
+message attachments (file & thumbnail) if exists, and store them in
+`SoroushMessage.file` and `SoroushMessage.thumbnail`.
+
+|*uploadFile* (Producer)
+|By sending a message to this endpoint it will upload file and thumbnail
+attachments if provided in the message  (`SoroushMessage.file`, `SoroushMessage.thumbnail`)
+and store the urls in the message (`SoroushMessage.fileUrl`, `SoroushMessage.thumbnailUrl`).
+|===
+
+== Options
+
+// component options: START
+The Soroush component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *authorizationToken* (global) | The default Soroush authorization token to be used when the information is not provided in the endpoints. |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+// endpoint options: START
+The Soroush endpoint is configured using URI syntax:
+
+----
+soroush:action
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *action* | *Required* The action to do. |  | SoroushAction
+|===
+
+
+=== Query Parameters (22 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionTimeout* (common) | Connection timeout in ms when connecting to soroush API | 30000 | int
+| *maxConnectionRetry* (common) | Maximum connection retry when fail to connect to soroush API, if the quota is reached, MaximumConnectionRetryReachedException is thrown for that message. | 4 | int
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *concurrentConsumers* (consumer) | Number of Thread created by consumer in the route. if you use this method for parallelism, it is guaranteed that messages from same user always execute in the same thread and therefore messages from the same user are processed sequentially. Default value notice: using SoroushBotSingleThreadConsumer | 1 | int
+| *queueCapacityPerThread* (consumer) | Maximum capacity of each queue when concurrentConsumers is greater than 1. if a queue become full, every message that should go to that queue will be dropped. If bridgeErrorHandler is set to true, an exchange with CongestionException is directed to ErrorHandler. You can then processed the error using onException(CongestionException.class) route. Default value notice: infinite capacity | 0 | int
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *autoDownload* (producer) | Automatically download SoroushMessage.fileUrl and SoroushMessage.thumbnailUrl if exists for the message and store them in SoroushMessage.file and SoroushMessage.thumbnail field | false | boolean
+| *autoUploadFile* (producer) | Automatically upload attachments when a message goes to the sendMessage endpoint and the SoroushMessage.file (SoroushMessage.thumbnail) has been set and SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null | true | boolean
+| *downloadThumbnail* (producer) | If true, when downloading an attached file, thumbnail will be downloaded if provided in the message. Otherwise, only the file will be downloaded | true | boolean
+| *forceDownload* (producer) | Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail) was not null in that message | false | boolean
+| *forceUpload* (producer) | Force to upload SoroushMessage.file(SoroushMessage.thumbnail) if exists, even if the SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in the message | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *authorizationToken* (security) | The authorization token for using the bot. if uri path does not contain authorization token, this token will be used. |  | String
+| *backOffStrategy* (scheduling) | The strategy to backoff in case of connection failure. Currently 3 strategies are supported: 1. Exponential (default): It multiply retryWaitingTime by retryExponentialCoefficient after each connection failure. 2. Linear: It increase retryWaitingTime by retryLinearIncrement after each connection failure. 3. Fixed: Always use retryWaitingTime as the time between retries. | Exponential | String
+| *maxRetryWaitingTime* (scheduling) | Maximum amount of time (in millisecond) a thread wait before retrying failed request. | 3600000 | long
+| *reconnectIdleConnection Timeout* (scheduling) | The timeout in millisecond to reconnect the existing getMessage connection to ensure that the connection is always live and does not dead without notifying the bot. this value should not be changed. | 300000 | long
+| *retryExponentialCoefficient* (scheduling) | Coefficient to compute back off time when using Exponential Back Off strategy | 2 | long
+| *retryLinearIncrement* (scheduling) | The amount of time (in millisecond) which adds to waiting time when using Linear back off strategy | 10000 | long
+| *retryWaitingTime* (scheduling) | Waiting time before retry failed request (Millisecond). If backOffStrategy is not Fixed this is the based value for computing back off waiting time. the first retry is always happen immediately after failure and retryWaitingTime do not apply to the first retry. | 1000 | long
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-soroush-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.soroush.authorization-token* | The default Soroush authorization token to be used when the information is not provided in the endpoints. |  | String
+| *camel.component.soroush.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.soroush.enabled* | Whether to enable auto configuration of the soroush component. This is enabled by default. |  | Boolean
+| *camel.component.soroush.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Usage
+
+Every exchange that you send to soroush endpoint must contain a
+body of type `org.apache.camel.component.soroushbot.models.MessageModel`.
+Similarly, every exchange you receive from soroush endpoint contains a body
+of `MessageModel` too.
+
+[source,java]
+------------
+SoroushMessage message = exchange.getIn().getBody(SoroushMessage.class)
+------------
+
+=== Receive Message
+With this endpoint you can receive messages from users.
+
+The following is a basic example of how to receive all messages that your Soroush users are sending to the configured Bot.
+In Java DSL:
+
+[source,java]
+-------------
+from("soroush:getMessage/YourAuthorizationToken?autoDownload=true")
+    .bean(ProcessorBean.class);
+-------------
+and in Spring XML
+[source,xml]
+------------
+<route>
+    <from uri="soroush:getMessage/YourAuthorizationToken?autoDownload=true"/>
+    <bean ref="processorBean" />
+<route>
+
+<bean id="processorBean" class="com.example.ProcessorBean"/>
+------------
+
+=== Download File
+This endpoint is useful when you want to conditionally download the files specified in the message.
+When you send a message to this endpoint it opens a connection to Soroush Server
+for downloading the files and store `InputStream` of that connection in
+`SoroushMessage.file` and `SoroushMessage.thumbnail` and then you can read contents of the files.
+
+*NOTE:* If you delay reading from these streams, the Soroush server may close the connection.
+You are responsible for storing attachment files on your disc if needed.
+
+Please refer to  Query Parameters table for more information.
+
+The following is an example of how to conditionally download files in the messages.
+
+[source,java]
+-------------
+from("soroush:getMessage/YourAuthorizationToken")
+    .choice().when(exchange -> {
+        SoroushMessage soroushMessage = exchange.getIn().getBody(SoroushMessage.class);
+        return soroushMessage.getFileSize()!=null && soroushMessage.getFileSize()<10000;
+                               })
+    .to("soroush:downloadFile/YourAuthorizationToken");
+    .otherwise().stop()
+    .end()
+    .bean(ProcessorBean.class)
+-------------
+
+=== Send Message
+This endpoint is your primary way to send messages and upload files. You can simply
+send a message to a user by sending the message to this endpoint.
+
+This is a simple example that simply replies every user messages with the same message.
+
+[source,java]
+-------------
+from("soroush:getMessage/YourAuthorizationToken")
+    .process(exchange->{
+        SoroushMessage soroushMessage = exchange.getIn().getBody(SoroushMessage.class);
+        soroushMessage.setTo(soroushMessage.getFrom());
+    })
+    .to("soroush:sendMessage/YourAuthorizationToken");
+-------------
+
+=== Auto Upload Attachments
+This endpoint can help you to automatically upload files and thumbnails of a message to the server
+and set `fileUrl` and `thumbnailUrl` of that message to proper values taken from Soroush Upload File Api.
+The only thing you need to do is setting `SoroushMessage.file` and `SoroushMessage.thumbnail` properties.
+There are 4 utility methods provided for this purpose:
+
+[source,java]
+-------------
+SoroushMessage.setFile(File file)
+SoroushMessage.setFile(InputStream fileStream)
+SoroushMessage.setThumbnail(File thumbnail)
+SoroushMessage.setThumbnail(InputStream thumbnailStream)
+-------------
+
+
+=== Upload File
+This endpoint is a utility endpoint that allows you to upload a file without sending the message.
+The only thing you need to do for uploading a file is to set `SoroushMessage.file` and `Send Message.thumbnail`
+and this endpoint upload them to the Soroush server.
+
+[source,java]
+-------------
+from("soroush:getMessage/YourAuthorizationToken")
+    .process(exchage->{
+        SoroushMessage response = new SoroushMessage();
+        response.setTo(exchange.getIn().getBody(SoroushMessage.class).getFrom());
+        response.setFile(new File("MyResponse.jpg"))
+    })
+    .to("soroush:uploadFile/YourAuthorizationToken")
+    .process(exchage->System.out.println(exchange.getIn().getBody(SoroushMessage.class).getFileUrl())
+-------------
+
+=== Error Handling
+There are 3 types of exceptions that can be produced in Soroush Component.
+[width="100%",cols="2,5",options="header"]
+|===
+|Exception| Description
+
+|CongestionException
+|this exception occurs when `bridgeErrorHandler=true` and you use more than 1 concurrentConsumer (`concurrentConsumers>1`)
+and `queueCapacityPerThread` is reached for a queue, on any message that goes to that queue,
+a CongestionException will throw.
+
+|MaximumConnectionRetryReachedException
+|when the component could not connect to the Soroush server for more than `MaxConnectionRetry` times
+
+|SoroushException
+|when a request is rejected by Soroush Server.
+
+|===
+
+One way to handle these exceptions is by using `onException` route definition:
+
+[source,java]
+-------------
+onException(CongestionException.class).log("Failed to processing ${id}")
+-------------
+
+_Donated by https://www.mohaymen.ir[Mohaymen ICT] to ASF_

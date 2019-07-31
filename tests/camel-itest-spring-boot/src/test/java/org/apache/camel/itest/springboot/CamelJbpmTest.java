@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,6 +35,8 @@ public class CamelJbpmTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelJbpmTest.class))
+                .dependency("org.drools:drools-core:7.22.0.Final")
+                .dependency("org.drools:drools-compiler:7.22.0.Final")
                 .unitTestExpectedNumber(0)
                 .build();
     }

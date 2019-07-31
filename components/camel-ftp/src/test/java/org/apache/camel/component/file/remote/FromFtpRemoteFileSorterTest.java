@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,9 +18,9 @@ package org.apache.camel.component.file.remote;
 
 import java.util.Comparator;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,15 +29,11 @@ import org.junit.Test;
  */
 public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
 
+    @BindToRegistry("mySorter")
+    private MyRemoteFileSorter sorter = new MyRemoteFileSorter();
+    
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/sorter?password=admin&sorter=#mySorter";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("mySorter", new MyRemoteFileSorter());
-        return jndi;
     }
 
     @Override
@@ -46,7 +42,7 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
         super.setUp();
         prepareFtpServer();
     }
-    
+
     @Test
     public void testFtpSorter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -56,8 +52,9 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating files on the server that we want to unit
-        // test that we can pool        
+        // prepares the FTP Server by creating files on the server that we want
+        // to unit
+        // test that we can pool
         sendFile(getFtpUrl(), "Hello Paris", "paris.txt");
         sendFile(getFtpUrl(), "Hello London", "london.txt");
         sendFile(getFtpUrl(), "Hello Copenhagen", "copenhagen.txt");

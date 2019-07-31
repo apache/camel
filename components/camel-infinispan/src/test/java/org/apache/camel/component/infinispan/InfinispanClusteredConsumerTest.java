@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.infinispan;
-
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,10 +30,10 @@ public class InfinispanClusteredConsumerTest extends InfinispanClusterTestSuppor
 
     private static final long WAIT_TIMEOUT = 5000;
 
-    @EndpointInject(uri = "mock:resultCreated")
+    @EndpointInject("mock:resultCreated")
     private MockEndpoint mockResultCreatedEvents;
 
-    @EndpointInject(uri = "mock:resultExpired")
+    @EndpointInject("mock:resultExpired")
     private MockEndpoint mockResultExpiredEvents;
 
     @BeforeClass
@@ -52,10 +52,10 @@ public class InfinispanClusteredConsumerTest extends InfinispanClusterTestSuppor
 
         mockResultCreatedEvents.expectedMessageCount(1);
 
-        mockResultCreatedEvents.message(0).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
-        mockResultCreatedEvents.message(0).outHeader(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mockResultCreatedEvents.message(0).outHeader(InfinispanConstants.CACHE_NAME).isNotNull();
-        mockResultCreatedEvents.message(0).outHeader(InfinispanConstants.KEY).isEqualTo(key.toString());
+        mockResultCreatedEvents.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
+        mockResultCreatedEvents.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(false);
+        mockResultCreatedEvents.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
+        mockResultCreatedEvents.message(0).header(InfinispanConstants.KEY).isEqualTo(key.toString());
 
         defaultCache(1).put(key, "value");
         mockResultCreatedEvents.assertIsSatisfied();
@@ -68,15 +68,15 @@ public class InfinispanClusteredConsumerTest extends InfinispanClusterTestSuppor
         mockResultCreatedEvents.expectedMessageCount(1);
         mockResultExpiredEvents.expectedMessageCount(1);
 
-        mockResultCreatedEvents.message(0).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
-        mockResultCreatedEvents.message(0).outHeader(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mockResultCreatedEvents.message(0).outHeader(InfinispanConstants.CACHE_NAME).isNotNull();
-        mockResultCreatedEvents.message(0).outHeader(InfinispanConstants.KEY).isEqualTo(key.toString());
+        mockResultCreatedEvents.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
+        mockResultCreatedEvents.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(false);
+        mockResultCreatedEvents.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
+        mockResultCreatedEvents.message(0).header(InfinispanConstants.KEY).isEqualTo(key.toString());
 
-        mockResultExpiredEvents.message(0).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_EXPIRED");
-        mockResultExpiredEvents.message(0).outHeader(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mockResultExpiredEvents.message(0).outHeader(InfinispanConstants.CACHE_NAME).isNotNull();
-        mockResultExpiredEvents.message(0).outHeader(InfinispanConstants.KEY).isEqualTo(key.toString());
+        mockResultExpiredEvents.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_EXPIRED");
+        mockResultExpiredEvents.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(false);
+        mockResultExpiredEvents.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
+        mockResultExpiredEvents.message(0).header(InfinispanConstants.KEY).isEqualTo(key.toString());
 
         injectTimeService();
 
@@ -95,9 +95,9 @@ public class InfinispanClusteredConsumerTest extends InfinispanClusterTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan://localhost?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_CREATED")
+                from("infinispan?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_CREATED")
                         .to("mock:resultCreated");
-                from("infinispan://localhost?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_EXPIRED")
+                from("infinispan?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_EXPIRED")
                         .to("mock:resultExpired");
             }
         };

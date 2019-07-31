@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -47,7 +47,7 @@ public class JmsToCxfInOutTest extends AbstractJUnit4SpringContextTests {
         String out = template.requestBodyAndHeader("jms:queue:bridge.cxf", "Willem", CxfConstants.OPERATION_NAME, "greetMe", String.class);
         assertEquals("Hello Willem", out);
 
-        // call for the other opertion
+        // call for the other operation
         out = template.requestBodyAndHeader("jms:queue:bridge.cxf", new Object[0], CxfConstants.OPERATION_NAME, "sayHi", String.class);
         assertEquals("Bonjour", out);
     }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <dataFormats>
+      <thrift id="thrift1" instanceClass="org.apache.camel.dataformat.thrift.generated.Work"/>
+    </dataFormats>
+    <route id="_route1">
+      <from id="_from1" uri="direct:in"/>
+      <marshal id="_marshal1">
+        <thrift instanceClass="org.apache.camel.dataformat.thrift.generated.Work"/>
+      </marshal>
+    </route>
+    <route id="_route2">
+      <from id="_from2" uri="direct:back"/>
+      <unmarshal id="_unmarshal2">
+        <thrift instanceClass="org.apache.camel.dataformat.thrift.generated.Work"/>
+      </unmarshal>
+      <to id="_to1" uri="mock:reverse"/>
+    </route>
+    <route id="_route3">
+      <from id="_from3" uri="direct:marshal"/>
+      <marshal id="_marshal3">
+        <custom ref="thrift1"/>
+      </marshal>
+    </route>
+    <route id="_route4">
+      <from id="_from4" uri="direct:unmarshalA"/>
+      <unmarshal id="_unmarshal4">
+        <custom ref="thrift1"/>
+      </unmarshal>
+      <to id="_to2" uri="mock:reverse"/>
+    </route>
+    <route id="_route5">
+      <from id="_from5" uri="direct:unmarshalB"/>
+      <unmarshal id="_unmarshal5">
+        <custom ref="thrift1"/>
+      </unmarshal>
+      <to id="_to3" uri="mock:reverse"/>
+    </route>
+  </camelContext>
+  <bean class="org.apache.camel.dataformat.thrift.ThriftDataFormat" id="thrift2">
+    <property name="instanceClass" value="org.apache.camel.dataformat.thrift.generated.Work"/>
+  </bean>
+</beans>

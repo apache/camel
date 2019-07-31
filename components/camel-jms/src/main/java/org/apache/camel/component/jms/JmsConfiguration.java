@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -50,9 +50,6 @@ import org.springframework.util.ErrorHandler;
 
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 
-/**
- * @version
- */
 @UriParams
 public class JmsConfiguration implements Cloneable {
 
@@ -127,8 +124,6 @@ public class JmsConfiguration implements Cloneable {
     private String clientId;
     @UriParam(description = "The durable subscriber name for specifying durable topic subscriptions. The clientId option must be configured as well.")
     private String durableSubscriptionName;
-    @Deprecated
-    private boolean subscriptionDurable;
     @UriParam(label = "consumer,advanced",
             description = "Specifies whether the listener session should be exposed when consuming messages.")
     private boolean exposeListenerSession = true;
@@ -238,13 +233,13 @@ public class JmsConfiguration implements Cloneable {
     private boolean mapJmsMessage = true;
     @UriParam(defaultValue = "true", label = "advanced",
             description = "When sending, specifies whether message IDs should be added. This is just an hint to the JMS broker." 
-                    + "If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, " 
-                    + "the message ID must be set to its normal unique value")
+                    + " If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, "
+                    + "the message ID must be set to its normal unique value.")
     private boolean messageIdEnabled = true;
     @UriParam(defaultValue = "true", label = "advanced",
             description = "Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS broker."
-                    + "If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint " 
-                    + "the timestamp must be set to its normal value")
+                    + " If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint "
+                    + "the timestamp must be set to its normal value.")
     private boolean messageTimestampEnabled = true;
     @UriParam(defaultValue = "" + Message.DEFAULT_PRIORITY, enums = "1,2,3,4,5,6,7,8,9", label = "producer",
             description = "Values greater than 1 specify the message priority when sending (where 0 is the lowest priority and 9 is the highest)."
@@ -254,8 +249,6 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "transaction",
             description = "Specifies whether to use transacted mode")
     private boolean transacted;
-    @Deprecated
-    private boolean transactedInOut;
     @UriParam(defaultValue = "true", label = "transaction,advanced",
             description = "If true, Camel will create a JmsTransactionManager, if there is no transactionManager injected when option transacted=true.")
     private boolean lazyCreateTransactionManager = true;
@@ -275,13 +268,14 @@ public class JmsConfiguration implements Cloneable {
                     + " values from the endpoint instead. So, when using this option, the headers override the values from the endpoint."
                     + " The explicitQosEnabled option, by contrast, will only use options set on the endpoint, and not values from the message header.")
     private boolean preserveMessageQos;
-    @UriParam(description = "If true, a producer will behave like a InOnly exchange with the exception that JMSReplyTo header is sent out and"
-            + " not be suppressed like in the case of InOnly. Like InOnly the producer will not wait for a reply."
-            + " A consumer with this flag will behave like InOnly. This feature can be used to bridge InOut requests to"
-            + " another queue so that a route on the other queue will send its response directly back to the original JMSReplyTo.")
+    @UriParam(description = "Specifies whether Camel ignores the JMSReplyTo header in messages. If true, Camel does not send a reply back to"
+            + " the destination specified in the JMSReplyTo header. You can use this option if you want Camel to consume from a"
+            + " route and you do not want Camel to automatically send back a reply message because another component in your code"
+            + " handles the reply message. You can also use this option if you want to use Camel as a proxy between different"
+            + " message brokers and you want to route message from one system to another.")
     private boolean disableReplyTo;
     @UriParam(label = "consumer,advanced",
-            description = "Enables eager loading of JMS properties as soon as a message is loaded"
+            description = "Enables eager loading of JMS properties and payload as soon as a message is loaded"
                     + " which generally is inefficient as the JMS properties may not be required"
                     + " but sometimes can catch early any issues with the underlying JMS provider"
                     + " and the use of JMS properties")
@@ -295,8 +289,6 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "advanced",
             description = "Specifies whether JMSMessageID should always be used as JMSCorrelationID for InOut messages.")
     private boolean useMessageIDAsCorrelationID;
-    private JmsProviderMetadata providerMetadata = new JmsProviderMetadata();
-    private JmsOperations metadataJmsOperations;
     @UriParam(label = "consumer",
             description = "Provides an explicit ReplyTo destination, which overrides any incoming value of Message.getJMSReplyTo().")
     private String replyTo;
@@ -347,13 +339,6 @@ public class JmsConfiguration implements Cloneable {
                     + " The original Exception on the consumer side can be wrapped in an outer exception"
                     + " such as org.apache.camel.RuntimeCamelException when returned to the producer.")
     private boolean transferException;
-    @UriParam(label = "advanced",
-            description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,"
-                    + " then the fault flag on Message#isFault() will be send back in the response as a JMS header with the key"
-                    + " org.apache.camel.component.jms.JmsConstants#JMS_TRANSFER_FAULT#JMS_TRANSFER_FAULT."
-                    + " If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}."
-                    + " You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.")
-    private boolean transferFault;
     @UriParam(description = "Specifies whether to test the connection on startup."
             + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
             + " If a connection cannot be granted then Camel throws an exception on startup."
@@ -451,6 +436,49 @@ public class JmsConfiguration implements Cloneable {
                     + " JMS property to correlate messages. If set messages will be correlated solely on the"
                     + " value of this property JMSCorrelationID property will be ignored and not set by Camel.")
     private String correlationProperty;
+    @UriParam(label = "producer,advanced",
+            description = "This option is used to allow additional headers which may have values that are invalid according to JMS specification."
+                    + " For example some message systems such as WMQ do this with header names using prefix JMS_IBM_MQMD_ containing values with byte array or other invalid types."
+                    + " You can specify multiple header names separated by comma, and use * as suffix for wildcard matching.")
+    private String allowAdditionalHeaders;
+
+    // JMS 2.0 API
+    @UriParam(label = "consumer", description = "Set the name of a subscription to create. To be applied in case"
+        + " of a topic (pub-sub domain) with a shared or durable subscription."
+        + " The subscription name needs to be unique within this client's"
+        + " JMS client id. Default is the class name of the specified message listener."
+        + " Note: Only 1 concurrent consumer (which is the default of this"
+        + " message listener container) is allowed for each subscription,"
+        + " except for a shared subscription (which requires JMS 2.0).")
+    private String subscriptionName;
+    @UriParam(label = "consumer", description = "Set whether to make the subscription durable. The durable subscription name"
+        + " to be used can be specified through the subscriptionName property."
+        + " Default is false. Set this to true to register a durable subscription,"
+        + " typically in combination with a subscriptionName value (unless"
+        + " your message listener class name is good enough as subscription name)."
+        + " Only makes sense when listening to a topic (pub-sub domain),"
+        + " therefore this method switches the pubSubDomain flag as well.")
+    private boolean subscriptionDurable;
+    @UriParam(label = "consumer", description = "Set whether to make the subscription shared. The shared subscription name"
+        + " to be used can be specified through the subscriptionName property."
+        + " Default is false. Set this to true to register a shared subscription,"
+        + " typically in combination with a subscriptionName value (unless"
+        + " your message listener class name is good enough as subscription name)."
+        + " Note that shared subscriptions may also be durable, so this flag can"
+        + " (and often will) be combined with subscriptionDurable as well."
+        + " Only makes sense when listening to a topic (pub-sub domain),"
+        + " therefore this method switches the pubSubDomain flag as well."
+        + " Requires a JMS 2.0 compatible message broker.")
+    private boolean subscriptionShared;
+
+    @UriParam(label = "producer,advanced", description = "Sets whether StreamMessage type is enabled or not."
+        + " Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage."
+        + " This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory."
+        + " By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data.")
+    private boolean streamMessageTypeEnabled;
+
+    @UriParam(label = "producer", description = "Sets whether JMS date properties should be formatted according to the ISO 8601 standard.")
+    private boolean formatDateHeadersToIso8601;
 
     public JmsConfiguration() {
     }
@@ -613,18 +641,13 @@ public class JmsConfiguration implements Cloneable {
                 jmsTemplate.setTimeToLive(ttl);
             }
 
-            jmsTemplate.setSessionTransacted(isTransactedInOut());
-            if (isTransactedInOut()) {
-                jmsTemplate.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
+            if (acknowledgementMode >= 0) {
+                jmsTemplate.setSessionAcknowledgeMode(acknowledgementMode);
+            } else if (acknowledgementModeName != null) {
+                jmsTemplate.setSessionAcknowledgeModeName(acknowledgementModeName);
             } else {
-                if (acknowledgementMode >= 0) {
-                    jmsTemplate.setSessionAcknowledgeMode(acknowledgementMode);
-                } else if (acknowledgementModeName != null) {
-                    jmsTemplate.setSessionAcknowledgeModeName(acknowledgementModeName);
-                } else {
-                    // default to AUTO
-                    jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
-                }
+                // default to AUTO
+                jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
             }
         }
         return answer;
@@ -736,6 +759,10 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
+    }
+
+    public ConnectionFactory getOrCreateConnectionFactory() {
         if (connectionFactory == null) {
             connectionFactory = createConnectionFactory();
         }
@@ -913,16 +940,6 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setErrorHandlerLogStackTrace(boolean errorHandlerLogStackTrace) {
         this.errorHandlerLogStackTrace = errorHandlerLogStackTrace;
-    }
-
-    @Deprecated
-    public boolean isSubscriptionDurable() {
-        return subscriptionDurable;
-    }
-
-    @Deprecated
-    public void setSubscriptionDurable(boolean subscriptionDurable) {
-        this.subscriptionDurable = subscriptionDurable;
     }
 
     public String getAcknowledgementModeName() {
@@ -1283,7 +1300,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS Broker.
-     * If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint, the timestamp must be set to its normal value
+     * If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint, the timestamp must be set to its normal value.
      */
     public void setMessageTimestampEnabled(boolean messageTimestampEnabled) {
         this.messageTimestampEnabled = messageTimestampEnabled;
@@ -1327,21 +1344,6 @@ public class JmsConfiguration implements Cloneable {
         this.transacted = consumerTransacted;
     }
 
-    /**
-     * Should InOut operations (request reply) default to using transacted mode?
-     * <p>
-     * By default this is false as you need to commit the outgoing request before you can consume the input
-     */
-    @Deprecated
-    public boolean isTransactedInOut() {
-        return transactedInOut;
-    }
-
-    @Deprecated
-    public void setTransactedInOut(boolean transactedInOut) {
-        this.transactedInOut = transactedInOut;
-    }
-
     public boolean isLazyCreateTransactionManager() {
         return lazyCreateTransactionManager;
     }
@@ -1358,7 +1360,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Enables eager loading of JMS properties as soon as a message is loaded
+     * Enables eager loading of JMS properties and payload as soon as a message is loaded
      * which generally is inefficient as the JMS properties may not be required
      * but sometimes can catch early any issues with the underlying JMS provider
      * and the use of JMS properties
@@ -1372,10 +1374,11 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * If true, a producer will behave like a InOnly exchange with the exception that JMSReplyTo header is sent out and
-     * not be suppressed like in the case of InOnly. Like InOnly the producer will not wait for a reply.
-     * A consumer with this flag will behave like InOnly. This feature can be used to bridge InOut requests to
-     * another queue so that a route on the other queue will send its response directly back to the original JMSReplyTo.
+     * Specifies whether Camel ignores the JMSReplyTo header in messages. If true, Camel does not send a reply back to
+     * the destination specified in the JMSReplyTo header. You can use this option if you want Camel to consume from a
+     * route and you do not want Camel to automatically send back a reply message because another component in your code
+     * handles the reply message. You can also use this option if you want to use Camel as a proxy between different
+     * message brokers and you want to route message from one system to another.
      */
     public void setDisableReplyTo(boolean disableReplyTo) {
         this.disableReplyTo = disableReplyTo;
@@ -1415,37 +1418,6 @@ public class JmsConfiguration implements Cloneable {
     public void setDestinationResolver(DestinationResolver destinationResolver) {
         this.destinationResolver = destinationResolver;
     }
-
-    public JmsProviderMetadata getProviderMetadata() {
-        return providerMetadata;
-    }
-
-    /**
-     * Allows the provider metadata to be explicitly configured. Typically this is not required
-     * and Camel will auto-detect the provider metadata from the underlying provider.
-     */
-    public void setProviderMetadata(JmsProviderMetadata providerMetadata) {
-        this.providerMetadata = providerMetadata;
-    }
-
-    public JmsOperations getMetadataJmsOperations(JmsEndpoint endpoint) {
-        if (metadataJmsOperations == null) {
-            metadataJmsOperations = getJmsOperations();
-            if (metadataJmsOperations == null) {
-                metadataJmsOperations = createInOnlyTemplate(endpoint, false, null);
-            }
-        }
-        return metadataJmsOperations;
-    }
-
-    /**
-     * Sets the {@link JmsOperations} used to deduce the {@link JmsProviderMetadata} details which if none
-     * is customized one is lazily created on demand
-     */
-    public void setMetadataJmsOperations(JmsOperations metadataJmsOperations) {
-        this.metadataJmsOperations = metadataJmsOperations;
-    }
-
 
     // Implementation methods
     // -------------------------------------------------------------------------
@@ -1629,7 +1601,7 @@ public class JmsConfiguration implements Cloneable {
      * creation
      */
     protected ConnectionFactory createListenerConnectionFactory() {
-        return getConnectionFactory();
+        return getOrCreateConnectionFactory();
     }
 
     /**
@@ -1637,7 +1609,7 @@ public class JmsConfiguration implements Cloneable {
      * creation
      */
     protected ConnectionFactory createTemplateConnectionFactory() {
-        return getConnectionFactory();
+        return getOrCreateConnectionFactory();
     }
 
     /**
@@ -1646,7 +1618,7 @@ public class JmsConfiguration implements Cloneable {
      */
     protected PlatformTransactionManager createTransactionManager() {
         JmsTransactionManager answer = new JmsTransactionManager();
-        answer.setConnectionFactory(getConnectionFactory());
+        answer.setConnectionFactory(getOrCreateConnectionFactory());
         return answer;
     }
 
@@ -1857,22 +1829,6 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
-    }
-
-    public boolean isTransferFault() {
-        return transferFault;
-    }
-
-    /**
-     * If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,
-     * then the fault flag on {@link org.apache.camel.Message#isFault()} will be send back in the response as a JMS header with the key
-     * {@link JmsConstants#JMS_TRANSFER_FAULT}.
-     * If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}.
-     * <p>
-     * You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.
-     */
-    public void setTransferFault(boolean transferFault) {
-        this.transferFault = transferFault;
     }
 
     public boolean isAsyncStartListener() {
@@ -2102,4 +2058,102 @@ public class JmsConfiguration implements Cloneable {
     public String getCorrelationProperty() {
         return correlationProperty;
     }
+
+    public String getAllowAdditionalHeaders() {
+        return allowAdditionalHeaders;
+    }
+
+    /**
+     * This option is used to allow additional headers which may have values that are invalid according to JMS specification.
+     + For example some message systems such as WMQ do this with header names using prefix JMS_IBM_MQMD_ containing values with byte array or other invalid types.
+     + You can specify multiple header names separated by comma, and use * as suffix for wildcard matching.
+     */
+    public void setAllowAdditionalHeaders(String allowAdditionalHeaders) {
+        this.allowAdditionalHeaders = allowAdditionalHeaders;
+    }
+
+    public boolean isSubscriptionDurable() {
+        return subscriptionDurable;
+    }
+
+    /**
+     * Set whether to make the subscription durable. The durable subscription name
+     * to be used can be specified through the "subscriptionName" property.
+     * <p>Default is "false". Set this to "true" to register a durable subscription,
+     * typically in combination with a "subscriptionName" value (unless
+     * your message listener class name is good enough as subscription name).
+     * <p>Only makes sense when listening to a topic (pub-sub domain),
+     * therefore this method switches the "pubSubDomain" flag as well.
+     */
+    public void setSubscriptionDurable(boolean subscriptionDurable) {
+        this.subscriptionDurable = subscriptionDurable;
+    }
+
+    public boolean isSubscriptionShared() {
+        return subscriptionShared;
+    }
+
+    /**
+     * Set whether to make the subscription shared. The shared subscription name
+     * to be used can be specified through the "subscriptionName" property.
+     * <p>Default is "false". Set this to "true" to register a shared subscription,
+     * typically in combination with a "subscriptionName" value (unless
+     * your message listener class name is good enough as subscription name).
+     * Note that shared subscriptions may also be durable, so this flag can
+     * (and often will) be combined with "subscriptionDurable" as well.
+     * <p>Only makes sense when listening to a topic (pub-sub domain),
+     * therefore this method switches the "pubSubDomain" flag as well.
+     * <p><b>Requires a JMS 2.0 compatible message broker.</b>
+     */
+    public void setSubscriptionShared(boolean subscriptionShared) {
+        this.subscriptionShared = subscriptionShared;
+    }
+
+    public String getSubscriptionName() {
+        return subscriptionName;
+    }
+
+    /**
+     * Set the name of a subscription to create. To be applied in case
+     * of a topic (pub-sub domain) with a shared or durable subscription.
+     * <p>The subscription name needs to be unique within this client's
+     * JMS client id. Default is the class name of the specified message listener.
+     * <p>Note: Only 1 concurrent consumer (which is the default of this
+     * message listener container) is allowed for each subscription,
+     * except for a shared subscription (which requires JMS 2.0).
+     */
+    public void setSubscriptionName(String subscriptionName) {
+        this.subscriptionName = subscriptionName;
+    }
+
+    public boolean isStreamMessageTypeEnabled() {
+        return streamMessageTypeEnabled;
+    }
+
+    /**
+     * Sets whether StreamMessage type is enabled or not.
+     * Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage.
+     * This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory.
+     * By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data.
+     */
+    public void setStreamMessageTypeEnabled(boolean streamMessageTypeEnabled) {
+        this.streamMessageTypeEnabled = streamMessageTypeEnabled;
+    }
+
+    /**
+     * Gets whether date headers should be formatted according to the ISO 8601
+     * standard.
+     */
+    public boolean isFormatDateHeadersToIso8601() {
+        return formatDateHeadersToIso8601;
+    }
+
+    /**
+     * Sets whether date headers should be formatted according to the ISO 8601
+     * standard.
+     */
+    public void setFormatDateHeadersToIso8601(boolean formatDateHeadersToIso8601) {
+        this.formatDateHeadersToIso8601 = formatDateHeadersToIso8601;
+    }
+
 }

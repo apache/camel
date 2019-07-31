@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,9 +21,6 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.ibatis.session.SqlSession;
 
-/**
- * @version 
- */
 public class DefaultMyBatisProcessingStrategy implements MyBatisProcessingStrategy {
 
     public void commit(MyBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatements) throws Exception {

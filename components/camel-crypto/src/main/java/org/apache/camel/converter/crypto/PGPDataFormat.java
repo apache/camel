@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -35,8 +36,8 @@ import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
  * enable encryption and decryption in the PGP format.
  * <p>
  * See also {@link PGPKeyAccessDataFormat}.
- * 
  */
+@Dataformat("pgp")
 public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKeyAccessor, PGPSecretKeyAccessor {
     
     public static final String KEY_FILE_NAME = "CamelPGPDataFormatKeyFileName";
@@ -46,7 +47,7 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     public static final String SIGNATURE_KEY_RING = "CamelPGPDataFormatSignatureKeyRing";
     public static final String SIGNATURE_KEY_PASSWORD = "CamelPGPDataFormatSignatureKeyPassword";
 
-    //private static final Logger LOG = LoggerFactory.getLogger(PGPDataFormatChanged.class);
+    //private static final Logger log = LoggerFactory.getLogger(PGPDataFormatChanged.class);
 
     private String password; // only for decryption
     private String keyFileName;
@@ -123,7 +124,7 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
 
     public Map<String, String> determineSignatureKeyUserId2Password(List<String> sigKeyUserids, String sigKeyPassword) {
         // we want to keep the order of the entries, therefore we use LinkedHashMap
-        Map<String, String> sigKeyUserId2Password = new LinkedHashMap<String, String>(sigKeyUserids.size());
+        Map<String, String> sigKeyUserId2Password = new LinkedHashMap<>(sigKeyUserids.size());
         for (String sigKeyUserid : sigKeyUserids) {
             if (sigKeyPassword == null) {
                 sigKeyPassword = passphraseAccessor.getPassphrase(sigKeyUserid);

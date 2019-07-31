@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.ribbon.cloud;
 
 import org.apache.camel.RoutesBuilder;
@@ -31,11 +30,11 @@ public class RibbonServiceCallRegistryRouteTest extends RibbonServiceCallRouteTe
             public void configure() throws Exception {
                 // setup a static ribbon server list with these 2 servers to start with
                 StaticServiceDiscovery servers = new StaticServiceDiscovery();
-                servers.addServer("localhost", 9090);
-                servers.addServer("localhost", 9091);
+                servers.addServer("myService@localhost:9090");
+                servers.addServer("myService@localhost:9091");
 
                 RibbonConfiguration configuration = new RibbonConfiguration();
-                RibbonLoadBalancer loadBalancer = new RibbonLoadBalancer(configuration);
+                RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
 
                 // configure camel service call
                 ServiceCallConfigurationDefinition config = new ServiceCallConfigurationDefinition();
@@ -46,7 +45,10 @@ public class RibbonServiceCallRegistryRouteTest extends RibbonServiceCallRouteTe
                 context.setServiceCallConfiguration(config);
 
                 from("direct:start")
-                    .serviceCall("myService")
+                    .serviceCall()
+                        .name("myService")
+                        .component("http")
+                    .end()
                     .to("mock:result");
                 from("jetty:http://localhost:9090")
                     .to("mock:9090")

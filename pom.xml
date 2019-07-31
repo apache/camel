@@ -1,707 +1,819 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <groupId>org.apache</groupId>
-    <artifactId>apache</artifactId>
-    <version>18</version>
-  </parent>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>21</version>
+    </parent>
 
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel</artifactId>
-  <version>2.19.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>Camel</name>
-  <description>Camel build POM</description>
-  <url>http://camel.apache.org</url>
-  <inceptionYear>2007</inceptionYear>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-  <prerequisites>
-    <maven>3.2.5</maven>
-  </prerequisites>
+    <name>Camel</name>
+    <description>Camel build POM</description>
+    <url>http://camel.apache.org</url>
+    <inceptionYear>2007</inceptionYear>
 
-  <properties>
-    <!-- enforce to require using at least this maven version -->
-    <maven-enforcer-require-maven-version>3.2.5</maven-enforcer-require-maven-version>
+    <developers>
+        <developer>
+            <name>The Apache Camel Team</name>
+            <email>dev@camel.apache.org</email>
+            <url>http://camel.apache.org</url>
+            <organization>Apache Software Foundation</organization>
+            <organizationUrl>http://apache.org/</organizationUrl>
+            <properties>
+                <picUrl>http://camel.apache.org/banner.data/apache-camel-7.png</picUrl>
+            </properties>
+        </developer>
+    </developers>
 
-    <!-- unify the encoding for all the modules -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <mailingLists>
+        <mailingList>
+            <name>Development List</name>
+            <subscribe>dev-subscribe@camel.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@camel.apache.org</unsubscribe>
+            <post>dev@camel.apache.org</post>
+        </mailingList>
+        <mailingList>
+            <name>User List</name>
+            <subscribe>users-subscribe@camel.apache.org</subscribe>
+            <unsubscribe>users-unsubscribe@camel.apache.org</unsubscribe>
+            <post>users@camel.apache.org</post>
+        </mailingList>
+        <mailingList>
+            <name>Commits List</name>
+            <subscribe>commits-subscribe@camel.apache.org</subscribe>
+            <unsubscribe>commits-unsubscribe@camel.apache.org</unsubscribe>
+            <post>commits@camel.apache.org</post>
+        </mailingList>
+    </mailingLists>
 
-    <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
-    <jdk.version>1.8</jdk.version>
-    <compiler.fork>false</compiler.fork>
+    <prerequisites>
+        <maven>3.5.0</maven>
+    </prerequisites>
 
-    <maven-compiler-plugin-version>3.6.1</maven-compiler-plugin-version>
-    <maven-surefire-plugin-version>2.19.1</maven-surefire-plugin-version>
+    <modules>
+        <module>parent</module>
+        <module>etc</module>
+        <module>bom</module>
+        <module>buildingtools</module>
+        <module>tooling</module>
+        <module>core</module>
+        <module>components</module>
+        <module>archetypes</module>
+        <module>platforms</module>
+        <module>catalog</module>
+        <module>tests</module>
+        <module>examples</module>
+        <module>docs</module>
+    </modules>
 
-    <!-- eclipse plugin need the jaxb in this pom.xml file -->
-    <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
-    <jaxb-version>2.2.11</jaxb-version>
-    <errorprone-version>2.5</errorprone-version>
-  </properties>
+    <scm>
+        <connection>scm:git:http://gitbox.apache.org/repos/asf/camel.git</connection>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/camel.git</developerConnection>
+        <url>https://gitbox.apache.org/repos/asf?p=camel.git;a=summary</url>
+        <tag>HEAD</tag>
+    </scm>
+    <issueManagement>
+        <system>jira</system>
+        <url>https://issues.apache.org/jira/browse/CAMEL</url>
+    </issueManagement>
+    <distributionManagement>
+        <site>
+            <id>apache.website</id>
+            <url>${site-repo-url}</url>
+        </site>
+    </distributionManagement>
 
-  <mailingLists>
-    <mailingList>
-      <name>Development List</name>
-      <subscribe>dev-subscribe@camel.apache.org</subscribe>
-      <unsubscribe>dev-unsubscribe@camel.apache.org</unsubscribe>
-      <post>dev@camel.apache.org</post>
-    </mailingList>
-    <mailingList>
-      <name>User List</name>
-      <subscribe>users-subscribe@camel.apache.org</subscribe>
-      <unsubscribe>users-unsubscribe@camel.apache.org</unsubscribe>
-      <post>users@camel.apache.org</post>
-    </mailingList>
-    <mailingList>
-      <name>Commits List</name>
-      <subscribe>commits-subscribe@camel.apache.org</subscribe>
-      <unsubscribe>commits-unsubscribe@camel.apache.org</unsubscribe>
-      <post>commits@camel.apache.org</post>
-    </mailingList>
-  </mailingLists>
+    <properties>
 
-  <developers>
-    <developer>
-      <name>The Apache Camel Team</name>
-      <email>dev@camel.apache.org</email>
-      <url>http://camel.apache.org</url>
-      <organization>Apache Software Foundation</organization>
-      <organizationUrl>http://apache.org/</organizationUrl>
-      <properties>
-        <picUrl>http://camel.apache.org/banner.data/apache-camel-7.png</picUrl>
-      </properties>
-    </developer>
-  </developers>
+        <!-- unify the encoding for all the modules -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-  <issueManagement>
-    <system>jira</system>
-    <url>https://issues.apache.org/jira/browse/CAMEL</url>
-  </issueManagement>
+        <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
+        <jdk.version>1.8</jdk.version>
+        <compiler.fork>false</compiler.fork>
 
-  <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <url>${site-repo-url}</url>
-    </site>
-  </distributionManagement>
+        <maven-compiler-plugin-version>3.8.0</maven-compiler-plugin-version>
+        <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
+        <maven-surefire-plugin-version>2.22.1</maven-surefire-plugin-version>
+        <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
+        <surefire.version>${maven-surefire-plugin-version}</surefire.version>
 
-  <!-- Comment out the snapshot repositories as we don't need them now -->
-  <repositories>
-    <repository>
-      <id>apache.snapshots</id>
-      <url>http://repository.apache.org/snapshots/</url>
-      <name>Apache Snapshot Repo</name>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-  </repositories>
+        <!-- eclipse plugin need the jaxb in this pom.xml file -->
+        <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
+        <jaxb-version>2.3.0</jaxb-version>
+        <errorprone-version>2.5</errorprone-version>
+        <mycila-license-version>3.0</mycila-license-version>
+        <gmavenplus-plugin-version>1.6.2</gmavenplus-plugin-version>
+        <groovy-version>2.5.7</groovy-version>
+    </properties>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <url>http://repository.apache.org/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
+    <!-- Comment out the snapshot repositories as we don't need them now -->
+    <repositories>
+        <repository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots/</url>
+            <name>Apache Snapshot Repo</name>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
 
-  <modules>
-    <module>parent</module>
-    <module>etc</module>
-    <module>buildingtools</module>
-    <module>camel-core</module>
-    <module>components</module>
-    <module>tooling</module>
-    <module>platforms</module>
-    <module>connectors</module>
-    <module>tests</module>
-    <module>examples</module>
-  </modules>
+    <build>
+        <defaultGoal>install</defaultGoal>
 
-  <scm>
-    <connection>scm:git:http://git-wip-us.apache.org/repos/asf/camel.git</connection>
-    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/camel.git</developerConnection>
-    <url>https://fisheye6.atlassian.com/browse/~br=master/camel-git</url>
-    <tag>HEAD</tag>
-  </scm>
-
-  <build>
-    <defaultGoal>install</defaultGoal>
-
-    <!-- enforce maven version -->
-    <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <version>1.4.1</version>
-          <executions>
-            <execution>
-              <id>enforce-maven</id>
-              <goals>
-                <goal>enforce</goal>
-              </goals>
-              <configuration>
-                <rules>
-                  <requireMavenVersion>
-                    <version>${maven-enforcer-require-maven-version}</version>
-                  </requireMavenVersion>
-                </rules>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-    </plugins>
-
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.10.4</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.10</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-buildtools</artifactId>
-              <version>${project.version}</version>
-            </dependency>
-          </dependencies>
-          <configuration>
-            <downloadSources>true</downloadSources>
-            <downloadJavadocs>false</downloadJavadocs>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-idea-plugin</artifactId>
-          <version>2.2.1</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-buildtools</artifactId>
-              <version>${project.version}</version>
-            </dependency>
-          </dependencies>
-          <configuration>
-            <downloadSources>true</downloadSources>
-            <downloadJavadocs>false</downloadJavadocs>
-          </configuration>
-        </plugin>
-
-          <plugin>
-            <groupId>org.apache.rat</groupId>
-            <artifactId>apache-rat-plugin</artifactId>
-            <configuration>
-              <excludeSubProjects>false</excludeSubProjects>
-              <excludes>
-                <exclude>**/README</exclude>
-                <exclude>**/README.txt</exclude>
-                <exclude>**/README.md</exclude>
-                <exclude>**/ReadMe.md</exclude>
-                <exclude>**/resources/**/*.xsd</exclude>
-                <exclude>**/webapp/js/**/*</exclude>
-                <exclude>**/test/resources/**/*</exclude>
-                <exclude>**/test/data*/**/*</exclude>
-                <exclude>.gitignore</exclude>
-                <exclude>.git/**/*</exclude>
-                <exclude>**/*.adoc</exclude>
-                <exclude>**/*.md</exclude>
-                <!-- tooling/camel-manual/src/styles/print.css use a different license -->
-                <exclude>**/src/styles/print.css</exclude>
-                <!-- tooling for component docs -->
-                <exclude>**/component-header.mvel</exclude>
-                <exclude>**/component-options.mvel</exclude>
-                <exclude>**/endpoint-options.mvel</exclude>
-                <exclude>**/dataformat-options.mvel</exclude>
-                <exclude>**/language-options.mvel</exclude>
-                <exclude>**/readme-components.mvel</exclude>
-                <exclude>**/readme-components.mvel</exclude>
-                <exclude>**/readme-dataformats.mvel</exclude>
-                <exclude>**/readme-eips.mvel</exclude>
-                <exclude>**/readme-languages.mvel</exclude>
-                <exclude>**/spring-boot-starter-NOTICE.txt</exclude>
-                <!-- cxf does not handle comments here -->
-                <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
-                <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>
-                <!-- ignore the api signatures files -->
-                <exclude>**/src/signatures/*.txt</exclude>
-                <!-- camel-salesforce BSD license from salesforce developers -->
-                <exclude>**/CometDReplayExtension.java</exclude>
-                <exclude>**/LICENSE-SALESFORCE.txt</exclude>
-                <!-- camel website and user-manual -->
-                <exclude>**/node/**</exclude>
-                <exclude>**/node_modules/**</exclude>
-                <exclude>**/npm-shrinkwrap.json</exclude>
-                <exclude>**/package.json</exclude>
-                <exclude>**/user-manual/**</exclude>
-                <!-- generated files -->
-                <exclude>**/target/**/*</exclude>
-                <exclude>**/eclipse-classes/**/*</exclude>
-                <exclude>**/.*</exclude>
-                <exclude>**/.settings/**/*</exclude>
-                <exclude>**/*.iml</exclude>
-                <exclude>**/.idea/**/*</exclude>
-                <exclude>**/avro/**/*.avpr</exclude>
-                <exclude>**/OSGI-INF/bundle.info</exclude>
-                <exclude>**/test_rsa*</exclude>
-                <exclude>**/data*/**/*.xml</exclude>
-                <exlucde>**/*.log</exlucde>
-                <exclude>**/id_file</exclude>
-                <exclude>**/dependency-reduced-pom.xml</exclude>
-                <exclude>**/grape.json</exclude>
-                <exclude>**/Dropbox_API_Terms_and_Conditions.txt</exclude>
-                <exclude>**/MerchandiseRestResource.apxc</exclude>
-                <exclude>**/file-sig-api.txt</exclude>
-                <exclude>**/Tasks__c.java</exclude>
-                <exclude>**/additional-spring-configuration-metadata.json</exclude>
-              </excludes>
-            </configuration>
-          </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <!-- see http://jira.codehaus.org/browse/MRELEASE-812 -->
-          <version>2.4.2</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.maven.scm</groupId>
-              <artifactId>maven-scm-provider-gitexe</artifactId>
-              <version>1.9</version>
-            </dependency>
-          </dependencies>
-          <configuration>
-            <localCheckout>true</localCheckout>
-            <pushChanges>true</pushChanges>
-            <tagNameFormat>@{project.artifactId}-@{project.version}</tagNameFormat>
-            <useReleaseProfile>false</useReleaseProfile>
-            <preparationGoals>clean install</preparationGoals>
-            <goals>deploy</goals>
-            <!-- The profile we want to use when doing the release -->
-            <arguments>-Prelease,apache-release,enable-schemagen,apt,sourcecheck,hibernate</arguments>
-            <autoVersionSubmodules>true</autoVersionSubmodules>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-
-  <profiles>
-    <profile>
-      <id>assembly</id>
-      <activation>
-        <property>
-          <name>!noassembly</name>
-        </property>
-      </activation>
-      <modules>
-        <module>apache-camel</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>setup.eclipse</id>
-      <!-- set up the eclipse workspace and generate the .classpath and .project
-        files for modules -->
-      <properties>
-        <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>
-        <maven.test.skip.exec>true</maven.test.skip.exec>
-      </properties>
-      <build>
-        <defaultGoal>package</defaultGoal>
-        <pluginManagement>
-          <plugins>
+        <plugins>
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <version>${maven-compiler-plugin-version}</version>
-              <configuration>
-                <source>${jdk.version}</source>
-                <target>${jdk.version}</target>
-                <maxmem>512M</maxmem>
-                <fork>${compiler.fork}</fork>
-              </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.1.0</version>
             </plugin>
-          </plugins>
-        </pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-eclipse-plugin</artifactId>
-            <inherited>false</inherited>
-            <executions>
-              <execution>
-                <id>setup.eclipse.workspace</id>
-                <phase>process-test-sources</phase>
-                <goals>
-                  <goal>configure-workspace</goal>
-                </goals>
-                <configuration>
-                  <workspace>${eclipse.workspace.dir}</workspace>
-                  <workspaceCodeStylesURL>file:etc/eclipse/CamelCodeFormatter.xml</workspaceCodeStylesURL>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <inherited>false</inherited>
-            <executions>
-              <execution>
-                <id>setup.workspace</id>
-                <phase>validate</phase>
-                <configuration>
-                  <target>
-                    <path id="ecp.ws.path" location="${eclipse.workspace.dir}" />
-                    <property name="full.eclipse.workspace" refid="ecp.ws.path" />
-                    <path path="${basedir}/etc" id="etc.path" />
-
-                    <path id="buildtools.classpath">
-                        <fileset dir="${basedir}/buildingtools/target" includes="*.jar" />
-                        <pathelement location="${basedir}/buildingtools/target/classes" />
-                        <pathelement location="${basedir}/buildingtools/src/main/resources" />
-                    </path>
-
-                    <whichresource resource="/camel-eclipse-pmd" property="pmd.url" classpathref="buildtools.classpath" />
-                    <whichresource resource="/camel-pmd-ruleset.xml" property="pmdruleset.url" classpathref="buildtools.classpath" />
-                    <whichresource resource="/camel-eclipse-checkstyle" property="eclipse.checkstyle.url" classpathref="buildtools.classpath" />
-                    <whichresource resource="/camel-checkstyle.xml" property="checkstyle.url" classpathref="buildtools.classpath" />
-
-                    <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings" />
-                    <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core" />
-                    <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sourceforge.pmd.eclipse" />
-
-                    <get src="${checkstyle.url}" dest="${full.eclipse.workspace}/camel-checkstyle.xml" />
-
-                    <!-- Add checkstyle config -->
-                    <copy file="${basedir}/etc/eclipse/template.checkstyle-config.xml" tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml" overwrite="no">
-                      <filterset>
-                        <filter token="CHECKSTYLE_CONFIG_FILE" value="${full.eclipse.workspace}/camel-checkstyle.xml" />
-                        <filter token="APACHE_HEADER_FILE" value="${full.eclipse.workspace}/apache-header.txt" />
-                      </filterset>
-                    </copy>
-
-                    <xslt style="${basedir}/etc/eclipse/addcheckstyle.xsl" in="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml" out="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new">
-                      <param name="checkstyleconfig" expression="${full.eclipse.workspace}/camel-checkstyle.xml" />
-                    </xslt>
-                    <copy file="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new" tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml" overwrite="yes" />
-
-                    <!-- Add code format rules -->
-                    <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs" append="true" fixlastline="true">
-                      <filelist dir="${basedir}/etc/eclipse" files="org.eclipse.jdt.core.prefs" />
-                    </concat>
-                    <loadfile property="eclipse.code.format" srcFile="${basedir}/etc/eclipse/CamelCodeFormatter.xml" />
-                    <loadfile property="eclipse.code.templates" srcFile="${basedir}/etc/eclipse/codetemplates.xml" />
-                    <loadfile property="eclipse.camel.java.code.templates" srcFile="${basedir}/etc/eclipse/camel_java_templates.xml" />
-                    <loadfile property="eclipse.camel.xml.code.templates" srcFile="${basedir}/etc/eclipse/camel_xml_templates.xml" />
-                    <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs">
-                      <entry key="formatter_profile" value="Camel Java Conventions" />
-                      <entry key="org.eclipse.jdt.ui.formatterprofiles" value="${eclipse.code.format}" />
-                      <entry key="org.eclipse.jdt.ui.text.custom_code_templates" value="${eclipse.code.templates}" />
-
-                      <!-- Add Camel templates for Java DSL -->
-                      <entry key="org.eclipse.jdt.ui.text.custom_templates" value="${eclipse.camel.java.code.templates}" />
-
-                      <!-- Add import order -->
-                      <entry key="org.eclipse.jdt.ui.importorder" value="java;javax;org.w3c;org.xml;w3c;" />
-                      <!-- Sort order -->
-                      <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V," />
-                      <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M," />
-                      <entry key="org.eclipse.jdt.ui.enable.visibility.order" value="true" />
-                    </propertyfile>
-                    <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.xml.ui.prefs">
-                      <entry key="eclipse.preferences.version" value="1" />
-                      <!-- Add Camel templates for Spring DSL -->
-                      <entry key="org.eclipse.wst.sse.ui.custom_templates" value="${eclipse.camel.xml.code.templates}" />
-                    </propertyfile>
-                  </target>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
         </plugins>
-      </build>
-    </profile>
 
-    <profile>
-      <!-- When not on the Mac, we need to add tools.jar to the antrun plugin
-        for schemagen to work -->
-      <id>not-mac</id>
-      <activation>
-        <os>
-          <family>!mac</family>
-        </os>
-      </activation>
-      <build>
         <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-antrun-plugin</artifactId>
-              <dependencies>
-                <dependency>
-                  <groupId>com.sun.xml.bind</groupId>
-                  <artifactId>jaxb-core</artifactId>
-                  <version>${jaxb-version}</version>
-                </dependency>
-                <dependency>
-                  <groupId>com.sun.xml.bind</groupId>
-                  <artifactId>jaxb-impl</artifactId>
-                  <version>${jaxb-version}</version>
-                </dependency>
-                <dependency>
-                  <groupId>com.sun.xml.bind</groupId>
-                  <artifactId>jaxb-jxc</artifactId>
-                  <version>${jaxb-version}</version>
-                </dependency>
-                <dependency>
-                  <groupId>xerces</groupId>
-                  <artifactId>xercesImpl</artifactId>
-                  <version>2.11.0</version>
-                </dependency>
-                <dependency>
-                  <groupId>ant-contrib</groupId>
-                  <artifactId>ant-contrib</artifactId>
-                  <version>1.0b3</version>
-                  <exclusions>
-                    <exclusion>
-                      <groupId>ant</groupId>
-                      <artifactId>ant</artifactId>
-                    </exclusion>
-                  </exclusions>
-                </dependency>
-                <dependency>
-                  <groupId>org.apache.ant</groupId>
-                  <artifactId>ant-trax</artifactId>
-                  <version>1.8.0</version>
-                </dependency>
-                <dependency>
-                  <groupId>org.apache.ant</groupId>
-                  <artifactId>ant-nodeps</artifactId>
-                  <version>1.8.1</version>
-                </dependency>
-              </dependencies>
-            </plugin>
-          </plugins>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-eclipse-plugin</artifactId>
+                    <version>2.10</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel</groupId>
+                            <artifactId>camel-buildtools</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <downloadSources>true</downloadSources>
+                        <downloadJavadocs>false</downloadJavadocs>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <configuration>
+                        <excludeSubProjects>false</excludeSubProjects>
+                        <excludes>
+                            <exclude>**/README</exclude>
+                            <exclude>**/README.txt</exclude>
+                            <exclude>**/README.md</exclude>
+                            <exclude>**/ReadMe.md</exclude>
+                            <exclude>**/resources/**/*.xsd</exclude>
+                            <exclude>**/webapp/js/**/*</exclude>
+                            <exclude>**/test/resources/**/*</exclude>
+                            <exclude>**/test/data*/**/*</exclude>
+                            <exclude>.gitignore</exclude>
+                            <exclude>.git/**/*</exclude>
+                            <exclude>**/*.adoc</exclude>
+                            <exclude>**/*.adoc.template</exclude>
+                            <exclude>**/*.md</exclude>
+                            <exclude>**/*.sh</exclude>
+                            <exclude>**/*.bat</exclude>
+                            <exclude>**/java9-maven-settings</exclude>
+                            <exclude>**/*.pfx</exclude>
+                            <!-- tooling json-simple parser -->
+                            <exclude>**/src/main/java/org/json/simple/**</exclude>
+                            <!-- tooling/camel-manual/src/styles/print.css use a different license -->
+                            <exclude>**/src/styles/print.css</exclude>
+                            <!-- tooling for component docs -->
+                            <exclude>**/component-header.mvel</exclude>
+                            <exclude>**/component-options.mvel</exclude>
+                            <exclude>**/endpoint-options.mvel</exclude>
+                            <exclude>**/dataformat-options.mvel</exclude>
+                            <exclude>**/eip-options.mvel</exclude>
+                            <exclude>**/language-options.mvel</exclude>
+                            <exclude>**/readme-components.mvel</exclude>
+                            <exclude>**/readme-components.mvel</exclude>
+                            <exclude>**/readme-dataformats.mvel</exclude>
+                            <exclude>**/readme-eips.mvel</exclude>
+                            <exclude>**/readme-examples.mvel</exclude>
+                            <exclude>**/readme-languages.mvel</exclude>
+                            <exclude>**/readme-others.mvel</exclude>
+                            <exclude>**/spring-boot-auto-configure-options.mvel</exclude>
+                            <exclude>**/camel-NOTICE.txt</exclude>
+                            <exclude>**/spring-boot-starter-NOTICE.txt</exclude>
+                            <!-- cxf does not handle comments here -->
+                            <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
+                            <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>
+                            <!-- ignore the api signatures files -->
+                            <exclude>**/src/signatures/*.txt</exclude>
+                            <!-- camel-salesforce BSD license from salesforce developers -->
+                            <exclude>**/CometDReplayExtension.java</exclude>
+                            <exclude>**/LICENSE-SALESFORCE.txt</exclude>
+                            <!-- camel-as2 -->
+                            <exclude>**/mdnDescription.vm</exclude>
+                            <!-- camel-jbpm -->
+                            <exclude>**/src/main/resources/*.wid</exclude>
+                            <!-- camel website and user-manual -->
+                            <exclude>**/node/**</exclude>
+                            <exclude>**/node_modules/**</exclude>
+                            <exclude>**/npm-shrinkwrap.json</exclude>
+                            <exclude>**/package.json</exclude>
+                            <exclude>**/user-manual/**</exclude>
+                            <exclude>**/yarn.lock</exclude>
+                            <!-- examples -->
+                            <exclude>**/fabric8/*.yaml</exclude>
+                            <exclude>**/src/main/resources/consul/services.json</exclude>
+                            <exclude>**/src/main/resources/data/*.json</exclude>
+                            <exclude>**/src/main/data/*.patient</exclude>
+                            <exclude>**/src/main/data/*.csv</exclude>
+                            <!-- generated files -->
+                            <exclude>**/target/**/*</exclude>
+                            <exclude>**/eclipse-classes/**/*</exclude>
+                            <exclude>**/.*</exclude>
+                            <exclude>**/.settings/**/*</exclude>
+                            <exclude>**/*.iml</exclude>
+                            <exclude>**/.idea/**/*</exclude>
+                            <exclude>**/avro/**/*.avpr</exclude>
+                            <exclude>**/OSGI-INF/bundle.info</exclude>
+                            <exclude>**/test_rsa*</exclude>
+                            <exclude>**/data*/**/*.xml</exclude>
+                            <exlucde>**/*.log</exlucde>
+                            <exclude>**/id_file</exclude>
+                            <exclude>**/dependency-reduced-pom.xml</exclude>
+                            <exclude>**/grape.json</exclude>
+                            <exclude>**/Dropbox_API_Terms_and_Conditions.txt</exclude>
+                            <exclude>**/MerchandiseRestResource.apxc</exclude>
+                            <exclude>**/file-sig-api.txt</exclude>
+                            <exclude>**/Tasks__c.java</exclude>
+                            <exclude>**/additional-spring-configuration-metadata.json</exclude>
+                            <exclude>**/*.proto</exclude>
+                            <exclude>**/src/revapi/ignore.json</exclude>
+                            <exclude>
+                                **/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension
+                            </exclude>
+                            <!-- Maven Wrapper -->
+                            <exclude>.mvn/**/*</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <!-- see https://issues.apache.org/jira/browse/MRELEASE-812 -->
+                    <version>2.4.2</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.scm</groupId>
+                            <artifactId>maven-scm-provider-gitexe</artifactId>
+                            <version>1.9</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <localCheckout>true</localCheckout>
+                        <pushChanges>true</pushChanges>
+                        <tagNameFormat>@{project.artifactId}-@{project.version}</tagNameFormat>
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <preparationGoals>clean install</preparationGoals>
+                        <goals>deploy</goals>
+                        <!-- The profile we want to use when doing the release -->
+                        <arguments>-Prelease,apache-release,enable-schemagen,apt,sourcecheck,hibernate</arguments>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-remote-resources-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>process-resource-bundles</id>
+                            <phase>disabled</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>1.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>default-cli</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                            <configuration>
+                                <updatePomFile>true</updatePomFile>
+                                <pomElements>
+                                    <build>keep</build>
+                                    <dependencyManagement>keep</dependencyManagement>
+                                    <description>keep</description>
+                                    <name>keep</name>
+                                    <parent>expand</parent>
+                                    <pluginManagement>keep</pluginManagement>
+                                    <profiles>remove</profiles>
+                                    <properties>keep</properties>
+                                </pomElements>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-invoker-plugin</artifactId>
+                    <configuration>
+                        <skipInstallation>${invoker.skip}</skipInstallation>
+                        <skipInvocation>${invoker.skip}</skipInvocation>
+                        <mavenOpts>-Xmx64m -XshowSettings</mavenOpts>
+                        <showVersion>true</showVersion>
+                    </configuration>
+                </plugin>
+
+            </plugins>
         </pluginManagement>
-      </build>
-    </profile>
+    </build>
 
-    <profile>
-      <id>jdk8-build</id>
-      <activation>
-        <jdk>(,1.9)</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <dependencies>
-              <dependency>
-              <groupId>com.sun</groupId>
-              <artifactId>tools</artifactId>
-              <version>1.5.0</version>
-              <scope>system</scope>
-              <systemPath>${java.home}/../lib/tools.jar</systemPath>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+    <profiles>
+        <profile>
+            <id>assembly</id>
+            <activation>
+                <property>
+                    <name>!noassembly</name>
+                </property>
+            </activation>
+            <modules>
+                <module>apache-camel</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>setup.eclipse</id>
+            <!-- set up the eclipse workspace and generate the .classpath and .project
+              files for modules -->
+            <properties>
+                <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>
+                <maven.test.skip.exec>true</maven.test.skip.exec>
+            </properties>
+            <build>
+                <defaultGoal>package</defaultGoal>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-compiler-plugin</artifactId>
+                            <version>${maven-compiler-plugin-version}</version>
+                            <configuration>
+                                <source>${jdk.version}</source>
+                                <target>${jdk.version}</target>
+                                <maxmem>512M</maxmem>
+                                <fork>${compiler.fork}</fork>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-eclipse-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>setup.eclipse.workspace</id>
+                                <phase>process-test-sources</phase>
+                                <goals>
+                                    <goal>configure-workspace</goal>
+                                </goals>
+                                <configuration>
+                                    <workspace>${eclipse.workspace.dir}</workspace>
+                                    <workspaceCodeStylesURL>file:etc/eclipse/CamelCodeFormatter.xml
+                                    </workspaceCodeStylesURL>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>setup.workspace</id>
+                                <phase>validate</phase>
+                                <configuration>
+                                    <target>
+                                        <path id="ecp.ws.path" location="${eclipse.workspace.dir}"/>
+                                        <property name="full.eclipse.workspace" refid="ecp.ws.path"/>
+                                        <path path="${basedir}/etc" id="etc.path"/>
 
-    <profile>
-      <id>integration</id>
-      <!--The profile for running the unit and integration test -->
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>${maven-surefire-plugin-version}</version>
-            <configuration>
-              <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-              <childDelegation>false</childDelegation>
-              <useFile>true</useFile>
-              <failIfNoTests>false</failIfNoTests>
-              <runOrder>alphabetical</runOrder>
-              <systemPropertyVariables>
-                <derby.stream.error.file>target/derby.log</derby.stream.error.file>
-                <java.awt.headless>${java.awt.headless}</java.awt.headless>
-              </systemPropertyVariables>
-              <includes>
-                <include>**/*Test.*</include>
-                <include>**/*IntegrationTest.*</include>
-              </includes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+                                        <path id="buildtools.classpath">
+                                            <fileset dir="${basedir}/buildingtools/target" includes="*.jar"/>
+                                            <pathelement location="${basedir}/buildingtools/target/classes"/>
+                                            <pathelement location="${basedir}/buildingtools/src/main/resources"/>
+                                        </path>
 
-    <profile>
-      <id>deploy</id>
-      <build>
-        <defaultGoal>deploy</defaultGoal>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-                <configuration>
-                  <additionalparam>${javadoc.opts}</additionalparam>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+                                        <whichresource resource="/camel-eclipse-pmd" property="pmd.url"
+                                                       classpathref="buildtools.classpath"/>
+                                        <whichresource resource="/camel-pmd-ruleset.xml" property="pmdruleset.url"
+                                                       classpathref="buildtools.classpath"/>
+                                        <whichresource resource="/camel-eclipse-checkstyle"
+                                                       property="eclipse.checkstyle.url"
+                                                       classpathref="buildtools.classpath"/>
+                                        <whichresource resource="/camel-checkstyle.xml" property="checkstyle.url"
+                                                       classpathref="buildtools.classpath"/>
 
-    <profile>
-      <id>source-jar</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-       <id>release</id>
-       <activation>
-        <property>
-          <name>release</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <!-- We want to deploy the artifact to a staging location for perusal -->
-          <plugin>
-            <inherited>true</inherited>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-deploy-plugin</artifactId>
-            <configuration>
-              <updateReleaseInfo>true</updateReleaseInfo>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <additionalparam>${javadoc.opts}</additionalparam>
-            </configuration>
-          </plugin>
-          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <configuration>
-              <passphrase>${gpg.passphrase}</passphrase>
-              <useAgent>${gpg.useagent}</useAgent>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>doclint-java8-disable</id>
-      <activation>
-        <jdk>[1.8,)</jdk>
-      </activation>
-      <properties>
-        <javadoc.opts>-Xdoclint:none</javadoc.opts>
-      </properties>
-     </profile>
-  </profiles>
+                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings"/>
+                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core"/>
+                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sourceforge.pmd.eclipse"/>
+
+                                        <get src="${checkstyle.url}"
+                                             dest="${full.eclipse.workspace}/camel-checkstyle.xml"/>
+
+                                        <!-- Add checkstyle config -->
+                                        <copy file="${basedir}/etc/eclipse/template.checkstyle-config.xml"
+                                              tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml"
+                                              overwrite="no">
+                                            <filterset>
+                                                <filter token="CHECKSTYLE_CONFIG_FILE"
+                                                        value="${full.eclipse.workspace}/camel-checkstyle.xml"/>
+                                                <filter token="APACHE_HEADER_FILE"
+                                                        value="${full.eclipse.workspace}/apache-header.txt"/>
+                                            </filterset>
+                                        </copy>
+
+                                        <xslt style="${basedir}/etc/eclipse/addcheckstyle.xsl"
+                                              in="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml"
+                                              out="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new">
+                                            <param name="checkstyleconfig"
+                                                   expression="${full.eclipse.workspace}/camel-checkstyle.xml"/>
+                                        </xslt>
+                                        <copy file="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new"
+                                              tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml"
+                                              overwrite="yes"/>
+
+                                        <!-- Add code format rules -->
+                                        <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs"
+                                                append="true" fixlastline="true">
+                                            <filelist dir="${basedir}/etc/eclipse" files="org.eclipse.jdt.core.prefs"/>
+                                        </concat>
+                                        <loadfile property="eclipse.code.format"
+                                                  srcFile="${basedir}/etc/eclipse/CamelCodeFormatter.xml"/>
+                                        <loadfile property="eclipse.code.templates"
+                                                  srcFile="${basedir}/etc/eclipse/codetemplates.xml"/>
+                                        <loadfile property="eclipse.camel.java.code.templates"
+                                                  srcFile="${basedir}/etc/eclipse/camel_java_templates.xml"/>
+                                        <loadfile property="eclipse.camel.xml.code.templates"
+                                                  srcFile="${basedir}/etc/eclipse/camel_xml_templates.xml"/>
+                                        <propertyfile
+                                                file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs">
+                                            <entry key="formatter_profile" value="Camel Java Conventions"/>
+                                            <entry key="org.eclipse.jdt.ui.formatterprofiles"
+                                                   value="${eclipse.code.format}"/>
+                                            <entry key="org.eclipse.jdt.ui.text.custom_code_templates"
+                                                   value="${eclipse.code.templates}"/>
+
+                                            <!-- Add Camel templates for Java DSL -->
+                                            <entry key="org.eclipse.jdt.ui.text.custom_templates"
+                                                   value="${eclipse.camel.java.code.templates}"/>
+
+                                            <!-- Add import order -->
+                                            <entry key="org.eclipse.jdt.ui.importorder"
+                                                   value="java;javax;org.w3c;org.xml;w3c;"/>
+                                            <!-- Sort order -->
+                                            <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V,"/>
+                                            <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M,"/>
+                                            <entry key="org.eclipse.jdt.ui.enable.visibility.order" value="true"/>
+                                        </propertyfile>
+                                        <propertyfile
+                                                file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.xml.ui.prefs">
+                                            <entry key="eclipse.preferences.version" value="1"/>
+                                            <!-- Add Camel templates for Spring DSL -->
+                                            <entry key="org.eclipse.wst.sse.ui.custom_templates"
+                                                   value="${eclipse.camel.xml.code.templates}"/>
+                                        </propertyfile>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <!-- When not on the Mac, we need to add tools.jar to the antrun plugin
+              for schemagen to work -->
+            <id>not-mac</id>
+            <activation>
+                <os>
+                    <family>!mac</family>
+                </os>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-antrun-plugin</artifactId>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>com.sun.xml.bind</groupId>
+                                    <artifactId>jaxb-core</artifactId>
+                                    <version>${jaxb-version}</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>com.sun.xml.bind</groupId>
+                                    <artifactId>jaxb-impl</artifactId>
+                                    <version>${jaxb-version}</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>com.sun.xml.bind</groupId>
+                                    <artifactId>jaxb-jxc</artifactId>
+                                    <version>${jaxb-version}</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>xerces</groupId>
+                                    <artifactId>xercesImpl</artifactId>
+                                    <version>2.11.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>ant-contrib</groupId>
+                                    <artifactId>ant-contrib</artifactId>
+                                    <version>1.0b3</version>
+                                    <exclusions>
+                                        <exclusion>
+                                            <groupId>ant</groupId>
+                                            <artifactId>ant</artifactId>
+                                        </exclusion>
+                                    </exclusions>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.ant</groupId>
+                                    <artifactId>ant-trax</artifactId>
+                                    <version>1.8.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.ant</groupId>
+                                    <artifactId>ant-nodeps</artifactId>
+                                    <version>1.8.1</version>
+                                </dependency>
+                            </dependencies>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
+            <id>jdk8-build</id>
+            <activation>
+                <jdk>(,1.9)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.sun</groupId>
+                                <artifactId>tools</artifactId>
+                                <version>1.5.0</version>
+                                <scope>system</scope>
+                                <systemPath>${java.home}/../lib/tools.jar</systemPath>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>deploy</id>
+            <build>
+                <defaultGoal>deploy</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <additionalOptions>${javadoc.opts}</additionalOptions>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>source-jar</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>release</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- We want to deploy the artifact to a staging location for perusal -->
+                    <plugin>
+                        <inherited>true</inherited>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <configuration>
+                            <updateReleaseInfo>true</updateReleaseInfo>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <additionalOptions>${javadoc.opts}</additionalOptions>
+                        </configuration>
+                    </plugin>
+                    <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <configuration>
+                            <passphrase>${gpg.passphrase}</passphrase>
+                            <useAgent>${gpg.useagent}</useAgent>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>doclint-java8-disable</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.opts>-Xdoclint:none</javadoc.opts>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>cleanrepo</id>
+            <build>
+                <defaultGoal>build-helper:remove-project-artifact</defaultGoal>
+            </build>
+        </profile>
+
+        <profile>
+            <id>license</id>
+            <build>
+                <defaultGoal>license:format</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>${mycila-license-version}</version>
+                        <configuration>
+                            <header>header.txt</header>
+                            <excludes>
+                                <exclude>KEYS</exclude>
+                                <exclude>**/NOTICE</exclude>
+                                <exclude>**/LICENSE</exclude>
+                                <exclude>**/NOTICE.txt</exclude>
+                                <exclude>**/LICENSE.txt</exclude>
+                                <exclude>doap.rdf</exclude>
+                                <exclude>**/README</exclude>
+                                <exclude>**/*.adoc</exclude>
+                                <exclude>**/node_modules/**</exclude>
+                                <exclude>**/cacerts</exclude>
+                                <exclude>**/*.p12</exclude>
+                                <exclude>**/*.txt</exclude>
+                                <exclude>.mvn/**</exclude>
+                                <exclude>mvnw*</exclude>
+                                <exclude>**/META-INF/persistence*.xsd</exclude>
+                            </excludes>
+                            <mapping>
+                                <java>SLASHSTAR_STYLE</java>
+                                <properties>CAMEL_PROPERTIES_STYLE</properties>
+                                <spring.factories>CAMEL_PROPERTIES_STYLE</spring.factories>
+                                <spring.provides>CAMEL_PROPERTIES_STYLE</spring.provides>
+                            </mapping>
+                            <headerDefinitions>
+                                <headerDefinition>license-properties-headerdefinition.xml</headerDefinition>
+                            </headerDefinitions>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.camel</groupId>
+                                <artifactId>camel-buildtools</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
 </project>

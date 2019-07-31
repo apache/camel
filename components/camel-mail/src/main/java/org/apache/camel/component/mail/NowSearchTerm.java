@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.util.Date;
+
 import javax.mail.Message;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.DateTerm;
@@ -50,7 +51,7 @@ public class NowSearchTerm extends ComparisonTerm {
     }
 
     private Date getDate() {
-        long now = new Date().getTime();
+        long now = System.currentTimeMillis();
         return new Date(now + offset);
     }
 

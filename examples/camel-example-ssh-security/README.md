@@ -50,7 +50,7 @@ For this example you will need to add a new user `scott` with the key value from
 
 Append the following to the `<karaf_home>/etc/keys.properties` file
 
-    scott=AAAAB3NzaC1yc2EAAAADAQABAAABAQC4MSqXneGVM9n3Rnqfya0D31crTx+J8X8dKZ5/+2Rq96/klnmt6uGyl+DI8G0HXVK66KqU2Z0qUE9ytOMR+zSPA+zU4Bhd3G82qdJsys7Nz8t9wSWQs8/ItWTjwg+b3vVLcI1Q8sSgfxqZvD/XQk4srbDs9ba55yjEPn5DOhA7UFbFAv8menSgbpNFMrUQQ9DJcMVlu3MOcMylI5UFFf1uvDD3vUoFXZa6GQOK9j1AGvfagGgBEqV4/AiKzDmQDFqMzmTfTfBpi1crY0SGXdT26PE4Knx7KP7bBJupBm6lJ9Pk39iw8dnDWcq45EEqrHsI0dps7/iQgYxYqBmFLIkP,admin
+    scott=AAAAB3NzaC1yc2EAAAADAQABAAABAQC4MSqXneGVM9n3Rnqfya0D31crTx+J8X8dKZ5/+2Rq96/klnmt6uGyl+DI8G0HXVK66KqU2Z0qUE9ytOMR+zSPA+zU4Bhd3G82qdJsys7Nz8t9wSWQs8/ItWTjwg+b3vVLcI1Q8sSgfxqZvD/XQk4srbDs9ba55yjEPn5DOhA7UFbFAv8menSgbpNFMrUQQ9DJcMVlu3MOcMylI5UFFf1uvDD3vUoFXZa6GQOK9j1AGvfagGgBEqV4/AiKzDmQDFqMzmTfTfBpi1crY0SGXdT26PE4Knx7KP7bBJupBm6lJ9Pk39iw8dnDWcq45EEqrHsI0dps7/iQgYxYqBmFLIkP,_g_:admingroup
 
 
 
@@ -78,7 +78,7 @@ the `<karaf_home>` directory.
 From the running Karaf console, run the following commands to install this example into your
 running Karaf server.
 
-    feature:repo-add mvn:org.apache.camel/camel-example-ssh-security/<camel version>/xml/features
+    feature:repo-add mvn:org.apache.camel.example/camel-example-ssh-security/${version}/xml/features
     feature:install camel-example-ssh-security
 
 This example outputs into the Karaf log file so you can either `tail -f <karaf_home>data/log/karaf.log`

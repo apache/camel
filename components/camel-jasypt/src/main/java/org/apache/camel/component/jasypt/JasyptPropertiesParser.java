@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.jasypt;
 
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
 import org.apache.camel.component.properties.DefaultPropertiesParser;
+import org.apache.camel.component.properties.PropertiesLookup;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
@@ -49,7 +50,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     }
 
     @Override
-    public String parseProperty(String key, String value, Properties properties) {
+    public String parseProperty(String key, String value, PropertiesLookup properties) {
         log.trace(format("Parsing property '%s=%s'", key, value));
         if (value != null) {
             initEncryptor();
@@ -65,7 +66,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
 
     private synchronized void initEncryptor() {
         if (encryptor == null) {
-            ObjectHelper.notEmpty("password", password);
+            StringHelper.notEmpty("password", password);
             StandardPBEStringEncryptor pbeStringEncryptor = new StandardPBEStringEncryptor();
             pbeStringEncryptor.setPassword(password);
             if (algorithm != null) {
@@ -89,10 +90,10 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     public void setPassword(String password) {
         // lookup password as either environment or JVM system property
         if (password.startsWith("sysenv:")) {
-            password = System.getenv(ObjectHelper.after(password, "sysenv:"));
+            password = System.getenv(StringHelper.after(password, "sysenv:"));
         }
         if (ObjectHelper.isNotEmpty(password) && password.startsWith("sys:")) {
-            password = System.getProperty(ObjectHelper.after(password, "sys:"));
+            password = System.getProperty(StringHelper.after(password, "sys:"));
         }
         this.password = password;
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,6 +27,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.ignite.compute.IgniteComputeComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
@@ -41,10 +42,20 @@ public class IgniteComputeTest extends AbstractIgniteTest {
     private static final List<Ignite> ADDITIONAL_INSTANCES = Lists.newArrayList();
     private static final List<UUID> LISTENERS = Lists.newArrayList();
 
+    @Override
+    protected String getScheme() {
+        return "ignite-compute";
+    }
+
+    @Override
+    protected AbstractIgniteComponent createComponent() {
+        return IgniteComputeComponent.fromConfiguration(createConfiguration());
+    }
+
     @Test
     public void testExecuteWithWrongPayload() {
         try {
-            template.requestBody("ignite:compute:abc?executionType=EXECUTE", TestIgniteComputeResources.TEST_CALLABLE, String.class);
+            template.requestBody("ignite-compute:" + resourceUid + "?executionType=EXECUTE", TestIgniteComputeResources.TEST_CALLABLE, String.class);
         } catch (Exception e) {
             assert_().that(ObjectHelper.getException(RuntimeCamelException.class, e).getMessage()).startsWith("Ignite Compute endpoint with EXECUTE");
             return;
@@ -59,20 +70,20 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         TestIgniteComputeResources.COUNTER.set(0);
 
         // Single Callable.
-        String result = template.requestBody("ignite:compute:abc?executionType=CALL", TestIgniteComputeResources.TEST_CALLABLE, String.class);
+        String result = template.requestBody("ignite-compute:" + resourceUid + "?executionType=CALL", TestIgniteComputeResources.TEST_CALLABLE, String.class);
 
         assert_().that(result).isEqualTo("hello");
 
         // Collection of Callables.
         Object[] callables = new Object[5];
         Arrays.fill(callables, TestIgniteComputeResources.TEST_CALLABLE);
-        Collection<String> colResult = template.requestBody("ignite:compute:abc?executionType=CALL", Lists.newArrayList(callables), Collection.class);
+        Collection<String> colResult = template.requestBody("ignite-compute:" + resourceUid + "?executionType=CALL", Lists.newArrayList(callables), Collection.class);
 
         assert_().that(colResult).containsExactly("hello", "hello", "hello", "hello", "hello").inOrder();
 
         // Callables with a Reducer.
-        String reduced = template.requestBodyAndHeader("ignite:compute:abc?executionType=CALL", Lists.newArrayList(callables), IgniteConstants.IGNITE_COMPUTE_REDUCER,
-                TestIgniteComputeResources.STRING_JOIN_REDUCER, String.class);
+        String reduced = template.requestBodyAndHeader("ignite-compute:" + resourceUid + "?executionType=CALL", Lists.newArrayList(callables),
+                                                       IgniteConstants.IGNITE_COMPUTE_REDUCER, TestIgniteComputeResources.STRING_JOIN_REDUCER, String.class);
 
         assert_().that(reduced).isEqualTo("hellohellohellohellohello");
     }
@@ -82,14 +93,14 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         TestIgniteComputeResources.COUNTER.set(0);
 
         // Single Runnable.
-        Object result = template.requestBody("ignite:compute:abc?executionType=RUN", TestIgniteComputeResources.TEST_RUNNABLE_COUNTER, Object.class);
+        Object result = template.requestBody("ignite-compute:" + resourceUid + "?executionType=RUN", TestIgniteComputeResources.TEST_RUNNABLE_COUNTER, Object.class);
         assert_().that(result).isNull();
         assert_().that(TestIgniteComputeResources.COUNTER.get()).isEqualTo(1);
 
         // Multiple Runnables.
         Object[] runnables = new Object[5];
         Arrays.fill(runnables, TestIgniteComputeResources.TEST_RUNNABLE_COUNTER);
-        result = template.requestBody("ignite:compute:abc?executionType=RUN", Lists.newArrayList(runnables), Collection.class);
+        result = template.requestBody("ignite-compute:" + resourceUid + "?executionType=RUN", Lists.newArrayList(runnables), Collection.class);
         assert_().that(result).isNull();
         assert_().that(TestIgniteComputeResources.COUNTER.get()).isEqualTo(6);
     }
@@ -106,18 +117,19 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         LISTENERS.add(ignite().events().remoteListen(null, TestIgniteComputeResources.EVENT_COUNTER, EventType.EVT_JOB_FINISHED));
 
         // Single Runnable.
-        Object result = template.requestBody("ignite:compute:abc?executionType=BROADCAST", TestIgniteComputeResources.TEST_RUNNABLE, Object.class);
+        Object result = template.requestBody("ignite-compute:" + resourceUid + "?executionType=BROADCAST", TestIgniteComputeResources.TEST_RUNNABLE, Object.class);
         assert_().that(result).isNull();
         assert_().that(TestIgniteComputeResources.COUNTER.get()).isEqualTo(3);
 
         // Single Callable.
-        Collection<String> colResult = template.requestBody("ignite:compute:abc?executionType=BROADCAST", TestIgniteComputeResources.TEST_CALLABLE, Collection.class);
+        Collection<String> colResult = template.requestBody("ignite-compute:" + resourceUid + "?executionType=BROADCAST", TestIgniteComputeResources.TEST_CALLABLE,
+                                                            Collection.class);
         assert_().that(colResult).isNotNull();
         assert_().that(colResult).containsExactly("hello", "hello", "hello").inOrder();
 
         // Single Closure.
-        colResult = template.requestBodyAndHeader("ignite:compute:abc?executionType=BROADCAST", TestIgniteComputeResources.TEST_CLOSURE, IgniteConstants.IGNITE_COMPUTE_PARAMS, "Camel",
-                Collection.class);
+        colResult = template.requestBodyAndHeader("ignite-compute:" + resourceUid + "?executionType=BROADCAST", TestIgniteComputeResources.TEST_CLOSURE,
+                                                  IgniteConstants.IGNITE_COMPUTE_PARAMS, "Camel", Collection.class);
         assert_().that(colResult).isNotNull();
         assert_().that(colResult).containsExactly("hello Camel", "hello Camel", "hello Camel").inOrder();
     }
@@ -133,12 +145,14 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         LISTENERS.add(ignite().events().remoteListen(null, TestIgniteComputeResources.EVENT_COUNTER, EventType.EVT_JOB_RESULTED));
 
         // ComputeTask instance.
-        String result = template.requestBodyAndHeader("ignite:compute:abc?executionType=EXECUTE", TestIgniteComputeResources.COMPUTE_TASK, IgniteConstants.IGNITE_COMPUTE_PARAMS, 10, String.class);
+        String result = template.requestBodyAndHeader("ignite-compute:" + resourceUid + "?executionType=EXECUTE", TestIgniteComputeResources.COMPUTE_TASK,
+                                                      IgniteConstants.IGNITE_COMPUTE_PARAMS, 10, String.class);
         assert_().that(result).isNotNull();
         assert_().that(Splitter.on(",").splitToList(result)).containsAllOf("a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9");
 
         // ComputeTask class.
-        result = template.requestBodyAndHeader("ignite:compute:abc?executionType=EXECUTE", TestIgniteComputeResources.COMPUTE_TASK.getClass(), IgniteConstants.IGNITE_COMPUTE_PARAMS, 10, String.class);
+        result = template.requestBodyAndHeader("ignite-compute:" + resourceUid + "?executionType=EXECUTE", TestIgniteComputeResources.COMPUTE_TASK.getClass(),
+                                               IgniteConstants.IGNITE_COMPUTE_PARAMS, 10, String.class);
         assert_().that(result).isNotNull();
         assert_().that(Splitter.on(",").splitToList(result)).containsAllOf("a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9");
     }
@@ -149,18 +163,19 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         TestIgniteComputeResources.COUNTER.set(0);
 
         // Closure with a single parameter.
-        String result = template.requestBodyAndHeader("ignite:compute:abc?executionType=APPLY", TestIgniteComputeResources.TEST_CLOSURE, IgniteConstants.IGNITE_COMPUTE_PARAMS, "Camel", String.class);
+        String result = template.requestBodyAndHeader("ignite-compute:" + resourceUid + "?executionType=APPLY", TestIgniteComputeResources.TEST_CLOSURE,
+                                                      IgniteConstants.IGNITE_COMPUTE_PARAMS, "Camel", String.class);
         assert_().that(result).isEqualTo("hello Camel");
 
         // Closure with a Collection of parameters.
-        Collection<String> colResult = template.requestBodyAndHeader("ignite:compute:abc?executionType=APPLY", TestIgniteComputeResources.TEST_CLOSURE, IgniteConstants.IGNITE_COMPUTE_PARAMS,
-                Lists.newArrayList("Camel1", "Camel2", "Camel3"), Collection.class);
+        Collection<String> colResult = template.requestBodyAndHeader("ignite-compute:" + resourceUid + "?executionType=APPLY", TestIgniteComputeResources.TEST_CLOSURE,
+                                                                     IgniteConstants.IGNITE_COMPUTE_PARAMS, Lists.newArrayList("Camel1", "Camel2", "Camel3"), Collection.class);
         assert_().that(colResult).containsAllOf("hello Camel1", "hello Camel2", "hello Camel3");
 
         // Closure with a Collection of parameters and a Reducer.
-        Map<String, Object> headers = ImmutableMap.<String, Object> of(IgniteConstants.IGNITE_COMPUTE_PARAMS, Lists.newArrayList("Camel1", "Camel2", "Camel3"), IgniteConstants.IGNITE_COMPUTE_REDUCER,
-                TestIgniteComputeResources.STRING_JOIN_REDUCER);
-        result = template.requestBodyAndHeaders("ignite:compute:abc?executionType=APPLY", TestIgniteComputeResources.TEST_CLOSURE, headers, String.class);
+        Map<String, Object> headers = ImmutableMap.<String, Object> of(IgniteConstants.IGNITE_COMPUTE_PARAMS, Lists.newArrayList("Camel1", "Camel2", "Camel3"),
+                                                                       IgniteConstants.IGNITE_COMPUTE_REDUCER, TestIgniteComputeResources.STRING_JOIN_REDUCER);
+        result = template.requestBodyAndHeaders("ignite-compute:" + resourceUid + "?executionType=APPLY", TestIgniteComputeResources.TEST_CLOSURE, headers, String.class);
         assert_().that(result).isEqualTo("hello Camel1hello Camel2hello Camel3");
     }
 
@@ -170,7 +185,7 @@ public class IgniteComputeTest extends AbstractIgniteTest {
     }
 
     private void startAdditionalGridInstance() {
-        ADDITIONAL_INSTANCES.add(Ignition.start(buildComponent().getIgniteConfiguration()));
+        ADDITIONAL_INSTANCES.add(Ignition.start(createConfiguration()));
     }
 
     @After

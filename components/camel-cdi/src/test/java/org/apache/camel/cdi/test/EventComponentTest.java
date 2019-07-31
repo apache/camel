@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -78,11 +78,11 @@ public class EventComponentTest {
     static class NotStartedCamelContext extends DefaultCamelContext {
 
         @Override
-        public void start() throws Exception {
+        public void start() {
             start(false);
         }
 
-        void start(boolean start) throws Exception {
+        void start(boolean start) {
             if (start) {
                 super.start();
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,10 +31,6 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.apache.http.util.EntityUtils;
 
-/**
- *
- * @version 
- */
 public class BasicValidationHandler implements HttpRequestHandler {
 
     protected String expectedMethod;
@@ -74,8 +70,9 @@ public class BasicValidationHandler implements HttpRequestHandler {
         }
 
         response.setStatusCode(HttpStatus.SC_OK);
-        if (responseContent != null) {
-            response.setEntity(new StringEntity(responseContent, "ASCII"));
+        String content = buildResponse(request);
+        if (content != null) {
+            response.setEntity(new StringEntity(content, "ASCII"));
         }
     }
 
@@ -90,4 +87,9 @@ public class BasicValidationHandler implements HttpRequestHandler {
         }
         return true;
     }
+
+    protected String buildResponse(HttpRequest request) {
+        return responseContent;
+    }
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ public class ManagedSEContainerConfiguration implements ContainerConfiguration {
     private Level logLevel = Level.INFO;
     private boolean keepDeploymentArchives;
     private String additionalJavaOpts;
-    private int waitTime = 5;
+    private int waitTime = 10;
 
     public void validate() throws ConfigurationException {
     }

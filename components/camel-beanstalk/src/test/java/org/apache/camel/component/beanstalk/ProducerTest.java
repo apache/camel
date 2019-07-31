@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,13 +43,13 @@ import static org.mockito.Mockito.when;
 
 public class ProducerTest extends BeanstalkMockTestSupport {
 
-    @EndpointInject(uri = "beanstalk:tube")
+    @EndpointInject("beanstalk:tube")
     protected BeanstalkEndpoint endpoint;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate direct;
 
     private String testMessage = "hello, world";

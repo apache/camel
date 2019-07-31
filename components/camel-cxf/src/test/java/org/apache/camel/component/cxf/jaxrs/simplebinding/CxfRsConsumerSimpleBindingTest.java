@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.jaxrs.simplebinding;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -28,6 +27,7 @@ import javax.xml.bind.JAXBContext;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Customer;
@@ -50,6 +50,8 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -63,12 +65,14 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
     private JAXBContext jaxb;
     private CloseableHttpClient httpclient;
     
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         httpclient = HttpClientBuilder.create().build();
         jaxb = JAXBContext.newInstance(CustomerList.class, Customer.class, Order.class, Product.class);
     }
     
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         httpclient.close();
@@ -120,7 +124,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         assertEquals(MessageContentsList.class, exchange.getIn().getBody().getClass());
                         assertEquals(0, exchange.getIn().getBody(MessageContentsList.class).size());
                         CustomerList response = new CustomerList();
-                        List<Customer> list = new ArrayList<Customer>(2);
+                        List<Customer> list = new ArrayList<>(2);
                         list.add(new Customer(123, "Raul"));
                         list.add(new Customer(456, "Raul2"));
                         response.setCustomers(list);
@@ -172,8 +176,8 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("abcd", exchange.getIn().getHeader("query"));
                         assertEquals("123", exchange.getIn().getHeader("id"));
-                        assertNotNull(exchange.getIn().getAttachment("part1"));
-                        assertNotNull(exchange.getIn().getAttachment("part2"));
+                        assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachment("part1"));
+                        assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachment("part2"));
                         assertNull(exchange.getIn().getHeader("part1"));
                         assertNull(exchange.getIn().getHeader("part2"));
                         assertEquals(Customer.class, exchange.getIn().getHeader("body").getClass());
@@ -183,8 +187,8 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                 
                 from("direct:multipartPostWithoutParameters").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertNotNull(exchange.getIn().getAttachment("part1"));
-                        assertNotNull(exchange.getIn().getAttachment("part2"));
+                        assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachment("part1"));
+                        assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachment("part2"));
                         assertNull(exchange.getIn().getHeader("part1"));
                         assertNull(exchange.getIn().getHeader("part2"));
                         assertEquals(Customer.class, exchange.getIn().getHeader("body").getClass());

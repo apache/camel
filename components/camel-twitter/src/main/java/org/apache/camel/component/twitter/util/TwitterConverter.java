@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import twitter4j.UserList;
 /**
  * Utility for converting between Twitter4J and camel-twitter data layers.
  */
-@Converter
+@Converter(loader = true)
 public final class TwitterConverter {
 
     private TwitterConverter() {
@@ -46,7 +46,7 @@ public final class TwitterConverter {
     @Converter
     public static String toString(DirectMessage dm) throws ParseException {
         return new StringBuilder()
-            .append(dm.getCreatedAt()).append(" (").append(dm.getSenderScreenName()).append(") ")
+            .append(dm.getCreatedAt()).append(" (").append(dm.getSenderId()).append(") ")
             .append(dm.getText())
             .toString();
     }

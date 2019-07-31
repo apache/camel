@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,23 +16,20 @@
  */
 package org.apache.camel.component.infinispan;
 
-import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class InfinispanAsyncConsumerTest extends InfinispanTestSupport {
-
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint mockResult;
-
     @Test
     public void consumerReceivedPreAndPostEntryCreatedEventNotifications() throws Exception {
-        mockResult.expectedMessageCount(2);
-        mockResult.setResultMinimumWaitTime(900);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.setResultMinimumWaitTime(900);
 
         currentCache().put(KEY_ONE, VALUE_ONE);
-        mockResult.assertIsSatisfied();
+
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -40,9 +37,9 @@ public class InfinispanAsyncConsumerTest extends InfinispanTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan://localhost?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
-                        .delayer(500)
-                        .to("mock:result");
+                from("infinispan?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
+                    .delayer(500)
+                    .to("mock:result");
             }
         };
     }

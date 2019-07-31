@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,8 +33,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
@@ -76,7 +76,6 @@ import org.slf4j.LoggerFactory;
  * <p>
  * If you want to provide the key access via keyrings in the format of a byte
  * array or file, then you should use the class {@link PGPDataFormat}.
- * 
  */
 public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
@@ -291,7 +290,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             if (userids == null || userids.isEmpty()) {
                 result = Collections.singletonList(userid);
             } else {
-                result = new ArrayList<String>(userids.size() + 1);
+                result = new ArrayList<>(userids.size() + 1);
                 result.add(userid);
                 result.addAll(userids);
             }
@@ -313,7 +312,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             if (userids == null || userids.isEmpty()) {
                 result = Collections.singletonList(userid);
             } else {
-                result = new ArrayList<String>(userids.size() + 1);
+                result = new ArrayList<>(userids.size() + 1);
                 result.add(userid);
                 result.addAll(userids);
             }
@@ -339,7 +338,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
         exchange.getOut().setHeader(NUMBER_OF_SIGNING_KEYS, Integer.valueOf(sigSecretKeysWithPrivateKeyAndUserId.size()));
 
-        List<PGPSignatureGenerator> sigGens = new ArrayList<PGPSignatureGenerator>();
+        List<PGPSignatureGenerator> sigGens = new ArrayList<>();
         for (PGPSecretKeyAndPrivateKeyAndUserId sigSecretKeyWithPrivateKeyAndUserId : sigSecretKeysWithPrivateKeyAndUserId) {
             PGPPrivateKey sigPrivateKey = sigSecretKeyWithPrivateKeyAndUserId.getPrivateKey();
 
@@ -369,7 +368,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
         try {
             in = PGPUtil.getDecoderStream(encryptedStream);
-            encData = getDecryptedData(exchange, in);
+            DecryptedDataAndPPublicKeyEncryptedData encDataAndPbe = getDecryptedData(exchange, in);
+            encData = encDataAndPbe.getDecryptedData();
             PGPObjectFactory pgpFactory = new PGPObjectFactory(encData, new BcKeyFingerprintCalculator());
             Object object = pgpFactory.nextObject();
             if (object instanceof PGPCompressedData) {
@@ -412,6 +412,12 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
                 osb.flush();
             }
             verifySignature(pgpFactory, signature);
+            PGPPublicKeyEncryptedData pbe = encDataAndPbe.getPbe();
+            if (pbe.isIntegrityProtected()) {
+                if (!pbe.verify()) {
+                    throw new PGPException("Message failed integrity check");
+                }
+            }
         } finally {
             IOHelper.close(osb, litData, uncompressedData, encData, in, encryptedStream);
         }
@@ -419,7 +425,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return osb.build();
     }
 
-    private InputStream getDecryptedData(Exchange exchange, InputStream encryptedStream) throws Exception, PGPException {
+    private DecryptedDataAndPPublicKeyEncryptedData getDecryptedData(Exchange exchange, InputStream encryptedStream) throws Exception, PGPException {
         PGPObjectFactory pgpFactory = new PGPObjectFactory(encryptedStream, new BcKeyFingerprintCalculator());
         Object firstObject = pgpFactory.nextObject();
         // the first object might be a PGP marker packet 
@@ -448,7 +454,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         }
 
         InputStream encData = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(getProvider()).build(key));
-        return encData;
+        return new DecryptedDataAndPPublicKeyEncryptedData(encData, pbe);
     }
 
     private PGPEncryptedDataList getEcryptedDataList(PGPObjectFactory pgpFactory, Object firstObject) throws IOException {
@@ -776,5 +782,26 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     @Override
     protected void doStop() throws Exception { //NOPMD
         // noop
+    }
+    
+    private static class DecryptedDataAndPPublicKeyEncryptedData {
+
+        private final InputStream decryptedData;
+
+        private final PGPPublicKeyEncryptedData pbe;
+
+        DecryptedDataAndPPublicKeyEncryptedData(InputStream decryptedData, PGPPublicKeyEncryptedData pbe) {
+            this.decryptedData = decryptedData;
+            this.pbe = pbe;
+        }
+
+        public InputStream getDecryptedData() {
+            return decryptedData;
+        }
+
+        public PGPPublicKeyEncryptedData getPbe() {
+            return pbe;
+        }
+
     }
 }

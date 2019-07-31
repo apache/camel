@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.infinispan.processor.aggregate;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,10 +33,10 @@ public class InfinispanRemoteAggregationRepositoryTest extends CamelTestSupport 
     private static final String MOCK_GOTCHA = "mock:gotcha";
     private static final String DIRECT_ONE = "direct:one";
 
-    @EndpointInject(uri = MOCK_GOTCHA)
+    @EndpointInject(MOCK_GOTCHA)
     private MockEndpoint mock;
 
-    @Produce(uri = DIRECT_ONE)
+    @Produce(DIRECT_ONE)
     private ProducerTemplate produceOne;
 
 

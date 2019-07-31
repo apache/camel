@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,46 +39,46 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rabbitmq.testbeans.TestNonSerializableObject;
 import org.apache.camel.component.rabbitmq.testbeans.TestPartiallySerializableObject;
 import org.apache.camel.component.rabbitmq.testbeans.TestSerializableObject;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 
-public class RabbitMQInOutIntTest extends CamelTestSupport {
+public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
     public static final String ROUTING_KEY = "rk5";
     public static final long TIMEOUT_MS = 2000;
     private static final String EXCHANGE = "ex5";
     private static final String EXCHANGE_NO_ACK = "ex5.noAutoAck";
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
-    @Produce(uri = "direct:rabbitMQ")
+    @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
                     + "&autoAck=true&queue=q4&routingKey=" + ROUTING_KEY
                     + "&transferException=true&requestTimeout=" + TIMEOUT_MS)
     private Endpoint rabbitMQEndpoint;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
             + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY
             + "&transferException=true&requestTimeout=" + TIMEOUT_MS
-            + "&queueArgs=#queueArgs")
+            + "&args=#args")
     private Endpoint noAutoAckEndpoint;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        SimpleRegistry reg = new SimpleRegistry();
 
-        HashMap<String, Object> queueArgs = new HashMap<>();
-        queueArgs.put("x-expires", 60000);
-        jndi.bind("queueArgs", queueArgs);
+        HashMap<String, Object> args = new HashMap<>();
+        args.put("queue.x-expires", 60000);
+        reg.bind("args", args);
 
-        return jndi;
+        return reg;
     }
 
     @Override
@@ -142,7 +142,7 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
 
     @Test
     public void headerTest() throws InterruptedException, IOException {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
 
         TestSerializableObject testObject = new TestSerializableObject();
         testObject.setName("header");
@@ -158,8 +158,8 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
         headers.put("CamelSerialize", true);
 
         // populate a map and an arrayList
-        Map<Object, Object> tmpMap = new HashMap<Object, Object>();
-        List<String> tmpList = new ArrayList<String>();
+        Map<Object, Object> tmpMap = new HashMap<>();
+        List<String> tmpList = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             String name = "header" + i;
             tmpList.add(name);
@@ -190,7 +190,7 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
         foo.setName("foobar");
 
         try {
-            TestPartiallySerializableObject reply = template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, TestPartiallySerializableObject.class);
+            template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, TestPartiallySerializableObject.class);
         } catch (CamelExecutionException e) {
             // expected
         }
@@ -256,7 +256,7 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(1);
 
         try {
-            String reply = template.requestBodyAndHeaders("direct:rabbitMQNoAutoAck", "testMessage", headers, String.class);
+            template.requestBodyAndHeaders("direct:rabbitMQNoAutoAck", "testMessage", headers, String.class);
             fail("This should have thrown an exception");
         } catch (CamelExecutionException e) {
             if (!(e.getCause() instanceof IllegalStateException)) {

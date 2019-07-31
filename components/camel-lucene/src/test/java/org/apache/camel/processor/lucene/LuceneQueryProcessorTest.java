@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor.lucene;
 
 import org.apache.camel.Exchange;
@@ -62,7 +61,7 @@ public class LuceneQueryProcessorTest extends CamelTestSupport {
                 try {
                     from("direct:start").
                         setHeader("QUERY", constant("Rodney Dangerfield")).
-                        process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20)).
+                        process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20, 20)).
                         to("direct:next");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -106,7 +105,7 @@ public class LuceneQueryProcessorTest extends CamelTestSupport {
                 try {
                     from("direct:start").
                         setHeader("QUERY", constant("Carl*")).
-                        process(new LuceneQueryProcessor("target/simpleindexDir", analyzer, null, 20)).
+                        process(new LuceneQueryProcessor("target/simpleindexDir", analyzer, null, 20, 20)).
                         to("direct:next");
                 } catch (Exception e) {
                     e.printStackTrace();

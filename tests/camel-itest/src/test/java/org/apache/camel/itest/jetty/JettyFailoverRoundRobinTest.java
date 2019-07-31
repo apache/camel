@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettyFailoverRoundRobinTest extends CamelTestSupport {
     private static int port1 = AvailablePortFinder.getNextAvailable(23021);
     private static int port2 = AvailablePortFinder.getNextAvailable(23022);
@@ -36,6 +33,10 @@ public class JettyFailoverRoundRobinTest extends CamelTestSupport {
     private String bad2 = "jetty:http://localhost:" + port2 + "/bad2";
     private String good = "jetty:http://localhost:" + port3 + "/good";
     private String good2 = "jetty:http://localhost:" + port4 + "/good2";
+    private String hbad = "http://localhost:" + port1 + "/bad";
+    private String hbad2 = "http://localhost:" + port2 + "/bad2";
+    private String hgood = "http://localhost:" + port3 + "/good";
+    private String hgood2 = "http://localhost:" + port4 + "/good2";
 
     @Test
     public void testJettyFailoverRoundRobin() throws Exception {
@@ -75,7 +76,7 @@ public class JettyFailoverRoundRobinTest extends CamelTestSupport {
                     // -1 is to indicate that failover LB should newer exhaust and keep trying
                     .loadBalance().failover(-1, false, true)
                         // this is the four endpoints we will load balance with failover
-                        .to(bad, bad2, good, good2);
+                        .to(hbad, hbad2, hgood, hgood2);
                 // END SNIPPET: e1
 
                 from(bad)

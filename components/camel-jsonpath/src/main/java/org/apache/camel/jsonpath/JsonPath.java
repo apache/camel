@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,14 +23,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.jayway.jsonpath.Option;
-import org.apache.camel.language.LanguageAnnotation;
+import org.apache.camel.support.language.LanguageAnnotation;
 
 /**
- * An annotation used to inject a <a href="http://commons.apache.org/jsonpath/">JSon Path</a>
+ * An annotation used to inject a <a href="http://commons.apache.org/jsonpath/">JsonPath</a>
  * expression into a method parameter when using
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
- *
- * @version
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -46,12 +44,12 @@ public @interface JsonPath {
     boolean suppressExceptions() default false;
 
     /**
-     * Whether to allow in inlined simple exceptions in the json path expression
+     * Whether to allow in inlined simple exceptions in the JsonPath expression
      */
     boolean allowSimple() default true;
 
     /**
-     * To configure the json path options to use
+     * To configure the JsonPath options to use
      */
     Option[] options() default {};
 }

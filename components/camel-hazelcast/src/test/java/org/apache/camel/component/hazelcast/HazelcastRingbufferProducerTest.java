@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ import com.hazelcast.ringbuffer.Ringbuffer;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 
 import static org.mockito.Mockito.atLeastOnce;
@@ -45,21 +45,21 @@ public class HazelcastRingbufferProducerTest extends HazelcastCamelTestSupport {
     
     @Test
     public void testReadHead() throws InterruptedException {
-        when(ringbuffer.readOne(Matchers.anyLong())).thenReturn("pippo");
-        Object result = template.requestBody("direct:readonceHead", 12L, String.class);
+        when(ringbuffer.readOne(ArgumentMatchers.anyLong())).thenReturn("pippo");
+        Object result = template.requestBody("direct:READ_ONCE_HEAD", 12L, String.class);
         assertEquals("pippo", result);
     }
     
     @Test
     public void testReadTail() throws InterruptedException {
-        when(ringbuffer.readOne(Matchers.anyLong())).thenReturn("pippo");
-        Object result = template.requestBody("direct:readonceTail", 12L, String.class);
+        when(ringbuffer.readOne(ArgumentMatchers.anyLong())).thenReturn("pippo");
+        Object result = template.requestBody("direct:READ_ONCE_TAIL", 12L, String.class);
         assertEquals("pippo", result);
     }
     
     @Test
     public void testAdd() throws InterruptedException {
-        when(ringbuffer.add(Matchers.anyLong())).thenReturn(13L);
+        when(ringbuffer.add(ArgumentMatchers.anyLong())).thenReturn(13L);
         Object result = template.requestBody("direct:add", 12L, Long.class);
         assertEquals(13L, result);
     }
@@ -74,7 +74,7 @@ public class HazelcastRingbufferProducerTest extends HazelcastCamelTestSupport {
     @Test
     public void testRemainingCapacity() throws InterruptedException {
         when(ringbuffer.remainingCapacity()).thenReturn(2L);
-        Object result = template.requestBody("direct:remainingCapacity", "", Long.class);
+        Object result = template.requestBody("direct:REMAINING_CAPACITY", "", Long.class);
         assertEquals(2L, result);
     }
 
@@ -84,20 +84,20 @@ public class HazelcastRingbufferProducerTest extends HazelcastCamelTestSupport {
             @Override
             public void configure() throws Exception {
               
-                from("direct:readonceHead").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.READ_ONCE_HEAD_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                from("direct:READ_ONCE_HEAD").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.READ_ONCE_HEAD)).to(
+                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
                 
-                from("direct:readonceTail").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.READ_ONCE_TAIL_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                from("direct:READ_ONCE_TAIL").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.READ_ONCE_TAIL)).to(
+                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
                 
-                from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.ADD)).to(
+                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
                 
-                from("direct:capacity").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_CAPACITY_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                from("direct:capacity").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CAPACITY)).to(
+                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
                 
-                from("direct:remainingCapacity").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMAINING_CAPACITY_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                from("direct:REMAINING_CAPACITY").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMAINING_CAPACITY)).to(
+                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
 
             }
         };

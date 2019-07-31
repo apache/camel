@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,6 +41,7 @@ import org.apache.camel.itest.springboot.ITestConfigBuilder;
 import org.apache.camel.itest.springboot.arquillian.SpringBootZipExporterImpl;
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.se.api.ClassPath;
+import org.jboss.arquillian.core.spi.InvocationException;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Configuration;
@@ -60,6 +61,7 @@ import org.jboss.shrinkwrap.impl.base.path.BasicPath;
 import org.jboss.shrinkwrap.resolver.api.maven.ConfigurableMavenResolverSystem;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenResolvedArtifact;
+import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
 import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenCoordinate;
 import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenCoordinates;
@@ -119,11 +121,11 @@ public final class ArquillianPackager {
         }
 
         if (config.getUseCustomLog()) {
-            ark = ark.addAsResource("spring-logback.xml", "/spring-logback.xml");
+            ark = ark.addAsResource("spring-logback.xml", CLASSES_FOLDER + "/spring-logback.xml");
         }
 
         for (Map.Entry<String, String> res : config.getResources().entrySet()) {
-            ark = ark.addAsResource(res.getKey(), "/" + res.getValue());
+            ark = ark.addAsResource(res.getKey(), CLASSES_FOLDER + "/" + res.getValue());
         }
 
         String version = System.getProperty("version_org.apache.camel:camel-core");
@@ -132,7 +134,8 @@ public final class ArquillianPackager {
         }
         if (version == null) {
             // It is missing when launching from IDE
-            List<MavenResolvedArtifact> resolved = Arrays.asList(resolver(config).loadPomFromFile("pom.xml").importRuntimeDependencies().resolve().withoutTransitivity().asResolvedArtifact());
+            PomEquippedResolveStage pom = resolver(config).loadPomFromFile("pom.xml");
+            List<MavenResolvedArtifact> resolved = Arrays.asList(pom.importCompileAndRuntimeDependencies().resolve().withoutTransitivity().asResolvedArtifact());
             for (MavenResolvedArtifact dep : resolved) {
                 if (dep.getCoordinate().getGroupId().equals("org.apache.camel")) {
                     version = dep.getCoordinate().getVersion();
@@ -300,33 +303,55 @@ public final class ArquillianPackager {
         ignore.add("com.github.jnr");
         ignore.add("com.sun.xml.bind:jaxb-xjc");
         ignore.add("commons-beanutils:commons-beanutils");
+        ignore.add("io.dropwizard.metrics:metrics-json"); // PR to spring-boot
+        ignore.add("io.dropwizard.metrics:metrics-jvm"); // PR to spring-boot
         ignore.add("io.fabric8:kubernetes-");
         ignore.add("io.netty:netty:jar"); // an old version
+        ignore.add("io.netty:netty-tcnative-boringssl-static");
         ignore.add("io.swagger:swagger-parser");
+        ignore.add("io.opencensus:opencensus-");
+        ignore.add("io.opentracing.contrib:opentracing-");
         ignore.add("org.apache.commons");
         ignore.add("org.apache.curator");
         ignore.add("org.apache.cxf:cxf-api");
         ignore.add("org.apache.geronimo.specs");
+        ignore.add("org.apache.flink:flink-shaded-asm");
+        ignore.add("org.apache.flink:flink-shaded-guava");
+        ignore.add("org.apache.flink:flink-shaded-jackson");
+        ignore.add("org.apache.flink:flink-shaded-netty");
+        ignore.add("org.apache.logging.log4j:log4j-jcl");
         ignore.add("org.apache.maven");
         ignore.add("org.apache.parquet");
+        ignore.add("org.apache.solr:solr-solrj"); // PR to spring-boot
         ignore.add("org.apache.velocity");
         ignore.add("org.apache.qpid:qpid-jms-client");
+        ignore.add("org.opensaml");
         ignore.add("org.ow2.asm"); // No problem
         ignore.add("org.codehaus.plexus");
+        ignore.add("org.eclipse.jetty.websocket:websocket-api"); // PR to spring-boot
         ignore.add("org.jboss.arquillian.container");
         ignore.add("org.jboss:");
         ignore.add("org.hibernate:hibernate-validator"); // does not match with hibernate-core
         ignore.add("org.mortbay.jetty:servlet-api-2.5");
         ignore.add("org.scala-lang:scala-compiler");
+        ignore.add("org.slf4j:slf4j-ext"); // PR to spring-boot
         ignore.add("org.easytesting");
+        ignore.add("net.java.dev.jna:jna-platform"); // PR to spring-boot
         ignore.add("net.openhft");
+        ignore.add("org.scala-lang.modules:scala-java8-compat_2.11");
         ignore.add("net.sourceforge.htmlunit:htmlunit-core-js"); // v 2.21 does not exist
+        ignore.add("org.springframework.cloud"); // too many different versions
         ignore.add("org.springframework.data");
         ignore.add("org.springframework.security:spring-security-jwt");
+        ignore.add("org.springframework.security:spring-security-rsa");
         ignore.add("org.springframework.social");
         ignore.add("org.webjars"); // No problem
         ignore.add("stax:stax-api");
         ignore.add("xml-apis:xml-apis-ext");
+        ignore.add("org.jboss.logging");
+        ignore.add("org.jboss.marshalling");
+        ignore.add("org.jgroups:jgroups-raft");
+        ignore.add("net.sourceforge.htmlunit:htmlunit");
 
 
         Map<String, Map<String, String>> status = new TreeMap<>();
@@ -378,7 +403,7 @@ public final class ArquillianPackager {
         if (message.length() > 0) {
             String alert = "Library version mismatch found.\n" + message;
             if (FAIL_ON_RELATED_LIBRARY_MISMATCH) {
-                throw new RuntimeException(alert);
+                throw new InvocationException(new RuntimeException(alert));
             } else {
                 debug(alert);
             }
@@ -441,7 +466,7 @@ public final class ArquillianPackager {
             }
 
             if (FAIL_ON_TEST_LIBRARY_MISMATCH) {
-                throw new RuntimeException(message.toString());
+                throw new InvocationException(new RuntimeException(message.toString()));
             } else {
                 debug(message.toString());
             }
@@ -458,7 +483,8 @@ public final class ArquillianPackager {
     private static File createUserPom(ITestConfig config, List<String> cleanTestProvidedDependencies) throws Exception {
 
         String pom;
-        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream("/application-pom.xml")) {
+        String template = "/application-pom-sb" + config.getSpringBootMajorVersion() + ".xml";
+        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream(template)) {
             pom = IOUtils.toString(pomTemplate);
         }
 
@@ -485,6 +511,7 @@ public final class ArquillianPackager {
         pom = pom.replace("#{module}", config.getModuleName());
 
         File pomFile = new File(config.getModuleBasePath() + "/target/itest-spring-boot-pom.xml");
+        pomFile.getParentFile().mkdirs();
         try (FileWriter fw = new FileWriter(pomFile)) {
             IOUtils.write(pom, fw);
         }
@@ -571,22 +598,32 @@ public final class ArquillianPackager {
         String groupId = textBetween(dependencyXml, "<groupId>", "</groupId>");
         String artifactId = textBetween(dependencyXml, "<artifactId>", "</artifactId>");
 
-        String bomVersion = config.getTestLibraryVersions().get(groupId + ":" + artifactId);
-        if (bomVersion == null) {
-            bomVersion = BOMResolver.getInstance().getBOMVersion(groupId, artifactId);
+        String version = config.getTestLibraryVersions().get(groupId + ":" + artifactId);
+        boolean stripVersion = false;
+        if (version == null) {
+            boolean testsLib = dependencyXml.contains("<classifier>tests");
+            stripVersion = !testsLib && BOMResolver.getInstance(config).getBOMVersion(groupId, artifactId) != null;
+            // skip if its org.infinispan as we need explict version to work-around a problem when using test-jar dependencies
+            if ("org.infinispan".equals(groupId)) {
+                stripVersion = false;
+            }
         }
 
-        if (bomVersion != null) {
+        if (version != null) {
             if (dependencyXml.contains("<version>")) {
                 int from = dependencyXml.indexOf("<version>") + 9;
                 int to = dependencyXml.indexOf("</version>");
 
-                dependencyXml = dependencyXml.substring(0, from) + bomVersion + dependencyXml.substring(to);
+                dependencyXml = dependencyXml.substring(0, from) + version + dependencyXml.substring(to);
             } else {
                 String kw = "</artifactId>";
                 int pos = dependencyXml.indexOf(kw) + kw.length();
-                dependencyXml = dependencyXml.substring(0, pos) + "<version>" + bomVersion + "</version>" + dependencyXml.substring(pos);
+                dependencyXml = dependencyXml.substring(0, pos) + "<version>" + version + "</version>" + dependencyXml.substring(pos);
             }
+        } else if (stripVersion && dependencyXml.contains("<version>")) {
+            int from = dependencyXml.indexOf("<version>");
+            int to = dependencyXml.indexOf("</version>") + 10;
+            dependencyXml = dependencyXml.substring(0, from) + dependencyXml.substring(to);
         }
 
         return dependencyXml;
@@ -637,10 +674,10 @@ public final class ArquillianPackager {
 
                 final URLPackageScanner.Callback callback = new URLPackageScanner.Callback() {
                     @Override
-                    public void classFound(String className) {
+                    public void classFound(String className, Asset asset) {
                         ArchivePath classNamePath = AssetUtil.getFullPathForClassResource(className);
 
-                        Asset asset = new ClassLoaderAsset(classNamePath.get().substring(1), classLoader);
+                        asset = new ClassLoaderAsset(classNamePath.get().substring(1), classLoader);
                         ArchivePath location = new BasicPath(CLASSES_FOLDER + "/", classNamePath);
                         ark.add(asset, location);
                     }

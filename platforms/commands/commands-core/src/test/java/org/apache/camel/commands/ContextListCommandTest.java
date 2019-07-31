@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,8 @@ import java.io.PrintStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
+import org.apache.camel.impl.engine.DefaultRuntimeEndpointRegistry;
+import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,7 @@ public class ContextListCommandTest {
     @Test
     public void testEndpointStats() throws Exception {
         CamelContext context = new DefaultCamelContext();
+        context.setRuntimeEndpointRegistry(new DefaultRuntimeEndpointRegistry());
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("foobar"));
         context.addRoutes(new RouteBuilder() {
             @Override

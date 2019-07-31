@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,22 +16,18 @@
  */
 package org.apache.camel.component.netty4.http.rest;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty4.http.BaseNettyTest;
 import org.apache.camel.component.netty4.http.RestNettyHttpBinding;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class RestNettyHttpGetWildcardsTest extends BaseNettyTest {
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("mybinding", new RestNettyHttpBinding());
-        return jndi;
-    }
+    @BindToRegistry("mybinding")
+    private RestNettyHttpBinding binding = new RestNettyHttpBinding();
 
     @Test
     public void testProducerGet() throws Exception {

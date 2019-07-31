@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,15 +8,15 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
--->
 
+-->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:u="http://www.springframework.org/schema/util"
@@ -44,16 +45,16 @@
       <from uri="file://target/inbox"/>
       <split>
         <xpath>/stocks/stock</xpath>
-        <!-- throttle 10 msg/sec being send the the ActiveMQ queue -->
+        <!-- throttle 10 msg/sec being send the ActiveMQ queue -->
         <throttle>
           <constant>10</constant>
-          <!-- store the stock symbol as a header -->
-          <setHeader headerName="symbol">
-            <xpath>/stock/symbol/text()</xpath>
-          </setHeader>
-          <!-- send the message to a dynamic to, with the stock symbol as the name of the queue -->
-          <toD uri="activemq:queue:stock.${header.symbol}"/>
         </throttle>
+        <!-- store the stock symbol as a header -->
+        <setHeader name="symbol">
+          <xpath>/stock/symbol/text()</xpath>
+        </setHeader>
+        <!-- send the message to a dynamic to, with the stock symbol as the name of the queue -->
+        <toD uri="activemq:queue:stock.${header.symbol}"/>
       </split>
     </route>
 
@@ -71,7 +72,7 @@
   </camelContext>
 
   <!-- create a Camel ActiveMQ component to use -->
-  <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" depends-on="broker">
+  <bean id="activemq" class="org.apache.camel.component.activemq.ActiveMQComponent" depends-on="broker">
     <property name="brokerURL" value="vm://myBroker?create=false&amp;waitForStart=5000"/>
   </bean>
 

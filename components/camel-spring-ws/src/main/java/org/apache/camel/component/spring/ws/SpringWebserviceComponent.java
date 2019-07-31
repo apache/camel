@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,24 +19,23 @@ package org.apache.camel.component.spring.ws;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import javax.xml.transform.TransformerFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
 import org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.spring.ws.filter.impl.BasicMessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
-import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.xml.xpath.XPathExpression;
 import org.springframework.xml.xpath.XPathExpressionFactory;
@@ -44,15 +43,17 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
 /**
  * Apache Camel component for working with Spring Web Services (a.k.a Spring-WS).
  */
-public class SpringWebserviceComponent extends UriEndpointComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
+@Component("spring-ws")
+public class SpringWebserviceComponent extends DefaultComponent implements SSLContextParametersAware {
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public SpringWebserviceComponent() {
-        super(SpringWebserviceEndpoint.class);
     }
 
     public SpringWebserviceComponent(CamelContext context) {
-        super(context, SpringWebserviceEndpoint.class);
+        super(context);
     }
 
     @Deprecated
@@ -65,17 +66,21 @@ public class SpringWebserviceComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SpringWebserviceConfiguration configuration = new SpringWebserviceConfiguration();
         addConsumerConfiguration(remaining, parameters, configuration);
-        addXmlConverterToConfiguration(parameters, configuration);
         setProperties(configuration, parameters);
         configureProducerConfiguration(remaining, configuration);
         configureMessageFilter(configuration);
+
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
         return new SpringWebserviceEndpoint(this, uri, configuration);
     }
 
     private void addConsumerConfiguration(String remaining, Map<String, Object> parameters, SpringWebserviceConfiguration configuration) {
         EndpointMappingType type = EndpointMappingType.getTypeFromUriPrefix(remaining);
         if (type != null) {
-            LOG.debug("Building Spring Web Services consumer of type " + type);
+            log.debug("Building Spring Web Services consumer of type {}", type);
             String lookupKey = getLookupKey(remaining, type);
             if (EndpointMappingType.BEANNAME.equals(type)) {
                 addEndpointDispatcherToConfiguration(configuration, lookupKey);
@@ -94,7 +99,7 @@ public class SpringWebserviceComponent extends UriEndpointComponent {
 
     private void configureProducerConfiguration(String remaining, SpringWebserviceConfiguration configuration) throws URISyntaxException {
         if (configuration.getEndpointMapping() == null && configuration.getEndpointDispatcher() == null) {
-            LOG.debug("Building Spring Web Services producer");
+            log.debug("Building Spring Web Services producer");
             URI webServiceEndpointUri = new URI(UnsafeUriCharactersEncoder.encode(remaining));
 
             // Obtain a WebServiceTemplate from the registry when specified by
@@ -151,15 +156,6 @@ public class SpringWebserviceComponent extends UriEndpointComponent {
         configuration.setEndpointDispatcher(endpoint);
     }
 
-    private void addXmlConverterToConfiguration(Map<String, Object> parameters, SpringWebserviceConfiguration configuration) {
-        XmlConverter xmlConverter = new XmlConverter();
-        TransformerFactory transformerFactory = resolveAndRemoveReferenceParameter(parameters, "transformerFactory", TransformerFactory.class, null);
-        if (transformerFactory != null) {
-            xmlConverter.setTransformerFactory(transformerFactory);
-        }
-        configuration.setXmlConverter(xmlConverter);
-    }
-
     /**
      * Configures the messageFilter's factory. The factory is looked up in the endpoint's URI and then in the Spring's context.
      * The bean search mechanism looks for a bean with the name messageFilter.
@@ -177,6 +173,19 @@ public class SpringWebserviceComponent extends UriEndpointComponent {
                 configuration.setMessageFilter(new BasicMessageFilter());
             }
         }
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
 }

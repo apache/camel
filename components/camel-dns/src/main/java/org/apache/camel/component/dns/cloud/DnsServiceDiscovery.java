@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.dns.cloud;
 
 import java.util.Arrays;
@@ -51,7 +50,7 @@ public final class DnsServiceDiscovery extends DefaultServiceDiscovery {
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         final Lookup lookup = cache.computeIfAbsent(name, this::createLookup);
         final Record[] records = lookup.run();
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,23 +30,21 @@ import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.mongodb3.MongoDbOperation.command;
 import static org.apache.camel.component.mongodb3.MongoDbOperation.findAll;
@@ -60,15 +58,14 @@ import static org.apache.camel.component.mongodb3.MongoDbOutputType.MongoIterabl
  * Component for working with documents stored in MongoDB database.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb3", title = "MongoDB", syntax = "mongodb3:connectionBean",
-    consumerClass = MongoDbTailableCursorConsumer.class, label = "database,nosql")
+    label = "database,nosql")
 public class MongoDbEndpoint extends DefaultEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
-
+    @UriParam(description = "Sets the connection bean used as a client for connecting to a database.")
     private MongoClient mongoConnection;
 
-    @UriPath
-    @Metadata(required = "true")
+    @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database.")
+    @Metadata(required = true)
     private String connectionBean;
     @UriParam
     private String database;
@@ -85,12 +82,15 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private boolean dynamicity;
     @UriParam(label = "advanced")
     private boolean writeResultAsHeader;
-    // tailable cursor consumer by default
-    private MongoDbConsumerType consumerType;
+    @UriParam(label = "consumer")
+    private String consumerType;
     @UriParam(label = "advanced", defaultValue = "1000")
     private long cursorRegenerationDelay = 1000L;
     @UriParam(label = "tail")
     private String tailTrackIncreasingField;
+
+    @UriParam(label = "changeStream")
+    private String streamFilter;
 
     // persistent tail tracking
     @UriParam(label = "tail")
@@ -103,15 +103,16 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private String tailTrackCollection;
     @UriParam(label = "tail")
     private String tailTrackField;
-    private MongoDbTailTrackingConfig tailTrackingConfig;
-
-    @UriParam
+    @UriParam(label = "common")
     private MongoDbOutputType outputType;
+
+    // tailable cursor consumer by default
+    private MongoDbConsumerType dbConsumerType;
+
+    private MongoDbTailTrackingConfig tailTrackingConfig;
 
     private MongoDatabase mongoDatabase;
     private MongoCollection<Document> mongoCollection;
-
-    // ======= Constructors ===============================================
 
     public MongoDbEndpoint() {
     }
@@ -120,9 +121,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         super(uri, component);
     }
 
-    // ======= Implementation methods =====================================
-
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         validateProducerOptions();
         initializeConnection();
         return new MongoDbProducer(this);
@@ -136,15 +135,25 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         initializeConnection();
 
         // select right consumer type
-        if (consumerType == null) {
-            consumerType = MongoDbConsumerType.tailable;
+        try {
+            dbConsumerType = ObjectHelper.isEmpty(consumerType)
+                    ? MongoDbConsumerType.tailable
+                    : MongoDbConsumerType.valueOf(consumerType);
+        } catch (Exception e) {
+            throw new CamelMongoDbException("Consumer type not supported: " + consumerType, e);
         }
 
         Consumer consumer;
-        if (consumerType == MongoDbConsumerType.tailable) {
+
+        switch (dbConsumerType) {
+        case tailable:
             consumer = new MongoDbTailableCursorConsumer(this, processor);
-        } else {
-            throw new CamelMongoDbException("Consumer type not supported: " + consumerType);
+            break;
+        case changeStreams:
+            consumer = new MongoDbChangeStreamsConsumer(this, processor);
+            break;
+        default:
+            throw new CamelMongoDbException("Consumer type not supported: " + dbConsumerType);
         }
 
         configureConsumer(consumer);
@@ -152,11 +161,12 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Check if outputType is compatible with operation. DbCursor and
-     * DocumentList applies to findAll. Document applies to others.
+     * Check if outputType is compatible with operation.
+     * DbCursor and DocumentList applies to findAll.
+     * Document applies to others.
      */
-    @SuppressWarnings("unused") // TODO: validate Output on createProducer
-                                // method.
+    @SuppressWarnings("unused")
+    // TODO: validate Output on createProducer method.
     private void validateOutputType() {
         if (!ObjectHelper.isEmpty(outputType)) {
             if (DocumentList.equals(outputType) && !(findAll.equals(operation))) {
@@ -175,9 +185,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         // make our best effort to validate, options with defaults are checked
         // against their defaults, which is not always a guarantee that
         // they haven't been explicitly set, but it is enough
-        if (!ObjectHelper.isEmpty(consumerType) || persistentTailTracking || !ObjectHelper.isEmpty(tailTrackDb) || !ObjectHelper.isEmpty(tailTrackCollection)
+        if (!ObjectHelper.isEmpty(dbConsumerType) || persistentTailTracking || !ObjectHelper.isEmpty(tailTrackDb) || !ObjectHelper.isEmpty(tailTrackCollection)
             || !ObjectHelper.isEmpty(tailTrackField) || cursorRegenerationDelay != 1000L) {
-            throw new IllegalArgumentException("consumerType, tailTracking, cursorRegenerationDelay options cannot appear on a producer endpoint");
+            throw new IllegalArgumentException("dbConsumerType, tailTracking, cursorRegenerationDelay options cannot appear on a producer endpoint");
         }
     }
 
@@ -188,7 +198,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         if (!ObjectHelper.isEmpty(operation) || dynamicity || outputType != null) {
             throw new IllegalArgumentException("operation, dynamicity, outputType " + "options cannot appear on a consumer endpoint");
         }
-        if (consumerType == MongoDbConsumerType.tailable) {
+        if (dbConsumerType == MongoDbConsumerType.tailable) {
             if (tailTrackIncreasingField == null) {
                 throw new IllegalArgumentException("tailTrackIncreasingField option must be set for tailable cursor MongoDB consumer endpoint");
             }
@@ -198,18 +208,13 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         }
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
-     * Initialises the MongoDB connection using the Mongo object provided to the
-     * endpoint
+     * Initialises the MongoDB connection using the Mongo object provided to the endpoint
      * 
      * @throws CamelMongoDbException
      */
     public void initializeConnection() throws CamelMongoDbException {
-        LOG.info("Initialising MongoDb endpoint: {}", this.toString());
+        log.info("Initialising MongoDb endpoint: {}", this);
         if (database == null || (collection == null && !(getDbStats.equals(operation) || command.equals(operation)))) {
             throw new CamelMongoDbException("Missing required endpoint configuration: database and/or collection");
         }
@@ -223,7 +228,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             }
             mongoCollection = mongoDatabase.getCollection(collection, Document.class);
 
-            LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
+            log.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
                       new Object[] {mongoConnection.getAllAddress().toString(), mongoDatabase.getName(), collection});
 
             try {
@@ -248,7 +253,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public void ensureIndex(MongoCollection<Document> aCollection, List<Bson> dynamicIndex) {
         if (dynamicIndex != null && !dynamicIndex.isEmpty()) {
             for (Bson index : dynamicIndex) {
-                LOG.debug("create Document Index {}", index);
+                log.debug("create Document Index {}", index);
                 aCollection.createIndex(index);
             }
         }
@@ -298,22 +303,15 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     
     @Override
     protected void doStart() throws Exception {
-        mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
-        LOG.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
+        if (mongoConnection == null) {
+            mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
+            log.debug("Resolved the connection provided by {} context reference as {}", connectionBean,
+                    mongoConnection);
+        } else {
+            log.debug("Resolved the connection provided by mongoConnection property parameter as {}", mongoConnection);
+        }
         super.doStart();
     }
-    
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        if (mongoConnection != null) {
-            LOG.debug("Closing connection");
-            mongoConnection.close();
-        }
-    }
-
-    // ======= Getters and setters
-    // ===============================================
 
     public String getConnectionBean() {
         return connectionBean;
@@ -417,8 +415,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     /**
      * Set the {@link WriteConcern} for write operations on MongoDB, passing in
      * the bean ref to a custom WriteConcern which exists in the Registry. You
-     * can also use standard WriteConcerns by passing in their key. See the
-     * {@link #setWriteConcern(String) setWriteConcern} method.
+     * can also use standard WriteConcerns by passing in their key.
      * 
      * @param writeConcernRef the name of the bean in the registry that
      *            represents the WriteConcern to use
@@ -466,19 +463,30 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     /**
      * Reserved for future use, when more consumer types are supported.
      *
-     * @param consumerType key of the consumer type
-     * @throws CamelMongoDbException
+     * @param dbConsumerType key of the consumer type
+     * @throws CamelMongoDbException if consumer type is not supported
      */
-    public void setConsumerType(String consumerType) throws CamelMongoDbException {
+    public void setDbConsumerType(String dbConsumerType) throws CamelMongoDbException {
         try {
-            this.consumerType = MongoDbConsumerType.valueOf(consumerType);
+            this.dbConsumerType = MongoDbConsumerType.valueOf(dbConsumerType);
         } catch (IllegalArgumentException e) {
             throw new CamelMongoDbException("Consumer type not supported", e);
         }
     }
 
-    public MongoDbConsumerType getConsumerType() {
+    public MongoDbConsumerType getDbConsumerType() {
+        return dbConsumerType;
+    }
+
+    public String getConsumerType() {
         return consumerType;
+    }
+
+    /**
+     * Consumer type.
+     */
+    public void setConsumerType(String consumerType) {
+        this.consumerType = consumerType;
     }
 
     public String getTailTrackDb() {
@@ -623,10 +631,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Convert the output of the producer to the selected type : "DocumentList",
-     * "Document" or "MongoIterable". DocumentList or Document applies to
-     * findAll. MongoIterable applies to all other operations.
-     * 
+     * Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. 
+     * DocumentList or MongoIterable applies to findAll and aggregate. Document applies to all other operations.
      * @param outputType
      */
     public void setOutputType(MongoDbOutputType outputType) {
@@ -639,5 +645,16 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public MongoCollection<Document> getMongoCollection() {
         return mongoCollection;
+    }
+
+    public String getStreamFilter() {
+        return streamFilter;
+    }
+
+    /**
+     * Filter condition for change streams consumer.
+     */
+    public void setStreamFilter(String streamFilter) {
+        this.streamFilter = streamFilter;
     }
 }

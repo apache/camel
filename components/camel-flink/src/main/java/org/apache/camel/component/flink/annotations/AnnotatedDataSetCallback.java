@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.flink.api.java.DataSet;
 
+import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
 
 /**
@@ -63,7 +64,6 @@ public class AnnotatedDataSetCallback implements org.apache.camel.component.flin
             }
 
             Method callbackMethod = dataSetCallbacks.get(0);
-            callbackMethod.setAccessible(true);
 
             if (camelContext != null) {
                 for (int i = 1; i < arguments.size(); i++) {
@@ -71,7 +71,8 @@ public class AnnotatedDataSetCallback implements org.apache.camel.component.flin
                 }
             }
 
-            return callbackMethod.invoke(objectWithCallback, arguments.toArray(new Object[arguments.size()]));
+            Object[] args = arguments.toArray(new Object[arguments.size()]);
+            return invokeMethodSafe(callbackMethod, objectWithCallback, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

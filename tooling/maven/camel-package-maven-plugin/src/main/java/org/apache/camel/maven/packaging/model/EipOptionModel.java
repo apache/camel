@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,10 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import org.apache.camel.maven.packaging.StringHelper;
+
+import static org.apache.camel.maven.packaging.StringHelper.wrapCamelCaseWords;
+
 public class EipOptionModel {
 
     private String name;
@@ -25,8 +29,10 @@ public class EipOptionModel {
     private String javaType;
     private String type;
     private String label;
+    private String defaultValue;
     private String description;
     private boolean deprecated;
+    private String deprecationNote;
     private boolean input;
     private boolean output;
 
@@ -86,6 +92,14 @@ public class EipOptionModel {
         this.label = label;
     }
 
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -100,6 +114,14 @@ public class EipOptionModel {
 
     public void setDeprecated(boolean deprecated) {
         this.deprecated = deprecated;
+    }
+
+    public String getDeprecationNote() {
+        return deprecationNote;
+    }
+
+    public void setDeprecationNote(String deprecationNote) {
+        this.deprecationNote = deprecationNote;
     }
 
     public boolean isInput() {
@@ -127,19 +149,45 @@ public class EipOptionModel {
     }
 
     public String getShortJavaType() {
-        if (javaType.startsWith("java.util.Map")) {
-            return "Map";
-        } else if (javaType.startsWith("java.util.Set")) {
-            return "Set";
-        } else if (javaType.startsWith("java.util.List")) {
-            return "List";
-        }
-        int pos = javaType.lastIndexOf(".");
-        if (pos != -1) {
-            return javaType.substring(pos + 1);
-        } else {
-            return javaType;
-        }
+        // TODO: use watermark in the others
+        return getShortJavaType(40);
     }
+
+    public String getShortJavaType(int watermark) {
+
+        String text = StringHelper.getClassShortName(javaType);
+
+        // if its some kind of java object then lets wrap it as its long
+        if ("object".equals(type)) {
+            text = wrapCamelCaseWords(text, watermark, " ");
+        }
+        return text;
+    }
+
+    public String getShortDefaultValue(int watermark) {
+        if (defaultValue.isEmpty()) {
+            return "";
+        }
+        String text = defaultValue;
+        if (text.endsWith("<T>")) {
+            text = text.substring(0, text.length() - 3);
+        } else if (text.endsWith("<T>>")) {
+            text = text.substring(0, text.length() - 4);
+        }
+
+        // TODO: dirty hack for AUTO_ACKNOWLEDGE which we should wrap
+        if ("AUTO_ACKNOWLEDGE".equals(text)) {
+            return "AUTO_ ACKNOWLEDGE";
+        }
+
+        return text;
+    }
+
+    public String getShortName(int watermark) {
+        String text = wrapCamelCaseWords(name, watermark, " ");
+        // ensure the option name starts with lower-case
+        return Character.toLowerCase(text.charAt(0)) + text.substring(1);
+    }
+
 }
 

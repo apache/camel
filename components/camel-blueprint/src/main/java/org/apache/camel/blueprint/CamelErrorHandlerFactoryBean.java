@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,14 +25,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
 @XmlRootElement(name = "errorHandler")
@@ -46,11 +45,9 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     @XmlAttribute
     private Boolean deadLetterHandleNewException;
     @XmlAttribute
-    private LoggingLevel level;
-    @XmlAttribute
-    private String logName;
-    @XmlAttribute
     private Boolean useOriginalMessage;
+    @XmlAttribute
+    private Boolean useOriginalBody;
     @XmlAttribute
     private String onRedeliveryRef;
     @XmlAttribute
@@ -82,8 +79,11 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             if (useOriginalMessage != null) {
                 handler.setUseOriginalMessage(useOriginalMessage);
             }
+            if (useOriginalBody != null) {
+                handler.setUseOriginalBody(useOriginalBody);
+            }
             if (redeliveryPolicy != null) {
-                handler.setRedeliveryPolicy(redeliveryPolicy.createRedeliveryPolicy(getCamelContext(), null));
+                handler.setRedeliveryPolicy(ErrorHandlerReifier.createRedeliveryPolicy(redeliveryPolicy, getCamelContext(), null));
             }
             if (redeliveryPolicyRef != null) {
                 handler.setRedeliveryPolicy(lookup(redeliveryPolicyRef, RedeliveryPolicy.class));
@@ -102,14 +102,6 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             }
             if (executorServiceRef != null) {
                 handler.setExecutorServiceRef(executorServiceRef);
-            }
-        } else if (errorHandler instanceof LoggingErrorHandlerBuilder) {
-            LoggingErrorHandlerBuilder handler = (LoggingErrorHandlerBuilder) errorHandler;
-            if (level != null) {
-                handler.setLevel(level);
-            }
-            if (logName != null) {
-                handler.setLogName(logName);
             }
         }
         return errorHandler;

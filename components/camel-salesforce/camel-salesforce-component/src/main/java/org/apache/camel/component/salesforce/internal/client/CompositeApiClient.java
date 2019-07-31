@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectCompositeResponse;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
 
@@ -29,28 +33,30 @@ public interface CompositeApiClient {
     @FunctionalInterface
     interface Operation<T, R> {
 
-        void submit(T body, ResponseCallback<R> callback) throws SalesforceException;
+        void submit(T body, Map<String, List<String>> headers, ResponseCallback<R> callback) throws SalesforceException;
 
     }
 
     @FunctionalInterface
     public interface ResponseCallback<T> {
-        void onResponse(Optional<T> body, SalesforceException exception);
+        void onResponse(Optional<T> body, Map<String, String> headers, SalesforceException exception);
     }
 
-    void submitCompositeBatch(SObjectBatch batch, ResponseCallback<SObjectBatchResponse> callback)
-            throws SalesforceException;
+    void submitComposite(SObjectComposite composite, Map<String, List<String>> headers,
+        ResponseCallback<SObjectCompositeResponse> callback) throws SalesforceException;
+
+    void submitCompositeBatch(SObjectBatch batch, Map<String, List<String>> headers,
+        ResponseCallback<SObjectBatchResponse> callback) throws SalesforceException;
 
     /**
-     * Submits given nodes (records) of SObjects and their children as a tree in a single request. And updates the
-     * <code>Id</code> parameter of each object to the value returned from the API call.
+     * Submits given nodes (records) of SObjects and their children as a tree in
+     * a single request. And updates the <code>Id</code> parameter of each
+     * object to the value returned from the API call.
      *
-     * @param tree
-     *            SObject tree to submit
-     * @param callback
-     *            {@link ResponseCallback} to handle response or exception
+     * @param tree SObject tree to submit
+     * @param callback {@link ResponseCallback} to handle response or exception
      */
-    void submitCompositeTree(SObjectTree tree, ResponseCallback<SObjectTreeResponse> callback)
-            throws SalesforceException;
+    void submitCompositeTree(SObjectTree tree, Map<String, List<String>> headers,
+        ResponseCallback<SObjectTreeResponse> callback) throws SalesforceException;
 
 }

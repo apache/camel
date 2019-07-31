@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,9 +23,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 
@@ -34,11 +34,11 @@ import org.optaplanner.core.api.solver.SolverFactory;
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile", label = "engine,planning")
 public class OptaPlannerEndpoint extends DefaultEndpoint {
-    private static final Map<String, Solver> SOLVERS = new HashMap<String, Solver>();
+    private static final Map<String, Solver<Object>> SOLVERS = new HashMap<>();
 
     @UriParam
     private OptaPlannerConfiguration configuration;
-    private SolverFactory solverFactory;
+    private SolverFactory<Object> solverFactory;
 
     public OptaPlannerEndpoint() {
     }
@@ -50,9 +50,9 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
         solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile(), classLoader);
     }
 
-    protected Solver getOrCreateSolver(String solverId) throws Exception {
+    protected Solver<Object> getOrCreateSolver(String solverId) throws Exception {
         synchronized (SOLVERS) {
-            Solver solver = SOLVERS.get(solverId);
+            Solver<Object> solver = SOLVERS.get(solverId);
             if (solver == null) {
                 solver = createSolver();
                 SOLVERS.put(solverId, solver);
@@ -61,11 +61,11 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
         }
     }
 
-    protected Solver createSolver() {
+    protected Solver<Object> createSolver() {
         return solverFactory.buildSolver();
     }
 
-    protected Solver getSolver(String solverId) {
+    protected Solver<Object> getSolver(String solverId) {
         synchronized (SOLVERS) {
             return SOLVERS.get(solverId);
         }
@@ -82,14 +82,9 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     protected void doStop() throws Exception {
         synchronized (SOLVERS) {
-            for (Solver solver : SOLVERS.values()) {
+            for (Solver<Object> solver : SOLVERS.values()) {
                 solver.terminateEarly();
                 SOLVERS.remove(solver);
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,13 +32,13 @@ import org.junit.Test;
  */
 public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
-    @Produce(uri = "direct:header")
+    @Produce("direct:header")
     protected ProducerTemplate templateHeader;
 
-    @Produce(uri = "direct:double")
+    @Produce("direct:double")
     protected ProducerTemplate templateDouble;
 
     @Test
@@ -69,7 +69,7 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
     
     @Test
     public void testSearchTimelineWithDynamicQuerySinceId() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(TwitterConstants.TWITTER_KEYWORDS, "java");
         headers.put(TwitterConstants.TWITTER_SINCEID, new Long(258347905419730944L));
         templateHeader.sendBodyAndHeaders(null, headers);
@@ -85,7 +85,7 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
     
     @Test
     public void testSearchTimelineWithDynamicQuerySinceIdAndMaxId() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(TwitterConstants.TWITTER_KEYWORDS, "java");
         headers.put(TwitterConstants.TWITTER_SINCEID, new Long(258347905419730944L));
         headers.put(TwitterConstants.TWITTER_MAXID, new Long(258348815243960320L));
@@ -120,17 +120,17 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .toF("twitter://search?%s&keywords=java", getUriTokens())
+                        .toF("twitter-search://java?%s", getUriTokens())
                         .split().body()
                         .to("mock:result");
 
                 from("direct:header")
-                        .toF("twitter://search?%s", getUriTokens())
+                        .toF("twitter-search://foo?%s", getUriTokens())
                         .split().body()
                         .to("mock:result");
 
                 from("direct:double")
-                        .toF("twitter://search?filterOld=false&%s", getUriTokens())
+                        .toF("twitter-search://foo?filterOld=false&%s", getUriTokens())
                         .split().body()
                         .to("mock:result");
             }

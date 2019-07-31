@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,43 +17,18 @@
 package org.apache.camel.component.dropbox.validator;
 
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.camel.component.dropbox.DropboxConfiguration;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxException;
-import org.apache.camel.component.dropbox.util.DropboxOperation;
-
-import static org.apache.camel.component.dropbox.util.DropboxConstants.DROPBOX_FILE_SEPARATOR;
+import org.apache.camel.component.dropbox.util.DropboxUploadMode;
+import org.apache.camel.util.ObjectHelper;
 
 public final class DropboxConfigurationValidator {
 
-    private static final Pattern PATTERN = Pattern.compile("/*?(\\S+)/*?", Pattern.CASE_INSENSITIVE);
-
     private DropboxConfigurationValidator() { }
 
-    /**
-     * Validate the parameters passed in the incoming url.
-     * @param configuration object containing the parameters.
-     * @throws DropboxException
-     */
-    public static void validate(DropboxConfiguration configuration) throws DropboxException {
-        validateCommonProperties(configuration);
-        DropboxOperation op = configuration.getOperation();
-        if (op == DropboxOperation.get) {
-            validateGetOp(configuration);
-        } else if (op == DropboxOperation.put) {
-            validatePutOp(configuration);
-        } else if (op == DropboxOperation.search) {
-            validateSearchOp(configuration);
-        } else if (op == DropboxOperation.del) {
-            validateDelOp(configuration);
-        } else if (op == DropboxOperation.move) {
-            validateMoveOp(configuration);
-        }
-    }
-
-    private static void validateCommonProperties(DropboxConfiguration configuration) throws DropboxException {
+    public static void validateCommonProperties(DropboxConfiguration configuration) throws DropboxException {
         if (configuration.getAccessToken() == null || configuration.getAccessToken().equals("")) {
             throw new DropboxException("option <accessToken> is not present or not valid!");
         }
@@ -62,64 +37,62 @@ public final class DropboxConfigurationValidator {
         }
     }
 
-    private static void validateGetOp(DropboxConfiguration configuration) throws DropboxException {
-        validateRemotePath(configuration.getRemotePath());
+    public static void validateGetOp(String remotePath) throws DropboxException {
+        validateRemotePath(remotePath);
     }
 
-    private static void validatePutOp(DropboxConfiguration configuration) throws DropboxException {
-        validateLocalPath(configuration.getLocalPath());
+    public static void validatePutOp(String localPath, String remotePath, DropboxUploadMode uploadMode) throws DropboxException {
+        validateLocalPath(localPath);
         //remote path is optional
-        if (configuration.getRemotePath() != null) {
-            validateRemotePathForPut(configuration.getRemotePath());
+        if (remotePath != null) {
+            validateRemotePathForPut(remotePath);
         } else {  //in case remote path is not set, local path is even the remote path so it must be validated as UNIX
-            validatePathInUnix(configuration.getLocalPath());
+            validatePathInUnix(localPath);
         }
-        if (configuration.getUploadMode() == null) {
+        if (uploadMode == null) {
             throw new DropboxException("option <uploadMode> is not present or not valid!");
         }
     }
 
-    private static void validateSearchOp(DropboxConfiguration configuration) throws DropboxException {
-        validateRemotePath(configuration.getRemotePath());
+    public static void validateSearchOp(String remotePath) throws DropboxException {
+        validateRemotePath(remotePath);
     }
 
-    private static void validateDelOp(DropboxConfiguration configuration) throws DropboxException {
-        validateRemotePath(configuration.getRemotePath());
+    public static void validateDelOp(String remotePath) throws DropboxException {
+        validateRemotePath(remotePath);
     }
 
-    private static void validateMoveOp(DropboxConfiguration configuration) throws DropboxException {
-        validateRemotePath(configuration.getRemotePath());
-        validateRemotePath(configuration.getNewRemotePath());
+    public static void validateMoveOp(String remotePath, String newRemotePath) throws DropboxException {
+        validateRemotePath(remotePath);
+        validateRemotePath(newRemotePath);
     }
 
     private static void validateLocalPath(String localPath) throws DropboxException {
-        if (localPath == null || localPath.equals("")) {
-            throw new DropboxException("option <localPath> is not present or not valid!");
-        }
-        File file = new File(localPath);
-        if (!file.exists()) {
-            throw new DropboxException("option <localPath> is not an existing file or directory!");
+        if (ObjectHelper.isNotEmpty(localPath)) {
+            File file = new File(localPath);
+            if (!file.exists()) {
+                throw new DropboxException("option <localPath> is not an existing file or directory!");
+            }
         }
     }
 
     private static void validateRemotePath(String remotePath) throws DropboxException {
-        if (remotePath == null || !remotePath.startsWith(DROPBOX_FILE_SEPARATOR)) {
+        if (remotePath == null || !remotePath.startsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
             throw new DropboxException("option <remotePath> is not valid!");
         }
         validatePathInUnix(remotePath);
     }
 
     private static void validateRemotePathForPut(String remotePath) throws DropboxException {
-        if (!remotePath.startsWith(DROPBOX_FILE_SEPARATOR)) {
+        if (!remotePath.startsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
             throw new DropboxException("option <remotePath> is not valid!");
         }
         validatePathInUnix(remotePath);
     }
 
     private static void validatePathInUnix(String path) throws DropboxException {
-        Matcher matcher = PATTERN.matcher(path);
-        if (!matcher.matches()) {
-            throw new DropboxException(path + " is not a valid path, must be in UNIX form!");
+        if (path.indexOf('\\') != -1) {
+            throw new DropboxException(path + " must not contain Windows path separator, use UNIX path separator!");
         }
     }
 

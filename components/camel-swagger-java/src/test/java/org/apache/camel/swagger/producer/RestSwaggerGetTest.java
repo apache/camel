@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,7 +45,7 @@ public class RestSwaggerGetTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().producerComponent("dummy");
+                restConfiguration().host("camelhost").producerComponent("dummy");
 
                 from("direct:start")
                     .to("rest:get:hello/hi/{name}?apiDoc=hello-api.json")

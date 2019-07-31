@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,13 +17,12 @@
 package org.apache.camel.spring.produce.generics;
 
 import org.apache.camel.Consume;
-
 import org.springframework.stereotype.Service;
 
 @Service
 public class MyServiceImpl extends MyServiceSupport<Double> {
 
-    @Consume(uri = "direct:myService")
+    @Consume("direct:myService")
     @Override
     public Double sqrt(Double number) {
         log(number);

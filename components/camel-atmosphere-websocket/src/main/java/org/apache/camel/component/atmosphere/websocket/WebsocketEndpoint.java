@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,14 +32,15 @@ import org.apache.camel.spi.UriPath;
  * To exchange data with external Websocket clients using Atmosphere.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "atmosphere-websocket", extendsScheme = "servlet", title = "Atmosphere Websocket",
-        syntax = "atmosphere-websocket:servicePath", consumerClass = WebsocketConsumer.class, label = "websocket",
-        excludeProperties = "httpUri,contextPath")
+        syntax = "atmosphere-websocket:servicePath", label = "websocket",
+        excludeProperties = "httpUri,contextPath,authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"
+                + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain")
 public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;
     private WebsocketConsumer websocketConsumer;
 
-    @UriPath(description = "Name of websocket endpoint") @Metadata(required = "true")
+    @UriPath(description = "Name of websocket endpoint") @Metadata(required = true)
     private String servicePath;
     @UriParam
     private boolean sendToAll;
@@ -66,11 +67,6 @@ public class WebsocketEndpoint extends ServletEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         websocketConsumer = new WebsocketConsumer(this, processor);
         return websocketConsumer;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     public boolean isSendToAll() {

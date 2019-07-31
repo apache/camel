@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,12 +18,11 @@ package org.apache.camel.component.kafka;
 
 import java.util.Properties;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.MemoryStateRepository;
-import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.camel.impl.engine.MemoryStateRepository;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.After;
 import org.junit.Test;
@@ -31,26 +30,21 @@ import org.junit.Test;
 public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC = "offset-resume";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
+    @BindToRegistry("offset")
     private MemoryStateRepository stateRepository;
 
     @Override
     protected void doPreSetup() throws Exception {
-        Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:" + getKafkaPort());
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
-        props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
-        props.put(ProducerConfig.ACKS_CONFIG, "1");
-
+        Properties props = getDefaultProperties();
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
 
         // Create the topic with 2 partitions + send 10 messages (5 in each partitions)
-        embeddedKafkaCluster.createTopic(TOPIC, 2);
+        kafkaBroker.createTopic(TOPIC, 2);
         for (int i = 0; i < 10; i++) {
             producer.send(new ProducerRecord<>(TOPIC, i % 2, "key", "message-" + i));
         }
@@ -76,20 +70,12 @@ public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTe
      */
     @Test
     public void shouldResumeFromAnyParticularOffset() throws InterruptedException {
-        result.expectedMessageCount(3);
         result.expectedBodiesReceivedInAnyOrder("message-6", "message-8", "message-9");
 
-        result.assertIsSatisfied(3000);
+        result.assertIsSatisfied(5000);
 
         assertEquals("partition-0", "4", stateRepository.getState(TOPIC + "/0"));
         assertEquals("partition-1", "4", stateRepository.getState(TOPIC + "/1"));
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("offset", stateRepository);
-        return registry;
     }
 
     @Override
@@ -99,6 +85,7 @@ public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTe
             public void configure() throws Exception {
                 from("kafka:" + TOPIC
                              + "?groupId=A"
+                             + "&autoCommitIntervalMs=1000"
                              + "&autoOffsetReset=earliest"             // Ask to start from the beginning if we have unknown offset
                              + "&consumersCount=2"                     // We have 2 partitions, we want 1 consumer per partition
                              + "&offsetRepository=#offset")            // Keep the offset in our repository

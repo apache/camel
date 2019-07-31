@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,11 +22,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.component.AbstractApiComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.component.AbstractApiComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the component that manages {@link GoogleDriveEndpoint}.
  */
+@Component("google-drive")
 public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiName, GoogleDriveConfiguration, GoogleDriveApiCollection> {
 
     @Metadata(label = "advanced")
@@ -58,7 +61,15 @@ public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiNam
     
     public GoogleDriveClientFactory getClientFactory() {
         if (clientFactory == null) {
-            clientFactory = new BatchGoogleDriveClientFactory();
+            // configure https proxy from camelContext
+            if (ObjectHelper.isNotEmpty(getCamelContext().getGlobalOption("http.proxyHost")) 
+                    && ObjectHelper.isNotEmpty(getCamelContext().getGlobalOption("http.proxyPort"))) {
+                String host = getCamelContext().getGlobalOption("http.proxyHost");
+                int port = Integer.parseInt(getCamelContext().getGlobalOption("http.proxyPort"));
+                clientFactory = new BatchGoogleDriveClientFactory(host, port);
+            } else {
+                clientFactory = new BatchGoogleDriveClientFactory();
+            }
         }
         return clientFactory;
     }

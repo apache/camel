@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,17 +20,18 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.springframework.ldap.core.LdapTemplate;
 
 /**
  * Creates endpoints for the Spring LDAP component.
  */
-public class SpringLdapComponent extends UriEndpointComponent {
+@Component("spring-ldap")
+public class SpringLdapComponent extends DefaultComponent {
 
     public SpringLdapComponent() {
-        super(SpringLdapEndpoint.class);
     }
 
     /**

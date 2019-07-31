@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,13 @@
 package org.apache.camel.spring.remoting;
 
 import static junit.framework.TestCase.assertEquals;
+
 import org.apache.camel.Consume;
 
 public class MyMultiArgumentService implements MyMultiArgumentServiceInterface {
 
     @Override
-    @Consume(uri = "direct:myargs")
+    @Consume("direct:myargs")
     public void doSomething(String arg1, String arg2, Long arg3) {
         assertEquals("Hello World 1", arg1);
         assertEquals("Hello World 2", arg2);

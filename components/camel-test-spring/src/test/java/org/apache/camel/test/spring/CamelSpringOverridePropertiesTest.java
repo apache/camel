@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,16 +37,16 @@ import org.springframework.test.context.ContextConfiguration;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CamelSpringOverridePropertiesTest {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate start;
 
-    @EndpointInject(uri = "mock:a")
+    @EndpointInject("mock:a")
     private MockEndpoint mockA;
 
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     private MockEndpoint mockTest;
 
-    @EndpointInject(uri = "mock:foo")
+    @EndpointInject("mock:foo")
     private MockEndpoint mockFoo;
 
     @UseOverridePropertiesWithPropertiesComponent

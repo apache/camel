@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,11 +32,9 @@ import org.slf4j.LoggerFactory;
 /**
  * MLLP Test Client packaged as a JUnit Rule
  *
- * The client can be configured to simulate a large number
- * of error conditions.
+ * The client can be configured to simulate a large number of error conditions.
  */
 public class MllpClientResource extends ExternalResource {
-
     static final char START_OF_BLOCK = 0x0b;
     static final char END_OF_BLOCK = 0x1c;
     static final char END_OF_DATA = 0x0d;
@@ -164,8 +162,34 @@ public class MllpClientResource extends ExternalResource {
         return disconnectMethod;
     }
 
+    public void setDisconnectMethod(DisconnectMethod disconnectMethod) {
+        this.disconnectMethod = disconnectMethod;
+    }
+
     public boolean isConnected() {
         return clientSocket.isConnected() && !clientSocket.isClosed();
+    }
+
+    public void checkConnection() {
+        if (clientSocket == null) {
+            throw new MllpJUnitResourceException("checkConnection failed - clientSocket is null");
+        }
+
+        if (clientSocket.isClosed()) {
+            throw new MllpJUnitResourceException("checkConnection failed - clientSocket is closed");
+        }
+
+        if (!clientSocket.isConnected()) {
+            throw new MllpJUnitResourceException("checkConnection failed - clientSocket is not connected");
+        }
+
+        try {
+            if (END_OF_STREAM == clientSocket.getInputStream().read()) {
+                throw new MllpJUnitResourceException("checkConnection failed - read() returned END_OF_STREAM");
+            }
+        } catch (IOException ioEx) {
+            throw new MllpJUnitResourceException("checkConnection failed - read() failure", ioEx);
+        }
     }
 
     public void sendData(String data) {
@@ -475,10 +499,6 @@ public class MllpClientResource extends ExternalResource {
 
     public void setTcpNoDelay(boolean tcpNoDelay) {
         this.tcpNoDelay = tcpNoDelay;
-    }
-
-    public void setDisconnectMethod(DisconnectMethod disconnectMethod) {
-        this.disconnectMethod = disconnectMethod;
     }
 
     public enum DisconnectMethod {

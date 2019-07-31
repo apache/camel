@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -46,7 +46,7 @@ public class TemplateCacheTest extends CamelTestSupport {
     @Test
     public void shouldCacheTemplateFunctions() throws InterruptedException {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(db);
-        CallableStatementWrapperFactory fac = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser());
+        CallableStatementWrapperFactory fac = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(context.getClassResolver()), false);
 
         BatchCallableStatementCreatorFactory batchFactory1 = fac.getTemplateForBatch("FOO()");
         BatchCallableStatementCreatorFactory batchFactory2 = fac.getTemplateForBatch("FOO()");

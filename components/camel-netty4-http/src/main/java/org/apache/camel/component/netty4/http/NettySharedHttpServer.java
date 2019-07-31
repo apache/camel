@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.component.netty4.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty4.NettyServerBootstrapFactory;
-import org.apache.camel.spi.ClassResolver;
 
 /**
  * A single interface to easily configure and setup a shared Netty HTTP server
@@ -37,9 +37,9 @@ public interface NettySharedHttpServer extends Service {
     void setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration configuration);
 
     /**
-     * To use a custom {@link ClassResolver} for loading resource on the classpath.
+     * The CamelContext
      */
-    void setClassResolver(ClassResolver classResolver);
+    void setCamelContext(CamelContext camelContext);
 
     /**
      * Whether to start the Netty HTTP server eager and bind to the port, or wait on first demand

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,39 +17,46 @@
 package org.apache.camel.component.azure.blob;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.microsoft.azure.storage.StorageCredentials;
 import com.microsoft.azure.storage.StorageCredentialsAnonymous;
 import com.microsoft.azure.storage.blob.CloudBlob;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
-public class BlobServiceComponent extends UriEndpointComponent {
-    
+@Component("azure-blob")
+public class BlobServiceComponent extends DefaultComponent {
+
+    @Metadata(label = "advanced")
+    private BlobServiceConfiguration configuration;
+
     public BlobServiceComponent() {
-        super(BlobServiceEndpoint.class);
     }
 
     public BlobServiceComponent(CamelContext context) {
-        super(context, BlobServiceEndpoint.class);
+        super(context);
+        this.configuration = new BlobServiceConfiguration();
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        BlobServiceConfiguration configuration = new BlobServiceConfiguration();
+        final BlobServiceConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);
 
         String[] parts = null;
         if (remaining != null) {
-            parts = remaining.split("/"); 
+            parts = remaining.split("/");
         }
         if (parts == null || parts.length < 2) {
             throw new IllegalArgumentException("At least the account and container names must be specified.");
         }
-        
+
         configuration.setAccountName(parts[0]);
         configuration.setContainerName(parts[1]);
-        
+
         if (parts.length > 2) {
             // Blob names can contain forward slashes
             StringBuilder sb = new StringBuilder();
@@ -61,21 +68,37 @@ public class BlobServiceComponent extends UriEndpointComponent {
             }
             configuration.setBlobName(sb.toString());
         }
-        
+        checkAndSetRegistryClient(configuration);
         checkCredentials(configuration);
-        
+
         BlobServiceEndpoint endpoint = new BlobServiceEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
     }
-    
+
+    public BlobServiceConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * The Blob Service configuration
+     */
+    public void setConfiguration(BlobServiceConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     private void checkCredentials(BlobServiceConfiguration cfg) {
         CloudBlob client = cfg.getAzureBlobClient();
-        StorageCredentials creds = client == null ? cfg.getCredentials() 
-            : client.getServiceClient().getCredentials(); 
-        if ((creds == null || creds instanceof StorageCredentialsAnonymous)
-            && !cfg.isPublicForRead()) {
+        StorageCredentials creds = client == null ? cfg.getCredentials() : client.getServiceClient().getCredentials();
+        if ((creds == null || creds instanceof StorageCredentialsAnonymous) && !cfg.isPublicForRead()) {
             throw new IllegalArgumentException("Credentials must be specified.");
+        }
+    }
+
+    private void checkAndSetRegistryClient(BlobServiceConfiguration configuration) {
+        Set<CloudBlob> clients = getCamelContext().getRegistry().findByType(CloudBlob.class);
+        if (clients.size() == 1) {
+            configuration.setAzureBlobClient(clients.stream().findFirst().get());
         }
     }
 }

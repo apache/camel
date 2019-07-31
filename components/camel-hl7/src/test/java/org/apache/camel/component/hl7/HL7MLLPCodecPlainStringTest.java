@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,28 +16,26 @@
  */
 package org.apache.camel.component.hl7;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 /**
- * Unit test to demonstrate the HL7MLLPCodec is message format agnostic (don't require the HAPI library).
- * The message format can be java.lang.String.
+ * Unit test to demonstrate the HL7MLLPCodec is message format agnostic (don't
+ * require the HAPI library). The message format can be java.lang.String.
  */
 public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("hl7codec")
+    public HL7MLLPCodec addCodec() throws Exception {
 
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
 
-        jndi.bind("hl7codec", codec);
-
-        return jndi;
+        return codec;
     }
 
     @Test
@@ -60,18 +58,16 @@ public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e2
-                from("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // use plain String as message format
-                            String body = exchange.getIn().getBody(String.class);
-                            assertEquals("Hello World", body);
+                from("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // use plain String as message format
+                        String body = exchange.getIn().getBody(String.class);
+                        assertEquals("Hello World", body);
 
-                            // return the response as plain string
-                            exchange.getOut().setBody("Bye World");
-                        }
-                    })
-                    .to("mock:result");
+                        // return the response as plain string
+                        exchange.getOut().setBody("Bye World");
+                    }
+                }).to("mock:result");
                 // END SNIPPET: e2
             }
         };

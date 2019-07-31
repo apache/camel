@@ -1,0 +1,88 @@
+[[HowtoswitchtheCXFconsumerbetweenHTTPandHTTPSwithouttouchingtheSpringconfiguration-HowtoswitchtheCXFconsumerbetweenHTTPandHTTPSwithouttouchingtheSpringconfiguration]]
+= How to switch the CXF consumer between HTTP and HTTPS without touching the Spring configuration?
+
+You can find general information how to secure your Camel CXF Consumer
+with HTTPS
+http://cxf.apache.org/docs/client-http-transport-including-ssl-support.html[here].
+
+A simple Camel CXF Consumer configuration which use the `\http:conduit`
+configuration to enable SSL and an external properties file for all
+environment specific configurations could looks like:
+
+*bundle-context.xml*
+
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:ctx="http://www.springframework.org/schema/context"
+  xmlns:camel="http://camel.apache.org/schema/spring"
+  xmlns:camel-cxf="http://camel.apache.org/schema/cxf"
+  xmlns:http="http://cxf.apache.org/transports/http/configuration"
+  xmlns:sec="http://cxf.apache.org/configuration/security"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    http://camel.apache.org/schema/osgi http://camel.apache.org/schema/osgi/camel-osgi.xsd
+    http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+    http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+    http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
+    ">
+
+  <import resource="classpath:META-INF/cxf/cxf.xml" />
+  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
+
+  <ctx:property-placeholder location="classpath:orderEntry.cfg" />
+
+  <camel-cxf:cxfEndpoint id="orderEntryEndpoint"
+    address="${endpointUri}"
+    serviceClass="com.company.product.OrderEntryService"
+    endpointName="ssp:OrderEntry"
+    serviceName="ssp:OrderEntryService"
+    wsdlURL="META-INF/orderEntry/orderEntry.wsdl"
+    xmlns:ssp="http://www.company.com/product/orderEntry/service/1" />
+  
+  <http:conduit name="{http://www.company.com/product/orderEntry/service/1}OrderEntry.http-conduit">
+    <http:tlsClientParameters disableCNCheck="true">
+      <sec:trustManagers>
+        <sec:keyStore type="JKS" password="${trustStore.password}" file="${trustStore.file}"/>
+      </sec:trustManagers>
+      <sec:cipherSuitesFilter>
+        <sec:include>.*_EXPORT_.*</sec:include>
+        <sec:include>.*_EXPORT1024_.*</sec:include>
+        <sec:include>.*_WITH_DES_.*</sec:include>
+        <sec:include>.*_WITH_NULL_.*</sec:include>
+        <sec:exclude>.*_DH_anon_.*</sec:exclude>
+      </sec:cipherSuitesFilter>
+    </http:tlsClientParameters>
+  </http:conduit>
+
+  <camel:camelContext trace="true">
+    <camel:routeBuilder ref="orderEntryRoute" />
+  </camel:camelContext>
+    
+  <bean id="orderEntryRoute" class="com.company.product.OrderEntryRoute" />
+</beans>
+----
+
+The environment specific configurations are externalized into a
+properties file:
+
+*orderEntry.cfg*
+
+[source,java]
+----
+endpointUri=https://localhost:8181/OrderEntry
+trustStore.password=password
+trustStore.file=etc/myApp.ts
+----
+
+With this configuration, you Camel CXF consumer connects with HTTPS to
+the web service provider.
+If you need to change the protocol to HTTP, maybe for tracing/debugging
+reasons, change the `endpointUri` property in your properties file to
+e.g. `\http://localhost:8080/OrderEntry`. That's all! Isn't it easy?
+Apache CXF detects that you "only" use HTTP and instantiates a
+`HttpURLConnectionFactoryImpl` instead of a `HttpsURLConnectionFactory`.

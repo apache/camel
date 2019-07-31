@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Version;
 
-/**
- * @version 
- */
 @Entity
 @NamedQuery(name = "findAllCustomersWithName",
 query = "SELECT c FROM Customer c WHERE c.name LIKE :custName ")

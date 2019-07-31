@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,31 +29,30 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Integration test to check that RabbitMQ Endpoint is able handle heavy load using multiple producers and
  * consumers
  */
-public class RabbitMQLoadIntTest extends CamelTestSupport {
+public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
     public static final String ROUTING_KEY = "rk4";
     private static final int PRODUCER_COUNT = 10;
     private static final int CONSUMER_COUNT = 10;
     private static final int MESSAGE_COUNT = 100;
     
-    @Produce(uri = "direct:rabbitMQ")
+    @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
+    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
                           + "&queue=q4&routingKey=" + ROUTING_KEY + "&threadPoolSize=" + (CONSUMER_COUNT + 5)
                           + "&concurrentConsumers=" + CONSUMER_COUNT)
     private Endpoint rabbitMQEndpoint;
 
-    @EndpointInject(uri = "mock:producing")
+    @EndpointInject("mock:producing")
     private MockEndpoint producingMockEndpoint;
 
-    @EndpointInject(uri = "mock:consuming")
+    @EndpointInject("mock:consuming")
     private MockEndpoint consumingMockEndpoint;
 
     @Override
@@ -79,7 +78,7 @@ public class RabbitMQLoadIntTest extends CamelTestSupport {
     public void testSendEndReceive() throws Exception {
         // Start producers
         ExecutorService executorService = Executors.newFixedThreadPool(PRODUCER_COUNT);
-        List<Future> futures = new ArrayList<Future>(PRODUCER_COUNT);
+        List<Future<?>> futures = new ArrayList<>(PRODUCER_COUNT);
         for (int i = 0; i < PRODUCER_COUNT; i++) {
             futures.add(executorService.submit(new Runnable() {
                 @Override
@@ -92,7 +91,7 @@ public class RabbitMQLoadIntTest extends CamelTestSupport {
             }));
         }
         // Wait for producers to end
-        for (Future future : futures) {
+        for (Future<?> future : futures) {
             future.get(5, TimeUnit.SECONDS);
         }
         // Check message count

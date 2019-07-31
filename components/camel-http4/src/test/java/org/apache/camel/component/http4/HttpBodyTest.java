@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,10 +32,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-/**
- *
- * @version 
- */
 public class HttpBodyTest extends BaseHttpTest {
     private String protocolString = "http4://";
     // default content encoding of the local test server
@@ -45,7 +41,7 @@ public class HttpBodyTest extends BaseHttpTest {
     @Before
     @Override
     public void setUp() throws Exception {
-        Map<String, String> expectedHeaders = new HashMap<String, String>();
+        Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("Content-Type", "image/jpeg");
         
         localServer = ServerBootstrap.bootstrap().

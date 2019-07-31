@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>camel-spring-boot-dm</artifactId>
+        <groupId>org.apache.camel</groupId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>camel-spring-boot-dependencies-generator</artifactId>
+    <packaging>pom</packaging>
+    <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: Dependencies BOM Generator</name>
+
+    <dependencyManagement>
+
+        <dependencies>
+
+            <!-- Additional libraries related to Avro (version from Camel) -->
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-mapred</artifactId>
+                <version>${avro-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-mapred</artifactId>
+                <classifier>hadoop2</classifier>
+                <version>${avro-version}</version>
+            </dependency>
+
+
+            <!-- Add a uniform jackson 1 (version from Camel) -->
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-jaxrs</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-xc</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+
+            <!-- Dependencies from Camel parent at the end -->
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-parent</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>bom-generator-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <checkConflicts>
+                        <boms>
+                            <bom>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-dependencies</artifactId>
+                                <version>${spring-boot-version}</version>
+                            </bom>
+                            <!-- Other BOMs imported by SB are now checked transitively -->
+                        </boms>
+                    </checkConflicts>
+                    <dependencies>
+                        <includes>
+                            <include>*:*</include>
+                        </includes>
+                        <excludes>
+
+                            <!-- These artifacts should not be included in the final (generated) BOM -->
+
+                            <!-- Different versions from the ones provided by spring-boot -->
+                            <exclude>de.flapdoodle*:*</exclude>
+                            <exclude>org.apache.activemq:*</exclude>
+                            <exclude>org.apache.commons:commons-pool2</exclude>
+                            <exclude>org.apache.httpcomponents:httpasyncclient</exclude>
+                            <exclude>org.apache.httpcomponents:httpclient</exclude>
+                            <exclude>org.apache.httpcomponents:httpclient-cache</exclude>
+                            <exclude>org.apache.httpcomponents:httpclient-osgi</exclude>
+                            <exclude>org.apache.httpcomponents:httpcore</exclude>
+                            <exclude>org.apache.httpcomponents:httpcore-nio</exclude>
+                            <exclude>org.apache.httpcomponents:httpmime</exclude>
+                            <exclude>org.apache.derby:derby</exclude>
+                            <exclude>org.apache.logging.log4j:*</exclude>
+                            <exclude>org.assertj:assertj-core:*</exclude>
+
+                            <exclude>org.codehaus.groovy:*</exclude>
+                            <exclude>org.hibernate:hibernate-entitymanager</exclude>
+                            <exclude>org.hsqldb:*</exclude>
+                            <exclude>org.mockito:*</exclude>
+
+                            <exclude>org.slf4j:jul-to-slf4j</exclude>
+                            <exclude>org.slf4j:log4j-over-slf4j</exclude>
+                            <exclude>org.slf4j:slf4j-api</exclude>
+                            <exclude>org.slf4j:slf4j-log4j12</exclude>
+                            <exclude>org.slf4j:slf4j-simple</exclude>
+
+                            <exclude>org.springframework*:*</exclude>
+
+                            <exclude>commons-codec:*</exclude>
+                            <exclude>commons-collections:*</exclude>
+                            <exclude>commons-dbcp:*</exclude>
+                            <exclude>org.apache.commons:commons-dbcp2</exclude>
+                            <exclude>commons-pool:*</exclude>
+
+                            <exclude>com.github.ben-manes.caffeine:caffeine</exclude>
+                            <exclude>com.datastax.cassandra:*</exclude>
+
+                            <exclude>com.fasterxml.jackson.*:*</exclude>
+
+                            <exclude>com.google.code.gson:*</exclude>
+                            <exclude>javax.servlet:javax.servlet-api</exclude>
+                            <exclude>junit:*</exclude>
+                            <exclude>net.sf.ehcache:ehcache</exclude>
+
+                            <exclude>xml-apis:*</exclude>
+
+                            <!-- Different versions required by some modules -->
+                            <exclude>com.google.inject:*</exclude>
+                            <exclude>com.google.guava:*</exclude>
+                            <exclude>io.netty*:*</exclude>
+                            <exclude>org.scala-lang:*</exclude>
+                            <exclude>org.apache.lucene:*</exclude>
+
+                            <!-- Kafka -->
+                            <exclude>org.apache.kafka:*</exclude>
+
+                            <!-- Jetty -->
+                            <exclude>org.eclipse.jetty:jetty-rewrite</exclude>
+                            <exclude>org.eclipse.jetty:jetty-util-ajax</exclude>
+
+                            <!-- Unrelated -->
+                            <exclude>org.apache.servicemix.bundles:*</exclude>
+                            <exclude>org.ops4j.pax*:*</exclude>
+                            <exclude>org.codehaus.mojo:*</exclude>
+                            <exclude>org.apache.servicemix:*</exclude>
+                            <exclude>org.apache.aries.blueprint:*</exclude>
+                            <exclude>org.apache.felix:*</exclude>
+                            <exclude>org.apache.maven.archetype:*</exclude>
+                            <exclude>org.osgi:*</exclude>
+
+                            <!-- Unuseful -->
+                            <exclude>org.springframework:springloaded</exclude>
+                            <exclude>com.zaxxer:HikariCP-java6</exclude>
+                        </excludes>
+                    </dependencies>
+
+                    <sourcePom>${basedir}/target-template-pom.xml</sourcePom>
+                    <targetPom>${basedir}/../camel-spring-boot-dependencies/pom.xml</targetPom>
+                </configuration>
+
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

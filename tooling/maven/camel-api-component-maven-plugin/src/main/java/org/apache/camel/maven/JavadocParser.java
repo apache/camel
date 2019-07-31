@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,8 +45,8 @@ public class JavadocParser extends Parser {
     private String methodWithTypes;
     private StringBuilder methodTextBuilder = new StringBuilder();
 
-    private List<String> methods = new ArrayList<String>();
-    private Map<String, String> methodText = new HashMap<String, String>();
+    private List<String> methods = new ArrayList<>();
+    private Map<String, String> methodText = new HashMap<>();
     private String errorMessage;
 
     public JavadocParser(DTD dtd, String docPath) {
@@ -76,16 +76,19 @@ public class JavadocParser extends Parser {
             if (HTML.Tag.A.equals(htmlTag)) {
                 final SimpleAttributeSet attributes = getAttributes();
                 final Object name = attributes.getAttribute(HTML.Attribute.NAME);
-                if (name != null) {
+                final Object id = attributes.getAttribute(HTML.Attribute.ID);
+                if (name != null || id != null) {
                     final String nameAttr = (String) name;
+                    final String idAttr = (String) id;
                     if (parserState == ParserState.INIT
-                        && ("method_summary".equals(nameAttr) || "method.summary".equals(nameAttr))) {
+                        && ("method_summary".equals(nameAttr) || "method.summary".equals(nameAttr)
+                            || "method_summary".equals(idAttr) || "method.summary".equals(idAttr))) {
                         parserState = ParserState.METHOD_SUMMARY;
                     } else if (parserState == ParserState.METHOD) {
                         if (methodWithTypes == null) {
 
                             final String hrefAttr = (String) attributes.getAttribute(HTML.Attribute.HREF);
-                            if (hrefAttr != null && hrefAttr.contains(hrefPattern)) {
+                            if (hrefAttr != null && (hrefAttr.contains(hrefPattern) || hrefAttr.charAt(0) == '#')) {
                                 // unescape HTML
                                 String methodSignature = hrefAttr.substring(hrefAttr.indexOf('#') + 1);
                                 final int firstHyphen = methodSignature.indexOf('-');

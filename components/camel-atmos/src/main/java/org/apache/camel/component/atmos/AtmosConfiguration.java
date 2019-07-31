@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,7 +36,7 @@ public class AtmosConfiguration {
 
     @UriPath
     private String name;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private AtmosOperation operation;
     @UriParam
     private String secretKey;

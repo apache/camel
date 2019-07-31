@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.aries.blueprint.ExtendedBeanMetadata;
+import org.apache.aries.blueprint.ext.PropertyPlaceholderExt;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
@@ -53,7 +55,6 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
-import org.apache.camel.model.PropertiesDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
@@ -64,11 +65,14 @@ import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
+import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.StringHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,8 +81,6 @@ import org.slf4j.LoggerFactory;
  * and install routes either explicitly configured in
  * Blueprint XML or found by searching the classpath for Java classes which extend
  * {@link RouteBuilder} using the nested {@link #setPackages(String[])}.
- *
- * @version 
  */
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -90,7 +92,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     private String trace;
     @XmlAttribute
+    private String tracePattern;
+    @XmlAttribute
     private String messageHistory;
+    @XmlAttribute
+    private String logMask;
     @XmlAttribute
     private String logExhaustedMessageBody;
     @XmlAttribute
@@ -98,13 +104,13 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     private String delayer;
     @XmlAttribute
-    private String handleFault;
-    @XmlAttribute
     private String errorHandlerRef;
     @XmlAttribute
     private String autoStartup = "true";
     @XmlAttribute
     private String useMDCLogging;
+    @XmlAttribute
+    private String useDataType;
     @XmlAttribute
     private String useBreadcrumb;
     @XmlAttribute
@@ -122,17 +128,13 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     private ShutdownRunningTask shutdownRunningTask;
     @XmlAttribute
-    @Deprecated
-    private Boolean lazyLoadTypeConverters;
+    private Boolean loadTypeConverters;
     @XmlAttribute
     private Boolean typeConverterStatisticsEnabled;
     @XmlAttribute
     private TypeConverterExists typeConverterExists;
     @XmlAttribute
     private LoggingLevel typeConverterExistsLoggingLevel;
-    @Deprecated
-    @XmlElement(name = "properties")
-    private PropertiesDefinition properties;
     @XmlElement(name = "globalOptions")
     private GlobalOptionsDefinition globalOptions;
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class)
@@ -157,16 +159,20 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlElements({
         @XmlElement(name = "export", type = CamelServiceExporterDefinition.class) })
     private List<?> beans;
+    @XmlElement(name = "defaultServiceCallConfiguration")
+    private ServiceCallConfigurationDefinition defaultServiceCallConfiguration;
     @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class)
     private List<ServiceCallConfigurationDefinition> serviceCallConfigurations;
+    @XmlElement(name = "defaultHystrixConfiguration")
+    private HystrixConfigurationDefinition defaultHystrixConfiguration;
     @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)
     private List<HystrixConfigurationDefinition> hystrixConfigurations;
     @XmlElement(name = "routeBuilder")
-    private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
+    private List<RouteBuilderDefinition> builderRefs = new ArrayList<>();
     @XmlElement(name = "routeContextRef")
-    private List<RouteContextRefDefinition> routeRefs = new ArrayList<RouteContextRefDefinition>();
+    private List<RouteContextRefDefinition> routeRefs = new ArrayList<>();
     @XmlElement(name = "restContextRef")
-    private List<RestContextRefDefinition> restRefs = new ArrayList<RestContextRefDefinition>();
+    private List<RestContextRefDefinition> restRefs = new ArrayList<>();
     @XmlElement(name = "threadPoolProfile")
     private List<ThreadPoolProfileDefinition> threadPoolProfiles;
     @XmlElement(name = "threadPool")
@@ -177,24 +183,26 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private DataFormatsDefinition dataFormats;
     @XmlElement(name = "transformers")
     private TransformersDefinition transformers;
+    @XmlElement(name = "validators")
+    private ValidatorsDefinition validators;
     @XmlElement(name = "redeliveryPolicyProfile")
     private List<CamelRedeliveryPolicyFactoryBean> redeliveryPolicies;
     @XmlElement(name = "onException")
-    private List<OnExceptionDefinition> onExceptions = new ArrayList<OnExceptionDefinition>();
+    private List<OnExceptionDefinition> onExceptions = new ArrayList<>();
     @XmlElement(name = "onCompletion")
-    private List<OnCompletionDefinition> onCompletions = new ArrayList<OnCompletionDefinition>();
+    private List<OnCompletionDefinition> onCompletions = new ArrayList<>();
     @XmlElement(name = "intercept")
-    private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
+    private List<InterceptDefinition> intercepts = new ArrayList<>();
     @XmlElement(name = "interceptFrom")
-    private List<InterceptFromDefinition> interceptFroms = new ArrayList<InterceptFromDefinition>();
+    private List<InterceptFromDefinition> interceptFroms = new ArrayList<>();
     @XmlElement(name = "interceptSendToEndpoint")
-    private List<InterceptSendToEndpointDefinition> interceptSendToEndpoints = new ArrayList<InterceptSendToEndpointDefinition>();
+    private List<InterceptSendToEndpointDefinition> interceptSendToEndpoints = new ArrayList<>();
     @XmlElement(name = "restConfiguration")
     private RestConfigurationDefinition restConfiguration;
     @XmlElement(name = "rest")
-    private List<RestDefinition> rests = new ArrayList<RestDefinition>();
+    private List<RestDefinition> rests = new ArrayList<>();
     @XmlElement(name = "route")
-    private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
+    private List<RouteDefinition> routes = new ArrayList<>();
     @XmlTransient
     private BlueprintCamelContext context;
     @XmlTransient
@@ -237,14 +245,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     protected void initCustomRegistry(BlueprintCamelContext context) {
         Registry registry = getBeanForType(Registry.class);
         if (registry != null) {
-            LOG.info("Using custom Registry: " + registry);
+            LOG.info("Using custom Registry: {}", registry);
             context.setRegistry(registry);
         }
     }
 
     @Override
     protected <S> S getBeanForType(Class<S> clazz) {
-        Collection<S> objects = BlueprintContainerRegistry.lookupByType(blueprintContainer, clazz).values();
+        Collection<S> objects = BlueprintContainerBeanRepository.lookupByType(blueprintContainer, clazz).values();
         if (objects.size() == 1) {
             return objects.iterator().next();
         }
@@ -260,9 +268,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
             // lookup existing configured properties component
             PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
 
-            BlueprintPropertiesParser parser = new BlueprintPropertiesParser(pc, blueprintContainer, pc.getPropertiesParser());
-            BlueprintPropertiesResolver resolver = new BlueprintPropertiesResolver(pc.getPropertiesResolver(), parser);
-
             // any extra properties
             ServiceReference<?> ref = bundleContext.getServiceReference(PropertiesComponent.OVERRIDE_PROPERTIES);
             if (ref != null) {
@@ -272,26 +277,43 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
                 }
             }
 
-            // no locations has been set, so its a default component
-            if (pc.getLocations() == null) {
-                String[] ids = parser.lookupPropertyPlaceholderIds();
-                for (int i = 0; i < ids.length; i++) {
-                    if (!ids[i].startsWith("blueprint:")) {
-                        ids[i] = "blueprint:" + ids[i];
-                    }
-                }
-                if (ids.length > 0) {
-                    // location supports multiple separated by comma
-                    pc.setLocations(ids);
+            List<String> ids = new ArrayList<>();
+            for (String bp : pc.getLocations()) {
+                String resolver = StringHelper.before(bp, ":");
+                String path = StringHelper.after(bp, ":");
+                if ("blueprint".equals(resolver)) {
+                    ids.add(path);
                 }
             }
+            if (ids.isEmpty()) {
+                // no blueprint locations has been set, so auto-detect the blueprint property placeholders to use (convention over configuration)
+                ids = lookupPropertyPlaceholderIds();
+            }
+            pc.addPropertiesSource(new BlueprintPropertiesSource(blueprintContainer, ids));
+        }
+    }
 
-            if (pc.getLocations() != null) {
-                // bridge camel properties with blueprint
-                pc.setPropertiesParser(parser);
-                pc.setPropertiesResolver(resolver);
+    /**
+     * Lookup the ids of the Blueprint property placeholder services in the
+     * Blueprint container.
+     *
+     * @return the ids, will be an empty if none found.
+     */
+    private List<String> lookupPropertyPlaceholderIds() {
+        List<String> ids = new ArrayList<>();
+
+        for (Object componentId : blueprintContainer.getComponentIds()) {
+            String id = (String) componentId;
+            ComponentMetadata meta = blueprintContainer.getComponentMetadata(id);
+            if (meta instanceof ExtendedBeanMetadata) {
+                Class<?> clazz = ((ExtendedBeanMetadata) meta).getRuntimeClass();
+                if (clazz != null && PropertyPlaceholderExt.class.isAssignableFrom(clazz)) {
+                    ids.add(id);
+                }
             }
         }
+
+        return ids;
     }
 
     @Override
@@ -374,6 +396,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.useMDCLogging = useMDCLogging;
     }
 
+    public String getUseDataType() {
+        return useDataType;
+    }
+
+    public void setUseDataType(String useDataType) {
+        this.useDataType = useDataType;
+    }
+
     public String getUseBreadcrumb() {
         return useBreadcrumb;
     }
@@ -414,15 +444,13 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.threadNamePattern = threadNamePattern;
     }
 
-    @Deprecated
-    public Boolean getLazyLoadTypeConverters() {
-        // use false by default
-        return lazyLoadTypeConverters != null ? lazyLoadTypeConverters : Boolean.FALSE;
+    @Override
+    public Boolean getLoadTypeConverters() {
+        return loadTypeConverters;
     }
 
-    @Deprecated
-    public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
-        this.lazyLoadTypeConverters = lazyLoadTypeConverters;
+    public void setLoadTypeConverters(Boolean loadTypeConverters) {
+        this.loadTypeConverters = loadTypeConverters;
     }
 
     public Boolean getTypeConverterStatisticsEnabled() {
@@ -521,12 +549,28 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.trace = trace;
     }
 
+    public String getTracePattern() {
+        return tracePattern;
+    }
+
+    public void setTracePattern(String tracePattern) {
+        this.tracePattern = tracePattern;
+    }
+
     public String getMessageHistory() {
         return messageHistory;
     }
 
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public String getLogMask() {
+        return logMask;
+    }
+
+    public void setLogMask(String logMask) {
+        this.logMask = logMask;
     }
 
     public String getLogExhaustedMessageBody() {
@@ -553,14 +597,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.delayer = delayer;
     }
 
-    public String getHandleFault() {
-        return handleFault;
-    }
-
-    public void setHandleFault(String handleFault) {
-        this.handleFault = handleFault;
-    }
-
     public String getErrorHandlerRef() {
         return errorHandlerRef;
     }
@@ -569,19 +605,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.errorHandlerRef = errorHandlerRef;
     }
 
-    @Deprecated
-    public PropertiesDefinition getProperties() {
-        return properties;
-    }
-
     @Override
     public GlobalOptionsDefinition getGlobalOptions() {
         return globalOptions;
-    }
-
-    @Deprecated
-    public void setProperties(PropertiesDefinition properties) {
-        this.properties = properties;
     }
 
     public void setGlobalOptions(GlobalOptionsDefinition globalOptions) {
@@ -647,12 +673,30 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     }
 
     @Override
+    public ServiceCallConfigurationDefinition getDefaultServiceCallConfiguration() {
+        return defaultServiceCallConfiguration;
+    }
+
+    public void setDefaultServiceCallConfiguration(ServiceCallConfigurationDefinition defaultServiceCallConfiguration) {
+        this.defaultServiceCallConfiguration = defaultServiceCallConfiguration;
+    }
+
+    @Override
     public List<ServiceCallConfigurationDefinition> getServiceCallConfigurations() {
         return serviceCallConfigurations;
     }
 
     public void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> serviceCallConfigurations) {
         this.serviceCallConfigurations = serviceCallConfigurations;
+    }
+
+    @Override
+    public HystrixConfigurationDefinition getDefaultHystrixConfiguration() {
+        return defaultHystrixConfiguration;
+    }
+
+    public void setDefaultHystrixConfiguration(HystrixConfigurationDefinition defaultHystrixConfiguration) {
+        this.defaultHystrixConfiguration = defaultHystrixConfiguration;
     }
 
     @Override
@@ -694,6 +738,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public TransformersDefinition getTransformers() {
         return transformers;
+    }
+
+    public void setValidators(ValidatorsDefinition validators) {
+        this.validators = validators;
+    }
+
+    public ValidatorsDefinition getValidators() {
+        return validators;
     }
 
     public List<OnExceptionDefinition> getOnExceptions() {

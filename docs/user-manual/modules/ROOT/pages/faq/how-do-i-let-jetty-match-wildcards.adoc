@@ -1,0 +1,31 @@
+[[HowdoIletJettymatchwildcards-HowdoIletJettymatchwildcards]]
+= How do I let Jetty match wildcards?
+
+By default xref:components::jetty-component.adoc[Jetty] will only match on exact uri's. But
+you can instruct Jetty to match prefixes. For example:
+
+[source,java]
+----
+from("jetty://0.0.0.0:8123/foo").to("mock:foo");
+----
+
+In the route above xref:components::jetty-component.adoc[Jetty] will only match if the uri is
+an exact match, so it will match if you enter
+`\http://0.0.0.0:8123/foo` but not match if you do
+`\http://0.0.0.0:8123/foo/bar`.
+
+So if you want to enable wildcard matching you do as follows:
+
+[source,java]
+----
+from("jetty://0.0.0.0:8123/foo?matchOnUriPrefix=true").to("mock:foo");
+----
+
+So now Jetty matches any endpoints with starts with `foo`.
+
+To match *any* endpoint you can do:
+
+[source,java]
+----
+from("jetty://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
+----

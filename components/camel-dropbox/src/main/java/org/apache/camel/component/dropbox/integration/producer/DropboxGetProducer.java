@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,9 @@ import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxFileDownloadResult;
+import org.apache.camel.component.dropbox.util.DropboxHelper;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
+import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +38,11 @@ public class DropboxGetProducer extends DropboxProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        String remotePath = DropboxHelper.getRemotePath(configuration, exchange);
+        DropboxConfigurationValidator.validateGetOp(remotePath);
+
         DropboxFileDownloadResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
-                .get(configuration.getRemotePath());
+                .get(remotePath);
 
         Map<String, Object> map = result.getEntries();
         if (map.size() == 1) {
@@ -53,7 +58,7 @@ public class DropboxGetProducer extends DropboxProducer {
             exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILES.name(), pathsExtracted.toString());
             exchange.getIn().setBody(map);
         }
-        LOG.debug("Downloaded: {}", result.toString());
+        LOG.debug("Downloaded: {}", result);
     }
 
 }

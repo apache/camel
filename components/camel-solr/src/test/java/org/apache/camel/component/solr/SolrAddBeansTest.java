@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,10 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Need refactoring in SolrComponentTestSupport, with new schema and solr-config from solr 5.2.1 and new Cloud Solr cluster instantiation")
 public class SolrAddBeansTest extends SolrComponentTestSupport {
 
     public SolrAddBeansTest(SolrFixtures.TestServerType serverToTest) {
@@ -33,7 +31,7 @@ public class SolrAddBeansTest extends SolrComponentTestSupport {
     @Test
     public void testAddBeans() throws Exception {
 
-        List<Item> beans = new ArrayList<Item>();
+        List<Item> beans = new ArrayList<>();
 
         //add bean1
         Item item1 = new Item();

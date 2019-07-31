@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,9 +34,7 @@ import javax.management.ObjectName;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import quickfix.Acceptor;
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
@@ -71,7 +69,6 @@ import quickfix.fix42.Email;
 import quickfix.mina.ProtocolFactory;
 
 import static org.apache.camel.util.ObjectHelper.equal;
-
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -412,7 +409,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
     private void doLogonEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine) throws Exception {
 
-        final List<EventRecord> events = new ArrayList<EventRecord>();
+        final List<EventRecord> events = new ArrayList<>();
         final CountDownLatch logonLatch = new CountDownLatch(2);
 
         QuickfixjEventListener logonListener = new QuickfixjEventListener() {
@@ -450,7 +447,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
     private void doApplicationMessageEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine) throws SessionNotFound,
         InterruptedException, FieldNotFound {
 
-        final List<EventRecord> events = new ArrayList<EventRecord>();
+        final List<EventRecord> events = new ArrayList<>();
         final CountDownLatch messageLatch = new CountDownLatch(1);
 
         QuickfixjEventListener messageListener = new QuickfixjEventListener() {
@@ -486,7 +483,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
     private void doLogoffEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine) throws Exception {
 
-        final List<EventRecord> events = new ArrayList<EventRecord>();
+        final List<EventRecord> events = new ArrayList<>();
         final CountDownLatch logoffLatch = new CountDownLatch(2);
 
         QuickfixjEventListener logoffListener = new QuickfixjEventListener() {
@@ -507,7 +504,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         assertTrue("Logoffs not received", logoffLatch.await(5000, TimeUnit.MILLISECONDS));
         quickfixjEngine.removeEventListener(logoffListener);
 
-        assertThat(events.size(), is(2));
+        assertThat(events.size(), is(6));
 
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionLogoff, acceptorSessionID, null)));
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionLogoff, initiatorSessionID, null)));

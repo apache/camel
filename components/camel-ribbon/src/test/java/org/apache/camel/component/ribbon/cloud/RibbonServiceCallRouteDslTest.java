@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,12 +43,13 @@ public class RibbonServiceCallRouteDslTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .serviceCall()
-                    .name("myService")
-                    .ribbonLoadBalancer()
-                    .staticServiceDiscovery()
-                        .server("localhost:9090")
-                        .server("localhost:9091")
-                    .endParent()
+                        .name("myService")
+                        .component("http")
+                        .ribbonLoadBalancer()
+                        .staticServiceDiscovery()
+                            .servers("localhost:9090")
+                            .servers("localhost:9091")
+                        .endParent()
                     .to("mock:result");
                 from("jetty:http://localhost:9090")
                     .to("mock:9090")

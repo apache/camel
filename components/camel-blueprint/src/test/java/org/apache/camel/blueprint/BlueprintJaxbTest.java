@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,11 +34,6 @@ public class BlueprintJaxbTest extends TestSupport {
 
     @Test
     public void test() throws Exception {
-        if (isJava16() && isJavaVendor("ibm")) {
-            // does not test well on java6 with ibm
-            return;
-        }
-
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -62,11 +57,9 @@ public class BlueprintJaxbTest extends TestSupport {
         assertNotNull(((CamelContextFactoryBean) object).getRoutes());
         assertEquals(1, ((CamelContextFactoryBean) object).getRoutes().size());
         assertNotNull(((CamelContextFactoryBean) object).getRoutes().get(0));
-        assertNotNull(((CamelContextFactoryBean) object).getRoutes().get(0).getInputs());
-        assertEquals(1, ((CamelContextFactoryBean) object).getRoutes().get(0).getInputs().size());
+        assertNotNull(((CamelContextFactoryBean) object).getRoutes().get(0).getInput());
         assertNotNull(((CamelContextFactoryBean) object).getRoutes().get(0).getOutputs());
         assertEquals(1, ((CamelContextFactoryBean) object).getRoutes().get(0).getOutputs().size());
-        assertTrue(((CamelContextFactoryBean) object).getCamelPropertyPlaceholder().isCache());
         assertTrue(((CamelContextFactoryBean) object).getCamelPropertyPlaceholder().isIgnoreMissingLocation());
     }
 }

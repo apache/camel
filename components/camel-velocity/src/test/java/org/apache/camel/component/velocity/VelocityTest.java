@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,8 +19,6 @@ package org.apache.camel.component.velocity;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,11 +30,9 @@ public class VelocityTest extends CamelTestSupport {
     
     @Test
     public void testVelocityLetter() throws Exception {
-        final DataHandler dataHandler = new DataHandler("my attachment", "text/plain");
         Exchange exchange = template.request("direct:a", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().addAttachment("item", dataHandler);
                 exchange.getIn().setBody("Monday");
                 exchange.getIn().setHeader("name", "Christian");
                 exchange.setProperty("item", "7");
@@ -45,7 +41,6 @@ public class VelocityTest extends CamelTestSupport {
 
         assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getOut().getBody());
         assertEquals("Christian", exchange.getOut().getHeader("name"));
-        assertSame(dataHandler, exchange.getOut().getAttachment("item"));
     }
     
     @Test
@@ -55,8 +50,8 @@ public class VelocityTest extends CamelTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("");
                 exchange.getIn().setHeader("name", "Christian");
-                Map<String, Object> variableMap = new HashMap<String, Object>();
-                Map<String, Object> headersMap = new HashMap<String, Object>();
+                Map<String, Object> variableMap = new HashMap<>();
+                Map<String, Object> headersMap = new HashMap<>();
                 headersMap.put("name", "Willem");
                 variableMap.put("headers", headersMap);
                 variableMap.put("body", "Monday");

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ import java.io.Reader;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 public class WsConsumer extends DefaultConsumer {
 
@@ -31,15 +31,15 @@ public class WsConsumer extends DefaultConsumer {
     }
 
     @Override
-    public void start() throws Exception {
-        super.start();
+    public void doStart() throws Exception {
+        super.doStart();
         getEndpoint().connect(this);
     }
 
     @Override
-    public void stop() throws Exception {
+    public void doStop() throws Exception {
         getEndpoint().disconnect(this);
-        super.stop();
+        super.doStop();
     }
 
     @Override

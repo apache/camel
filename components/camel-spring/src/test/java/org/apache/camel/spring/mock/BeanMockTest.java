@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,19 +17,16 @@
 package org.apache.camel.spring.mock;
 
 import org.apache.camel.spring.ApplicationContextTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class BeanMockTest extends ApplicationContextTestSupport {
+
+    @Test
     public void testAssertionsUsingBean() throws Exception {
         MyAssertions bean = getMandatoryBean(MyAssertions.class, "myBean");
         bean.assertEndpointsValid();
-
-        // give time for file consumer to stop properly
-        Thread.sleep(20);
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {

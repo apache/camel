@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,13 +8,14 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
 <component>
 
@@ -23,20 +25,60 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
       <includes>
+        <!-- camel core -->
+        <include>org.apache.camel:apt</include>
+        <include>org.apache.camel:camel-api</include>
+        <include>org.apache.camel:camel-util</include>
+        <include>org.apache.camel:camel-management-api</include>
+        <include>org.apache.camel:camel-management-impl</include>
+        <include>org.apache.camel:camel-base</include>
+        <include>org.apache.camel:camel-support</include>
+        <include>org.apache.camel:camel-core</include>
+        <include>org.apache.camel:camel-core-engine</include>
+        <include>org.apache.camel:camel-core-osgi</include>
+        <include>org.apache.camel:camel-core-xml</include>
+        <include>org.apache.camel:camel-cloud</include>
+        <include>org.apache.camel:camel-main</include>
+
+        <!-- NOTE: auto-generated list of components when building camel catalog -->
+        <!-- camel components: START -->
+        <include>org.apache.camel:camel-activemq</include>
         <include>org.apache.camel:camel-ahc</include>
         <include>org.apache.camel:camel-ahc-ws</include>
         <include>org.apache.camel:camel-amqp</include>
         <include>org.apache.camel:camel-apns</include>
+        <include>org.apache.camel:camel-as2</include>
+        <include>org.apache.camel:camel-as2-api</include>
+        <include>org.apache.camel:camel-asn1</include>
         <include>org.apache.camel:camel-asterisk</include>
         <include>org.apache.camel:camel-atmos</include>
         <include>org.apache.camel:camel-atmosphere-websocket</include>
         <include>org.apache.camel:camel-atom</include>
-        <include>org.apache.camel:camel-aws</include>
-        <include>org.apache.camel:camel-azure</include>
+        <include>org.apache.camel:camel-atomix</include>
+        <include>org.apache.camel:camel-attachments</include>
         <include>org.apache.camel:camel-avro</include>
-        <include>org.apache.camel:camel-bam</include>
+        <include>org.apache.camel:camel-aws-cw</include>
+        <include>org.apache.camel:camel-aws-ddb</include>
+        <include>org.apache.camel:camel-aws-ec2</include>
+        <include>org.apache.camel:camel-aws-ecs</include>
+        <include>org.apache.camel:camel-aws-eks</include>
+        <include>org.apache.camel:camel-aws-iam</include>
+        <include>org.apache.camel:camel-aws-kinesis</include>
+        <include>org.apache.camel:camel-aws-kms</include>
+        <include>org.apache.camel:camel-aws-lambda</include>
+        <include>org.apache.camel:camel-aws-mq</include>
+        <include>org.apache.camel:camel-aws-msk</include>
+        <include>org.apache.camel:camel-aws-s3</include>
+        <include>org.apache.camel:camel-aws-sdb</include>
+        <include>org.apache.camel:camel-aws-ses</include>
+        <include>org.apache.camel:camel-aws-sns</include>
+        <include>org.apache.camel:camel-aws-sqs</include>
+        <include>org.apache.camel:camel-aws-swf</include>
+        <include>org.apache.camel:camel-aws-xray</include>
+        <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-barcode</include>
         <include>org.apache.camel:camel-base64</include>
+        <include>org.apache.camel:camel-bean</include>
         <include>org.apache.camel:camel-bean-validator</include>
         <include>org.apache.camel:camel-beanio</include>
         <include>org.apache.camel:camel-beanstalk</include>
@@ -45,43 +87,53 @@
         <include>org.apache.camel:camel-bonita</include>
         <include>org.apache.camel:camel-boon</include>
         <include>org.apache.camel:camel-box</include>
+        <include>org.apache.camel:camel-box-api</include>
         <include>org.apache.camel:camel-braintree</include>
-        <include>org.apache.camel:camel-cache</include>
+        <include>org.apache.camel:camel-browse</include>
+        <include>org.apache.camel:camel-caffeine</include>
         <include>org.apache.camel:camel-cassandraql</include>
-        <include>org.apache.camel:camel-castor</include>
+        <include>org.apache.camel:camel-cbor</include>
         <include>org.apache.camel:camel-cdi</include>
-        <include>org.apache.camel:camel-chronicle</include>
+        <include>org.apache.camel:camel-chatscript</include>
         <include>org.apache.camel:camel-chunk</include>
         <include>org.apache.camel:camel-cm-sms</include>
         <include>org.apache.camel:camel-cmis</include>
-        <include>org.apache.camel:camel-core</include>
-        <include>org.apache.camel:camel-core-osgi</include>
+        <include>org.apache.camel:camel-coap</include>
         <include>org.apache.camel:camel-cometd</include>
-        <include>org.apache.camel:camel-connector</include>
         <include>org.apache.camel:camel-consul</include>
-        <include>org.apache.camel:camel-context</include>
-        <include>org.apache.camel:camel-couchdb</include>
+        <include>org.apache.camel:camel-controlbus</include>
+        <include>org.apache.camel:camel-corda</include>
         <include>org.apache.camel:camel-couchbase</include>
+        <include>org.apache.camel:camel-couchdb</include>
         <include>org.apache.camel:camel-crypto</include>
+        <include>org.apache.camel:camel-crypto-cms</include>
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-cxf-transport</include>
+        <include>org.apache.camel:camel-dataformat</include>
+        <include>org.apache.camel:camel-dataset</include>
+        <include>org.apache.camel:camel-digitalocean</include>
+        <include>org.apache.camel:camel-direct</include>
+        <include>org.apache.camel:camel-directvm</include>
         <include>org.apache.camel:camel-disruptor</include>
         <include>org.apache.camel:camel-dns</include>
         <include>org.apache.camel:camel-docker</include>
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-drill</include>
-	    <include>org.apache.camel:camel-dropbox</include>
-        <include>org.apache.camel:camel-eclipse</include>
+        <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-ejb</include>
-        <include>org.apache.camel:camel-elasticsearch</include>
-        <include>org.apache.camel:camel-elasticsearch5</include>
+        <include>org.apache.camel:camel-elasticsearch-rest</include>
         <include>org.apache.camel:camel-elsql</include>
         <include>org.apache.camel:camel-etcd</include>
         <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-facebook</include>
+        <include>org.apache.camel:camel-fastjson</include>
+        <include>org.apache.camel:camel-fhir</include>
+        <include>org.apache.camel:camel-fhir-api</include>
+        <include>org.apache.camel:camel-file</include>
+        <include>org.apache.camel:camel-file-watch</include>
         <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-flink</include>
         <include>org.apache.camel:camel-fop</include>
@@ -91,145 +143,159 @@
         <include>org.apache.camel:camel-geocoder</include>
         <include>org.apache.camel:camel-git</include>
         <include>org.apache.camel:camel-github</include>
+        <include>org.apache.camel:camel-google-bigquery</include>
         <include>org.apache.camel:camel-google-calendar</include>
         <include>org.apache.camel:camel-google-drive</include>
         <include>org.apache.camel:camel-google-mail</include>
         <include>org.apache.camel:camel-google-pubsub</include>
+        <include>org.apache.camel:camel-google-sheets</include>
         <include>org.apache.camel:camel-gora</include>
+        <include>org.apache.camel:camel-grape</include>
+        <include>org.apache.camel:camel-grok</include>
         <include>org.apache.camel:camel-groovy</include>
-        <include>org.apache.camel:camel-guava-eventbus</include>
-        <include>org.apache.camel:camel-guice</include>
+        <include>org.apache.camel:camel-grpc</include>
         <include>org.apache.camel:camel-gson</include>
-        <include>org.apache.camel:camel-hl7</include>
-        <include>org.apache.camel:camel-hawtdb</include>
+        <include>org.apache.camel:camel-guava-eventbus</include>
         <include>org.apache.camel:camel-hazelcast</include>
         <include>org.apache.camel:camel-hbase</include>
-        <include>org.apache.camel:camel-hdfs</include>
         <include>org.apache.camel:camel-hdfs2</include>
-        <include>org.apache.camel:camel-hessian</include>
         <include>org.apache.camel:camel-hipchat</include>
-        <include>org.apache.camel:camel-http</include>
+        <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-http-common</include>
         <include>org.apache.camel:camel-http4</include>
-        <include>org.apache.camel:camel-ibatis</include>
+        <include>org.apache.camel:camel-hystrix</include>
         <include>org.apache.camel:camel-ical</include>
+        <include>org.apache.camel:camel-iec60870</include>
+        <include>org.apache.camel:camel-ignite</include>
         <include>org.apache.camel:camel-infinispan</include>
         <include>org.apache.camel:camel-influxdb</include>
-        <include>org.apache.camel:camel-ignite</include>
+        <include>org.apache.camel:camel-iota</include>
+        <include>org.apache.camel:camel-ipfs</include>
         <include>org.apache.camel:camel-irc</include>
         <include>org.apache.camel:camel-ironmq</include>
         <include>org.apache.camel:camel-jackson</include>
         <include>org.apache.camel:camel-jacksonxml</include>
         <include>org.apache.camel:camel-jasypt</include>
-        <include>org.apache.camel:camel-javaspace</include>
         <include>org.apache.camel:camel-jaxb</include>
         <include>org.apache.camel:camel-jbpm</include>
-        <include>org.apache.camel:camel-jcr</include>
         <include>org.apache.camel:camel-jcache</include>
         <include>org.apache.camel:camel-jclouds</include>
+        <include>org.apache.camel:camel-jcr</include>
         <include>org.apache.camel:camel-jdbc</include>
-        <include>org.apache.camel:camel-jetty-common</include>
         <include>org.apache.camel:camel-jetty</include>
-        <include>org.apache.camel:camel-jetty9</include>
+        <include>org.apache.camel:camel-jetty-common</include>
         <include>org.apache.camel:camel-jgroups</include>
-        <include>org.apache.camel:camel-jibx</include>
+        <include>org.apache.camel:camel-jgroups-raft</include>
         <include>org.apache.camel:camel-jing</include>
         <include>org.apache.camel:camel-jira</include>
         <include>org.apache.camel:camel-jms</include>
         <include>org.apache.camel:camel-jmx</include>
-        <include>org.apache.camel:camel-jolt</include>
         <include>org.apache.camel:camel-johnzon</include>
-        <include>org.apache.camel:camel-josql</include>
+        <include>org.apache.camel:camel-jolt</include>
+        <include>org.apache.camel:camel-jooq</include>
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-jsch</include>
+        <include>org.apache.camel:camel-json-validator</include>
+        <include>org.apache.camel:camel-jsonapi</include>
         <include>org.apache.camel:camel-jsonpath</include>
         <include>org.apache.camel:camel-jt400</include>
-        <include>org.apache.camel:camel-juel</include>
-        <include>org.apache.camel:camel-jxpath</include>
         <include>org.apache.camel:camel-kafka</include>
-        <include>org.apache.camel:camel-kestrel</include>
-        <include>org.apache.camel:camel-krati</include>
-        <include>org.apache.camel:camel-kura</include>
         <include>org.apache.camel:camel-kubernetes</include>
+        <include>org.apache.camel:camel-kura</include>
+        <include>org.apache.camel:camel-language</include>
         <include>org.apache.camel:camel-ldap</include>
+        <include>org.apache.camel:camel-ldif</include>
         <include>org.apache.camel:camel-leveldb</include>
-        <include>org.apache.camel:camel-linkedin-api</include>
         <include>org.apache.camel:camel-linkedin</include>
+        <include>org.apache.camel:camel-linkedin-api</include>
+        <include>org.apache.camel:camel-log</include>
+        <include>org.apache.camel:camel-lra</include>
         <include>org.apache.camel:camel-lucene</include>
         <include>org.apache.camel:camel-lumberjack</include>
         <include>org.apache.camel:camel-lzf</include>
-        <include>org.apache.camel:camel-metrics</include>
         <include>org.apache.camel:camel-mail</include>
-        <include>org.apache.camel:camel-mina</include>
+        <include>org.apache.camel:camel-master</include>
+        <include>org.apache.camel:camel-metrics</include>
+        <include>org.apache.camel:camel-micrometer</include>
+        <include>org.apache.camel:camel-microprofile-config</include>
+        <include>org.apache.camel:camel-milo</include>
         <include>org.apache.camel:camel-mina2</include>
         <include>org.apache.camel:camel-mllp</include>
-        <include>org.apache.camel:camel-mongodb</include>
-        <include>org.apache.camel:camel-mongodb3</include>
+        <include>org.apache.camel:camel-mock</include>
         <include>org.apache.camel:camel-mongodb-gridfs</include>
+        <include>org.apache.camel:camel-mongodb3</include>
         <include>org.apache.camel:camel-mqtt</include>
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mustache</include>
         <include>org.apache.camel:camel-mvel</include>
         <include>org.apache.camel:camel-mybatis</include>
         <include>org.apache.camel:camel-nagios</include>
-        <include>org.apache.camel:camel-netty</include>
+        <include>org.apache.camel:camel-nats</include>
         <include>org.apache.camel:camel-netty4</include>
-        <include>org.apache.camel:camel-netty-http</include>
         <include>org.apache.camel:camel-netty4-http</include>
+        <include>org.apache.camel:camel-nsq</include>
         <include>org.apache.camel:camel-ognl</include>
-        <include>org.apache.camel:camel-olingo2-api</include>
         <include>org.apache.camel:camel-olingo2</include>
-        <include>org.apache.camel:camel-openshift</include>
+        <include>org.apache.camel:camel-olingo2-api</include>
+        <include>org.apache.camel:camel-olingo4</include>
+        <include>org.apache.camel:camel-olingo4-api</include>
         <include>org.apache.camel:camel-openstack</include>
         <include>org.apache.camel:camel-opentracing</include>
         <include>org.apache.camel:camel-optaplanner</include>
         <include>org.apache.camel:camel-paho</include>
         <include>org.apache.camel:camel-paxlogging</include>
         <include>org.apache.camel:camel-pdf</include>
+        <include>org.apache.camel:camel-pg-replication-slot</include>
         <include>org.apache.camel:camel-pgevent</include>
         <include>org.apache.camel:camel-printer</include>
+        <include>org.apache.camel:camel-properties</include>
         <include>org.apache.camel:camel-protobuf</include>
-        <include>org.apache.camel:camel-quartz</include>
+        <include>org.apache.camel:camel-pubnub</include>
+        <include>org.apache.camel:camel-pulsar</include>
         <include>org.apache.camel:camel-quartz2</include>
         <include>org.apache.camel:camel-quickfix</include>
         <include>org.apache.camel:camel-rabbitmq</include>
+        <include>org.apache.camel:camel-reactive-executor-vertx</include>
         <include>org.apache.camel:camel-reactive-streams</include>
+        <include>org.apache.camel:camel-reactor</include>
+        <include>org.apache.camel:camel-ref</include>
+        <include>org.apache.camel:camel-rest</include>
+        <include>org.apache.camel:camel-rest-swagger</include>
         <include>org.apache.camel:camel-restlet</include>
         <include>org.apache.camel:camel-ribbon</include>
-        <include>org.apache.camel:camel-rmi</include>
-        <include>org.apache.camel:camel-routebox</include>
         <include>org.apache.camel:camel-rss</include>
-        <include>org.apache.camel:camel-ruby</include>
-        <include>org.apache.camel:camel-rx</include>
+        <include>org.apache.camel:camel-rxjava2</include>
+        <include>org.apache.camel:camel-saga</include>
         <include>org.apache.camel:camel-salesforce</include>
         <include>org.apache.camel:camel-sap-netweaver</include>
         <include>org.apache.camel:camel-saxon</include>
-        <include>org.apache.camel:camel-scala</include>
+        <include>org.apache.camel:camel-scheduler</include>
         <include>org.apache.camel:camel-schematron</include>
-        <include>org.apache.camel:camel-scr</include>
-        <include>org.apache.camel:camel-script</include>
+        <include>org.apache.camel:camel-seda</include>
+        <include>org.apache.camel:camel-service</include>
         <include>org.apache.camel:camel-servicenow</include>
         <include>org.apache.camel:camel-servlet</include>
-        <include>org.apache.camel:camel-servletlistener</include>
         <include>org.apache.camel:camel-shiro</include>
         <include>org.apache.camel:camel-sip</include>
         <include>org.apache.camel:camel-sjms</include>
+        <include>org.apache.camel:camel-sjms2</include>
         <include>org.apache.camel:camel-slack</include>
         <include>org.apache.camel:camel-smpp</include>
         <include>org.apache.camel:camel-snakeyaml</include>
         <include>org.apache.camel:camel-snmp</include>
         <include>org.apache.camel:camel-soap</include>
         <include>org.apache.camel:camel-solr</include>
+        <include>org.apache.camel:camel-soroush</include>
         <include>org.apache.camel:camel-spark</include>
         <include>org.apache.camel:camel-spark-rest</include>
         <include>org.apache.camel:camel-splunk</include>
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-batch</include>
         <include>org.apache.camel:camel-spring-boot</include>
-        <include>org.apache.camel:camel-spring-boot-starter</include>
         <include>org.apache.camel:camel-spring-cloud</include>
-        <include>org.apache.camel:camel-spring-cloud-starter</include>
-        <include>org.apache.camel:camel-spring-dm</include>
+        <include>org.apache.camel:camel-spring-cloud-consul</include>
+        <include>org.apache.camel:camel-spring-cloud-netflix</include>
+        <include>org.apache.camel:camel-spring-cloud-zookeeper</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
         <include>org.apache.camel:camel-spring-ldap</include>
@@ -242,9 +308,9 @@
         <include>org.apache.camel:camel-stomp</include>
         <include>org.apache.camel:camel-stream</include>
         <include>org.apache.camel:camel-stringtemplate</include>
-        <include>org.apache.camel:camel-syslog</include>
-        <include>org.apache.camel:camel-swagger</include>
+        <include>org.apache.camel:camel-stub</include>
         <include>org.apache.camel:camel-swagger-java</include>
+        <include>org.apache.camel:camel-syslog</include>
         <include>org.apache.camel:camel-tagsoup</include>
         <include>org.apache.camel:camel-tarfile</include>
         <include>org.apache.camel:camel-telegram</include>
@@ -253,27 +319,49 @@
         <include>org.apache.camel:camel-test-cdi</include>
         <include>org.apache.camel:camel-test-karaf</include>
         <include>org.apache.camel:camel-test-spring</include>
-        <include>org.apache.camel:camel-testng</include>
+        <include>org.apache.camel:camel-testcontainers</include>
+        <include>org.apache.camel:camel-testcontainers-spring</include>
+        <include>org.apache.camel:camel-thrift</include>
         <include>org.apache.camel:camel-tika</include>
+        <include>org.apache.camel:camel-timer</include>
+        <include>org.apache.camel:camel-twilio</include>
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-undertow</include>
         <include>org.apache.camel:camel-univocity-parsers</include>
-        <include>org.apache.camel:camel-urlrewrite</include>
+        <include>org.apache.camel:camel-validator</include>
         <include>org.apache.camel:camel-velocity</include>
         <include>org.apache.camel:camel-vertx</include>
+        <include>org.apache.camel:camel-vm</include>
         <include>org.apache.camel:camel-weather</include>
+        <include>org.apache.camel:camel-web3j</include>
+        <include>org.apache.camel:camel-webhook</include>
         <include>org.apache.camel:camel-websocket</include>
-        <include>org.apache.camel:camel-xmlbeans</include>
-        <include>org.apache.camel:camel-xmljson</include>
-        <include>org.apache.camel:camel-xmlrpc</include>
+        <include>org.apache.camel:camel-websocket-jsr356</include>
+        <include>org.apache.camel:camel-wordpress</include>
+        <include>org.apache.camel:camel-xchange</include>
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
+        <include>org.apache.camel:camel-xpath</include>
+        <include>org.apache.camel:camel-xslt</include>
         <include>org.apache.camel:camel-xstream</include>
         <include>org.apache.camel:camel-yammer</include>
+        <include>org.apache.camel:camel-zendesk</include>
+        <include>org.apache.camel:camel-zip-deflater</include>
         <include>org.apache.camel:camel-zipfile</include>
         <include>org.apache.camel:camel-zipkin</include>
-        <include>org.apache.camel:camel-zipkin-starter</include>
         <include>org.apache.camel:camel-zookeeper</include>
+        <include>org.apache.camel:camel-zookeeper-master</include>
+        <!-- camel components: END -->
+      </includes>
+    </dependencySet>
+
+    <!-- this is needed for the jasypt tooling -->
+    <dependencySet>
+      <outputDirectory>/lib/optional</outputDirectory>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <includes>
+        <include>org.jasypt:jasypt</include>
       </includes>
     </dependencySet>
 
@@ -283,19 +371,16 @@
       <scope>runtime</scope>
       <includes>
         <include>org.apache.camel:camel-catalog</include>
-        <include>org.apache.camel:camel-catalog-connector</include>
         <include>org.apache.camel:camel-catalog-lucene</include>
         <include>org.apache.camel:camel-catalog-maven</include>
-        <include>org.apache.camel:camel-catalog-nexus</include>
         <include>org.apache.camel:camel-catalog-provider-karaf</include>
         <include>org.apache.camel:camel-catalog-provider-springboot</include>
-        <include>org.apache.camel:camel-catalog-rest</include>
-        <include>org.apache.camel:camel-catalog-rest-app</include>
         <include>org.apache.camel:camel-commands-core</include>
-        <include>org.apache.camel:camel-commands-jolokia</include>
-        <include>org.apache.camel:camel-commands-spring-boot</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
         <include>org.apache.camel:camel-route-parser</include>
+        <include>org.apache.camel:camel-headersmap</include>
+        <include>org.apache.camel:camel-caffeine-lrucache</include>
+        <include>org.apache.camel:camel-reactive-executor-vertx</include>
       </includes>
     </dependencySet>
 
@@ -304,58 +389,93 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
       <includes>
+        <!-- NOTE: auto-generated list of components when building camel catalog -->
+        <!-- camel starters: START -->
+        <include>org.apache.camel:camel-activemq-starter</include>
         <include>org.apache.camel:camel-ahc-starter</include>
         <include>org.apache.camel:camel-ahc-ws-starter</include>
         <include>org.apache.camel:camel-amqp-starter</include>
         <include>org.apache.camel:camel-apns-starter</include>
-        <include>org.apache.camel:camel-atmosphere-websocket-starter</include>
+        <include>org.apache.camel:camel-as2-starter</include>
+        <include>org.apache.camel:camel-asn1-starter</include>
+        <include>org.apache.camel:camel-asterisk-starter</include>
         <include>org.apache.camel:camel-atmos-starter</include>
+        <include>org.apache.camel:camel-atmosphere-websocket-starter</include>
         <include>org.apache.camel:camel-atom-starter</include>
+        <include>org.apache.camel:camel-atomix-starter</include>
         <include>org.apache.camel:camel-avro-starter</include>
-        <include>org.apache.camel:camel-aws-starter</include>
-        <include>org.apache.camel:camel-bam-starter</include>
+        <include>org.apache.camel:camel-aws-cw-starter</include>
+        <include>org.apache.camel:camel-aws-ddb-starter</include>
+        <include>org.apache.camel:camel-aws-ec2-starter</include>
+        <include>org.apache.camel:camel-aws-ecs-starter</include>
+        <include>org.apache.camel:camel-aws-eks-starter</include>
+        <include>org.apache.camel:camel-aws-iam-starter</include>
+        <include>org.apache.camel:camel-aws-kinesis-starter</include>
+        <include>org.apache.camel:camel-aws-kms-starter</include>
+        <include>org.apache.camel:camel-aws-lambda-starter</include>
+        <include>org.apache.camel:camel-aws-mq-starter</include>
+        <include>org.apache.camel:camel-aws-msk-starter</include>
+        <include>org.apache.camel:camel-aws-s3-starter</include>
+        <include>org.apache.camel:camel-aws-sdb-starter</include>
+        <include>org.apache.camel:camel-aws-ses-starter</include>
+        <include>org.apache.camel:camel-aws-sns-starter</include>
+        <include>org.apache.camel:camel-aws-sqs-starter</include>
+        <include>org.apache.camel:camel-aws-swf-starter</include>
+        <include>org.apache.camel:camel-aws-xray-starter</include>
+        <include>org.apache.camel:camel-azure-starter</include>
         <include>org.apache.camel:camel-barcode-starter</include>
         <include>org.apache.camel:camel-base64-starter</include>
+        <include>org.apache.camel:camel-bean-starter</include>
+        <include>org.apache.camel:camel-bean-validator-starter</include>
         <include>org.apache.camel:camel-beanio-starter</include>
         <include>org.apache.camel:camel-beanstalk-starter</include>
-        <include>org.apache.camel:camel-bean-validator-starter</include>
         <include>org.apache.camel:camel-bindy-starter</include>
         <include>org.apache.camel:camel-bonita-starter</include>
         <include>org.apache.camel:camel-boon-starter</include>
         <include>org.apache.camel:camel-box-starter</include>
         <include>org.apache.camel:camel-braintree-starter</include>
-        <include>org.apache.camel:camel-cache-starter</include>
+        <include>org.apache.camel:camel-browse-starter</include>
+        <include>org.apache.camel:camel-caffeine-starter</include>
         <include>org.apache.camel:camel-cassandraql-starter</include>
-        <include>org.apache.camel:camel-castor-starter</include>
-        <include>org.apache.camel:camel-chronicle-starter</include>
+        <include>org.apache.camel:camel-cbor-starter</include>
+        <include>org.apache.camel:camel-chatscript-starter</include>
         <include>org.apache.camel:camel-chunk-starter</include>
-        <include>org.apache.camel:camel-cmis-starter</include>
         <include>org.apache.camel:camel-cm-sms-starter</include>
+        <include>org.apache.camel:camel-cmis-starter</include>
         <include>org.apache.camel:camel-coap-starter</include>
         <include>org.apache.camel:camel-cometd-starter</include>
         <include>org.apache.camel:camel-consul-starter</include>
-        <include>org.apache.camel:camel-context-starter</include>
+        <include>org.apache.camel:camel-controlbus-starter</include>
+        <include>org.apache.camel:camel-corda-starter</include>
         <include>org.apache.camel:camel-core-starter</include>
-        <include>org.apache.camel:camel-core-xml-starter</include>
-        <include>org.apache.camel:camel-couchdb-starter</include>
         <include>org.apache.camel:camel-couchbase-starter</include>
+        <include>org.apache.camel:camel-couchdb-starter</include>
+        <include>org.apache.camel:camel-crypto-cms-starter</include>
         <include>org.apache.camel:camel-crypto-starter</include>
         <include>org.apache.camel:camel-csv-starter</include>
         <include>org.apache.camel:camel-cxf-starter</include>
         <include>org.apache.camel:camel-cxf-transport-starter</include>
+        <include>org.apache.camel:camel-dataformat-starter</include>
+        <include>org.apache.camel:camel-dataset-starter</include>
+        <include>org.apache.camel:camel-digitalocean-starter</include>
+        <include>org.apache.camel:camel-direct-starter</include>
+        <include>org.apache.camel:camel-directvm-starter</include>
         <include>org.apache.camel:camel-disruptor-starter</include>
         <include>org.apache.camel:camel-dns-starter</include>
         <include>org.apache.camel:camel-docker-starter</include>
         <include>org.apache.camel:camel-dozer-starter</include>
         <include>org.apache.camel:camel-drill-starter</include>
         <include>org.apache.camel:camel-dropbox-starter</include>
-        <include>org.apache.camel:camel-eclipse-starter</include>
         <include>org.apache.camel:camel-ehcache-starter</include>
-        <include>org.apache.camel:camel-elasticsearch-starter</include>
+        <include>org.apache.camel:camel-elasticsearch-rest-starter</include>
         <include>org.apache.camel:camel-elsql-starter</include>
         <include>org.apache.camel:camel-etcd-starter</include>
         <include>org.apache.camel:camel-exec-starter</include>
         <include>org.apache.camel:camel-facebook-starter</include>
+        <include>org.apache.camel:camel-fastjson-starter</include>
+        <include>org.apache.camel:camel-fhir-starter</include>
+        <include>org.apache.camel:camel-file-starter</include>
+        <include>org.apache.camel:camel-file-watch-starter</include>
         <include>org.apache.camel:camel-flatpack-starter</include>
         <include>org.apache.camel:camel-flink-starter</include>
         <include>org.apache.camel:camel-fop-starter</include>
@@ -363,80 +483,87 @@
         <include>org.apache.camel:camel-ftp-starter</include>
         <include>org.apache.camel:camel-ganglia-starter</include>
         <include>org.apache.camel:camel-geocoder-starter</include>
-        <include>org.apache.camel:camel-github-starter</include>
         <include>org.apache.camel:camel-git-starter</include>
+        <include>org.apache.camel:camel-github-starter</include>
+        <include>org.apache.camel:camel-google-bigquery-starter</include>
         <include>org.apache.camel:camel-google-calendar-starter</include>
         <include>org.apache.camel:camel-google-drive-starter</include>
         <include>org.apache.camel:camel-google-mail-starter</include>
         <include>org.apache.camel:camel-google-pubsub-starter</include>
+        <include>org.apache.camel:camel-google-sheets-starter</include>
         <include>org.apache.camel:camel-gora-starter</include>
         <include>org.apache.camel:camel-grape-starter</include>
+        <include>org.apache.camel:camel-grok-starter</include>
         <include>org.apache.camel:camel-groovy-starter</include>
+        <include>org.apache.camel:camel-grpc-starter</include>
         <include>org.apache.camel:camel-gson-starter</include>
         <include>org.apache.camel:camel-guava-eventbus-starter</include>
-        <include>org.apache.camel:camel-guice-starter</include>
-        <include>org.apache.camel:camel-hawtdb-starter</include>
         <include>org.apache.camel:camel-hazelcast-starter</include>
         <include>org.apache.camel:camel-hbase-starter</include>
         <include>org.apache.camel:camel-hdfs2-starter</include>
-        <include>org.apache.camel:camel-hdfs-starter</include>
-        <include>org.apache.camel:camel-hessian-starter</include>
         <include>org.apache.camel:camel-hipchat-starter</include>
         <include>org.apache.camel:camel-hl7-starter</include>
-        <include>org.apache.camel:camel-http4-starter</include>
         <include>org.apache.camel:camel-http-common-starter</include>
-        <include>org.apache.camel:camel-http-starter</include>
+        <include>org.apache.camel:camel-http4-starter</include>
         <include>org.apache.camel:camel-hystrix-starter</include>
         <include>org.apache.camel:camel-ical-starter</include>
+        <include>org.apache.camel:camel-iec60870-starter</include>
         <include>org.apache.camel:camel-ignite-starter</include>
         <include>org.apache.camel:camel-infinispan-starter</include>
         <include>org.apache.camel:camel-influxdb-starter</include>
+        <include>org.apache.camel:camel-iota-starter</include>
+        <include>org.apache.camel:camel-ipfs-starter</include>
         <include>org.apache.camel:camel-irc-starter</include>
         <include>org.apache.camel:camel-ironmq-starter</include>
         <include>org.apache.camel:camel-jackson-starter</include>
         <include>org.apache.camel:camel-jacksonxml-starter</include>
         <include>org.apache.camel:camel-jasypt-starter</include>
-        <include>org.apache.camel:camel-javaspace-starter</include>
         <include>org.apache.camel:camel-jaxb-starter</include>
+        <include>org.apache.camel:camel-jaxp-starter</include>
         <include>org.apache.camel:camel-jbpm-starter</include>
         <include>org.apache.camel:camel-jcache-starter</include>
+        <include>org.apache.camel:camel-jclouds-starter</include>
         <include>org.apache.camel:camel-jcr-starter</include>
         <include>org.apache.camel:camel-jdbc-starter</include>
-        <include>org.apache.camel:camel-jetty9-starter</include>
         <include>org.apache.camel:camel-jetty-common-starter</include>
         <include>org.apache.camel:camel-jetty-starter</include>
+        <include>org.apache.camel:camel-jgroups-raft-starter</include>
         <include>org.apache.camel:camel-jgroups-starter</include>
-        <include>org.apache.camel:camel-jibx-starter</include>
         <include>org.apache.camel:camel-jing-starter</include>
         <include>org.apache.camel:camel-jira-starter</include>
         <include>org.apache.camel:camel-jms-starter</include>
         <include>org.apache.camel:camel-jmx-starter</include>
         <include>org.apache.camel:camel-johnzon-starter</include>
         <include>org.apache.camel:camel-jolt-starter</include>
-        <include>org.apache.camel:camel-josql-starter</include>
+        <include>org.apache.camel:camel-jooq-starter</include>
         <include>org.apache.camel:camel-jpa-starter</include>
         <include>org.apache.camel:camel-jsch-starter</include>
+        <include>org.apache.camel:camel-json-validator-starter</include>
+        <include>org.apache.camel:camel-jsonapi-starter</include>
         <include>org.apache.camel:camel-jsonpath-starter</include>
         <include>org.apache.camel:camel-jt400-starter</include>
-        <include>org.apache.camel:camel-juel-starter</include>
-        <include>org.apache.camel:camel-jxpath-starter</include>
         <include>org.apache.camel:camel-kafka-starter</include>
-        <include>org.apache.camel:camel-kestrel-starter</include>
-        <include>org.apache.camel:camel-krati-starter</include>
         <include>org.apache.camel:camel-kubernetes-starter</include>
         <include>org.apache.camel:camel-kura-starter</include>
+        <include>org.apache.camel:camel-language-starter</include>
         <include>org.apache.camel:camel-ldap-starter</include>
+        <include>org.apache.camel:camel-ldif-starter</include>
         <include>org.apache.camel:camel-leveldb-starter</include>
         <include>org.apache.camel:camel-linkedin-starter</include>
+        <include>org.apache.camel:camel-log-starter</include>
+        <include>org.apache.camel:camel-lra-starter</include>
         <include>org.apache.camel:camel-lucene-starter</include>
         <include>org.apache.camel:camel-lumberjack-starter</include>
         <include>org.apache.camel:camel-lzf-starter</include>
         <include>org.apache.camel:camel-mail-starter</include>
+        <include>org.apache.camel:camel-master-starter</include>
         <include>org.apache.camel:camel-metrics-starter</include>
+        <include>org.apache.camel:camel-micrometer-starter</include>
+        <include>org.apache.camel:camel-milo-starter</include>
         <include>org.apache.camel:camel-mina2-starter</include>
         <include>org.apache.camel:camel-mllp-starter</include>
+        <include>org.apache.camel:camel-mock-starter</include>
         <include>org.apache.camel:camel-mongodb-gridfs-starter</include>
-        <include>org.apache.camel:camel-mongodb-starter</include>
         <include>org.apache.camel:camel-mongodb3-starter</include>
         <include>org.apache.camel:camel-mqtt-starter</include>
         <include>org.apache.camel:camel-msv-starter</include>
@@ -447,55 +574,64 @@
         <include>org.apache.camel:camel-nats-starter</include>
         <include>org.apache.camel:camel-netty4-http-starter</include>
         <include>org.apache.camel:camel-netty4-starter</include>
-        <include>org.apache.camel:camel-netty-http-starter</include>
-        <include>org.apache.camel:camel-netty-starter</include>
+        <include>org.apache.camel:camel-nsq-starter</include>
         <include>org.apache.camel:camel-ognl-starter</include>
         <include>org.apache.camel:camel-olingo2-starter</include>
-        <include>org.apache.camel:camel-openshift-starter</include>
+        <include>org.apache.camel:camel-olingo4-starter</include>
         <include>org.apache.camel:camel-openstack-starter</include>
         <include>org.apache.camel:camel-opentracing-starter</include>
         <include>org.apache.camel:camel-optaplanner-starter</include>
         <include>org.apache.camel:camel-paho-starter</include>
         <include>org.apache.camel:camel-pdf-starter</include>
+        <include>org.apache.camel:camel-pg-replication-slot-starter</include>
         <include>org.apache.camel:camel-pgevent-starter</include>
         <include>org.apache.camel:camel-printer-starter</include>
+        <include>org.apache.camel:camel-properties-starter</include>
         <include>org.apache.camel:camel-protobuf-starter</include>
+        <include>org.apache.camel:camel-pubnub-starter</include>
+        <include>org.apache.camel:camel-pulsar-starter</include>
         <include>org.apache.camel:camel-quartz2-starter</include>
         <include>org.apache.camel:camel-quickfix-starter</include>
         <include>org.apache.camel:camel-rabbitmq-starter</include>
+        <include>org.apache.camel:camel-reactive-executor-vertx-starter</include>
         <include>org.apache.camel:camel-reactive-streams-starter</include>
+        <include>org.apache.camel:camel-reactor-starter</include>
+        <include>org.apache.camel:camel-ref-starter</include>
+        <include>org.apache.camel:camel-rest-starter</include>
+        <include>org.apache.camel:camel-rest-swagger-starter</include>
         <include>org.apache.camel:camel-restlet-starter</include>
         <include>org.apache.camel:camel-ribbon-starter</include>
-        <include>org.apache.camel:camel-rmi-starter</include>
-        <include>org.apache.camel:camel-routebox-starter</include>
         <include>org.apache.camel:camel-rss-starter</include>
-        <include>org.apache.camel:camel-ruby-starter</include>
-        <include>org.apache.camel:camel-rx-starter</include>
+        <include>org.apache.camel:camel-rxjava2-starter</include>
+        <include>org.apache.camel:camel-saga-starter</include>
         <include>org.apache.camel:camel-salesforce-starter</include>
         <include>org.apache.camel:camel-sap-netweaver-starter</include>
         <include>org.apache.camel:camel-saxon-starter</include>
-        <include>org.apache.camel:camel-scala-starter</include>
+        <include>org.apache.camel:camel-scheduler-starter</include>
         <include>org.apache.camel:camel-schematron-starter</include>
-        <include>org.apache.camel:camel-script-starter</include>
-        <include>org.apache.camel:camel-scr-starter</include>
+        <include>org.apache.camel:camel-seda-starter</include>
+        <include>org.apache.camel:camel-service-starter</include>
         <include>org.apache.camel:camel-servicenow-starter</include>
-        <include>org.apache.camel:camel-servletlistener-starter</include>
         <include>org.apache.camel:camel-servlet-starter</include>
         <include>org.apache.camel:camel-shiro-starter</include>
         <include>org.apache.camel:camel-sip-starter</include>
         <include>org.apache.camel:camel-sjms-starter</include>
+        <include>org.apache.camel:camel-sjms2-starter</include>
         <include>org.apache.camel:camel-slack-starter</include>
         <include>org.apache.camel:camel-smpp-starter</include>
         <include>org.apache.camel:camel-snakeyaml-starter</include>
         <include>org.apache.camel:camel-snmp-starter</include>
         <include>org.apache.camel:camel-soap-starter</include>
         <include>org.apache.camel:camel-solr-starter</include>
+        <include>org.apache.camel:camel-soroush-starter</include>
         <include>org.apache.camel:camel-spark-starter</include>
         <include>org.apache.camel:camel-splunk-starter</include>
         <include>org.apache.camel:camel-spring-batch-starter</include>
         <include>org.apache.camel:camel-spring-boot-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-consul-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-netflix-starter</include>
         <include>org.apache.camel:camel-spring-cloud-starter</include>
-        <include>org.apache.camel:camel-spring-dm-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-zookeeper-starter</include>
         <include>org.apache.camel:camel-spring-integration-starter</include>
         <include>org.apache.camel:camel-spring-javaconfig-starter</include>
         <include>org.apache.camel:camel-spring-ldap-starter</include>
@@ -509,29 +645,43 @@
         <include>org.apache.camel:camel-stomp-starter</include>
         <include>org.apache.camel:camel-stream-starter</include>
         <include>org.apache.camel:camel-stringtemplate-starter</include>
+        <include>org.apache.camel:camel-stub-starter</include>
         <include>org.apache.camel:camel-swagger-java-starter</include>
         <include>org.apache.camel:camel-syslog-starter</include>
         <include>org.apache.camel:camel-tagsoup-starter</include>
         <include>org.apache.camel:camel-tarfile-starter</include>
         <include>org.apache.camel:camel-telegram-starter</include>
+        <include>org.apache.camel:camel-thrift-starter</include>
+        <include>org.apache.camel:camel-tika-starter</include>
+        <include>org.apache.camel:camel-timer-starter</include>
+        <include>org.apache.camel:camel-twilio-starter</include>
         <include>org.apache.camel:camel-twitter-starter</include>
         <include>org.apache.camel:camel-undertow-starter</include>
         <include>org.apache.camel:camel-univocity-parsers-starter</include>
-        <include>org.apache.camel:camel-urlrewrite-starter</include>
+        <include>org.apache.camel:camel-validator-starter</include>
         <include>org.apache.camel:camel-velocity-starter</include>
         <include>org.apache.camel:camel-vertx-starter</include>
+        <include>org.apache.camel:camel-vm-starter</include>
         <include>org.apache.camel:camel-weather-starter</include>
+        <include>org.apache.camel:camel-web3j-starter</include>
+        <include>org.apache.camel:camel-webhook-starter</include>
+        <include>org.apache.camel:camel-websocket-jsr356-starter</include>
         <include>org.apache.camel:camel-websocket-starter</include>
-        <include>org.apache.camel:camel-xmlbeans-starter</include>
-        <include>org.apache.camel:camel-xmljson-starter</include>
-        <include>org.apache.camel:camel-xmlrpc-starter</include>
+        <include>org.apache.camel:camel-wordpress-starter</include>
+        <include>org.apache.camel:camel-xchange-starter</include>
         <include>org.apache.camel:camel-xmlsecurity-starter</include>
         <include>org.apache.camel:camel-xmpp-starter</include>
+        <include>org.apache.camel:camel-xpath-starter</include>
+        <include>org.apache.camel:camel-xslt-starter</include>
         <include>org.apache.camel:camel-xstream-starter</include>
         <include>org.apache.camel:camel-yammer-starter</include>
+        <include>org.apache.camel:camel-zendesk-starter</include>
+        <include>org.apache.camel:camel-zip-deflater-starter</include>
         <include>org.apache.camel:camel-zipfile-starter</include>
         <include>org.apache.camel:camel-zipkin-starter</include>
+        <include>org.apache.camel:camel-zookeeper-master-starter</include>
         <include>org.apache.camel:camel-zookeeper-starter</include>
+        <!-- camel starters: END -->
       </includes>
     </dependencySet>
   </dependencySets>

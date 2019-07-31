@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,8 +30,6 @@ import org.junit.Test;
  * password: password
  * <br/>
  * A SMSC for test is available here: http://www.seleniumsoftware.com/downloads.html
- * 
- * @version 
  */
 @Ignore("Must be manually tested")
 public class SmppConsumerReconnectIntegrationTest extends CamelTestSupport {

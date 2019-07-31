@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,6 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Consumer cannot deliver the MLLP Acknowledgement
  */
 public class MllpAcknowledgementDeliveryException extends MllpAcknowledgementException {
-
     static final String EXCEPTION_MESSAGE = "HL7 Acknowledgment Delivery Failed";
 
     public MllpAcknowledgementDeliveryException(byte[] hl7Message, byte[] hl7Acknowledgement) {

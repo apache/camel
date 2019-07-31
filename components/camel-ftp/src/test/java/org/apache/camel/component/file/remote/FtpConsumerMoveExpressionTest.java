@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,9 +20,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,6 +31,9 @@ import org.junit.Test;
  */
 public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
 
+    @BindToRegistry("myguidgenerator")
+    private MyGuidGenerator guid = new MyGuidGenerator();
+    
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin&consumer.delay=5000";
     }
@@ -42,13 +45,6 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
         deleteDirectory("target/filelanguage");
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myguidgenerator", new MyGuidGenerator());
-        return jndi;
-    }
-    
     @Test
     public void testMoveUsingExpression() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -70,8 +66,7 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl() + "&move=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}"
-                        + "-${file:name.noext}.bak").to("mock:result");
+                from(getFtpUrl() + "&move=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}" + "-${file:name.noext}.bak").to("mock:result");
             }
         };
     }

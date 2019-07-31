@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.infinispan;
 
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.commons.time.TimeService;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.test.TestingUtil;
 import org.infinispan.util.ControlledTimeService;
-import org.infinispan.util.TimeService;
 import org.junit.Before;
 
 public class InfinispanTestSupport extends CamelTestSupport {
@@ -32,13 +33,14 @@ public class InfinispanTestSupport extends CamelTestSupport {
     protected static final String KEY_TWO = "keyTwo";
     protected static final String VALUE_TWO = "valueTwo";
 
+    @BindToRegistry("cacheContainer")
     protected BasicCacheContainer basicCacheContainer;
     protected ControlledTimeService ts;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        basicCacheContainer = new DefaultCacheManager();
+        basicCacheContainer = new DefaultCacheManager(new ConfigurationBuilder().build());
         basicCacheContainer.start();
         super.setUp();
     }
@@ -47,13 +49,6 @@ public class InfinispanTestSupport extends CamelTestSupport {
     public void tearDown() throws Exception {
         basicCacheContainer.stop();
         super.tearDown();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("cacheContainer", basicCacheContainer);
-        return registry;
     }
 
     protected BasicCache<Object, Object> currentCache() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -26,8 +27,6 @@ import org.apache.camel.util.FileUtil;
 
 /**
  * A helper for unit testing with Apache ActiveMQ as embedded JMS broker.
- *
- * @version 
  */
 public final class CamelJmsTestHelper {
 
@@ -38,6 +37,14 @@ public final class CamelJmsTestHelper {
 
     public static PooledConnectionFactory createPooledConnectionFactory() {
         ConnectionFactory cf = createConnectionFactory(null, null);
+        PooledConnectionFactory pooled = new PooledConnectionFactory();
+        pooled.setConnectionFactory(cf);
+        pooled.setMaxConnections(8);
+        return pooled;
+    }
+
+    public static PooledConnectionFactory createPooledPersistentConnectionFactory() {
+        ConnectionFactory cf = createPersistentConnectionFactory();
         PooledConnectionFactory pooled = new PooledConnectionFactory();
         pooled.setConnectionFactory(cf);
         pooled.setMaxConnections(8);

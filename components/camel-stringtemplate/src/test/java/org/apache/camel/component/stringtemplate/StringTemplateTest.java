@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,8 +19,6 @@ package org.apache.camel.component.stringtemplate;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,11 +29,8 @@ public class StringTemplateTest extends CamelTestSupport {
     
     @Test
     public void test() throws Exception {
-        final DataHandler dataHandler = new DataHandler("my attachment", "text/plain");
-        
         Exchange response = template.request("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().addAttachment("item", dataHandler);
                 exchange.getIn().setBody("Monday");
                 exchange.getIn().setHeader("name", "Christian");
                 exchange.setProperty("item", "7");
@@ -45,7 +40,6 @@ public class StringTemplateTest extends CamelTestSupport {
         assertEquals("Dear Christian. You ordered item 7 on Monday.", response.getOut().getBody());
         assertEquals("org/apache/camel/component/stringtemplate/template.tm", response.getOut().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI));
         assertEquals("Christian", response.getOut().getHeader("name"));
-        assertSame(dataHandler, response.getOut().getAttachment("item"));
     }
     
     @Test
@@ -55,8 +49,8 @@ public class StringTemplateTest extends CamelTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("");
                 exchange.getIn().setHeader("name", "Christian");
-                Map<String, Object> variableMap = new HashMap<String, Object>();
-                Map<String, Object> headersMap = new HashMap<String, Object>();
+                Map<String, Object> variableMap = new HashMap<>();
+                Map<String, Object> headersMap = new HashMap<>();
                 headersMap.put("name", "Willem");
                 variableMap.put("headers", headersMap);
                 variableMap.put("body", "Monday");

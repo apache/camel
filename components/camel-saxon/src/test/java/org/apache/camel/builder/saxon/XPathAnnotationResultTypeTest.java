@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,19 +16,15 @@
  */
 package org.apache.camel.builder.saxon;
 
-import javax.naming.Context;
 import javax.xml.xpath.XPathFactory;
 
 import net.sf.saxon.lib.NamespaceConstant;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.language.XPath;
+import org.apache.camel.language.xpath.XPath;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class XPathAnnotationResultTypeTest extends CamelTestSupport {
     protected MyBean myBean = new MyBean();
 
@@ -43,10 +39,8 @@ public class XPathAnnotationResultTypeTest extends CamelTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-        answer.bind("myBean", myBean);
-        return answer;
+    protected void bindToRegistry(Registry registry) throws Exception {
+        registry.bind("myBean", myBean);
     }
 
     protected RouteBuilder createRouteBuilder() {

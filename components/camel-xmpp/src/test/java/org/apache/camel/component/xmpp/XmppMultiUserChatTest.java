@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,23 +15,30 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xmpp;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
-@Ignore("Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target")
+@Ignore("This test is not working at the moment")
 public class XmppMultiUserChatTest extends CamelTestSupport {
 
     protected MockEndpoint consumerEndpoint;
-    protected MockEndpoint producerEndpoint;
     protected String body1 = "the first message";
     protected String body2 = "the second message";
+    private EmbeddedXmppTestServer embeddedXmppTestServer;
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
+        embeddedXmppTestServer.bindSSLContextTo(registry);
+
+        return registry;
+    }
 
     @Test
     public void testXmppChat() throws Exception {
@@ -60,17 +67,31 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
     }
 
     protected String getProducerUri() {
-
-        // the nickname paramenter is necessary in these URLs because the '@' in the user name can not be parsed by
+        // the nickname parameter is necessary in these URLs because the '@' in the user name can not be parsed by
         // vysper during chat room message routing.
 
-        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/?room=camel-test@conference.apache.camel&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
+        // here on purpose we provide the room query parameter without the domain name as 'camel-test', and Camel
+        // will resolve it properly to 'camel-test@conference.apache.camel'
+        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
+            + "/?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
     }
     
     protected String getConsumerUri() {
-        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/?room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
+        // however here we provide the room query parameter as fully qualified, including the domain name as
+        // 'camel-test@conference.apache.camel'
+        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
+            + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
     }
 
+    @Override
+    public void doPreSetup() throws Exception {
+        embeddedXmppTestServer = new EmbeddedXmppTestServer();
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        embeddedXmppTestServer.stop();
+    }
 }

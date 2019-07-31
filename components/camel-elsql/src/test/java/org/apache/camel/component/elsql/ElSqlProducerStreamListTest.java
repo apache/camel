@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,9 +19,9 @@ package org.apache.camel.component.elsql;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Test;
@@ -33,20 +33,8 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 
 public class ElSqlProducerStreamListTest extends CamelTestSupport {
 
-    private EmbeddedDatabase db;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        // this is the database we create with some initial data for our unit test
-        db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-
-        jndi.bind("dataSource", db);
-
-        return jndi;
-    }
+    @BindToRegistry("dataSource")
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
     @Test
     public void testReturnAnIterator() throws Exception {
@@ -102,26 +90,13 @@ public class ElSqlProducerStreamListTest extends CamelTestSupport {
             public void configure() {
                 getContext().getComponent("elsql", ElsqlComponent.class).setDataSource(db);
 
-                from("direct:start")
-                    .to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList")
-                    .to("log:stream")
-                    .to("mock:result");
+                from("direct:start").to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList").to("log:stream").to("mock:result");
 
-                from("direct:withSplit")
-                    .to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList")
-                    .to("log:stream")
-                    .split(body()).streaming()
-                        .to("log:row")
-                        .to("mock:result")
-                    .end();
+                from("direct:withSplit").to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList").to("log:stream").split(body()).streaming().to("log:row")
+                    .to("mock:result").end();
 
-                from("direct:withSplitModel")
-                    .to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList&outputClass=org.apache.camel.component.elsql.Project")
-                    .to("log:stream")
-                    .split(body()).streaming()
-                        .to("log:row")
-                        .to("mock:result")
-                    .end();
+                from("direct:withSplitModel").to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList&outputClass=org.apache.camel.component.elsql.Project")
+                    .to("log:stream").split(body()).streaming().to("log:row").to("mock:result").end();
             }
         };
     }

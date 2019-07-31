@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,12 +30,15 @@ public abstract class SolrTestSupport extends CamelTestSupport {
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable(8999);
         httpsPort = AvailablePortFinder.getNextAvailable(8999);
+        //TODO : add test for TLSv1.3
+        System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
+        System.setProperty("jdk.tls.server.protocols", "TLSv1.2");
     }
 
     protected static int getPort() {
         return port;
     }
-    
+
     protected static int getHttpsPort() {
         return httpsPort;
     }

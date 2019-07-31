@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,11 +18,11 @@ package org.apache.camel.component.http4;
 
 import java.net.InetSocketAddress;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http4.handler.SessionReflectionHandler;
 import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.common.cookie.InstanceCookieHandler;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.server.Server;
@@ -35,6 +35,15 @@ import org.junit.Test;
 public class HttpProducerSessionTest extends CamelTestSupport {
     private static volatile int port;
     private static Server localServer;
+    
+    @BindToRegistry("instanceCookieHandler")
+    private InstanceCookieHandler instanceHandler = new InstanceCookieHandler();
+    
+    @BindToRegistry("exchangeCookieHandler")
+    private ExchangeCookieHandler exchangeHandler = new ExchangeCookieHandler();
+    
+    @BindToRegistry("noopCookieStore")
+    private NoopCookieStore cookieStore = new NoopCookieStore();
 
     @BeforeClass
     public static void initServer() throws Exception {
@@ -76,15 +85,6 @@ public class HttpProducerSessionTest extends CamelTestSupport {
         template.sendBody("direct:exchange", "World");
         template.sendBody("direct:exchange", "World");
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndiRegistry = super.createRegistry();
-        jndiRegistry.bind("instanceCookieHandler", new InstanceCookieHandler());
-        jndiRegistry.bind("exchangeCookieHandler", new ExchangeCookieHandler());
-        jndiRegistry.bind("noopCookieStore", new NoopCookieStore());
-        return jndiRegistry;
     }
 
     private String getTestServerEndpointSessionUrl() {

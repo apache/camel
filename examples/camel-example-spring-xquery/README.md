@@ -20,7 +20,7 @@ To run the example using Maven, type
 
 	mvn camel:run
 
-You can see the routing rules by looking at the the Spring XML configuration
+You can see the routing rules by looking at the Spring XML configuration
 at `src/main/resources/META-INF/spring`
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>

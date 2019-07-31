@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,8 +32,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Tests a Quartz based cluster setup of two Camel Apps being triggered through with recoverableJob option is true {@link QuartzConsumer}.
- * 
- * @version
  */
 public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest extends TestSupport {
 
@@ -41,25 +39,24 @@ public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest extends TestSuppor
     public void testQuartzPersistentStoreClusteredApp() throws Exception {
         // boot up the database the two apps are going to share inside a clustered quartz setup
         AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz2/SpringQuartzConsumerClusteredAppDatabase.xml");
-        db.start();
 
         // now launch the first clustered app which will acquire the quartz database lock and become the master
         AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz2/SpringQuartzConsumerRecoveryClusteredAppOne.xml");
-        app.start();
-        
+
         // now let's simulate a crash of the first app (the quartz instance 'app-one')
         log.warn("The first app is going to crash NOW!");
+        IOHelper.close(app);
 
         log.warn("Crashed...");
         log.warn("Crashed...");
         log.warn("Crashed...");
-        
+
         Thread.sleep(2000);
-        
+
         // as well as the second one which will run in slave mode as it will not be able to acquire the same lock
         AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz2/SpringQuartzConsumerRecoveryClusteredAppTwo.xml");
         app2.start();
-        
+
         // wait long enough until the second app takes it over...
         Thread.sleep(20000);
         // inside the logs one can then clearly see how the route of the second app ('app-two') starts consuming:
@@ -81,22 +78,22 @@ public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest extends TestSuppor
         // and as the last step shutdown the second app as well as the database
         IOHelper.close(app2, db);
     }
-    
+
     private static class ClusteringPredicate implements Predicate {
 
         private final String expectedPayload;
-        
+
         ClusteringPredicate(boolean pings) {
             expectedPayload = pings ? "clustering PINGS!" : "clustering PONGS!";
         }
-        
+
         @Override
         public boolean matches(Exchange exchange) {
             return exchange.getIn().getBody().equals(expectedPayload);
         }
 
     }
-    
+
     public static class MyProcessor implements Processor, ApplicationContextAware {
         ApplicationContext applicationContext;
 
@@ -110,7 +107,7 @@ public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest extends TestSuppor
         public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
             this.applicationContext = applicationContext;
         }
-        
+
     }
 
 }

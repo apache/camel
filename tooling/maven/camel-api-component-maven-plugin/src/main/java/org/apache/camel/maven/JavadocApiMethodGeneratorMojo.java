@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.text.html.parser.DTD;
 
-import org.apache.camel.util.component.ApiMethodParser;
+import org.apache.camel.support.component.ApiMethodParser;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -41,7 +41,7 @@ import org.codehaus.plexus.util.IOUtil;
  * Parses ApiMethod signatures from Javadoc.
  */
 @Mojo(name = "fromJavadoc", requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true,
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
     static {
@@ -70,7 +70,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
     @Override
     public List<String> getSignatureList() throws MojoExecutionException {
         // signatures as map from signature with no arg names to arg names from JavadocParser
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
 
         final Pattern packagePatterns = Pattern.compile(excludePackages);
         final Pattern classPatterns = (excludeClasses != null) ? Pattern.compile(excludeClasses) : null;
@@ -87,9 +87,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
             final String javaDocPath = aClass.getName().replaceAll("\\.", "/").replace('$', '.') + ".html";
 
             // read javadoc html text for class
-            InputStream inputStream = null;
-            try {
-                inputStream = getProjectClassLoader().getResourceAsStream(javaDocPath);
+
+            try (InputStream inputStream = getProjectClassLoader().getResourceAsStream(javaDocPath)) {
                 if (inputStream == null) {
                     log.debug("JavaDoc not found on classpath for " + aClass.getName());
                     break;
@@ -121,7 +120,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                             types = new String[0];
                         } else {
                             // get raw types from args
-                            final List<String> rawTypes = new ArrayList<String>();
+                            final List<String> rawTypes = new ArrayList<>();
                             final Matcher argTypesMatcher = RAW_ARGTYPES_PATTERN.matcher(args);
                             while (argTypesMatcher.find()) {
                                 rawTypes.add(argTypesMatcher.group(1));
@@ -136,8 +135,6 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                 }
             } catch (IOException e) {
                 throw new MojoExecutionException(e.getMessage(), e);
-            } finally {
-                IOUtil.close(inputStream);
             }
         }
 
@@ -145,7 +142,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
             throw new MojoExecutionException("No public non-static methods found, "
                     + "make sure Javadoc is available as project test dependency");
         }
-        return new ArrayList<String>(result.values());
+        return new ArrayList<>(result.values());
     }
 
     private String getResultType(Class<?> aClass, String name, String[] types) throws MojoExecutionException {

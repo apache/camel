@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,17 +26,17 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 @UriParams
 public class NettyServerBootstrapConfiguration implements Cloneable {
     public static final String DEFAULT_ENABLED_PROTOCOLS = "TLSv1,TLSv1.1,TLSv1.2";
 
-    @UriPath(enums = "tcp,udp") @Metadata(required = "true")
+    @UriPath(enums = "tcp,udp") @Metadata(required = true)
     protected String protocol;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     protected String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     protected int port;
     @UriParam(label = "consumer")
     protected boolean broadcast;
@@ -134,7 +134,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     /**
      * The hostname.
      * <p/>
-     * For the consumer the hostname is localhost or 0.0.0.0
+     * For the consumer the hostname is localhost or 0.0.0.0. 
      * For the producer the hostname is the remote host to connect to
      */
     public void setHost(String host) {
@@ -201,8 +201,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     }
 
     /**
-     * When netty works on nio mode, it uses default workerCount parameter from Netty, which is cpu_core_threads*2.
-     * User can use this operation to override the default workerCount from Netty
+     * When netty works on nio mode, it uses default workerCount parameter from Netty, which is cpu_core_threads x 2.
+     * User can use this operation to override the default workerCount from Netty.
      */
     public void setWorkerCount(int workerCount) {
         this.workerCount = workerCount;
@@ -258,7 +258,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     }
 
     /**
-     * Time to wait for a socket connection to be available. Value is in millis.
+     * Time to wait for a socket connection to be available. Value is in milliseconds.
      */
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,26 +18,30 @@ package org.apache.camel.http.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
+import org.apache.camel.cloud.DiscoverableService;
+import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.CollectionHelper;
 
-public abstract class HttpCommonEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public abstract class HttpCommonEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, DiscoverableService {
 
     // Note: all options must be documented with description in annotations so extended components can access the documentation
 
     HttpCommonComponent component;
 
-    @UriPath(label = "producer", description = "The url of the HTTP endpoint to call.") @Metadata(required = "true")
+    @UriPath(label = "common", description = "The url of the HTTP endpoint to call.") @Metadata(required = true)
     URI httpUri;
-    @UriParam(description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    @UriParam(label = "common", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    @UriParam(description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
+    @UriParam(label = "common,advanced", description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
     HttpBinding httpBinding;
     @UriParam(label = "producer", defaultValue = "true",
             description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
@@ -70,12 +74,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
                     + " The http/http4 producer will by default cache the response body stream. If setting this option to true,"
                     + " then the producers will not cache the response body stream but use the response stream as-is as the message body.")
     boolean disableStreamCache;
-    @UriParam(label = "producer", description = "The proxy host name")
-    String proxyHost;
-    @UriParam(label = "producer", description = "The proxy port number")
-    int proxyPort;
-    @UriParam(label = "producer", enums = "Basic,Digest,NTLM", description = "Authentication method for proxy, either as Basic, Digest or NTLM.")
-    String authMethodPriority;
     @UriParam(description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
             + " in the response as a application/x-java-serialized-object content type."
             + " On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException."
@@ -85,10 +83,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     boolean transferException;
     @UriParam(label = "producer", defaultValue = "false", description = "Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.")
     boolean connectionClose;
-    @UriParam(label = "consumer",
+    @UriParam(label = "consumer,advanced",
             description = "Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.")
     boolean traceEnabled;
-    @UriParam(label = "consumer",
+    @UriParam(label = "consumer,advanced",
             description = "Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.")
     boolean optionsEnabled;
     @UriParam(label = "consumer",
@@ -104,7 +102,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
                     + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
     boolean copyHeaders = true;
-    @UriParam(label = "consumer",
+    @UriParam(label = "consumer,advanced",
             description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
                     + " This can be turned on in case HTTP clients do not send streamed data.")
     boolean eagerCheckContentAvailable;
@@ -120,18 +118,53 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP."
             + " Setting this to false will avoid the HTTP Form Encoded body mapping.")
     boolean mapHttpMessageFormUrlEncodedBody = true;
-    @UriParam(label = "producer", defaultValue = "200-299",
-            description = "The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.")
+    @UriParam(label = "producer,advanced", defaultValue = "200-299",
+            description = "The status codes which are considered a success response. The values are inclusive. Multiple ranges can be"
+                    + " defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
     @UriParam(label = "producer,advanced",
             description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
                     + " See more details at http://camel.apache.org/urlrewrite.html")
+    @Deprecated
     private UrlRewrite urlRewrite;
     @UriParam(label = "consumer", defaultValue = "false",
             description = "Configure the consumer to work in async mode")
     private boolean async;
-    @UriParam(label = "producer", description = "Configure a cookie handler to maintain a HTTP session")
+    @UriParam(label = "producer,advanced", description = "Configure a cookie handler to maintain a HTTP session")
     private CookieHandler cookieHandler;
+    @UriParam(label = "producer", description = "Configure the HTTP method to use. The HttpMethod header cannot override this option if set.")
+    private HttpMethods httpMethod;
+
+    @UriParam(label = "producer,security", description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.")
+    private String authMethod;
+    @UriParam(label = "producer,security", enums = "Basic,Digest,NTLM", description = "Which authentication method to prioritize to use, either as Basic, Digest or NTLM.")
+    private String authMethodPriority;
+    @UriParam(label = "producer,security", secret = true, description = "Authentication username")
+    private String authUsername;
+    @UriParam(label = "producer,security", secret = true, description = "Authentication password")
+    private String authPassword;
+    @UriParam(label = "producer,security", description = "Authentication domain to use with NTML")
+    private String authDomain;
+    @UriParam(label = "producer,security", description = "Authentication host to use with NTML")
+    private String authHost;
+    @UriParam(label = "producer,proxy", description = "Proxy hostname to use")
+    private String proxyHost;
+    @UriParam(label = "producer,proxy", description = "Proxy port to use")
+    private int proxyPort;
+    @UriParam(label = "producer,proxy", enums = "http,https", description = "Proxy authentication scheme to use")
+    private String proxyAuthScheme;
+    @UriParam(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
+    private String proxyAuthMethod;
+    @UriParam(label = "producer,proxy", secret = true, description = "Proxy authentication username")
+    private String proxyAuthUsername;
+    @UriParam(label = "producer,proxy", secret = true, description = "Proxy authentication password")
+    private String proxyAuthPassword;
+    @UriParam(label = "producer,proxy", description = "Proxy authentication host")
+    private String proxyAuthHost;
+    @UriParam(label = "producer,proxy", description = "Proxy authentication port")
+    private int proxyAuthPort;
+    @UriParam(label = "producer,proxy", description = "Proxy authentication domain to use with NTML")
+    private String proxyAuthDomain;
 
     public HttpCommonEndpoint() {
     }
@@ -150,6 +183,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         component.disconnect(consumer);
     }
 
+    public boolean canConnect(HttpConsumer consumer) throws Exception {
+        return component.canConnect(consumer);
+    }
+
     @Override
     public HttpCommonComponent getComponent() {
         return (HttpCommonComponent) super.getComponent();
@@ -160,10 +197,17 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         return true;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
+// Service Registration
+    //-------------------------------------------------------------------------
 
+    @Override
+    public Map<String, String> getServiceProperties() {
+        return CollectionHelper.immutableMapOf(
+            ServiceDefinition.SERVICE_META_PORT, Integer.toString(getPort()),
+            ServiceDefinition.SERVICE_META_PATH, getPath(),
+            ServiceDefinition.SERVICE_META_PROTOCOL, getProtocol()
+        );
+    }
 
     // Properties
     //-------------------------------------------------------------------------
@@ -332,39 +376,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         this.chunked = chunked;
     }
 
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    /**
-     * The proxy host name
-     */
-    public void setProxyHost(String proxyHost) {
-        this.proxyHost = proxyHost;
-    }
-
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    /**
-     * The proxy port number
-     */
-    public void setProxyPort(int proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    public String getAuthMethodPriority() {
-        return authMethodPriority;
-    }
-
-    /**
-     * Authentication method for proxy, either as Basic, Digest or NTLM.
-     */
-    public void setAuthMethodPriority(String authMethodPriority) {
-        this.authMethodPriority = authMethodPriority;
-    }
-
     public boolean isTransferException() {
         return transferException;
     }
@@ -427,6 +438,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         this.httpMethodRestrict = httpMethodRestrict;
     }
 
+    @Deprecated
     public UrlRewrite getUrlRewrite() {
         return urlRewrite;
     }
@@ -435,6 +447,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      * Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints.
      * See more details at http://camel.apache.org/urlrewrite.html
      */
+    @Deprecated
     public void setUrlRewrite(UrlRewrite urlRewrite) {
         this.urlRewrite = urlRewrite;
     }
@@ -490,7 +503,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+     * The status codes which are considered a success response. The values are inclusive. Multiple ranges can be
+     * defined, separated by comma, e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number or from-to with the
+     * dash included.
      * <p/>
      * The default range is <tt>200-299</tt>
      */
@@ -537,7 +552,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     /**
      * If this option is true, the consumer will work in async mode
-     * @param async
      */
     public void setAsync(boolean async) {
         this.async = async;
@@ -552,5 +566,181 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setCookieHandler(CookieHandler cookieHandler) {
         this.cookieHandler = cookieHandler;
+    }
+
+    public HttpMethods getHttpMethod() {
+        return httpMethod;
+    }
+
+    /**
+     * Configure the HTTP method to use. The HttpMethod header cannot override this option if set.
+     */
+    public void setHttpMethod(HttpMethods httpMethod) {
+        this.httpMethod = httpMethod;
+    }
+
+    public String getAuthMethod() {
+        return authMethod;
+    }
+
+    /**
+     * Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.
+     */
+    public void setAuthMethod(String authMethod) {
+        this.authMethod = authMethod;
+    }
+
+    public String getAuthMethodPriority() {
+        return authMethodPriority;
+    }
+
+    /**
+     * Which authentication method to prioritize to use, either as Basic, Digest or NTLM.
+     */
+    public void setAuthMethodPriority(String authMethodPriority) {
+        this.authMethodPriority = authMethodPriority;
+    }
+
+    public String getAuthUsername() {
+        return authUsername;
+    }
+
+    /**
+     * Authentication username
+     */
+    public void setAuthUsername(String authUsername) {
+        this.authUsername = authUsername;
+    }
+
+    public String getAuthPassword() {
+        return authPassword;
+    }
+
+    /**
+     * Authentication password
+     */
+    public void setAuthPassword(String authPassword) {
+        this.authPassword = authPassword;
+    }
+
+    public String getAuthDomain() {
+        return authDomain;
+    }
+
+    /**
+     * Authentication domain to use with NTML
+     */
+    public void setAuthDomain(String authDomain) {
+        this.authDomain = authDomain;
+    }
+
+    public String getAuthHost() {
+        return authHost;
+    }
+
+    /**
+     * Authentication host to use with NTML
+     */
+    public void setAuthHost(String authHost) {
+        this.authHost = authHost;
+    }
+
+    public String getProxyAuthScheme() {
+        return proxyAuthScheme;
+    }
+
+    /**
+     * Proxy authentication scheme to use
+     */
+    public void setProxyAuthScheme(String proxyAuthScheme) {
+        this.proxyAuthScheme = proxyAuthScheme;
+    }
+
+    public String getProxyAuthMethod() {
+        return proxyAuthMethod;
+    }
+
+    /**
+     * Proxy authentication method to use
+     */
+    public void setProxyAuthMethod(String proxyAuthMethod) {
+        this.proxyAuthMethod = proxyAuthMethod;
+    }
+
+    public String getProxyAuthUsername() {
+        return proxyAuthUsername;
+    }
+
+    /**
+     * Proxy authentication username
+     */
+    public void setProxyAuthUsername(String proxyAuthUsername) {
+        this.proxyAuthUsername = proxyAuthUsername;
+    }
+
+    public String getProxyAuthPassword() {
+        return proxyAuthPassword;
+    }
+
+    /**
+     * Proxy authentication password
+     */
+    public void setProxyAuthPassword(String proxyAuthPassword) {
+        this.proxyAuthPassword = proxyAuthPassword;
+    }
+
+    public String getProxyAuthDomain() {
+        return proxyAuthDomain;
+    }
+
+    /**
+     * Proxy authentication domain to use with NTML
+     */
+    public void setProxyAuthDomain(String proxyAuthDomain) {
+        this.proxyAuthDomain = proxyAuthDomain;
+    }
+
+    public String getProxyAuthHost() {
+        return proxyAuthHost;
+    }
+
+    /**
+     * Proxy authentication host to use with NTML
+     */
+    public void setProxyAuthHost(String proxyAuthHost) {
+        this.proxyAuthHost = proxyAuthHost;
+    }
+
+    public int getProxyAuthPort() {
+        return proxyAuthPort;
+    }
+
+    /**
+     * Proxy authentication port
+     */
+    public void setProxyAuthPort(int proxyAuthPort) {
+        this.proxyAuthPort = proxyAuthPort;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * Proxy hostname to use
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public int getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * Proxy port to use
+     */
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
     }
 }

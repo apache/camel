@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,24 +20,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.SSLContextParametersAware;
+
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>
- *
- * @version 
  */
-public class IrcComponent extends UriEndpointComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
-    private final transient Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
+@Component("irc,ircs")
+public class IrcComponent extends DefaultComponent implements SSLContextParametersAware {
+
+    private final transient Map<String, IRCConnection> connectionCache = new HashMap<>();
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public IrcComponent() {
-        super(IrcEndpoint.class);
     }
 
     public IrcEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -53,8 +57,8 @@ public class IrcComponent extends UriEndpointComponent {
     public synchronized IRCConnection getIRCConnection(IrcConfiguration configuration) {
         final IRCConnection connection;
         if (connectionCache.containsKey(configuration.getCacheKey())) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Returning Cached Connection to {}:{}", configuration.getHostname(), configuration.getNickname());
+            if (log.isDebugEnabled()) {
+                log.debug("Returning Cached Connection to {}:{}", configuration.getHostname(), configuration.getNickname());
             }
             connection = connectionCache.get(configuration.getCacheKey());
         } else {
@@ -69,16 +73,21 @@ public class IrcComponent extends UriEndpointComponent {
         IRCEventListener ircLogger;
 
         if (configuration.getUsingSSL()) {
-            
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
+
+            if (log.isDebugEnabled()) {
+                log.debug("Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
                     new Object[]{configuration.getHostname(), configuration.getListOfChannels(), configuration.getNickname(), configuration.getUsername()});
             }
-            
-            if (configuration.getSslContextParameters() != null) {
+
+            SSLContextParameters sslParams = configuration.getSslContextParameters();
+            if (sslParams == null) {
+                sslParams = retrieveGlobalSslContextParameters();
+            }
+
+            if (sslParams != null) {
                 conn = new CamelSSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
                                                  configuration.getNickname(), configuration.getUsername(), configuration.getRealname(),
-                                                 configuration.getSslContextParameters(), getCamelContext());
+                                                 sslParams, getCamelContext());
             } else {
                 SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
                         configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
@@ -87,8 +96,8 @@ public class IrcComponent extends UriEndpointComponent {
                 conn = sconn;
             }
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating Connection to {} destination(s): {} nick: {} user: {}",
+            if (log.isDebugEnabled()) {
+                log.debug("Creating Connection to {} destination(s): {} nick: {} user: {}",
                         new Object[]{configuration.getHostname(), configuration.getListOfChannels(), configuration.getNickname(), configuration.getUsername()});
             }
 
@@ -99,8 +108,8 @@ public class IrcComponent extends UriEndpointComponent {
         conn.setColors(configuration.isColors());
         conn.setPong(true);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Adding IRC event logging listener");
+        if (log.isDebugEnabled()) {
+            log.debug("Adding IRC event logging listener");
             ircLogger = createIrcLogger(configuration.getHostname());
             conn.addIRCEventListener(ircLogger);
         }
@@ -118,14 +127,14 @@ public class IrcComponent extends UriEndpointComponent {
             connection.doQuit();
             connection.close();
         } catch (Exception e) {
-            LOG.warn("Error during closing connection.", e);
+            log.warn("Error during closing connection.", e);
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         // lets use a copy so we can clear the connections eagerly in case of exceptions
-        Map<String, IRCConnection> map = new HashMap<String, IRCConnection>(connectionCache);
+        Map<String, IRCConnection> map = new HashMap<>(connectionCache);
         connectionCache.clear();
         for (Map.Entry<String, IRCConnection> entry : map.entrySet()) {
             closeConnection(entry.getKey(), entry.getValue());
@@ -134,11 +143,24 @@ public class IrcComponent extends UriEndpointComponent {
     }
 
     protected IRCEventListener createIrcLogger(String hostname) {
-        return new IrcLogger(LOG, hostname);
+        return new IrcLogger(log, hostname);
     }
 
     @Deprecated
     protected String preProcessUri(String uri) {
         return IrcConfiguration.sanitize(uri);
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

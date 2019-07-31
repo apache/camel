@@ -1,9 +1,11 @@
+@if{eipOptions.isEmpty()}
+The @{title} EIP has no options.
+@else{}
 The @{title} EIP supports @{eipOptions.size()} options which are listed below:
 
-{% raw %}
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Name | Java Type | Description
-@foreach{row : eipOptions}| @{row.name} | @{row.shortJavaType} | @{row.description}
-@end{}|=======================================================================
-{% endraw %}
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+@foreach{row : eipOptions}| *@{row.getShortName(30)}* | @{util.escape(row.description)} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
+@end{}|===
+@end{}

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,9 @@
 package org.apache.camel.component.docker;
 
 import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.Map;
 
-import com.github.dockerjava.api.exception.DockerClientException;
 import org.apache.camel.Message;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.commons.lang.BooleanUtils;
 
 /**
@@ -33,58 +30,18 @@ public final class DockerHelper {
     private static final String STRING_DELIMITER = ";";
 
     private DockerHelper() {
-        // Helpser class
+        // Helper class
     }
 
     /**
-     * Validates the URI parameters for a given {@link DockerOperation}
-     *
-     * @param dockerOperation
-     * @param parameters
-     */
-    public static void validateParameters(DockerOperation dockerOperation, Map<String, Object> parameters) {
-        Map<String, Class<?>> validParamMap = new HashMap<String, Class<?>>();
-        validParamMap.putAll(DockerConstants.DOCKER_DEFAULT_PARAMETERS);
-        validParamMap.putAll(dockerOperation.getParameters());
-
-        for (String key : parameters.keySet()) {
-
-            String transformedKey = DockerHelper.transformToHeaderName(key);
-
-            // Validate URI parameter name
-            if (!validParamMap.containsKey(transformedKey)) {
-                throw new DockerClientException(key + " is not a valid URI parameter");
-            }
-
-            try {
-                Class<?> parameterClass = validParamMap.get(transformedKey);
-                Object parameterValue = parameters.get(key);
-
-                if (parameterClass == null || parameterValue == null) {
-                    throw new DockerClientException("Failed to validate parameter type for property " + key);
-                }
-
-                if (Integer.class == parameterClass) {
-                    Integer.parseInt((String)parameterValue);
-                } else if (Boolean.class == parameterClass) {
-                    BooleanUtils.toBooleanObject((String)parameterValue, "true", "false", "null");
-                }
-            } catch (Exception e) {
-                throw new DockerClientException("Failed to validate parameter type for property " + key);
-            }
-        }
-
-    }
-
-    /**
-     * Transforms a Docker Component header value to its' analogous URI
+     * Transforms a Docker Component header value to its analogous URI
      * parameter
      *
      * @param name
      * @return
      */
     public static String transformFromHeaderName(String name) {
-        ObjectHelper.notEmpty(name, "name");
+        StringHelper.notEmpty(name, "name");
 
         StringBuilder formattedName = new StringBuilder();
 
@@ -93,26 +50,6 @@ public final class DockerHelper {
         if (nameSubstring.length() > 0) {
             formattedName.append(nameSubstring.substring(0, 1).toLowerCase());
             formattedName.append(nameSubstring.substring(1));
-        }
-
-        return formattedName.toString();
-    }
-
-    /**
-     * Transforms a Docker Component URI parameter to its' analogous header
-     * value
-     *
-     * @param name
-     * @return
-     */
-    public static String transformToHeaderName(String name) {
-        ObjectHelper.notEmpty(name, "name");
-
-        StringBuilder formattedName = new StringBuilder(DockerConstants.DOCKER_PREFIX);
-
-        if (name.length() > 0) {
-            formattedName.append(name.substring(0, 1).toUpperCase());
-            formattedName.append(name.substring(1));
         }
 
         return formattedName.toString();
@@ -174,7 +111,6 @@ public final class DockerHelper {
         }
 
         return null;
-
     }
 
     /**
@@ -212,7 +148,6 @@ public final class DockerHelper {
         }
 
         return null;
-
     }
 
     /**
@@ -236,7 +171,6 @@ public final class DockerHelper {
         }
 
         return null;
-
     }
 
 }

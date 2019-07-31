@@ -1,0 +1,25 @@
+[[Exception-org.apache.camel.NoSuchEndpointException-Exceptionorg.apache.camel.NoSuchEndpointException]]
+= Exception: `org.apache.camel.NoSuchEndpointException`
+
+The usual cause for this exception is a missing component JAR on the
+classpath. The exception detail message will tell you what the missing
+component is. You can solve the issue by adding the required JAR files
+to the classpath.
+
+== Example:
+
+If you try to use the definition below without having `camel-jetty.jar` on
+the classpath, you'll run into this exception:
+----
+org.apache.camel.NoSuchEndpointException: No endpoint could be found for: jetty:http://localhost:8080/bus
+----
+
+[source,xml]
+----
+<camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+  <route>
+    <from uri="jetty:http://localhost:8080/bus" />
+    <to uri="file://C:/tmp/something.xml" /> 
+  </route>
+</camelContext>
+----

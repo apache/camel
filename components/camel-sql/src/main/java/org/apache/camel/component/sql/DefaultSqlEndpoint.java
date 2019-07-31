@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,8 +26,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
-import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultPollingEndpoint;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -80,26 +80,26 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private boolean breakBatchOnConsumeFail;
     @UriParam(defaultValue = "true", description = "Whether to allow using named parameters in the queries.")
     private boolean allowNamedParameters = true;
-    @UriParam(label = "producer,advanced",
+    @UriParam(label = "advanced",
             description = "If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked, "
                     + "also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1"
                     + " or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters.")
     private boolean alwaysPopulateStatement;
     @UriParam(defaultValue = ",",
             description = "The separator to use when parameter values is taken from message body (if the body is a String type), to be inserted at # placeholders."
-            + "Notice if you use named parameters, then a Map type is used instead. The default value is comma")
+            + " Notice if you use named parameters, then a Map type is used instead. The default value is comma")
     private char separator = ',';
     @UriParam(defaultValue = "SelectList", description = "Make the output of consumer or producer to SelectList as List of Map, or SelectOne as single Java object in the following way:"
-            + "a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long object."
-            + "b) If the query has more than one column, then it will return a Map of that result."
-            + "c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names."
-            + "It will assume your class has a default constructor to create instance with."
-            + "d) If the query resulted in more than one rows, it throws an non-unique result exception."
-            + "StreamList streams the result of the query using an Iterator. This can be used with the Splitter EIP in streaming mode to process the ResultSet in streaming fashion.")
+            + " a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long object."
+            + " b) If the query has more than one column, then it will return a Map of that result."
+            + " c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names."
+            + " It will assume your class has a default constructor to create instance with."
+            + " d) If the query resulted in more than one rows, it throws an non-unique result exception."
+            + " StreamList streams the result of the query using an Iterator. This can be used with the Splitter EIP in streaming mode to process the ResultSet in streaming fashion.")
     private SqlOutputType outputType = SqlOutputType.SelectList;
     @UriParam(description = "Specify the full package and class name to use as conversion when outputType=SelectOne.")
     private String outputClass;
-    @UriParam(label = "producer,advanced", description = "If set greater than zero, then Camel will use this count value of parameters to replace instead of"
+    @UriParam(label = "advanced", description = "If set greater than zero, then Camel will use this count value of parameters to replace instead of"
             + " querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count, then user may override instead.")
     private int parametersCount;
     @UriParam(label = "producer", description = "If set, will ignore the results of the SQL query and use the existing IN message as the OUT message for the continuation of processing")
@@ -125,10 +125,6 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     public DefaultSqlEndpoint(String uri, Component component, JdbcTemplate jdbcTemplate) {
         super(uri, component);
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     public JdbcTemplate getJdbcTemplate() {
@@ -457,7 +453,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
             return data;
         } else {
             ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
-            RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(rowMapper);
+            RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<>(rowMapper);
             List<Map<String, Object>> data = mapper.extractData(rs);
             return data;
         }

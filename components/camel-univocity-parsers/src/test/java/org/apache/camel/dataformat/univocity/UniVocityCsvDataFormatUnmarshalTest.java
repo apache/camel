@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,7 +38,7 @@ import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
  * Spring DSL.
  */
 public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport {
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint result;
 
     /**
@@ -148,7 +148,7 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final Map<String, DataFormat> tests = new HashMap<String, DataFormat>();
+        final Map<String, DataFormat> tests = new HashMap<>();
 
         // Default reading of CSV
         tests.put("default", new UniVocityCsvDataFormat());

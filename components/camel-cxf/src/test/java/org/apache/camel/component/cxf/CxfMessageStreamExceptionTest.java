@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,6 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
                         public void process(Exchange exchange) throws Exception {
                             SoapFault fault = exchange
                                 .getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
-                            exchange.getOut().setFault(true);
                             exchange.getOut().setBody(fault);
                         }
 

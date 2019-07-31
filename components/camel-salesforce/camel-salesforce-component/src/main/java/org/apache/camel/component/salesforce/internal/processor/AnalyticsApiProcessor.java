@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -31,7 +32,7 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportIns
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
 import org.apache.camel.component.salesforce.internal.client.AnalyticsApiClient;
 import org.apache.camel.component.salesforce.internal.client.DefaultAnalyticsApiClient;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.INCLUDE_DETAILS;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.INSTANCE_ID;
@@ -100,10 +101,10 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
 
     private void processGetRecentReports(final Exchange exchange, final AsyncCallback callback) {
 
-        analyticsClient.getRecentReports(new AnalyticsApiClient.RecentReportsResponseCallback() {
+        analyticsClient.getRecentReports(determineHeaders(exchange), new AnalyticsApiClient.RecentReportsResponseCallback() {
             @Override
-            public void onResponse(List<RecentReport> reportDescription, SalesforceException ex) {
-                processResponse(exchange, reportDescription, ex, callback);
+            public void onResponse(List<RecentReport> reportDescription, Map<String, String> headers, SalesforceException ex) {
+                processResponse(exchange, reportDescription, headers, ex, callback);
             }
         });
     }
@@ -112,10 +113,10 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
 
         final String reportId = getParameter(REPORT_ID, exchange, USE_BODY, NOT_OPTIONAL);
 
-        analyticsClient.getReportDescription(reportId, new AnalyticsApiClient.ReportDescriptionResponseCallback() {
+        analyticsClient.getReportDescription(reportId, determineHeaders(exchange), new AnalyticsApiClient.ReportDescriptionResponseCallback() {
             @Override
-            public void onResponse(ReportDescription reportDescription, SalesforceException ex) {
-                processResponse(exchange, reportDescription, ex, callback);
+            public void onResponse(ReportDescription reportDescription, Map<String, String> headers, SalesforceException ex) {
+                processResponse(exchange, reportDescription, headers, ex, callback);
             }
         });
     }
@@ -138,11 +139,11 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
                 ReportMetadata.class);
         }
 
-        analyticsClient.executeSyncReport(reportId, includeDetails, reportMetadata,
+        analyticsClient.executeSyncReport(reportId, includeDetails, reportMetadata, determineHeaders(exchange),
             new AnalyticsApiClient.ReportResultsResponseCallback() {
                 @Override
-                public void onResponse(AbstractReportResultsBase reportResults, SalesforceException ex) {
-                    processResponse(exchange, reportResults, ex, callback);
+                public void onResponse(AbstractReportResultsBase reportResults, Map<String, String> headers, SalesforceException ex) {
+                    processResponse(exchange, reportResults, headers, ex, callback);
                 }
             });
     }
@@ -165,11 +166,11 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
                 ReportMetadata.class);
         }
 
-        analyticsClient.executeAsyncReport(reportId, includeDetails, reportMetadata,
+        analyticsClient.executeAsyncReport(reportId, includeDetails, reportMetadata, determineHeaders(exchange),
             new AnalyticsApiClient.ReportInstanceResponseCallback() {
                 @Override
-                public void onResponse(ReportInstance reportInstance, SalesforceException ex) {
-                    processResponse(exchange, reportInstance, ex, callback);
+                public void onResponse(ReportInstance reportInstance, Map<String, String> headers, SalesforceException ex) {
+                    processResponse(exchange, reportInstance, headers, ex, callback);
                 }
             });
     }
@@ -178,12 +179,13 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
 
         final String reportId = getParameter(REPORT_ID, exchange, USE_BODY, NOT_OPTIONAL);
 
-        analyticsClient.getReportInstances(reportId, new AnalyticsApiClient.ReportInstanceListResponseCallback() {
-            @Override
-            public void onResponse(List<ReportInstance> reportInstances, SalesforceException ex) {
-                processResponse(exchange, reportInstances, ex, callback);
-            }
-        });
+        analyticsClient.getReportInstances(reportId, determineHeaders(exchange),
+            new AnalyticsApiClient.ReportInstanceListResponseCallback() {
+                @Override
+                public void onResponse(List<ReportInstance> reportInstances, Map<String, String> headers, SalesforceException ex) {
+                    processResponse(exchange, reportInstances, headers, ex, callback);
+                }
+            });
     }
 
     private void processGetReportResults(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -191,15 +193,16 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
         final String reportId = getParameter(REPORT_ID, exchange, USE_BODY, NOT_OPTIONAL);
         final String instanceId = getParameter(INSTANCE_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
 
-        analyticsClient.getReportResults(reportId, instanceId, new AnalyticsApiClient.ReportResultsResponseCallback() {
-            @Override
-            public void onResponse(AbstractReportResultsBase reportResults, SalesforceException ex) {
-                processResponse(exchange, reportResults, ex, callback);
-            }
-        });
+        analyticsClient.getReportResults(reportId, instanceId, determineHeaders(exchange),
+            new AnalyticsApiClient.ReportResultsResponseCallback() {
+                @Override
+                public void onResponse(AbstractReportResultsBase reportResults, Map<String, String> headers, SalesforceException ex) {
+                    processResponse(exchange, reportResults, headers, ex, callback);
+                }
+            });
     }
 
-    private void processResponse(Exchange exchange, Object body, SalesforceException ex, AsyncCallback callback) {
+    private void processResponse(Exchange exchange, Object body, Map<String, String> headers, SalesforceException ex, AsyncCallback callback) {
         final Message out = exchange.getOut();
         if (ex != null) {
             exchange.setException(ex);
@@ -207,21 +210,23 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
             out.setBody(body);
         }
 
-        // copy headers and attachments
-        out.getHeaders().putAll(exchange.getIn().getHeaders());
-        out.getAttachmentObjects().putAll(exchange.getIn().getAttachmentObjects());
+        // copy headers
+        final Message inboundMessage = exchange.getIn();
+        final Map<String, Object> outputHeaders = out.getHeaders();
+        outputHeaders.putAll(inboundMessage.getHeaders());
+        outputHeaders.putAll(headers);
 
         // signal exchange completion
         callback.done(false);
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         ServiceHelper.startService(analyticsClient);
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         // stop the client
         ServiceHelper.stopService(analyticsClient);
     }

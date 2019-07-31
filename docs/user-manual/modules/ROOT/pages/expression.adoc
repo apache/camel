@@ -1,0 +1,122 @@
+[[Expression-Expressions]]
+= Expressions
+
+Expressions and Predicates can then be used to
+create the various xref:enterprise-integration-patterns.adoc[Enterprise
+Integration Patterns] in the DSL or
+XML Configuration like the
+Recipient List. +
+ To support dynamic rules Camel supports pluggable
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Expression.html[Expression]
+strategies using a variety of different Languages.
+
+[[Expression-API]]
+== API
+
+If you are outside of the DSL and want to create your own
+expressions you can either implement the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Expression.html[Expression
+interface], reuse one of the other builders or try the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/builder/ExpressionBuilder.html[ExpressionBuilder
+class].
+
+[[Expression-Expression]]
+=== Expression
+
+The API for a Camel Expression is defined in the
+`org.apache.camel.Expression` interface as shown:
+
+[source,java]
+-------------------------------------------------------------------------------
+public interface Expression {
+
+    /**
+     * Returns the value of the expression on the given exchange
+     *
+     * @param exchange the message exchange on which to evaluate the expression
+     * @param type the expected type of the evaluation result
+     * @return the value of the expression
+     */
+    <T> T evaluate(Exchange exchange, Class<T> type);
+}
+-------------------------------------------------------------------------------
+
+[[Expression-Predicate]]
+=== Predicate
+
+The API for a Camel Predicate is defined in the
+`org.apache.camel.Predicate` interface as shown:
+
+[source,java]
+-------------------------------------------------------------------------------
+public interface Predicate {
+
+    /**
+     * Evaluates the predicate on the message exchange and returns true if this
+     * exchange matches the predicate
+     * 
+     * @param exchange the message exchange
+     * @return true if the predicate matches
+     */
+    boolean matches(Exchange exchange);
+
+}
+-------------------------------------------------------------------------------
+
+[[Expression-ExpressionLanguages]]
+== Expression Languages
+
+The following languages are supported out of the box
+
+* xref:components::bean-language.adoc[Bean Language] for using Java for expressions
+* xref:constant-language.adoc[Constant]
+* xref:header-language.adoc[Header]
+* xref:components::jsonpath-language.adoc[JSonPath]
+* xref:components::mvel-component.adoc[Mvel]
+* xref:components::ognl-language.adoc[OGNL]
+* xref:ref-language.adoc[Ref Language]
+* ExchangeProperty / Property
+* Scripting Languages such as
+** BeanShell
+** JavaScript
+** xref:components::groovy-language.adoc[Groovy]
+* xref:simple-language.adoc[Simple]
+** xref:file-language.adoc[File Language]
+* xref:components::spel-language.adoc[Spring Expression Language]
+* xref:components::sql-component.adoc[SQL]
+* Tokenizer
+* xref:components::xpath-language.adoc[XPath]
+* xref:components::xquery-component.adoc[XQuery]
+* https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
+
+Most of these languages is also supported used as
+xref:parameter-binding-annotations.adoc[Annotation Based
+Expression Language].
+
+[[Expression-UsingExpressionsinyourIDE]]
+== Using Expressions in your IDE
+
+To use different expression and predicates in your IDE you need to
+perform a static import of the builder class for the language(s) you
+wish to use.
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Language(s) |Builder class to import
+
+|Scripting Languages such as
+BeanShell, JavaScript,
+xref:components::groovy-language.adoc[Groovy] |
+
+|xref:components::sql-component.adoc[SQL] |
+
+|xref:components::xpath-language.adoc[XPath] |https://github.com/apache/camel/blob/master/components/camel-xpath/src/main/java/org/apache/camel/language/xpath/XPathBuilder.java[org.apache.camel.builder.xml.XPathBuilder]
+
+|xref:components::xquery-component.adoc[XQuery] |https://github.com/apache/camel/blob/master/components/camel-saxon/src/main/java/org/apache/camel/component/xquery/XQueryBuilder.java[org.apache.camel.builder.saxon.XQueryBuilder]
+|=======================================================================
+
+[[Expression-SeeAlso]]
+=== See Also
+
+* Predicate
+

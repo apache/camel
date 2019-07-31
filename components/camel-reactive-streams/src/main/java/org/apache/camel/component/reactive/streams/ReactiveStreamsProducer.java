@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,43 +18,45 @@ package org.apache.camel.component.reactive.streams;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The Camel reactive-streams producer.
  */
 public class ReactiveStreamsProducer extends DefaultAsyncProducer {
 
-    private ReactiveStreamsEndpoint endpoint;
+    private final ReactiveStreamsEndpoint endpoint;
+    private final String name;
+    private final CamelReactiveStreamsService service;
 
-    private String name;
-
-    private CamelReactiveStreamsService service;
-
-    public ReactiveStreamsProducer(ReactiveStreamsEndpoint endpoint, String name) {
+    public ReactiveStreamsProducer(ReactiveStreamsEndpoint endpoint, String name, CamelReactiveStreamsService service) {
         super(endpoint);
+
         this.endpoint = endpoint;
-        this.name = name;
+        this.name = ObjectHelper.notNull(name, "name");
+        this.service = ObjectHelper.notNull(service, "service");
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        service.sendCamelExchange(name, exchange, (data, error) -> {
+        ReactiveStreamsHelper.attachCallback(exchange, (data, error) -> {
             if (error != null) {
                 data.setException(error);
             }
 
             callback.done(false);
         });
+
+        service.sendCamelExchange(name, exchange);
+
         return false;
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.service = CamelReactiveStreams.get(endpoint.getCamelContext(), endpoint.getServiceName());
         this.service.attachCamelProducer(endpoint.getStream(), this);
     }
 

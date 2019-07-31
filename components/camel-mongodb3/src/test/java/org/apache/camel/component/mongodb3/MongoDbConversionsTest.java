@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -49,7 +49,6 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         template.requestBody("direct:insertMap", m1);
         Document b = testCollection.find(eq(MONGO_ID, "testInsertMap")).first();
         assertNotNull("No record with 'testInsertMap' _id", b);
-
     }
 
     @Test
@@ -79,6 +78,14 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
                              IOConverter.toInputStream("{\"fruits\": [\"apple\", \"banana\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}\n", null));
         Document b = testCollection.find(eq(MONGO_ID, "testInsertJsonString")).first();
         assertNotNull("No record with 'testInsertJsonString' _id", b);
+    }
+
+    @Test
+    public void testInsertJsonInputStreamWithSpaces() throws Exception {
+        assertEquals(0, testCollection.count());
+        template.requestBody("direct:insertJsonString", IOConverter.toInputStream("    {\"test\": [\"test\"], \"_id\": \"testInsertJsonStringWithSpaces\"}\n", null));
+        Document b = testCollection.find(eq(MONGO_ID, "testInsertJsonStringWithSpaces")).first();
+        assertNotNull("No record with 'testInsertJsonStringWithSpaces' _id", b);
     }
 
     @Test

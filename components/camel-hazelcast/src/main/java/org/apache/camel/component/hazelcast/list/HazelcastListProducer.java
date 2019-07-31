@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,6 +28,7 @@ import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 
 /**
  * Implementation of Hazelcast List {@link Producer}.
@@ -45,7 +46,7 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
 
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
-        // get header parameters
+        // GET header parameters
         Integer pos = null;
 
         if (headers.containsKey(HazelcastConstants.OBJECT_POS)) {
@@ -55,39 +56,39 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
             pos = (Integer) headers.get(HazelcastConstants.OBJECT_POS);
         }
 
-        final int operation = lookupOperationNumber(exchange);
+        final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
 
-        case HazelcastConstants.ADD_OPERATION:
+        case ADD:
             this.add(pos, exchange);
             break;
 
-        case HazelcastConstants.GET_OPERATION:
+        case GET:
             this.get(pos, exchange);
             break;
 
-        case HazelcastConstants.SETVALUE_OPERATION:
+        case SET_VALUE:
             this.set(pos, exchange);
             break;
 
-        case HazelcastConstants.REMOVEVALUE_OPERATION:
+        case REMOVE_VALUE:
             this.remove(pos, exchange);
             break;
             
-        case HazelcastConstants.CLEAR_OPERATION:
+        case CLEAR:
             this.clear();
             break;
             
-        case HazelcastConstants.ADD_ALL_OPERATION:
+        case ADD_ALL:
             this.addAll(pos, exchange);
             break;
             
-        case HazelcastConstants.REMOVE_ALL_OPERATION:
+        case REMOVE_ALL:
             this.removeAll(exchange);
             break;
 
-        case HazelcastConstants.RETAIN_ALL_OPERATION:
+        case RETAIN_ALL:
             this.retainAll(exchange);
             break;
             
@@ -102,10 +103,10 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
     private void add(Integer pos, Exchange exchange) {
         final Object body = exchange.getIn().getBody();
         if (null == pos) {
-            // add the specified element to the end of the list
+            // ADD the specified element to the end of the list
             list.add(body);
         } else {
-            // add the specified element at the specified position
+            // ADD the specified element at the specified position
             list.add(pos, body);
         }
     }

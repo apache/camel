@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.ribbon.cloud;
 
 import com.netflix.loadbalancer.LoadBalancerBuilder;
@@ -31,13 +30,13 @@ public class RibbonServerListTest {
     @Test
     public void testFixedServerList() throws Exception {
         ZoneAwareLoadBalancer<RibbonServiceDefinition> lb = LoadBalancerBuilder.<RibbonServiceDefinition>newBuilder()
-            .withDynamicServerList(new RibbonLoadBalancer.RibbonServerList(
+            .withDynamicServerList(new RibbonServiceLoadBalancer.RibbonServerList(
                 "unknown",
                 StaticServiceDiscovery.forServices(
                     new RibbonServiceDefinition("unknown", "localhost", 9090),
                     new RibbonServiceDefinition("unknown", "localhost", 9091)
                 ),
-                PassThroughServiceFilter.INSTANCE))
+                new PassThroughServiceFilter()))
             .withRule(new RoundRobinRule())
             .buildDynamicServerListLoadBalancer();
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.example.cdi.metrics;
+
+import java.util.Random;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -28,7 +29,8 @@ public class UnreliableService {
 
     @Metered
     public void attempt(Exchange exchange) {
-        if (Math.random() < 0.5) {
+        Random rand = new Random();
+        if (rand.nextDouble() < 0.5) {
             throw new RuntimeExchangeException("Random failure", exchange);
         }
     }

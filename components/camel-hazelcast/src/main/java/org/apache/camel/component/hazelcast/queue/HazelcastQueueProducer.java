@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.hazelcast.queue;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
@@ -27,7 +28,7 @@ import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 
 /**
  *
@@ -46,54 +47,64 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
         // get header parameters
-        Object draintToCollection = null;
+        Object drainToCollection = null;
         
         if (headers.containsKey(HazelcastConstants.DRAIN_TO_COLLECTION)) {
-            draintToCollection = headers.get(HazelcastConstants.DRAIN_TO_COLLECTION);
+            drainToCollection = headers.get(HazelcastConstants.DRAIN_TO_COLLECTION);
         }
 
-        final int operation = lookupOperationNumber(exchange);
+        final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
 
-        case -1:
-            //If no operation is specified use ADD.
-        case HazelcastConstants.ADD_OPERATION:
+        case ADD:
             this.add(exchange);
             break;
 
-        case HazelcastConstants.PUT_OPERATION:
+        case PUT:
             this.put(exchange);
             break;
 
-        case HazelcastConstants.POLL_OPERATION:
+        case POLL:
             this.poll(exchange);
             break;
 
-        case HazelcastConstants.PEEK_OPERATION:
+        case PEEK:
             this.peek(exchange);
             break;
 
-        case HazelcastConstants.OFFER_OPERATION:
+        case OFFER:
             this.offer(exchange);
             break;
 
-        case HazelcastConstants.REMOVEVALUE_OPERATION:
+        case REMOVE_VALUE:
             this.remove(exchange);
             break;
 
-        case HazelcastConstants.REMAINING_CAPACITY_OPERATION:
+        case REMAINING_CAPACITY:
             this.remainingCapacity(exchange);
             break;
             
-        case HazelcastConstants.DRAIN_TO_OPERATION:
-            if (ObjectHelper.isNotEmpty(draintToCollection)) {
-                this.drainTo((Collection) draintToCollection, exchange);
-            } else {
-                throw new IllegalArgumentException("Drain to collection header must be specified");
-            }
+        case REMOVE_ALL:
+            this.removeAll(exchange);
             break;
             
+        case REMOVE_IF:
+            this.removeIf(exchange);
+            break;
+            
+        case DRAIN_TO:
+            this.drainTo((Collection) drainToCollection, exchange);
+            break;
+            
+        case TAKE:
+            this.take(exchange);
+            break;
+            
+        case RETAIN_ALL:
+            this.retainAll(exchange);
+            break;
+
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the QUEUE cache.", operation, HazelcastConstants.OPERATION));
         }
@@ -142,5 +153,24 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
     private void drainTo(Collection c, Exchange exchange) {
         exchange.getOut().setBody(this.queue.drainTo(c));
         exchange.getOut().setHeader(HazelcastConstants.DRAIN_TO_COLLECTION, c);
+    }
+    
+    private void removeAll(Exchange exchange) {
+        Collection body = exchange.getIn().getBody(Collection.class);
+        this.queue.removeAll(body);
+    }
+    
+    private void removeIf(Exchange exchange) {
+        Predicate filter = exchange.getIn().getBody(Predicate.class);
+        exchange.getOut().setBody(this.queue.removeIf(filter));
+    }
+    
+    private void take(Exchange exchange) throws InterruptedException {
+        exchange.getOut().setBody(this.queue.take());
+    }
+    
+    private void retainAll(Exchange exchange) {
+        Collection body = exchange.getIn().getBody(Collection.class);
+        this.queue.retainAll(body);
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.ejb;
 
 import java.util.Map;
 import java.util.Properties;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -25,21 +26,19 @@ import javax.naming.NamingException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanHolder;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.jndi.JndiBeanRepository;
 
 /**
  * EJB component to invoke EJBs like the {@link org.apache.camel.component.bean.BeanComponent}.
- *
- * @version 
  */
+@Component("ejb")
 public class EjbComponent extends BeanComponent {
 
     private Context context;
     private Properties properties;
 
     public EjbComponent() {
-        super(EjbEndpoint.class);
     }
 
     @Override
@@ -48,7 +47,7 @@ public class EjbComponent extends BeanComponent {
         answer.setBeanName(remaining);
 
         // plugin registry to lookup in jndi for the EJBs
-        Registry registry = new JndiRegistry(getContext());
+        JndiBeanRepository registry = new JndiBeanRepository(getContext());
         // and register the bean as a holder on the endpoint
         BeanHolder holder = new EjbRegistryBean(registry, getCamelContext(), answer.getBeanName());
         answer.setBeanHolder(holder);

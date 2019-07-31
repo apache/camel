@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test;
 
-import org.apache.camel.impl.DefaultNodeIdFactory;
+import org.apache.camel.impl.engine.DefaultNodeIdFactory;
 
 public class TestSupportNodeIdFactory extends DefaultNodeIdFactory {
 

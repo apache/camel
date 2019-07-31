@@ -1,0 +1,19 @@
+[[HowtodefineastaticCamelconvertermethodinScala-HowtodefineastaticCamelconvertermethodinScala]]
+= How to define a static Camel converter method in Scala?
+
+When you use Scala object you can define the static method for others to
+use. Scala will create a class which implements the singleton pattern
+for that class object.
+
+If the object name is `A`, you can find the singleton class name with `A$`.
+Using `javap` to recompile the class `A` and `A$`, you will find `A` has bunch
+of static method, and `A$` doesn't have any of them. If you specify the
+converter class package name in
+`META-INF/service/org/apache/camel/TypeConverter`, Camel will load the
+class `A` and `A$` at the same time. As the `A$` construction method is not
+supposed to be invoked, Camel will complain that he cannot load the
+converter method which you are supposed to use because he can't create
+an instance of `A$`.
+
+To avoid this kind of error, we need to specify the full class name of `A`
+in the `TypeConverter` to let Camel load the converter directly.

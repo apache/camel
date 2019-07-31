@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,8 +30,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.Customer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -123,14 +123,14 @@ public class JpaWithNamedQueryAndParametersTest extends Assert {
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
         SimpleRegistry registry = new SimpleRegistry();
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("custName", "Willem");
         // bind the params
-        registry.put("params", params);
+        registry.bind("params", params);
         camelContext.setRegistry(registry);
         
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startServices(template, camelContext);
+        ServiceHelper.startService(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
@@ -147,6 +147,6 @@ public class JpaWithNamedQueryAndParametersTest extends Assert {
 
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopServices(consumer, template, camelContext);
+        ServiceHelper.stopService(consumer, template, camelContext);
     }
 }

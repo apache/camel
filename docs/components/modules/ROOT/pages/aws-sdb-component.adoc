@@ -1,0 +1,267 @@
+[[aws-sdb-component]]
+= AWS SimpleDB Component
+
+*Available as of Camel version 2.9*
+
+The sdb component supports storing and retrieving data from/to
+https://aws.amazon.com/sdb[Amazon's SDB] service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon SDB. More information is available at
+https://aws.amazon.com/sdb[Amazon SDB].
+
+== URI Format
+
+[source,java]
+------------------------------
+aws-sdb://domainName[?options]
+------------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS SimpleDB component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS SimpleDB endpoint is configured using URI syntax:
+
+----
+aws-sdb:domainName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *domainName* | *Required* The name of the domain currently worked with. |  | String
+|===
+
+
+=== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *amazonSDBClient* (producer) | To use the AmazonSimpleDB as the client |  | AmazonSimpleDB
+| *consistentRead* (producer) | Determines whether or not strong consistency should be enforced when data is read. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *maxNumberOfDomains* (producer) | The maximum number of domain names you want returned. The range is 1 to 100. |  | Integer
+| *operation* (producer) | Operation to perform | PutAttributes | SdbOperations
+| *proxyHost* (producer) | To define a proxy host when instantiating the SDB client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the SDB client |  | Integer
+| *region* (producer) | The region in which SDB client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-aws-sdb-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-sdb.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.aws-sdb.enabled* | Whether to enable auto configuration of the aws-sdb component. This is enabled by default. |  | Boolean
+| *camel.component.aws-sdb.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+Required SDB component options
+
+You have to provide the amazonSDBClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/sdb[Amazon's SDB].
+
+== Usage
+
+=== Message headers evaluated by the SDB producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsSdbAttributes` |`Collection<Attribute>` |List of attributes to be acted upon.
+
+|`CamelAwsSdbAttributeNames` |`Collection<String>` |The names of the attributes to be retrieved.
+
+|`CamelAwsSdbConsistentRead` |`Boolean` |Determines whether or not strong consistency should be enforced when
+data is read.
+
+|`CamelAwsSdbDeletableItems` |`Collection<DeletableItem>` |A list of items on which to perform the delete operation in a batch.
+
+|`CamelAwsSdbDomainName` |`String` |The name of the domain currently worked with.
+
+|`CamelAwsSdbItemName` |`String` |The unique key for this item
+
+|`CamelAwsSdbMaxNumberOfDomains` |`Integer` |The maximum number of domain names you want returned. The range is 1 *
+to 100.
+
+|`CamelAwsSdbNextToken` |`String` |A string specifying where to start the next list of domain/item names.
+
+|`CamelAwsSdbOperation` |`String` |To override the operation from the URI options.
+
+|`CamelAwsSdbReplaceableAttributes` |`Collection<ReplaceableAttribute>` |List of attributes to put in an Item.
+
+|`CamelAwsSdbReplaceableItems` |`Collection<ReplaceableItem>` |A list of items to put in a Domain.
+
+|`CamelAwsSdbSelectExpression` |`String` |The expression used to query the domain.
+
+|`CamelAwsSdbUpdateCondition` |`UpdateCondition` |The update condition which, if specified, determines whether the
+specified attributes will be updated/deleted or not.
+|=======================================================================
+
+=== Message headers set during DomainMetadata operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsSdbTimestamp` |`Integer` |The data and time when metadata was calculated, in Epoch (UNIX) seconds.
+
+|`CamelAwsSdbItemCount` |`Integer` |The number of all items in the domain.
+
+|`CamelAwsSdbAttributeNameCount` |`Integer` |The number of unique attribute names in the domain.
+
+|`CamelAwsSdbAttributeValueCount` |`Integer` |The number of all attribute name/value pairs in the domain.
+
+|`CamelAwsSdbAttributeNameSize` |`Long` |The total size of all unique attribute names in the domain, in bytes.
+
+|`CamelAwsSdbAttributeValueSize` |`Long` |The total size of all attribute values in the domain, in bytes.
+
+|`CamelAwsSdbItemNameSize` |`Long` |The total size of all item names in the domain, in bytes.
+|=======================================================================
+
+=== Message headers set during GetAttributes operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsSdbAttributes` |`List<Attribute>` |The list of attributes returned by the operation.
+|=======================================================================
+
+=== Message headers set during ListDomains operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsSdbDomainNames` |`List<String>` |A list of domain names that match the expression.
+
+|`CamelAwsSdbNextToken` |`String` |An opaque token indicating that there are more domains than the
+specified MaxNumberOfDomains still available.
+|=======================================================================
+
+=== Message headers set during Select operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsSdbItems` |`List<Item>` |A list of items that match the select expression.
+
+|`CamelAwsSdbNextToken` |`String` |An opaque token indicating that more items than MaxNumberOfItems were
+matched, the response size exceeded 1 megabyte, or the execution time
+exceeded 5 seconds.
+|=======================================================================
+
+=== Advanced AmazonSimpleDB configuration
+
+If you need more control over the `AmazonSimpleDB` instance
+configuration you can create your own instance and refer to it from the
+URI:
+
+[source,java]
+----------------------------------------------------
+from("direct:start")
+.to("aws-sdb://domainName?amazonSDBClient=#client");
+----------------------------------------------------
+
+The `#client` refers to a `AmazonSimpleDB` in the
+Registry.
+
+For example if your Camel Application is running behind a firewall:
+
+[source,java]
+--------------------------------------------------------------------------------------
+AWSCredentials awsCredentials = new BasicAWSCredentials("myAccessKey", "mySecretKey");
+ClientConfiguration clientConfiguration = new ClientConfiguration();
+clientConfiguration.setProxyHost("http://myProxyHost");
+clientConfiguration.setProxyPort(8080);
+
+AmazonSimpleDB client = new AmazonSimpleDBClient(awsCredentials, clientConfiguration);
+
+registry.bind("client", client);
+--------------------------------------------------------------------------------------
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws-sdb</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
+== See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* AWS Component

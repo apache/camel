@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,97 +16,52 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.ResourceQuota;
-import io.fabric8.kubernetes.api.model.ResourceQuotaSpec;
+import io.fabric8.kubernetes.api.model.ResourceQuotaBuilder;
+import io.fabric8.kubernetes.api.model.ResourceQuotaListBuilder;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport {
 
-    @Test
-    public void listTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        List<ResourceQuota> result = template.requestBody("direct:list", "",
-                List.class);
+    @Rule
+    public KubernetesServer server = new KubernetesServer();
 
-        assertTrue(result.size() == 0);
+    @BindToRegistry("kubernetesClient")
+    public KubernetesClient getClient() throws Exception {
+        return server.getClient();
     }
 
     @Test
-    public void createAndDeleteResourceQuota() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        Exchange ex = template.request("direct:create", new Processor() {
+    public void listTest() throws Exception {
+        server.expect().withPath("/api/v1/resourcequotas").andReturn(200, new ResourceQuotaListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        List<ResourceQuota> result = template.requestBody("direct:list", "", List.class);
+
+        assertEquals(3, result.size());
+    }
+
+    @Test
+    public void deleteResourceQuota() throws Exception {
+        ResourceQuota rq1 = new ResourceQuotaBuilder().withNewMetadata().withName("rq1").withNamespace("test").and().build();
+        server.expect().withPath("/api/v1/namespaces/test/resourcequotas/rq1").andReturn(200, rq1).once();
+
+        Exchange ex = template.request("direct:delete", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME,
-                        "test");
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS,
-                        labels);
-                ResourceQuotaSpec rsSpec = new ResourceQuotaSpec();
-                Map<String, Quantity> mp = new HashMap<String, Quantity>();
-                mp.put("pods", new Quantity("100"));
-                rsSpec.setHard(mp);
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_RESOURCE_QUOTA_SPEC,
-                        rsSpec);
-            }
-        });
-
-        ResourceQuota rs = ex.getOut().getBody(ResourceQuota.class);
-
-        assertEquals(rs.getMetadata().getName(), "test");
-        
-        ex = template.request("direct:get", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME,
-                        "test");
-            }
-        });
-        
-        ResourceQuota rsGet = ex.getOut().getBody(ResourceQuota.class);
-        
-        assertEquals(rsGet.getMetadata().getName(), "test");
-        assertEquals(rsGet.getSpec().getHard().get("pods"), new Quantity("100"));
-
-        ex = template.request("direct:delete", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME,
-                        "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, "rq1");
             }
         });
 
@@ -120,21 +75,8 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=listResourcesQuota",
-                                host, authToken);
-                from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=listResourcesQuotaByLabels",
-                                host, authToken);
-                from("direct:get")
-                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=getResourceQuota",
-                                host, authToken);
-                from("direct:create")
-                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=createResourceQuota",
-                                host, authToken);
-                from("direct:delete")
-                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=deleteResourceQuota",
-                                host, authToken);
+                from("direct:list").to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=listResourcesQuota");
+                from("direct:delete").to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=deleteResourceQuota");
             }
         };
     }

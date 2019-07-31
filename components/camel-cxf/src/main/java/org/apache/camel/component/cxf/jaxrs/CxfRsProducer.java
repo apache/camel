@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,7 +39,6 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -47,9 +46,10 @@ import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LRUCache;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
  * JAXRS client, it will turn the normal Object invocation to a RESTful request
  * according to resource annotation.  Any response will be bound to Camel exchange.
  */
-public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
+public class CxfRsProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsProducer.class);
 
@@ -164,6 +164,12 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
         setupClientMatrix(client, exchange);
         setupClientQueryAndHeaders(client, exchange);
 
+        // ensure the CONTENT_TYPE header can be retrieved
+        if (ObjectHelper.isEmpty(inMessage.getHeader(Exchange.CONTENT_TYPE, String.class))
+                && ObjectHelper.isNotEmpty(client.getHeaders().get(Exchange.CONTENT_TYPE))) {
+            inMessage.setHeader(Exchange.CONTENT_TYPE, client.getHeaders().get(Exchange.CONTENT_TYPE).get(0));
+        }
+
         //Build message entity
         Entity<Object> entity = binding.bindCamelMessageToRequestEntity(body, inMessage, exchange);
 
@@ -193,6 +199,8 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
         } else {
             target = cfb.createWithValues(varValues);
         }
+
+        ((CxfRsEndpoint) getEndpoint()).getChainedCxfRsEndpointConfigurer().configureClient(target);
 
         setupClientHeaders(target, exchange);
 
@@ -230,7 +238,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
             String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
             if (queryString != null) {
                 maps = getQueryParametersFromQueryString(queryString,
-                                                         IOHelper.getCharsetName(exchange));
+                                                         ExchangeHelper.getCharsetName(exchange));
             }
         }
         if (maps == null) {
@@ -258,7 +266,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
             if (requestURL != null && matrixStart > 0) {
                 matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);
                 if (matrixParam != null) {
-                    maps = getMatrixParametersFromMatrixString(matrixParam, IOHelper.getCharsetName(exchange));
+                    maps = getMatrixParametersFromMatrixString(matrixParam, ExchangeHelper.getCharsetName(exchange));
                 }
             }
             if (maps != null) {
@@ -415,7 +423,9 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
         } else {
             target = cfb.createWithValues(varValues);
         }
-        
+
+        ((CxfRsEndpoint) getEndpoint()).getChainedCxfRsEndpointConfigurer().configureClient(target);
+
         setupClientHeaders(target, exchange);
         
         // find out the method which we want to invoke
@@ -469,7 +479,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
     }
     
     private Map<String, String> getQueryParametersFromQueryString(String queryString, String charset) throws UnsupportedEncodingException {
-        Map<String, String> answer  = new LinkedHashMap<String, String>();
+        Map<String, String> answer  = new LinkedHashMap<>();
         for (String param : queryString.split("&")) {
             String[] pair = param.split("=", 2);
             if (pair.length == 2) {
@@ -528,7 +538,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
     }
 
     private Map<String, String> getMatrixParametersFromMatrixString(String matrixString, String charset) throws UnsupportedEncodingException {
-        Map<String, String> answer  = new LinkedHashMap<String, String>();
+        Map<String, String> answer  = new LinkedHashMap<>();
         for (String param : matrixString.split(";")) {
             String[] pair = param.split("=", 2);
             if (pair.length == 2) {
@@ -606,7 +616,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
 
     protected Map<String, String> parseResponseHeaders(Object response, Exchange camelExchange) {
 
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         if (response instanceof Response) {
 
             for (Map.Entry<String, List<Object>> entry : ((Response) response).getMetadata().entrySet()) {
@@ -627,7 +637,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
             } else {
                 body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Request body = " + body);
+                    LOG.trace("Request body = {}", body);
                 }
             }
         }
@@ -832,14 +842,16 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
      * Cache contains {@link org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean}
      */
     class ClientFactoryBeanCache {
-        private LRUSoftCache<String, JAXRSClientFactoryBean> cache;    
+        private Map<String, JAXRSClientFactoryBean> cache;
         
         ClientFactoryBeanCache(final int maxCacheSize) {
-            this.cache = new LRUSoftCache<String, JAXRSClientFactoryBean>(maxCacheSize);
+            this.cache = LRUCacheFactory.newLRUSoftCache(maxCacheSize);
         }
         
         public void start() throws Exception {
-            cache.resetStatistics();
+            if (cache instanceof LRUCache) {
+                ((LRUCache) cache).resetStatistics();
+            }
         }
         
         public void stop() throws Exception {

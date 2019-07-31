@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.http4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
@@ -31,6 +31,21 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
 
     private int port2;
     private HttpServer localServer;
+    
+    @BindToRegistry("x509HostnameVerifier")
+    private NoopHostnameVerifier hostnameVerifier = new NoopHostnameVerifier();
+    
+    @BindToRegistry("sslContextParameters")
+    private SSLContextParameters sslContextParameters = new SSLContextParameters();
+    
+    @BindToRegistry("sslContextParameters2")
+    private SSLContextParameters sslContextParameters2 = new SSLContextParameters();
+    
+    @BindToRegistry("http4s-foo")
+    private HttpComponent httpComponent = new HttpComponent();
+    
+    @BindToRegistry("http4s-bar")
+    private HttpComponent httpComponent1 = new HttpComponent();
     
     @Before
     @Override
@@ -56,19 +71,6 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
             localServer.stop();
         }
     }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("x509HostnameVerifier", new AllowAllHostnameVerifier());
-        registry.bind("sslContextParameters", new SSLContextParameters());
-        registry.bind("sslContextParameters2", new SSLContextParameters());
-
-        registry.bind("http4s-foo", new HttpComponent());
-        registry.bind("http4s-bar", new HttpComponent());
-
-        return registry;
-    }
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -83,10 +85,10 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
                 port2 = AvailablePortFinder.getNextAvailable(localServer.getLocalPort());
 
                 from("direct:foo")
-                        .to("http4s-foo://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParametersRef=sslContextParameters");
+                        .to("http4s-foo://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters");
 
                 from("direct:bar")
-                        .to("http4s-bar://127.0.0.1:" + port2 + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParametersRef=sslContextParameters2");
+                        .to("http4s-bar://127.0.0.1:" + port2 + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
             }
         });
 

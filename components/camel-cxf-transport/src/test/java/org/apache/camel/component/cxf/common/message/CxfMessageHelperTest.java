@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,8 +29,8 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.io.CachedOutputStream;
@@ -108,7 +108,7 @@ public class CxfMessageHelperTest extends Assert {
         IOHelper.copy(is, os);
         is.close();
         os.writeCacheTo(out);
-        return out.toString();
+        return out.toString().replaceAll("(?s)<\\?.*\\?>", "").replaceAll("(?s)<!--.*-->", "").replaceAll("(\\r)?\\n", "");
 
     }
 

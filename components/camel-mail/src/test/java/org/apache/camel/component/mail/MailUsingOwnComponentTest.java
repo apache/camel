@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,11 +27,6 @@ import org.jvnet.mock_javamail.Mailbox;
  * Unit test for CAMEL-1249
  */
 public class MailUsingOwnComponentTest extends CamelTestSupport {
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
