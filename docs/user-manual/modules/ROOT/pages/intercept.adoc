@@ -2,9 +2,7 @@
 = Intercept
 
 The intercept feature in Camel supports intercepting
-Exchanges while they are _on route_.  +
- We have overhauled the Intercept in Camel 2.0 so
-the following information is based on Camel 2.0.
+Exchanges while they are _on route_. 
 
 Camel supports three kinds of interceptors:
 
@@ -26,6 +24,8 @@ will by default *not stop*.
 * `skip` when used with `interceptSendToEndpoint` will *skip* sending
 the Exchange to the original intended endpoint.
 Camel will by default *not skip*.
+* `afterUrl` when using with `interceptSendToEndpoint` allows to send
+the Exchange to an endpoint url after the detour and sending to the original endpoint.
 * `interceptFrom` and `interceptSendToEndpoint` supports endpoint URI
 matching by: exact uri, wildcard, regular expression. See advanced
 section.
@@ -142,12 +142,10 @@ not continue routing in the original intended route path.
 [[Intercept-InterceptSendToEndpoint]]
 == InterceptSendToEndpoint
 
-*Available as of Camel 2.0*
-
 Intercept send to endpoint is triggered when an
 Exchange is being sent to the intercepted endpoint.
 This allows you to route the Exchange to a
-Detour or do some custom processing before the
+detour or do some custom processing before the
 Exchange is sent to the original intended
 destination. You can also skip sending to the intended destination. By
 default Camel will send to the original intended destination after the
@@ -155,7 +153,7 @@ intercepted route completes. And as the regular intercept you can also
 define an `when` Predicate so we only intercept if
 the Predicate evaluates to *true*. This allows you
 do do a bit of filtering, to only intercept when certain criteria is
-meet.
+meet. And finally you can send the Exchange to an endpoint with the `afterUrl` option. You can use this to process the response from the original endpoint.
 
 Let start with a simple example, where we want to intercept when an
 Exchange is being sent to `mock:foo`:
@@ -169,15 +167,15 @@ original intended endpoint.
 
 *Conditional skipping*
 
-The combination of `skipSendToEndpoint` with a `when` predicate behaves
-differently depending on the Camel version:
+The combination of `skipSendToEndpoint` with a `when` predicate only occurs if the `when` predicate is matched, leading to more natural logic altogether.
 
-* *Before Camel 2.10:* the skipping is applied unconditionally whether
-the `when` predicate is matched or not, i.e. the `when` predicate only
-determines whether the body of the interception will execute, but it
-does not control skipping behaviour
-* *As of Camel 2.10:* the skipping only occurs if the `when` predicate
-is matched, leading to more natural logic altogether.
+[source,java]
+-------------------------------------
+interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint()
+    .when(simple("${body} == 'Hello World'")
+    .to("log:intercepted");
+-------------------------------------
+
 
 [[Intercept-UsingfromSpringDSL.2]]
 === Using from Spring DSL
@@ -192,6 +190,45 @@ language for the Predicate:
 And the 3rd with the `skip`, notice skip is set with the
 `skipSendToOriginalEndpoint` attribute on the *interceptSendToEndpoint*
 tag:
+
+[source,xml]
+--------------------------------------
+<camelContext ...>
+    <interceptSendToEndpoint uri="mock:foo" skipSendToOriginalEndpoint="true">
+        <when><simple>${body} == 'Hello World'</simple></when>
+        <to uri="log:intercepted"/>
+    </intercept>
+
+    <route>
+        <from uri="jms:queue:order"/>
+        <to uri="bean:validateOrder"/>
+        <to uri="bean:handleOrder"/>
+    </route>
+</camelContext>
+--------------------------------------
+
+[[Intercept-InterceptSendToEndpoint with afterUrl]]
+== InterceptSendToEndpoint with afterUrl
+
+The interceptor allows to call an endpoint after the intercepted message has been sent to the original endpoint, which allows you to process the response from the original endpoint. For example to log the request/response from sending to all JMS endpoints you can do:
+
+[source,java]
+-------------------------------------
+interceptSendToEndpoint("jms*").afterUrl("log:jms-reply")
+    .to("log:jms-request");
+-------------------------------------
+
+And in XML DSL:
+
+[source,xml]
+--------------------------------------
+<camelContext ...>
+    <interceptSendToEndpoint uri="jms*" afterUrl="log:jms-reply">
+        <to uri="log:jms-request"/>
+    </intercept>
+</camelContext>
+--------------------------------------
+
 
 [[Intercept-AdvancedusageofIntercpt]]
 == Advanced usage of Intercpt
@@ -254,10 +291,5 @@ time. +
 routes registered as routes in `CamelContext`. So if you dynamic
 construct a `Consumer` using the Camel API and consumes an
 Endpoint then the `interceptFrom` is not triggered.
-
-[[Intercept-SeeAlso]]
-== See Also
-
-* xref:architecture.adoc[Architecture]
 
 
