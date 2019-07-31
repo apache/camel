@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.undertow.ws;
 
-import io.undertow.websockets.core.WebSocketChannel;
-import io.undertow.websockets.spi.WebSocketHttpExchange;
-
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -31,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import io.undertow.websockets.core.WebSocketChannel;
+import io.undertow.websockets.spi.WebSocketHttpExchange;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -385,7 +385,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
             Assert.assertNotNull(key);
             final WebSocketChannel channel = in.getHeader(UndertowConstants.CHANNEL, WebSocketChannel.class);
             Assert.assertNotNull(channel);
-            if(in.getHeader(UndertowConstants.EVENT_TYPE_ENUM, EventType.class) == EventType.ONOPEN){
+            if (in.getHeader(UndertowConstants.EVENT_TYPE_ENUM, EventType.class) == EventType.ONOPEN) {
                 final WebSocketHttpExchange transportExchange = in.getHeader(UndertowConstants.EXCHANGE, WebSocketHttpExchange.class);
                 Assert.assertNotNull(transportExchange);
             }

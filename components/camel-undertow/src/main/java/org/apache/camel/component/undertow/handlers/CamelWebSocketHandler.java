@@ -44,6 +44,7 @@ import io.undertow.websockets.core.BufferedTextMessage;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.core.WebSockets;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -95,18 +96,14 @@ public class CamelWebSocketHandler implements HttpHandler {
      * Send the given {@code message} to the given {@code channel} and report the outcome to the given {@code callback}
      * within the given {@code timeoutMillis}.
      *
-     * @param channel
-     *            the channel to sent the {@code message} to
-     * @param message
-     *            the message to send
-     * @param callback
-     *            where to report the outcome
-     * @param timeoutMillis
-     *            the timeout in milliseconds
+     * @param channel       the channel to sent the {@code message} to
+     * @param message       the message to send
+     * @param callback      where to report the outcome
+     * @param timeoutMillis the timeout in milliseconds
      * @throws IOException
      */
     private static void send(WebSocketChannel channel, Object message, ExtendedWebSocketCallback callback,
-            long timeoutMillis) throws IOException {
+                             long timeoutMillis) throws IOException {
         if (channel.isOpen()) {
             if (message instanceof String) {
                 WebSockets.sendText((String) message, channel, callback);
@@ -130,7 +127,9 @@ public class CamelWebSocketHandler implements HttpHandler {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         this.delegate.handleRequest(exchange);
@@ -140,20 +139,17 @@ public class CamelWebSocketHandler implements HttpHandler {
      * Send the given {@code message} to one or more channels selected using the given {@code peerFilter} within the
      * given {@code timeout} and report the outcome to the given {@code camelExchange} and {@code camelCallback}.
      *
-     * @param peerFilter
-     *            a {@link Predicate} to apply to the set of peers obtained via {@link #delegate}'s
-     *            {@link WebSocketProtocolHandshakeHandler#getPeerConnections()}
-     * @param message
-     *            the message to send
+     * @param peerFilter    a {@link Predicate} to apply to the set of peers obtained via {@link #delegate}'s
+     *                      {@link WebSocketProtocolHandshakeHandler#getPeerConnections()}
+     * @param message       the message to send
      * @param camelExchange to notify about the outcome
      * @param camelCallback to notify about the outcome
-     * @param timeout
-     *            in milliseconds
+     * @param timeout       in milliseconds
      * @return {@code true} if the execution finished synchronously or {@code false} otherwise
      * @throws IOException
      */
     public boolean send(Predicate<WebSocketChannel> peerFilter, Object message, final int timeout,
-            final Exchange camelExchange, final AsyncCallback camelCallback) throws IOException {
+                        final Exchange camelExchange, final AsyncCallback camelCallback) throws IOException {
         List<WebSocketChannel> targetPeers = delegate.getPeerConnections().stream().filter(peerFilter).collect(Collectors.toList());
         if (targetPeers.isEmpty()) {
             camelCallback.done(true);
