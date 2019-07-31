@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.netty4;
 
+import io.netty.channel.ChannelHandler;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
-
-import io.netty.channel.ChannelHandler;
 
 public class NettyCustomCodecTest extends BaseNettyTest {
 
