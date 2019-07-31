@@ -61,7 +61,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private String persistenceUnit = "camel";
     @UriParam(defaultValue = "true")
     private boolean joinTransaction = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean sharedEntityManager;
     @UriParam(defaultValue = "-1")
     private int maximumResults = -1;
@@ -80,7 +80,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private String nativeQuery;
     @UriParam(label = "consumer", optionalPrefix = "consumer.", defaultValue = "PESSIMISTIC_WRITE")
     private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
-    @UriParam(optionalPrefix = "consumer.", multiValue = true)
+    @UriParam(label = "consumer,advanced", optionalPrefix = "consumer.", multiValue = true)
     private Map<String, Object> parameters;
     @UriParam(optionalPrefix = "consumer.")
     private Class<?> resultClass;
@@ -97,7 +97,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean flushOnSend = true;
     @UriParam(label = "producer")
     private boolean usePersist;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     private boolean usePassedInEntityManager;
     @UriParam(label = "producer")
     private boolean remove;
@@ -106,7 +106,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     @UriParam(label = "advanced", prefix = "emf.", multiValue = true)
     private Map<String, Object> entityManagerProperties;
-
 
     public JpaEndpoint() {
     }

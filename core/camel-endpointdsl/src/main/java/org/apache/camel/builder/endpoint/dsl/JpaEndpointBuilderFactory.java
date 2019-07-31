@@ -126,44 +126,6 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * This key/value mapping is used for building the query parameters. It
-         * is expected to be of the generic type java.util.Map where the keys
-         * are the named parameters of a given JPA query and the values are
-         * their corresponding effective values you want to select for. When
-         * it's used for producer, Simple expression can be used as a parameter
-         * value. It allows you to retrieve parameter values from the message
-         * body, header and etc.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointConsumerBuilder parameters(
-                Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
-            return this;
-        }
-        /**
-         * This key/value mapping is used for building the query parameters. It
-         * is expected to be of the generic type java.util.Map where the keys
-         * are the named parameters of a given JPA query and the values are
-         * their corresponding effective values you want to select for. When
-         * it's used for producer, Simple expression can be used as a parameter
-         * value. It allows you to retrieve parameter values from the message
-         * body, header and etc.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointConsumerBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
-            return this;
-        }
-        /**
          * The JPA persistence unit used by default.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -217,34 +179,6 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder resultClass(String resultClass) {
             setProperty("resultClass", resultClass);
-            return this;
-        }
-        /**
-         * Whether to use Spring's SharedEntityManager for the
-         * consumer/producer. Note in most cases joinTransaction should be set
-         * to false as this is not an EXTENDED EntityManager.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointConsumerBuilder sharedEntityManager(
-                boolean sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
-            return this;
-        }
-        /**
-         * Whether to use Spring's SharedEntityManager for the
-         * consumer/producer. Note in most cases joinTransaction should be set
-         * to false as this is not an EXTENDED EntityManager.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointConsumerBuilder sharedEntityManager(
-                String sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
         /**
@@ -938,6 +872,44 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * This key/value mapping is used for building the query parameters. It
+         * is expected to be of the generic type java.util.Map where the keys
+         * are the named parameters of a given JPA query and the values are
+         * their corresponding effective values you want to select for. When
+         * it's used for producer, Simple expression can be used as a parameter
+         * value. It allows you to retrieve parameter values from the message
+         * body, header and etc.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJpaEndpointConsumerBuilder parameters(
+                Map<String, Object> parameters) {
+            setProperty("parameters", parameters);
+            return this;
+        }
+        /**
+         * This key/value mapping is used for building the query parameters. It
+         * is expected to be of the generic type java.util.Map where the keys
+         * are the named parameters of a given JPA query and the values are
+         * their corresponding effective values you want to select for. When
+         * it's used for producer, Simple expression can be used as a parameter
+         * value. It allows you to retrieve parameter values from the message
+         * body, header and etc.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJpaEndpointConsumerBuilder parameters(String parameters) {
+            setProperty("parameters", parameters);
+            return this;
+        }
+        /**
          * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
@@ -1020,6 +992,34 @@ public interface JpaEndpointBuilderFactory {
         default AdvancedJpaEndpointConsumerBuilder entityManagerProperties(
                 String entityManagerProperties) {
             setProperty("entityManagerProperties", entityManagerProperties);
+            return this;
+        }
+        /**
+         * Whether to use Spring's SharedEntityManager for the
+         * consumer/producer. Note in most cases joinTransaction should be set
+         * to false as this is not an EXTENDED EntityManager.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedJpaEndpointConsumerBuilder sharedEntityManager(
+                boolean sharedEntityManager) {
+            setProperty("sharedEntityManager", sharedEntityManager);
+            return this;
+        }
+        /**
+         * Whether to use Spring's SharedEntityManager for the
+         * consumer/producer. Note in most cases joinTransaction should be set
+         * to false as this is not an EXTENDED EntityManager.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedJpaEndpointConsumerBuilder sharedEntityManager(
+                String sharedEntityManager) {
+            setProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
         /**
@@ -1137,44 +1137,6 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * This key/value mapping is used for building the query parameters. It
-         * is expected to be of the generic type java.util.Map where the keys
-         * are the named parameters of a given JPA query and the values are
-         * their corresponding effective values you want to select for. When
-         * it's used for producer, Simple expression can be used as a parameter
-         * value. It allows you to retrieve parameter values from the message
-         * body, header and etc.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointProducerBuilder parameters(
-                Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
-            return this;
-        }
-        /**
-         * This key/value mapping is used for building the query parameters. It
-         * is expected to be of the generic type java.util.Map where the keys
-         * are the named parameters of a given JPA query and the values are
-         * their corresponding effective values you want to select for. When
-         * it's used for producer, Simple expression can be used as a parameter
-         * value. It allows you to retrieve parameter values from the message
-         * body, header and etc.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointProducerBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
-            return this;
-        }
-        /**
          * The JPA persistence unit used by default.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1228,34 +1190,6 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointProducerBuilder resultClass(String resultClass) {
             setProperty("resultClass", resultClass);
-            return this;
-        }
-        /**
-         * Whether to use Spring's SharedEntityManager for the
-         * consumer/producer. Note in most cases joinTransaction should be set
-         * to false as this is not an EXTENDED EntityManager.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointProducerBuilder sharedEntityManager(
-                boolean sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
-            return this;
-        }
-        /**
-         * Whether to use Spring's SharedEntityManager for the
-         * consumer/producer. Note in most cases joinTransaction should be set
-         * to false as this is not an EXTENDED EntityManager.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointProducerBuilder sharedEntityManager(
-                String sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
         /**
@@ -1372,36 +1306,6 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If set to true, then Camel will use the EntityManager from the header
-         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
-         * on the component/endpoint. This allows end users to control which
-         * entity manager will be in use.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default JpaEndpointProducerBuilder usePassedInEntityManager(
-                boolean usePassedInEntityManager) {
-            setProperty("usePassedInEntityManager", usePassedInEntityManager);
-            return this;
-        }
-        /**
-         * If set to true, then Camel will use the EntityManager from the header
-         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
-         * on the component/endpoint. This allows end users to control which
-         * entity manager will be in use.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default JpaEndpointProducerBuilder usePassedInEntityManager(
-                String usePassedInEntityManager) {
-            setProperty("usePassedInEntityManager", usePassedInEntityManager);
-            return this;
-        }
-        /**
          * Indicates to use entityManager.persist(entity) instead of
          * entityManager.merge(entity). Note: entityManager.persist(entity)
          * doesn't work for detached entities (where the EntityManager has to
@@ -1439,6 +1343,36 @@ public interface JpaEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default JpaEndpointProducerBuilder basic() {
             return (JpaEndpointProducerBuilder) this;
+        }
+        /**
+         * If set to true, then Camel will use the EntityManager from the header
+         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
+         * on the component/endpoint. This allows end users to control which
+         * entity manager will be in use.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedJpaEndpointProducerBuilder usePassedInEntityManager(
+                boolean usePassedInEntityManager) {
+            setProperty("usePassedInEntityManager", usePassedInEntityManager);
+            return this;
+        }
+        /**
+         * If set to true, then Camel will use the EntityManager from the header
+         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
+         * on the component/endpoint. This allows end users to control which
+         * entity manager will be in use.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedJpaEndpointProducerBuilder usePassedInEntityManager(
+                String usePassedInEntityManager) {
+            setProperty("usePassedInEntityManager", usePassedInEntityManager);
+            return this;
         }
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
@@ -1491,6 +1425,34 @@ public interface JpaEndpointBuilderFactory {
         default AdvancedJpaEndpointProducerBuilder entityManagerProperties(
                 String entityManagerProperties) {
             setProperty("entityManagerProperties", entityManagerProperties);
+            return this;
+        }
+        /**
+         * Whether to use Spring's SharedEntityManager for the
+         * consumer/producer. Note in most cases joinTransaction should be set
+         * to false as this is not an EXTENDED EntityManager.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedJpaEndpointProducerBuilder sharedEntityManager(
+                boolean sharedEntityManager) {
+            setProperty("sharedEntityManager", sharedEntityManager);
+            return this;
+        }
+        /**
+         * Whether to use Spring's SharedEntityManager for the
+         * consumer/producer. Note in most cases joinTransaction should be set
+         * to false as this is not an EXTENDED EntityManager.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedJpaEndpointProducerBuilder sharedEntityManager(
+                String sharedEntityManager) {
+            setProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
         /**
@@ -1606,43 +1568,6 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * This key/value mapping is used for building the query parameters. It
-         * is expected to be of the generic type java.util.Map where the keys
-         * are the named parameters of a given JPA query and the values are
-         * their corresponding effective values you want to select for. When
-         * it's used for producer, Simple expression can be used as a parameter
-         * value. It allows you to retrieve parameter values from the message
-         * body, header and etc.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointBuilder parameters(Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
-            return this;
-        }
-        /**
-         * This key/value mapping is used for building the query parameters. It
-         * is expected to be of the generic type java.util.Map where the keys
-         * are the named parameters of a given JPA query and the values are
-         * their corresponding effective values you want to select for. When
-         * it's used for producer, Simple expression can be used as a parameter
-         * value. It allows you to retrieve parameter values from the message
-         * body, header and etc.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
-            return this;
-        }
-        /**
          * The JPA persistence unit used by default.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1695,34 +1620,6 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointBuilder resultClass(String resultClass) {
             setProperty("resultClass", resultClass);
-            return this;
-        }
-        /**
-         * Whether to use Spring's SharedEntityManager for the
-         * consumer/producer. Note in most cases joinTransaction should be set
-         * to false as this is not an EXTENDED EntityManager.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointBuilder sharedEntityManager(
-                boolean sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
-            return this;
-        }
-        /**
-         * Whether to use Spring's SharedEntityManager for the
-         * consumer/producer. Note in most cases joinTransaction should be set
-         * to false as this is not an EXTENDED EntityManager.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointBuilder sharedEntityManager(
-                String sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
     }
@@ -1787,6 +1684,34 @@ public interface JpaEndpointBuilderFactory {
         default AdvancedJpaEndpointBuilder entityManagerProperties(
                 String entityManagerProperties) {
             setProperty("entityManagerProperties", entityManagerProperties);
+            return this;
+        }
+        /**
+         * Whether to use Spring's SharedEntityManager for the
+         * consumer/producer. Note in most cases joinTransaction should be set
+         * to false as this is not an EXTENDED EntityManager.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedJpaEndpointBuilder sharedEntityManager(
+                boolean sharedEntityManager) {
+            setProperty("sharedEntityManager", sharedEntityManager);
+            return this;
+        }
+        /**
+         * Whether to use Spring's SharedEntityManager for the
+         * consumer/producer. Note in most cases joinTransaction should be set
+         * to false as this is not an EXTENDED EntityManager.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedJpaEndpointBuilder sharedEntityManager(
+                String sharedEntityManager) {
+            setProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
         /**
