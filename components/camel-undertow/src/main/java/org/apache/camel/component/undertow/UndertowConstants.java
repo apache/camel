@@ -23,6 +23,8 @@ public final class UndertowConstants {
     public static final String SEND_TO_ALL = "websocket.sendToAll";
     public static final String EVENT_TYPE = "websocket.eventType";
     public static final String EVENT_TYPE_ENUM = "websocket.eventTypeEnum";
+    public static final String CHANNEL = "websocket.channel";
+    public static final String EXCHANGE = "websocket.exchange";
 
     /**
      * WebSocket peers related events the {@link UndertowConsumer} sends to the Camel route.
