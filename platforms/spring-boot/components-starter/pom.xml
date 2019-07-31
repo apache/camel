@@ -214,7 +214,7 @@
     <module>camel-hipchat-starter</module>
     <module>camel-hl7-starter</module>
     <module>camel-http-common-starter</module>
-    <module>camel-http4-starter</module>
+    <module>camel-http-starter</module>
     <module>camel-hystrix-starter</module>
     <module>camel-ical-starter</module>
     <module>camel-iec60870-starter</module>

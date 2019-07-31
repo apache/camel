@@ -1299,12 +1299,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-http4</artifactId>
+        <artifactId>camel-http</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-http4-starter</artifactId>
+        <artifactId>camel-http-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

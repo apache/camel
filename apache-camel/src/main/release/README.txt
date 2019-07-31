@@ -98,7 +98,6 @@ software:
   * camel-cxf can be configured for secure communications
   * camel-ftp can be configured for secure communications
   * camel-http can be configured to use https
-  * camel-http4 can be configured to use https
   * camel-jasypt can be used for secure communications
   * camel-jetty can be configured to use https
   * camel-mail can be configured for secure communications

@@ -71,7 +71,7 @@
         <module>camel-groovy</module>
         <module>camel-attachments</module>
         <module>camel-http-common</module>
-        <module>camel-http4</module>
+        <module>camel-http</module>
         <module>camel-hystrix</module>
         <module>camel-ipfs</module>
         <module>camel-jetty-common</module>

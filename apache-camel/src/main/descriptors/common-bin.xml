@@ -161,7 +161,7 @@
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-http-common</include>
-        <include>org.apache.camel:camel-http4</include>
+        <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-hystrix</include>
         <include>org.apache.camel:camel-ical</include>
         <include>org.apache.camel:camel-iec60870</include>
@@ -503,7 +503,7 @@
         <include>org.apache.camel:camel-hipchat-starter</include>
         <include>org.apache.camel:camel-hl7-starter</include>
         <include>org.apache.camel:camel-http-common-starter</include>
-        <include>org.apache.camel:camel-http4-starter</include>
+        <include>org.apache.camel:camel-http-starter</include>
         <include>org.apache.camel:camel-hystrix-starter</include>
         <include>org.apache.camel:camel-ical-starter</include>
         <include>org.apache.camel:camel-iec60870-starter</include>
