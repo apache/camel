@@ -154,7 +154,6 @@
         <module>camel-drill</module>
         <module>camel-dropbox</module>
         <module>camel-ehcache</module>
-        <module>camel-ejb</module>
         <module>camel-elasticsearch-rest</module>
         <module>camel-elsql</module>
         <module>camel-etcd</module>
