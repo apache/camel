@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -26,18 +27,12 @@ import org.junit.Test;
 
 public class SjmsComponentRestartTest extends CamelTestSupport {
 
+    @BindToRegistry("activemqCF")
+    private ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+    
     @Override
     public boolean isUseRouteBuilder() {
         return false;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
-
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("activemqCF", connectionFactory);
-        return jndi;
     }
 
     @Test
