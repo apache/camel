@@ -95,10 +95,10 @@
             <artifactId>camel-swagger-java-starter</artifactId>
         </dependency>
 
-        <!-- use http4 as rest producer -->
+        <!-- use http as rest producer -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-http4-starter</artifactId>
+            <artifactId>camel-http-starter</artifactId>
         </dependency>
 
         <!-- test -->

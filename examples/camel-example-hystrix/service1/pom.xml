@@ -79,7 +79,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-http4-starter</artifactId>
+            <artifactId>camel-http-starter</artifactId>
         </dependency>
 
     </dependencies>
