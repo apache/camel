@@ -30,7 +30,7 @@ public class Http4RouteTest extends CamelTestSupport {
     
     @Test
     public void sendHttpGetRequestTest() {
-        String response = template.requestBody("http4://localhost:" + port1 
+        String response = template.requestBody("http://localhost:" + port1 
                          + "/test?aa=bb&httpClient.socketTimeout=10000&httpClient.connectTimeout=10000"
                          + "&bridgeEndpoint=true&throwExceptionOnFailure=false", null, String.class);
         assertEquals("Get a wrong response", "aa=bb", response);
@@ -76,9 +76,9 @@ public class Http4RouteTest extends CamelTestSupport {
                     
                 });
                 
-                from("direct:start1").to("http4://localhost:" + port1 + "/test");
+                from("direct:start1").to("http://localhost:" + port1 + "/test");
                 
-                from("direct:start2").to("http4://localhost:" + port2 + "/test");
+                from("direct:start2").to("http://localhost:" + port2 + "/test");
                 
                 
                    
