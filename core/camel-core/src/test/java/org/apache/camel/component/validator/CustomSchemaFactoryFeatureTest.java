@@ -40,19 +40,6 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
         ValidatorComponent v = new ValidatorComponent();
         v.setCamelContext(context);
         v.createEndpoint("validator:org/apache/camel/component/validator/unsecuredSchema.xsd?schemaFactory=#MySchemaFactory");
-       
-        try {
-            v.createEndpoint("validator:org/apache/camel/component/validator/unsecuredSchema.xsd");
-            // we should get an security exception in JDK 7 with Oracle or Sun JDK
-            String jdkVendor = System.getProperty("java.vm.vendor");
-            if (jdkVendor != null && (jdkVendor.indexOf("Oracle") > 0 || jdkVendor.indexOf("Sun") > 0)) {
-                fail("Expect exception here");
-            }
-        } catch (Exception ex) {
-            // do nothing here
-        }
     }
-    
-    
 
 }
