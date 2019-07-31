@@ -85,7 +85,7 @@ public class CamelWebSocketHandler implements HttpHandler {
             @Override
             public void handleEvent(WebSocketChannel channel) {
                 sendEventNotificationIfNeeded((String) channel.getAttribute(UndertowConstants.CONNECTION_KEY),
-                        EventType.ONCLOSE);
+                        null, channel, EventType.ONCLOSE);
             }
         };
         this.delegate = Handlers.websocket(callback);
@@ -181,12 +181,12 @@ public class CamelWebSocketHandler implements HttpHandler {
         }
     }
 
-    void sendEventNotificationIfNeeded(String connectionKey, EventType eventType) {
+    void sendEventNotificationIfNeeded(String connectionKey, WebSocketHttpExchange transportExchange, WebSocketChannel channel, EventType eventType) {
         synchronized (consumerLock) {
             synchronized (consumerLock) {
                 if (consumer != null) {
                     if (consumer.getEndpoint().isFireWebSocketChannelEvents()) {
-                        consumer.sendEventNotification(connectionKey, eventType);
+                        consumer.sendEventNotification(connectionKey, transportExchange, channel, eventType);
                     }
                 } else {
                     LOG.debug("No consumer to handle a peer {} event type {}", connectionKey, eventType);
@@ -315,7 +315,7 @@ public class CamelWebSocketHandler implements HttpHandler {
                 synchronized (consumerLock) {
                     if (consumer != null) {
                         final Object outMsg = consumer.getEndpoint().isUseStreaming() ? new ByteArrayInputStream(bytes) : bytes;
-                        consumer.sendMessage(connectionKey, outMsg);
+                        consumer.sendMessage(connectionKey, channel, outMsg);
                     } else {
                         LOG.debug("No consumer to handle message received: {}", message);
                     }
@@ -337,7 +337,7 @@ public class CamelWebSocketHandler implements HttpHandler {
             synchronized (consumerLock) {
                 if (consumer != null) {
                     final Object outMsg = consumer.getEndpoint().isUseStreaming() ? new StringReader(text) : text;
-                    consumer.sendMessage(connectionKey, outMsg);
+                    consumer.sendMessage(connectionKey, channel, outMsg);
                 } else {
                     LOG.debug("No consumer to handle message received: {}", message);
                 }
@@ -362,7 +362,7 @@ public class CamelWebSocketHandler implements HttpHandler {
             channel.setAttribute(UndertowConstants.CONNECTION_KEY, connectionKey);
             channel.getReceiveSetter().set(receiveListener);
             channel.addCloseTask(closeListener);
-            sendEventNotificationIfNeeded(connectionKey, EventType.ONOPEN);
+            sendEventNotificationIfNeeded(connectionKey, exchange, channel, EventType.ONOPEN);
             channel.resumeReceives();
         }
 
