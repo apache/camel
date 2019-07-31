@@ -276,7 +276,7 @@ camel routes without them knowing
 ** xref:components::hbase-component.adoc[HBase]
 ** xref:components::hdfs2-component.adoc[HDFS2]
 ** xref:components::hipchat-component.adoc[Hipchat]
-** xref:components::http4-component.adoc[HTTP4]
+** xref:components::http-component.adoc[HTTP]
 ** xref:components::iec60870-client-component.adoc[IEC 60870 Client]
 ** xref:components::iec60870-server-component.adoc[IEC 60870 Server]
 ** xref:components::ignite-cache-component.adoc[Ignite Cache]
