@@ -6,17 +6,89 @@ Components
 
 
 // components: START
-Number of Components: 2 in 1 JAR artifacts (1 deprecated)
+Number of Components: 26 in 1 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Component | Available From | Description
 
+| link:src/main/docs/bean-component.adoc[Bean] (camel-core) +
+`bean:beanName` | 1.0 | The bean component is for invoking Java beans from Camel.
+
 | link:src/main/docs/binding-component.adoc[Binding] (camel-core) +
 `binding:bindingName:delegateUri` | 2.11 | *deprecated* The binding component is used for as a of wrapping an Endpoint in a contract with a data format.
 
+| link:src/main/docs/browse-component.adoc[Browse] (camel-core) +
+`browse:name` | 1.3 | The browse component is used for viewing the messages received on endpoints that supports BrowsableEndpoint.
+
+| link:src/main/docs/class-component.adoc[Class] (camel-core) +
+`class:beanName` | 2.4 | The Class Component is for invoking Java Classes (Java beans) from Camel.
+
+| link:src/main/docs/controlbus-component.adoc[Control Bus] (camel-core) +
+`controlbus:command:language` | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
+
+| link:src/main/docs/dataformat-component.adoc[Data Format] (camel-core) +
+`dataformat:name:operation` | 2.12 | The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
+
+| link:src/main/docs/dataset-component.adoc[Dataset] (camel-core) +
+`dataset:name` | 1.3 | The dataset component provides a mechanism to easily perform load & soak testing of your system.
+
+| link:src/main/docs/direct-component.adoc[Direct] (camel-core) +
+`direct:name` | 1.0 | The direct component provides direct, synchronous call to another endpoint from the same CamelContext.
+
+| link:src/main/docs/direct-vm-component.adoc[Direct VM] (camel-core) +
+`direct-vm:name` | 2.10 | The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.
+
+| link:src/main/docs/file-component.adoc[File] (camel-core) +
+`file:directoryName` | 1.0 | The file component is used for reading or writing files.
+
+| link:src/main/docs/language-component.adoc[Language] (camel-core) +
+`language:languageName:resourceUri` | 2.5 | The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
+
+| link:src/main/docs/log-component.adoc[Log] (camel-core) +
+`log:loggerName` | 1.1 | The log component logs message exchanges to the underlying logging mechanism.
+
+| link:src/main/docs/mock-component.adoc[Mock] (camel-core) +
+`mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
+
+| link:src/main/docs/properties-component.adoc[Properties] (camel-core) +
+`properties:key` | 2.3 | The properties component is used for using property placeholders in endpoint uris.
+
+| link:src/main/docs/ref-component.adoc[Ref] (camel-core) +
+`ref:name` | 1.2 | The ref component is used for lookup of existing endpoints bound in the Registry.
+
+| link:src/main/docs/rest-component.adoc[REST] (camel-core) +
+`rest:method:path:uriTemplate` | 2.14 | The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
+
+| link:src/main/docs/rest-api-component.adoc[REST API] (camel-core) +
+`rest-api:path/contextIdPattern` | 2.16 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
+
+| link:src/main/docs/saga-component.adoc[Saga] (camel-core) +
+`saga:action` | 2.21 | The saga component provides access to advanced options for managing the flow in the Saga EIP.
+
+| link:src/main/docs/scheduler-component.adoc[Scheduler] (camel-core) +
+`scheduler:name` | 2.15 | The scheduler component is used for generating message exchanges when a scheduler fires.
+
+| link:src/main/docs/seda-component.adoc[SEDA] (camel-core) +
+`seda:name` | 1.1 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
+
+| link:src/main/docs/stub-component.adoc[Stub] (camel-core) +
+`stub:name` | 2.10 | The stub component provides a simple way to stub out any physical endpoints while in development or testing.
+
 | link:src/main/docs/test-component.adoc[Test] (camel-core) +
 `test:name` | 1.3 | The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
+
+| link:src/main/docs/timer-component.adoc[Timer] (camel-core) +
+`timer:timerName` | 1.0 | The timer component is used for generating message exchanges when a timer fires.
+
+| link:src/main/docs/validator-component.adoc[Validator] (camel-core) +
+`validator:resourceUri` | 1.1 | Validates the payload of a message using XML Schema and JAXP Validation.
+
+| link:src/main/docs/vm-component.adoc[VM] (camel-core) +
+`vm:name` | 1.1 | The vm component provides asynchronous call to another endpoint from the same CamelContext.
+
+| link:src/main/docs/xslt-component.adoc[XSLT] (camel-core) +
+`xslt:resourceUri` | 1.3 | Transforms the message using a XSLT template.
 
 |===
 // components: END
@@ -34,7 +106,7 @@ Data Formats
 
 
 // dataformats: START
-Number of Data Formats: 4 in 43 JAR artifacts (5 deprecated)
+Number of Data Formats: 4 in 39 JAR artifacts (5 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -64,11 +136,13 @@ Expression Languages
 
 
 // languages: START
-Number of Languages: 8 in 1 JAR artifacts (0 deprecated)
+Number of Languages: 10 in 1 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Language | Available From | Description
+
+| link:src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
 
 | link:src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | To use a constant value in Camel expressions or predicates.
 
@@ -85,6 +159,8 @@ Number of Languages: 8 in 1 JAR artifacts (0 deprecated)
 | link:src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
 
 | link:src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
+
+| link:src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
 |===
 // languages: END
 

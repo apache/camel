@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 311 in 211 JAR artifacts (24 deprecated)
+Number of Components: 311 in 211 JAR artifacts (25 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -21,7 +21,7 @@ Number of Components: 311 in 211 JAR artifacts (24 deprecated)
 `flink:endpointType` | 2.18 | The flink component can be used to send DataSet jobs to Apache Flink cluster.
 
 | link:camel-pulsar/src/main/docs/pulsar-component.adoc[Apache Pulsar] (camel-pulsar) +
-`pulsar:persistence://tenant/namespace/topic` |  | Camel Apache Pulsar Component
+`pulsar:uri` | 2.24 | Camel Apache Pulsar Component
 
 | link:camel-spark/src/main/docs/spark-component.adoc[Apache Spark] (camel-spark) +
 `spark:endpointType` | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
@@ -243,7 +243,7 @@ Number of Components: 311 in 211 JAR artifacts (24 deprecated)
 `ehcache:cacheName` | 2.18 | The ehcache component enables you to perform caching operations using Ehcache as cache implementation.
 
 | link:camel-ejb/src/main/docs/ejb-component.adoc[EJB] (camel-ejb) +
-`ejb:beanName` | 2.4 | The ejb component is for invoking EJB Java beans from Camel.
+`ejb:beanName` | 2.4 | *deprecated* The ejb component is for invoking EJB Java beans from Camel.
 
 | link:camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc[Elastichsearch Rest] (camel-elasticsearch-rest) +
 `elasticsearch-rest:clusterName` | 2.21 | The elasticsearch component is used for interfacing with ElasticSearch server using REST API.
