@@ -337,6 +337,8 @@ The annotation `org.apache.camel.language.SpEL` has been moved to `org.apache.ca
 
 The annotation `org.apache.camel.InvokeOnHeader` and `org.apache.camel.InvokeOnHeaders` has been moved to the `org.apache.camel.spi` package.
 
+The class `OutputStreamBuilder` has been moved from package `org.apache.camel.converter.stream` to `org.apache.camel.support.builder` package.
+
 Rename various APIs in camel-core to fix the typo `chiper` to `cipher`.
 
 The classes `ReloadStrategySupport` and `FileWatcherReloadStrategy` has been removed.

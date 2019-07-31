@@ -33,7 +33,7 @@ import org.apache.camel.component.crypto.cms.exception.CryptoCmsNoCertificateFor
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsSignatureException;
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsSignatureInvalidContentHashException;
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsVerifierCertificateNotValidException;
-import org.apache.camel.converter.stream.OutputStreamBuilder;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.util.IOHelper;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.CMSAttributes;
