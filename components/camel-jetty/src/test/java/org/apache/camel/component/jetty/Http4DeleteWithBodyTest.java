@@ -26,14 +26,14 @@ public class Http4DeleteWithBodyTest extends BaseJettyTest {
     @Test
     public void testHttp4DeleteWithBodyFalseTest() throws Exception {
         byte[] data = "World".getBytes();
-        String out = template.requestBodyAndHeader("http4://localhost:{{port}}/test", data, Exchange.HTTP_METHOD, "DELETE", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/test", data, Exchange.HTTP_METHOD, "DELETE", String.class);
         assertEquals("Bye ", out);
     }
 
     @Test
     public void testHttp4DeleteWithBodyTrueTest() throws Exception {
         byte[] data = "World".getBytes();
-        String out = template.requestBodyAndHeader("http4://localhost:{{port}}/test?deleteWithBody=true", data, Exchange.HTTP_METHOD, "DELETE", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/test?deleteWithBody=true", data, Exchange.HTTP_METHOD, "DELETE", String.class);
         assertEquals("Bye World", out);
     }
 
