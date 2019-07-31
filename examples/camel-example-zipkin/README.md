@@ -71,7 +71,7 @@ You can then click on each span and get annotated data from the Camel exchange a
 
 ### Installing Zipkin Server 
 
-The quickest way to get Zipkin started is to fetch the [latest released server](https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec) as a self-contained executable jar.
+The quickest way to get Zipkin started is to fetch the [latest released server](https://search.maven.org/remote_content?g=io.zipkin&a=zipkin-server&v=LATEST&c=exec) as a self-contained executable jar.
 
 ```bash
 curl -sSL https://zipkin.io/quickstart.sh | bash -s
@@ -89,7 +89,7 @@ Finally, browse to http://localhost:9411 to find traces!
 
 If you want to try Zipkin locally then you quickly try that using Docker.
 
-There is a [quickstart guide at zipkin](http://zipkin.io/pages/quickstart.html) that has further instructions.
+There is a [quickstart guide at zipkin](https://zipkin.io/pages/quickstart.html) that has further instructions.
 Remember to configure the IP address and port number in the `application.properties` file.
 
 You can find the IP using `docker-machine ls`
