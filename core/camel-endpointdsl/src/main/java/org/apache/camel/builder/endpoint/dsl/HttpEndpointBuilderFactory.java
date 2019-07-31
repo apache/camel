@@ -33,7 +33,7 @@ public interface HttpEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the HTTP4 component.
+     * Builder for endpoint for the HTTP component.
      */
     public interface HttpEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedHttpEndpointBuilder advanced() {
@@ -246,7 +246,7 @@ public interface HttpEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the HTTP4 component.
+     * Advanced builder for endpoint for the HTTP component.
      */
     public interface AdvancedHttpEndpointBuilder
             extends
@@ -663,12 +663,12 @@ public interface HttpEndpointBuilderFactory {
         PATCH;
     }
     /**
-     * HTTP4 (camel-http4)
+     * HTTP (camel-http)
      * For calling out to external HTTP servers using Apache HTTP Client 4.x.
      * 
      * Category: http
      * Available as of version: 2.3
-     * Maven coordinates: org.apache.camel:camel-http4
+     * Maven coordinates: org.apache.camel:camel-http
      * 
      * Syntax: <code>http:httpUri</code>
      * 
