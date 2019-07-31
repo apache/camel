@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
@@ -57,9 +58,8 @@ public class ApprovalExamplesIntegrationTest extends AbstractApprovalIntegration
         assertNotNull("Result should be received", result);
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        final JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("approvalTemplate")
+    public ApprovalRequest approvalReq() throws Exception {
 
         final ApprovalRequest approvalTemplate = new ApprovalRequest();
         approvalTemplate.setActionType(ApprovalRequest.Action.Submit);
@@ -67,9 +67,7 @@ public class ApprovalExamplesIntegrationTest extends AbstractApprovalIntegration
         approvalTemplate.setProcessDefinitionNameOrId("Test_Account_Process");
         approvalTemplate.setSkipEntryCriteria(true);
 
-        jndi.bind("approvalTemplate", approvalTemplate);
-
-        return jndi;
+        return approvalTemplate;
     }
 
     @Override
