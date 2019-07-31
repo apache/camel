@@ -25,7 +25,6 @@ import static java.util.Arrays.asList;
 
 import com.google.common.truth.Truth;
 import org.apache.camel.component.spark.annotations.RddCallback;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
