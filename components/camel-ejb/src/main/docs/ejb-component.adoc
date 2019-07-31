@@ -1,7 +1,8 @@
-[[ejb-component]]
-== EJB Component
+== EJB Component (deprecated)
 
 *Available as of Camel version 2.4*
+*Available as of Camel version 2.4*
+
 
 The *ejb:* component binds EJBs to Camel message exchanges.
 

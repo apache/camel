@@ -28,7 +28,7 @@
 
     <artifactId>camel-ejb</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: EJB</name>
+    <name>Camel :: EJB (deprecated)</name>
     <description>Camel EJB support</description>
 
     <properties>
