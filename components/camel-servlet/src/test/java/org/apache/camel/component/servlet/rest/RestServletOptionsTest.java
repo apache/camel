@@ -28,8 +28,8 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class RestServletOptionsTest extends ServletCamelRouterTestSupport {
-    
-	@BindToRegistry("myBinding")
+
+    @BindToRegistry("myBinding")
     private ServletRestHttpBinding restHttpBinding = new ServletRestHttpBinding();
 
     @Test
@@ -70,17 +70,9 @@ public class RestServletOptionsTest extends ServletCamelRouterTestSupport {
             public void configure() throws Exception {
                 // configure to use servlet on localhost
                 restConfiguration().component("servlet").host("localhost").endpointProperty("httpBinding", "#myBinding");
-                
+
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .get("v1/customers")
-                        .to("mock:customers")
-                    .put("v1/id/{id}")
-                        .to("mock:id")
-                    .get("v2/options")
-                        .to("mock:options")
-                    .post("v2/options")
-                        .to("mock:options");
+                rest("/users/").get("v1/customers").to("mock:customers").put("v1/id/{id}").to("mock:id").get("v2/options").to("mock:options").post("v2/options").to("mock:options");
             }
         };
     }

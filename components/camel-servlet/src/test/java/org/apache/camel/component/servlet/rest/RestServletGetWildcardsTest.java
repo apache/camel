@@ -31,8 +31,8 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
-    
-	@BindToRegistry("myBinding")
+
+    @BindToRegistry("myBinding")
     private ServletRestHttpBinding restHttpBinding = new ServletRestHttpBinding();
 
     @Test
@@ -66,27 +66,19 @@ public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
             public void configure() throws Exception {
                 // configure to use servlet on localhost
                 restConfiguration().component("servlet").host("localhost").endpointProperty("httpBinding", "#myBinding");
-                
+
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .get("{id}/basic")
-                        .route()
-                        .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
-                        }).endRest()
-                    .get("{id}/{query}")
-                        .route()
-                        .to("mock:query")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Goofy");
-                            }
-                        }).endRest();
+                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        exchange.getOut().setBody(id + ";Donald Duck");
+                    }
+                }).endRest().get("{id}/{query}").route().to("mock:query").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        exchange.getOut().setBody(id + ";Goofy");
+                    }
+                }).endRest();
             }
         };
     }
