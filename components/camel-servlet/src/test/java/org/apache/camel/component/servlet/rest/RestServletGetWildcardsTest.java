@@ -20,6 +20,8 @@ import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,12 +32,8 @@ import org.junit.Test;
 
 public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myBinding", new ServletRestHttpBinding());
-        return jndi;
-    }
+	@BindToRegistry("myBinding")
+    private ServletRestHttpBinding restHttpBinding = new ServletRestHttpBinding();
 
     @Test
     public void testServletProducerGet() throws Exception {
