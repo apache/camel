@@ -29,7 +29,7 @@ public class JettyRestRedirectTest extends CamelTestSupport {
 
     @Test
     public void testRedirectInvocation() throws Exception {
-        String response = template.requestBody("http4://localhost:" + port + "/metadata/profile/tag", "<hello>Camel</hello>", String.class);
+        String response = template.requestBody("http://localhost:" + port + "/metadata/profile/tag", "<hello>Camel</hello>", String.class);
         assertEquals("It should support the redirect out of box.", "Mock profile", response);
     }
 
@@ -40,7 +40,7 @@ public class JettyRestRedirectTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                restConfiguration().component("jetty").host("localhost").scheme("http").port(port).producerComponent("http4");
+                restConfiguration().component("jetty").host("localhost").scheme("http").port(port).producerComponent("http");
                 rest("/metadata/profile")
                     .get("/{id}").to("direct:profileLookup")
                     .post("/tag").to("direct:tag");
