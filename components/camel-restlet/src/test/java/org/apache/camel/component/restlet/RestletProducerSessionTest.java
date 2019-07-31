@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.common.cookie.InstanceCookieHandler;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class RestletProducerSessionTest extends RestletTestSupport {
