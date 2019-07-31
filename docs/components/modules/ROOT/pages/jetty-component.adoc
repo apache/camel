@@ -227,7 +227,7 @@ The component supports 35 options, which are listed below.
 
 == Message Headers
 
-Camel uses the same message headers as the xref:http4-component.adoc[HTTP]
+Camel uses the same message headers as the xref:http-component.adoc[HTTP]
 component. 
 It also uses (Exchange.HTTP_CHUNKED,CamelHttpChunked)
 header to turn on or turn off the chuched encoding on the camel-jetty

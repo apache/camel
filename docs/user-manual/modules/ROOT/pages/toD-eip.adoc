@@ -165,7 +165,6 @@ But a better solution would be if the HTTP component could be optimised to handl
 This is with the following components, which have been optimised for `toD`:
 
 - camel-http
-- camel-http4
 - camel-jetty
 - camel-netty4-http
 - camel-undertow
