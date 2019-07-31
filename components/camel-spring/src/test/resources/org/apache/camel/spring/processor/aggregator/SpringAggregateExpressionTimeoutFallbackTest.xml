@@ -32,9 +32,9 @@
                 <correlationExpression>
                     <simple>${header.id}</simple>
                 </correlationExpression>
-                <completionTimeout>
+                <completionTimeoutExpression>
                     <header>timeout</header>
-                </completionTimeout>
+                </completionTimeoutExpression>
                 <to uri="mock:aggregated"/>
             </aggregate>
         </route>

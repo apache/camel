@@ -139,6 +139,21 @@ To
 
 And the same for `<setProperty>`.
 
+### <aggregate> EIP in XML DSL
+
+The aggregte EIP have renamed the expressions (not the attributes) for setting correlation size/timeout to avoid a name clash, so migrate:
+
+                <completionSize>
+                    <header>mySize</header>
+                </completionSize>
+To
+
+                <completionSizeExpression>
+                    <header>mySize</header>
+                </completionSizeExpression>
+
+And the same for `<completionTimeout`.
+
 #### camel-cdi
 
 Support for multiple CamelContext's has been removed, and therefore `@ContextName` has been removed. Instead use standard CDI annotations such as `@Named` and `@ApplicationScoped`.
