@@ -111,12 +111,4 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
         return intercepted;
     }
 
-    public Processor getInterceptedProcessor(int index) {
-        // avoid out of bounds
-        if (index <= intercepted.size() - 1) {
-            return intercepted.get(index);
-        } else {
-            return null;
-        }
-    }
 }
