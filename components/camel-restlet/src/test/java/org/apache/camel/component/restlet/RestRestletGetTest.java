@@ -25,9 +25,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class RestRestletGetTest extends RestletTestSupport {
-    
-	@BindToRegistry("myBinding")
-	private DefaultRestletBinding binding = new DefaultRestletBinding();
+
+    @BindToRegistry("myBinding")
+    private DefaultRestletBinding binding = new DefaultRestletBinding();
 
     @Test
     public void testRestletProducerGet() throws Exception {
@@ -54,16 +54,12 @@ public class RestRestletGetTest extends RestletTestSupport {
                 restConfiguration().component("restlet").host("localhost").port(portNum).endpointProperty("restletBinding", "#myBinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .get("{id}/basic")
-                        .route()
-                        .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
-                        });
+                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        exchange.getOut().setBody(id + ";Donald Duck");
+                    }
+                });
             }
         };
     }
