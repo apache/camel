@@ -134,7 +134,6 @@ The following components support rest consumer (Rest DSL):
 The following components support rest producer:
 
 * camel-http
-* camel-http4
 * camel-netty4-http
 * camel-jetty
 * camel-restlet
@@ -219,11 +218,11 @@ from("direct:start")
 ----
 
 You can use the `producerComponent` to select which Camel component to use as the HTTP client, for example
-to use http4 you can do:
+to use http you can do:
 
 [source,java]
 ----
-restConfiguration().host("myserver:8080/foo").producerComponent("http4");
+restConfiguration().host("myserver:8080/foo").producerComponent("http");
 
 from("direct:start")
   .to("rest:get:hello/{me}");

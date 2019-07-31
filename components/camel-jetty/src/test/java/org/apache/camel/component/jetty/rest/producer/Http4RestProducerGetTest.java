@@ -37,7 +37,7 @@ public class Http4RestProducerGetTest extends BaseJettyTest {
             public void configure() throws Exception {
                 restConfiguration().component("jetty").host("localhost").port(getPort())
                         // use camel-http4 as rest client
-                        .producerComponent("http4");
+                        .producerComponent("http");
 
                 from("direct:start")
                         .to("rest:get:users/{id}/basic");

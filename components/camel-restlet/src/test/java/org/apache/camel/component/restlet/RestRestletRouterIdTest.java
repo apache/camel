@@ -62,17 +62,17 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
     @Test
     public void test() throws Exception {
 
-        Assert.assertEquals("\"test1\"", template.requestBodyAndHeader("http4://localhost:" + port + "/app/test1", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
+        Assert.assertEquals("\"test1\"", template.requestBodyAndHeader("http://localhost:" + port + "/app/test1", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
 
-        Assert.assertEquals("\"test2\"", template.requestBodyAndHeader("http4://localhost:" + port + "/app/test2", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
+        Assert.assertEquals("\"test2\"", template.requestBodyAndHeader("http://localhost:" + port + "/app/test2", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
 
-        Assert.assertEquals("\"test3\"", template.requestBodyAndHeader("http4://localhost:" + port + "/app/test3", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
+        Assert.assertEquals("\"test3\"", template.requestBodyAndHeader("http://localhost:" + port + "/app/test3", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
 
-        Assert.assertEquals("\"test4\"", template.requestBodyAndHeader("http4://localhost:" + port + "/app/test4", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
+        Assert.assertEquals("\"test4\"", template.requestBodyAndHeader("http://localhost:" + port + "/app/test4", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
 
-        Assert.assertEquals("\"test5\"", template.requestBodyAndHeader("http4://localhost:" + port + "/app/test5", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
+        Assert.assertEquals("\"test5\"", template.requestBodyAndHeader("http://localhost:" + port + "/app/test5", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
 
         Assert.assertEquals("\"REST-TEST\"",
-                            template.requestBodyAndHeader("http4://localhost:" + port + "/app/REST-TEST", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
+                            template.requestBodyAndHeader("http://localhost:" + port + "/app/REST-TEST", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
     }
 }

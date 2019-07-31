@@ -49,7 +49,7 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
     }
 
     protected String getClientURI() {
-        return "http4://localhost:%d/TestResource/some-id?sslContextParameters=#clientSSLContextParameters";
+        return "http://localhost:%d/TestResource/some-id?sslContextParameters=#clientSSLContextParameters";
     }
 
     protected void decorateRestConfiguration(RestConfigurationDefinition restConfig) {

@@ -37,7 +37,7 @@ public class Http4RestProducerPutTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use localhost with the given port
-                restConfiguration().producerComponent("http4").component("jetty").host("localhost").port(getPort());
+                restConfiguration().producerComponent("http").component("jetty").host("localhost").port(getPort());
 
                 from("direct:start")
                         .to("rest:put:users/{id}");
