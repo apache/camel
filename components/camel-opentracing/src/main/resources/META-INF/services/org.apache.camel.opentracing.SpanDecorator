@@ -27,7 +27,6 @@ org.apache.camel.opentracing.decorators.DirectvmSpanDecorator
 org.apache.camel.opentracing.decorators.DisruptorSpanDecorator
 org.apache.camel.opentracing.decorators.DisruptorvmSpanDecorator
 org.apache.camel.opentracing.decorators.ElasticsearchSpanDecorator
-org.apache.camel.opentracing.decorators.Http4SpanDecorator
 org.apache.camel.opentracing.decorators.HttpSpanDecorator
 org.apache.camel.opentracing.decorators.IronmqSpanDecorator
 org.apache.camel.opentracing.decorators.JdbcSpanDecorator
