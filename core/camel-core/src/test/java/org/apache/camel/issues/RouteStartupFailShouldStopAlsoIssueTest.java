@@ -67,16 +67,11 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         assertTrue(context.getRouteController().getRouteStatus("foo").isStopped());
         assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
 
-        assertFalse(context.getRouteController().getRouteStatus("bar").isStopped());
-        assertTrue(context.getRouteController().getRouteStatus("bar").isStarted());
-
-        context.stop();
-
-        assertTrue(context.getRouteController().getRouteStatus("foo").isStopped());
-        assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
-
         assertTrue(context.getRouteController().getRouteStatus("bar").isStopped());
         assertFalse(context.getRouteController().getRouteStatus("bar").isStarted());
+
+        assertFalse(context.getStatus().isStarted());
+        assertTrue(context.getStatus().isStopped());
 
         assertEquals(3, EVENTS.size());
         assertEquals("constructor", EVENTS.get(0));
