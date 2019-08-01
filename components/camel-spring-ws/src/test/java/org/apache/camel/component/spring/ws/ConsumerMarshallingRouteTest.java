@@ -20,7 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
 import org.apache.camel.component.spring.ws.jaxb.QuoteRequest;
 import org.apache.camel.component.spring.ws.jaxb.QuoteResponse;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
