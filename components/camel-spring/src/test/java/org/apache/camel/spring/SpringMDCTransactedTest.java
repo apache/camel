@@ -22,13 +22,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.slf4j.MDC;
 
-public class SpringMDCTransactedTest extends ContextTestSupport {
+public class SpringMDCTransactedTest extends CamelTestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry result = super.createRegistry();
+	@Override
+    protected Registry createCamelRegistry() throws Exception {
+        Registry result = new SimpleRegistry();
         result.bind("NOOP-TX", new NoopPlatformTransactionManager());
         return result;
     }
