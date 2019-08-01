@@ -145,7 +145,7 @@ public class ServletEndpoint extends HttpCommonEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("You cannot create producer with servlet endpoint, please consider to use http or http4 endpoint.");
+        throw new UnsupportedOperationException("You cannot create producer with servlet endpoint, please consider to use http endpoint.");
     }
 
     @Override
