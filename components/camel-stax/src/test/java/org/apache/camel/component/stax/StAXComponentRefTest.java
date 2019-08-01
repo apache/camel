@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stax;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,17 +31,13 @@ public class StAXComponentRefTest extends CamelTestSupport {
 
     @EndpointInject("mock:records")
     private MockEndpoint recordsEndpoint;
+    
+    @BindToRegistry("myHandler")
+    private CountingHandler handler =new CountingHandler();
 
     @BeforeClass
     public static void initRouteExample() {
         RecordsUtil.createXMLFile();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myHandler", new CountingHandler());
-        return jndi;
     }
 
     @Override
