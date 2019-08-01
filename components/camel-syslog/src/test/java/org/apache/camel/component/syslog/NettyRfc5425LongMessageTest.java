@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.syslog;
 import io.netty.buffer.ByteBuf;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,6 +26,7 @@ import org.apache.camel.component.syslog.netty.Rfc5425Encoder;
 import org.apache.camel.component.syslog.netty.Rfc5425FrameDecoder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
@@ -46,18 +49,15 @@ public class NettyRfc5425LongMessageTest extends CamelTestSupport {
         + "\n Semper aliquid fabulas ei mel. Vix ei nullam malorum bonorum, movet nemore scaevola cu vel. "
         + "Quo ut esse dictas incorrupte, ex denique splendide nec, mei dicit doming omnium no. Nulla putent nec id, vis vide ignota eligendi in.";
 
+    @BindToRegistry("decoder")
+    private Rfc5425FrameDecoder decoder = new Rfc5425FrameDecoder();
+    @BindToRegistry("encoder")
+    private Rfc5425Encoder encoder = new Rfc5425Encoder();    
+    
     @BeforeClass
     public static void initPort() {
         serverPort = AvailablePortFinder.getNextAvailable();
         uri = "netty4:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoder=#encoder";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("decoder", new Rfc5425FrameDecoder());
-        jndi.bind("encoder", new Rfc5425Encoder());
-        return jndi;
     }
 
     @Test
@@ -76,7 +76,7 @@ public class NettyRfc5425LongMessageTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        context().getRegistry(JndiRegistry.class).bind("rfc5426FrameDecoder", new Rfc5425FrameDecoder());
+        context().getRegistry(Registry.class).bind("rfc5426FrameDecoder", new Rfc5425FrameDecoder());
 
         return new RouteBuilder() {
             @Override
