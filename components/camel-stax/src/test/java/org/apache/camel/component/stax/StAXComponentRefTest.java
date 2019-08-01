@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stax;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -31,9 +32,9 @@ public class StAXComponentRefTest extends CamelTestSupport {
 
     @EndpointInject("mock:records")
     private MockEndpoint recordsEndpoint;
-    
+
     @BindToRegistry("myHandler")
-    private CountingHandler handler =new CountingHandler();
+    private CountingHandler handler = new CountingHandler();
 
     @BeforeClass
     public static void initRouteExample() {
@@ -45,16 +46,12 @@ public class StAXComponentRefTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/in")
-                    .routeId("stax-parser")
-                    .to("stax:#myHandler")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            assertEquals(11, exchange.getIn().getBody(CountingHandler.class).getNumber());
-                        }
-                    })
-                    .to("mock:records");
+                from("file:target/in").routeId("stax-parser").to("stax:#myHandler").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals(11, exchange.getIn().getBody(CountingHandler.class).getNumber());
+                    }
+                }).to("mock:records");
             }
         };
     }
