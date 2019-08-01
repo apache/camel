@@ -44,9 +44,7 @@ public class RestSwaggerGetUriParamTest extends CamelTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("camelhost").producerComponent("dummy").producerApiDoc("hello-api.json");
 
-                from("direct:start")
-                    .to("rest:get:bye?name={name}")
-                    .to("mock:result");
+                from("direct:start").to("rest:get:bye?name={name}").to("mock:result");
             }
         };
     }

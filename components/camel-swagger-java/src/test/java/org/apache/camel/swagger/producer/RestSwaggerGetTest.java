@@ -25,8 +25,8 @@ import org.junit.Test;
 
 public class RestSwaggerGetTest extends CamelTestSupport {
 
-	@BindToRegistry("dummy")
-	private DummyRestProducerFactory factory = new DummyRestProducerFactory();
+    @BindToRegistry("dummy")
+    private DummyRestProducerFactory factory = new DummyRestProducerFactory();
 
     @Test
     public void testSwaggerGet() throws Exception {
@@ -44,9 +44,7 @@ public class RestSwaggerGetTest extends CamelTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("camelhost").producerComponent("dummy");
 
-                from("direct:start")
-                    .to("rest:get:hello/hi/{name}?apiDoc=hello-api.json")
-                    .to("mock:result");
+                from("direct:start").to("rest:get:hello/hi/{name}?apiDoc=hello-api.json").to("mock:result");
             }
         };
     }

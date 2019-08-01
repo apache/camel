@@ -42,19 +42,12 @@ public class RestSwaggerReaderDayOfWeekTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // this user REST service is json only
-                rest("/day").tag("dude").description("Day service")
-                    .consumes("application/json").produces("application/json")
+                rest("/day").tag("dude").description("Day service").consumes("application/json").produces("application/json")
 
-                    .get("/week").description("Day of week")
-                        .param().name("day").type(RestParamType.query).description("Day of week")
-                            .defaultValue("friday")
-                            .dataType("string").allowableValues("monday", "tuesday", "wednesday", "thursday", "friday")
-                        .endParam()
-                        .responseMessage()
-                            .code(200).responseModel(DayResponse.class)
-                            .header("X-Rate-Limit-Limit").description("The number of allowed requests in the current period").dataType("integer").endHeader()
-                        .endResponseMessage()
-                        .to("log:week");
+                    .get("/week").description("Day of week").param().name("day").type(RestParamType.query).description("Day of week").defaultValue("friday").dataType("string")
+                    .allowableValues("monday", "tuesday", "wednesday", "thursday", "friday").endParam().responseMessage().code(200).responseModel(DayResponse.class)
+                    .header("X-Rate-Limit-Limit").description("The number of allowed requests in the current period").dataType("integer").endHeader().endResponseMessage()
+                    .to("log:week");
             }
         };
     }
@@ -63,7 +56,7 @@ public class RestSwaggerReaderDayOfWeekTest extends CamelTestSupport {
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Day");
         config.setLicense("Apache 2.0");

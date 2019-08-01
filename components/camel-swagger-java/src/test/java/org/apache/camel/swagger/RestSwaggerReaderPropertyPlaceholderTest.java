@@ -38,10 +38,10 @@ import org.junit.Test;
 
 @Ignore("Does not run well on CI due test uses JMX mbeans")
 public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
-	
+
     @BindToRegistry("dummy-rest")
     private DummyRestProducerFactory factory = new DummyRestProducerFactory();
-    
+
     @Override
     protected boolean useJmx() {
         return true;
@@ -60,17 +60,11 @@ public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/{{foo}}").consumes("application/json").produces("application/json")
-                        .get("/hi/{name}").description("Saying hi")
-                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
-                            .to("log:hi")
-                        .get("/{{bar}}/{name}").description("Saying bye")
-                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
-                            .responseMessage().code(200).message("A reply message").endResponseMessage()
-                            .to("log:bye")
-                        .post("/{{bar}}").description("To update the greeting message").consumes("application/xml").produces("application/xml")
-                            .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").endParam()
-                            .to("log:bye");
+                rest("/{{foo}}").consumes("application/json").produces("application/json").get("/hi/{name}").description("Saying hi").param().name("name").type(RestParamType.path)
+                    .dataType("string").description("Who is it").endParam().to("log:hi").get("/{{bar}}/{name}").description("Saying bye").param().name("name")
+                    .type(RestParamType.path).dataType("string").description("Who is it").endParam().responseMessage().code(200).message("A reply message").endResponseMessage()
+                    .to("log:bye").post("/{{bar}}").description("To update the greeting message").consumes("application/xml").produces("application/xml").param().name("greeting")
+                    .type(RestParamType.body).dataType("string").description("Message to use as greeting").endParam().to("log:bye");
             }
         };
     }
@@ -79,7 +73,7 @@ public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         RestSwaggerReader reader = new RestSwaggerReader();
 
