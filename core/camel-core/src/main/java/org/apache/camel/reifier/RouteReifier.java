@@ -139,8 +139,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // inject this route into the advice route builder so it can access this route
         // and offer features to manipulate the route directly
+        boolean logRoutesAsXml = true;
         if (builder instanceof AdviceWithRouteBuilder) {
-            ((AdviceWithRouteBuilder) builder).setOriginalRoute(definition);
+            AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder) builder;
+            arb.setOriginalRoute(definition);
+            logRoutesAsXml = arb.isLogRouteAsXml();
         }
 
         // configure and prepare the routes from the builder
@@ -161,7 +164,10 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             throw new IllegalArgumentException("You can not advice with error handlers. Remove the error handlers from the route builder.");
         }
 
-        String beforeAsXml = ModelHelper.dumpModelAsXml(camelContext, definition);
+        String beforeAsXml = null;
+        if (logRoutesAsXml && log.isInfoEnabled()) {
+            beforeAsXml = ModelHelper.dumpModelAsXml(camelContext, definition);
+        }
 
         // stop and remove this existing route
         camelContext.getExtension(Model.class).removeRouteDefinition(definition);
@@ -181,10 +187,14 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         camelContext.getExtension(Model.class).getRouteDefinitions().add(0, merged);
 
         // log the merged route at info level to make it easier to end users to spot any mistakes they may have made
-        log.info("AdviceWith route after: {}", merged);
+        if (log.isInfoEnabled()) {
+            log.info("AdviceWith route after: {}", merged);
+        }
 
-        String afterAsXml = ModelHelper.dumpModelAsXml(camelContext, merged);
-        log.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
+        if (logRoutesAsXml && log.isInfoEnabled()) {
+            String afterAsXml = ModelHelper.dumpModelAsXml(camelContext, merged);
+            log.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
+        }
 
         // If the camel context is started then we start the route
         if (camelContext.isStarted()) {
