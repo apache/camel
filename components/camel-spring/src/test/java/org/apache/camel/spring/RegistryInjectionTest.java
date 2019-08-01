@@ -17,7 +17,6 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
