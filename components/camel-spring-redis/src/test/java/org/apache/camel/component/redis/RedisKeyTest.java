@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,14 +46,8 @@ import static org.mockito.Mockito.when;
 public class RedisKeyTest extends RedisTestSupport {
 
     @Mock
+    @BindToRegistry("redisTemplate")
     private RedisTemplate<String, Integer> redisTemplate;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("redisTemplate", redisTemplate);
-        return registry;
-    }
 
     @Test
     public void shouldExecuteDEL() throws Exception {
