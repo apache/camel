@@ -81,7 +81,7 @@ public class CamelCloudConfigurationProperties {
         private String uri;
 
         /**
-         * The Camel component to use for calling the service. The default is http4 component.
+         * The Camel component to use for calling the service. The default is http component.
          */
         private String component = ServiceCallDefinitionConstants.DEFAULT_COMPONENT;
 

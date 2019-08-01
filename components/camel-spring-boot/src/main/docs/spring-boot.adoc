@@ -98,7 +98,7 @@ The component supports 126 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.cloud.enabled* | Global option to enable/disable Camel cloud support, default is true. | true | Boolean
 | *camel.cloud.load-balancer.enabled* | Global option to enable/disable Camel cloud load balancer, default is true. | true | Boolean
-| *camel.cloud.service-call.component* | The Camel component to use for calling the service. The default is http4 component. |  | String
+| *camel.cloud.service-call.component* | The Camel component to use for calling the service. The default is http component. |  | String
 | *camel.cloud.service-call.default-load-balancer* | Determine if the default load balancer should be used instead of any auto discovered one. | false | Boolean
 | *camel.cloud.service-call.expression* | The expression to use. |  | String
 | *camel.cloud.service-call.expression-language* | The expression language to use, default is ref. | ref | String
