@@ -19,6 +19,7 @@ package org.apache.camel.component.sql;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,6 +35,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
 
     EmbeddedDatabase db;
+    
+    @BindToRegistry("myIdGenerator")
     MyIdGenerator idGenerator = new MyIdGenerator();
 
     @Before
@@ -49,13 +52,6 @@ public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
         super.tearDown();
 
         db.shutdown();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myIdGenerator", idGenerator);
-        return jndi;
     }
 
     @Test
