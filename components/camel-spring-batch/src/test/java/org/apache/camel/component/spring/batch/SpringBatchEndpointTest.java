@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -93,8 +94,8 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     }
 
     @Override
-    public JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    public Registry createCamelRegistry() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
         registry.bind("jobLauncher", jobLauncher);
         registry.bind("alternativeJobLauncher", alternativeJobLauncher);
         registry.bind("mockJob", job);
