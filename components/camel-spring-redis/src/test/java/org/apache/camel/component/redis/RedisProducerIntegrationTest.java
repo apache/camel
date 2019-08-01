@@ -34,7 +34,7 @@ public class RedisProducerIntegrationTest extends RedisTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-    	Registry registry = new SimpleRegistry();
+        Registry registry = new SimpleRegistry();
         redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(CONNECTION_FACTORY);
         redisTemplate.afterPropertiesSet();
@@ -45,10 +45,7 @@ public class RedisProducerIntegrationTest extends RedisTestSupport {
 
     @Test
     public void shouldSetAString() throws Exception {
-        sendHeaders(
-                RedisConstants.COMMAND, "SET",
-                RedisConstants.KEY, "key1",
-                RedisConstants.VALUE, "value");
+        sendHeaders(RedisConstants.COMMAND, "SET", RedisConstants.KEY, "key1", RedisConstants.VALUE, "value");
 
         assertEquals("value", redisTemplate.opsForValue().get("key1"));
     }
