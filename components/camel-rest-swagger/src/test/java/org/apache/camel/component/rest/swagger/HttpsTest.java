@@ -133,12 +133,6 @@ public abstract class HttpsTest extends CamelTestSupport {
         // the commons-httpclient (all endpoints, component instances)
         producers.remove("http");
 
-        // `http4` component transforms the endpoint uri from `http4://` to
-        // `https4://` we need to accommodate for that otherwise we'll end up
-        // configuring the wrong component's properties in
-        // RestSwaggerDelegateHttpsTest
-        producers.replaceAll(c -> "http4".equals(c) ? "https4" : c);
-
         return producers;
     }
 
