@@ -22,6 +22,8 @@ import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
 import org.apache.camel.component.spring.ws.jaxb.QuoteRequest;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -51,8 +53,8 @@ public class ConsumerBreadcrumbIdTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = new SimpleRegistry();
         registry.bind("endpointMapping", this.endpointMapping);
         registry.bind("webServiceTemplate", this.webServiceTemplate);
         return registry;
