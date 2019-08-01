@@ -16,6 +16,7 @@
  */
 package org.apache.camel.swagger.producer;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -24,12 +25,8 @@ import org.junit.Test;
 
 public class RestSwaggerGetUriParamTest extends CamelTestSupport {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy", new DummyRestProducerFactory());
-        return jndi;
-    }
+    @BindToRegistry("dummy")
+    private DummyRestProducerFactory factory = new DummyRestProducerFactory();
 
     @Test
     public void testSwaggerGet() throws Exception {
