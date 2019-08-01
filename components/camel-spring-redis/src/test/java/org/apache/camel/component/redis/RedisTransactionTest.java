@@ -19,6 +19,7 @@ package org.apache.camel.component.redis;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,14 +33,8 @@ import static org.mockito.Mockito.verify;
 public class RedisTransactionTest extends RedisTestSupport {
 
     @Mock
+    @BindToRegistry("redisTemplate")
     private RedisTemplate<String, ?> redisTemplate;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("redisTemplate", redisTemplate);
-        return registry;
-    }
 
     @Test
     public void shouldExecuteMULTI() throws Exception {
