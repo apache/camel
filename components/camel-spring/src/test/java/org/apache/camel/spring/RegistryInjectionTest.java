@@ -18,6 +18,7 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -37,8 +38,8 @@ public class RegistryInjectionTest extends SpringTestSupport {
     public void testInjectedStrategy() throws Exception {
         CamelContext context = createCamelContext();
 
-        JndiRegistry jndi = context.getRegistry(JndiRegistry.class);
-        assertNotNull(jndi);
+        Registry reg = context.getRegistry(Registry.class);
+        assertNotNull(reg);
     }
 
 }
