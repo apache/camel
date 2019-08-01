@@ -98,6 +98,13 @@ public abstract class ServiceSupport implements StatefulService {
                 status = STARTED;
                 log.trace("Service started: {}", this);
             } catch (Exception e) {
+                // need to stop as some resources may have been started during startup
+                try {
+                    stop();
+                } catch (Exception e2) {
+                    // ignore
+                    log.trace("Error while stopping service after it failed to start: " + this + ". This exception is ignored", e);
+                }
                 status = FAILED;
                 log.trace("Error while starting service: " + this, e);
                 throw RuntimeCamelException.wrapRuntimeException(e);
@@ -113,6 +120,10 @@ public abstract class ServiceSupport implements StatefulService {
      */
     public void stop() {
         synchronized (lock) {
+            if (status == FAILED) {
+                log.trace("Service: {} failed and regarded as already stopped", this);
+                return;
+            }
             if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {
                 log.trace("Service: {} already stopped", this);
                 return;
