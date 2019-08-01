@@ -85,7 +85,6 @@
         <include>org.apache.camel:camel-bindy</include>
         <include>org.apache.camel:camel-blueprint</include>
         <include>org.apache.camel:camel-bonita</include>
-        <include>org.apache.camel:camel-boon</include>
         <include>org.apache.camel:camel-box</include>
         <include>org.apache.camel:camel-box-api</include>
         <include>org.apache.camel:camel-braintree</include>
@@ -430,7 +429,6 @@
         <include>org.apache.camel:camel-beanstalk-starter</include>
         <include>org.apache.camel:camel-bindy-starter</include>
         <include>org.apache.camel:camel-bonita-starter</include>
-        <include>org.apache.camel:camel-boon-starter</include>
         <include>org.apache.camel:camel-box-starter</include>
         <include>org.apache.camel:camel-braintree-starter</include>
         <include>org.apache.camel:camel-browse-starter</include>

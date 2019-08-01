@@ -29,7 +29,6 @@ import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.model.dataformat.BoonDataFormat;
 import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
@@ -193,17 +192,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         bindy.setClassType(classType);
         bindy.setUnwrapSingleInstance(unwrapSingleInstance);
         return dataFormat(bindy);
-    }
-
-    /**
-     * Uses the Boon data format
-     *
-     * @param classType the POJO class type
-     */
-    public T boon(Class<?> classType) {
-        BoonDataFormat boon = new BoonDataFormat();
-        boon.setUnmarshalType(classType);
-        return dataFormat(boon);
     }
     
     /**

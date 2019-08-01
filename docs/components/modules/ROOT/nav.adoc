@@ -54,7 +54,6 @@
 * xref:bindy-dataformat.adoc[Bindy DataFormat]
 * xref:blueprint.adoc[Using OSGi blueprint with Camel]
 * xref:bonita-component.adoc[Bonita Component]
-* xref:boon-dataformat.adoc[Boon DataFormat]
 * xref:box-component.adoc[Box Component]
 * xref:braintree-component.adoc[Braintree Component]
 * xref:browse-component.adoc[Browse Component]
