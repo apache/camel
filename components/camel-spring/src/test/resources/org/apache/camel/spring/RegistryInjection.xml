@@ -25,7 +25,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
     
-  <bean id="registry" class="org.apache.camel.impl.JndiRegistry"/>
+  <bean id="registry" class="org.apache.camel.support.SimpleRegistry"/>
   
   <camel:camelContext>
     <camel:route>
