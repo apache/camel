@@ -206,7 +206,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the Boon data format
      *
      * @param classType the POJO class type
+     * @deprecated Not functional in Java 9+ and will be removed in Apache Camel 3.0.0
      */
+    @Deprecated
     public T boon(Class<?> classType) {
         BoonDataFormat boon = new BoonDataFormat();
         boon.setUnmarshalType(classType);

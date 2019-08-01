@@ -46,7 +46,7 @@
 * xref:bindy-dataformat.adoc[Bindy DataFormat]
 * xref:blueprint.adoc[Using OSGi blueprint with Camel]
 * xref:bonita-component.adoc[Bonita Component]
-* xref:boon-dataformat.adoc[Boon DataFormat]
+* xref:boon-dataformat.adoc[Boon DataFormat (deprecated)]
 * xref:braintree-component.adoc[Braintree Component]
 * xref:cache-component.adoc[EHCache Component (deprecated)]
 * xref:caffeine-cache-component.adoc[Caffeine Cache Component]

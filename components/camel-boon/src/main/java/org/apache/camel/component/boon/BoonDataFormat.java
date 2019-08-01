@@ -38,7 +38,9 @@ import org.boon.json.ObjectMapper;
  * {@link DataFormat}) using <a
  * href="http://richardhightower.github.io/site/Boon/">Boon</a> to marshal to
  * and from JSON.
+ * @deprecated Not functional in Java 9+ and will be removed in Apache Camel 3.0.0
  */
+@Deprecated
 public class BoonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, NonManagedService {
 
     private final ObjectMapper objectMapper;

@@ -28,7 +28,7 @@
 
     <artifactId>camel-boon</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Boon</name>
+    <name>Camel :: Boon (deprecated)</name>
     <description>Camel Boon support</description>
 
     <properties>

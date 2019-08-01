@@ -1,5 +1,4 @@
-[[boon-dataformat]]
-== Boon DataFormat
+== Boon DataFormat (deprecated)
 
 *Available as of Camel version 2.16*
 

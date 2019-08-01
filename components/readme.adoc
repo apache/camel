@@ -949,7 +949,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 49 in 39 JAR artifacts (5 deprecated)
+Number of Data Formats: 49 in 39 JAR artifacts (6 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -971,7 +971,7 @@ Number of Data Formats: 49 in 39 JAR artifacts (5 deprecated)
 
 | link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy Key Value Pair] (camel-bindy) | 2.0 | The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
 
-| link:camel-boon/src/main/docs/boon-dataformat.adoc[Boon] (camel-boon) | 2.16 | Boon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+| link:camel-boon/src/main/docs/boon-dataformat.adoc[Boon] (camel-boon) | 2.16 | *deprecated* Boon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
 | link:camel-castor/src/main/docs/castor-dataformat.adoc[Castor] (camel-castor) | 2.1 | *deprecated* Castor data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
