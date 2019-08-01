@@ -2194,6 +2194,29 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default ActiveMQEndpointProducerBuilder deliveryDelay(long deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default ActiveMQEndpointProducerBuilder deliveryDelay(
+                String deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
          * Specifies the delivery mode to be used. Possibles values are those
          * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
          * = 2.
