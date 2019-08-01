@@ -71,7 +71,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
                     + " if this option is false to support reading the stream multiple times."
                     + " If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,"
                     + " in case you do not need to read the message payload multiple times."
-                    + " The http/http4 producer will by default cache the response body stream. If setting this option to true,"
+                    + " The http producer will by default cache the response body stream. If setting this option to true,"
                     + " then the producers will not cache the response body stream but use the response stream as-is as the message body.")
     boolean disableStreamCache;
     @UriParam(description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
@@ -358,7 +358,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      * if this option is false to support reading the stream multiple times.
      * If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,
      * in case you do not need to read the message payload multiple times.
-     + The http/http4 producer will by default cache the response body stream. If setting this option to true,
+     + The http producer will by default cache the response body stream. If setting this option to true,
      + then the producers will not cache the response body stream but use the response stream as-is as the message body.
      */
     public void setDisableStreamCache(boolean disable) {
