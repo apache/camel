@@ -24,10 +24,10 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Below are some examples how to call a service and what Camel endpoint URI is constructed based on the input:
  * <pre>
- serviceCall("myService") -> http4://hostname:port
- serviceCall("myService/foo") -> http4://hostname:port/foo
- serviceCall("http4:myService/foo") -> http4:hostname:port/foo
- serviceCall("myService", "http4:myService.host:myService.port/foo") -> http4:hostname:port/foo
+ serviceCall("myService") -> http://hostname:port
+ serviceCall("myService/foo") -> http://hostname:port/foo
+ serviceCall("http:myService/foo") -> http:hostname:port/foo
+ serviceCall("myService", "http:myService.host:myService.port/foo") -> http:hostname:port/foo
  serviceCall("myService", "netty4:tcp:myService?connectTimeout=1000") -> netty:tcp:hostname:port?connectTimeout=1000
  * </pre>
  */
@@ -75,11 +75,11 @@ public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
         if (scheme == null) {
             // use http/https by default if no scheme or port have been configured
             if (port == null) {
-                scheme = "http4";
+                scheme = "http";
             } else if (port == 443) {
-                scheme = "https4";
+                scheme = "https";
             } else {
-                scheme = "http4";
+                scheme = "http";
             }
         }
 
