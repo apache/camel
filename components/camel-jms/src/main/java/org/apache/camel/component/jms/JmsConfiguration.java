@@ -652,7 +652,6 @@ public class JmsConfiguration implements Cloneable {
                 // default to AUTO
                 jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
             }
-            jmsTemplate.setDeliveryDelay(deliveryDelay);
         }
         return answer;
     }
@@ -2167,6 +2166,9 @@ public class JmsConfiguration implements Cloneable {
         return deliveryDelay;
     }
 
+    /**
+     * Sets delivery delay to use for send calls for JMS.
+     */
     public void setDeliveryDelay(long deliveryDelay) {
         this.deliveryDelay = deliveryDelay;
     }
