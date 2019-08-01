@@ -18,6 +18,7 @@ package org.apache.camel.component.stream;
 
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -25,11 +26,8 @@ import org.junit.Test;
 
 public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
     
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myGroupStrategy", new MyGroupStrategy());
-        return jndi;
-    }
+	@BindToRegistry("myGroupStrategy")
+	private MyGroupStrategy strat = new MyGroupStrategy();
     
     class MyGroupStrategy implements GroupStrategy {
 
