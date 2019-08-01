@@ -19,6 +19,8 @@ package org.apache.camel.component.sql;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Test;
@@ -41,13 +43,13 @@ public class SqlEndpointLikeTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry reg = new SimpleRegistry();
         // this is the database we create with some initial data for our unit test
         db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-        jndi.bind("jdbc/myDataSource", db);
-        return jndi;
+        reg.bind("jdbc/myDataSource", db);
+        return reg;
     }
 
     @After

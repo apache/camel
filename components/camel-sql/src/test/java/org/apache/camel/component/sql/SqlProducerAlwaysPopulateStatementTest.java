@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -36,6 +37,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 public class SqlProducerAlwaysPopulateStatementTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
+    @BindToRegistry("myStrategy")
     private SqlPrepareStatementStrategy strategy;
     private volatile boolean invoked;
 
@@ -53,13 +55,6 @@ public class SqlProducerAlwaysPopulateStatementTest extends CamelTestSupport {
         };
         
         super.setUp();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myStrategy", strategy);
-        return jndi;
     }
 
     @After

@@ -22,7 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
@@ -50,8 +52,8 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry reg = new SimpleRegistry();
         
         db = new EmbeddedDatabaseBuilder()
             .setType(EmbeddedDatabaseType.DERBY).build();
