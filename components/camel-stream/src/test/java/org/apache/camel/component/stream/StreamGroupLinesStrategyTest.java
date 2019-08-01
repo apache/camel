@@ -25,10 +25,10 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
-    
-	@BindToRegistry("myGroupStrategy")
-	private MyGroupStrategy strat = new MyGroupStrategy();
-    
+
+    @BindToRegistry("myGroupStrategy")
+    private MyGroupStrategy strat = new MyGroupStrategy();
+
     class MyGroupStrategy implements GroupStrategy {
 
         @Override
@@ -41,7 +41,7 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
             return buffer.toString();
         }
     }
-    
+
     @Test
     public void testGroupLines() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
