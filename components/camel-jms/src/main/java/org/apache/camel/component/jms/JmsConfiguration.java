@@ -110,14 +110,14 @@ public class JmsConfiguration implements Cloneable {
                     + " the DefaultMessageListenerContainer.runningAllowed flag to quick stop in case JmsConfiguration#isAcceptMessagesWhileStopping"
                     + " is enabled, and org.apache.camel.CamelContext is currently being stopped. This quick stop ability is enabled by"
                     + " default in the regular JMS consumers but to enable for reply managers you must enable this flag.")
-    private boolean allowReplyManagerQuickStop;   
+    private boolean allowReplyManagerQuickStop;
     @UriParam(label = "consumer,advanced",
             description = "Specifies whether the consumer accept messages while it is stopping."
                     + " You may consider enabling this option, if you start and stop JMS routes at runtime, while there are still messages"
                     + " enqueued on the queue. If this option is false, and you stop the JMS route, then messages may be rejected,"
                     + " and the JMS broker would have to attempt redeliveries, which yet again may be rejected, and eventually the message"
                     + " may be moved at a dead letter queue on the JMS broker. To avoid this its recommended to enable this option.")
-    private boolean acceptMessagesWhileStopping;    
+    private boolean acceptMessagesWhileStopping;
     @UriParam(description = "Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance."
             + " It is typically only required for durable topic subscriptions."
             + " If using Apache ActiveMQ you may prefer to use Virtual Topics instead.")
@@ -232,7 +232,7 @@ public class JmsConfiguration implements Cloneable {
             description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc.")
     private boolean mapJmsMessage = true;
     @UriParam(defaultValue = "true", label = "advanced",
-            description = "When sending, specifies whether message IDs should be added. This is just an hint to the JMS broker." 
+            description = "When sending, specifies whether message IDs should be added. This is just an hint to the JMS broker."
                     + " If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, "
                     + "the message ID must be set to its normal unique value.")
     private boolean messageIdEnabled = true;
@@ -484,6 +484,10 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "Sets whether JMS date properties should be formatted according to the ISO 8601 standard.")
     private boolean formatDateHeadersToIso8601;
 
+    @UriParam(defaultValue = "-1", label = "producer", description = "Sets delivery delay to use for send calls for JMS. "
+         + "This option requires JMS 2.0 compliant broker.")
+    private long deliveryDelay = -1;
+
     public JmsConfiguration() {
     }
 
@@ -717,6 +721,9 @@ public class JmsConfiguration implements Cloneable {
                 template.setSessionAcknowledgeModeName(acknowledgementModeName);
             }
         }
+
+        template.setDeliveryDelay(deliveryDelay);
+
         return template;
     }
 
@@ -863,7 +870,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Whether the {@link DefaultMessageListenerContainer} used in the reply managers for request-reply messaging allow 
+     * Whether the {@link DefaultMessageListenerContainer} used in the reply managers for request-reply messaging allow
      * the {@link DefaultMessageListenerContainer#runningAllowed()} flag to quick stop in case {@link JmsConfiguration#isAcceptMessagesWhileStopping()}
      * is enabled, and {@link org.apache.camel.CamelContext} is currently being stopped. This quick stop ability is enabled by
      * default in the regular JMS consumers but to enable for reply managers you must enable this flag.
@@ -875,7 +882,7 @@ public class JmsConfiguration implements Cloneable {
     public void setAllowReplyManagerQuickStop(boolean allowReplyManagerQuickStop) {
         this.allowReplyManagerQuickStop = allowReplyManagerQuickStop;
     }
-    
+
     public String getClientId() {
         return clientId;
     }
@@ -1163,7 +1170,7 @@ public class JmsConfiguration implements Cloneable {
     public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
         this.waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = sleepingTime;
     }
-    
+
     public int getMaxConcurrentConsumers() {
         return maxConcurrentConsumers;
     }
@@ -2056,7 +2063,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Use this JMS property to correlate messages in InOut exchange pattern (request-reply)
-     * instead of JMSCorrelationID property. This allows you to exchange messages with 
+     * instead of JMSCorrelationID property. This allows you to exchange messages with
      * systems that do not correlate messages using JMSCorrelationID JMS property. If used
      * JMSCorrelationID will not be used or set by Camel. The value of here named property
      * will be generated if not supplied in the header of the message under the same name.
@@ -2164,6 +2171,17 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setFormatDateHeadersToIso8601(boolean formatDateHeadersToIso8601) {
         this.formatDateHeadersToIso8601 = formatDateHeadersToIso8601;
+    }
+
+    public long getDeliveryDelay() {
+        return deliveryDelay;
+    }
+
+    /**
+     * Sets delivery delay to use for send calls for JMS.
+     */
+    public void setDeliveryDelay(long deliveryDelay) {
+        this.deliveryDelay = deliveryDelay;
     }
 
 }

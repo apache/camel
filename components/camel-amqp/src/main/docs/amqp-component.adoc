@@ -152,7 +152,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (92 parameters):
+=== Query Parameters (93 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -188,6 +188,7 @@ with the following path and query parameters:
 | *exposeListenerSession* (consumer) | Specifies whether the listener session should be exposed when consuming messages. | false | boolean
 | *replyToSameDestination Allowed* (consumer) | Whether a JMS consumer is allowed to send a reply message to the same destination that the consumer is using to consume from. This prevents an endless loop by consuming and sending back the same message to itself. | false | boolean
 | *taskExecutor* (consumer) | Allows you to specify a custom task executor for consuming messages. |  | TaskExecutor
+| *deliveryDelay* (producer) | Sets delivery delay to use for send calls for JMS. | -1 | long
 | *deliveryMode* (producer) | Specifies the delivery mode to be used. Possibles values are those defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT = 2. |  | Integer
 | *deliveryPersistent* (producer) | Specifies whether persistent delivery is used by default. | true | boolean
 | *explicitQosEnabled* (producer) | Set if the deliveryMode, priority or timeToLive qualities of service should be used when sending messages. This option is based on Spring's JmsTemplate. The deliveryMode, priority and timeToLive options are applied to the current endpoint. This contrasts with the preserveMessageQos option, which operates at message granularity, reading QoS properties exclusively from the Camel In message headers. | false | Boolean
