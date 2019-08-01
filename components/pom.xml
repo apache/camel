@@ -126,7 +126,6 @@
         <module>camel-barcode</module>
         <module>camel-bindy</module>
         <module>camel-bonita</module>
-        <module>camel-boon</module>
         <module>camel-box</module>
         <module>camel-braintree</module>
         <module>camel-caffeine</module>

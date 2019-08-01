@@ -905,7 +905,7 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 == Data Formats
 
 // dataformats: START
-Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
+Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -926,8 +926,6 @@ Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 | link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy Fixed Length] (camel-bindy) | 2.0 | The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
 
 | link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy Key Value Pair] (camel-bindy) | 2.0 | The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
-
-| link:camel-boon/src/main/docs/boon-dataformat.adoc[Boon] (camel-boon) | 2.16 | Boon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
 | link:camel-cbor/src/main/docs/cbor-dataformat.adoc[CBOR] (camel-cbor) | 3.0 | CBOR data format is used for unmarshal a CBOR payload to POJO or to marshal POJO back to CBOR payload.
 

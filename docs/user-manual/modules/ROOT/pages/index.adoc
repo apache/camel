@@ -478,7 +478,6 @@ camel routes without them knowing
 ** xref:components::bindy-dataformat.adoc[Bindy CSV]
 ** xref:components::bindy-dataformat.adoc[Bindy Fixed Length]
 ** xref:components::bindy-dataformat.adoc[Bindy Key Value Pair]
-** xref:components::boon-dataformat.adoc[Boon]
 ** xref:components::crypto-dataformat.adoc[Crypto (Java Cryptographic Extension)]
 ** xref:components::csv-dataformat.adoc[CSV]
 ** xref:components::fhirJson-dataformat.adoc[FHIR JSon]

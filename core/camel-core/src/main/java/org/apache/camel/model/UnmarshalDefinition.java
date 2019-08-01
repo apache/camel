@@ -28,7 +28,6 @@ import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
-import org.apache.camel.model.dataformat.BoonDataFormat;
 import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
@@ -80,7 +79,6 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         @XmlElement(required = false, name = "base64", type = Base64DataFormat.class),
         @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
         @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
-        @XmlElement(required = false, name = "boon", type = BoonDataFormat.class),
         @XmlElement(required = false, name = "cbor", type = CBORDataFormat.class),
         @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),

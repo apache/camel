@@ -141,7 +141,6 @@
     <module>camel-beanstalk-starter</module>
     <module>camel-bindy-starter</module>
     <module>camel-bonita-starter</module>
-    <module>camel-boon-starter</module>
     <module>camel-box-starter</module>
     <module>camel-braintree-starter</module>
     <module>camel-browse-starter</module>

@@ -9,7 +9,6 @@ The following data formats are currently supported:
 
 * Object marshalling
 ** xref:components::avro-dataformat.adoc[Avro]
-** xref:components::boon-dataformat.adoc[Boon]
 ** xref:json.adoc[JSON]
 ** xref:components::protobuf-dataformat.adoc[Protobuf]
 ** xref:components::yaml-snakeyaml-dataformat.adoc[YAML]
