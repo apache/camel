@@ -17,7 +17,6 @@
 package org.apache.camel.component.redis;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

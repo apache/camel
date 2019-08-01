@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.redis;
 
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.Ignore;
