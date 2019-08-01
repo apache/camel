@@ -43,6 +43,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
 
     private RouteDefinition originalRoute;
     private final List<AdviceWithTask> adviceWithTasks = new ArrayList<>();
+    private boolean logRouteAsXml = true;
 
     /**
      * Advices this route with the route builder using a lambda expression.
@@ -118,6 +119,30 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public RouteDefinition getOriginalRoute() {
         return originalRoute;
+    }
+
+    /**
+     * Whether to log the adviced routes before/after as XML.
+     * This is usable to know how the route was adviced and changed.
+     * However marshalling the route model to XML costs CPU resources
+     * and you can then turn this off by not logging.
+     *
+     * This is default enabled.
+     */
+    public boolean isLogRouteAsXml() {
+        return logRouteAsXml;
+    }
+
+    /**
+     * Sets whether to log the adviced routes before/after as XML.
+     * This is usable to know how the route was adviced and changed.
+     * However marshalling the route model to XML costs CPU resources
+     * and you can then turn this off by not logging.
+     *
+     * This is default enabled.
+     */
+    public void setLogRouteAsXml(boolean logRouteAsXml) {
+        this.logRouteAsXml = logRouteAsXml;
     }
 
     /**
