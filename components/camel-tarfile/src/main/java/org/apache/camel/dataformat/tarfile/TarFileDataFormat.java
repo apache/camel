@@ -25,10 +25,10 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
