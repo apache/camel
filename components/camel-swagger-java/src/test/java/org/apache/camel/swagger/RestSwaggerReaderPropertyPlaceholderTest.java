@@ -24,28 +24,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
+import org.apache.camel.swagger.producer.DummyRestProducerFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore("Does not run well on CI due test uses JMX mbeans")
 public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
-
+	
+    @BindToRegistry("dummy-rest")
+    private DummyRestProducerFactory factory = new DummyRestProducerFactory();
+    
     @Override
     protected boolean useJmx() {
         return true;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
-        return jndi;
     }
 
     @Override
