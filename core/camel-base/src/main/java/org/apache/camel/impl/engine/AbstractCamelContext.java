@@ -2291,6 +2291,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                         return;
                     }
                 } else {
+                    log.error("Error starting CamelContext (" + getName() + ") due to exception thrown: " + e.getMessage(), e);
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             }
