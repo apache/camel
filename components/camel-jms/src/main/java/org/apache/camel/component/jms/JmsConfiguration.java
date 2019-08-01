@@ -479,7 +479,7 @@ public class JmsConfiguration implements Cloneable {
 
     @UriParam(label = "producer", description = "Sets whether JMS date properties should be formatted according to the ISO 8601 standard.")
     private boolean formatDateHeadersToIso8601;
-    
+
     @UriParam(label = "deliveryDelay", description = "set delivey delay for jms")
     private long deliveryDelay = -1;
     
