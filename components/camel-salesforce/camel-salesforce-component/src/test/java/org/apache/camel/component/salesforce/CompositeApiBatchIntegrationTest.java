@@ -155,7 +155,9 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         final Map<String, String> apiRequests = (Map<String, String>) limits.get("DailyApiRequests");
 
         // for JSON value will be Integer, for XML (no type information) it will be String
-        assertEquals("15000", String.valueOf(apiRequests.get("Max")));
+        // This number can be different per org, and future releases,
+        // so let's just make sure it's greater than zero
+        assertTrue(Integer.valueOf(String.valueOf(apiRequests.get("Max"))) > 0);
     }
 
     @Test
