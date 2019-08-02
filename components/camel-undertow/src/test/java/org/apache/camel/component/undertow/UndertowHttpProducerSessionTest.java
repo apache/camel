@@ -22,7 +22,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.common.cookie.InstanceCookieHandler;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
