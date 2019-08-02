@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.net.SocketFactory;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
