@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.web3j;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -42,6 +43,7 @@ import static org.mockito.ArgumentMatchers.any;
 public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
 
     @Mock
+    @BindToRegistry("mockQuorum")
     protected Quorum mockQuorum;
 
     @Produce("direct:start")
@@ -52,13 +54,6 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
 
     protected String getUrl() {
         return "web3j://http://127.0.0.1:8545?web3j=#mockQuorum&quorumAPI=true&";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("mockQuorum", mockQuorum);
-        return registry;
     }
 
     @Override
