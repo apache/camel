@@ -27,9 +27,9 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class RestUndertowHttpGetWildcardsTest extends BaseUndertowTest {
-    
-	@BindToRegistry("mybinding")
-	private UndertowHttpBinding binding = new DefaultUndertowHttpBinding();
+
+    @BindToRegistry("mybinding")
+    private UndertowHttpBinding binding = new DefaultUndertowHttpBinding();
 
     @Test
     public void testProducerGet() throws Exception {
@@ -52,25 +52,17 @@ public class RestUndertowHttpGetWildcardsTest extends BaseUndertowTest {
                 restConfiguration().component("undertow").host("localhost").port(getPort()).endpointProperty("undertowHttpBinding", "#mybinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .get("{id}/{query}")
-                        .route()
-                        .to("log:query")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Goofy");
-                            }
-                        }).endRest()
-                    .get("{id}/basic")
-                        .route()
-                        .to("log:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
-                        }).endRest();
+                rest("/users/").get("{id}/{query}").route().to("log:query").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        exchange.getOut().setBody(id + ";Goofy");
+                    }
+                }).endRest().get("{id}/basic").route().to("log:input").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        exchange.getOut().setBody(id + ";Donald Duck");
+                    }
+                }).endRest();
             }
         };
     }
