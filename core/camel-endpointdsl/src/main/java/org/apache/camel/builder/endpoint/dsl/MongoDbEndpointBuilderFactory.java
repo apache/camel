@@ -1494,14 +1494,14 @@ public interface MongoDbEndpointBuilderFactory {
         MongoIterable;
     }
     /**
-     * MongoDB (camel-mongodb3)
+     * MongoDB (camel-mongodb)
      * Component for working with documents stored in MongoDB database.
      * 
      * Category: database,nosql
      * Available as of version: 2.19
-     * Maven coordinates: org.apache.camel:camel-mongodb3
+     * Maven coordinates: org.apache.camel:camel-mongodb
      * 
-     * Syntax: <code>mongodb3:connectionBean</code>
+     * Syntax: <code>mongodb:connectionBean</code>
      * 
      * Path parameter: connectionBean (required)
      * Name of com.mongodb.Mongo to use.
@@ -1509,7 +1509,7 @@ public interface MongoDbEndpointBuilderFactory {
     default MongoDbEndpointBuilder mongoDb(String path) {
         class MongoDbEndpointBuilderImpl extends AbstractEndpointBuilder implements MongoDbEndpointBuilder, AdvancedMongoDbEndpointBuilder {
             public MongoDbEndpointBuilderImpl(String path) {
-                super("mongodb3", path);
+                super("mongodb", path);
             }
         }
         return new MongoDbEndpointBuilderImpl(path);
