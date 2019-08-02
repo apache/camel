@@ -18,6 +18,7 @@ package org.apache.camel.component.undertow;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
@@ -55,15 +56,13 @@ public class BaseUndertowTest extends CamelTestSupport {
         return context;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("prop")
+    public Properties loadProperties() throws Exception {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
         prop.setProperty("port2", "" + getPort2());
-        jndi.bind("prop", prop);
-        return jndi;
+        return prop;
     }
 
     protected int getNextPort() {
