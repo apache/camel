@@ -1930,12 +1930,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-mongodb3</artifactId>
+        <artifactId>camel-mongodb</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-mongodb3-starter</artifactId>
+        <artifactId>camel-mongodb-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

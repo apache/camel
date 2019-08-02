@@ -221,7 +221,7 @@
         <include>org.apache.camel:camel-mllp</include>
         <include>org.apache.camel:camel-mock</include>
         <include>org.apache.camel:camel-mongodb-gridfs</include>
-        <include>org.apache.camel:camel-mongodb3</include>
+        <include>org.apache.camel:camel-mongodb</include>
         <include>org.apache.camel:camel-mqtt</include>
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mustache</include>
@@ -561,7 +561,7 @@
         <include>org.apache.camel:camel-mllp-starter</include>
         <include>org.apache.camel:camel-mock-starter</include>
         <include>org.apache.camel:camel-mongodb-gridfs-starter</include>
-        <include>org.apache.camel:camel-mongodb3-starter</include>
+        <include>org.apache.camel:camel-mongodb-starter</include>
         <include>org.apache.camel:camel-mqtt-starter</include>
         <include>org.apache.camel:camel-msv-starter</include>
         <include>org.apache.camel:camel-mustache-starter</include>
