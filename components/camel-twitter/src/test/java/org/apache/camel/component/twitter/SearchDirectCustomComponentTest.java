@@ -18,7 +18,6 @@ package org.apache.camel.component.twitter;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.twitter.search.TwitterSearchComponent;
-import org.apache.camel.impl.JndiRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

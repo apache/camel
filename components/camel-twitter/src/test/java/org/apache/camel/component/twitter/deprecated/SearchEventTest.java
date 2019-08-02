@@ -24,7 +24,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.twitter.CamelTwitterTestSupport;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
