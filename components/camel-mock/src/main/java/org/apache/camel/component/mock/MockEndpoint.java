@@ -426,8 +426,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         for (Throwable failure : failures) {
             if (failure != null) {
-                log.error("Caught on " + getEndpointUri() + " Exception: " + failure, failure);
-                fail("Failed due to caught exception: " + failure);
+                log.error("Caught exception on " + getEndpointUri() + " due to: " + failure.getMessage(), failure);
+                fail(failure);
             }
         }
     }
@@ -1114,11 +1114,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         final AssertionClause clause = new AssertionClauseTask(this) {
             @Override
             public void assertOnIndex(int index) {
-                applyAssertionOn(MockEndpoint.this, index, assertExchangeReceived(index));
+                if (index < getReceivedExchanges().size()) {
+                    applyAssertionOn(MockEndpoint.this, index, assertExchangeReceived(index));
+                }
             }
 
             public void run() {
-                for (int i = 0; i < getReceivedCounter(); i++) {
+                for (int i = 0; i < getReceivedExchanges().size(); i++) {
                     assertOnIndex(i);
                 }
             }
@@ -1603,7 +1605,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 log.debug("{} failed and received[{}]: {}", getEndpointUri(), ++index, exchange);
             }
         }
-        throw new AssertionError(getEndpointUri() + " " + message);
+        if (message instanceof Throwable) {
+            Throwable cause = (Throwable) message;
+            String msg = "Caught exception on " + getEndpointUri() + " due to: " + cause.getMessage();
+            throw new AssertionError(msg, cause);
+        } else {
+            throw new AssertionError(getEndpointUri() + " " + message);
+        }
     }
 
     public int getExpectedMinimumCount() {
