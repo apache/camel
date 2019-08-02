@@ -21,6 +21,8 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Ignore;
@@ -32,8 +34,8 @@ public class XmppProducerConcurrentTest extends CamelTestSupport {
     private EmbeddedXmppTestServer embeddedXmppTestServer;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = new SimpleRegistry();
 
         embeddedXmppTestServer.bindSSLContextTo(registry);
 
