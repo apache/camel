@@ -26,6 +26,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.vysper.mina.TCPEndpoint;
@@ -108,7 +109,7 @@ public final class EmbeddedXmppTestServer {
         return port;
     }
 
-    public void bindSSLContextTo(JndiRegistry registry) throws Exception {
+    public void bindSSLContextTo(Registry registry) throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(ObjectHelper.loadResourceAsStream("xmppServer.jks"), "secret".toCharArray());
 
