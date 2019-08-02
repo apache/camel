@@ -19,6 +19,7 @@ package org.apache.camel.component.zookeeper.cloud;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.service.ServiceComponent;
@@ -26,16 +27,11 @@ import org.apache.camel.impl.JndiRegistry;
 
 public class ZooKeeperServiceRegistrationWithServiceComponentTest extends ZooKeeperServiceRegistrationTestBase {
 
+    @BindToRegistry("service")
+    private ServiceComponent service = new ServiceComponent();
+
     protected Map<String, String> getMetadata() {
         return Collections.singletonMap("service.type", "zookeeper");
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("service", new ServiceComponent());
-
-        return registry;
     }
 
     @Override
@@ -43,11 +39,8 @@ public class ZooKeeperServiceRegistrationWithServiceComponentTest extends ZooKee
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=zookeeper", SERVICE_NAME, SERVICE_PORT)
-                    .routeId(SERVICE_ID)
-                    .routeGroup(SERVICE_NAME)
-                    .noAutoStartup()
-                    .to("log:service-registry?level=INFO");
+                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=zookeeper", SERVICE_NAME, SERVICE_PORT).routeId(SERVICE_ID).routeGroup(SERVICE_NAME)
+                    .noAutoStartup().to("log:service-registry?level=INFO");
             }
         };
     }
