@@ -20,7 +20,6 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
