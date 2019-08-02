@@ -1778,11 +1778,11 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mllp/${project.version}</bundle>
   </feature>
-  <feature name='camel-mongodb3' version='${project.version}' start-level='50'>
+  <feature name='camel-mongodb' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-jackson</feature>
     <bundle dependency='true'>mvn:org.mongodb/mongo-java-driver/${mongo-java-driver-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-mongodb3/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-mongodb/${project.version}</bundle>
   </feature>
   <feature name='camel-mongodb-gridfs' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
