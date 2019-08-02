@@ -23,7 +23,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.service.ServiceComponent;
-import org.apache.camel.impl.JndiRegistry;
 
 public class ZooKeeperServiceRegistrationWithServiceComponentTest extends ZooKeeperServiceRegistrationTestBase {
 
