@@ -23,6 +23,7 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,11 +74,11 @@ public class HttpAsyncDslTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi =  super.createRegistry();
-        jndi.bind("validateOrder", new MyValidateOrderBean());
-        jndi.bind("handleOrder", new MyHandleOrderBean());
-        return jndi;
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry =  new SimpleRegistry();
+        registry.bind("validateOrder", new MyValidateOrderBean());
+        registry.bind("handleOrder", new MyHandleOrderBean());
+        return registry;
     }
 
     @Override

@@ -27,6 +27,8 @@ import javax.net.SocketFactory;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.net.ftp.FTPClient;
 import org.junit.After;
@@ -134,8 +136,8 @@ public class FtpInitialConnectTimeoutTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = new SimpleRegistry();
         registry.bind("mocked", mockedClient());
         return registry;
     }
