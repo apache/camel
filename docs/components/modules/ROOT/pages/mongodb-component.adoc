@@ -1,9 +1,9 @@
-[[mongodb3-component]]
+[[mongodb-component]]
 = MongoDB Component
 
 *Available as of Camel version 2.19*
 
-Note: Camel MongoDB3 component Use the Mongo Driver for Java 3.x.
+Note: Camel MongoDB component Use the Mongo Driver for Java 3.x.
 If your are looking for previews versions look the Camel MongoDB component.
 
 According to Wikipedia: "NoSQL is a movement promoting a loosely defined
@@ -38,7 +38,7 @@ for this component:
 ------------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-mongodb3</artifactId>
+    <artifactId>camel-mongodb</artifactId>
     <version>x.y.z</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
@@ -48,7 +48,7 @@ for this component:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------
-mongodb3:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
+mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
 == MongoDB options
@@ -77,7 +77,7 @@ The MongoDB component supports 3 options, which are listed below.
 The MongoDB endpoint is configured using URI syntax:
 
 ----
-mongodb3:connectionBean
+mongodb:connectionBean
 ----
 
 with the following path and query parameters:
@@ -133,7 +133,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-mongodb3-starter</artifactId>
+  <artifactId>camel-mongodb-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -147,10 +147,10 @@ The component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.mongodb3.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.mongodb3.enabled* | Enable mongodb3 component | true | Boolean
-| *camel.component.mongodb3.mongo-connection* | Set a client used for connection: all endpoints generated from the component will share this connection bean. The option is a com.mongodb.MongoClient type. |  | String
-| *camel.component.mongodb3.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.mongodb.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.mongodb.enabled* | Whether to enable auto configuration of the mongodb component. This is enabled by default. |  | Boolean
+| *camel.component.mongodb.mongo-connection* | Set a client used for connection: all endpoints generated from the component will share this connection bean. The option is a com.mongodb.MongoClient type. |  | String
+| *camel.component.mongodb.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -194,7 +194,7 @@ The following route defined in Spring XML executes the operation
 <route>
   <from uri="direct:start" />
   <!-- using bean 'mongoBean' defined above -->
-  <to uri="mongodb3:mongoBean?database=${mongodb.database}&amp;collection=${mongodb.collection}&amp;operation=getDbStats" />
+  <to uri="mongodb:mongoBean?database=${mongodb.database}&amp;collection=${mongodb.collection}&amp;operation=getDbStats" />
   <to uri="direct:result" />
 </route>
 ---------------------------------------------------------------------------------------------------------------------------
@@ -215,7 +215,7 @@ http://www.mongodb.org/display/DOCS/Java+Types[http://www.mongodb.org/display/DO
 [source,java]
 ------------------------------------------------------------------------------
 from("direct:findById")
-    .to("mongodb3:myDb?database=flights&collection=tickets&operation=findById")
+    .to("mongodb:myDb?database=flights&collection=tickets&operation=findById")
     .to("mock:resultFindById");
 ------------------------------------------------------------------------------
 
@@ -238,7 +238,7 @@ Example with no query (returns any object of the collection):
 [source,java]
 ------------------------------------------------------------------------------------
 from("direct:findOneByQuery")
-    .to("mongodb3:myDb?database=flights&collection=tickets&operation=findOneByQuery")
+    .to("mongodb:myDb?database=flights&collection=tickets&operation=findOneByQuery")
     .to("mock:resultFindOneByQuery");
 ------------------------------------------------------------------------------------
 
@@ -248,7 +248,7 @@ Example with a query (returns one matching result):
 ------------------------------------------------------------------------------------
 from("direct:findOneByQuery")
     .setHeader(MongoDbConstants.CRITERIA, Filters.eq("name", "Raul Kripalani"))
-    .to("mongodb3:myDb?database=flights&collection=tickets&operation=findOneByQuery")
+    .to("mongodb:myDb?database=flights&collection=tickets&operation=findOneByQuery")
     .to("mock:resultFindOneByQuery");
 ------------------------------------------------------------------------------------
 
@@ -271,7 +271,7 @@ Example with no query (returns all object in the collection):
 [source,java]
 -----------------------------------------------------------------------------
 from("direct:findAll")
-    .to("mongodb3:myDb?database=flights&collection=tickets&operation=findAll")
+    .to("mongodb:myDb?database=flights&collection=tickets&operation=findAll")
     .to("mock:resultFindAll");
 -----------------------------------------------------------------------------
 
@@ -281,7 +281,7 @@ Example with a query (returns all matching results):
 -----------------------------------------------------------------------------
 from("direct:findAll")
     .setHeader(MongoDbConstants.CRITERIA, Filters.eq("name", "Raul Kripalani"))
-    .to("mongodb3:myDb?database=flights&collection=tickets&operation=findAll")
+    .to("mongodb:myDb?database=flights&collection=tickets&operation=findAll")
     .to("mock:resultFindAll");
 -----------------------------------------------------------------------------
 
@@ -317,7 +317,7 @@ Example with option outputType=MongoIterable and batch size :
 from("direct:findAll")
     .setHeader(MongoDbConstants.BATCH_SIZE).constant(10)
     .setHeader(MongoDbConstants.CRITERIA, Filters.eq("name", "Raul Kripalani"))
-    .to("mongodb3:myDb?database=flights&collection=tickets&operation=findAll&outputType=MongoIterable")
+    .to("mongodb:myDb?database=flights&collection=tickets&operation=findAll&outputType=MongoIterable")
     .to("mock:resultFindAll");
 -----------------------------------------------------------------------------
 
@@ -351,7 +351,7 @@ collection.
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------------------
-// from("direct:count").to("mongodb3:myDb?database=tickets&collection=flights&operation=count&dynamicity=true");
+// from("direct:count").to("mongodb:myDb?database=tickets&collection=flights&operation=count&dynamicity=true");
 Long result = template.requestBodyAndHeader("direct:count", "irrelevantBody", MongoDbConstants.COLLECTION, "dynamicCollectionName");
 assertTrue("Result is not of type Long", result instanceof Long);
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -385,7 +385,7 @@ the creation of Bson. It retrieves all fields except `_id` and
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------
-// route: from("direct:findAll").to("mongodb3:myDb?database=flights&collection=tickets&operation=findAll")
+// route: from("direct:findAll").to("mongodb:myDb?database=flights&collection=tickets&operation=findAll")
 Bson fieldProjection = Projection.exclude("_id", "boringField");
 Object result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.FIELDS_PROJECTION, fieldProjection);
 ----------------------------------------------------------------------------------------------------------------------------
@@ -396,7 +396,7 @@ the creation of Bson. It retrieves all fields except `_id` and
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------
-// route: from("direct:findAll").to("mongodb3:myDb?database=flights&collection=tickets&operation=findAll")
+// route: from("direct:findAll").to("mongodb:myDb?database=flights&collection=tickets&operation=findAll")
 Bson fieldProjection = Projection.exclude("_id", "boringField");
 Object result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.FIELDS_PROJECTION, fieldProjection);
 ----------------------------------------------------------------------------------------------------------------------------
@@ -411,7 +411,7 @@ the creation of Bson. It retrieves all fields except `_id` and
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------
-// route: from("direct:findAll").to("mongodb3:myDb?database=flights&collection=tickets&operation=findAll")
+// route: from("direct:findAll").to("mongodb:myDb?database=flights&collection=tickets&operation=findAll")
 Bson sorts = Sorts.descending("_id");
 Object result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.SORT_BY, sorts);
 ----------------------------------------------------------------------------------------------------------------------------
@@ -430,7 +430,7 @@ to a single field, based on the `documentTimestamp` field:
 .setHeader(MongoDbConstants.SORT_BY).constant(Sorts.descending("documentTimestamp"))
 .setHeader(MongoDbConstants.FIELDS_PROJECTION).constant(Projection.include("documentTimestamp"))
 .setBody().constant("{}")
-.to("mongodb3:myDb?database=local&collection=myDemoCollection&operation=findOneByQuery")
+.to("mongodb:myDb?database=local&collection=myDemoCollection&operation=findOneByQuery")
 .to("direct:aMyBatisParameterizedSelect");
 ----------------------------------------------------------------------------------------------------------------------------
 
@@ -450,7 +450,7 @@ Example:
 [source,java]
 -----------------------------------------------------------------------------
 from("direct:insert")
-    .to("mongodb3:myDb?database=flights&collection=tickets&operation=insert");
+    .to("mongodb:myDb?database=flights&collection=tickets&operation=insert");
 -----------------------------------------------------------------------------
 
 The operation will return a WriteResult, and depending on the
@@ -512,7 +512,7 @@ For example:
 [source,java]
 ---------------------------------------------------------------------------
 from("direct:insert")
-    .to("mongodb3:myDb?database=flights&collection=tickets&operation=save");
+    .to("mongodb:myDb?database=flights&collection=tickets&operation=save");
 ---------------------------------------------------------------------------
 
 ==== update
@@ -565,7 +565,7 @@ field equals true by setting the value of the "scientist" field to
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------------------------
-// route: from("direct:update").to("mongodb3:myDb?database=science&collection=notableScientists&operation=update");
+// route: from("direct:update").to("mongodb:myDb?database=science&collection=notableScientists&operation=update");
 Bson filterField = Filters.eq("filterField", true);
 String updateObj = Updates.set("scientist", "Darwin");
 Object result = template.requestBodyAndHeader("direct:update", new Bson[] {filterField, Document.parse(updateObj)}, MongoDbConstants.MULTIUPDATE, true);
@@ -573,7 +573,7 @@ Object result = template.requestBodyAndHeader("direct:update", new Bson[] {filte
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------------------------
-// route: from("direct:update").to("mongodb3:myDb?database=science&collection=notableScientists&operation=update");
+// route: from("direct:update").to("mongodb:myDb?database=science&collection=notableScientists&operation=update");
 Maps<String, Object> headers = new HashMap<>(2);
 headers.add(MongoDbConstants.MULTIUPDATE, true);
 headers.add(MongoDbConstants.FIELDS_FILTER, Filters.eq("filterField", true));
@@ -584,7 +584,7 @@ Object result = template.requestBodyAndHeaders("direct:update", updateObj, heade
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------------------------
-// route: from("direct:update").to("mongodb3:myDb?database=science&collection=notableScientists&operation=update");
+// route: from("direct:update").to("mongodb:myDb?database=science&collection=notableScientists&operation=update");
 String updateObj = "[{\"filterField\": true}, {\"$set\", {\"scientist\", \"Darwin\"}}]";
 Object result = template.requestBodyAndHeader("direct:update", updateObj, MongoDbConstants.MULTIUPDATE, true);
 
@@ -603,7 +603,7 @@ collection:
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------
-// route: from("direct:remove").to("mongodb3:myDb?database=science&collection=notableScientists&operation=remove");
+// route: from("direct:remove").to("mongodb:myDb?database=science&collection=notableScientists&operation=remove");
 Bson conditionField = Filters.eq("conditionField", true);
 Object result = template.requestBody("direct:remove", conditionField);
 ------------------------------------------------------------------------------------------------------------------
@@ -660,12 +660,12 @@ body.
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// route: from("direct:aggregate").to("mongodb3:myDb?database=science&collection=notableScientists&operation=aggregate");
+// route: from("direct:aggregate").to("mongodb:myDb?database=science&collection=notableScientists&operation=aggregate");
 List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist", 
         group("$scientist", sum("count", 1)));
 from("direct:aggregate")
     .setBody().constant(aggregate)
-    .to("mongodb3:myDb?database=science&collection=notableScientists&operation=aggregate")
+    .to("mongodb:myDb?database=science&collection=notableScientists&operation=aggregate")
     .to("mock:resultAggregate");
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -693,7 +693,7 @@ List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("sci
 from("direct:aggregate")
     .setHeader(MongoDbConstants.BATCH_SIZE).constant(10)
     .setBody().constant(aggregate)
-    .to("mongodb3:myDb?database=science&collection=notableScientists&operation=aggregate&outputType=MongoIterable")
+    .to("mongodb:myDb?database=science&collection=notableScientists&operation=aggregate&outputType=MongoIterable")
     .split(body())
     .streaming()
     .to("mock:resultAggregate");
@@ -732,7 +732,7 @@ Usage example:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------
-// from("direct:getDbStats").to("mongodb3:myDb?database=flights&collection=tickets&operation=getDbStats");
+// from("direct:getDbStats").to("mongodb:myDb?database=flights&collection=tickets&operation=getDbStats");
 Object result = template.requestBody("direct:getDbStats", "irrelevantBody");
 assertTrue("Result is not of type Document", result instanceof Document);
 ---------------------------------------------------------------------------------------------------------
@@ -772,7 +772,7 @@ Usage example:
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------
-// from("direct:getColStats").to("mongodb3:myDb?database=flights&collection=tickets&operation=getColStats");
+// from("direct:getColStats").to("mongodb:myDb?database=flights&collection=tickets&operation=getColStats");
 Object result = template.requestBody("direct:getColStats", "irrelevantBody");
 assertTrue("Result is not of type Document", result instanceof Document);
 -----------------------------------------------------------------------------------------------------------
@@ -789,7 +789,7 @@ Collection parameter is not use for this operation.
 
 [source,java]
 --------------------------------------------------------------------------------
-// route: from("command").to("mongodb3:myDb?database=science&operation=command");
+// route: from("command").to("mongodb:myDb?database=science&operation=command");
 DBObject commandBody = new BasicDBObject("hostInfo", "1");
 Object result = template.requestBody("direct:command", commandBody);
 --------------------------------------------------------------------------------
@@ -807,7 +807,7 @@ For example:
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------------
-// from("direct:insert").to("mongodb3:myDb?database=flights&collection=tickets&operation=insert");
+// from("direct:insert").to("mongodb:myDb?database=flights&collection=tickets&operation=insert");
 Object result = template.requestBodyAndHeader("direct:insert", "irrelevantBody", MongoDbConstants.OPERATION_HEADER, "count");
 assertTrue("Result is not of type Long", result instanceof Long);
 -----------------------------------------------------------------------------------------------------------------------------
@@ -881,7 +881,7 @@ An example:
 
 [source,java]
 -----------------------------------------------------------------------------------------------------
-from("mongodb3:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime")
+from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime")
     .id("tailableCursorConsumer1")
     .autoStartup(false)
     .to("mock:test");
@@ -935,7 +935,7 @@ the last processed value under the "lastTrackingValue" field
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------------------
-from("mongodb3:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime&persistentTailTracking=true" + 
+from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime&persistentTailTracking=true" + 
      "&persistentId=cancellationsTracker")
     .id("tailableCursorConsumer2")
     .autoStartup(false)
@@ -949,7 +949,7 @@ field:
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------------------
-from("mongodb3:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime&persistentTailTracking=true" + 
+from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime&persistentTailTracking=true" + 
      "&persistentId=cancellationsTracker&tailTrackDb=trackers&tailTrackCollection=camelTrackers" + 
      "&tailTrackField=lastProcessedDepartureTime")
     .id("tailableCursorConsumer3")
@@ -971,7 +971,7 @@ It could be easily specified using XML DSL configuration:
 [source,xml]
 -------------
 <route id="filterConsumer">
-    <from uri="mongodb3:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets"/>
+    <from uri="mongodb:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets"/>
     <to uri="mock:test"/>
 
     <routeProperty key="streamFilter" value="{'$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]}}"/>
@@ -981,7 +981,7 @@ It could be easily specified using XML DSL configuration:
 Java configuration:
 [source,java]
 -------------
-from("mongodb3:myDb?consumerType=changeStreams&database=flights&collection=tickets")
+from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=tickets")
     .routeProperty("streamFilter", "{'$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]}}")
     .to("mock:test");
 -------------

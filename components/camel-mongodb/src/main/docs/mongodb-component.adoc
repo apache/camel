@@ -133,7 +133,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-mongodb3-starter</artifactId>
+  <artifactId>camel-mongodb-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -147,10 +147,10 @@ The component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.mongodb3.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.mongodb3.enabled* | Enable mongodb3 component | true | Boolean
-| *camel.component.mongodb3.mongo-connection* | Set a client used for connection: all endpoints generated from the component will share this connection bean. The option is a com.mongodb.MongoClient type. |  | String
-| *camel.component.mongodb3.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.mongodb.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.mongodb.enabled* | Whether to enable auto configuration of the mongodb component. This is enabled by default. |  | Boolean
+| *camel.component.mongodb.mongo-connection* | Set a client used for connection: all endpoints generated from the component will share this connection bean. The option is a com.mongodb.MongoClient type. |  | String
+| *camel.component.mongodb.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

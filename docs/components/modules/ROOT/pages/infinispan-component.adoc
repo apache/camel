@@ -10,8 +10,21 @@ store and data grid platform written in Java.
 
 Infinispan requires at least Java 8.
 
-Maven users will need to add the following dependency to their `pom.xml`
-for this component:
+The `camel-infinispan` component includes the following features:
+
+* *Local Camel Consumer* - Receives cache change notifications and sends them to be processed.
+This can be done synchronously or asynchronously, and is also supported with a replicated or distributed cache.
+
+* *Local Camel Producer* - A producer creates and sends messages to an endpoint.
+The `camel-infinispan` producer uses ``GET``, ``PUT``, ``REMOVE``, and `CLEAR` operations.
+The local producer is also supported with a replicated or distributed cache.
+
+* *Remote Camel Producer* - In Remote Client-Server mode, the Camel producer can send messages using Hot Rod.
+
+* *Remote Camel Consumer* - In Client-Server mode, receives cache change notifications and sends them to be processed.
+The events are processed asynchronously.
+
+If you use Maven, you must add the following dependency to your `pom.xml`:
 
 [source,xml]
 ------------------------------------------------------------
@@ -153,6 +166,257 @@ The component supports 23 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
+== Camel Operations
+This section lists all available operations, along with their header information.
+
+.Put Operations
+[cols="40%,60%", frame="all", options="header"]
+|===
+| Operation Name
+| Description
+
+| InfinispanOperation.PUT
+| *Context*: Embedded / Remote
+
+*Description*: Puts a key/value pair in the cache, optionally with expiration
+
+*Required Headers*: CamelInfinispanKey, CamelInfinispanValue
+
+*Optional Headers*: CamelInfinispanLifespanTime, CamelInfinispanLifespanTimeUnit, CamelInfinispanMaxIdleTime, CamelInfinispanMaxIdleTimeUnit, CamelInfinispanIgnoreReturnValues
+
+*Result Header*: CamelInfinispanOperationResult
+
+| InfinispanOperation.PUTASYNC
+| *Description*: Asynchronously puts a key/value pair in the cache, optionally with expiration
+
+
+| InfinispanOperation.PUTIFABSENT
+| *Description*: Puts a key/value pair in the cache if it did not exist, optionally with expiration
+
+
+| InfinispanOperation.PUTIFABSENTASYNC
+| *Description*: Asynchronously puts a key/value pair in the cache if it did not exist, optionally with expiration
+
+|===
+
+.Put All Operations
+[cols="40%,60%", options="header"]
+|===
+| Operation Name
+| Description
+
+| InfinispanOperation.PUTALL
+| *Context*: Embedded / Remote
+
+*Description*: Adds multiple entries to a cache, optionally with expiration
+
+*Required Headers*: CamelInfinispanMap
+
+*Optional Headers*: CamelInfinispanLifespanTime, CamelInfinispanLifespanTimeUnit, CamelInfinispanMaxIdleTime, CamelInfinispanMaxIdleTimeUnit
+
+*Result Header*: None
+
+| CamelInfinispanOperation.PUTALLASYNC
+| *Description*: Asynchronously adds multiple entries to a cache, optionally with expiration
+
+|===
+
+.Get Operations
+[cols="40%,60%", frame="all", options="header"]
+|===
+|Operation Name
+|Description
+
+| InfinispanOperation.GET
+| *Context*: Embedded / Remote
+
+*Description*: Retrieves the value associated with a specific key from the cache
+
+*Required Headers*: CamelInfinispanKey
+
+*Optional Headers*: None
+
+*Result Header*: None
+
+| InfinispanOperation.GETORDEFAULT
+| *Context*: Embedded / Remote
+
+*Description*: Retrieves the value, or default value, associated with a specific key from the cache
+
+*Required Headers*: CamelInfinispanKey
+
+*Optional Headers*: None
+
+*Result Header*: None
+|===
+
+.Contains Key Operation
+[cols="40%,60%", options="header"]
+|===
+| Operation Name
+| Description
+
+| InfinispanOperation.CONTAINSKEY
+| *Context*: Embedded / Remote
+
+*Description*: Determines whether a cache contains a specific key
+
+*Required Headers*: CamelInfinispanKey
+
+*Optional Headers*: None
+
+*Result Header*: CamelInfinispanOperationResult
+|===
+
+.Contains Value Operation
+[cols="40%,60%", options="header"]
+|===
+| Operation Name
+| Description
+
+| InfinispanOperation.CONTAINSVALUE
+| *Context*: Embedded / Remote
+
+*Description*: Determines whether a cache contains a specific value
+
+*Required Headers*: CamelInfinispanKey
+
+*Optional Headers*: None
+
+*Result Headers*: None
+|===
+
+.Remove Operations
+[cols="40%,60%", options="header"]
+|===
+| Operation Name
+| Description
+
+| InfinispanOperation.REMOVE
+| *Context*: Embedded / Remote
+
+*Description*: Removes an entry from a cache, optionally only if the value matches a given one
+
+*Required Headers*: CamelInfinispanKey
+
+*Optional Headers*: CamelInfinispanValue
+
+*Result Header*: CamelInfinispanOperationResult
+
+| InfinispanOperation.REMOVEASYNC
+| *Description*: Asynchronously removes an entry from a cache, optionally only if the value matches a given one
+
+|===
+
+.Replace Operations
+[cols="40%,60%", options="header"]
+|===
+| Operation Name
+| Description
+
+| InfinispanOperation.REPLACE
+| *Context*: Embedded / Remote
+
+*Description*: Conditionally replaces an entry in the cache, optionally with expiration
+
+*Required Headers*: CamelInfinispanKey, CamelInfinispanValue, CamelInfinispanOldValue
+
+*Optional Headers*: CamelInfinispanLifespanTime, CamelInfinispanLifespanTimeUnit, CamelInfinispanMaxIdleTime, CamelInfinispanMaxIdleTimeUnit, CamelInfinispanIgnoreReturnValues
+
+*Result Header*: CamelInfinispanOperationResult
+
+| InfinispanOperation.REPLACEASYNC
+| *Description*: Asynchronously conditionally replaces an entry in the cache, optionally with expiration
+
+|===
+
+.Clear Operations
+[cols="40%,60%", options="header"]
+|===
+| Operation Name
+| Description
+
+| InfinispanOperation.CLEAR
+| *Context*: Embedded / Remote
+
+*Description*: Clears the cache
+
+*Required Headers*: None
+
+*Optional Headers*: None
+
+*Result Header*: None
+
+| InfinispanOperation.CLEARASYNC
+| *Context*: Embedded / Remote
+
+*Description*: Asynchronously clears the cache
+
+*Required Headers*: None
+
+*Optional Headers*: None
+
+*Result Header*: None
+|===
+
+.Size Operation
+[cols="40%,60%", options="header"]
+|===
+| Operation Name
+| Description
+
+| InfinispanOperation.SIZE
+| *Context*: Embedded / Remote
+
+*Description*: Returns the number of entries in the cache
+
+*Required Headers*: None
+
+*Optional Headers*: None
+
+*Result Header*: CamelInfinispanOperationResult
+|===
+
+.Stats Operation
+[cols="40%,60%", options="header"]
+|===
+| Operation Name
+| Description
+
+| InfinispanOperation.STATS
+| *Context*: Embedded / Remote
+
+*Description*: Returns statistics about the cache
+
+*Required Headers*: None
+
+*Optional Headers*: None
+
+*Result Header*: CamelInfinispanOperationResult
+|===
+
+.Query Operation
+[cols="40%,60%", options="header"]
+|===
+| Operation Name
+| Description
+
+| InfinispanOperation.QUERY
+| *Context*: Remote
+
+*Description*: Executes a query on the cache
+
+*Required Headers*: CamelInfinispanQueryBuilder
+
+*Optional Headers*: None
+
+*Result Header*: CamelInfinispanOperationResult
+|===
+
+[NOTE]
+====
+Any operations that take `CamelInfinispanIgnoreReturnValues` will receive a null result.
+====
 
 
 
@@ -188,6 +452,7 @@ from("direct:start")
     .setHeader(InfinispanConstants.KEY).constant("123")
     .to("infinispan?cacheContainer=#cacheContainer");
 ----
+
 
 * Retrieve a specific key from a named cache:
 +
@@ -247,6 +512,310 @@ from("direct:start")
 ----
 
 
+
+=== XML examples
+
+Routing can also be performed using XML configuration.
+The following example demonstrates `camel-infinispan` `local-camel-producer`, a camel route that sends data to an embedded cache created by the `local-cache` module.
+
+[source,java,options="nowrap"]
+----
+<camelContext id="local-producer" xmlns="http://camel.apache.org/schema/blueprint">
+    <route>
+        <from uri="timer://local?fixedRate=true&amp;period=5000"/>
+        <setHeader headerName="CamelInfinispanKey">
+            <constant>CamelTimerCounter</constant>
+        </setHeader>
+        <setHeader headerName="CamelInfinispanValue">
+            <constant>CamelTimerCounter</constant>
+        </setHeader>
+        <to uri="infinispan://foo?cacheContainer=#cacheManager"/>
+        <to uri="log:local-put?showAll=true"/>
+    </route>
+</camelContext>
+----
+
+
+The provided example requires you to instantiate the [class]``cacheManager``.
+
+You can instantiate the [class]``cacheManager`` bean for Spring XML as follows:
+
+[source,xml,options="nowrap"]
+----
+<bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager" init-method="start" destroy-method="stop">
+    <constructor-arg type="java.lang.String" value="infinispan.xml"/>
+</bean>
+----
+
+
+The following demonstrates how to instantiate the [class]``cacheManager`` bean using Blueprint XML.
+
+[source,xml,options="nowrap"]
+----
+<bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager" init-method="start" destroy-method="stop">
+    <argument value="infinispan.xml" />
+</bean>
+----
+
+[NOTE]
+====
+Both the Spring XML and Blueprint XML examples use the configuration file [path]_infinispan.xml_
+ for configuration of the cache. This file must be present on the classpath.
+====
+
+
+== Remote Query
+
+When executing remote queries the cacheManager must be an instance of ``RemoteCacheManager``, and an example configuration utilizing a `RemoteCacheManager` is found below for both Java and blueprint.xml: 
+
+.Using only Java
+====
+[source,java,options="nowrap"]
+----
+from("direct:start")
+    .setHeader(InfinispanConstants.OPERATION, InfinispanConstants.QUERY)
+    .setHeader(InfinispanConstants.QUERY_BUILDER,
+      new InfinispanQueryBuilder() {
+        public Query build(QueryFactory<Query> queryFactory) {
+          return queryFactory.from(User.class).having("name").like("%abc%")
+                      .build();
+        }
+      })
+    .to("infinispan://localhost?cacheContainer=#cacheManager&cacheName=remote_query_cache") ;
+----
+====
+
+.Using Blueprint and Java
+====
+.Java [class]``RemoteCacheManagerFactory`` class:  
+[source,java,options="nowrap"]
+----
+public class RemoteCacheManagerFactory {      
+    ConfigurationBuilder clientBuilder;
+    public RemoteCacheManagerFactory(String hostname, int port) {
+        clientBuilder = new ConfigurationBuilder();
+        clientBuilder.addServer()
+            .host(hostname).port(port);
+    }
+    public RemoteCacheManager newRemoteCacheManager() {
+        return new RemoteCacheManager(clientBuilder.build());
+    }
+}
+----
+.Java [class]``InfinispanQueryExample`` class:  
+[source,java,options="nowrap"]
+----
+public class InfinispanQueryExample {
+    public InfinispanQueryBuilder getBuilder() {
+        return new InfinispanQueryBuilder() {
+            public Query build(QueryFactory<Query> queryFactory) {
+                return queryFactory.from(User.class)
+                         .having("name")
+                         .like("%abc%")
+                         .build();
+            }
+        }
+    }
+}
+----
+.blueprint.xml: 
+[source,xml,options="nowrap"]
+----
+<bean id=”remoteCacheManagerFactory” class=“com.datagrid.RemoteCacheManagerFactory”>  
+    <argument value=”localhost”/>      
+    <argument value="11222”/>      
+</bean>
+ 
+<bean id=”cacheManager”
+    factory-ref=”remoteCacheManagerFactory” 
+    factory-method=“newRemoteCacheManager”>   
+</bean>
+
+<bean id="queryBuilder" class="org.example.com.InfinispanQueryExample"/>
+
+<camelContext id="route" xmlns="http://camel.apache.org/schema/blueprint">
+    <route>
+        <from uri="direct:start"/>
+            <setHeader headerName="CamelInfinispanOperation">
+                <constant>CamelInfinispanOperationQuery</constant>
+            </setHeader>
+            <setHeader headerName="CamelInfinispanQueryBuilder">
+                <method ref="queryBuilder" method="getBuilder"/>
+            </setHeader>
+        <to uri="infinispan://localhost?cacheContainer=#cacheManager&cacheName=remote_query_cache"/>
+    </route>
+</camelContext>
+----
+====
+
+The `remote_query_cache` is an arbitrary name for a cache that holds the data, and the results of the query will be a list of domain objects stored as a `CamelInfinispanOperationResult` header. 
+
+In addition, there are the following requirements:  
+
+* The [class]``RemoteCacheManager`` must be configured to use [class]``ProtoStreamMarshaller``. 
+* The [class]``ProtoStreamMarshaller`` must be registered with the [class]``RemoteCacheManager``'s serialization context. 
+* The .proto descriptors for domain objects must be registered with the remote Data Grid server. 
+
+
+== Custom Listeners for Embedded Cache
+
+Custom Listeners for an embedded cache can be registered through the [parameter]``customListener`` parameter as shown below: 
+
+.Using Java
+
+[source,java,options="nowrap"]
+----
+from("infinispan://?cacheContainer=#myCustomContainer&cacheName=customCacheName&customListener=#myCustomListener")
+  .to("mock:result");
+----
+
+.Using Blueprint
+
+[source,xml,options="nowrap"]
+----
+<bean id="myCustomContainer" org.infinispan.manager.DefaultCacheManager"
+      init-method="start" destroy-method="stop">
+      <argument value="infinispan.xml" />
+</bean>
+
+<bean id="myCustomListener" class="org.example.com.CustomListener"/>
+   
+<camelContext id="route" xmlns="http://camel.apache.org/schema/blueprint">
+    <route>
+        <from uri="infinispan://?cacheContainer=#myCustomContainer&cacheName=customCacheName&customListener=#myCustomListener"/>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
+----
+
+
+The instance of [class]``myCustomListener`` must exist.
+Users are encouraged to extend the [class]``org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomListener`` and annotate the resulting class with the `@Listener` annotation from [package]#org.infinispan.notifications#
+. 
+
+[NOTE]
+====
+Custom filters and converters for embedded caches are currently not supported. 
+====
+
+
+== Custom Listeners for Remote Cache
+
+Custom listeners for a remote cache can be registered in the same way as an embedded cache, with the exception that [parameter]``sync=false`` must be present.
+For instance: 
+
+.Using only Java
+====
+[source,java,options="nowrap"]
+----
+from(infinispan://?cacheContainer=#cacheManager&sync=false&customListener=#myCustomListener")
+  .to(mock:result);
+----
+====
+
+.Using Blueprint and Java
+====
+.Java class:  
+[source,java,options="nowrap"]
+----
+
+public class RemoteCacheManagerFactory {      
+    ConfigurationBuilder clientBuilder;
+    public RemoteCacheManagerFactory(String hostname, int port) {
+        clientBuilder = new ConfigurationBuilder();
+        clientBuilder.addServer()
+            .host(hostname).port(port);
+    }
+    public RemoteCacheManager newRemoteCacheManager() {
+        return new RemoteCacheManager(clientBuilder.build());
+    }
+}
+----
+.blueprint.xml: 
+[source,xml,options="nowrap"]
+----
+<bean id=”remoteCacheManagerFactory” class=“com.datagrid.RemoteCacheManagerFactory”>  
+    <argument value=”localhost”/>      
+    <argument value="11222”/>      
+</bean>
+ 
+<bean id=”cacheManager”
+    factory-ref=”remoteCacheManagerFactory” 
+    factory-method=“newRemoteCacheManager”>   
+</bean>
+
+<bean id="myCustomListener" class="org.example.com.CustomListener"/>
+
+<camelContext id="route" xmlns="http://camel.apache.org/schema/blueprint">
+    <route>
+        <from uri="infinispan://?cacheContainer=#cacheManager&sync=false&customListener=#myCustomListener"/>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
+----
+====
+
+The instance of [class]``myCustomListener`` must exist.
+Users are encouraged to extend the [class]``org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener`` class and annotate the resulting class with ``@ClientListener``; this annotation is found in [package]#org.infinispan.client.hotrod.annotation#
+. 
+
+Remote listeners may also be associated with custom filters and converters as shown below:  
+[source,java,options="nowrap"]
+----
+@ClientListener(includeCurrentState=true, filterFactoryName = "static-filter-factory", converterFactoryName = "static-converter-factory")
+  private static class MyCustomListener extends InfinispanRemoteCustomListener {
+}
+----
+
+In order to use custom filters or converters classes annotated with `@NamedFactory` must be implemented.
+A skeleton that implements the necessary methods is shown below:  
+[source,java,options="nowrap"]
+----
+import org.infinispan.notifications.cachelistener.filter;
+
+@NamedFactory(name = "static-converter-factory")
+public static class StaticConverterFactory implements CacheEventConverterFactory {
+  @Override
+  public CacheEventConverter<Integer, String, CustomEvent> getConverter(Object[] params) {
+    ...
+  }
+
+  static class StaticConverter implements CacheEventConverter<Integer, String, CustomEvent>, Serializable {
+    @Override
+    public CustomEvent convert(Integer key, String previousValue, Metadata previousMetadata, 
+                               String value, Metadata metadata, EventType eventType) {
+      ...
+    }
+  }
+}
+   
+@NamedFactory(name = "static-filter-factory")
+public static class StaticCacheEventFilterFactory implements CacheEventFilterFactory {
+  @Override
+  public CacheEventFilter<Integer, String> getFilter(final Object[] params) {
+    ...
+  }
+
+  static class StaticCacheEventFilter implements CacheEventFilter<Integer, String>, Serializable {
+    @Override
+    public boolean accept(Integer key, String previousValue, Metadata previousMetadata, 
+                          String value, Metadata metadata, EventType eventType) {
+      ...
+    }
+  }
+}
+----
+
+Custom filters and converters must be registered with the server.
+. 
+
+[NOTE]
+====
+In order to listen for remote HotRod events the cacheManager must be of type [class]``RemoteCacheManager`` and instantiated. 
+====
+
+
+
 == Using the Infinispan based idempotent repository
 
 In this section we will use the Infinispan based idempotent repository.
@@ -290,8 +859,6 @@ XML file as well:
     </route>
 </camelContext>
 ----
-
-== Using the Infinispan based route policy
 
 == See Also
 
