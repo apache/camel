@@ -31,7 +31,6 @@ import org.apache.camel.component.thrift.generated.InvalidOperation;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.component.thrift.impl.CalculatorSyncServerImpl;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.KeyStoreParameters;
