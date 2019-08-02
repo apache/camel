@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
  */
 public class SearchDirectCustomComponentTest extends CamelTwitterConsumerTestSupport {
 
-	@BindToRegistry("my-twitter")
-	private TwitterSearchComponent component = new TwitterSearchComponent();
+    @BindToRegistry("my-twitter")
+    private TwitterSearchComponent component = new TwitterSearchComponent();
 
     @Override
     protected String getUri() {
