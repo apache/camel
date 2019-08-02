@@ -59,6 +59,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
@@ -86,6 +87,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.URISupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -131,8 +133,9 @@ public abstract class CamelTestSupport extends TestSupport {
 
     /**
      * Use the RouteBuilder or not
+     *
      * @return <tt>true</tt> then {@link CamelContext} will be auto started,
-     *        <tt>false</tt> then {@link CamelContext} will <b>not</b> be auto started (you will have to start it manually)
+     * <tt>false</tt> then {@link CamelContext} will <b>not</b> be auto started (you will have to start it manually)
      */
     public boolean isUseRouteBuilder() {
         return useRouteBuilder;
@@ -218,17 +221,17 @@ public abstract class CamelTestSupport extends TestSupport {
 
     /**
      * Used for filtering routes routes matching the given pattern, which follows the following rules:
-     *
+     * <p>
      * - Match by route id
      * - Match by route input endpoint uri
-     *
+     * <p>
      * The matching is using exact match, by wildcard and regular expression.
-     *
+     * <p>
      * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
      * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
-     *
+     * <p>
      * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
-     *
+     * <p>
      * Exclude takes precedence over include.
      */
     public String getRouteFilterIncludePattern() {
@@ -237,17 +240,17 @@ public abstract class CamelTestSupport extends TestSupport {
 
     /**
      * Used for filtering routes routes matching the given pattern, which follows the following rules:
-     *
+     * <p>
      * - Match by route id
      * - Match by route input endpoint uri
-     *
+     * <p>
      * The matching is using exact match, by wildcard and regular expression.
-     *
+     * <p>
      * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
      * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
-     *
+     * <p>
      * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
-     *
+     * <p>
      * Exclude takes precedence over include.
      */
     public String getRouteFilterExcludePattern() {
@@ -359,7 +362,7 @@ public abstract class CamelTestSupport extends TestSupport {
         boolean springBoot = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest");
         if (springBoot) {
             throw new RuntimeException("Spring Boot detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Spring Boot."
-                + " Prefer to not extend this class, but use @RunWith(CamelSpringBootRunner.class) instead.");
+                    + " Prefer to not extend this class, but use @RunWith(CamelSpringBootRunner.class) instead.");
         }
     }
 
@@ -373,7 +376,7 @@ public abstract class CamelTestSupport extends TestSupport {
             disableJMX();
         }
 
-        context = (ModelCamelContext)createCamelContext();
+        context = (ModelCamelContext) createCamelContext();
         threadCamelContext.set(context);
 
         assertNotNull("No context found!", context);
@@ -496,8 +499,8 @@ public abstract class CamelTestSupport extends TestSupport {
             ManagedCamelContext mc = context != null ? context.getExtension(ManagedCamelContext.class) : null;
             ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
             if (managedCamelContext == null) {
-                log.warn("Cannot dump route coverage to file as JMX is not enabled. "  
-                    + "Add camel-management-impl JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
+                log.warn("Cannot dump route coverage to file as JMX is not enabled. "
+                        + "Add camel-management-impl JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
             } else {
                 logCoverageSummary(managedCamelContext);
 
@@ -737,7 +740,7 @@ public abstract class CamelTestSupport extends TestSupport {
 
     /**
      * Applies the {@link CamelBeanPostProcessor} to this instance.
-     *
+     * <p>
      * Derived classes using IoC / DI frameworks may wish to turn this into a NoOp such as for CDI
      * we would just use CDI to inject this
      */
@@ -811,7 +814,7 @@ public abstract class CamelTestSupport extends TestSupport {
             camelContextService.start();
         } else {
             if (context instanceof DefaultCamelContext) {
-                DefaultCamelContext defaultCamelContext = (DefaultCamelContext)context;
+                DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
                 if (!defaultCamelContext.isStarted()) {
                     defaultCamelContext.start();
                 }
@@ -832,8 +835,8 @@ public abstract class CamelTestSupport extends TestSupport {
         }
         if (registry != null) {
             String msg = "createRegistry() from camel-test is deprecated. Use createCamelRegistry if you want to control which registry to use, however"
-                + " if you need to bind beans to the registry then this is possible already with the bind method on registry,"
-                + " and there is no need to override this method.";
+                    + " if you need to bind beans to the registry then this is possible already with the bind method on registry,"
+                    + " and there is no need to override this method.";
             LOG.warn(msg);
         } else {
             registry = createCamelRegistry();
@@ -857,7 +860,7 @@ public abstract class CamelTestSupport extends TestSupport {
 
     /**
      * Override to use a custom {@link Registry}.
-     *
+     * <p>
      * However if you need to bind beans to the registry then this is possible already with the bind method on registry,"
      * and there is no need to override this method.
      */
@@ -935,7 +938,7 @@ public abstract class CamelTestSupport extends TestSupport {
      * @see #createRouteBuilder()
      */
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
-        return new RoutesBuilder[] {createRouteBuilder()};
+        return new RoutesBuilder[]{createRouteBuilder()};
     }
 
     /**
@@ -970,21 +973,50 @@ public abstract class CamelTestSupport extends TestSupport {
 
     /**
      * Resolves the {@link MockEndpoint} using a URI of the form <code>mock:someName</code>, optionally
-     * creating it if it does not exist.
+     * creating it if it does not exist. This implementation will lookup existing mock endpoints and match
+     * on the mock queue name, eg mock:foo and mock:foo?retainFirst=5 would match as the queue name is foo.
      *
-     * @param uri      the URI which typically starts with "mock:" and has some name
-     * @param create   whether or not to allow the endpoint to be created if it doesn't exist
+     * @param uri    the URI which typically starts with "mock:" and has some name
+     * @param create whether or not to allow the endpoint to be created if it doesn't exist
      * @return the mock endpoint or an {@link NoSuchEndpointException} is thrown if it could not be resolved
      * @throws NoSuchEndpointException is the mock endpoint does not exists
      */
     protected MockEndpoint getMockEndpoint(String uri, boolean create) throws NoSuchEndpointException {
+        // look for existing mock endpoints that has the same queue name, and to do that we need to
+        // normalize uri and strip out query parameters and whatnot
+        String n;
+        try {
+            n = URISupport.normalizeUri(uri);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+        // strip query
+        int idx = n.indexOf('?');
+        if (idx != -1) {
+            n = n.substring(0, idx);
+        }
+        final String target = n;
+
+        // lookup endpoints in registry and try to find it
+        MockEndpoint found = (MockEndpoint) context.getEndpointRegistry().values().stream()
+                .filter(e -> e instanceof MockEndpoint)
+                .filter(e -> {
+                    String t = e.getEndpointUri();
+                    // strip query
+                    int idx2 = t.indexOf('?');
+                    if (idx2 != -1) {
+                        t = t.substring(0, idx2);
+                    }
+                    return t.startsWith(target);
+                }).findFirst().orElse(null);
+
+        if (found != null) {
+            return found;
+        }
+
         if (create) {
             return resolveMandatoryEndpoint(uri, MockEndpoint.class);
         } else {
-            Endpoint endpoint = context.hasEndpoint(uri);
-            if (endpoint instanceof MockEndpoint) {
-                return (MockEndpoint) endpoint;
-            }
             throw new NoSuchEndpointException(String.format("MockEndpoint %s does not exist.", uri));
         }
     }
