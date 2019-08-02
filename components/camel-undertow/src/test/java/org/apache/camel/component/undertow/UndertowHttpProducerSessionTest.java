@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.undertow;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -29,6 +30,12 @@ import org.junit.Test;
 
 public class UndertowHttpProducerSessionTest extends CamelTestSupport {
     private static volatile int port;
+    
+    @BindToRegistry("instanceCookieHandler")
+    private InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
+    
+    @BindToRegistry("exchangeCookieHandler")
+    private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
 
     @BeforeClass
     public static void initPort() throws Exception {
@@ -57,14 +64,6 @@ public class UndertowHttpProducerSessionTest extends CamelTestSupport {
         template.sendBody("direct:exchange", "World");
         template.sendBody("direct:exchange", "World");
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndiRegistry = super.createRegistry();
-        jndiRegistry.bind("instanceCookieHandler", new InstanceCookieHandler());
-        jndiRegistry.bind("exchangeCookieHandler", new ExchangeCookieHandler());
-        return jndiRegistry;
     }
 
     private String getTestServerEndpointSessionUrl() {

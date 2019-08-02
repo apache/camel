@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.undertow.rest;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,13 +28,8 @@ import org.junit.Test;
 
 public class RestUndertowHttpGetWildcardsTest extends BaseUndertowTest {
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        UndertowHttpBinding binding = new DefaultUndertowHttpBinding();
-        jndi.bind("mybinding", binding);
-        return jndi;
-    }
+	@BindToRegistry("mybinding")
+	private UndertowHttpBinding binding = new DefaultUndertowHttpBinding();
 
     @Test
     public void testProducerGet() throws Exception {
