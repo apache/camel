@@ -16,8 +16,11 @@
  */
 package org.apache.camel.zipkin;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import zipkin2.reporter.Reporter;
@@ -37,8 +40,8 @@ public class ZipkinSpanReporterInRegistryTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = new SimpleRegistry();
         registry.bind("span", Reporter.NOOP);
         return registry;
     }
