@@ -810,10 +810,11 @@ public class MockEndpointTest extends ContextTestSupport {
     @Test
     public void testExpectedExchangePattern() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        mock.expectedMessageCount(2);
         mock.expectedExchangePattern(ExchangePattern.InOnly);
 
         template.sendBody("direct:a", "Hello World");
+        template.sendBody("direct:a", "Bye World");
 
         assertMockEndpointsSatisfied();
 
