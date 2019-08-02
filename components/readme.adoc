@@ -574,8 +574,8 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 | link:camel-mock/src/main/docs/mock-component.adoc[Mock] (camel-mock) +
 `mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
 
-| link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
-`mongodb3:connectionBean` | 2.19 | Component for working with documents stored in MongoDB database.
+| link:camel-mongodb/src/main/docs/mongodb-component.adoc[MongoDB] (camel-mongodb) +
+`mongodb:connectionBean` | 2.19 | Component for working with documents stored in MongoDB database.
 
 | link:camel-mongodb-gridfs/src/main/docs/mongodb-gridfs-component.adoc[MongoDB GridFS] (camel-mongodb-gridfs) +
 `mongodb-gridfs:connectionBean` | 2.18 | Component for working with MongoDB GridFS.
