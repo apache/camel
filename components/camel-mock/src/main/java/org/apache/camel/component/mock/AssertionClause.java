@@ -100,11 +100,13 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
         for (Predicate predicate : predicates) {
             currentIndex = index;
 
-            Object value = exchange.getMessage().getBody();
-            // if the value is StreamCache then ensure its readable before evaluating any predicates
-            // by resetting it (this is also what StreamCachingAdvice does)
-            if (value instanceof StreamCache) {
-                ((StreamCache) value).reset();
+            if (exchange != null) {
+                Object value = exchange.getMessage().getBody();
+                // if the value is StreamCache then ensure its readable before evaluating any predicates
+                // by resetting it (this is also what StreamCachingAdvice does)
+                if (value instanceof StreamCache) {
+                    ((StreamCache) value).reset();
+                }
             }
 
             PredicateAssertHelper.assertMatches(predicate, "Assertion error at index " + index + " on mock " + endpoint.getEndpointUri() + " with predicate: ", exchange);
