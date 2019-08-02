@@ -57,7 +57,6 @@ public class AhcProducerSessionTest extends BaseAhcTest {
     }
 
     @Test
-    @org.junit.Ignore("Failing cookie test with Jetty 9.4")
     public void testProducerInstanceSession() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Old New World", "Old Old World");
         template.sendBody("direct:instance", "World");
@@ -66,7 +65,6 @@ public class AhcProducerSessionTest extends BaseAhcTest {
     }
 
     @Test
-    @org.junit.Ignore("Failing cookie test with Jetty 9.4")
     public void testProducerExchangeSession() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Old New World", "Old New World");
         template.sendBody("direct:exchange", "World");
