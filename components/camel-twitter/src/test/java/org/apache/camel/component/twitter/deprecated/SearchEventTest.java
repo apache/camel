@@ -25,6 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.twitter.CamelTwitterTestSupport;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 import twitter4j.Status;
 import twitter4j.StatusListener;
@@ -61,11 +63,11 @@ public class SearchEventTest extends CamelTwitterTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         twitterStream = (TwitterStream) Proxy.newProxyInstance(getClass().getClassLoader(),
                 new Class[]{TwitterStream.class},
                 new TwitterHandler());
-        JndiRegistry registry = super.createRegistry();
+        Registry registry = new SimpleRegistry();
         registry.bind("twitterStream", twitterStream);
         return registry;
     }
