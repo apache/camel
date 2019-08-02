@@ -273,6 +273,7 @@
     <module>camel-mllp-starter</module>
     <module>camel-mock-starter</module>
     <module>camel-mongodb-gridfs-starter</module>
+    <module>camel-mongodb-starter</module>
     <module>camel-mongodb3-starter</module>
     <module>camel-mqtt-starter</module>
     <module>camel-msv-starter</module>
