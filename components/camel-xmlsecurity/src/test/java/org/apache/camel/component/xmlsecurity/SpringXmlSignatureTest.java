@@ -31,7 +31,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -63,8 +65,8 @@ public class SpringXmlSignatureTest extends XmlSignatureTest {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        return super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        return new SimpleRegistry();
     }
 
     @Override

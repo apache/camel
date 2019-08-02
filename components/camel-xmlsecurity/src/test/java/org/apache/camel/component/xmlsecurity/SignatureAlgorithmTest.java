@@ -72,6 +72,8 @@ import org.apache.camel.component.xmlsecurity.util.ValidationFailedHandlerIgnore
 import org.apache.camel.component.xmlsecurity.util.XmlSignature2Message2MessageWithTimestampProperty;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
@@ -110,8 +112,8 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = new SimpleRegistry();
         
         Key secretKey = getSecretKey("testkey".getBytes("ASCII"));
 
