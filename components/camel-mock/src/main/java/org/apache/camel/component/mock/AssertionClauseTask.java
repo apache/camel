@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mock;
 
+/**
+ * An {@link AssertionClause} that bridges with fail fast mode ({@link AssertionTask}).
+ */
 public abstract class AssertionClauseTask extends AssertionClause implements AssertionTask {
 
     public AssertionClauseTask(MockEndpoint mock) {

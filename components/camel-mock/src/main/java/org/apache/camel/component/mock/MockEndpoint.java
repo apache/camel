@@ -945,9 +945,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * of the given expression such as a user generated counter value
      */
     public void expectsAscending(final Expression expression) {
-        expects(new Runnable() {
+        expects(new AssertionTask() {
+            @Override
+            public void assertOnIndex(int index) {
+                assertMessagesSorted(expression, true, index);
+            }
+
             public void run() {
-                // TODO: Task
                 assertMessagesAscending(expression);
             }
         });
@@ -961,9 +965,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         final AssertionClause clause = new AssertionClauseTask(this) {
             @Override
             public void assertOnIndex(int index) {
-                // TODO: Make this smarter
-                // just run from top again
-                run();
+                assertMessagesSorted(createExpression(getCamelContext()), true, index);
             }
 
             public void run() {
@@ -979,7 +981,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * of the given expression such as a user generated counter value
      */
     public void expectsDescending(final Expression expression) {
-        expects(new Runnable() {
+        expects(new AssertionTask() {
+            @Override
+            public void assertOnIndex(int index) {
+                assertMessagesSorted(expression, false, index);
+            }
+
             public void run() {
                 assertMessagesDescending(expression);
             }
@@ -991,8 +998,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * of the given expression such as a user generated counter value
      */
     public AssertionClause expectsDescending() {
-        // TODO: Task
-        final AssertionClause clause = new AssertionClause(this) {
+        final AssertionClause clause = new AssertionClauseTask(this) {
+            @Override
+            public void assertOnIndex(int index) {
+                assertMessagesSorted(createExpression(getCamelContext()), false, index);
+            }
+
             public void run() {
                 assertMessagesDescending(createExpression(getCamelContext()));
             }
@@ -1075,7 +1086,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * Asserts that the messages have ascending values of the given expression
      */
     public void assertMessagesAscending(Expression expression) {
-        // TODO: Task
         assertMessagesSorted(expression, true);
     }
 
@@ -1083,34 +1093,42 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * Asserts that the messages have descending values of the given expression
      */
     public void assertMessagesDescending(Expression expression) {
-        // TODO: Task
         assertMessagesSorted(expression, false);
     }
 
     protected void assertMessagesSorted(Expression expression, boolean ascending) {
+        List<Exchange> list = getReceivedExchanges();
+        for (int i = 0; i < list.size(); i++) {
+            assertMessagesSorted(expression, ascending, i);
+        }
+    }
+
+    protected void assertMessagesSorted(Expression expression, boolean ascending, int index) {
         String type = ascending ? "ascending" : "descending";
         ExpressionComparator comparator = new ExpressionComparator(expression);
-        List<Exchange> list = getReceivedExchanges();
-        for (int i = 1; i < list.size(); i++) {
-            int j = i - 1;
-            Exchange e1 = list.get(j);
-            Exchange e2 = list.get(i);
+
+        int prev = index - 1;
+        if (prev > 0) {
+            List<Exchange> list = getReceivedExchanges();
+            Exchange e1 = list.get(prev);
+            Exchange e2 = list.get(index);
             int result = comparator.compare(e1, e2);
             if (result == 0) {
-                fail("Messages not " + type + ". Messages" + j + " and " + i + " are equal with value: "
-                    + expression.evaluate(e1, Object.class) + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
+                fail("Messages not " + type + ". Messages" + prev + " and " + index + " are equal with value: "
+                        + expression.evaluate(e1, Object.class) + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
             } else {
                 if (!ascending) {
                     result = result * -1;
                 }
                 if (result > 0) {
-                    fail("Messages not " + type + ". Message " + j + " has value: " + expression.evaluate(e1, Object.class)
-                        + " and message " + i + " has value: " + expression.evaluate(e2, Object.class) + " for expression: "
-                        + expression + ". Exchanges: " + e1 + " and " + e2);
+                    fail("Messages not " + type + ". Message " + prev + " has value: " + expression.evaluate(e1, Object.class)
+                            + " and message " + index + " has value: " + expression.evaluate(e2, Object.class) + " for expression: "
+                            + expression + ". Exchanges: " + e1 + " and " + e2);
                 }
             }
         }
     }
+
 
     /**
      * Asserts among all the current received exchanges that there are no duplicate message
