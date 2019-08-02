@@ -20,7 +20,6 @@ import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Assert;
@@ -168,11 +167,8 @@ public class DataSetProducerTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
         } catch (AssertionError assertionError) {
             // Check as much of the string as possible - but the ExchangeID at the end will be unique
-            String expectedErrorString = dataSetUriWithDataSetIndexSetToStrict
-                    + " Failed due to caught exception: "
-                    + NoSuchHeaderException.class.getName()
-                    + ": No '" + Exchange.DATASET_INDEX
-                    + "' header available of type: java.lang.Long. Exchange";
+            String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToStrict + " due to:"
+                    + " No '" + Exchange.DATASET_INDEX + "' header available of type: java.lang.Long";
             String actualErrorString = assertionError.getMessage();
             if (actualErrorString.startsWith(expectedErrorString)) {
                 // This is what we expect
@@ -323,10 +319,9 @@ public class DataSetProducerTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
         } catch (AssertionError assertionError) {
             // Check as much of the string as possible - but the ExchangeID at the end will be unique
-            String expectedErrorString = dataSetUri + " Failed due to caught exception: "
-                    + AssertionError.class.getName()
-                    + ": Header: " + Exchange.DATASET_INDEX + " does not match. Expected: "
-                    + size / 2 + " but was: " + (size / 2 + 10) + " on Exchange";
+            String expectedErrorString = "Caught exception on " + dataSetUri + " due to: "
+                    + "Header: " + Exchange.DATASET_INDEX + " does not match. Expected: "
+                    + size / 2 + " but was: " + (size / 2 + 10);
             String actualErrorString = assertionError.getMessage();
             if (actualErrorString.startsWith(expectedErrorString)) {
                 // This is what we expect
@@ -397,10 +392,9 @@ public class DataSetProducerTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
         } catch (AssertionError assertionError) {
             // Check as much of the string as possible - but the ExchangeID at the end will be unique
-            String expectedErrorString = dataSetUriWithDataSetIndexSetToLenient + " Failed due to caught exception: "
-                    + AssertionError.class.getName()
-                    + ": Header: " + Exchange.DATASET_INDEX + " does not match. Expected: "
-                    + size / 2 + " but was: " + (size / 2 + 10) + " on Exchange";
+            String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToLenient + " due to: "
+                    + "Header: " + Exchange.DATASET_INDEX + " does not match. Expected: "
+                    + size / 2 + " but was: " + (size / 2 + 10);
             String actualErrorString = assertionError.getMessage();
             if (actualErrorString.startsWith(expectedErrorString)) {
                 // This is what we expect
@@ -443,9 +437,9 @@ public class DataSetProducerTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
         } catch (AssertionError assertionError) {
             // Check as much of the string as possible - but the ExchangeID at the end will be unique
-            String expectedErrorString = dataSetUriWithDataSetIndexSetToStrict + " Failed due to caught exception: "
-                    + AssertionError.class.getName() + ": Header: " + Exchange.DATASET_INDEX
-                    + " does not match. Expected: " + size / 2 + " but was: " + (size / 2 + 10) + " on Exchange";
+            String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToStrict + " due to: "
+                    + "Header: " + Exchange.DATASET_INDEX + " does not match. Expected: "
+                    + size / 2 + " but was: " + (size / 2 + 10);
             String actualErrorString = assertionError.getMessage();
             if (actualErrorString.startsWith(expectedErrorString)) {
                 // This is what we expect

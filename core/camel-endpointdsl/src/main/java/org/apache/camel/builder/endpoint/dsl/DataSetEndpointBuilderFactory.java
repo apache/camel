@@ -346,6 +346,36 @@ public interface DataSetEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets whether assertIsSatisfied() should fail fast at the first
+         * detected failed expectation while it may otherwise wait for all
+         * expected messages to arrive before performing expectations
+         * verifications. Is by default true. Set to false to use behavior as in
+         * Camel 2.x.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default DataSetEndpointProducerBuilder failFast(boolean failFast) {
+            setProperty("failFast", failFast);
+            return this;
+        }
+        /**
+         * Sets whether assertIsSatisfied() should fail fast at the first
+         * detected failed expectation while it may otherwise wait for all
+         * expected messages to arrive before performing expectations
+         * verifications. Is by default true. Set to false to use behavior as in
+         * Camel 2.x.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default DataSetEndpointProducerBuilder failFast(String failFast) {
+            setProperty("failFast", failFast);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
