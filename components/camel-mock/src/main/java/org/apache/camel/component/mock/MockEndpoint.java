@@ -541,7 +541,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             // we just wants to expects to be called once
             expects(new AssertionTask() {
                 @Override
-                void assertOnIndex(int i) {
+                public void assertOnIndex(int i) {
                     Exchange exchange = getReceivedExchange(i);
                     for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
                         String key = entry.getKey();
@@ -635,7 +635,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         expects(new AssertionTask() {
             @Override
-            void assertOnIndex(int i) {
+            public void assertOnIndex(int i) {
                 Exchange exchange = getReceivedExchange(i);
                 for (Map.Entry<String, Object> entry : expectedPropertyValues.entrySet()) {
                     String key = entry.getKey();
@@ -729,7 +729,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         expects(new AssertionTask() {
             @Override
-            void assertOnIndex(int i) {
+            public void assertOnIndex(int i) {
                 Exchange exchange = getReceivedExchange(i);
                 assertTrue("No exchange received for counter: " + i, exchange != null);
 
@@ -783,6 +783,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             final AssertionClause clause = new AssertionClause(this) {
                 public void run() {
                     addPredicate(predicate);
+                    // TODO: Is this correct
                     applyAssertionOn(MockEndpoint.this, messageIndex, assertExchangeReceived(messageIndex));
                 }
             };
@@ -809,16 +810,23 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     public AssertionClause expectedBodyReceived() {
         expectedMessageCount(1);
-        final AssertionClause clause = new AssertionClause(this) {
+        final AssertionClause clause = new AssertionClauseTask(this) {
+            @Override
+            public void assertOnIndex(int index) {
+                if (index == 0) {
+                    Exchange exchange = getReceivedExchange(index);
+                    assertTrue("No exchange received for counter: " + index, exchange != null);
+
+                    Object actualBody = exchange.getIn().getBody();
+                    Expression exp = createExpression(getCamelContext());
+                    Object expectedBody = exp.evaluate(exchange, Object.class);
+
+                    assertEquals("Body of message: " + index, expectedBody, actualBody);
+                }
+            }
+
             public void run() {
-                Exchange exchange = getReceivedExchange(0);
-                assertTrue("No exchange received for counter: " + 0, exchange != null);
-
-                Object actualBody = exchange.getIn().getBody();
-                Expression exp = createExpression(getCamelContext());
-                Object expectedBody = exp.evaluate(exchange, Object.class);
-
-                assertEquals("Body of message: " + 0, expectedBody, actualBody);
+                assertOnIndex(0);
             }
         };
         expects(clause);
@@ -941,6 +949,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * of the given expression such as a user generated counter value
      */
     public AssertionClause expectsAscending() {
+        // TODO: Task
         final AssertionClause clause = new AssertionClause(this) {
             public void run() {
                 assertMessagesAscending(createExpression(getCamelContext()));
@@ -967,6 +976,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * of the given expression such as a user generated counter value
      */
     public AssertionClause expectsDescending() {
+        // TODO: Task
         final AssertionClause clause = new AssertionClause(this) {
             public void run() {
                 assertMessagesDescending(createExpression(getCamelContext()));
@@ -999,6 +1009,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * the expression to determine the message ID
      */
     public AssertionClause expectsNoDuplicates() {
+        // TODO: Task
         final AssertionClause clause = new AssertionClause(this) {
             public void run() {
                 assertNoDuplicates(createExpression(getCamelContext()));
@@ -1012,6 +1023,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * Asserts that the messages have ascending values of the given expression
      */
     public void assertMessagesAscending(Expression expression) {
+        // TODO: Task
         assertMessagesSorted(expression, true);
     }
 
@@ -1019,6 +1031,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * Asserts that the messages have descending values of the given expression
      */
     public void assertMessagesDescending(Expression expression) {
+        // TODO: Task
         assertMessagesSorted(expression, false);
     }
 
@@ -1076,9 +1089,16 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * @return the assertion clause
      */
     public AssertionClause message(final int messageIndex) {
-        final AssertionClause clause = new AssertionClause(this) {
+        final AssertionClause clause = new AssertionClauseTask(this) {
+            @Override
+            public void assertOnIndex(int index) {
+                if (index == messageIndex) {
+                    applyAssertionOn(MockEndpoint.this, index, assertExchangeReceived(index));
+                }
+            }
+
             public void run() {
-                applyAssertionOn(MockEndpoint.this, messageIndex, assertExchangeReceived(messageIndex));
+                assertOnIndex(messageIndex);
             }
         };
         expects(clause);
@@ -1091,12 +1111,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * @return the assertion clause
      */
     public AssertionClause allMessages() {
-        final AssertionClause clause = new AssertionClause(this) {
+        final AssertionClause clause = new AssertionClauseTask(this) {
+            @Override
+            public void assertOnIndex(int index) {
+                applyAssertionOn(MockEndpoint.this, index, assertExchangeReceived(index));
+            }
+
             public void run() {
-                List<Exchange> list = getReceivedExchanges();
-                int index = 0;
-                for (Exchange exchange : list) {
-                    applyAssertionOn(MockEndpoint.this, index++, exchange);
+                for (int i = 0; i < getReceivedCounter(); i++) {
+                    assertOnIndex(i);
                 }
             }
         };
@@ -1411,6 +1434,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                             while (latch != null && latch.getCount() > 0) {
                                 latch.countDown();
                             }
+                            // we are failing fast
+                            break;
                         }
                     }
                 }
