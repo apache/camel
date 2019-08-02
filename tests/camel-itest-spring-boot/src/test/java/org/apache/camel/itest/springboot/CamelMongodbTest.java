@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class CamelMongodb3Test extends AbstractSpringBootTestSupport {
+public class CamelMongodbTest extends AbstractSpringBootTestSupport {
 
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
@@ -34,7 +34,7 @@ public class CamelMongodb3Test extends AbstractSpringBootTestSupport {
 
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
-                .module(inferModuleName(CamelMongodb3Test.class))
+                .module(inferModuleName(CamelMongodbTest.class))
                 .includeTestDependencies(false)
                 .unitTestsEnabled(false)
                 .build();
