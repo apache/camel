@@ -102,6 +102,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile List<Throwable> failures;
     private volatile List<Runnable> tests;
     private volatile CountDownLatch latch;
+    private volatile AssertionError failFastAssertionError;
     private volatile int expectedMinimumCount;
     private volatile List<?> expectedBodyValues;
     private volatile List<Object> actualBodyValues;
@@ -130,6 +131,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private int retainLast;
     @UriParam(label = "producer")
     private int reportGroup;
+    @UriParam(label = "producer")
+    private boolean failFast = true;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean copyOnExchange = true;
 
@@ -180,7 +183,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             endpoint.assertIsSatisfied();
         }
     }
-
 
     /**
      * Asserts that all the expectations on any {@link MockEndpoint} instances registered
@@ -299,7 +301,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         doInit();
     }
 
-
     // Testing API
     // -------------------------------------------------------------------------
 
@@ -399,9 +400,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             if (expectedCount != getReceivedCounter()) {
                 waitForCompleteLatch();
             }
-            assertEquals("Received message count", expectedCount, getReceivedCounter());
+            if (failFastAssertionError == null) {
+                assertEquals("Received message count", expectedCount, getReceivedCounter());
+            }
         } else if (expectedMinimumCount > 0 && getReceivedCounter() < expectedMinimumCount) {
             waitForCompleteLatch();
+        }
+
+        if (failFastAssertionError != null) {
+            throw failFastAssertionError;
         }
 
         if (expectedMinimumCount >= 0) {
@@ -410,7 +417,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
 
         for (Runnable test : tests) {
-            test.run();
+            // skip tasks which we have already been running in fail fast mode
+            boolean skip = failFast && test instanceof AssertionTask;
+            if (!skip) {
+                test.run();
+            }
         }
 
         for (Throwable failure : failures) {
@@ -528,26 +539,31 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         if (expectedHeaderValues == null) {
             expectedHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
             // we just wants to expects to be called once
-            expects(new Runnable() {
+            expects(new AssertionTask() {
+                @Override
+                void assertOnIndex(int i) {
+                    Exchange exchange = getReceivedExchange(i);
+                    for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
+                        String key = entry.getKey();
+                        Object expectedValue = entry.getValue();
+
+                        // we accept that an expectedValue of null also means that the header may be absent
+                        if (expectedValue != null) {
+                            assertTrue("Exchange " + i + " has no headers", exchange.getIn().hasHeaders());
+                            boolean hasKey = exchange.getIn().getHeaders().containsKey(key);
+                            assertTrue("No header with name " + key + " found for message: " + i, hasKey);
+                        }
+
+                        Object actualValue = exchange.getIn().getHeader(key);
+                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
+
+                        assertEquals("Header with name " + key + " for message: " + i, expectedValue, actualValue);
+                    }
+                }
+
                 public void run() {
                     for (int i = 0; i < getReceivedExchanges().size(); i++) {
-                        Exchange exchange = getReceivedExchange(i);
-                        for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
-                            String key = entry.getKey();
-                            Object expectedValue = entry.getValue();
-
-                            // we accept that an expectedValue of null also means that the header may be absent
-                            if (expectedValue != null) {
-                                assertTrue("Exchange " + i + " has no headers", exchange.getIn().hasHeaders());
-                                boolean hasKey = exchange.getIn().getHeaders().containsKey(key);
-                                assertTrue("No header with name " + key + " found for message: " + i, hasKey);
-                            }
-
-                            Object actualValue = exchange.getIn().getHeader(key);
-                            actualValue = extractActualValue(exchange, actualValue, expectedValue);
-
-                            assertEquals("Header with name " + key + " for message: " + i, expectedValue, actualValue);
-                        }
+                        assertOnIndex(i);
                     }
                 }
             });
@@ -617,26 +633,31 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
         expectedPropertyValues.put(name, value);
 
-        expects(new Runnable() {
+        expects(new AssertionTask() {
+            @Override
+            void assertOnIndex(int i) {
+                Exchange exchange = getReceivedExchange(i);
+                for (Map.Entry<String, Object> entry : expectedPropertyValues.entrySet()) {
+                    String key = entry.getKey();
+                    Object expectedValue = entry.getValue();
+
+                    // we accept that an expectedValue of null also means that the property may be absent
+                    if (expectedValue != null) {
+                        assertTrue("Exchange " + i + " has no properties", !exchange.getProperties().isEmpty());
+                        boolean hasKey = exchange.getProperties().containsKey(key);
+                        assertTrue("No property with name " + key + " found for message: " + i, hasKey);
+                    }
+
+                    Object actualValue = exchange.getProperty(key);
+                    actualValue = extractActualValue(exchange, actualValue, expectedValue);
+
+                    assertEquals("Property with name " + key + " for message: " + i, expectedValue, actualValue);
+                }
+            }
+
             public void run() {
                 for (int i = 0; i < getReceivedExchanges().size(); i++) {
-                    Exchange exchange = getReceivedExchange(i);
-                    for (Map.Entry<String, Object> entry : expectedPropertyValues.entrySet()) {
-                        String key = entry.getKey();
-                        Object expectedValue = entry.getValue();
-
-                        // we accept that an expectedValue of null also means that the property may be absent
-                        if (expectedValue != null) {
-                            assertTrue("Exchange " + i + " has no properties", !exchange.getProperties().isEmpty());
-                            boolean hasKey = exchange.getProperties().containsKey(key);
-                            assertTrue("No property with name " + key + " found for message: " + i, hasKey);
-                        }
-
-                        Object actualValue = exchange.getProperty(key);
-                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
-
-                        assertEquals("Property with name " + key + " for message: " + i, expectedValue, actualValue);
-                    }
+                    assertOnIndex(i);
                 }
             }
         });
@@ -706,20 +727,25 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.expectedBodyValues = bodies;
         this.actualBodyValues = new ArrayList<>();
 
-        expects(new Runnable() {
+        expects(new AssertionTask() {
+            @Override
+            void assertOnIndex(int i) {
+                Exchange exchange = getReceivedExchange(i);
+                assertTrue("No exchange received for counter: " + i, exchange != null);
+
+                Object expectedBody = expectedBodyValues.get(i);
+                Object actualBody = null;
+                if (i < actualBodyValues.size()) {
+                    actualBody = actualBodyValues.get(i);
+                }
+                actualBody = extractActualValue(exchange, actualBody, expectedBody);
+
+                assertEquals("Body of message: " + i, expectedBody, actualBody);
+            }
+
             public void run() {
                 for (int i = 0; i < expectedBodyValues.size(); i++) {
-                    Exchange exchange = getReceivedExchange(i);
-                    assertTrue("No exchange received for counter: " + i, exchange != null);
-
-                    Object expectedBody = expectedBodyValues.get(i);
-                    Object actualBody = null;
-                    if (i < actualBodyValues.size()) {
-                        actualBody = actualBodyValues.get(i);
-                    }
-                    actualBody = extractActualValue(exchange, actualBody, expectedBody);
-
-                    assertEquals("Body of message: " + i, expectedBody, actualBody);
+                    assertOnIndex(i);
                 }
             }
         });
@@ -1314,6 +1340,21 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.copyOnExchange = copyOnExchange;
     }
 
+    public boolean isFailFast() {
+        return failFast;
+    }
+
+    /**
+     * Sets whether {@link #assertIsSatisfied()} should fail fast
+     * at the first detected failed expectation while it may otherwise wait for all expected
+     * messages to arrive before performing expectations verifications.
+     *
+     * Is by default <tt>true</tt>. Set to <tt>false</tt> to use behavior as in Camel 2.x.
+     */
+    public void setFailFast(boolean failFast) {
+        this.failFast = failFast;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected void doInit() {
@@ -1325,6 +1366,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         failures = new CopyOnWriteArrayList<>();
         tests = new CopyOnWriteArrayList<>();
         latch = null;
+        failFastAssertionError = null;
         sleepForEmptyTest = 0;
         resultWaitTime = 0;
         resultMinimumWaitTime = 0L;
@@ -1351,6 +1393,28 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 copy = ExchangeHelper.createCopy(exchange, true);
             }
             performAssertions(exchange, copy);
+
+            if (failFast) {
+                // fail fast mode so check n'th expectations as soon as possible
+                int index = getReceivedCounter() - 1;
+                for (Runnable test : tests) {
+                    // only assertion tasks can support fail fast mode
+                    if (test instanceof AssertionTask) {
+                        AssertionTask task = (AssertionTask) test;
+                        try {
+                            log.debug("Running assertOnIndex({}) on task: {}", index, task);
+                            task.assertOnIndex(index);
+                        } catch (AssertionError e) {
+                            failFastAssertionError = e;
+                            // signal latch we are done as we are failing fast
+                            log.debug("Assertion failed fast on " + index + " received exchange due to " + e.getMessage());
+                            while (latch != null && latch.getCount() > 0) {
+                                latch.countDown();
+                            }
+                        }
+                    }
+                }
+            }
         } catch (Throwable e) {
             // must catch java.lang.Throwable as AssertionError extends java.lang.Error
             failures.add(e);
