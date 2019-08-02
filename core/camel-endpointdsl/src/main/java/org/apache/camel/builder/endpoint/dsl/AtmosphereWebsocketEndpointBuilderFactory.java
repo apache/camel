@@ -103,10 +103,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http producer will by default cache the response
-         * body stream. If setting this option to true, then the producers will
-         * not cache the response body stream but use the response stream as-is
-         * as the message body.
+         * multiple times. The http/http4 producer will by default cache the
+         * response body stream. If setting this option to true, then the
+         * producers will not cache the response body stream but use the
+         * response stream as-is as the message body.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -130,10 +130,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http producer will by default cache the response
-         * body stream. If setting this option to true, then the producers will
-         * not cache the response body stream but use the response stream as-is
-         * as the message body.
+         * multiple times. The http/http4 producer will by default cache the
+         * response body stream. If setting this option to true, then the
+         * producers will not cache the response body stream but use the
+         * response stream as-is as the message body.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -806,10 +806,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http producer will by default cache the response
-         * body stream. If setting this option to true, then the producers will
-         * not cache the response body stream but use the response stream as-is
-         * as the message body.
+         * multiple times. The http/http4 producer will by default cache the
+         * response body stream. If setting this option to true, then the
+         * producers will not cache the response body stream but use the
+         * response stream as-is as the message body.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -833,10 +833,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http producer will by default cache the response
-         * body stream. If setting this option to true, then the producers will
-         * not cache the response body stream but use the response stream as-is
-         * as the message body.
+         * multiple times. The http/http4 producer will by default cache the
+         * response body stream. If setting this option to true, then the
+         * producers will not cache the response body stream but use the
+         * response stream as-is as the message body.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1187,10 +1187,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http producer will by default cache the response
-         * body stream. If setting this option to true, then the producers will
-         * not cache the response body stream but use the response stream as-is
-         * as the message body.
+         * multiple times. The http/http4 producer will by default cache the
+         * response body stream. If setting this option to true, then the
+         * producers will not cache the response body stream but use the
+         * response stream as-is as the message body.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1214,10 +1214,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http producer will by default cache the response
-         * body stream. If setting this option to true, then the producers will
-         * not cache the response body stream but use the response stream as-is
-         * as the message body.
+         * multiple times. The http/http4 producer will by default cache the
+         * response body stream. If setting this option to true, then the
+         * producers will not cache the response body stream but use the
+         * response stream as-is as the message body.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
