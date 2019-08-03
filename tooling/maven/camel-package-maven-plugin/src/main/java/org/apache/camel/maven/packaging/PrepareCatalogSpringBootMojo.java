@@ -121,6 +121,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
      *                                                        threads it generated failed.
      * @throws MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Set<String> starters = findSpringBootStarters();
         executeComponents(starters);

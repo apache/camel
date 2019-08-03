@@ -45,26 +45,32 @@ public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager {
         this.keyManager = keyManager;
     }
 
+    @Override
     public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
         return keyAlias == null ? keyManager.chooseClientAlias(keyType, issuers, socket) : keyAlias;
     }
 
+    @Override
     public String chooseServerAlias(String keyType, Principal[] issuers, Socket socket) {
         return keyAlias == null ? keyManager.chooseServerAlias(keyType, issuers, socket) : keyAlias;
     }
 
+    @Override
     public String[] getClientAliases(String keyType, Principal[] issuers) {
         return keyManager.getClientAliases(keyType, issuers);
     }
 
+    @Override
     public String[] getServerAliases(String keyType, Principal[] issuers) {
         return keyManager.getServerAliases(keyType, issuers);
     }
 
+    @Override
     public X509Certificate[] getCertificateChain(String alias) {
         return keyManager.getCertificateChain(alias);
     }
 
+    @Override
     public PrivateKey getPrivateKey(String alias) {
         return keyManager.getPrivateKey(alias);
     }

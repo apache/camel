@@ -95,6 +95,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     /**
      * Poll for files
      */
+    @Override
     public int poll() throws Exception {
         // must prepare on startup the very first time
         if (!prepareOnStartup) {
@@ -189,6 +190,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return polledMessages;
     }
 
+    @Override
     public int processBatch(Queue<Object> exchanges) {
         int total = exchanges.size();
         int answer = total;

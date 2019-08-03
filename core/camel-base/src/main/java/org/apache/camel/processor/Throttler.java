@@ -383,10 +383,12 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
         this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(final String id) {
         this.id = id;
     }
@@ -422,6 +424,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
         return timePeriodMillis;
     }
 
+    @Override
     public String getTraceLabel() {
         return "throttle[" + maxRequestsPerPeriodExpression + " per: " + timePeriodMillis + "]";
     }

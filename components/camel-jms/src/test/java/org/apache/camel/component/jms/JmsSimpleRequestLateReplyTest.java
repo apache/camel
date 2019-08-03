@@ -70,6 +70,7 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
 
     private class SendLateReply implements Runnable {
 
+        @Override
         public void run() {
             try {
                 LOG.info("Waiting for latch");
@@ -90,6 +91,7 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
         }
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -102,6 +104,7 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -40,18 +40,21 @@ public class RouteBuilderCxfTracer extends RouteBuilder {
     }
     
     private static class DoSomethingProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getOut().setBody(exchange.getIn().getBody() + " world!");        
         }
     }
     
     private static class DoNothingProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getOut().setBody(exchange.getIn().getBody());        
         }
     }
      
     private static class BeforeProcessor implements Processor {
+        @Override
         public void process(Exchange e) throws Exception {
             MessageContentsList mclIn = e.getIn().getBody(MessageContentsList.class);
             e.getIn().setBody(((GetPerson) mclIn.get(0)).getPersonId(), String.class);
@@ -59,6 +62,7 @@ public class RouteBuilderCxfTracer extends RouteBuilder {
     }
 
     private static class AfterProcessor implements Processor {
+        @Override
         public void process(Exchange e) throws Exception {
             GetPersonResponse gpr = new GetPersonResponse();
             gpr.setName("Bill");

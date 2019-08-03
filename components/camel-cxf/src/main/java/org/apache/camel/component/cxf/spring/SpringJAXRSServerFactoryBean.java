@@ -43,16 +43,19 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean impleme
         super(sf);
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         if (bus == null) {
             setBus(BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx));
         }
     }
 
+    @Override
     public String getBeanId() {
         return beanId;
     }
 
+    @Override
     public void setBeanId(String id) {
         beanId = id;
     }

@@ -52,6 +52,7 @@ public class TransactionalClientWithAnnotatedBeanTest extends TransactionalClien
         super.setUp();
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/spring/interceptor/transactionalClientWithAnnotatedBeanTest.xml");

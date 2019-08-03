@@ -168,6 +168,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
             beanServer.getAttribute(pcob, "LastExchangeCompletedTimestamp"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

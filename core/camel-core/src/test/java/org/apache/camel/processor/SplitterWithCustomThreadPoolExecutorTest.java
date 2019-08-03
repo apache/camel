@@ -75,6 +75,7 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
         return result;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

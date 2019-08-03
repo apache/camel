@@ -47,6 +47,7 @@ public class ContextInflight extends CamelControllerImpl implements Action {
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean sortByLongestDuration;
 
+    @Override
     public Object execute() throws Exception {
         ContextInflightCommand command = new ContextInflightCommand(name, route, limit, sortByLongestDuration);
         return command.execute(this, System.out, System.err);

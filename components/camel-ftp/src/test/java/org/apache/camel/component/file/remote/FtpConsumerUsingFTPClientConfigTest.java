@@ -61,6 +61,7 @@ public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello World", "hello.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

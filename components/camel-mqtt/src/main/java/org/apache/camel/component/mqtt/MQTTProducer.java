@@ -96,6 +96,7 @@ public class MQTTProducer extends DefaultAsyncProducer implements Processor {
         }
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (!mqttEndpoint.getConfiguration().isLazySessionCreation()) {
             ensureConnected();

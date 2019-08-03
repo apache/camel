@@ -56,6 +56,7 @@ public class FreemarkerConcurrentTest extends CamelTestSupport {
         executor.shutdownNow();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

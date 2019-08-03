@@ -92,6 +92,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         assertEquals("Lock file should " + (expected ? "exists" : "not exists"), expected, file.exists());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -107,6 +108,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
     }
 
     private static class MyNoopProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             boolean locked = "Hello Locked".equals(body);

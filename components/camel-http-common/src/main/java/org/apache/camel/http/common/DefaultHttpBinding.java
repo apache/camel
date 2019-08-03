@@ -103,6 +103,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @Override
     public void readRequest(HttpServletRequest request, HttpMessage message) {
         LOG.trace("readRequest {}", request);
 
@@ -326,6 +327,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @Override
     public void writeResponse(Exchange exchange, HttpServletResponse response) throws IOException {
         Message target = exchange.getMessage();
         if (exchange.isFailed()) {
@@ -354,6 +356,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @Override
     public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
         if (exception instanceof TimeoutException) {
             response.setStatus(HttpServletResponse.SC_GATEWAY_TIMEOUT);
@@ -375,11 +378,13 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @Override
     public void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
         message.setHeader(Exchange.HTTP_RESPONSE_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         doWriteResponse(message, response, exchange);
     }
 
+    @Override
     public void doWriteResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
         // set the status code in the response. Default is 200.
         if (message.getHeader(Exchange.HTTP_RESPONSE_CODE) != null) {
@@ -573,6 +578,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @Override
     public Object parseBody(HttpMessage httpMessage) throws IOException {
         // lets assume the body is a reader
         HttpServletRequest request = httpMessage.getRequest();
@@ -599,74 +605,92 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @Override
     public boolean isUseReaderForPayload() {
         return useReaderForPayload;
     }
 
+    @Override
     public void setUseReaderForPayload(boolean useReaderForPayload) {
         this.useReaderForPayload = useReaderForPayload;
     }
 
+    @Override
     public boolean isEagerCheckContentAvailable() {
         return eagerCheckContentAvailable;
     }
 
+    @Override
     public void setEagerCheckContentAvailable(boolean eagerCheckContentAvailable) {
         this.eagerCheckContentAvailable = eagerCheckContentAvailable;
     }
 
+    @Override
     public boolean isTransferException() {
         return transferException;
     }
 
+    @Override
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
 
+    @Override
     public boolean isAllowJavaSerializedObject() {
         return allowJavaSerializedObject;
     }
 
+    @Override
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    @Override
     public boolean isMapHttpMessageBody() {
         return mapHttpMessageBody;
     }
 
+    @Override
     public void setMapHttpMessageBody(boolean mapHttpMessageBody) {
         this.mapHttpMessageBody = mapHttpMessageBody;
     }
 
+    @Override
     public boolean isMapHttpMessageHeaders() {
         return mapHttpMessageHeaders;
     }
 
+    @Override
     public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
         this.mapHttpMessageHeaders = mapHttpMessageHeaders;
     }
 
+    @Override
     public boolean isMapHttpMessageFormUrlEncodedBody() {
         return mapHttpMessageFormUrlEncodedBody;
     }
 
+    @Override
     public void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody) {
         this.mapHttpMessageFormUrlEncodedBody = mapHttpMessageFormUrlEncodedBody;
     }
 
+    @Override
     public String getFileNameExtWhitelist() {
         return fileNameExtWhitelist;
     }
 
+    @Override
     public void setFileNameExtWhitelist(String fileNameExtWhitelist) {
         this.fileNameExtWhitelist = fileNameExtWhitelist;
     }

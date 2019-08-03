@@ -35,6 +35,7 @@ public class IronMQProducer extends DefaultProducer {
         this.ironQueue = ironQueue;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         IronMQConfiguration configuration = getEndpoint().getConfiguration();
         if (IronMQConstants.CLEARQUEUE.equals(exchange.getIn().getHeader(IronMQConstants.OPERATION, String.class))) {

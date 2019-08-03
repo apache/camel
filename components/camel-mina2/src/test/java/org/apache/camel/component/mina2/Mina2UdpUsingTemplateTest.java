@@ -99,6 +99,7 @@ public class Mina2UdpUsingTemplateTest extends BaseMina2Test {
         return data;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

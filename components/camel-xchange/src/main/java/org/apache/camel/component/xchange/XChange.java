@@ -39,42 +39,52 @@ public class XChange implements Exchange {
         this.delegate = delegate;
     }
 
+    @Override
     public ExchangeSpecification getExchangeSpecification() {
         return delegate.getExchangeSpecification();
     }
 
+    @Override
     public ExchangeMetaData getExchangeMetaData() {
         return delegate.getExchangeMetaData();
     }
 
+    @Override
     public List<CurrencyPair> getExchangeSymbols() {
         return delegate.getExchangeSymbols();
     }
 
+    @Override
     public SynchronizedValueFactory<Long> getNonceFactory() {
         return delegate.getNonceFactory();
     }
 
+    @Override
     public ExchangeSpecification getDefaultExchangeSpecification() {
         return delegate.getDefaultExchangeSpecification();
     }
 
+    @Override
     public void applySpecification(ExchangeSpecification exchangeSpecification) {
         delegate.applySpecification(exchangeSpecification);
     }
 
+    @Override
     public MarketDataService getMarketDataService() {
         return delegate.getMarketDataService();
     }
 
+    @Override
     public TradeService getTradeService() {
         return delegate.getTradeService();
     }
 
+    @Override
     public AccountService getAccountService() {
         return delegate.getAccountService();
     }
 
+    @Override
     public void remoteInit() throws IOException, ExchangeException {
         delegate.remoteInit();
     }

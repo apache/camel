@@ -55,6 +55,7 @@ public class JmsInOutPipelineWithBeanTest extends CamelTestSupport {
         assertEquals("Reply", "Hello World,From A,From B,From Bean", response);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

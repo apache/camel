@@ -77,6 +77,7 @@ public class CamelContextTracker implements Closeable {
         TRACKERS.add(this);
     }
 
+    @Override
     public final void close() {
         TRACKERS.remove(this);
     }

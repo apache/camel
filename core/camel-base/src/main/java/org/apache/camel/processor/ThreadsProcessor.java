@@ -109,6 +109,7 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware {
         this.rejectedPolicy = rejectedPolicy;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (shutdown.get()) {
             throw new IllegalStateException("ThreadsProcessor is not running.");
@@ -148,14 +149,17 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware {
         return executorService;
     }
 
+    @Override
     public String toString() {
         return "Threads";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -164,14 +168,17 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware {
         return rejectedPolicy;
     }
 
+    @Override
     protected void doStart() throws Exception {
         shutdown.set(false);
     }
 
+    @Override
     protected void doStop() throws Exception {
         shutdown.set(true);
     }
 
+    @Override
     protected void doShutdown() throws Exception {
         if (shutdownExecutorService) {
             camelContext.getExecutorServiceManager().shutdownNow(executorService);

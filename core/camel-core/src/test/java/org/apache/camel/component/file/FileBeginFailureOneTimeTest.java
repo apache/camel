@@ -71,9 +71,11 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
         private volatile int invoked;
 
+        @Override
         public void prepareOnStartup(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint) throws Exception {
         }
 
+        @Override
         public boolean begin(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                              Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
             invoked++;
@@ -83,17 +85,20 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
             return true;
         }
 
+        @Override
         public void abort(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                           Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
             // noop
         }
 
+        @Override
         public void commit(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
-                            Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
+                           Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
         }
 
+        @Override
         public void rollback(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
-                            Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
+                             Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
         }
 
         public int getInvoked() {

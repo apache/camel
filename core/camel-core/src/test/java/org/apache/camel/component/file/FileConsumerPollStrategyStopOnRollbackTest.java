@@ -63,6 +63,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         assertEquals("rollback", event);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -73,6 +74,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
 
     private static class MyPollStrategy implements PollingConsumerPollStrategy {
 
+        @Override
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             // start consumer as we simulate the fail in begin
             // and thus before camel lazy start it itself
@@ -90,10 +92,12 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
             return true;
         }
 
+        @Override
         public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
             event += "commit";
         }
 
+        @Override
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
             if (cause.getMessage().equals("Damn I cannot do this")) {
                 event += "rollback";

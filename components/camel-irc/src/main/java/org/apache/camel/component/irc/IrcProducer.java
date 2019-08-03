@@ -40,6 +40,7 @@ public class IrcProducer extends DefaultProducer {
         this.configuration = endpoint.getConfiguration();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         final String msg = exchange.getIn().getBody(String.class);
         final String targetChannel = exchange.getIn().getHeader(IrcConstants.IRC_TARGET, String.class);

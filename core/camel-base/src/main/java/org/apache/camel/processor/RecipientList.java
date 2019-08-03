@@ -99,14 +99,17 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware {
         return "RecipientList[" + (expression != null ? expression : "") + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (!isStarted()) {
             throw new IllegalStateException("RecipientList has not been started: " + this);
@@ -174,6 +177,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware {
         return producerCache.getEndpointUtilizationStatistics();
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (producerCache == null) {
             producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
@@ -182,10 +186,12 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware {
         ServiceHelper.startService(aggregationStrategy, producerCache);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache, aggregationStrategy);
     }
 
+    @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(producerCache, aggregationStrategy);
 

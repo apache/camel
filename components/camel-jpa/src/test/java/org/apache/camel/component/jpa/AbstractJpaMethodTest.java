@@ -44,6 +44,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     
     abstract boolean usePersist();
     
+    @Override
     @After
     public void tearDown() throws Exception {
         if (entityManager != null) {

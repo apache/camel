@@ -38,6 +38,7 @@ public class MyRouteBuilder extends RouteBuilder {
         // END SNIPPET: e2
     }
 
+    @Override
     public void configure() {
 
         // START SNIPPET: e1

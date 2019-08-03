@@ -47,10 +47,12 @@ public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
         setCommand(HazelcastCommand.seda);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new HazelcastSedaProducer(this, getQueue());
     }
 
+    @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
         HazelcastSedaConsumer answer = new HazelcastSedaConsumer(this, processor);
         configureConsumer(answer);

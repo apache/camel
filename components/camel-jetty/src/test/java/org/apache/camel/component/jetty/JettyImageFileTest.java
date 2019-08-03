@@ -62,7 +62,8 @@ public class JettyImageFileTest extends BaseJettyTest {
     }
 
     public class MyImageService implements Processor {
-        public void process(Exchange exchange) throws Exception {            
+        @Override
+        public void process(Exchange exchange) throws Exception {
             exchange.getOut().setBody(new File("src/test/data/logo.jpeg"));
             exchange.getOut().setHeader("Content-Type", "image/jpeg");
         }

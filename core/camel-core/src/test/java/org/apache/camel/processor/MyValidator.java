@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 
 public class MyValidator implements Processor {
+    @Override
     public void process(Exchange exchange) throws Exception {
         Object value = exchange.getIn().getHeader("foo");
         if (value == null || !value.equals("bar")) {

@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class CXFHolderRouteTest extends CxfHolderConsumerTest {
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

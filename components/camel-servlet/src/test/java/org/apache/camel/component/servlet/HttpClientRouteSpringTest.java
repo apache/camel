@@ -20,12 +20,14 @@ import org.junit.Before;
 
 public class HttpClientRouteSpringTest extends HttpClientRouteTest {
 
+    @Override
     @Before
     public void setUp() throws Exception {
         startCamelContext = false;
         super.setUp();
     }
    
+    @Override
     protected String getConfiguration() {
         return "/org/apache/camel/component/servlet/web-spring.xml";
     }

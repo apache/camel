@@ -41,6 +41,7 @@ public class HazelcastSetProducer extends HazelcastDefaultProducer {
         this.set = hazelcastInstance.getSet(setName);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         final HazelcastOperation operation = lookupOperation(exchange);

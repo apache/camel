@@ -37,6 +37,7 @@ public class SpELExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    @Override
     public String getLanguage() {
         return "spel";
     }

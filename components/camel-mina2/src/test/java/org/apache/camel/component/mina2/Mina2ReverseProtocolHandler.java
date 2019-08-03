@@ -27,12 +27,14 @@ import org.apache.mina.core.session.IoSession;
  */
 public class Mina2ReverseProtocolHandler extends IoHandlerAdapter {
 
+    @Override
     public void exceptionCaught(IoSession session, Throwable cause) {
         cause.printStackTrace();
         // Close connection when unexpected exception is caught.
         session.closeNow();
     }
 
+    @Override
     public void messageReceived(IoSession session, Object message) {
         // Reverse reveiced string
         String str = message.toString();

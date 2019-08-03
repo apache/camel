@@ -21,6 +21,7 @@ package org.apache.camel.component.file.remote;
  */
 public class FtpChangedReadLockTimeoutTest extends FtpChangedReadLockTest {
 
+    @Override
     protected String getFtpUrl() {
         // will timeout, but the scheduler will pickup the file later
         return super.getFtpUrl() + "&readLockTimeout=2500";

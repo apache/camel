@@ -39,6 +39,7 @@ public class DelayInterceptorTest extends ContextTestSupport {
         assertTrue("Should not take that long to run: " + delta, delta < 5000);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             // START SNIPPET: e1

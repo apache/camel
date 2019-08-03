@@ -38,6 +38,7 @@ public class HeaderFilterStrategyComponentTest extends Assert {
             super();
         }
 
+        @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             return null;
         }
@@ -47,22 +48,27 @@ public class HeaderFilterStrategyComponentTest extends Assert {
 
         private HeaderFilterStrategy strategy;
 
+        @Override
         public HeaderFilterStrategy getHeaderFilterStrategy() {
             return strategy;
         }
 
+        @Override
         public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
             this.strategy = strategy;
         }
 
+        @Override
         public Producer createProducer() throws Exception {
             return null;
         }
 
+        @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             return null;
         }
 
+        @Override
         public boolean isSingleton() {
             return true;
         }

@@ -56,6 +56,7 @@ public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends CamelTe
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

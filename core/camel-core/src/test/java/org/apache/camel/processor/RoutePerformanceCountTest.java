@@ -70,6 +70,7 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
     private static class CountProcessor implements Processor {
         private AtomicInteger counter = new AtomicInteger(0);
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             counter.incrementAndGet();
         }

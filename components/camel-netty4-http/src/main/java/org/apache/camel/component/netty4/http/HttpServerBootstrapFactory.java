@@ -51,6 +51,7 @@ public class HttpServerBootstrapFactory extends SingleTCPNettyServerBootstrapFac
         LOG.info("BootstrapFactory on port {} is using bootstrap configuration: [{}]", port, bootstrapConfiguration.toStringBootstrapConfiguration());
     }
 
+    @Override
     public void addConsumer(NettyConsumer consumer) {
         if (compatibleCheck) {
             // when adding additional consumers on the same port (eg to reuse port for multiple routes etc) then the Netty server bootstrap

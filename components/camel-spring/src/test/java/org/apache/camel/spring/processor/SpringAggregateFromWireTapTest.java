@@ -22,6 +22,7 @@ import org.apache.camel.processor.aggregator.AggregateFromWireTapTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringAggregateFromWireTapTest extends AggregateFromWireTapTest {
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringAggregateFromWireTapTest.xml");
     }

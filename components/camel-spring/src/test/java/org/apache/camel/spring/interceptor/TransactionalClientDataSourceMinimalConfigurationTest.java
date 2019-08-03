@@ -32,6 +32,7 @@ public class TransactionalClientDataSourceMinimalConfigurationTest extends Sprin
 
     protected JdbcTemplate jdbc;
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml");

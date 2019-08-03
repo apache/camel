@@ -46,6 +46,7 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
         this.processor = processor;
     }
 
+    @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
@@ -69,30 +70,37 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
         return true;
     }
 
+    @Override
     public WireTapProcessor getProcessor() {
         return processor;
     }
 
+    @Override
     public String getUri() {
         return uri;
     }
 
+    @Override
     public Integer getCacheSize() {
         return processor.getCacheSize();
     }
 
+    @Override
     public Boolean isIgnoreInvalidEndpoint() {
         return processor.isIgnoreInvalidEndpoint();
     }
 
+    @Override
     public Boolean isCopy() {
         return processor.isCopy();
     }
 
+    @Override
     public Boolean isDynamicUri() {
         return processor.isDynamicUri();
     }
 
+    @Override
     public Integer getTaskSize() {
         return processor.getPendingExchangesSize();
     }

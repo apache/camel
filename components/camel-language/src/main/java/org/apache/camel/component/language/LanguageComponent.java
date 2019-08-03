@@ -38,6 +38,7 @@ public class LanguageComponent extends DefaultComponent {
     public LanguageComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String name = StringHelper.before(remaining, ":");
         String script = StringHelper.after(remaining, ":");

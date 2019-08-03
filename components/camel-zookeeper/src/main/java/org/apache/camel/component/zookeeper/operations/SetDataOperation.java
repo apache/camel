@@ -37,6 +37,7 @@ public class SetDataOperation extends ZooKeeperOperation<byte[]> {
         this.data = data;
     }
 
+    @Override
     public OperationResult<byte[]> getResult() {
         try {
             Stat statistics = connection.setData(node, data, version);

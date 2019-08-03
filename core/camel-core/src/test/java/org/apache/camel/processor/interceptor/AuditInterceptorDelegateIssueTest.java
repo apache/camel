@@ -89,6 +89,7 @@ public class AuditInterceptorDelegateIssueTest extends ContextTestSupport {
     private static final class MyIntercepStrategy implements InterceptStrategy {
         private volatile boolean invoked;
 
+        @Override
         public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, Processor target, Processor nextTarget) throws Exception {
             return new DelegateProcessor(target) {
                 protected void processNext(Exchange exchange) throws Exception {

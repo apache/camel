@@ -33,6 +33,7 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
         + "&loggingFeatureEnabled=true";
        
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

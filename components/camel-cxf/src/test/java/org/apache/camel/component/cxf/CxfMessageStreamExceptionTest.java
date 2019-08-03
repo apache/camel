@@ -24,6 +24,7 @@ import org.apache.cxf.binding.soap.SoapFault;
 
 public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedExceptionTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

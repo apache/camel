@@ -88,6 +88,7 @@ public class SqsComponentIntegrationTest extends CamelTestSupport {
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final String sqsEndpointUri = String.format("aws-sqs://MyNewCamelQueue?accessKey=%s&secretKey=%s&messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s",
                 accessKey, secretKey, "1209600", "65536", "60", "%7B%22Version%22%3A%222008-10-17%22%2C%22Id%22%3A%22%2F195004372649%2FMyNewCamelQueue%2FSQSDefaultPolicy%22%2C%22"

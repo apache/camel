@@ -120,6 +120,7 @@ public class CxfProducerSessionTest extends CamelTestSupport {
         }
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

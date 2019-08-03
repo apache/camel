@@ -32,6 +32,7 @@ public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
         assertEquals("Get a wrong response ", "application/xml", out);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

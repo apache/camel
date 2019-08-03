@@ -54,30 +54,36 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     public ClientModeTCPNettyServerBootstrapFactory() {
     }
 
+    @Override
     public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
     }
 
+    @Override
     public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
     }
 
+    @Override
     public void addChannel(Channel channel) {
         // we don't need to track the channel in client mode
     }
 
+    @Override
     public void removeChannel(Channel channel) {
         // we don't need to track the channel in client mode
     }
 
+    @Override
     public void addConsumer(NettyConsumer consumer) {
         // does not allow sharing
     }
 
+    @Override
     public void removeConsumer(NettyConsumer consumer) {
         // does not allow sharing
     }

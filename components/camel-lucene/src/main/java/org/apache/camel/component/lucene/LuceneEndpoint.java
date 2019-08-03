@@ -50,10 +50,12 @@ public class LuceneEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported for Lucene endpoint");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         if (!insertFlag) {
             return new LuceneQueryProducer(this, this.config);

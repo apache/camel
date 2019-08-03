@@ -31,6 +31,7 @@ public class SetHeaderProcessor implements Processor {
         headerValue = value;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         exchange.getIn().setHeader(headerName, headerValue);
     }

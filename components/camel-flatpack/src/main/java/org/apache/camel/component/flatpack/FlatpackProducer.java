@@ -29,6 +29,7 @@ class FlatpackProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         Parser parser = endpoint.createParser(exchange);

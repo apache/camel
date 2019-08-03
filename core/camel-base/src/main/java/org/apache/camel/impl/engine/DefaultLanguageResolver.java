@@ -40,6 +40,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
     protected FactoryFinder languageFactory;
     protected FactoryFinder languageResolver;
 
+    @Override
     public Language resolveLanguage(String name, CamelContext context) {
         // lookup in registry first
         Language languageReg = ResolverHelper.lookupLanguageInRegistryWithFallback(context, name);

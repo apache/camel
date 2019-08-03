@@ -36,6 +36,7 @@ public class JavaConfigWithPostProcessorTest extends AbstractJUnit4SpringContext
         assertEquals("doCheese() should be called", true, doCheeseCalled);
     }
 
+    @Override
     public void doCheese() {
         logger.info("doCheese called!");
         doCheeseCalled = true;

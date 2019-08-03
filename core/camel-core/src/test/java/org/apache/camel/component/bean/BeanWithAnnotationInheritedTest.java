@@ -75,6 +75,7 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         answer.bind("b", new B());
@@ -91,6 +92,7 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
         return answer;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -135,18 +137,22 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
     }
 
     private abstract static class A implements I2 {
+        @Override
         public String m3(String h1, @Header("bar")String h2) {
             return h1 + h2;
         }
     }
 
     private static class B extends A implements I1 {
+        @Override
         public String m1(String h1, String h2) {
             return h1 + h2;
         }
+        @Override
         public String m2(String h1, String h2) {
             return h1 + h2;
         }
+        @Override
         public String m4(String h1, @Header("bar")String h2) {
             return h1 + h2;
         }

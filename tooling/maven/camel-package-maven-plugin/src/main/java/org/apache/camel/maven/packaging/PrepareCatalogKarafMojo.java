@@ -124,6 +124,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
      *                                                        threads it generated failed.
      * @throws MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Set<String> features = findKarafFeatures();
         executeComponents(features);

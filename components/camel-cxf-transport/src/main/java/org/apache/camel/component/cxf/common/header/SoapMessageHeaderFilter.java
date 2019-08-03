@@ -41,10 +41,12 @@ public class SoapMessageHeaderFilter implements MessageHeaderFilter {
                       SoapBindingFactory.SOAP_11_BINDING, 
                       SoapBindingFactory.SOAP_12_BINDING);
     
+    @Override
     public List<String> getActivationNamespaces() {
         return ACTIVATION_NS;
     }
 
+    @Override
     public void filter(Direction direction, List<Header> headers) {
         // Treat both in and out direction the same
         if (headers == null) {

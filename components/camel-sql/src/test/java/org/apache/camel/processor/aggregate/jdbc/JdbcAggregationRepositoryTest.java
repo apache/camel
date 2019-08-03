@@ -22,6 +22,7 @@ import org.junit.Test;
 
 public class JdbcAggregationRepositoryTest extends AbstractJdbcAggregationTestSupport {
 
+    @Override
     void configureJdbcAggregationRepository() {
         repo.setReturnOldExchange(true);
     }

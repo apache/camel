@@ -40,6 +40,7 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
     private EmbeddedDatabase db;
     private JdbcTemplate jdbcTemplate;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -50,6 +51,7 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

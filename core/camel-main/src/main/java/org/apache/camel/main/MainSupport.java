@@ -543,11 +543,13 @@ public abstract class MainSupport extends ServiceSupport {
         mainConfigurationProperties.setTracing(true);
     }
 
+    @Override
     protected void doStop() throws Exception {
         // call completed to properly stop as we count down the waiting latch
         completed();
     }
 
+    @Override
     protected void doStart() throws Exception {
     }
 
@@ -1373,6 +1375,7 @@ public abstract class MainSupport extends ServiceSupport {
             this.parameterName = parameterName;
         }
 
+        @Override
         protected void doProcess(String arg, LinkedList<String> remainingArgs) {
             if (remainingArgs.isEmpty()) {
                 System.err.println("Expected fileName for ");
@@ -1384,6 +1387,7 @@ public abstract class MainSupport extends ServiceSupport {
             }
         }
 
+        @Override
         public String getInformation() {
             return "  " + getAbbreviation() + " or " + getFullName() + " <" + parameterName + "> = " + getDescription();
         }

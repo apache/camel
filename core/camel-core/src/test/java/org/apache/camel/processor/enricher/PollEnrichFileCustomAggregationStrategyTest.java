@@ -77,6 +77,7 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
     
     class ReplaceAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange original, Exchange resource) {
             Object resourceResponse = resource.getIn().getBody();
             if (original.getPattern().isOutCapable()) {

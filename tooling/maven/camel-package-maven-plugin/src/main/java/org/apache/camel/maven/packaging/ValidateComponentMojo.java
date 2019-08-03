@@ -90,6 +90,7 @@ public class ValidateComponentMojo extends AbstractMojo {
      *                                                        threads it generated failed.
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!validate) {
             getLog().info("Validation disabled");

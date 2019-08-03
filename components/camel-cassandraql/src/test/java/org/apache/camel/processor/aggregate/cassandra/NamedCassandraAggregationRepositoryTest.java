@@ -45,6 +45,7 @@ public class NamedCassandraAggregationRepositoryTest extends BaseCassandraTest {
     private CassandraAggregationRepository aggregationRepository;
     private CamelContext camelContext;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
@@ -57,6 +58,7 @@ public class NamedCassandraAggregationRepositoryTest extends BaseCassandraTest {
         }
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         if (canTest()) {

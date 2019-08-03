@@ -60,6 +60,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
         this.objectFactory = new ObjectFactory();
     }
 
+    @Override
     public SoapJaxbDataFormat getDataFormat() {
         return dataFormat;
     }

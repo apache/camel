@@ -60,6 +60,7 @@ public class ExtractXPathWithNamespaceTest extends ContextTestSupport {
         assertNull(mock.getExchanges().get(0).getIn().getHeader("foo"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

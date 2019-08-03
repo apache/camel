@@ -34,6 +34,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
     private Set<Class<? extends Annotation>> annotations = new HashSet<>();
     private String scanPackage = "org.apache.camel.spring.scan";
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

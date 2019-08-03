@@ -64,6 +64,7 @@ public class AtmosEndpoint extends DefaultEndpoint {
      * @return the camel producer
      * @throws Exception
      */
+    @Override
     public Producer createProducer() throws Exception {
         log.debug("resolve producer atmos endpoint {{}}", configuration.getOperation());
         log.debug("resolve producer atmos attached client: {}", configuration.getClient());
@@ -87,6 +88,7 @@ public class AtmosEndpoint extends DefaultEndpoint {
      * @return the camel consumer
      * @throws Exception
      */
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         log.debug("resolve consumer atmos endpoint {{}}", configuration.getOperation());
         log.debug("resolve consumer atmos attached client:{}", configuration.getClient());

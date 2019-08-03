@@ -75,6 +75,7 @@ public class EmbeddedKafkaBroker extends ExternalResource {
         AdminUtils.createTopic(getZkUtils(), topic, partitionCount, 1, new Properties(), RackAwareMode.Enforced$.MODULE$);
     }
 
+    @Override
     public void before() {
         logDir = constructTempDir(perTest("kafka-log"));
 
@@ -116,6 +117,7 @@ public class EmbeddedKafkaBroker extends ExternalResource {
         return port;
     }
 
+    @Override
     public void after() {
         kafkaServer.shutdown();
         try {

@@ -28,6 +28,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
  */
 public class MyProcessor implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Thread.sleep(4000);
         Message in = exchange.getIn();

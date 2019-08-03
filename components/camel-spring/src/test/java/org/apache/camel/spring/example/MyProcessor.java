@@ -38,6 +38,7 @@ public class MyProcessor implements Processor {
         this.name = name;
     }
 
+    @Override
     public void process(Exchange exchange) {
         exchange.getIn().setHeader("name", getName());
         exchanges.add(exchange);

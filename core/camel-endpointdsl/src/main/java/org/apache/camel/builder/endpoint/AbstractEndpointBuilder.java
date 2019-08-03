@@ -83,6 +83,7 @@ public class AbstractEndpointBuilder {
         }
     }
 
+    @Override
     public String toString() {
         return getUri();
     }

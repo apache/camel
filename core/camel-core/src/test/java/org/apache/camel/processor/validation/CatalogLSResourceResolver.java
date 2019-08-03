@@ -72,32 +72,39 @@ public class CatalogLSResourceResolver implements LSResourceResolver {
             this.inputSource = catalogResolver.resolveEntity(publicId, systemId);
         }
 
+        @Override
         public Reader getCharacterStream() {
             return null;
         }
 
+        @Override
         public void setCharacterStream(Reader characterStream) {
             // noop
         }
 
+        @Override
         public InputStream getByteStream() {
             return inputSource != null ? inputSource.getByteStream() : null;
         }
 
+        @Override
         public void setByteStream(InputStream byteStream) {
             if (inputSource != null) {
                 inputSource.setByteStream(byteStream);
             }
         }
 
+        @Override
         public String getStringData() {
             return null;
         }
 
+        @Override
         public void setStringData(String stringData) {
             // noop
         }
 
+        @Override
         public String getSystemId() {
             if (inputSource != null) {
                 return inputSource.getSystemId();
@@ -106,12 +113,14 @@ public class CatalogLSResourceResolver implements LSResourceResolver {
             return systemId;
         }
 
+        @Override
         public void setSystemId(String systemId) {
             if (inputSource != null) {
                 inputSource.setSystemId(systemId);
             }
         }
 
+        @Override
         public String getPublicId() {
             if (inputSource != null) {
                 return inputSource.getPublicId();
@@ -120,6 +129,7 @@ public class CatalogLSResourceResolver implements LSResourceResolver {
             return publicId;
         }
 
+        @Override
         public void setPublicId(String publicId) {
             if (inputSource != null) {
                 inputSource.setPublicId(publicId);
@@ -128,14 +138,17 @@ public class CatalogLSResourceResolver implements LSResourceResolver {
             }
         }
 
+        @Override
         public String getBaseURI() {
             return baseURI;
         }
 
+        @Override
         public void setBaseURI(String baseURI) {
             // noop
         }
 
+        @Override
         public String getEncoding() {
             if (inputSource != null) {
                 return inputSource.getEncoding();
@@ -144,16 +157,19 @@ public class CatalogLSResourceResolver implements LSResourceResolver {
             return null;
         }
 
+        @Override
         public void setEncoding(String encoding) {
             if (inputSource != null) {
                 inputSource.setEncoding(encoding);
             }
         }
 
+        @Override
         public boolean getCertifiedText() {
             return true;
         }
 
+        @Override
         public void setCertifiedText(boolean certifiedText) {
             // noop
         }

@@ -57,6 +57,7 @@ public class BindySimpleCsvRemoveWhitespaceUnmarshallTest extends AbstractJUnit4
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassandremovewhitespace.Order.class);
 
+        @Override
         public void configure() {
             // from("file://src/test/data2")
             from("direct:start").unmarshal(camelDataFormat).to("mock:result");

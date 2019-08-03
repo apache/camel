@@ -72,6 +72,7 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
         }
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -83,6 +84,7 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
         };
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
     }

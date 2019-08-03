@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 
 // START SNIPPET: e1
 public class LowestQuoteAggregationStrategy implements AggregationStrategy {
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         // the first time we only have the new exchange
         if (oldExchange == null) {

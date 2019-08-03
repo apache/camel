@@ -58,6 +58,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     /**
      * Invoked by Spring-WS when a {@link WebServiceMessage} is received
      */
+    @Override
     public void invoke(MessageContext messageContext) throws Exception {
         Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOptionalOut);
         populateExchangeFromMessageContext(messageContext, exchange);

@@ -70,6 +70,7 @@ public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
 
     private class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
             // we can't assert on the expected values here as the contract of this method doesn't
             // allow to throw any Throwable (including AssertionError) so that we assert
@@ -84,6 +85,7 @@ public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
             oldExchange.getIn().setBody("AllTimeout");
         }
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             // noop
             return oldExchange;

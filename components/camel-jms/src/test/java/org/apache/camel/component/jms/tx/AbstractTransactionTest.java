@@ -39,6 +39,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  */
 public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -47,6 +48,7 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
         template = null;
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JavaDSLTransactionTest.xml");
     }

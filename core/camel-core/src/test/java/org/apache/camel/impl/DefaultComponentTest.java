@@ -41,6 +41,7 @@ public class DefaultComponentTest extends ContextTestSupport {
             super(context);
         }
 
+        @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
             return null;
@@ -263,6 +264,7 @@ public class DefaultComponentTest extends ContextTestSupport {
         }
     }
 
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         Date bean1 = new Date(10);
         Date bean2 = new Date(11);

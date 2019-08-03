@@ -68,6 +68,7 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
      *                 threads it generated failed.
      * @throws org.apache.maven.plugin.MojoFailureException something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // only generate this for the root pom
         if ("pom".equals(project.getModel().getPackaging())) {

@@ -23,6 +23,7 @@ import org.apache.camel.spi.annotations.Component;
 @Component("kubernetes-services")
 public class KubernetesServicesComponent extends AbstractKubernetesComponent {
 
+    @Override
     protected KubernetesServicesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {
         KubernetesServicesEndpoint endpoint = new KubernetesServicesEndpoint(uri, this, config);
         return endpoint;

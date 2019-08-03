@@ -82,6 +82,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         this.lock = lock;
     }
 
+    @Override
     public V get(K key) {
         TimeoutMapEntry<K, V> entry;
         lock.lock();
@@ -97,6 +98,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         return entry.getValue();
     }
 
+    @Override
     public V put(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
         lock.lock();
@@ -110,6 +112,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
     }
 
+    @Override
     public V putIfAbsent(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
         TimeoutMapEntry<K, V> result = null;
@@ -127,6 +130,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
     }
 
+    @Override
     public V remove(K key) {
         V value = null;
         lock.lock();
@@ -141,6 +145,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
     }
 
+    @Override
     public int size() {
         return map.size();
     }

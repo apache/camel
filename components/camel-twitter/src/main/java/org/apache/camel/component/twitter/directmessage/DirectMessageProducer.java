@@ -39,6 +39,7 @@ public class DirectMessageProducer extends DefaultProducer {
         this.user = user;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         // send direct message
         String toUsername = user;

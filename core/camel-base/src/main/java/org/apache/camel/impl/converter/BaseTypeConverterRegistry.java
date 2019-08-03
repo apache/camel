@@ -508,6 +508,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return null;
     }
 
+    @Override
     public List<Class<?>[]> listAllTypeConvertersFromTo() {
         List<Class<?>[]> answer = new ArrayList<>();
         typeMappings.forEach((k1, k2, v) -> answer.add(new Class<?>[]{k2, k1}));
@@ -622,18 +623,22 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return typeMappings.size();
     }
 
+    @Override
     public LoggingLevel getTypeConverterExistsLoggingLevel() {
         return typeConverterExistsLoggingLevel;
     }
 
+    @Override
     public void setTypeConverterExistsLoggingLevel(LoggingLevel typeConverterExistsLoggingLevel) {
         this.typeConverterExistsLoggingLevel = typeConverterExistsLoggingLevel;
     }
 
+    @Override
     public TypeConverterExists getTypeConverterExists() {
         return typeConverterExists;
     }
 
+    @Override
     public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
         this.typeConverterExists = typeConverterExists;
     }

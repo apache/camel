@@ -55,11 +55,13 @@ public class DateFormatFactory extends AbstractFormatFactory {
             }
         }
 
+        @Override
         public String format(Date object) throws Exception {
             ObjectHelper.notNull(this.pattern, "pattern");
             return this.getDateFormat().format(object);
         }
 
+        @Override
         public Date parse(String string) throws Exception {
 
             Date date;
@@ -99,6 +101,7 @@ public class DateFormatFactory extends AbstractFormatFactory {
             return result;
         }
 
+        @Override
         public String getPattern() {
             return pattern;
         }

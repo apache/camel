@@ -56,6 +56,7 @@ public class AdviceWithIssueTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         JmsComponent activemq =

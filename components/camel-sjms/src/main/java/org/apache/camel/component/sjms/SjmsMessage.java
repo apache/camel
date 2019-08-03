@@ -156,6 +156,7 @@ public class SjmsMessage extends DefaultMessage {
         }
     }
 
+    @Override
     public Object getHeader(String name) {
         Object answer = null;
 

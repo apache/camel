@@ -33,6 +33,7 @@ public class JMXHandbackTest extends SimpleBeanFixture {
 
     URI hb;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         hb = new URI("urn:some:handback:object");

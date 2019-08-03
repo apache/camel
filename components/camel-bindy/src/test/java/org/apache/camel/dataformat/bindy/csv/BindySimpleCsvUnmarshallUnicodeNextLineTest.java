@@ -61,6 +61,7 @@ public class BindySimpleCsvUnmarshallUnicodeNextLineTest extends AbstractJUnit4S
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat locationRecordBindyDataFormat = new BindyCsvDataFormat(LocationRecord.class);
 
+        @Override
         public void configure() {
             from(URI_DIRECT_START)
                     .unmarshal(locationRecordBindyDataFormat)

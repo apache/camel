@@ -41,10 +41,12 @@ public class ByteFormatFactory extends AbstractFormatFactory {
 
     private static class ByteFormat implements Format<Byte> {
 
+        @Override
         public String format(Byte object) throws Exception {
             return object.toString();
         }
 
+        @Override
         public Byte parse(String string) throws Exception {
             return new Byte(string);
         }

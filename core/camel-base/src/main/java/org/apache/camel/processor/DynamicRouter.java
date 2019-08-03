@@ -57,6 +57,7 @@ public class DynamicRouter extends RoutingSlip {
             this.slip = slip;
         }
 
+        @Override
         public boolean hasNext(Exchange exchange) {
             if (current != null && current.hasNext()) {
                 return true;
@@ -70,6 +71,7 @@ public class DynamicRouter extends RoutingSlip {
             return current.hasNext();
         }
 
+        @Override
         public Object next(Exchange exchange) {
             return current.next();
         }

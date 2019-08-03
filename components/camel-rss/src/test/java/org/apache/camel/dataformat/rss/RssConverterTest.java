@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class RssConverterTest extends RssDataFormatTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

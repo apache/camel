@@ -64,5 +64,6 @@ public abstract class AbstractGitHubProducer extends DefaultProducer {
         return repository;
     }
 
+    @Override
     public abstract void process(Exchange exchange) throws Exception;
 }

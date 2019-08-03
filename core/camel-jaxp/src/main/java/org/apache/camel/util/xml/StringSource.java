@@ -63,6 +63,7 @@ public class StringSource extends StreamSource implements Externalizable {
         this.encoding = encoding;
     }
 
+    @Override
     public InputStream getInputStream() {
         try {
             return new ByteArrayInputStream(text.getBytes(encoding));
@@ -71,10 +72,12 @@ public class StringSource extends StreamSource implements Externalizable {
         }
     }
 
+    @Override
     public Reader getReader() {
         return new StringReader(text);
     }
 
+    @Override
     public String toString() {
         return "StringSource[" + text + "]";
     }
@@ -87,6 +90,7 @@ public class StringSource extends StreamSource implements Externalizable {
         return encoding;
     }
 
+    @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         int b = (text != null ? 0x01 : 0x00) + (encoding != null ? 0x02 : 0x00) + (getPublicId() != null ? 0x04 : 0x00) + (getSystemId() != null ? 0x08 : 0x00);
         out.writeByte(b);
@@ -104,6 +108,7 @@ public class StringSource extends StreamSource implements Externalizable {
         }
     }
 
+    @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int b = in.readByte();
         if ((b & 0x01) != 0) {

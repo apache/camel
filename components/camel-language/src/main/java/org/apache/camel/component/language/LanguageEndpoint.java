@@ -81,6 +81,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
         setContentCache(true);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
@@ -97,6 +98,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
         return new LanguageProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new RuntimeCamelException("Cannot consume to a LanguageEndpoint: " + getEndpointUri());
     }
@@ -236,6 +238,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
         this.cacheScript = cacheScript;
     }
 
+    @Override
     public void clearContentCache() {
         super.clearContentCache();
         // must also clear expression and script

@@ -62,6 +62,7 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
         System.clearProperty("HTTPClient.dontChunkRequests");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

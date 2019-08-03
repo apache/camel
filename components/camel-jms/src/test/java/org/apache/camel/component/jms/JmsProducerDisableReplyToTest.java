@@ -38,6 +38,7 @@ public class JmsProducerDisableReplyToTest extends CamelTestSupport {
         assertEquals("Hello World", out);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

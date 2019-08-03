@@ -55,6 +55,7 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
         setMaskJson(maskJson);
     }
 
+    @Override
     public String format(String source) {
         if (keywords == null || keywords.isEmpty()) {
             return source;

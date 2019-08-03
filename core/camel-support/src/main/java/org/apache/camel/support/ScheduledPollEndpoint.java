@@ -97,6 +97,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     protected ScheduledPollEndpoint() {
     }
 
+    @Override
     public void configureProperties(Map<String, Object> options) {
         super.configureProperties(options);
         configureScheduledPollConsumerProperties(options, getConsumerProperties());

@@ -21,6 +21,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringRemotingWithExportAndProxyTest extends SpringRemotingRouteTest {
     
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/spring-with-exporter-proxy.xml");
     }

@@ -145,6 +145,7 @@ public class JpaProducer extends DefaultProducer {
         return useExecuteUpdate;
     }
 
+    @Override
     public void process(final Exchange exchange) {
         // resolve the entity manager before evaluating the expression
         final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory,

@@ -45,6 +45,7 @@ public class Camel715ThreadProcessorTest extends Assert {
             iterationNumber = iter;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             in.setBody("a");

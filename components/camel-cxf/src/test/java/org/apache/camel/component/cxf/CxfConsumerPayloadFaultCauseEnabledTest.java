@@ -55,6 +55,7 @@ public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelTestSupport {
         + "/" + getClass().getSimpleName() + "/PersonService";
     protected AbstractXmlApplicationContext applicationContext;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         CXFTestSupport.getPort1();

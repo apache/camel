@@ -43,14 +43,17 @@ public class IrcRouteTest extends IrcIntegrationTestSupport {
         }
     }
 
+    @Override
     protected String sendUri() {
         return "irc://{{camelTo}}@{{non.ssl.server}}?channels={{channel1}}";
     }
 
+    @Override
     protected String fromUri() {
         return "irc://{{camelFrom}}@{{non.ssl.server}}?&channels={{channel1}}";
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

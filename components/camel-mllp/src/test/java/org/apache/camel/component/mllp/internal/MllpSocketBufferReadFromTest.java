@@ -33,6 +33,7 @@ public class MllpSocketBufferReadFromTest extends SocketBufferTestSupport {
     SocketStub socketStub;
     SocketInputStreamStub inputStreamStub;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

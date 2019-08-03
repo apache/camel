@@ -45,6 +45,7 @@ public class RecipientListInflightExchangesTest extends RestletTestSupport {
         assertEquals(0, context.getInflightRepository().size());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

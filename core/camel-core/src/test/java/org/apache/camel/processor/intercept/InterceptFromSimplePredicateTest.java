@@ -47,6 +47,7 @@ public class InterceptFromSimplePredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -65,6 +66,7 @@ public class InterceptFromSimplePredicateTest extends ContextTestSupport {
 
     private static class MyTestServiceProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().setBody("This is a test body");
         }

@@ -148,6 +148,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         }
 
         // we receive a CXF request when this method is called
+        @Override
         public Object invoke(Exchange cxfExchange, Object o) {
             log.trace("Received CXF Request: {}", cxfExchange);
             Continuation continuation;

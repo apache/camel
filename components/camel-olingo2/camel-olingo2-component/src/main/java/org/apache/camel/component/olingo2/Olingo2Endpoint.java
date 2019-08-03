@@ -80,10 +80,12 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         endpointPropertyNames.add(FILTER_ALREADY_SEEN);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new Olingo2Producer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // make sure inBody is not set for consumers
         if (inBody != null) {
@@ -104,6 +106,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         return Olingo2PropertiesHelper.getHelper();
     }
 
+    @Override
     protected String getThreadProfileName() {
         return Olingo2Constants.THREAD_PROFILE_NAME;
     }

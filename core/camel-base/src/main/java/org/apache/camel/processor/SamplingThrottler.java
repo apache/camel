@@ -77,14 +77,17 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
         }
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getTraceLabel() {
         if (messageFrequency > 0) {
             return "samplingThrottler[1 exchange per: " + messageFrequency + " messages received]";

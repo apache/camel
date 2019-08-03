@@ -75,6 +75,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         this.camelContext = camelContext;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void traceBeforeNode(NamedNode node, Exchange exchange) {
         if (shouldTrace(node)) {

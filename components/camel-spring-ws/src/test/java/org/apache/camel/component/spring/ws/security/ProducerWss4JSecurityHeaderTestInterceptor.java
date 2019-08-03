@@ -27,6 +27,7 @@ public class ProducerWss4JSecurityHeaderTestInterceptor extends Wss4jSecurityInt
 
     public static boolean isX509DataPresent;
     
+    @Override
     protected void validateMessage(SoapMessage soapMessage, MessageContext messageContext) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {

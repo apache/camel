@@ -88,6 +88,7 @@ public class HttpProducer extends DefaultProducer {
         this.transferException = endpoint.isTransferException();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         if (getEndpoint().isClearExpiredCookies() && !getEndpoint().isBridgeEndpoint()) {

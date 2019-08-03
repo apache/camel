@@ -21,6 +21,7 @@ package org.apache.camel.component.file.remote;
  */
 public class FtpChangedReadLockLoggingLevelTest extends FtpChangedReadLockTest {
 
+    @Override
     protected String getFtpUrl() {
         return super.getFtpUrl() + "&readLockLoggingLevel=DEBUG";
     }

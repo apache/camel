@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class ValidationWithTryCatchTest extends ValidationTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

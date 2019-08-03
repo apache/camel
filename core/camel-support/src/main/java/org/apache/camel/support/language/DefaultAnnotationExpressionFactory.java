@@ -31,6 +31,7 @@ import org.apache.camel.support.PredicateToExpressionAdapter;
  */
 public class DefaultAnnotationExpressionFactory implements AnnotationExpressionFactory {
 
+    @Override
     public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
         String languageName = languageAnnotation.language();
         if (languageName == null) {

@@ -111,6 +111,7 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
             expectProtocolVersion = protocolVersion;
         }
 
+        @Override
         public void handle(final HttpRequest request, final HttpResponse response,
                            final HttpContext context) throws HttpException, IOException {
             if (!expectProtocolVersion.equals(request.getProtocolVersion().toString())) {

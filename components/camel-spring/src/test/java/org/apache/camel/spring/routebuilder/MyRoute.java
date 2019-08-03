@@ -30,6 +30,7 @@ public class MyRoute extends SpringRouteBuilder {
         }
     }
 
+    @Override
     public void configure() throws Exception {
         from("direct:a").to("mock:a");
     }

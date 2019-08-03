@@ -1739,6 +1739,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.reconnectBackoffMaxMs = reconnectBackoffMaxMs;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -1747,6 +1748,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }

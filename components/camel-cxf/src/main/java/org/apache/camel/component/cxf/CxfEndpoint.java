@@ -226,6 +226,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         super.setEndpointUri(UnsafeUriCharactersEncoder.encodeHttpURI(endpointUri));
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         Producer answer = new CxfProducer(this);
         if (isSynchronous()) {
@@ -235,6 +236,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         CxfConsumer answer = new CxfConsumer(this, processor);
         configureConsumer(answer);
@@ -921,6 +923,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
         if (cxfBinding instanceof HeaderFilterStrategyAware) {
@@ -928,6 +931,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -1005,6 +1009,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return properties;
     }
 
+    @Override
     public void setCamelContext(CamelContext c) {
         super.setCamelContext(c);
         if (this.properties != null) {

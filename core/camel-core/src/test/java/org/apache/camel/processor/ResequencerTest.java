@@ -53,11 +53,13 @@ public class ResequencerTest extends ContextTestSupport {
         super.tearDown();
     }
     
+    @Override
     protected boolean useJmx() {
         // use jmx only when running the following test(s)
         return getName().equals("testBatchResequencerTypeWithJmx");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -40,6 +40,7 @@ public class RssFilterTest extends CamelTestSupport {
         registry.bind("myFilterBean", new FilterBean());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

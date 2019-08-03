@@ -69,6 +69,7 @@ public class ElasticsearchComponent extends DefaultComponent {
         registerExtension(new ElasticsearchRestComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ElasticsearchConfiguration config = new ElasticsearchConfiguration();
         config.setHostAddresses(this.getHostAddresses());

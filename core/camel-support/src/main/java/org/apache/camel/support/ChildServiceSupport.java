@@ -31,6 +31,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
 
     protected volatile List<Service> childServices;
 
+    @Override
     public void start() {
         synchronized (lock) {
             if (status == STARTED) {
@@ -64,6 +65,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
         }
     }
 
+    @Override
     public void stop() {
         synchronized (lock) {
             if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {

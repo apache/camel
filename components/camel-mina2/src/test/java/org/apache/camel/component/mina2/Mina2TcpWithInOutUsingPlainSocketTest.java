@@ -124,6 +124,7 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         return sb.toString();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 

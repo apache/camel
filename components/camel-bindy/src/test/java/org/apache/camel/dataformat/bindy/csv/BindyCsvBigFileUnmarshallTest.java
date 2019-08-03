@@ -51,6 +51,7 @@ public class BindyCsvBigFileUnmarshallTest extends AbstractJUnit4SpringContextTe
     }
 
     public static class ContextConfig extends RouteBuilder {
+        @Override
         public void configure() {
             BindyCsvDataFormat camelDataFormat = 
                 new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);

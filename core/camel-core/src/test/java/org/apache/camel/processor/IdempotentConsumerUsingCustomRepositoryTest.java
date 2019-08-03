@@ -104,6 +104,7 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
             cache.put("4", "4");
         }
 
+        @Override
         public boolean add(String key) {
             if (cache.containsKey(key)) {
                 return false;
@@ -118,23 +119,28 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
             cache.clear();
         }
 
+        @Override
         public boolean contains(String key) {
             return cache.containsKey(key);
         }
 
+        @Override
         public boolean remove(String key) {
             return cache.remove(key) != null;
         }
 
+        @Override
         public boolean confirm(String key) {
             // noop
             return true;
         }
 
+        @Override
         public void start() {
             // noop
         }
 
+        @Override
         public void stop() {
             // noop
         }

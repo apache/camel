@@ -121,6 +121,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
 
     public abstract static class MyAbstractBean implements MyBaseInterface {
 
+        @Override
         public String hello(@Body String hi) {
             return "Hello " + hi;
         }

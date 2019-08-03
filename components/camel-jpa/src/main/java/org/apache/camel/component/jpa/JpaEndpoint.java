@@ -123,6 +123,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         return (JpaComponent) super.getComponent();
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         validate();
         JpaProducer producer = new JpaProducer(this, getProducerExpression());
@@ -135,6 +136,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         return producer;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         validate();
         JpaConsumer consumer = new JpaConsumer(this, processor);

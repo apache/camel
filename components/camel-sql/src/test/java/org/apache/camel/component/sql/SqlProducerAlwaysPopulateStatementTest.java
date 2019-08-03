@@ -40,6 +40,7 @@ public class SqlProducerAlwaysPopulateStatementTest extends CamelTestSupport {
     private SqlPrepareStatementStrategy strategy;
     private volatile boolean invoked;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -56,6 +57,7 @@ public class SqlProducerAlwaysPopulateStatementTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

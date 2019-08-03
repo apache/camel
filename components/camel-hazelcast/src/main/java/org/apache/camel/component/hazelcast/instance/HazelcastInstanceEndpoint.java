@@ -37,12 +37,14 @@ public class HazelcastInstanceEndpoint extends HazelcastDefaultEndpoint {
         setCommand(HazelcastCommand.instance);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         HazelcastInstanceConsumer answer = new HazelcastInstanceConsumer(hazelcastInstance, this, processor);
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("You cannot send messages to this endpoint: " + getEndpointUri());
     }

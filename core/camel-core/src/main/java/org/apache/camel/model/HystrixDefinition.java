@@ -65,6 +65,7 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> im
         return "hystrix";
     }
 
+    @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
@@ -100,6 +101,7 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> im
         return super.end();
     }
 
+    @Override
     public void preCreateProcessor() {
         // move the fallback from outputs to fallback which we need to ensure
         // such as when using the XML DSL

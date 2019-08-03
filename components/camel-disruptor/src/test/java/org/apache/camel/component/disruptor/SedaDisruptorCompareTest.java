@@ -408,6 +408,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
             this.totalMessageCount = totalMessageCount;
         }
 
+        @Override
         public void run() {
             final Endpoint endpoint = context().getEndpoint(endpointUri);
             while (producedMessageCount++ < totalMessageCount) {

@@ -51,6 +51,7 @@ public class DdbComponent extends DefaultComponent {
         registerExtension(new DdbComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DdbConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);

@@ -25,5 +25,6 @@ import javax.xml.ws.WebServiceProvider;
 @WebServiceProvider(targetNamespace = "http://camel.apache.org/cxf/jaxws/provider")
 @ServiceMode (value = javax.xml.ws.Service.Mode.PAYLOAD)
 public interface DefaultPayloadProviderSEI extends Provider<Source> {
+    @Override
     Source invoke(Source request);
 }

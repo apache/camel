@@ -89,18 +89,22 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
         return "wireTap(" + uri + ")";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -125,6 +129,7 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
         return dynamicProcessor.getEndpointUtilizationStatistics();
     }
 
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
             throw new IllegalStateException("WireTapProcessor has not been started: " + this);

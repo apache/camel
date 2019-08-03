@@ -36,11 +36,13 @@ public class StompConsumer extends DefaultConsumer {
         return (StompEndpoint) super.getEndpoint();
     }
 
+    @Override
     protected void doStart() throws Exception {
         getEndpoint().addConsumer(this);
         super.doStart();
     }
 
+    @Override
     protected void doStop() throws Exception {
         getEndpoint().removeConsumer(this);
         super.doStop();

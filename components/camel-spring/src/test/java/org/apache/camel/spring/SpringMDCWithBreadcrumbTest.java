@@ -31,6 +31,7 @@ public class SpringMDCWithBreadcrumbTest extends SpringMDCTest {
 
     public static class ProcessorA implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             assertEquals("route-a", MDC.get("camel.routeId"));
             assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
@@ -40,6 +41,7 @@ public class SpringMDCWithBreadcrumbTest extends SpringMDCTest {
 
     public static class ProcessorB implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             assertEquals("route-b", MDC.get("camel.routeId"));
             assertEquals(exchange.getExchangeId(), MDC.get("camel.breadcrumbId"));

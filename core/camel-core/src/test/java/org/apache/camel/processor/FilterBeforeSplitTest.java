@@ -81,6 +81,7 @@ public class FilterBeforeSplitTest extends ContextTestSupport {
 
     protected class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             String newBody = newExchange.getIn().getBody(String.class);
 

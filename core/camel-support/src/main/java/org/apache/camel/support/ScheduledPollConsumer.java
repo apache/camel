@@ -77,6 +77,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     /**
      * Invoked whenever we should be polled
      */
+    @Override
     public void run() {
         // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
         try {

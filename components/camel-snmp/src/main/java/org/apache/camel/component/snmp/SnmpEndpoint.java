@@ -94,6 +94,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         super(uri, component);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (this.type == SnmpActionType.TRAP) {
             SnmpTrapConsumer answer = new SnmpTrapConsumer(this, processor);
@@ -108,6 +109,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         }
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         if (this.type == SnmpActionType.TRAP) {
             return new SnmpTrapProducer(this);
@@ -152,6 +154,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         // noop
     }
 
+    @Override
     public long getDelay() {
         return delay;
     }

@@ -67,6 +67,7 @@ public class CxfProducerSynchronousTest extends CamelTestSupport {
         assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

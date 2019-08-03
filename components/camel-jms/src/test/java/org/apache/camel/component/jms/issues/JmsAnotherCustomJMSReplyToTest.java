@@ -64,6 +64,7 @@ public class JmsAnotherCustomJMSReplyToTest extends CamelTestSupport {
     }
 
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 
@@ -83,6 +84,7 @@ public class JmsAnotherCustomJMSReplyToTest extends CamelTestSupport {
         };
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

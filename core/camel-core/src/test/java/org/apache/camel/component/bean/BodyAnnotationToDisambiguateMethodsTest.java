@@ -47,6 +47,7 @@ public class BodyAnnotationToDisambiguateMethodsTest extends ContextTestSupport 
         return answer;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -278,6 +278,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             this.triggers = triggers;
         }
 
+        @Override
         public void run() {
             // only run if CamelContext has been fully started
             if (!getEndpoint().getCamelContext().getStatus().isStarted()) {

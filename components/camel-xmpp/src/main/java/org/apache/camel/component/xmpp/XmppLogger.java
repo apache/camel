@@ -30,6 +30,7 @@ public class XmppLogger implements StanzaListener {
         this.direction = direction;
     }
 
+    @Override
     public void processStanza(Stanza stanza) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("{} : {}", direction, stanza.toXML(null));

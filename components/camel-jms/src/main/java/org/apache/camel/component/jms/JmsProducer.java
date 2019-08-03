@@ -133,6 +133,7 @@ public class JmsProducer extends DefaultAsyncProducer {
         }
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // deny processing if we are not started
         if (!isRunAllowed()) {
@@ -541,6 +542,7 @@ public class JmsProducer extends DefaultAsyncProducer {
         }
     }
 
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
         if (uuidGenerator == null) {
@@ -552,6 +554,7 @@ public class JmsProducer extends DefaultAsyncProducer {
         }
     }
 
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
 

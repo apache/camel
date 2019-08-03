@@ -99,6 +99,7 @@ public class EnricherTest extends ContextTestSupport {
         assertFalse(exchange.hasOut());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

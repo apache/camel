@@ -80,6 +80,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
         return new SmppConnectionFactory(config);
     }    
 
+    @Override
     public Connection createConnection(String host, int port) throws IOException {
         try {
             Socket socket;

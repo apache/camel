@@ -94,6 +94,7 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
         verifyTheRecivedEmail("Content-Disposition: attachment; filename=myCoolLogo.jpeg");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -66,6 +66,7 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
         assertTrue(event.startsWith("rollbackcommit"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -76,6 +77,7 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
 
     private static class MyPollStrategy implements PollingConsumerPollStrategy {
 
+        @Override
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             if (counter++ == 0) {
                 // simulate an error on first poll
@@ -84,10 +86,12 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
             return true;
         }
 
+        @Override
         public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
             event += "commit";
         }
 
+        @Override
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
             if (cause.getMessage().equals("Damn I cannot do this")) {
                 event += "rollback";

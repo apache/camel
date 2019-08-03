@@ -31,6 +31,7 @@ public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
     static int port2 = CXFTestSupport.getPort2();
 
         
+    @Override
     protected String[] getApplicationContextFiles() {
         return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml"};
     }

@@ -46,6 +46,7 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
         this.dataFormat = dataFormat;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         ObjectHelper.notNull(dataFormat, "dataFormat");
 
@@ -84,26 +85,32 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
         return true;
     }
 
+    @Override
     public String toString() {
         return "Unmarshal[" + dataFormat + "]";
     }
 
+    @Override
     public String getTraceLabel() {
         return "unmarshal[" + dataFormat + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

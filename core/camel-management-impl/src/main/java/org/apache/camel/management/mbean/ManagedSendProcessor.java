@@ -42,6 +42,7 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
         this.processor = processor;
     }
 
+    @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
@@ -63,14 +64,17 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
         processor.reset();
     }
 
+    @Override
     public SendProcessor getProcessor() {
         return processor;
     }
 
+    @Override
     public String getDestination() {
         return destination;
     }
 
+    @Override
     public String getMessageExchangePattern() {
         if (processor.getPattern() != null) {
             return processor.getPattern().name();

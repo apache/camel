@@ -30,6 +30,7 @@ public class LoggingEventNotifier extends EventNotifierSupport {
     private Logger log = LoggerFactory.getLogger(LoggingEventNotifier.class);
     private String logName;
 
+    @Override
     public void notify(CamelEvent event) throws Exception {
         log.info("Event: {}", event);
     }
@@ -39,6 +40,7 @@ public class LoggingEventNotifier extends EventNotifierSupport {
         return !log.isInfoEnabled();
     }
 
+    @Override
     public boolean isEnabled(CamelEvent event) {
         return log.isInfoEnabled();
     }
@@ -56,6 +58,7 @@ public class LoggingEventNotifier extends EventNotifierSupport {
         this.logName = logName;
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (logName != null) {
             log = LoggerFactory.getLogger(logName);

@@ -43,6 +43,7 @@ public class NettyConverterTest extends CamelTestSupport {
         buf.writeBytes(bytes);
     }
 
+    @Override
     @After
     public void tearDown() {
         buf.release();

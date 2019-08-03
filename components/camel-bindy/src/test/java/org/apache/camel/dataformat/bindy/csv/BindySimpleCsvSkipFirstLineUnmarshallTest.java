@@ -52,6 +52,7 @@ public class BindySimpleCsvSkipFirstLineUnmarshallTest extends AbstractJUnit4Spr
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassandskipfirstline.Order.class);
 
+        @Override
         public void configure() {
             // from("file://src/test/data2")
             from("direct:start").unmarshal(camelDataFormat).to("mock:result");

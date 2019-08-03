@@ -56,6 +56,7 @@ public class ActiveMQOriginalDestinationTest extends CamelTestSupport {
         assertEquals("Queue", original.getDestinationTypeAsString());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));

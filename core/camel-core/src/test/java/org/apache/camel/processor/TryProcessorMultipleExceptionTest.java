@@ -84,6 +84,7 @@ public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
 
     public static class ProcessorFail implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             if ("Damn IO".equals(body)) {

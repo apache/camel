@@ -26,6 +26,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringExceptionCamel4022Test extends ExceptionCamel4022Test {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringExceptionCamel4022Test.xml");
     }

@@ -137,6 +137,7 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
         };
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
     }

@@ -77,6 +77,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
     private static final String HEADER_FILTER_STRATEGY_JAVADOC = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
 
+    @Override
     protected void doProcess(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) throws Exception {
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(UriEndpoint.class);
         for (Element element : elements) {

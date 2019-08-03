@@ -47,11 +47,13 @@ public class NagiosEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(configuration, "configuration");
         return new NagiosProducer(this, getSender());
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Nagios consumer not supported");
     }

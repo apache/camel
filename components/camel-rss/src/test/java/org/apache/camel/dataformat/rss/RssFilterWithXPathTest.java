@@ -21,6 +21,7 @@ import org.apache.camel.component.rss.RssFilterTest;
 
 public class RssFilterWithXPathTest extends RssFilterTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

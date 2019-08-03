@@ -75,6 +75,7 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
         }
     }
 
+    @Override
     public Processor createErrorHandler(final RouteContext routeContext, final Processor processor) throws Exception {
         // resolve policy reference, if given
         if (transactionPolicy == null) {
@@ -158,6 +159,7 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
         return this;
     }
 
+    @Override
     protected CamelLogger createLogger() {
         return new CamelLogger(LoggerFactory.getLogger(TransactionErrorHandler.class), LoggingLevel.ERROR);
     }

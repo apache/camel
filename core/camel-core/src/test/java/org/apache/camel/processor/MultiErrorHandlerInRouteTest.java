@@ -91,6 +91,7 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
 
         private String name;
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             if (name.equals("Error")) {
                 throw new IllegalArgumentException("Forced exception by unit test");

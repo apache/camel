@@ -47,6 +47,7 @@ public class Mina2ClientModeTcpTextlineDelimiterTest extends BaseMina2Test {
         server.shutdown();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
@@ -84,6 +85,7 @@ public class Mina2ClientModeTcpTextlineDelimiterTest extends BaseMina2Test {
     }
     
     private class ServerHandler extends IoHandlerAdapter {
+        @Override
         public void sessionOpened(IoSession session) throws Exception {
             session.write("Hello there!\n");
             session.closeNow();

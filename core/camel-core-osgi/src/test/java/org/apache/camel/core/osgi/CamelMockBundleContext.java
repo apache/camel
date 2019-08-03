@@ -42,6 +42,7 @@ public class CamelMockBundleContext extends MockBundleContext {
         super(bundle);
     }
 
+    @Override
     public Object getService(@SuppressWarnings("rawtypes") ServiceReference reference) {
         String[] classNames = (String[]) reference.getProperty(Constants.OBJECTCLASS);        
         String classNames0 = classNames != null ? classNames[0] : null;
@@ -73,6 +74,7 @@ public class CamelMockBundleContext extends MockBundleContext {
         }    
     }
 
+    @Override
     public ServiceReference getServiceReference(String clazz) {
         // lookup Java class if clazz contains dot (.) symbol
         if (clazz.contains(".")) {
@@ -103,6 +105,7 @@ public class CamelMockBundleContext extends MockBundleContext {
         }
     }
     
+    @Override
     @SuppressWarnings("rawtypes")
     public ServiceReference[] getServiceReferences(String clazz, String filter) throws InvalidSyntaxException {
         // just simulate when the bundle context doesn't have right service reference
@@ -119,6 +122,7 @@ public class CamelMockBundleContext extends MockBundleContext {
         }
     }
    
+    @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
     public ServiceReference[] getAllServiceReferences(String clazz, String filter) throws InvalidSyntaxException {
         // just simulate when the bundle context doesn't have right service reference

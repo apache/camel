@@ -40,6 +40,7 @@ public class ExecProducer extends DefaultProducer {
         this.log = LoggerFactory.getLogger(ExecProducer.class);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         ExecCommand execCommand = getBinding().readInput(exchange, endpoint);
 

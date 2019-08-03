@@ -1920,6 +1920,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression(exp, "99");
     }
 
+    @Override
     protected String getLanguageName() {
         return "simple";
     }

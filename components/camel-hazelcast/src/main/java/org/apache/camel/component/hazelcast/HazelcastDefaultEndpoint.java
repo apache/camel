@@ -60,8 +60,10 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
         this.hazelcastInstance = hazelcastInstance;
     }
 
+    @Override
     public abstract Consumer createConsumer(Processor processor) throws Exception;
 
+    @Override
     public abstract Producer createProducer() throws Exception;
 
     public HazelcastCommand getCommand() {

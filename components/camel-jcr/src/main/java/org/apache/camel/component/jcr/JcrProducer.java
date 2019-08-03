@@ -42,6 +42,7 @@ public class JcrProducer extends DefaultProducer {
         super(jcrEndpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         TypeConverter converter = exchange.getContext().getTypeConverter();
         Session session = openSession();

@@ -22,6 +22,7 @@ import org.apache.camel.processor.SetPropertyTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringSetPropertyTest extends SetPropertyTest {
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
                 "org/apache/camel/spring/processor/setProperty.xml");

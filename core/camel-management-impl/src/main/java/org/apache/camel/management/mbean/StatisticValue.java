@@ -22,10 +22,12 @@ public class StatisticValue extends Statistic {
 
     private final AtomicLong value = new AtomicLong(-1);
 
+    @Override
     public void updateValue(long newValue) {
         value.set(newValue);
     }
 
+    @Override
     public long getValue() {
         return value.get();
     }
@@ -40,6 +42,7 @@ public class StatisticValue extends Statistic {
         return value.get() != -1;
     }
 
+    @Override
     public void reset() {
         value.set(-1);
     }

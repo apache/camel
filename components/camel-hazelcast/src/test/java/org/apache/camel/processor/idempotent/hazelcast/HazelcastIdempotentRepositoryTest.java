@@ -34,6 +34,7 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
     private String key01 = "123";
     private String key02 = "456";
 
+    @Override
     @Before
     public void setUp() throws Exception {
         hazelcastInstance = Hazelcast.newHazelcastInstance(null);
@@ -44,6 +45,7 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
         repo.start();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         repo.stop();
@@ -130,6 +132,7 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

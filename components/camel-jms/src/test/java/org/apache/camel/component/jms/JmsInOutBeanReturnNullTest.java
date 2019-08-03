@@ -70,6 +70,7 @@ public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
         assertNull("Should be a null body", body);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

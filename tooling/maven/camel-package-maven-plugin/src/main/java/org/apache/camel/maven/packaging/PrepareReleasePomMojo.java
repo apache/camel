@@ -87,6 +87,7 @@ public class PrepareReleasePomMojo extends AbstractMojo {
      *                                                        threads it generated failed.
      * @throws MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         updatePomAndCommonBin(componentsDir, "camel components");
         updatePomAndCommonBin(startersDir, "camel starters");

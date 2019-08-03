@@ -95,6 +95,7 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
         }
     }
 
+    @Override
     protected void afterPropertiesSet(GenericFileEndpoint<FTPFile> endpoint) throws Exception {
         // noop
     }

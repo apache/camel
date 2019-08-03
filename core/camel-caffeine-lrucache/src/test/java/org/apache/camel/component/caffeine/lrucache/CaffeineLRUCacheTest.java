@@ -154,9 +154,11 @@ public class CaffeineLRUCacheTest {
 
         private Boolean stopped;
 
+        @Override
         public void start() {
         }
 
+        @Override
         public void stop() {
             stopped = true;
         }

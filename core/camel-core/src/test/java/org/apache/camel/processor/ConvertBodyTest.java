@@ -177,6 +177,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         result.assertIsNotSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

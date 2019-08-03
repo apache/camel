@@ -52,6 +52,7 @@ public class RecipientListEventNotifierTest extends ContextTestSupport {
         assertEquals("Should have 5 sent events", 5, notifier.getSent());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

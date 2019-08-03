@@ -75,6 +75,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         this.tracker = new ServiceTracker<>(bundleContext, TypeConverterLoader.class.getName(), this);
     }
 
+    @Override
     public Object addingService(ServiceReference<TypeConverterLoader> serviceReference) {
         LOG.trace("AddingService: {}, Bundle: {}", serviceReference, serviceReference.getBundle());        
         TypeConverterLoader loader = bundleContext.getService(serviceReference);
@@ -91,9 +92,11 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         return loader;
     }
 
+    @Override
     public void modifiedService(ServiceReference<TypeConverterLoader> serviceReference, Object o) {
     }
 
+    @Override
     public void removedService(ServiceReference<TypeConverterLoader> serviceReference, Object o) {
         LOG.trace("RemovedService: {}, Bundle: {}", serviceReference, serviceReference.getBundle());  
         try {
@@ -128,86 +131,107 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         this.camelContext = camelContext;
     }
 
+    @Override
     public boolean allowNull() {
         return getDelegate().allowNull();
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Object value) {
         return getDelegate().convertTo(type, value);
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return getDelegate().convertTo(type, exchange, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
         return getDelegate().mandatoryConvertTo(type, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
         return getDelegate().mandatoryConvertTo(type, exchange, value);
     }
 
+    @Override
     public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
         return getDelegate().tryConvertTo(type, exchange, value);
     }
 
+    @Override
     public <T> T tryConvertTo(Class<T> type, Object value) {
         return getDelegate().tryConvertTo(type, value);
     }
 
+    @Override
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         getDelegate().addTypeConverter(toType, fromType, typeConverter);
     }
 
+    @Override
     public void addTypeConverters(TypeConverters typeConverters) {
         getDelegate().addTypeConverters(typeConverters);
     }
 
+    @Override
     public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
         return getDelegate().removeTypeConverter(toType, fromType);
     }
 
+    @Override
     public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
         getDelegate().addFallbackTypeConverter(typeConverter, canPromote);
     }
 
+    @Override
     public TypeConverter lookup(Class<?> toType, Class<?> fromType) {
         return getDelegate().lookup(toType, fromType);
     }
 
+    @Override
     public List<Class<?>[]> listAllTypeConvertersFromTo() {
         return getDelegate().listAllTypeConvertersFromTo();
     }
 
+    @Override
     public void setInjector(Injector injector) {
         getDelegate().setInjector(injector);
     }
 
+    @Override
     public Injector getInjector() {
         return getDelegate().getInjector();
     }
 
+    @Override
     public Statistics getStatistics() {
         return getDelegate().getStatistics();
     }
 
+    @Override
     public int size() {
         return getDelegate().size();
     }
 
+    @Override
     public LoggingLevel getTypeConverterExistsLoggingLevel() {
         return getDelegate().getTypeConverterExistsLoggingLevel();
     }
 
+    @Override
     public void setTypeConverterExistsLoggingLevel(LoggingLevel loggingLevel) {
         getDelegate().setTypeConverterExistsLoggingLevel(loggingLevel);
     }
 
+    @Override
     public TypeConverterExists getTypeConverterExists() {
         return getDelegate().getTypeConverterExists();
     }
 
+    @Override
     public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
         getDelegate().setTypeConverterExists(typeConverterExists);
     }

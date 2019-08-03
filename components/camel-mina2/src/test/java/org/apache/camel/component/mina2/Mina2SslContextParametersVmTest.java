@@ -38,6 +38,7 @@ public class Mina2SslContextParametersVmTest extends BaseMina2Test {
         return true;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 

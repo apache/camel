@@ -25,6 +25,7 @@ public class FromRestConfigurationTest extends FromRestGetTest {
         return "org/apache/camel/test/blueprint/component/rest/FromRestConfigurationTest.xml";
     }
 
+    @Override
     @Test
     public void testFromRestModel() throws Exception {
         super.testFromRestModel();

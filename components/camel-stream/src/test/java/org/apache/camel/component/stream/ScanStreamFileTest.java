@@ -125,6 +125,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
         return new FileOutputStream(file);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

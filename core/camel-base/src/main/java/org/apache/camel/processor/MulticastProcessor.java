@@ -89,14 +89,17 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             this.exchange = exchange;
         }
 
+        @Override
         public int getIndex() {
             return index;
         }
 
+        @Override
         public Exchange getExchange() {
             return exchange;
         }
 
+        @Override
         public Producer getProducer() {
             if (processor instanceof Producer) {
                 return (Producer) processor;
@@ -104,14 +107,17 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             return null;
         }
 
+        @Override
         public Processor getProcessor() {
             return prepared;
         }
 
+        @Override
         public void begin() {
             // noop
         }
 
+        @Override
         public void done() {
             // noop
         }
@@ -189,14 +195,17 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         return "Multicast[" + getProcessors() + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getTraceLabel() {
         return "multicast";
     }
@@ -205,6 +214,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         return camelContext;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Iterable<ProcessorExchangePair> pairs;
         try {
@@ -269,10 +279,12 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
         }
 
+        @Override
         public String toString() {
             return "Step[" + original.getExchangeId() + "," + MulticastProcessor.this + "]";
         }
 
+        @Override
         public void run() {
             try {
                 if (done.get()) {
@@ -763,6 +775,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         childExchange.setProperty(Exchange.PARENT_UNIT_OF_WORK, parentExchange.getUnitOfWork());
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (isParallelProcessing() && executorService == null) {
             throw new IllegalArgumentException("ParallelProcessing is enabled but ExecutorService has not been set");
@@ -933,6 +946,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         return shareUnitOfWork;
     }
 
+    @Override
     public List<Processor> next() {
         if (!hasNext()) {
             return null;
@@ -940,6 +954,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         return new ArrayList<>(processors);
     }
 
+    @Override
     public boolean hasNext() {
         return processors != null && !processors.isEmpty();
     }

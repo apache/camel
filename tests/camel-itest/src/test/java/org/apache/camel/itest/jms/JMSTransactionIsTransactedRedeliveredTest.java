@@ -40,6 +40,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         System.setProperty("Jetty.port", Integer.toString(port));
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/itest/jms/JMSTransactionIsTransactedRedeliveredTest.xml");
@@ -83,6 +84,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
     public static class MyBeforeProcessor implements Processor {
         private int count;
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             ++count;
 
@@ -101,6 +103,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
     }
 
     public static class MyAfterProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             // origin message should be a external redelivered
             assertTrue("Should be external redelivered", exchange.isExternalRedelivered());

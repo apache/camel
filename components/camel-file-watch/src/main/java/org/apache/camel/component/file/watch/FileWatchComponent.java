@@ -102,6 +102,7 @@ public class FileWatchComponent extends DefaultComponent {
         this.useFileHashing = useFileHashing;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new FileWatchEndpoint(uri, remaining, this);
         setProperties(endpoint, parameters);

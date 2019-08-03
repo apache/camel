@@ -52,6 +52,7 @@ public class SWFComponent extends DefaultComponent {
         registerExtension(new SwfComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Map<String, Object> clientConfigurationParameters = IntrospectionSupport.extractProperties(parameters, "clientConfiguration.");
         Map<String, Object> sWClientParameters = IntrospectionSupport.extractProperties(parameters, "sWClient.");

@@ -29,6 +29,7 @@ public class SpecificDataNoCache extends SpecificData {
         super(classLoader);
     }
 
+    @Override
     public Object newRecord(Object old, Schema schema) {
         Class c = new SpecificDataNoCache().getClass(schema);
         return c == null ? super.newRecord(old, schema) : (c.isInstance(old) ? old : newInstance(c, schema));

@@ -48,10 +48,12 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
         }
     }
 
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         IOHelper.copyAndCloseInput(in, os);
     }
 
+    @Override
     public StreamCache copy(Exchange exchange) throws IOException {
         if (byteArrayForCopy == null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(in.available());
@@ -64,6 +66,7 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
         return new InputStreamCache(byteArrayForCopy);
     }
 
+    @Override
     public boolean inMemory() {
         return true;
     }

@@ -18,10 +18,12 @@ package org.apache.camel.component.ahc;
 
 public class AhcProduceSSLContextParametersGetTest extends AhcProduceGetTest {
 
+    @Override
     protected String getTestServerEndpointUri() {
         return super.getTestServerEndpointUri() + "?sslContextParameters=#sslContextParameters";
     }
     
+    @Override
     protected String getAhcEndpointUri() {
         return super.getAhcEndpointUri() + "?sslContextParameters=#sslContextParameters";
     }

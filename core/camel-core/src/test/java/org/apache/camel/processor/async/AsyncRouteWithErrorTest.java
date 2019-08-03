@@ -109,6 +109,7 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
         public MyProcessor() {
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             route += "B";
             assertEquals("Hello World", exchange.getIn().getBody());

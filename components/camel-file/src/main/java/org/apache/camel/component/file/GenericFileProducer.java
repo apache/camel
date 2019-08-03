@@ -58,6 +58,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         return FileUtil.normalizePath(name);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         // store any existing file header which we want to keep and propagate
         final String existing = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);

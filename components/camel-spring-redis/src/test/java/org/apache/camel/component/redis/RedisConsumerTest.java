@@ -62,6 +62,7 @@ public class RedisConsumerTest extends CamelTestSupport {
         assertEquals("two", twoTopic.getTopic());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -125,6 +125,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
 
     private static class ServerHandler extends SimpleChannelInboundHandler<String> {
 
+        @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
             ctx.write("Willem\r\n");
             ctx.flush();
@@ -141,6 +142,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
             // Do nothing here
         }
 
+        @Override
         public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
             ctx.flush();
         }

@@ -78,6 +78,7 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

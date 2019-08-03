@@ -50,18 +50,22 @@ public class ZKServerFactoryBean implements FactoryBean<ZooKeeperServer>, Initia
     private int maxClientConnections;
     private int port = 2181;
 
+    @Override
     public ZooKeeperServer getObject() throws Exception {
         return zooKeeperServer;
     }
 
+    @Override
     public Class<ZooKeeperServer> getObjectType() {
         return ZooKeeperServer.class;
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         if (purge) {
             deleteFilesInDir(getDataLogDir());
@@ -90,6 +94,7 @@ public class ZKServerFactoryBean implements FactoryBean<ZooKeeperServer>, Initia
         }
     }
 
+    @Override
     public void destroy() throws Exception {
         shutdown();
     }

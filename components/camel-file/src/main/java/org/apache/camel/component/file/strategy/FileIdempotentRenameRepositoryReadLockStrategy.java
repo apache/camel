@@ -119,31 +119,38 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
         rename.releaseExclusiveReadLockOnCommit(operations, file, exchange);
     }
 
+    @Override
     public void setTimeout(long timeout) {
         rename.setTimeout(timeout);
     }
 
+    @Override
     public void setCheckInterval(long checkInterval) {
         rename.setCheckInterval(checkInterval);
     }
 
+    @Override
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         this.readLockLoggingLevel = readLockLoggingLevel;
         rename.setReadLockLoggingLevel(readLockLoggingLevel);
     }
 
+    @Override
     public void setMarkerFiler(boolean markerFile) {
         // we do not use marker files
     }
 
+    @Override
     public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
         // we do not use marker files
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

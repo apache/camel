@@ -57,6 +57,7 @@ public class MulticastAggregationStrategyThrowExceptionTest extends ContextTestS
 
     public static class MyAggregateBean implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange != null) {
                 throw new IllegalArgumentException("Forced");

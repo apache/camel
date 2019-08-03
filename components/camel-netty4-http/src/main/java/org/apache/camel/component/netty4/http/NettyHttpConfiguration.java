@@ -92,6 +92,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         }
     }
 
+    @Override
     public String getProtocol() {
         return protocol;
     }
@@ -99,6 +100,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     /**
      * The protocol to use which is either http, https or proxy - a consumer only option.
      */
+    @Override
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }

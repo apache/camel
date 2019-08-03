@@ -53,6 +53,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     private String lastExchangeFailureExchangeId;
     private boolean statisticsEnabled = true;
 
+    @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         this.exchangesCompleted = new StatisticCounter();
@@ -101,102 +102,126 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         lastExchangeFailureExchangeId = null;
     }
 
+    @Override
     public long getExchangesCompleted() throws Exception {
         return exchangesCompleted.getValue();
     }
 
+    @Override
     public long getExchangesFailed() throws Exception {
         return exchangesFailed.getValue();
     }
 
+    @Override
     public long getExchangesInflight() {
         return exchangesInflight.getValue();
     }
 
+    @Override
     public long getFailuresHandled() throws Exception {
         return failuresHandled.getValue();
     }
 
+    @Override
     public long getRedeliveries() throws Exception {
         return redeliveries.getValue();
     }
 
+    @Override
     public long getExternalRedeliveries() throws Exception {
         return externalRedeliveries.getValue();
     }
 
+    @Override
     public long getMinProcessingTime() throws Exception {
         return minProcessingTime.getValue();
     }
 
+    @Override
     public long getMeanProcessingTime() throws Exception {
         return meanProcessingTime.getValue();
     }
 
+    @Override
     public long getMaxProcessingTime() throws Exception {
         return maxProcessingTime.getValue();
     }
 
+    @Override
     public long getTotalProcessingTime() throws Exception {
         return totalProcessingTime.getValue();
     }
 
+    @Override
     public long getLastProcessingTime() throws Exception {
         return lastProcessingTime.getValue();
     }
 
+    @Override
     public long getDeltaProcessingTime() throws Exception {
         return deltaProcessingTime.getValue();
     }
 
+    @Override
     public Date getLastExchangeCompletedTimestamp() {
         long value = lastExchangeCompletedTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
+    @Override
     public String getLastExchangeCompletedExchangeId() {
         return lastExchangeCompletedExchangeId;
     }
 
+    @Override
     public Date getFirstExchangeCompletedTimestamp() {
         long value = firstExchangeCompletedTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
+    @Override
     public String getFirstExchangeCompletedExchangeId() {
         return firstExchangeCompletedExchangeId;
     }
 
+    @Override
     public Date getLastExchangeFailureTimestamp() {
         long value = lastExchangeFailureTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
+    @Override
     public String getLastExchangeFailureExchangeId() {
         return lastExchangeFailureExchangeId;
     }
 
+    @Override
     public Date getFirstExchangeFailureTimestamp() {
         long value = firstExchangeFailureTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
+    @Override
     public String getFirstExchangeFailureExchangeId() {
         return firstExchangeFailureExchangeId;
     }
 
+    @Override
     public boolean isStatisticsEnabled() {
         return statisticsEnabled;
     }
 
+    @Override
     public void setStatisticsEnabled(boolean statisticsEnabled) {
         this.statisticsEnabled = statisticsEnabled;
     }
 
+    @Override
     public void processExchange(Exchange exchange) {
         exchangesInflight.increment();
     }
 
+    @Override
     public void completedExchange(Exchange exchange, long time) {
         increment();
         exchangesCompleted.increment();
@@ -236,6 +261,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         meanProcessingTime.updateValue(mean);
     }
 
+    @Override
     public void failedExchange(Exchange exchange) {
         increment();
         exchangesFailed.increment();
@@ -261,6 +287,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         lastExchangeFailureExchangeId = exchange.getExchangeId();
     }
 
+    @Override
     public String dumpStatsAsXml(boolean fullStats) {
         StringBuilder sb = new StringBuilder();
         sb.append("<stats ");

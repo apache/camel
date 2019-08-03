@@ -62,6 +62,7 @@ public class JmsConsumerRestartPickupConfigurationChangesTest extends CamelTestS
         consumer.stop();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

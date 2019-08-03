@@ -385,6 +385,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return getRouteCollection().onCompletion();
     }
     
+    @Override
     public void addRoutesToCamelContext(CamelContext context) throws Exception {
         // must configure routes before rests
         configureRoutes(context);

@@ -34,6 +34,7 @@ import org.junit.Test;
 
 public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

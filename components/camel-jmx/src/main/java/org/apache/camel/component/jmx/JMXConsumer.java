@@ -316,6 +316,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
      *
      * @see javax.management.NotificationListener#handleNotification(javax.management.Notification, java.lang.Object)
      */
+    @Override
     public void handleNotification(Notification aNotification, Object aHandback) {
         JMXEndpoint ep = getEndpoint();
         Exchange exchange = getEndpoint().createExchange();

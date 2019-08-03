@@ -119,11 +119,13 @@ public class MllpEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         log.trace("({}).createProducer()", this.getEndpointKey());
         return new MllpTcpClientProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         log.trace("({}).createConsumer(Processor)", this.getEndpointKey());
         Consumer consumer = new MllpTcpServerConsumer(this, processor);

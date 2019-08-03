@@ -87,6 +87,7 @@ public class DockerProducer extends DefaultProducer {
         this.component = (DockerComponent)endpoint.getComponent();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         Message message = exchange.getIn();

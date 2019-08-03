@@ -39,6 +39,7 @@ public abstract class DataSetSupport implements DataSet {
         setSize(size);
     }
 
+    @Override
     public void populateMessage(Exchange exchange, long messageIndex) throws Exception {
         Message in = exchange.getIn();
         in.setBody(createMessageBody(messageIndex));
@@ -50,6 +51,7 @@ public abstract class DataSetSupport implements DataSet {
         }
     }
 
+    @Override
     public void assertMessageExpected(DataSetEndpoint dataSetEndpoint, Exchange expected, Exchange actual, long index) throws Exception {
         Object expectedBody = expected.getIn().getBody();
         Object actualBody = actual.getIn().getBody();
@@ -63,6 +65,7 @@ public abstract class DataSetSupport implements DataSet {
     // Properties
     //-------------------------------------------------------------------------
 
+    @Override
     public long getSize() {
         return size;
     }
@@ -71,6 +74,7 @@ public abstract class DataSetSupport implements DataSet {
         this.size = size;
     }
 
+    @Override
     public long getReportCount() {
         if (reportCount <= 0) {
             reportCount = getSize() / 5;

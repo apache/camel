@@ -90,6 +90,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             counter.incrementAndGet();
             latch.countDown();

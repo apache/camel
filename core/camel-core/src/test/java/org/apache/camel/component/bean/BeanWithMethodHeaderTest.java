@@ -126,6 +126,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         }
     }
 
+    @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         bean = new MyBean();

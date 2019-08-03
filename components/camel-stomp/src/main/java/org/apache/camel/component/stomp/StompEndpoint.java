@@ -74,10 +74,12 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         this.destination = destination;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new StompProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new StompConsumer(this, processor);
     }
@@ -208,6 +210,7 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         return connection.nextId();
     }
     
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new DefaultHeaderFilterStrategy();
@@ -218,6 +221,7 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }

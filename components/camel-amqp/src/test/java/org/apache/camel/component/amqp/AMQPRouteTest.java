@@ -96,6 +96,7 @@ public class AMQPRouteTest extends CamelTestSupport {
 
     // Routes fixtures
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         camelContext.getRegistry().bind("amqpConnection", discoverAMQP(camelContext));
@@ -103,6 +104,7 @@ public class AMQPRouteTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

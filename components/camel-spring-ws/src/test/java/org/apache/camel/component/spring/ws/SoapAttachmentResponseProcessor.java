@@ -29,6 +29,7 @@ import org.apache.camel.attachment.AttachmentMessage;
  */
 public class SoapAttachmentResponseProcessor implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         exchange.setOut(exchange.getIn());
         exchange.getOut(AttachmentMessage.class).addAttachment("responseAttachment1.txt", new DataHandler("responseAttachment1", "text/plain"));

@@ -232,6 +232,7 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
         registry.addTypeConverter(from, to, converter);
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -244,6 +245,7 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
      *
      * @param camelContext the CamelContext
      */
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         if (this.camelContext == null) {
             this.camelContext = camelContext;

@@ -72,6 +72,7 @@ public class XPathExpression extends NamespaceAwareExpression {
         setExpressionValue(expression);
     }
 
+    @Override
     public String getLanguage() {
         return "xpath";
     }

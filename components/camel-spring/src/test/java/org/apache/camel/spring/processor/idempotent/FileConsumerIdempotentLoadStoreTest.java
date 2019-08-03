@@ -33,6 +33,7 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
     private IdempotentRepository repo;
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/idempotent/fileConsumerIdempotentTest.xml");
     }

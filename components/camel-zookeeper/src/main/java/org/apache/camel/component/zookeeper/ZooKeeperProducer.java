@@ -61,6 +61,7 @@ public class ZooKeeperProducer extends DefaultProducer {
         this.zkm = endpoint.getConnectionManager();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         if (connection == null) {
@@ -171,6 +172,7 @@ public class ZooKeeperProducer extends DefaultProducer {
 
     private class AsyncSetDataCallback implements StatCallback {
 
+        @Override
         public void processResult(int rc, String node, Object ctx, Stat statistics) {
             if (Code.NONODE.equals(Code.get(rc))) {
                 if (configuration.isCreate()) {

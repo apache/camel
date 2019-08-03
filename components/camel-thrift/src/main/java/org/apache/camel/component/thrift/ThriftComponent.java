@@ -35,6 +35,7 @@ public class ThriftComponent extends DefaultComponent implements SSLContextParam
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ThriftConfiguration config = new ThriftConfiguration();
 

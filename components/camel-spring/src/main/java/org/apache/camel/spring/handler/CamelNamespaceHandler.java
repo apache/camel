@@ -124,6 +124,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
     }
 
+    @Override
     public void init() {
         // register restContext parser
         registerParser("restContext", new RestContextDefinitionParser());

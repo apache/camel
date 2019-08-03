@@ -37,6 +37,7 @@ public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -31,6 +31,7 @@ public class BasicRawQueryValidationHandler extends BasicValidationHandler {
         super(expectedMethod, expectedQuery, expectedContent, responseContent);
     }
 
+    @Override
     protected boolean validateQuery(HttpRequest request) throws IOException {
         try {
             String query = new URI(request.getRequestLine().getUri()).getRawQuery();

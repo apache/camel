@@ -33,6 +33,7 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerBuilder> ex
         super((T) definition);
     }
 
+    @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DefaultErrorHandler answer = new DefaultErrorHandler(
                 routeContext.getCamelContext(),

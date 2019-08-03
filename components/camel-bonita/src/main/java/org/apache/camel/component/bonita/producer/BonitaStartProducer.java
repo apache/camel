@@ -32,6 +32,7 @@ public class BonitaStartProducer extends BonitaProducer {
         super(endpoint, configuration);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         // Setup access type (HTTP on local host)
         String hostname = this.configuration.getHostname();

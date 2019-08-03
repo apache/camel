@@ -33,6 +33,7 @@ public class RedisComponent extends DefaultComponent {
     public RedisComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
         throws Exception {
         RedisConfiguration configuration = new RedisConfiguration();

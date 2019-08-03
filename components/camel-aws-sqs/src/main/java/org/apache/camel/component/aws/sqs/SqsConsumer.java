@@ -139,6 +139,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         return answer;
     }
 
+    @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 

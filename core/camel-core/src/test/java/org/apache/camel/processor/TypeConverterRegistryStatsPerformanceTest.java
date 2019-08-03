@@ -61,6 +61,7 @@ public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSuppor
         log.info("Miss: before={}, after={}, delta={}", miss, miss2, miss2 - miss);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

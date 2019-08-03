@@ -96,6 +96,7 @@ public class MongoDbProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         MongoDbOperation operation = endpoint.getOperation();
         Object header = exchange.getIn().getHeader(OPERATION_HEADER);

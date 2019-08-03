@@ -32,10 +32,12 @@ public class StartAndStopEventNotifier extends EventNotifierSupport implements C
     private CamelContext camelContext;
     private ProducerTemplate template;
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -61,11 +63,13 @@ public class StartAndStopEventNotifier extends EventNotifierSupport implements C
         return true;
     }
 
+    @Override
     protected void doStart() throws Exception {
         template = camelContext.createProducerTemplate();
         template.start();
     }
 
+    @Override
     protected void doStop() throws Exception {
         template.stop();
     }

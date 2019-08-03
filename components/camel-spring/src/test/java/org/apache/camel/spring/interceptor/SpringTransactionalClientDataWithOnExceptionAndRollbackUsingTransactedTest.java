@@ -26,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringTransactionalClientDataWithOnExceptionAndRollbackUsingTransactedTest extends SpringTransactionalClientDataSourceTransactedTest {
 
+    @Override
     @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
@@ -40,6 +41,7 @@ public class SpringTransactionalClientDataWithOnExceptionAndRollbackUsingTransac
         assertEquals("Number of books", 1, count);
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/spring/interceptor/springTransactionalClientDataWithOnExceptionAndRollbackUsingTransacted.xml");

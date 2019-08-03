@@ -48,6 +48,7 @@ public class RawMessageWSDLGetInterceptor extends AbstractPhaseInterceptor<Messa
         getAfter().add(EndpointSelectionInterceptor.class.getName());
     }
 
+    @Override
     public void handleMessage(Message message) throws Fault {
         String method = (String)message.get(Message.HTTP_REQUEST_METHOD);
         String query = (String)message.get(Message.QUERY_STRING);

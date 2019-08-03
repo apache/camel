@@ -183,6 +183,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
      *                                                        threads it generated failed.
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         executeModel();
         Set<String> components = executeComponents();

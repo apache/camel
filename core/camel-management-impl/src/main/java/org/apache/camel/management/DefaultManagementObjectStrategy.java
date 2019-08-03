@@ -171,18 +171,21 @@ import org.apache.camel.support.processor.validation.PredicateValidatingProcesso
  */
 public class DefaultManagementObjectStrategy implements ManagementObjectStrategy {
 
+    @Override
     public Object getManagedObjectForCamelContext(CamelContext context) {
         ManagedCamelContext mc = new ManagedCamelContext(context);
         mc.init(context.getManagementStrategy());
         return mc;
     }
 
+    @Override
     public Object getManagedObjectForCamelHealth(CamelContext context) {
         ManagedCamelHealth mch = new ManagedCamelHealth(context);
         mch.init(context.getManagementStrategy());
         return mch;
     }
 
+    @Override
     @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForComponent(CamelContext context, Component component, String name) {
         ManagedComponent mc = new ManagedComponent(name, component);
@@ -190,6 +193,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         return mc;
     }
 
+    @Override
     @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForDataFormat(CamelContext context, DataFormat dataFormat) {
         ManagedDataFormat md = new ManagedDataFormat(context, dataFormat);
@@ -197,6 +201,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         return md;
     }
 
+    @Override
     @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForEndpoint(CamelContext context, Endpoint endpoint) {
         // we only want to manage singleton endpoints
@@ -215,6 +220,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         }
     }
 
+    @Override
     public Object getManagedObjectForErrorHandler(CamelContext context, RouteContext routeContext,
                                                   Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         ManagedErrorHandler me = new ManagedErrorHandler(routeContext, errorHandler, errorHandlerBuilder);
@@ -222,12 +228,14 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         return me;
     }
 
+    @Override
     public Object getManagedObjectForRouteController(CamelContext context) {
         ManagedRouteController mrc = new ManagedRouteController((ModelCamelContext) context);
         mrc.init(context.getManagementStrategy());
         return mrc;
     }
 
+    @Override
     public Object getManagedObjectForRoute(CamelContext context, Route route) {
         ManagedRoute mr;
         if (route.supportsSuspension()) {
@@ -239,6 +247,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         return mr;
     }
 
+    @Override
     public Object getManagedObjectForThreadPool(CamelContext context, ThreadPoolExecutor threadPool,
                                                 String id, String sourceId, String routeId, String threadPoolProfileId) {
         ManagedThreadPool mtp = new ManagedThreadPool(context, threadPool, id, sourceId, routeId, threadPoolProfileId);
@@ -246,12 +255,14 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         return mtp;
     }
 
+    @Override
     public Object getManagedObjectForEventNotifier(CamelContext context, EventNotifier eventNotifier) {
         ManagedEventNotifier men = new ManagedEventNotifier(context, eventNotifier);
         men.init(context.getManagementStrategy());
         return men;
     }
 
+    @Override
     public Object getManagedObjectForConsumer(CamelContext context, Consumer consumer) {
         ManagedConsumer mc;
         if (consumer instanceof ScheduledPollConsumer) {
@@ -263,24 +274,28 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         return mc;
     }
 
+    @Override
     public Object getManagedObjectForProducer(CamelContext context, Producer producer) {
         ManagedProducer mp = new ManagedProducer(context, producer);
         mp.init(context.getManagementStrategy());
         return mp;
     }
 
+    @Override
     public Object getManagedObjectForService(CamelContext context, Service service) {
         ManagedService mc = new ManagedService(context, service);
         mc.init(context.getManagementStrategy());
         return mc;
     }
 
+    @Override
     public Object getManagedObjectForClusterService(CamelContext context, CamelClusterService service) {
         ManagedClusterService mcs = new ManagedClusterService(context, service);
         mcs.init(context.getManagementStrategy());
         return mcs;
     }
 
+    @Override
     @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForProcessor(CamelContext context, Processor processor,
                                                NamedNode node, Route route) {

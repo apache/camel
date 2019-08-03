@@ -38,6 +38,7 @@ public class ProduceMessageConverterTest extends CamelTestSupport {
     @BindToRegistry("myMessageConverter")
     private MyMessageConverter conv = new MyMessageConverter();
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -57,6 +58,7 @@ public class ProduceMessageConverterTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -67,12 +69,14 @@ public class ProduceMessageConverterTest extends CamelTestSupport {
 
     private static class MyMessageConverter implements MessageConverter {
 
+        @Override
         public Message toMessage(Object object, Session session) throws JMSException, MessageConversionException {
             TextMessage txt = session.createTextMessage();
             txt.setText("Hello " + object);
             return txt;
         }
 
+        @Override
         public Object fromMessage(Message message) throws JMSException, MessageConversionException {
             return null;
         }

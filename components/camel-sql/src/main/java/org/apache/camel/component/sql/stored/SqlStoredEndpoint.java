@@ -63,6 +63,7 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
         setJdbcTemplate(jdbcTemplate);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new SqlStoredProducer(this);
     }

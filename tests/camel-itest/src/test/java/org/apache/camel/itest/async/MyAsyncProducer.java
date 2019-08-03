@@ -38,10 +38,12 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
         super(endpoint);
     }
 
+    @Override
     public MyAsyncEndpoint getEndpoint() {
         return (MyAsyncEndpoint) super.getEndpoint();
     }
 
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         executor.submit(new Callable<Object>() {
             public Object call() throws Exception {

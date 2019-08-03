@@ -116,6 +116,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -27,6 +27,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringWireTapUsingFireAndForgetTest extends ContextTestSupport {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringWireTapUsingFireAndForgetTest.xml");
     }
@@ -79,6 +80,7 @@ public class SpringWireTapUsingFireAndForgetTest extends ContextTestSupport {
     // START SNIPPET: e1
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             // here we prepare the new exchange by setting the payload on the exchange
             // on the IN message.

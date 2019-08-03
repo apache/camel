@@ -39,6 +39,7 @@ public class ServiceStopFailureEvent extends EventObject implements CamelEvent.S
         return context;
     }
 
+    @Override
     public Object getService() {
         return service;
     }

@@ -56,6 +56,7 @@ public class JmsRouteWithInOnlyTest extends CamelTestSupport {
         assertEquals(ExchangePattern.InOnly, order.getReceivedExchanges().get(0).getPattern());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

@@ -113,11 +113,13 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
             this.name = name;
         }
 
+        @Override
         public void beforeWrap(RouteContext routeContext,
                                NamedNode definition) {
             // no need to modify the route
         }
 
+        @Override
         public Processor wrap(RouteContext routeContext, final Processor processor) {
             return new AsyncProcessor() {
                 public boolean process(final Exchange exchange, final AsyncCallback callback) {

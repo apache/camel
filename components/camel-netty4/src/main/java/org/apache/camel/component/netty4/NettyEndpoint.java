@@ -53,12 +53,14 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer answer = new NettyConsumer(this, processor, configuration);
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         Producer answer = new NettyProducer(this, configuration);
         if (isSynchronous()) {

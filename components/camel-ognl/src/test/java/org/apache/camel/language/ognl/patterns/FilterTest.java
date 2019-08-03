@@ -42,6 +42,7 @@ public class FilterTest extends CamelTestSupport {
     }
 
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

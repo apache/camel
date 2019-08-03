@@ -57,6 +57,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
         this.apiNameClass = apiNameClass;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // split remaining path to get API name and method
         final String[] pathElements = remaining.split("/");

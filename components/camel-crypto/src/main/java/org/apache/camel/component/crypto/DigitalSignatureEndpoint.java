@@ -44,6 +44,7 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         if (CryptoOperation.sign == configuration.getCryptoOperation()) {
             return new DigitalSignatureProducer(this, new SigningProcessor(configuration));
@@ -52,6 +53,7 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Digital Signatures endpoints are not meant to be consumed from. They are meant be used as an intermediate endpoints");
     }

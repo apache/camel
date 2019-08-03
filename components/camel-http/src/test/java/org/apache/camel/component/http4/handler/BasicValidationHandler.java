@@ -46,6 +46,7 @@ public class BasicValidationHandler implements HttpRequestHandler {
         this.responseContent = responseContent;
     }
 
+    @Override
     public void handle(final HttpRequest request, final HttpResponse response,
                        final HttpContext context) throws HttpException, IOException {
 

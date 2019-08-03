@@ -61,6 +61,7 @@ public class LdapProducer extends DefaultProducer {
     }
 
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         String filter = exchange.getIn().getBody(String.class);
         DirContext dirContext = getDirContext();

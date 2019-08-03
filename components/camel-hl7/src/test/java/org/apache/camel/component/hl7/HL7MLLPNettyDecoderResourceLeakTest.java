@@ -41,6 +41,7 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

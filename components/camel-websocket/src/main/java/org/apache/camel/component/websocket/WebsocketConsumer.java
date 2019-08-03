@@ -44,6 +44,7 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
         super.doStop();
     }
 
+    @Override
     public WebsocketEndpoint getEndpoint() {
         return endpoint;
     }

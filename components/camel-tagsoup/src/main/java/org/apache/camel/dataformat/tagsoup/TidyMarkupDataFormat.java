@@ -115,6 +115,7 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, 
     /**
      * Unsupported operation. We cannot create ugly HTML.
      */
+    @Override
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
         throw new CamelException("Marshalling from Well Formed HTML to ugly HTML is not supported."
                 + " Only unmarshal is supported");
@@ -123,6 +124,7 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, 
     /**
      * Unmarshal the data
      */
+    @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
 
         ObjectHelper.notNull(dataObjectType, "dataObjectType", this);

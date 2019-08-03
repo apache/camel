@@ -85,6 +85,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
         assertEquals("ReplyTo", replyQueueName, destination.toString());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -95,6 +96,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

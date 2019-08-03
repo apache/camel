@@ -216,6 +216,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return exchange.getIn().getHeader(Exchange.FILE_NAME, getFileName(), String.class);
     }
 
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception { //NOPMD
         List<String> userids = determineEncryptionUserIds(exchange);
         List<PGPPublicKey> keys = publicKeyAccessor.getEncryptionKeys(exchange, userids);
@@ -356,6 +357,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return sigGens;
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream encryptedStream) throws Exception { //NOPMD
         if (encryptedStream == null) {
             return null;

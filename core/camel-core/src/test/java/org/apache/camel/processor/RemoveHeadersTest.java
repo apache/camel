@@ -94,6 +94,7 @@ public class RemoveHeadersTest extends ContextTestSupport {
         assertEquals(2, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -73,10 +73,12 @@ public class JdbcEndpoint extends DefaultEndpoint {
         this.dataSource = dataSource;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Not supported");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new JdbcProducer(this, dataSource, readSize, parameters);
     }

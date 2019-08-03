@@ -90,18 +90,22 @@ public class DataFormatServiceTest extends ContextTestSupport {
 
         private CamelContext camelContext;
 
+        @Override
         public CamelContext getCamelContext() {
             return camelContext;
         }
 
+        @Override
         public void setCamelContext(CamelContext camelContext) {
             this.camelContext = camelContext;
         }
 
+        @Override
         public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
             stream.write("Hi Camel".getBytes());
         }
 
+        @Override
         public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
             return "Bye World";
         }

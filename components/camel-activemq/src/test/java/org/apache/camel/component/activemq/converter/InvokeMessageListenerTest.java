@@ -54,12 +54,14 @@ public class InvokeMessageListenerTest extends CamelTestSupport {
         assertEquals("Text mesage body: " + textMessage, expectedBody, textMessage.getText());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

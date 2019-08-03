@@ -51,6 +51,7 @@ public class CamelEndpointFactoryBean extends AbstractCamelEndpointFactoryBean i
         return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

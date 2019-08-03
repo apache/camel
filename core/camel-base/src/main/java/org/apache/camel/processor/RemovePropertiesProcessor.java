@@ -52,14 +52,17 @@ public class RemovePropertiesProcessor extends AsyncProcessorSupport implements 
         return "RemoveProperties(" + pattern + ")";
     }
 
+    @Override
     public String getTraceLabel() {
         return "removeProperties[" + pattern + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

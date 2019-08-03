@@ -39,6 +39,7 @@ public class PredicateValidatingProcessor extends ServiceSupport implements Proc
         this.predicate = predicate;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         boolean matches = predicate.matches(exchange);
 
@@ -60,6 +61,7 @@ public class PredicateValidatingProcessor extends ServiceSupport implements Proc
         return "validate(" + predicate + ")";
     }
 
+    @Override
     public String getTraceLabel() {
         return "validate[" + predicate + "]";
     }

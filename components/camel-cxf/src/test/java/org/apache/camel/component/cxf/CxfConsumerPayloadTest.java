@@ -59,6 +59,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
     }
 
     // START SNIPPET: payload
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

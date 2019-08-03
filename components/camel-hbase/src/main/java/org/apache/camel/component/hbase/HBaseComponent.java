@@ -75,6 +75,7 @@ public class HBaseComponent extends DefaultComponent {
         }
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         HBaseEndpoint endpoint = new HBaseEndpoint(uri, this, connection, remaining);
         Map<String, Object> mapping = IntrospectionSupport.extractProperties(parameters, "row.");

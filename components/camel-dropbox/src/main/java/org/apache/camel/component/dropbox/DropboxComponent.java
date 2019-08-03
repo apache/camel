@@ -52,6 +52,7 @@ public class DropboxComponent extends DefaultComponent {
      * @return the camel endpoint
      * @throws Exception
      */
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DropboxConfiguration configuration = new DropboxConfiguration();
 

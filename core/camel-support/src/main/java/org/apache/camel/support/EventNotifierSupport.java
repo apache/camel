@@ -37,6 +37,7 @@ public abstract class EventNotifierSupport extends ServiceSupport implements Eve
     private boolean ignoreExchangeSentEvents;
     private boolean ignoreStepEvents;
 
+    @Override
     public boolean isIgnoreCamelContextEvents() {
         return ignoreCamelContextEvents;
     }
@@ -51,94 +52,117 @@ public abstract class EventNotifierSupport extends ServiceSupport implements Eve
         return false;
     }
 
+    @Override
     public void setIgnoreCamelContextEvents(boolean ignoreCamelContextEvents) {
         this.ignoreCamelContextEvents = ignoreCamelContextEvents;
     }
 
+    @Override
     public boolean isIgnoreRouteEvents() {
         return ignoreRouteEvents;
     }
 
+    @Override
     public void setIgnoreRouteEvents(boolean ignoreRouteEvents) {
         this.ignoreRouteEvents = ignoreRouteEvents;
     }
 
+    @Override
     public boolean isIgnoreServiceEvents() {
         return ignoreServiceEvents;
     }
 
+    @Override
     public void setIgnoreServiceEvents(boolean ignoreServiceEvents) {
         this.ignoreServiceEvents = ignoreServiceEvents;
     }
 
+    @Override
     public boolean isIgnoreExchangeEvents() {
         return ignoreExchangeEvents;
     }
 
+    @Override
     public void setIgnoreExchangeEvents(boolean ignoreExchangeEvents) {
         this.ignoreExchangeEvents = ignoreExchangeEvents;
     }
 
+    @Override
     public boolean isIgnoreExchangeCreatedEvent() {
         return ignoreExchangeCreatedEvent;
     }
 
+    @Override
     public void setIgnoreExchangeCreatedEvent(boolean ignoreExchangeCreatedEvent) {
         this.ignoreExchangeCreatedEvent = ignoreExchangeCreatedEvent;
     }
 
+    @Override
     public boolean isIgnoreExchangeCompletedEvent() {
         return ignoreExchangeCompletedEvent;
     }
 
+    @Override
     public void setIgnoreExchangeCompletedEvent(boolean ignoreExchangeCompletedEvent) {
         this.ignoreExchangeCompletedEvent = ignoreExchangeCompletedEvent;
     }
 
+    @Override
     public boolean isIgnoreExchangeFailedEvents() {
         return ignoreExchangeFailedEvents;
     }
 
+    @Override
     public void setIgnoreExchangeFailedEvents(boolean ignoreExchangeFailedEvents) {
         this.ignoreExchangeFailedEvents = ignoreExchangeFailedEvents;
     }
 
+    @Override
     public boolean isIgnoreExchangeRedeliveryEvents() {
         return ignoreExchangeRedeliveryEvents;
     }
 
+    @Override
     public void setIgnoreExchangeRedeliveryEvents(boolean ignoreExchangeRedeliveryEvents) {
         this.ignoreExchangeRedeliveryEvents = ignoreExchangeRedeliveryEvents;
     }
 
+    @Override
     public boolean isIgnoreExchangeSentEvents() {
         return ignoreExchangeSentEvents;
     }
 
+    @Override
     public void setIgnoreExchangeSentEvents(boolean ignoreExchangeSentEvents) {
         this.ignoreExchangeSentEvents = ignoreExchangeSentEvents;
     }
 
+    @Override
     public boolean isIgnoreExchangeSendingEvents() {
         return ignoreExchangeSendingEvents;
     }
 
+    @Override
     public void setIgnoreExchangeSendingEvents(boolean ignoreExchangeSendingEvents) {
         this.ignoreExchangeSendingEvents = ignoreExchangeSendingEvents;
     }
 
+    @Override
     public boolean isIgnoreStepEvents() {
         return ignoreStepEvents;
     }
 
+    @Override
     public void setIgnoreStepEvents(boolean ignoreStepEvents) {
         this.ignoreStepEvents = ignoreStepEvents;
     }
 
+    @Override
     protected void doStart() throws Exception {
         // noop
     }
 
+    @Override
     protected void doStop() throws Exception {
         // noop
     }

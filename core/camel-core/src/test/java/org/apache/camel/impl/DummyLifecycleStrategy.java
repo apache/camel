@@ -36,63 +36,78 @@ public class DummyLifecycleStrategy extends LifecycleStrategySupport {
 
     private List<String> events = new ArrayList<>();
 
+    @Override
     public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
         events.add("onContextStart");
     }
 
+    @Override
     public void onContextStop(CamelContext context) {
         events.add("onContextStop");
     }
 
+    @Override
     public void onComponentAdd(String name, Component component) {
         events.add("onComponentAdd");
     }
 
+    @Override
     public void onComponentRemove(String name, Component component) {
         events.add("onComponentRemove");
     }
 
+    @Override
     public void onEndpointAdd(Endpoint endpoint) {
         events.add("onEndpointAdd");
     }
 
+    @Override
     public void onEndpointRemove(Endpoint endpoint) {
         events.add("onEndpointRemove");
     }
 
+    @Override
     public void onServiceAdd(CamelContext context, Service service, Route route) {
         events.add("onServiceAdd");
     }
 
+    @Override
     public void onServiceRemove(CamelContext context, Service service, Route route) {
         events.add("onServiceRemove");
     }
 
+    @Override
     public void onRoutesAdd(Collection<Route> routes) {
         events.add("onRoutesAdd");
     }
 
+    @Override
     public void onRoutesRemove(Collection<Route> routes) {
         events.add("onRoutesRemove");
     }
 
+    @Override
     public void onRouteContextCreate(RouteContext routeContext) {
         events.add("onRouteContextCreate");
     }
 
+    @Override
     public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         events.add("onErrorHandlerAdd");
     }
 
+    @Override
     public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         events.add("onErrorHandlerRemove");
     }
 
+    @Override
     public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
                                 String sourceId, String routeId, String threadPoolProfileId) {
         events.add("onThreadPoolAdd");
     }
 
+    @Override
     public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
         events.add("onThreadPoolRemove");
     }

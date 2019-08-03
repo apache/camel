@@ -173,14 +173,17 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
         return "StreamResequencer[to: " + processor + "]";
     }
 
+    @Override
     public String getTraceLabel() {
         return "streamResequence";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -206,10 +209,12 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
      * 
      * @param exchange exchange to send.
      */
+    @Override
     public void sendElement(Exchange exchange) throws Exception {
         processor.process(exchange);
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         while (engine.size() >= capacity) {
             try {
@@ -237,10 +242,12 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
         return true;
     }
 
+    @Override
     public boolean hasNext() {
         return processor != null;
     }
 
+    @Override
     public List<Processor> next() {
         if (!hasNext()) {
             return null;

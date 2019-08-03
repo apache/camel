@@ -28,6 +28,7 @@ import org.apache.camel.spi.UuidGenerator;
  */
 public class JavaUuidGenerator implements UuidGenerator {
     
+    @Override
     public String generateUuid() {
         return UUID.randomUUID().toString();
     }

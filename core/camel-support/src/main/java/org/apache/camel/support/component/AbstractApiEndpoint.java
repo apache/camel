@@ -85,6 +85,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         this.configuration = endpointConfiguration;
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

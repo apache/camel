@@ -30,6 +30,7 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
     private static final String TEST_STRING = "This is a test string and it has enough" 
         + " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ";
     
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

@@ -45,6 +45,7 @@ public class DirectVmNoPropertyPropagationComponentTest extends ContextTestSuppo
         template.sendBody("direct-vm:start.default", "Hello World");
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

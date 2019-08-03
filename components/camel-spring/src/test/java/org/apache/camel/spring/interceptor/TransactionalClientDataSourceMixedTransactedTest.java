@@ -25,6 +25,7 @@ import org.junit.Test;
  */
 public class TransactionalClientDataSourceMixedTransactedTest extends TransactionalClientDataSourceTest {
 
+    @Override
     @Test
     public void testTransactionRollback() throws Exception {
         // through the onException clause below we've marked the exceptions containing the message
@@ -36,6 +37,7 @@ public class TransactionalClientDataSourceMixedTransactedTest extends Transactio
         assertEquals("Number of books", 2, count);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {

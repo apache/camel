@@ -155,10 +155,12 @@ public class AsyncCompletionService<V> {
             complete(this);
         }
 
+        @Override
         public int compareTo(Task other) {
             return Long.compare(this.id, other.id);
         }
 
+        @Override
         public String toString() {
             return "SubmitOrderedFutureTask[" + this.id + "]";
         }

@@ -56,6 +56,7 @@ public class HBaseProducer extends DefaultProducer {
         this.rowModel = endpoint.getRowModel();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         try (Table table = endpoint.getTable()) {
             updateHeaders(exchange);

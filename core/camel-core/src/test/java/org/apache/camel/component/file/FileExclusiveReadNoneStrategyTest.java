@@ -72,6 +72,7 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
 
     private static class MySlowFileProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             LOG.info("Creating a slow file with no locks...");
             File file = new File("target/data/exclusiveread/slowfile/hello.txt");

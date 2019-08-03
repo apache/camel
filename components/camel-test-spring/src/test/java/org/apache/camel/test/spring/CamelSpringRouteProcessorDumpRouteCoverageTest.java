@@ -35,6 +35,7 @@ public class CamelSpringRouteProcessorDumpRouteCoverageTest extends CamelSpringR
         TestSupport.deleteDirectory("target/camel-route-coverage");
     }
 
+    @Override
     @Test
     public void testJmx() throws Exception {
         // JMX is enabled with route coverage

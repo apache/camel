@@ -128,6 +128,7 @@ public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
             this.endpoints = new ArrayList<>(Arrays.asList(endpoints));
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             boolean done = false;
             while (!done) {

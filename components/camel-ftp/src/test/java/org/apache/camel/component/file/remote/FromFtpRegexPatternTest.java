@@ -56,6 +56,7 @@ public class FromFtpRegexPatternTest extends FtpServerTestSupport {
         template.sendBodyAndHeader(ftpUrl, "Reports", Exchange.FILE_NAME, "report2.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

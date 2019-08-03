@@ -56,6 +56,7 @@ public final class AsyncProcessorConverterHelper {
             this.processor = processor;
         }
 
+        @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             if (processor == null) {
                 // no processor then we are done
@@ -90,6 +91,7 @@ public final class AsyncProcessorConverterHelper {
             }
         }
         
+        @Override
         public void process(Exchange exchange) throws Exception {
             processNext(exchange);
         }
@@ -100,18 +102,22 @@ public final class AsyncProcessorConverterHelper {
             }
         }
 
+        @Override
         public void start() {
             ServiceHelper.startService(processor);
         }
 
+        @Override
         public void stop() {
             ServiceHelper.stopService(processor);
         }
 
+        @Override
         public boolean hasNext() {
             return processor != null;
         }
 
+        @Override
         public List<Processor> next() {
             if (!hasNext()) {
                 return null;

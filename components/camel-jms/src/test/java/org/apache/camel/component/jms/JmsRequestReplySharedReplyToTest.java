@@ -45,6 +45,7 @@ public class JmsRequestReplySharedReplyToTest extends CamelTestSupport {
         assertTrue("Should be slower than about 2 seconds, was: " + delta, delta > 2000);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

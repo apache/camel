@@ -40,6 +40,7 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
         super(endpoint, processor, executor);
     }
 
+    @Override
     protected int poll() throws Exception {
         int messagesPolled = 0;
 

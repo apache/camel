@@ -55,10 +55,12 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/util/CxfEndpointBeans.xml");
     }
 
+    @Override
     protected String getEndpointURI() {
         return "cxf:bean:testEndpoint";
     }
 
+    @Override
     protected String getNoServiceClassURI() {
         return "cxf:bean:noServiceClassEndpoint";
     }
@@ -70,11 +72,13 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
                      endpoint.getServiceClass().getName());
     }
     
+    @Override
     public char sepChar() {
         return '?';
     }
 
 
+    @Override
     @Test
     public void testGetProperties() throws Exception {
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint)createEndpoint(getEndpointURI());

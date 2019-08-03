@@ -29,6 +29,7 @@ import org.apache.camel.Message;
  */
 public class GroupedBodyAggregationStrategy extends AbstractListAggregationStrategy<Object> {
 
+    @Override
     public Object getValue(Exchange exchange) {
         return exchange.getIn().getBody();
     }

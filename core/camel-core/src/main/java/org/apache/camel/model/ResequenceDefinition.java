@@ -66,6 +66,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         }
     }
 
+    @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }

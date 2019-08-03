@@ -51,6 +51,7 @@ public class AggregateRepositoryReturnNullTest extends ContextTestSupport {
     }
 
     private static class MyNullAggregationStrategy implements AggregationStrategy {
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             // on purpose
             return null;

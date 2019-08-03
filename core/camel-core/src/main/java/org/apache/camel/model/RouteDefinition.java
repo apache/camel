@@ -212,6 +212,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @param group the route group
      * @return the builder
      */
+    @Override
     public RouteDefinition routeGroup(String group) {
         setGroup(group);
         return this;
@@ -223,6 +224,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @param id the route id
      * @return the builder
      */
+    @Override
     public RouteDefinition routeId(String id) {
         if (hasCustomIdAssigned()) {
             throw new IllegalArgumentException("You can only set routeId one time per route.");
@@ -237,6 +239,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @param description the route description
      * @return the builder
      */
+    @Override
     public RouteDefinition routeDescription(String description) {
         DescriptionDefinition desc = new DescriptionDefinition();
         desc.setText(description);
@@ -433,6 +436,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @param order the order represented as a number
      * @return the builder
      */
+    @Override
     public RouteDefinition startupOrder(int order) {
         setStartupOrder(order);
         return this;
@@ -671,6 +675,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
         this.input = input;
     }
 
+    @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }

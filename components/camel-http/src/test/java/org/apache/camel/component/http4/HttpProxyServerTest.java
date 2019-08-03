@@ -123,6 +123,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
     }
 
     private static class RequestProxyBasicAuth implements HttpRequestInterceptor {
+        @Override
         public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
             String auth = null;
 
@@ -161,6 +162,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
     }
 
     private static class ResponseProxyBasicUnauthorized implements HttpResponseInterceptor {
+        @Override
         public void process(final HttpResponse response, final HttpContext context) throws HttpException, IOException {
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
                 response.addHeader(AUTH.PROXY_AUTH, "Basic realm=\"test realm\"");

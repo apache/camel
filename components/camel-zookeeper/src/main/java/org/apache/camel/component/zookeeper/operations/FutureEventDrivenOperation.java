@@ -47,6 +47,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
         this.awaitedTypes = awaitedTypes;
     }
 
+    @Override
     public void process(WatchedEvent event) {
         this.event = event;
         EventType received = event.getType();
@@ -74,6 +75,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
         }
     }
 
+    @Override
     public OperationResult<ResultType> get() throws InterruptedException, ExecutionException {
         installWatch();
         waitingThreads.add(Thread.currentThread());
@@ -81,6 +83,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
         return result;
     }
 
+    @Override
     public OperationResult<ResultType> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         installWatch();
         waitingThreads.add(Thread.currentThread());

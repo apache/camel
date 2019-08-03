@@ -34,6 +34,7 @@ public class SampleInitializingBean implements InitializingBean {
         this.entries = entries;
     }
 
+    @Override
     public void afterPropertiesSet() {
         entries.add(name);
     }

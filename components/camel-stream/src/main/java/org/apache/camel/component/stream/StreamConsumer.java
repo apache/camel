@@ -112,6 +112,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         super.doStop();
     }
 
+    @Override
     public void run() {
         try {
             readFromStream();

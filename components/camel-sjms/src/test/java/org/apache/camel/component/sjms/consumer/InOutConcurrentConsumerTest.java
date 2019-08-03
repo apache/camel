@@ -71,11 +71,13 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
         executor.shutdownNow();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

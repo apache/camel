@@ -78,6 +78,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         this.configuration = configuration;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -85,14 +86,17 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     /**
      * To use a custom HeaderFilterStrategy to map headers to/from Camel.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new SqsProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         SqsConsumer sqsConsumer = new SqsConsumer(this, processor);
         configureConsumer(sqsConsumer);

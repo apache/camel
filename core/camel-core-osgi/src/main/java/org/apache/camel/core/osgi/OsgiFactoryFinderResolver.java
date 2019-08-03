@@ -29,10 +29,12 @@ public class OsgiFactoryFinderResolver implements FactoryFinderResolver {
         this.bundleContext = bundleContext;
     }
 
+    @Override
     public FactoryFinder resolveDefaultFactoryFinder(ClassResolver classResolver) {
         return resolveFactoryFinder(classResolver, "META-INF/services/org/apache/camel/");
     }
 
+    @Override
     public FactoryFinder resolveFactoryFinder(ClassResolver classResolver, String resourcePath) {
         return new OsgiFactoryFinder(bundleContext, classResolver, resourcePath);
     }

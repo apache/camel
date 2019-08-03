@@ -48,6 +48,7 @@ public class SesProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         if (!(exchange.getIn().getBody() instanceof javax.mail.Message)) {
             SendEmailRequest request = createMailRequest(exchange);

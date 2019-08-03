@@ -33,6 +33,7 @@ public class ManagedRuntimeCamelCatalog extends ManagedService implements Manage
         this.camelCatalog = camelCatalog;
     }
 
+    @Override
     public void init(ManagementStrategy strategy) {
         // do nothing
     }

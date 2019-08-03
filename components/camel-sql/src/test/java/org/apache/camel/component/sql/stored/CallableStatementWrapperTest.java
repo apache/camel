@@ -39,6 +39,7 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
     private JdbcTemplate jdbcTemplate;
     private CallableStatementWrapperFactory factory;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -114,6 +115,7 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
         });
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

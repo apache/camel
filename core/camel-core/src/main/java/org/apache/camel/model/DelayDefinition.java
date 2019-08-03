@@ -114,6 +114,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     /**
      * To use a custom Thread Pool if asyncDelay has been enabled.
      */
+    @Override
     public DelayDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
@@ -122,6 +123,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     /**
      * Refers to a custom Thread Pool if asyncDelay has been enabled.
      */
+    @Override
     public DelayDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -155,18 +157,22 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
         this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 
+    @Override
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
+    @Override
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
+    @Override
     public String getExecutorServiceRef() {
         return executorServiceRef;
     }
 
+    @Override
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }

@@ -107,6 +107,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         }
     }
 
+    @Override
     public boolean hasNext() {
         checkClosed();
         saveState();
@@ -122,6 +123,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         return result;
     }
 
+    @Override
     public String next() {
         checkClosed();
         while (true) {
@@ -277,6 +279,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         }
     }
 
+    @Override
     public void close() throws IOException {
         if (!closed) {
             closed = true;

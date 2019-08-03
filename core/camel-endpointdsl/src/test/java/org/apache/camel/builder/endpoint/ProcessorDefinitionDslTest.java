@@ -41,6 +41,7 @@ public class ProcessorDefinitionDslTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new EndpointRouteBuilder() {
             public void configure() {

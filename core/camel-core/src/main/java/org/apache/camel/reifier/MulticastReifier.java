@@ -52,6 +52,7 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
         return answer;
     }
 
+    @Override
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
         final AggregationStrategy strategy = createAggregationStrategy(routeContext);
 

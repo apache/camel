@@ -77,6 +77,7 @@ public class DefaultKeySelector extends KeySelector implements CamelContextAware
         }
     }
 
+    @Override
     public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context)
         throws KeySelectorException {
         

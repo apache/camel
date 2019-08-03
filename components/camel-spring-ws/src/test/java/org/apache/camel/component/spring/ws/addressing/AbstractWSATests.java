@@ -50,6 +50,7 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
     private final String xmlBody = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
     private String requestInputAction;
     
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

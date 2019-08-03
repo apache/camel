@@ -61,6 +61,7 @@ public enum HttpMethods implements Expression {
         return entity;
     }
 
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         return ExpressionBuilder.constantExpression(name()).evaluate(exchange, type);
     }

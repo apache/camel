@@ -77,18 +77,22 @@ public class CometdProducerConsumerInteractiveExtensionMain {
 
         private HashSet<String> forbidden = new HashSet<>(Arrays.asList("one", "two"));
 
+        @Override
         public void removed(ServerSession session, boolean timeout) {
             // called on remove of client
         }
 
+        @Override
         public boolean rcv(ServerSession from, ServerMessage.Mutable message) {
             return true;
         }
 
+        @Override
         public boolean rcvMeta(ServerSession from, ServerMessage.Mutable message) {
             return true;
         }
 
+        @Override
         public boolean send(ServerSession from, ServerSession to, ServerMessage.Mutable message) {
             Object data = message.getData();
             if (forbidden.contains(data)) {
@@ -97,6 +101,7 @@ public class CometdProducerConsumerInteractiveExtensionMain {
             return true;
         }
 
+        @Override
         public boolean sendMeta(ServerSession from, ServerMessage.Mutable message) {
             return true;
         }

@@ -41,6 +41,7 @@ public interface ManagedEnricherMBean extends ManagedProcessorMBean, ManagedExte
     @ManagedAttribute(description = "Whether to aggregate when there was an exception thrown during calling the resource endpoint")
     Boolean isAggregateOnException();
 
+    @Override
     @ManagedOperation(description = "Statistics of the endpoints that has been enriched from")
     TabularData extendedInformation();
 

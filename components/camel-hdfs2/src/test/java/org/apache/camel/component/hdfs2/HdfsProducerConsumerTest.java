@@ -31,6 +31,7 @@ import org.junit.Test;
 
 public class HdfsProducerConsumerTest extends HdfsTestSupport {
 
+    @Override
     @Before
     public void setUp() throws Exception {
         if (!canTest()) {

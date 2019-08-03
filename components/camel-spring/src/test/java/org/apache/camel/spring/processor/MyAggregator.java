@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class MyAggregator implements AggregationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(MyAggregator.class);
 
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         // lets append the old body to the new body
         if (oldExchange == null) {

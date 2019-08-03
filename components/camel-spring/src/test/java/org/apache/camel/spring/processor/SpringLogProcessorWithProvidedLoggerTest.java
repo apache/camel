@@ -23,6 +23,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringLogProcessorWithProvidedLoggerTest extends LogProcessorWithProvidedLoggerTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
             "org/apache/camel/spring/processor/logProcessorWithProvidedLoggerTest.xml");

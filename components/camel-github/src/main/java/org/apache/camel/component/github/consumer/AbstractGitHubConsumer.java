@@ -69,5 +69,6 @@ public abstract class AbstractGitHubConsumer extends ScheduledPollConsumer {
         return repository;
     }
 
+    @Override
     protected abstract int poll() throws Exception;
 }

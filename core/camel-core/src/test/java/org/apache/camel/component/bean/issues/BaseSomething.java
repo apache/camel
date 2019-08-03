@@ -18,5 +18,6 @@ package org.apache.camel.component.bean.issues;
 
 public abstract class BaseSomething extends BaseFoundationClass {
 
+    @Override
     public abstract Long doSomething(String name);
 }

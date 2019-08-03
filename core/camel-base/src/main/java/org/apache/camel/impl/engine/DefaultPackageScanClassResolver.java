@@ -77,10 +77,12 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         classLoaders.add(DefaultPackageScanClassResolver.class.getClassLoader());
     }
 
+    @Override
     public void addClassLoader(ClassLoader classLoader) {
         classLoaders.add(classLoader);
     }
 
+    @Override
     public void addFilter(PackageScanFilter filter) {
         if (scanFilters == null) {
             scanFilters = new LinkedHashSet<>();
@@ -88,6 +90,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         scanFilters.add(filter);
     }
 
+    @Override
     public void removeFilter(PackageScanFilter filter) {
         if (scanFilters != null) {
             scanFilters.remove(filter);
@@ -111,11 +114,13 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return false;
     }
 
+    @Override
     public Set<ClassLoader> getClassLoaders() {
         // return a new set to avoid any concurrency issues in other runtimes such as OSGi
         return Collections.unmodifiableSet(new LinkedHashSet<>(classLoaders));
     }
 
+    @Override
     public Set<Class<?>> findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
         if (packageNames == null) {
             return Collections.emptySet();
@@ -136,6 +141,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
+    @Override
     public Set<Class<?>> findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames) {
         if (packageNames == null) {
             return Collections.emptySet();
@@ -156,6 +162,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
+    @Override
     public Set<Class<?>> findImplementations(Class<?> parent, String... packageNames) {
         if (packageNames == null) {
             return Collections.emptySet();
@@ -176,6 +183,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
+    @Override
     public Set<Class<?>> findByFilter(PackageScanFilter filter, String... packageNames) {
         if (packageNames == null) {
             return Collections.emptySet();
@@ -500,6 +508,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         if (jarCache == null) {
@@ -508,6 +517,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         }
     }
 
+    @Override
     protected void doStop() throws Exception {
         jarCache.clear();
     }

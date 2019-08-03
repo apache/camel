@@ -25,6 +25,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 @Ignore
 public class SpringLogDebugBodyMaxCharsTest extends LogDebugBodyMaxCharsTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/SpringLogDebugBodyMaxCharsTest.xml");
     }

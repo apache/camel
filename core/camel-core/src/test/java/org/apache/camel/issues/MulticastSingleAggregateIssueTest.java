@@ -59,6 +59,7 @@ public class MulticastSingleAggregateIssueTest extends ContextTestSupport {
 
     public static class SumAggregateBean implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             newExchange.getIn().setHeader("foo", "I was here");
 

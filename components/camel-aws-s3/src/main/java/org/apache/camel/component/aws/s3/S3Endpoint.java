@@ -67,6 +67,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         S3Consumer s3Consumer = new S3Consumer(this, processor);
         configureConsumer(s3Consumer);
@@ -74,6 +75,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         return s3Consumer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new S3Producer(this);
     }

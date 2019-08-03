@@ -37,10 +37,12 @@ public class JmxNotificationEventNotifier extends EventNotifierSupport implement
     private NotificationBroadcasterSupport notificationBroadcaster;
     private String source = "Camel";
 
+    @Override
     public void setNotificationBroadcaster(NotificationBroadcasterSupport broadcaster) {
         notificationBroadcaster = broadcaster;
     }
 
+    @Override
     public void notify(CamelEvent event) throws Exception {
         if (notificationBroadcaster != null) {
             // its recommended to send light weight events and we don't want to have the entire Exchange/CamelContext etc
@@ -55,10 +57,12 @@ public class JmxNotificationEventNotifier extends EventNotifierSupport implement
         }
     }
 
+    @Override
     public boolean isEnabled(CamelEvent event) {
         return true;
     }
 
+    @Override
     protected void doStart() throws Exception {
         counter.set(0);
     }

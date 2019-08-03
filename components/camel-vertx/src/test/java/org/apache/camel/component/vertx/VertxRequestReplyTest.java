@@ -44,6 +44,7 @@ public class VertxRequestReplyTest extends VertxBaseTestSupport {
         assertEquals("Bye World", out2);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

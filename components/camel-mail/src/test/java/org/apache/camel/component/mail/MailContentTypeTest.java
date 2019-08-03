@@ -72,6 +72,7 @@ public class MailContentTypeTest extends CamelTestSupport {
         assertEquals("<html><body><h1>Hello</h1>World</body></html>", ((MimeMultipart) msg.getContent()).getBodyPart(1).getContent());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

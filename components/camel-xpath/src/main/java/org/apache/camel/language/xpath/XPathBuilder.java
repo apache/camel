@@ -180,6 +180,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         this.camelContext = camelContext;
     }
 
+    @Override
     public boolean matches(Exchange exchange) {
         try {
             Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
@@ -190,6 +191,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         }
     }
 
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         try {
             Object result = evaluate(exchange);
@@ -589,11 +591,13 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         this.functionResolver = functionResolver;
     }
 
+    @Override
     public void setNamespaces(Map<String, String> namespaces) {
         this.namespaces.clear();
         this.namespaces.putAll(namespaces);
     }
 
+    @Override
     public Map<String, String> getNamespaces() {
         return namespaces;
     }

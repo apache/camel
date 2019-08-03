@@ -162,6 +162,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     /**
      * Start the cache. The cache is not started automatically. You must call this method.
      */
+    @Override
     public void start() {
         LOG.info("Starting ZK Group for path: {}", path);
         if (started.compareAndSet(false, true)) {

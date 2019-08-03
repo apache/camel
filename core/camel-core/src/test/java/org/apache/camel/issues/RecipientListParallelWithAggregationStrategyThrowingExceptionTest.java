@@ -64,6 +64,7 @@ public class RecipientListParallelWithAggregationStrategyThrowingExceptionTest e
 
     public static class MyAggregateBean implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             throw new RuntimeException("Simulating a runtime exception thrown from the aggregation strategy");
         }

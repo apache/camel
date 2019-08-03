@@ -59,6 +59,7 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint {
         return producer;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Cannot consume from the BigQuery endpoint: " + getEndpointUri());
     }

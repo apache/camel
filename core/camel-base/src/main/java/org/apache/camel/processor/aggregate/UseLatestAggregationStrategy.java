@@ -28,6 +28,7 @@ import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByE
  */
 public class UseLatestAggregationStrategy implements AggregationStrategy {
 
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (newExchange == null) {
             return oldExchange;

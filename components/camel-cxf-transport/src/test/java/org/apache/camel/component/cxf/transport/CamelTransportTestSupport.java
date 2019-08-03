@@ -43,6 +43,7 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
     protected MessageObserver observer;
     protected Message inMessage;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -60,6 +61,7 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
         endpointInfo = new EndpointInfo();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         bus.shutdown(true);

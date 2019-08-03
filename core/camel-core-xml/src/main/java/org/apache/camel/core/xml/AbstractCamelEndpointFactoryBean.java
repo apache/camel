@@ -43,6 +43,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
     @XmlTransient
     private Endpoint endpoint;
 
+    @Override
     public Endpoint getObject() throws Exception {
         if (endpoint == null || !endpoint.isSingleton()) {
             // resolve placeholders (but leave the original uri unchanged)
@@ -56,6 +57,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
         return endpoint;
     }
 
+    @Override
     public Class<Endpoint> getObjectType() {
         return Endpoint.class;
     }

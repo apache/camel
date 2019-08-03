@@ -36,15 +36,18 @@ import org.slf4j.LoggerFactory;
 public class CamelTransportNameSpaceHandler extends BaseNamespaceHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTransportNameSpaceHandler.class);
 
+    @Override
     public ComponentMetadata decorate(Node node, ComponentMetadata componentMetadata, ParserContext parserContext) {
         return null;
     }
 
+    @Override
     @SuppressWarnings("rawtypes")
     public Set<Class> getManagedClasses() {
         return new HashSet<>(Arrays.asList(CamelTransportNameSpaceHandler.class));
     }
 
+    @Override
     public URL getSchemaLocation(String s) {
         if ("http://cxf.apache.org/transports/camel/blueprint".equals(s)) {
             return getClass().getClassLoader().getResource("schema/blueprint/camel.xsd");

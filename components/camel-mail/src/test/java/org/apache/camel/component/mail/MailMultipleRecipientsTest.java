@@ -74,6 +74,7 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         mock.expectedHeaderReceived("cc", "james@localhost");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -105,6 +105,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         this.bundleStateService = bundleStateService;
     }
    
+    @Override
     public void doInit() throws Exception {
         log.trace("init {}", this);
         // add service listener so we can be notified when blueprint container is done

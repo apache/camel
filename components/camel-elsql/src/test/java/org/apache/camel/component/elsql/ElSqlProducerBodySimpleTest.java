@@ -111,6 +111,7 @@ public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

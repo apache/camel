@@ -52,6 +52,7 @@ public class WSDLServiceFactoryBean extends JaxWsServiceFactoryBean {
         setServiceClass(serviceClass);
     }
     
+    @Override
     public void setServiceClass(Class<?> serviceClass) {
         if (serviceClass != null) {
             super.setServiceClass(serviceClass);
@@ -96,10 +97,12 @@ public class WSDLServiceFactoryBean extends JaxWsServiceFactoryBean {
         }
         return definition;
     }
+    @Override
     protected void buildServiceFromWSDL(String url) {
         getDefinition(url);
         super.buildServiceFromWSDL(url);
     }
+    @Override
     public Endpoint createEndpoint(EndpointInfo ei) throws EndpointException {
         Endpoint ep = new JaxWsEndpointImpl(getBus(), getService(), ei);
         sendEvent(Event.ENDPOINT_CREATED, ei, ep, getServiceClass());

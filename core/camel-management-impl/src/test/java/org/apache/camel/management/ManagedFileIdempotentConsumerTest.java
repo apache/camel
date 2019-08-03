@@ -134,6 +134,7 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

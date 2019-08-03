@@ -64,6 +64,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         return false;
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         if (!canTest()) {

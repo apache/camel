@@ -176,6 +176,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         }
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // deny processing if we are not started
         if (!isRunAllowed()) {

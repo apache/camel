@@ -72,6 +72,7 @@ public class AtomixMultiMapConfiguration extends AtomixClientConfiguration {
     // Copy
     // ****************************************
 
+    @Override
     public AtomixMultiMapConfiguration copy() {
         try {
             return (AtomixMultiMapConfiguration) super.clone();

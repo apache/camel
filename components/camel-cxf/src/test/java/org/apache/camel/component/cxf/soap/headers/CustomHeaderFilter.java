@@ -29,11 +29,13 @@ public class CustomHeaderFilter implements MessageHeaderFilter {
     public static final List<String> ACTIVATION_NAMESPACES = Arrays.asList(ACTIVATION_NAMESPACE);
 
 
+    @Override
     public List<String> getActivationNamespaces() {
         return ACTIVATION_NAMESPACES;
     }
 
-    public void filter(Direction direction, List<Header> headers) {        
+    @Override
+    public void filter(Direction direction, List<Header> headers) {
     }
 
 

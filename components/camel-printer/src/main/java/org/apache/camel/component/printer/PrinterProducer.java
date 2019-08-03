@@ -44,6 +44,7 @@ public class PrinterProducer extends DefaultProducer {
         this.config = config;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
         InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);

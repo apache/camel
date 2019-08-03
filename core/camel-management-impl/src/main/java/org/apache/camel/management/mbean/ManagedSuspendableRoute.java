@@ -30,6 +30,7 @@ public class ManagedSuspendableRoute extends ManagedRoute implements ManagedSusp
         super(context, route);
     }
 
+    @Override
     public void suspend() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -37,6 +38,7 @@ public class ManagedSuspendableRoute extends ManagedRoute implements ManagedSusp
         context.getRouteController().suspendRoute(getRouteId());
     }
 
+    @Override
     public void suspend(long timeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -44,6 +46,7 @@ public class ManagedSuspendableRoute extends ManagedRoute implements ManagedSusp
         context.getRouteController().suspendRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 
+    @Override
     public void resume() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");

@@ -39,6 +39,7 @@ public class CXFGreeterEnrichTest extends AbstractCXFGreeterRouterTest {
         endpoint = Endpoint.publish(address, implementor); 
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEnrichRouterContext.xml");
     }

@@ -57,10 +57,12 @@ public class ConstantBeanHolder implements BeanHolder {
         return ObjectHelper.className(bean) + "(" + ObjectHelper.getIdentityHashCode(bean) + ")";
     }
 
+    @Override
     public Object getBean()  {
         return bean;
     }
 
+    @Override
     public Processor getProcessor() {
         if (this.processor == null) {
             this.processor = CamelContextHelper.convertTo(beanInfo.getCamelContext(), Processor.class, bean);
@@ -68,14 +70,17 @@ public class ConstantBeanHolder implements BeanHolder {
         return this.processor;
     }
 
+    @Override
     public boolean supportProcessor() {
         return true;
     }
 
+    @Override
     public BeanInfo getBeanInfo() {
         return beanInfo;
     }
 
+    @Override
     public BeanInfo getBeanInfo(Object bean) {
         return null;
     }

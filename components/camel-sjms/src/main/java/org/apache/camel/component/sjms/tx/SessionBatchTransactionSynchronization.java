@@ -126,6 +126,7 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
          * When the timer executes, either commits or rolls back the session
          * transaction.
          */
+        @Override
         public void run() {
             LOG.debug("Batch Transaction Timer expired");
             try {

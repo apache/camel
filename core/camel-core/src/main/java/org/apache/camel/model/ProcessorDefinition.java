@@ -728,6 +728,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param id  the id
      * @return the builder
      */
+    @Override
     public Type id(String id) {
         if (this instanceof OutputNode && getOutputs().isEmpty()) {
             // set id on this
@@ -3626,6 +3627,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     // Properties
     // -------------------------------------------------------------------------
+    @Override
     public ProcessorDefinition<?> getParent() {
         return parent;
     }
@@ -3663,6 +3665,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Returns a label to describe this node such as the expression if some kind of expression node
      */
+    @Override
     public String getLabel() {
         return "";
     }

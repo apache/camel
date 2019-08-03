@@ -51,6 +51,7 @@ public class CwComponent extends DefaultComponent {
         registerExtension(new CwComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         CwConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);

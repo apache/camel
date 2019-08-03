@@ -42,6 +42,7 @@ public class CamelQueueSender extends CamelMessageProducer implements QueueSende
      *             <CODE>QueueSender</CODE> due to some internal error.
      */
 
+    @Override
     public Queue getQueue() throws JMSException {
         return (Queue)super.getDestination();
     }
@@ -65,6 +66,7 @@ public class CamelQueueSender extends CamelMessageProducer implements QueueSende
      * @see javax.jms.MessageProducer#getPriority()
      */
 
+    @Override
     public void send(Queue queue, Message message) throws JMSException {
         super.send(queue, message);
     }
@@ -87,6 +89,7 @@ public class CamelQueueSender extends CamelMessageProducer implements QueueSende
      *             some internal error.
      */
 
+    @Override
     public void send(Queue queue, Message message, int deliveryMode, int priority, long timeToLive) throws JMSException {
         super.send(queue, message, deliveryMode, priority, timeToLive);
     }

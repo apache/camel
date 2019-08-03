@@ -62,6 +62,7 @@ public class DirectMessageProducerTest extends CamelTwitterTestSupport {
         assertThat(receivedTweet, is(tweet));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

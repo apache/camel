@@ -39,14 +39,17 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
 
     private static class MyGenericFileOperations implements GenericFileOperations<Object> {
 
+        @Override
         public void setEndpoint(GenericFileEndpoint<Object> endpoint) {
         }
 
+        @Override
         public boolean deleteFile(String name) throws GenericFileOperationFailedException {
             deleteCounter++;
             return false;
         }
 
+        @Override
         public boolean existsFile(String name) throws GenericFileOperationFailedException {
             existsCounter++;
             // The file name should be normalized
@@ -58,40 +61,50 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
             return existsCounter <= 1;
         }
 
+        @Override
         public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
             return false;
         }
 
+        @Override
         public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
             return false;
         }
 
+        @Override
         public boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
             return false;
         }
 
+        @Override
         public void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
             // No-op
         }
 
+        @Override
         public boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
             return false;
         }
 
+        @Override
         public String getCurrentDirectory() throws GenericFileOperationFailedException {
             return null;
         }
 
+        @Override
         public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         }
 
+        @Override
         public void changeToParentDirectory() throws GenericFileOperationFailedException {
         }
 
+        @Override
         public List<Object> listFiles() throws GenericFileOperationFailedException {
             return null;
         }
 
+        @Override
         public List<Object> listFiles(String path) throws GenericFileOperationFailedException {
             return null;
         }

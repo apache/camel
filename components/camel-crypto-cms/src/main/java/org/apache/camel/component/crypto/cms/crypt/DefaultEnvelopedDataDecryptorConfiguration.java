@@ -110,6 +110,7 @@ public class DefaultEnvelopedDataDecryptorConfiguration extends DefaultCryptoCms
         }
     }
 
+    @Override
     public DefaultEnvelopedDataDecryptorConfiguration copy() {
         try {
             return (DefaultEnvelopedDataDecryptorConfiguration)clone();

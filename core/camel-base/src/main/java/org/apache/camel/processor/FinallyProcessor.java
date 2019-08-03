@@ -58,14 +58,17 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
         return "Finally{" + getProcessor() + "}";
     }
 
+    @Override
     public String getTraceLabel() {
         return "finally";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

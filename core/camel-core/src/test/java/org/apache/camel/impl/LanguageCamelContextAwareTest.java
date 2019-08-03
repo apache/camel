@@ -51,18 +51,22 @@ public class LanguageCamelContextAwareTest extends ContextTestSupport {
 
         private CamelContext camelContext;
 
+        @Override
         public CamelContext getCamelContext() {
             return camelContext;
         }
 
+        @Override
         public void setCamelContext(CamelContext camelContext) {
             this.camelContext = camelContext;
         }
 
+        @Override
         public Predicate createPredicate(String expression) {
             return null;
         }
 
+        @Override
         public Expression createExpression(String expression) {
             return null;
         }

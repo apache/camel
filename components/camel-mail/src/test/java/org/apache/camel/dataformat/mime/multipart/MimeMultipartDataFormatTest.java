@@ -49,6 +49,7 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     private Exchange exchange;
     private AttachmentMessage in;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

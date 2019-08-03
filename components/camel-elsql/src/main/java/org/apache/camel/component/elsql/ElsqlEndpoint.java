@@ -169,6 +169,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         this.resourceUri = resourceUri;
     }
 
+    @Override
     public DataSource getDataSource() {
         return dataSource;
     }
@@ -176,6 +177,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     /**
      * Sets the DataSource to use to communicate with the database.
      */
+    @Override
     public void setDataSource(final DataSource dataSource) {
         this.dataSource = dataSource;
     }

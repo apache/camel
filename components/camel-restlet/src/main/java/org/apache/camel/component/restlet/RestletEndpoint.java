@@ -109,12 +109,14 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
         return exchange;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         RestletConsumer answer = new RestletConsumer(this, processor);
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new RestletProducer(this);
     }
@@ -219,6 +221,7 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
         if (restletBinding instanceof HeaderFilterStrategyAware) {
@@ -226,6 +229,7 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
         }
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }

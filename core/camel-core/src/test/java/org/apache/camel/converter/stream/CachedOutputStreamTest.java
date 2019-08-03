@@ -51,6 +51,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         return context;
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

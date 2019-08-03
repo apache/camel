@@ -38,6 +38,7 @@ public class DataOutInterceptor extends AbstractOutDatabindingInterceptor {
         super(Phase.MARSHAL);
     }
 
+    @Override
     public void handleMessage(Message message) throws Fault {
         XMLStreamWriter xmlWriter = getXMLStreamWriter(message);
         try {

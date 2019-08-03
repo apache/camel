@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 //START SNIPPET: creditAgency
 public class CreditAgencyProcessor implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
         Random rand = new Random();

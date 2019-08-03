@@ -29,6 +29,7 @@ public class SelectCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         SelectRequest request = new SelectRequest()
             .withSelectExpression(determineSelectExpression())

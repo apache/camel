@@ -100,6 +100,7 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
         this.terminationTimeout = terminationTimeout;
     }
 
+    @Override
     public void start() {
         // local cache
         accessToken = session.getAccessToken();

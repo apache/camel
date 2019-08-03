@@ -75,18 +75,22 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Came
         this.timeout = timeout;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -345,6 +349,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Came
         return "PollEnrich[" + expression + "]";
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (consumerCache == null) {
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
@@ -357,16 +362,19 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Came
         ServiceHelper.startService(consumerCache, aggregationStrategy);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(aggregationStrategy, consumerCache);
     }
 
+    @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(aggregationStrategy, consumerCache);
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (newExchange != null) {
                 copyResultsPreservePattern(oldExchange, newExchange);

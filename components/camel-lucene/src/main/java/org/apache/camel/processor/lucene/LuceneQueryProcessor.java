@@ -43,6 +43,7 @@ public class LuceneQueryProcessor implements Processor {
         this.setMaxNumberOfHits(maxNumberOfHits);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Hits hits;
 

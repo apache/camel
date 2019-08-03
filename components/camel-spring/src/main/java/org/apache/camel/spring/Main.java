@@ -184,6 +184,7 @@ public class Main extends org.apache.camel.main.MainSupport {
         }
     }
 
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
         if (additionalApplicationContext != null) {
@@ -196,6 +197,7 @@ public class Main extends org.apache.camel.main.MainSupport {
         }
     }
 
+    @Override
     protected ProducerTemplate findOrCreateCamelTemplate() {
         String[] names = getApplicationContext().getBeanNamesForType(ProducerTemplate.class);
         if (names != null && names.length > 0) {

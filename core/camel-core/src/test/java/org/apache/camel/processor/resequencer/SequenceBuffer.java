@@ -40,6 +40,7 @@ public class SequenceBuffer<E> implements SequenceSender<E> {
         return queue.poll(timeout, TimeUnit.MILLISECONDS);
     }
     
+    @Override
     public void sendElement(E o) throws Exception {
         queue.put(o);
     }

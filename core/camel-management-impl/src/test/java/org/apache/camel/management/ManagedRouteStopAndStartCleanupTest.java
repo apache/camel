@@ -33,6 +33,7 @@ import static org.awaitility.Awaitility.await;
  */
 public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStartTest {
 
+    @Override
     @Test
     public void testStopAndStartRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)

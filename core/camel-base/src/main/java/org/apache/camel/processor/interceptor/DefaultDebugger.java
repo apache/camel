@@ -97,6 +97,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         this.camelContext = camelContext;
     }
 
+    @Override
     public void addBreakpoint(Breakpoint breakpoint) {
         breakpoints.add(new BreakpointConditions(breakpoint));
     }

@@ -53,6 +53,7 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
         super(uri, component);
     }
 
+    @Override
     public List<Exchange> getExchanges() {
         if (exchanges == null) {
             exchanges = createExchangeList();
@@ -60,6 +61,7 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
         return exchanges;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new DefaultProducer(this) {
             public void process(Exchange exchange) throws Exception {
@@ -68,6 +70,7 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
         };
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         this.onExchangeProcessor = processor;
 

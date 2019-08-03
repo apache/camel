@@ -53,94 +53,117 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     private final Set<SpoolRule> spoolRules = new LinkedHashSet<>();
     private boolean anySpoolRules;
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
+    @Override
     public void setSpoolDirectory(String path) {
         this.spoolDirectoryName = path;
     }
 
+    @Override
     public void setSpoolDirectory(File path) {
         this.spoolDirectory = path;
     }
 
+    @Override
     public File getSpoolDirectory() {
         return spoolDirectory;
     }
 
+    @Override
     public long getSpoolThreshold() {
         return spoolThreshold;
     }
 
+    @Override
     public int getSpoolUsedHeapMemoryThreshold() {
         return spoolUsedHeapMemoryThreshold;
     }
 
+    @Override
     public void setSpoolUsedHeapMemoryThreshold(int spoolHeapMemoryWatermarkThreshold) {
         this.spoolUsedHeapMemoryThreshold = spoolHeapMemoryWatermarkThreshold;
     }
 
+    @Override
     public SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit() {
         return spoolUsedHeapMemoryLimit;
     }
 
+    @Override
     public void setSpoolUsedHeapMemoryLimit(SpoolUsedHeapMemoryLimit spoolUsedHeapMemoryLimit) {
         this.spoolUsedHeapMemoryLimit = spoolUsedHeapMemoryLimit;
     }
 
+    @Override
     public void setSpoolThreshold(long spoolThreshold) {
         this.spoolThreshold = spoolThreshold;
     }
 
+    @Override
     public String getSpoolCipher() {
         return spoolCipher;
     }
 
+    @Override
     public void setSpoolCipher(String spoolCipher) {
         this.spoolCipher = spoolCipher;
     }
 
+    @Override
     public int getBufferSize() {
         return bufferSize;
     }
 
+    @Override
     public void setBufferSize(int bufferSize) {
         this.bufferSize = bufferSize;
     }
 
+    @Override
     public boolean isRemoveSpoolDirectoryWhenStopping() {
         return removeSpoolDirectoryWhenStopping;
     }
 
+    @Override
     public void setRemoveSpoolDirectoryWhenStopping(boolean removeSpoolDirectoryWhenStopping) {
         this.removeSpoolDirectoryWhenStopping = removeSpoolDirectoryWhenStopping;
     }
 
+    @Override
     public boolean isAnySpoolRules() {
         return anySpoolRules;
     }
 
+    @Override
     public void setAnySpoolRules(boolean anySpoolTasks) {
         this.anySpoolRules = anySpoolTasks;
     }
 
+    @Override
     public Statistics getStatistics() {
         return statistics;
     }
 
+    @Override
     public boolean shouldSpoolCache(long length) {
         if (!enabled || spoolRules.isEmpty()) {
             return false;
@@ -170,10 +193,12 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         return answer;
     }
 
+    @Override
     public void addSpoolRule(SpoolRule rule) {
         spoolRules.add(rule);
     }
 
+    @Override
     public StreamCache cache(Exchange exchange) {
         Message message = exchange.getMessage();
         StreamCache cache = message.getBody(StreamCache.class);
@@ -308,6 +333,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
     private final class FixedThresholdSpoolRule implements SpoolRule {
 
+        @Override
         public boolean shouldSpoolCache(long length) {
             if (spoolThreshold > 0 && length > spoolThreshold) {
                 log.trace("Should spool cache fixed threshold {} > {} -> true", length, spoolThreshold);
@@ -316,6 +342,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
             return false;
         }
 
+        @Override
         public String toString() {
             if (spoolThreshold < 1024) {
                 return "Spool > " + spoolThreshold + " bytes body size";
@@ -335,6 +362,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
             this.heapUsage = ManagementFactory.getMemoryMXBean();
         }
 
+        @Override
         public boolean shouldSpoolCache(long length) {
             if (spoolUsedHeapMemoryThreshold > 0) {
                 // must use double to calculate with decimals for the percentage
@@ -359,6 +387,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
             return false;
         }
 
+        @Override
         public String toString() {
             return "Spool > " + spoolUsedHeapMemoryThreshold + "% used of " + limit + " heap memory";
         }
@@ -389,30 +418,37 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
             spoolAverageSize = spoolSize / spoolCounter;
         }
 
+        @Override
         public long getCacheMemoryCounter() {
             return memoryCounter;
         }
 
+        @Override
         public long getCacheMemorySize() {
             return memorySize;
         }
 
+        @Override
         public long getCacheMemoryAverageSize() {
             return memoryAverageSize;
         }
 
+        @Override
         public long getCacheSpoolCounter() {
             return spoolCounter;
         }
 
+        @Override
         public long getCacheSpoolSize() {
             return spoolSize;
         }
 
+        @Override
         public long getCacheSpoolAverageSize() {
             return spoolAverageSize;
         }
 
+        @Override
         public synchronized void reset() {
             memoryCounter = 0;
             memorySize = 0;
@@ -422,14 +458,17 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
             spoolAverageSize = 0;
         }
 
+        @Override
         public boolean isStatisticsEnabled() {
             return statisticsEnabled;
         }
 
+        @Override
         public void setStatisticsEnabled(boolean statisticsEnabled) {
             this.statisticsEnabled = statisticsEnabled;
         }
 
+        @Override
         public String toString() {
             return String.format("[memoryCounter=%s, memorySize=%s, memoryAverageSize=%s, spoolCounter=%s, spoolSize=%s, spoolAverageSize=%s]",
                     memoryCounter, memorySize, memoryAverageSize, spoolCounter, spoolSize, spoolAverageSize);

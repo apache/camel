@@ -29,6 +29,7 @@ public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulSer
     @BindToRegistry("service")
     ServiceComponent comp = new ServiceComponent();
 
+    @Override
     protected Map<String, String> getMetadata() {
         return new HashMap<String, String>() {
             {

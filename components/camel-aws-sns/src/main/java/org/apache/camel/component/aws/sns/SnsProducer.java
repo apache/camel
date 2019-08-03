@@ -48,6 +48,7 @@ public class SnsProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         PublishRequest request = new PublishRequest();
 

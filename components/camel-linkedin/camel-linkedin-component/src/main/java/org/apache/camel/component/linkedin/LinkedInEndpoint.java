@@ -73,10 +73,12 @@ public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, Linke
         this.configuration = endpointConfiguration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new LinkedInProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // make sure inBody is not set for consumers
         if (inBody != null) {
@@ -93,6 +95,7 @@ public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, Linke
         return LinkedInPropertiesHelper.getHelper();
     }
 
+    @Override
     protected String getThreadProfileName() {
         return LinkedInConstants.THREAD_PROFILE_NAME;
     }

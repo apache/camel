@@ -142,6 +142,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
         }
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         disableJMX();

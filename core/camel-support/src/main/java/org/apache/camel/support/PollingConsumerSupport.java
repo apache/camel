@@ -40,6 +40,7 @@ public abstract class PollingConsumerSupport extends ServiceSupport implements P
         return "PollingConsumer on " + endpoint;
     }
 
+    @Override
     public Endpoint getEndpoint() {
         return endpoint;
     }

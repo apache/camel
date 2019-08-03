@@ -47,6 +47,7 @@ public class XQueryNullHeaderTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/xquery/xqueryExampleTest.xml");
     }

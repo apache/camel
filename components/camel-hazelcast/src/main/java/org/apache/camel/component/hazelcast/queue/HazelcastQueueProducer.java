@@ -42,6 +42,7 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
         this.queue = hazelcastInstance.getQueue(queueName);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         
         Map<String, Object> headers = exchange.getIn().getHeaders();

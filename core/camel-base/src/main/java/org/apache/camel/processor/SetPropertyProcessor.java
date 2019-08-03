@@ -65,14 +65,17 @@ public class SetPropertyProcessor extends AsyncProcessorSupport implements Trace
         return "SetProperty(" + propertyName + ", " + expression + ")";
     }
 
+    @Override
     public String getTraceLabel() {
         return "setProperty[" + propertyName + ", " + expression + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

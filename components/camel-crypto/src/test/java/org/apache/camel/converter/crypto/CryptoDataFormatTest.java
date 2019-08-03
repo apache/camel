@@ -140,6 +140,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
         }
     }
 
+    @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {

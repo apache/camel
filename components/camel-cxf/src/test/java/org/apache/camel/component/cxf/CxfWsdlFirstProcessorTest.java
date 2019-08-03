@@ -28,6 +28,7 @@ public class CxfWsdlFirstProcessorTest extends AbstractCxfWsdlFirstTest {
         return true;
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstProcessor.xml");
     }

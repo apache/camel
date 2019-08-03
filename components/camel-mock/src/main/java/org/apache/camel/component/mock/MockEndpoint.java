@@ -279,14 +279,17 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
     }
 
+    @Override
     public List<Exchange> getExchanges() {
         return getReceivedExchanges();
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot consume from this endpoint");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new DefaultAsyncProducer(this) {
             public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -1457,6 +1460,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     // Implementation methods
     // -------------------------------------------------------------------------
+    @Override
     protected void doInit() {
         expectedCount = -1;
         counter = 0;
@@ -1706,6 +1710,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return true;
     }
 
+    @Override
     public boolean isLenientProperties() {
         return true;
     }

@@ -60,6 +60,7 @@ public class DetourTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();        
     }    
     
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         controlBean = new ControlBean();
@@ -67,6 +68,7 @@ public class DetourTest extends ContextTestSupport {
         return jndi;
     }    
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

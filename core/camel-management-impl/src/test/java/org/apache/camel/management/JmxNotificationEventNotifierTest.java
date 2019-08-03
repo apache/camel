@@ -124,6 +124,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
         
         private int eventCounter;
 
+        @Override
         public void handleNotification(Notification notification, Object handback) {
             log.debug("Get the notification : " + notification);
             eventCounter++;            

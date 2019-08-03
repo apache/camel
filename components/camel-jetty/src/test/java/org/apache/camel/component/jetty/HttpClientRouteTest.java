@@ -96,6 +96,7 @@ public class HttpClientRouteTest extends BaseJettyTest {
         assertEquals("Get a wrong response.", "test", exchange.getOut().getBody(String.class));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

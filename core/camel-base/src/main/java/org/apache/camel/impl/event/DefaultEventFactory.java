@@ -30,66 +30,82 @@ import org.apache.camel.spi.EventFactory;
  */
 public class DefaultEventFactory implements EventFactory {
 
+    @Override
     public CamelEvent createCamelContextStartingEvent(CamelContext context) {
         return new CamelContextStartingEvent(context);
     }
 
+    @Override
     public CamelEvent createCamelContextStartedEvent(CamelContext context) {
         return new CamelContextStartedEvent(context);
     }
 
+    @Override
     public CamelEvent createCamelContextStoppingEvent(CamelContext context) {
         return new CamelContextStoppingEvent(context);
     }
 
+    @Override
     public CamelEvent createCamelContextStoppedEvent(CamelContext context) {
         return new CamelContextStoppedEvent(context);
     }
 
+    @Override
     public CamelEvent createCamelContextStartupFailureEvent(CamelContext context, Throwable cause) {
         return new CamelContextStartupFailureEvent(context, cause);
     }
 
+    @Override
     public CamelEvent createCamelContextStopFailureEvent(CamelContext context, Throwable cause) {
         return new CamelContextStopFailureEvent(context, cause);
     }
 
+    @Override
     public CamelEvent createServiceStartupFailureEvent(CamelContext context, Object service, Throwable cause) {
         return new ServiceStartupFailureEvent(context, service, cause);
     }
 
+    @Override
     public CamelEvent createServiceStopFailureEvent(CamelContext context, Object service, Throwable cause) {
         return new ServiceStopFailureEvent(context, service, cause);
     }
 
+    @Override
     public CamelEvent createRouteStartedEvent(Route route) {
         return new RouteStartedEvent(route);
     }
 
+    @Override
     public CamelEvent createRouteStoppedEvent(Route route) {
         return new RouteStoppedEvent(route);
     }
 
+    @Override
     public CamelEvent createRouteAddedEvent(Route route) {
         return new RouteAddedEvent(route);
     }
 
+    @Override
     public CamelEvent createRouteRemovedEvent(Route route) {
         return new RouteRemovedEvent(route);
     }
 
+    @Override
     public CamelEvent createExchangeCreatedEvent(Exchange exchange) {
         return new ExchangeCreatedEvent(exchange);
     }
 
+    @Override
     public CamelEvent createExchangeCompletedEvent(Exchange exchange) {
         return new ExchangeCompletedEvent(exchange);
     }
 
+    @Override
     public CamelEvent createExchangeFailedEvent(Exchange exchange) {
         return new ExchangeFailedEvent(exchange);
     }
 
+    @Override
     public CamelEvent createExchangeFailureHandlingEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor
         Processor handler = failureHandler;
@@ -99,8 +115,9 @@ public class DefaultEventFactory implements EventFactory {
         return new ExchangeFailureHandlingEvent(exchange, handler, deadLetterChannel, deadLetterUri);
     }
 
+    @Override
     public CamelEvent createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler,
-                                                         boolean deadLetterChannel, String deadLetterUri) {
+                                                        boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor
         Processor handler = failureHandler;
         if (handler instanceof DelegateProcessor) {
@@ -109,46 +126,57 @@ public class DefaultEventFactory implements EventFactory {
         return new ExchangeFailureHandledEvent(exchange, handler, deadLetterChannel, deadLetterUri);
     }
 
+    @Override
     public CamelEvent createExchangeRedeliveryEvent(Exchange exchange, int attempt) {
         return new ExchangeRedeliveryEvent(exchange, attempt);
     }
 
+    @Override
     public CamelEvent createExchangeSendingEvent(Exchange exchange, Endpoint endpoint) {
         return new ExchangeSendingEvent(exchange, endpoint);
     }
 
+    @Override
     public CamelEvent createExchangeSentEvent(Exchange exchange, Endpoint endpoint, long timeTaken) {
         return new ExchangeSentEvent(exchange, endpoint, timeTaken);
     }
 
+    @Override
     public CamelEvent createStepStartedEvent(Exchange exchange, String stepId) {
         return new StepStartedEvent(exchange, stepId);
     }
 
+    @Override
     public CamelEvent createStepCompletedEvent(Exchange exchange, String stepId) {
         return new StepCompletedEvent(exchange, stepId);
     }
 
+    @Override
     public CamelEvent createStepFailedEvent(Exchange exchange, String stepId) {
         return new StepFailedEvent(exchange, stepId);
     }
 
+    @Override
     public CamelEvent createCamelContextSuspendingEvent(CamelContext context) {
         return new CamelContextSuspendingEvent(context);
     }
 
+    @Override
     public CamelEvent createCamelContextSuspendedEvent(CamelContext context) {
         return new CamelContextSuspendedEvent(context);
     }
 
+    @Override
     public CamelEvent createCamelContextResumingEvent(CamelContext context) {
         return new CamelContextResumingEvent(context);
     }
 
+    @Override
     public CamelEvent createCamelContextResumedEvent(CamelContext context) {
         return new CamelContextResumedEvent(context);
     }
 
+    @Override
     public CamelEvent createCamelContextResumeFailureEvent(CamelContext context, Throwable cause) {
         return new CamelContextResumeFailureEvent(context, cause);
     }

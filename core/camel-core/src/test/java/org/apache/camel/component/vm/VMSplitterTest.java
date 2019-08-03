@@ -26,6 +26,7 @@ import org.junit.Test;
 
 public class VMSplitterTest extends AbstractVmTestSupport {
     
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("splitterBean", new SplitWordsBean());

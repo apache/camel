@@ -48,6 +48,7 @@ public class SqlStoredDataSourceTest extends CamelTestSupport {
         return reg;
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

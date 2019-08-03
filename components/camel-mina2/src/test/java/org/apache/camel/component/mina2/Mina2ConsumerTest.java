@@ -50,6 +50,7 @@ public class Mina2ConsumerTest extends BaseMina2Test {
         // END SNIPPET: e4
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 

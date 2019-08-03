@@ -67,6 +67,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         return context;
     }
 
+    @Override
     public Object getInstance() {
         return processor;
     }
@@ -83,14 +84,17 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         return id;
     }
 
+    @Override
     public String getStepId() {
         return stepId;
     }
 
+    @Override
     public Integer getIndex() {
         return definition.getIndex();
     }
 
+    @Override
     public Boolean getSupportExtendedInformation() {
         return false;
     }
@@ -103,6 +107,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.route = route;
     }
 
+    @Override
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (processor instanceof StatefulService) {
@@ -114,14 +119,17 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         return ServiceStatus.Started.name();
     }
 
+    @Override
     public String getCamelId() {
         return context.getName();
     }
 
+    @Override
     public String getCamelManagementName() {
         return context.getManagementName();
     }
 
+    @Override
     public String getRouteId() {
         if (route != null) {
             return route.getId();
@@ -129,10 +137,12 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         return null;
     }
 
+    @Override
     public String getProcessorId() {
         return id;
     }
 
+    @Override
     public void start() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -140,6 +150,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         ServiceHelper.startService(getProcessor());
     }
 
+    @Override
     public void stop() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");

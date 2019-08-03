@@ -42,6 +42,7 @@ public class EndpointList extends CamelControllerImpl implements Action {
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean verbose;
 
+    @Override
     public Object execute() throws Exception {
         EndpointListCommand command = new EndpointListCommand(name, decode, verbose);
         return command.execute(this, System.out, System.err);

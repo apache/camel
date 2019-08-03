@@ -38,6 +38,7 @@ public class SlackConsumerTest extends CamelTestSupport {
     private String token;
     private String hook;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         token = System.getProperty("SLACK_TOKEN");

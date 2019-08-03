@@ -59,6 +59,7 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
         assertEquals("File should exists", true, file.exists());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

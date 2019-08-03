@@ -33,14 +33,17 @@ public class CamelHttpClient9 extends CamelHttpClient {
         super(transport, sslContextFactory);
     }
 
+    @Override
     protected boolean hasThreadPool() {
         return getExecutor() != null;
     }
 
+    @Override
     protected void setThreadPoolOrExecutor(Executor pool) {
         setExecutor(pool);
     }
     
+    @Override
     public void setProxy(String host, int port) {
         getProxyConfiguration().getProxies().add(new org.eclipse.jetty.client.HttpProxy(host, port));
     }

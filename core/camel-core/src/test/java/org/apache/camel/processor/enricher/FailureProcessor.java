@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 
 public class FailureProcessor implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         throw new RuntimeException("failed");
     }

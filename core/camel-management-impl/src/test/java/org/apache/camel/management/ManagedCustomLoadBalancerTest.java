@@ -83,6 +83,7 @@ public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
 
     public static class MyLoadBalancer extends LoadBalancerSupport {
 
+        @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             String body = exchange.getIn().getBody(String.class);
             try {

@@ -23,11 +23,13 @@ public class StatisticDelta extends Statistic {
     private final AtomicLong value = new AtomicLong();
     private final AtomicLong lastValue = new AtomicLong();
 
+    @Override
     public void updateValue(long newValue) {
         lastValue.set(value.longValue());
         value.set(newValue);
     }
 
+    @Override
     public long getValue() {
         return value.get() - lastValue.get();
     }
@@ -43,6 +45,7 @@ public class StatisticDelta extends Statistic {
         return true;
     }
 
+    @Override
     public void reset() {
         value.set(0);
         lastValue.set(0);

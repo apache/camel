@@ -36,22 +36,27 @@ public final class SourceCache extends StringSource implements StreamCache {
         this.length = data.length();
     }
 
+    @Override
     public void reset() {
         // do nothing here
     }
 
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         IOHelper.copy(getInputStream(), os);
     }
 
+    @Override
     public StreamCache copy(Exchange exchange) throws IOException {
         return new SourceCache(getText());
     }
 
+    @Override
     public boolean inMemory() {
         return true;
     }
 
+    @Override
     public long length() {
         return length;
     }

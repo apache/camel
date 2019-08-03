@@ -48,6 +48,7 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
         this.assembler = new MBeanInfoAssembler();
     }
 
+    @Override
     public ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException {
         ModelMBeanInfo mbi = null;
         ModelMBeanInfo standardMbi = null;

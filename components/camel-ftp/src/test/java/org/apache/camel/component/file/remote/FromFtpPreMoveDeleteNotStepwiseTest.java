@@ -21,6 +21,7 @@ package org.apache.camel.component.file.remote;
  */
 public class FromFtpPreMoveDeleteNotStepwiseTest extends FromFtpPreMoveDeleteTest {
 
+    @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&preMove=work&delete=true&stepwise=false";
     }

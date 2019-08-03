@@ -36,12 +36,14 @@ public abstract class Jt400SecureTestSupport extends CamelTestSupport {
     protected Jt400SecureTestSupport() {
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         connectionPool = new MockAS400SecureConnectionPool();
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

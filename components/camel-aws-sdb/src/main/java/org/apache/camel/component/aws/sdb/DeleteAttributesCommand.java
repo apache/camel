@@ -30,6 +30,7 @@ public class DeleteAttributesCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         DeleteAttributesRequest request = new DeleteAttributesRequest()
             .withDomainName(determineDomainName())

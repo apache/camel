@@ -38,6 +38,7 @@ public class JcloudsComponent extends DefaultComponent {
     public JcloudsComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String[] uriParts = remaining.split(JcloudsConstants.DELIMETER);
         if (uriParts.length != 2) {

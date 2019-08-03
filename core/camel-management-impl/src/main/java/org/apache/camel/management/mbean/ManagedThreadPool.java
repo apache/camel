@@ -56,66 +56,82 @@ public class ManagedThreadPool implements ManagedThreadPoolMBean {
         return threadPool;
     }
 
+    @Override
     public String getCamelId() {
         return camelContext.getName();
     }
 
+    @Override
     public String getCamelManagementName() {
         return camelContext.getManagementName();
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public String getSourceId() {
         return sourceId;
     }
 
+    @Override
     public String getRouteId() {
         return routeId;
     }
 
+    @Override
     public String getThreadPoolProfileId() {
         return threadPoolProfileId;
     }
 
+    @Override
     public int getCorePoolSize() {
         return threadPool.getCorePoolSize();
     }
 
+    @Override
     public void setCorePoolSize(int corePoolSize) {
         threadPool.setCorePoolSize(corePoolSize);
     }
 
+    @Override
     public int getPoolSize() {
         return threadPool.getPoolSize();
     }
 
+    @Override
     public int getMaximumPoolSize() {
         return threadPool.getMaximumPoolSize();
     }
 
+    @Override
     public void setMaximumPoolSize(int maximumPoolSize) {
         threadPool.setMaximumPoolSize(maximumPoolSize);
     }
 
+    @Override
     public int getLargestPoolSize() {
         return threadPool.getLargestPoolSize();
     }
 
+    @Override
     public int getActiveCount() {
         return threadPool.getActiveCount();
     }
 
+    @Override
     public long getTaskCount() {
         return threadPool.getTaskCount();
     }
 
+    @Override
     public long getCompletedTaskCount() {
         return threadPool.getCompletedTaskCount();
     }
 
+    @Override
     public long getTaskQueueSize() {
         if (threadPool.getQueue() != null) {
             return threadPool.getQueue().size();
@@ -124,6 +140,7 @@ public class ManagedThreadPool implements ManagedThreadPoolMBean {
         }
     }
 
+    @Override
     public boolean isTaskQueueEmpty() {
         if (threadPool.getQueue() != null) {
             return threadPool.getQueue().isEmpty();
@@ -132,30 +149,37 @@ public class ManagedThreadPool implements ManagedThreadPoolMBean {
         }
     }
 
+    @Override
     public long getKeepAliveTime() {
         return threadPool.getKeepAliveTime(TimeUnit.SECONDS);
     }
 
+    @Override
     public void setKeepAliveTime(long keepAliveTimeInSeconds) {
         threadPool.setKeepAliveTime(keepAliveTimeInSeconds, TimeUnit.SECONDS);
     }
 
+    @Override
     public boolean isAllowCoreThreadTimeout() {
         return threadPool.allowsCoreThreadTimeOut();
     }
 
+    @Override
     public void setAllowCoreThreadTimeout(boolean allowCoreThreadTimeout) {
         threadPool.allowCoreThreadTimeOut(allowCoreThreadTimeout);
     }
 
+    @Override
     public boolean isShutdown() {
         return threadPool.isShutdown();
     }
 
+    @Override
     public void purge() {
         threadPool.purge();
     }
 
+    @Override
     public int getTaskQueueRemainingCapacity() {
         if (threadPool.getQueue() != null) {
             return threadPool.getQueue().remainingCapacity();

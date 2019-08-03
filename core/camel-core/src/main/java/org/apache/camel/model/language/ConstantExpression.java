@@ -40,6 +40,7 @@ public class ConstantExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    @Override
     public String getLanguage() {
         return "constant";
     }

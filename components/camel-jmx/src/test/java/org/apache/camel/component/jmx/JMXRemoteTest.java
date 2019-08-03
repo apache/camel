@@ -44,6 +44,7 @@ public class JMXRemoteTest extends SimpleBeanFixture {
     JMXConnectorServer connector;
     Registry registry;
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

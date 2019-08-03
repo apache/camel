@@ -29,6 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringAopClassLevelCamelBeanTest extends SpringTestSupport {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/aop/SpringAopClassLevelCamelBeanTest.xml");
     }

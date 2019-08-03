@@ -481,6 +481,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             this.endpointKey = endpointKey;
         }
 
+        @Override
         public Thread newThread(Runnable r) {
             Thread timeoutThread = Executors.defaultThreadFactory().newThread(r);
 

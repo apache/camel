@@ -35,6 +35,7 @@ public class ElSqlProducerBatchTest extends CamelTestSupport {
     @BindToRegistry("dataSource")
     private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

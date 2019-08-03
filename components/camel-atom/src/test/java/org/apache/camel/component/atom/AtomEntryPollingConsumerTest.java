@@ -56,6 +56,7 @@ public class AtomEntryPollingConsumerTest extends CamelTestSupport {
         registry.bind("myDate", df.parse("2007-11-13 14:35:00 +0100"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

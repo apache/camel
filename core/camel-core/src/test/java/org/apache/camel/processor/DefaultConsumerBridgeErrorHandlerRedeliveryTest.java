@@ -30,6 +30,7 @@ public class DefaultConsumerBridgeErrorHandlerRedeliveryTest extends DefaultCons
 
     protected final AtomicInteger redeliverCounter = new AtomicInteger();
 
+    @Override
     @Test
     public void testDefaultConsumerBridgeErrorHandler() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello World");

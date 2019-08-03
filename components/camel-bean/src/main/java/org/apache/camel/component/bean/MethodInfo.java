@@ -183,6 +183,7 @@ public class MethodInfo {
         }
     }
 
+    @Override
     public String toString() {
         return method.toString();
     }
@@ -579,6 +580,7 @@ public class MethodInfo {
             this.expressions = expressions;
         }
 
+        @Override
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             Object body = exchange.getIn().getBody();

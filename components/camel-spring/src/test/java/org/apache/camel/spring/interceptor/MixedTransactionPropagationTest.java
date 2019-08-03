@@ -34,6 +34,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
 
     protected JdbcTemplate jdbc;
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.xml");
@@ -102,6 +103,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Crocodile in Action'", Integer.class));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {

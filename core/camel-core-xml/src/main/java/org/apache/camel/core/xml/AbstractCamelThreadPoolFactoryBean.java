@@ -65,6 +65,7 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     @Metadata(description = "Whether to use a scheduled thread pool", defaultValue = "false")
     private Boolean scheduled;
 
+    @Override
     public ExecutorService getObject() throws Exception {
         int size = CamelContextHelper.parseInteger(getCamelContext(), poolSize);
         if (size <= 0) {
@@ -109,6 +110,7 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         return answer;
     }
 
+    @Override
     public Class<ExecutorService> getObjectType() {
         return ExecutorService.class;
     }

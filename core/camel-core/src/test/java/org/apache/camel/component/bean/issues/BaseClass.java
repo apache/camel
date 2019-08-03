@@ -18,6 +18,7 @@ package org.apache.camel.component.bean.issues;
 
 public class BaseClass implements MyMessageListener {
 
+    @Override
     public void onMessage(MyMessage message) {
         // noop
     }

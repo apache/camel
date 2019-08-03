@@ -82,6 +82,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         registry.bind("serviceBean", new CustomerService());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final Processor testProcessor = new TestProcessor();
         final Processor testProcessor2 = new TestProcessor2();
@@ -267,6 +268,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             
     }
     private static class TestProcessor extends AbstractTestProcessor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             Message inMessage = exchange.getIn();                        
             // Get the operation name from in message
@@ -289,6 +291,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             
     }
     private static class TestProcessor2 extends AbstractTestProcessor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             Message inMessage = exchange.getIn();                        
             // Get the operation name from in message
@@ -306,6 +309,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             
     }
     private static class TestProcessor3 extends AbstractTestProcessor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             UriInfo ui = exchange.getProperty(UriInfo.class.getName(), UriInfo.class);
             String path = ui.getPath();

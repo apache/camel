@@ -124,6 +124,7 @@ public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
     
     public static class RemoveRequestOutHeaderProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             List<?> headerList = (List<?>) exchange.getIn().getHeader(Header.HEADER_LIST);
             assertNotNull("We should get the header list.", headerList);

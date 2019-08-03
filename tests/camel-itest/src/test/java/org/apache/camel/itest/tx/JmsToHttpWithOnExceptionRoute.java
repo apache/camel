@@ -33,6 +33,7 @@ public class JmsToHttpWithOnExceptionRoute extends JmsToHttpRoute {
 
     private String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
+    @Override
     public void configure() throws Exception {
         port = AvailablePortFinder.getNextAvailable(8000);
 

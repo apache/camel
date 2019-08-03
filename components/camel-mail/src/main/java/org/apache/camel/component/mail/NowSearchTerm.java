@@ -116,6 +116,7 @@ public class NowSearchTerm extends ComparisonTerm {
         return true;
     }
     
+    @Override
     public int hashCode() {
         return comparison;
     }

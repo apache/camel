@@ -150,6 +150,7 @@ public class CxfPayload<T> {
         return nsMap;
     }
 
+    @Override
     public String toString() {
         // do not load or print the payload body etc as we do not want to load that into memory etc
         return super.toString();

@@ -46,6 +46,7 @@ public class Mina2ExchangeTimeOutTest extends BaseMina2Test {
         producer.stop();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 

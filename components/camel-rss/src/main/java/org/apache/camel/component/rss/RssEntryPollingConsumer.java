@@ -65,6 +65,7 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
         list = null;
     }
 
+    @Override
     protected EntryFilter createEntryFilter(Date lastUpdate) {
         return new UpdatedDateFilter(lastUpdate);
     }

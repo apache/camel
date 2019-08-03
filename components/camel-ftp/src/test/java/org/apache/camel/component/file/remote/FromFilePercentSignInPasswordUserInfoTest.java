@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 public class FromFilePercentSignInPasswordUserInfoTest extends FromFilePercentSignInPasswordTest {
 
+    @Override
     protected String getFtpUrl() {
         // the user info is not encoded, but we should be forgiving and allow the user to use
         // the user name and password out of the box as is

@@ -32,6 +32,7 @@ public class BankProcessor implements Processor {
         primeRate = 3.5;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
         Integer historyLength = exchange.getIn().getHeader(Constants.PROPERTY_HISTORYLENGTH, Integer.class);

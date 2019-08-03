@@ -89,6 +89,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
             + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         disableJMX();

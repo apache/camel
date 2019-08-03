@@ -67,10 +67,12 @@ public class DirectEndpoint extends DefaultEndpoint {
         this.consumers = consumers;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new DirectProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer answer = new DirectConsumer(this, processor);
         configureConsumer(answer);

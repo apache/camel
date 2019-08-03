@@ -60,6 +60,7 @@ public class JmsProduerConcurrentTest extends CamelTestSupport {
         executor.shutdownNow();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

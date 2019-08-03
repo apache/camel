@@ -48,6 +48,7 @@ public class JingValidator extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Jaxp11XMLReaderCreator xmlCreator = new Jaxp11XMLReaderCreator();
         DefaultValidationErrorHandler errorHandler = new DefaultValidationErrorHandler();

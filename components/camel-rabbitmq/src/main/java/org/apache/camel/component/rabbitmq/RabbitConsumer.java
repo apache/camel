@@ -205,6 +205,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
      *
      * @see Consumer#handleConsumeOk
      */
+    @Override
     public void handleConsumeOk(String consumerTag) {
         this.consumerTag = consumerTag;
     }
@@ -224,6 +225,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
      * @param consumerTag
      *            the defined consumer tag (client- or server-generated)
      */
+    @Override
     public void handleCancelOk(String consumerTag) {
         // no work to do
         log.debug("Received cancelOk signal on the rabbitMQ channel");
@@ -235,6 +237,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
      * @param consumerTag
      *            the defined consumer tag (client- or server-generated)
      */
+    @Override
     public void handleCancel(String consumerTag) throws IOException {
         log.debug("Received cancel signal on the rabbitMQ channel.");
 
@@ -256,6 +259,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
     /**
      * No-op implementation of {@link Consumer#handleShutdownSignal}.
      */
+    @Override
     public void handleShutdownSignal(String consumerTag, ShutdownSignalException sig) {
         log.info("Received shutdown signal on the rabbitMQ channel");
 
@@ -288,6 +292,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
     /**
      * No-op implementation of {@link Consumer#handleRecoverOk}.
      */
+    @Override
     public void handleRecoverOk(String consumerTag) {
         // no work to do
         log.debug("Received recover ok signal on the rabbitMQ channel");

@@ -281,16 +281,19 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
 
     protected abstract RuntimeCamelCatalog createRuntimeCamelCatalog();
 
+    @Override
     protected void doStartStandardServices() {
         super.doStartStandardServices();
         getExtension(RuntimeCamelCatalog.class);
     }
 
+    @Override
     protected void doStartEagerServices() {
         getExtension(HealthCheckRegistry.class);
         super.doStartEagerServices();
     }
 
+    @Override
     protected void bindDataFormats() throws Exception {
         // eager lookup data formats and bind to registry so the dataformats can
         // be looked up and used
@@ -304,6 +307,7 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         }
     }
 
+    @Override
     protected synchronized void shutdownRouteService(BaseRouteService routeService) throws Exception {
         if (routeService instanceof RouteService) {
             model.getRouteDefinitions().remove(((RouteService) routeService).getRouteDefinition());
@@ -311,6 +315,7 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         super.shutdownRouteService(routeService);
     }
 
+    @Override
     protected boolean isStreamCachingInUse() throws Exception {
         boolean streamCachingInUse = super.isStreamCachingInUse();
         if (!streamCachingInUse) {

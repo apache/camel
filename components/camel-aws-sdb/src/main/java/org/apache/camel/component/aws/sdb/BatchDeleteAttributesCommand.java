@@ -30,6 +30,7 @@ public class BatchDeleteAttributesCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         BatchDeleteAttributesRequest request = new BatchDeleteAttributesRequest()
             .withDomainName(determineDomainName())

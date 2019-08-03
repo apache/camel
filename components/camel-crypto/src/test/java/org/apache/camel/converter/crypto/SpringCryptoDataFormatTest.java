@@ -36,6 +36,7 @@ public class SpringCryptoDataFormatTest extends CryptoDataFormatTest {
         return new RouteBuilder[] {};
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         KeyGenerator generator = KeyGenerator.getInstance("DES");
         deskey = generator.generateKey();

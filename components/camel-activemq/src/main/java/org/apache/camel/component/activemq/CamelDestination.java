@@ -51,42 +51,51 @@ public class CamelDestination implements CustomDestination, CamelContextAware {
         this.uri = uri;
     }
 
+    @Override
     public String toString() {
         return uri.toString();
     }
 
     // CustomDestination interface
     // -----------------------------------------------------------------------
+    @Override
     public MessageConsumer createConsumer(ActiveMQSession session, String messageSelector) {
         return createConsumer(session, messageSelector, false);
     }
 
+    @Override
     public MessageConsumer createConsumer(ActiveMQSession session, String messageSelector, boolean noLocal) {
         return new CamelMessageConsumer(this, resolveEndpoint(session), session, messageSelector, noLocal);
     }
 
+    @Override
     public TopicSubscriber createSubscriber(ActiveMQSession session, String messageSelector, boolean noLocal) {
         return createDurableSubscriber(session, null, messageSelector, noLocal);
     }
 
+    @Override
     public TopicSubscriber createDurableSubscriber(ActiveMQSession session, String name, String messageSelector, boolean noLocal) {
         throw new UnsupportedOperationException("This destination is not a Topic: " + this);
     }
 
+    @Override
     public QueueReceiver createReceiver(ActiveMQSession session, String messageSelector) {
         throw new UnsupportedOperationException("This destination is not a Queue: " + this);
     }
 
     // Producers
     // -----------------------------------------------------------------------
+    @Override
     public MessageProducer createProducer(ActiveMQSession session) throws JMSException {
         return new CamelMessageProducer(this, resolveEndpoint(session), session);
     }
 
+    @Override
     public TopicPublisher createPublisher(ActiveMQSession session) throws JMSException {
         throw new UnsupportedOperationException("This destination is not a Topic: " + this);
     }
 
+    @Override
     public QueueSender createSender(ActiveMQSession session) throws JMSException {
         throw new UnsupportedOperationException("This destination is not a Queue: " + this);
     }
@@ -110,10 +119,12 @@ public class CamelDestination implements CustomDestination, CamelContextAware {
         this.endpoint = endpoint;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

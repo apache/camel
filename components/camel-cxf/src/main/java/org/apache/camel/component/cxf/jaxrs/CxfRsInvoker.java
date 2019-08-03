@@ -51,6 +51,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
         this.cxfRsConsumer = consumer;
     }
         
+    @Override
     protected Object performInvocation(Exchange cxfExchange, final Object serviceObject, Method method,
                                        Object[] paramArray) throws Exception {
         Object response = null;

@@ -47,6 +47,7 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         return camelContext.getManagementStrategy();
     }
 
+    @Override
     public <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type) {
         // jmx must be enabled
         if (getManagementStrategy().getManagementAgent() == null) {
@@ -70,6 +71,7 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         return null;
     }
 
+    @Override
     public ManagedStepMBean getManagedStep(String id) {
         // jmx must be enabled
         if (getManagementStrategy().getManagementAgent() == null) {
@@ -93,6 +95,7 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         return null;
     }
 
+    @Override
     public <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type) {
         // jmx must be enabled
         if (getManagementStrategy().getManagementAgent() == null) {
@@ -113,6 +116,7 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         return null;
     }
 
+    @Override
     public ManagedCamelContextMBean getManagedCamelContext() {
         // jmx must be enabled
         if (getManagementStrategy().getManagementAgent() == null) {

@@ -42,6 +42,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsTypeConverterIssueTest extends CamelTestSupport {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -99,6 +100,7 @@ public class JmsTypeConverterIssueTest extends CamelTestSupport {
     }
 
     private static class FixateHeaderValuesProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             String id = exchange.getIn().getHeader("agentId", String.class);
             exchange.getIn().setHeader("agentId", id);
@@ -106,6 +108,7 @@ public class JmsTypeConverterIssueTest extends CamelTestSupport {
     }
 
     private static class ReadLocalFile implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
             exchange.getIn().setBody(new File(filename));
@@ -113,6 +116,7 @@ public class JmsTypeConverterIssueTest extends CamelTestSupport {
     }
 
     private static class FilterProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             Document document = exchange.getIn().getBody(Document.class);
             assertNotNull("Should be able to convert to XML Document", document);

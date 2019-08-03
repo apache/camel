@@ -35,6 +35,7 @@ public class EtcdTestSupport extends CamelTestSupport {
         }
     };
 
+    @Override
     public boolean isCreateCamelContextPerClass() {
         return false;
     }

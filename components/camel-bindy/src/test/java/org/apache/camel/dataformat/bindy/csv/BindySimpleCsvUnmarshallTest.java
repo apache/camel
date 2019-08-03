@@ -137,6 +137,7 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
 
+        @Override
         public void configure() {
             // from("file://src/test/data?move=./target/done").unmarshal(camelDataFormat).to("mock:result");
 

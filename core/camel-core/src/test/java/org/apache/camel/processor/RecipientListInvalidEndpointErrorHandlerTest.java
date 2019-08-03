@@ -32,6 +32,7 @@ public class RecipientListInvalidEndpointErrorHandlerTest extends ContextTestSup
         assertMockEndpointsSatisfied();
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

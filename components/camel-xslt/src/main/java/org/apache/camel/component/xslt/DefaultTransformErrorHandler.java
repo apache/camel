@@ -41,30 +41,36 @@ public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener
         this.exchange = exchange;
     }
 
+    @Override
     public void error(SAXParseException exception) throws SAXException {
         exchange.setProperty(Exchange.XSLT_ERROR, exception);
         throw exception;
     }
 
+    @Override
     public void fatalError(SAXParseException exception) throws SAXException {
         exchange.setProperty(Exchange.XSLT_FATAL_ERROR, exception);
         throw exception;
     }
 
+    @Override
     public void warning(SAXParseException exception) throws SAXException {
         exchange.setProperty(Exchange.XSLT_WARNING, exception);
     }
 
+    @Override
     public void error(TransformerException exception) throws TransformerException {
         exchange.setProperty(Exchange.XSLT_ERROR, exception);
         throw exception;
     }
 
+    @Override
     public void fatalError(TransformerException exception) throws TransformerException {
         exchange.setProperty(Exchange.XSLT_FATAL_ERROR, exception);
         throw exception;
     }
 
+    @Override
     public void warning(TransformerException exception) throws TransformerException {
         exchange.setProperty(Exchange.XSLT_WARNING, exception);
     }

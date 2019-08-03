@@ -60,6 +60,7 @@ public class PojoSenderTest extends SpringTestSupport {
         mySender = getMandatoryBean(MySender.class, "mySender");
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/pojoSender.xml");
     }

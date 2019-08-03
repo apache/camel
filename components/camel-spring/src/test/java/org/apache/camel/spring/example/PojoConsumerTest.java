@@ -43,6 +43,7 @@ public class PojoConsumerTest extends SpringTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/pojoConsumer.xml");
     }

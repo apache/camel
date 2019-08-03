@@ -46,12 +46,14 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
     // Builder methods
     // -------------------------------------------------------------------------
 
+    @Override
     public MockValueBuilder expression(Expression expression) {
         // must override this method as we provide null in the constructor
         super.expression(expression);
         return new PredicateValueBuilder(expression);
     }
 
+    @Override
     public MockValueBuilder language(ExpressionFactory expression) {
         // must override this method as we provide null in the constructor
         super.expression(expression.createExpression(mock.getCamelContext()));
@@ -119,6 +121,7 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
 
     @SuppressWarnings("unchecked")
     private final class PreviousTimestamp implements Expression {
+        @Override
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             Date answer = null;
             if (currentIndex > 0 && mock.getReceivedCounter() > 0) {
@@ -130,6 +133,7 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
 
     @SuppressWarnings("unchecked")
     private final class NextTimestamp implements Expression {
+        @Override
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             Date answer = null;
             if (currentIndex < mock.getReceivedCounter() - 1) {

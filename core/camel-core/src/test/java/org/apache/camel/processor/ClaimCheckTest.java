@@ -55,6 +55,7 @@ public class ClaimCheckTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();        
     }
 
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("checkLuggage", new CheckLuggageBean());
@@ -62,6 +63,7 @@ public class ClaimCheckTest extends ContextTestSupport {
         return jndi;
     }    
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

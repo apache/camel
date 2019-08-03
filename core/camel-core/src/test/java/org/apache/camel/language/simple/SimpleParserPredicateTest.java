@@ -248,6 +248,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertFalse("Should not match", pre.matches(exchange));
     }
 
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 

@@ -33,6 +33,7 @@ public class WireTapCustomPool2Test extends ContextTestSupport {
     protected MockEndpoint result;
     protected ExecutorService pool;
     
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -60,6 +61,7 @@ public class WireTapCustomPool2Test extends ContextTestSupport {
         result = getMockEndpoint("mock:result");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

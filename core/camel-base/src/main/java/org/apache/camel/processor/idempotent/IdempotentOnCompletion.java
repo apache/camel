@@ -43,6 +43,7 @@ public class IdempotentOnCompletion implements Synchronization {
         this.removeOnFailure = removeOnFailure;
     }
 
+    @Override
     public void onComplete(Exchange exchange) {
         if (ExchangeHelper.isFailureHandled(exchange)) {
             // the exchange did not process successfully but was failure handled by the dead letter channel
@@ -53,6 +54,7 @@ public class IdempotentOnCompletion implements Synchronization {
         }
     }
 
+    @Override
     public void onFailure(Exchange exchange) {
         onFailedMessage(exchange, messageId);
     }

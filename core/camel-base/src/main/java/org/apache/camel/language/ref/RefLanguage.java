@@ -37,10 +37,12 @@ public class RefLanguage implements Language, IsSingleton {
         return ExpressionBuilder.refExpression(ref);
     }
 
+    @Override
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
 
+    @Override
     public Expression createExpression(final String expression) {
         final Expression exp = RefLanguage.ref(expression);
         return new ExpressionAdapter() {
@@ -69,6 +71,7 @@ public class RefLanguage implements Language, IsSingleton {
         };
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

@@ -64,6 +64,7 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
         assertEquals("The response is wrong", "<b>Hello World for gzip</b>", response);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

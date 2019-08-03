@@ -20,6 +20,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
 
 public class AnnotatedRoute extends SpringRouteBuilder {
 
+    @Override
     public void configure() throws Exception {
         from("direct:okay").
                 transacted().

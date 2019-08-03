@@ -45,6 +45,7 @@ public class CreateIssueProducer extends AbstractGitHubProducer {
         initService(issueService);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Issue issue = new Issue();
         String issueTitle = exchange.getIn().getHeader(GitHubConstants.GITHUB_ISSUE_TITLE, String.class);

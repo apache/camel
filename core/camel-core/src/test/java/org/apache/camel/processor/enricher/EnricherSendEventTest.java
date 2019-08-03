@@ -52,6 +52,7 @@ public class EnricherSendEventTest extends ContextTestSupport {
         assertEquals("Get a wrong sent event number", 3, en.exchangeSentEvent.get());
     }
     
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         camelContext.init();

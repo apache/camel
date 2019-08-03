@@ -54,6 +54,7 @@ public class GenericFileConfiguration {
         }
     }
 
+    @Override
     public String toString() {
         return directory;
     }

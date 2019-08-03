@@ -40,6 +40,7 @@ public class ElSqlConsumerDynamicParameterTest extends CamelTestSupport {
     @BindToRegistry("myIdGenerator")
     private MyIdGenerator idGenerator = new MyIdGenerator();
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

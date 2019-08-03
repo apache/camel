@@ -22,6 +22,7 @@ public class StatisticMaximum extends Statistic {
 
     private final AtomicLong value = new AtomicLong(-1);
 
+    @Override
     public void updateValue(long newValue) {
         // its okay its not 100% thread safe (these jmx counters are not guaranteed to be accurate for min/max values)
         // if we use the atomic operation updateAndGet then the JVM creates a new lambda per call which creates a new object
@@ -32,6 +33,7 @@ public class StatisticMaximum extends Statistic {
         }
     }
 
+    @Override
     public long getValue() {
         long num = value.get();
         return num == -1 ? 0 : num;
@@ -47,6 +49,7 @@ public class StatisticMaximum extends Statistic {
         return "" + value.get();
     }
 
+    @Override
     public void reset() {
         value.set(-1);
     }

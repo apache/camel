@@ -44,6 +44,7 @@ public class SpringSetPropertyNameDynamicTest extends ContextTestSupport {
         assertEquals(Boolean.TRUE, exchange.getProperty(TestConstans.EXCHANGE_PROP_TX_FAILED, Boolean.class));
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/setPropertyNameDynamic.xml");
     }

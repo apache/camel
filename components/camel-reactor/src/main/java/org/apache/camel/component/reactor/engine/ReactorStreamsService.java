@@ -107,6 +107,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
         return subscribers.computeIfAbsent(name, n -> new ReactiveStreamsCamelSubscriber(name));
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> Subscriber<T> streamSubscriber(String name, Class<T> type) {
         final Subscriber<Exchange> subscriber = streamSubscriber(name);

@@ -47,7 +47,8 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
     private final QName serviceName = new QName("http://apache.org/camel/cxf/mtom_feature", "HelloService");
     
 
-    protected RouteBuilder createRouteBuilder() {      
+    @Override
+    protected RouteBuilder createRouteBuilder() {
         
         return new RouteBuilder() {
             public void configure() {

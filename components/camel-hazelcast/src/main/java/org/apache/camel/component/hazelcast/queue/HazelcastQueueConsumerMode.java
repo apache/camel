@@ -41,6 +41,7 @@ public enum HazelcastQueueConsumerMode {
         throw new IllegalArgumentException(String.format("Mode '%s' is not supported by this component.", name));
     }
 
+    @Override
     public String toString() {
         return mode;
     }

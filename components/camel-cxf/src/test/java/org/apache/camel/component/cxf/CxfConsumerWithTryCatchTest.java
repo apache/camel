@@ -37,6 +37,7 @@ public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
     }
     
     // START SNIPPET: example
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -75,6 +76,7 @@ public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
         };
     }
     
+    @Override
     @Test
     public void testXmlDeclaration() throws Exception {
         // do nothing here

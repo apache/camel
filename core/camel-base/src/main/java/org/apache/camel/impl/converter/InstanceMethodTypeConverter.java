@@ -54,6 +54,7 @@ public class InstanceMethodTypeConverter extends TypeConverterSupport {
         return allowNull;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         Object instance = injector.newInstance();

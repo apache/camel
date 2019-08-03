@@ -192,6 +192,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         return (HttpCommonComponent) super.getComponent();
     }
 
+    @Override
     public boolean isLenientProperties() {
         // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
         return true;
@@ -283,6 +284,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         this.httpUri = httpUri;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -290,6 +292,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }

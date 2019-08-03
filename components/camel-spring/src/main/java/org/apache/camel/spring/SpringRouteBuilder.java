@@ -80,7 +80,8 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
     /**
      * Sets the application context to use to lookup beans
      */
-    public void setApplicationContext(ApplicationContext applicationContext) {        
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 

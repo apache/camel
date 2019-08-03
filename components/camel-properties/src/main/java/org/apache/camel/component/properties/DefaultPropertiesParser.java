@@ -59,6 +59,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
         return context.parse(text);
     }
 
+    @Override
     public String parseProperty(String key, String value, PropertiesLookup properties) {
         return value;
     }

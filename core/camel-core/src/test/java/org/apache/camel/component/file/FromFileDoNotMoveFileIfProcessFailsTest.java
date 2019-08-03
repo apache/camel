@@ -53,6 +53,7 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
         assertTrue("The file should NOT have been moved", file.exists());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

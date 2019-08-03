@@ -36,12 +36,14 @@ public class HazelcastMapEndpoint extends HazelcastDefaultEndpoint {
         setCommand(HazelcastCommand.map);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         HazelcastMapConsumer answer = new HazelcastMapConsumer(hazelcastInstance, this, processor, cacheName);
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new HazelcastMapProducer(hazelcastInstance, this, cacheName);
     }

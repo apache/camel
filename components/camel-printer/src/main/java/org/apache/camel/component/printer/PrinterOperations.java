@@ -97,6 +97,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
         }
     }
 
+    @Override
     public void print(Doc doc, String jobName) throws PrintException {
         // we need create a new job for each print
         DocPrintJob job = getPrintService().createPrintJob();

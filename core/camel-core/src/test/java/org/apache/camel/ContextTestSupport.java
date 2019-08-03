@@ -78,6 +78,7 @@ public abstract class ContextTestSupport extends TestSupport {
         return new NotifyBuilder(context);
     }
     
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -118,6 +119,7 @@ public abstract class ContextTestSupport extends TestSupport {
         
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         log.debug("tearDown test: {}", getName());

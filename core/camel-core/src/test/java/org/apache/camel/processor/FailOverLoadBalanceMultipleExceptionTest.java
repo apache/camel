@@ -43,6 +43,7 @@ public class FailOverLoadBalanceMultipleExceptionTest extends ContextTestSupport
         z = getMockEndpoint("mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

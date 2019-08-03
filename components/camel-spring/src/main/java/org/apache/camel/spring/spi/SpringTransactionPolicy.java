@@ -56,9 +56,11 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         this.transactionManager = transactionManager;
     }
 
+    @Override
     public void beforeWrap(RouteContext routeContext, NamedNode definition) {
     }
 
+    @Override
     public Processor wrap(RouteContext routeContext, Processor processor) {
         TransactionErrorHandler answer;
 

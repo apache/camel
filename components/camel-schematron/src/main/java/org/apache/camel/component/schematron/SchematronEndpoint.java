@@ -67,10 +67,12 @@ public class SchematronEndpoint extends DefaultEndpoint {
         this.path = path;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new SchematronProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer is not implemented for this component");
     }

@@ -35,6 +35,7 @@ public class BookStoreImpl implements BookStore {
         init();        
     }
     
+    @Override
     public Book getBook(Long id) throws BookNotFoundFault {
         
         if (books.get(id) == null) {
@@ -52,7 +53,8 @@ public class BookStoreImpl implements BookStore {
         return books.get(id);
     }
     
-    public Book addBook(Book book) {        
+    @Override
+    public Book addBook(Book book) {
         books.put(book.getId(), book);
         return books.get(book.getId());
     }

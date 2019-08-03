@@ -42,6 +42,7 @@ public class BlobServiceComponent extends DefaultComponent {
         this.configuration = new BlobServiceConfiguration();
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final BlobServiceConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);

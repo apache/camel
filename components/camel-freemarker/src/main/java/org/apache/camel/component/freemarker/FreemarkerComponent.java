@@ -42,6 +42,7 @@ public class FreemarkerComponent extends DefaultComponent {
     public FreemarkerComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // should we use regular configuration or no cache (content cache is default true)
         Configuration config;

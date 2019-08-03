@@ -44,6 +44,7 @@ public class DirectProducer extends DefaultAsyncProducer {
         super.doStop();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         DirectConsumer consumer = endpoint.getConsumer();
         if (consumer == null) {
@@ -57,6 +58,7 @@ public class DirectProducer extends DefaultAsyncProducer {
         }
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             DirectConsumer consumer = endpoint.getConsumer();

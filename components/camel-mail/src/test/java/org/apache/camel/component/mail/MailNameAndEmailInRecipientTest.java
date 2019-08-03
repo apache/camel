@@ -52,6 +52,7 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
         mock.message(0).header("cc").isEqualTo("James Strachan <jstrachan@localhost>");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

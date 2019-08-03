@@ -42,6 +42,7 @@ public class SplunkProducer extends DefaultProducer {
         createWriter(producerType);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         try {
             if (!dataWriter.isConnected()) {

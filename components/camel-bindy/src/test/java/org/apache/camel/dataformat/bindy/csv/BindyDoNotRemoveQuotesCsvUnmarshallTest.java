@@ -64,6 +64,7 @@ public class BindyDoNotRemoveQuotesCsvUnmarshallTest extends AbstractJUnit4Sprin
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(BindyDoNotRemoveQuotesCsvUnmarshallTest.Product.class);
 
+        @Override
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
         }

@@ -99,6 +99,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
             this.consumer = consumer;
         }
 
+        @Override
         protected void initChannel(Channel ch) throws Exception {
             ChannelPipeline channelPipeline = ch.pipeline();
             serverInvoked = true;

@@ -140,6 +140,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.clientConnectionManager = clientConnectionManager;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new HttpProducer(this);
     }
@@ -149,6 +150,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         throw new UnsupportedOperationException("Cannot consume from http endpoint");
     }
 
+    @Override
     public PollingConsumer createPollingConsumer() throws Exception {
         HttpPollingConsumer answer = new HttpPollingConsumer(this);
         configurePollingConsumer(answer);
@@ -330,6 +332,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.cookieStore = cookieStore;
     }
 
+    @Override
     public void setCookieHandler(CookieHandler cookieHandler) {
         super.setCookieHandler(cookieHandler);
         // if we set an explicit cookie handler

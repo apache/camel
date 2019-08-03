@@ -70,10 +70,12 @@ public final class AdviceWithTasks {
             this.id = id;
         }
 
+        @Override
         public String getId() {
             return id;
         }
 
+        @Override
         public boolean match(ProcessorDefinition<?> processor) {
             if (id.equals("*")) {
                 // make sure the processor which id isn't be set is matched.
@@ -94,10 +96,12 @@ public final class AdviceWithTasks {
             this.toString = toString;
         }
 
+        @Override
         public String getId() {
             return toString;
         }
 
+        @Override
         public boolean match(ProcessorDefinition<?> processor) {
             return PatternHelper.matchPattern(processor.toString(), toString);
         }
@@ -114,10 +118,12 @@ public final class AdviceWithTasks {
             this.toUri = toUri;
         }
 
+        @Override
         public String getId() {
             return toUri;
         }
 
+        @Override
         public boolean match(ProcessorDefinition<?> processor) {
             if (processor instanceof EndpointRequiredDefinition) {
                 String uri = ((EndpointRequiredDefinition) processor).getEndpointUri();
@@ -138,10 +144,12 @@ public final class AdviceWithTasks {
             this.type = type;
         }
 
+        @Override
         public String getId() {
             return type.getSimpleName();
         }
 
+        @Override
         public boolean match(ProcessorDefinition<?> processor) {
             return type.isAssignableFrom(processor.getClass());
         }

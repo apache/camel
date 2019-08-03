@@ -113,6 +113,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
 
     private static class MyDebuggerCheckingId implements InterceptStrategy {
 
+        @Override
         public Processor wrapProcessorInInterceptors(final CamelContext context,
                                                      final NamedNode definition, Processor target, Processor nextTarget) throws Exception {
 

@@ -91,6 +91,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
     private boolean streamRepresentation;
     private boolean autoCloseStream;
 
+    @Override
     public void populateExchangeFromRestletRequest(Request request, Response response, Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
 
@@ -179,6 +180,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
     }
 
+    @Override
     public void populateRestletRequestFromExchange(Request request, Exchange exchange) {
         request.setReferrerRef("camel-restlet");
 
@@ -392,6 +394,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
     }
 
+    @Override
     public void populateRestletResponseFromExchange(Exchange exchange, Response response) throws Exception {
         Message out;
         if (exchange.isFailed()) {
@@ -513,6 +516,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
     }
 
+    @Override
     public void populateExchangeFromRestletResponse(Exchange exchange, Response response) throws Exception {
         for (Map.Entry<String, Object> entry : response.getAttributes().entrySet()) {
             String key = entry.getKey();
@@ -756,10 +760,12 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
     }

@@ -38,6 +38,7 @@ public class JavaConfigWithNestedConfigClassTest extends AbstractJUnit4SpringCon
         assertEquals("doCheese() should be called", true, doCheeseCalled);
     }
 
+    @Override
     public void doCheese() {
         logger.info("doCheese called!");
         doCheeseCalled = true;

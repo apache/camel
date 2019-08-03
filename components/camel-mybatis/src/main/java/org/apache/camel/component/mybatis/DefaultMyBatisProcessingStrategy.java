@@ -23,6 +23,7 @@ import org.apache.ibatis.session.SqlSession;
 
 public class DefaultMyBatisProcessingStrategy implements MyBatisProcessingStrategy {
 
+    @Override
     public void commit(MyBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatements) throws Exception {
         SqlSession session = endpoint.getSqlSessionFactory().openSession();
         String[] statements = consumeStatements.split(",");
@@ -39,6 +40,7 @@ public class DefaultMyBatisProcessingStrategy implements MyBatisProcessingStrate
         }
     }
 
+    @Override
     public List<?> poll(MyBatisConsumer consumer, MyBatisEndpoint endpoint) throws Exception {
         SqlSession session = endpoint.getSqlSessionFactory().openSession();
         try {

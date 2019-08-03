@@ -42,10 +42,12 @@ public class ExchangeSentEvent extends AbstractExchangeEvent implements CamelEve
         this.timeTaken = timeTaken;
     }
 
+    @Override
     public Endpoint getEndpoint() {
         return endpoint;
     }
 
+    @Override
     public long getTimeTaken() {
         return timeTaken;
     }

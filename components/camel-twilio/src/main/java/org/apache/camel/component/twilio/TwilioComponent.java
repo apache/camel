@@ -92,6 +92,7 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
         super.doShutdown();
     }
 
+    @Override
     public TwilioConfiguration getConfiguration() {
         return configuration;
     }
@@ -99,6 +100,7 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
     /**
      * To use the shared configuration
      */
+    @Override
     public void setConfiguration(TwilioConfiguration configuration) {
         this.configuration = configuration;
     }

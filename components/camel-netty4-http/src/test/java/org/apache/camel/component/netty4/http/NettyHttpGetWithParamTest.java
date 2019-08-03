@@ -52,6 +52,7 @@ public class NettyHttpGetWithParamTest extends BaseNettyTest {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -61,6 +62,7 @@ public class NettyHttpGetWithParamTest extends BaseNettyTest {
     }
 
     private static class MyParamsProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             NettyHttpMessage message = exchange.getIn(NettyHttpMessage.class);
             assertNotNull(message.getHttpRequest());

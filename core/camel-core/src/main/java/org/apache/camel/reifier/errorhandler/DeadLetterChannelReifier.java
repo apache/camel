@@ -31,6 +31,7 @@ public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLet
         super((DeadLetterChannelBuilder) definition);
     }
 
+    @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         validateDeadLetterUri(routeContext);
 

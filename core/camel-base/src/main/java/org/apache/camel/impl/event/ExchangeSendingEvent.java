@@ -46,6 +46,7 @@ public class ExchangeSendingEvent extends AbstractExchangeEvent implements Camel
         this.endpoint = endpoint;
     }
 
+    @Override
     public Endpoint getEndpoint() {
         return endpoint;
     }

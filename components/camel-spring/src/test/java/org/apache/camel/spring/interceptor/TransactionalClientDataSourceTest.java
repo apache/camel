@@ -55,6 +55,7 @@ public class TransactionalClientDataSourceTest extends TransactionClientDataSour
     }
     // END SNIPPET: e4
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         // START SNIPPET: e1
         // Notice that we use the SpringRouteBuilder that has a few more features than

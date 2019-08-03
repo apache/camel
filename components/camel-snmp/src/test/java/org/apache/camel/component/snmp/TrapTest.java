@@ -98,6 +98,7 @@ public class TrapTest extends CamelTestSupport {
     /**
      * RouteBuilders for the SNMP TRAP producer and consumer
      */
+    @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
             new RouteBuilder() {

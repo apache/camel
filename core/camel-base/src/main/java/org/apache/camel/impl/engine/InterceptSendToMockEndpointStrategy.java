@@ -67,6 +67,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
         this.skip = skip;
     }
 
+    @Override
     public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
         if (endpoint instanceof DefaultInterceptSendToEndpoint) {
             // endpoint already decorated

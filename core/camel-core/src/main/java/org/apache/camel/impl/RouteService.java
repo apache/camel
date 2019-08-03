@@ -48,6 +48,7 @@ public class RouteService extends BaseRouteService {
         return routeDefinition;
     }
 
+    @Override
     public Integer getStartupOrder() {
         return routeDefinition.getStartupOrder();
     }
@@ -57,6 +58,7 @@ public class RouteService extends BaseRouteService {
         return RouteDefinitionHelper.getRouteMessage(routeDefinition.toString());
     }
 
+    @Override
     public boolean isAutoStartup() throws Exception {
         if (!getCamelContext().isAutoStartup()) {
             return false;
@@ -72,6 +74,7 @@ public class RouteService extends BaseRouteService {
         return isAutoStartup != null && isAutoStartup;
     }
 
+    @Override
     public boolean isContextScopedErrorHandler() {
         if (!routeDefinition.isContextScopedErrorHandler()) {
             return false;
@@ -90,6 +93,7 @@ public class RouteService extends BaseRouteService {
     /**
      * Gather all other kind of route scoped services from the given route, except error handler
      */
+    @Override
     protected void doGetRouteScopedServices(List<Service> services) {
 
         for (ProcessorDefinition<?> output : routeDefinition.getOutputs()) {

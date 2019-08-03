@@ -236,6 +236,7 @@ public class JMXEndpoint extends DefaultEndpoint {
         super(aEndpointUri, aComponent);
     }
 
+    @Override
     public Consumer createConsumer(Processor aProcessor) throws Exception {
         // validate that all of the endpoint is configured properly
         if (getMonitorType() != null) {
@@ -276,10 +277,12 @@ public class JMXEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("producing JMX notifications is not supported");
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }

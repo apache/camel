@@ -65,6 +65,7 @@ public class EC2Producer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
         case createAndRunInstances:

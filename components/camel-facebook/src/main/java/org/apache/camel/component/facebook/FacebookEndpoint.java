@@ -76,10 +76,12 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         this.method = remaining;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new FacebookProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // make sure inBody is not set for consumers
         if (inBody != null) {

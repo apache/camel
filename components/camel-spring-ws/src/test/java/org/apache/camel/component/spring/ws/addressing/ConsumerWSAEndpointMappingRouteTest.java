@@ -68,6 +68,7 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
 
     private WebServiceTemplate webServiceTemplate;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

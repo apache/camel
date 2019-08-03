@@ -85,6 +85,7 @@ public class BindyMarshalOneToManyWithHeadersTest extends AbstractJUnit4SpringCo
 
     public static class ContextConfig extends RouteBuilder {
 
+        @Override
         public void configure() {
 
             BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(Order.class);

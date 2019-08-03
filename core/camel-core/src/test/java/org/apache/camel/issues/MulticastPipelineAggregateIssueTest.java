@@ -79,6 +79,7 @@ public class MulticastPipelineAggregateIssueTest extends ContextTestSupport {
 
     public static class SumAggregateBean implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

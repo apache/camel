@@ -23,6 +23,7 @@ import org.junit.Test;
 
 public class FromRestUriPrefixTest extends FromRestGetTest {
 
+    @Override
     @Test
     public void testFromRestModel() throws Exception {
         assertEquals(getExpectedNumberOfRoutes(), context.getRoutes().size());

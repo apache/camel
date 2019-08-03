@@ -90,20 +90,25 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
 
     private static class ShuntErrorHandlerSupport extends ErrorHandlerSupport {
 
+        @Override
         protected void doStart() throws Exception {
         }
 
+        @Override
         protected void doStop() throws Exception {
         }
 
+        @Override
         public boolean supportTransacted() {
             return false;
         }
 
+        @Override
         public Processor getOutput() {
             return null;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
         }
     }

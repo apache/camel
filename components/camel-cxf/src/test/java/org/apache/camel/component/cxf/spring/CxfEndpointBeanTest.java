@@ -40,6 +40,7 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
 
 
 
+    @Override
     protected String[] getApplicationContextFiles() {
         return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeans.xml"};
     }

@@ -50,6 +50,7 @@ public class JmsInOnlyWithReplyToHeaderTest extends CamelTestSupport {
         assertEquals("Hello World", reply);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

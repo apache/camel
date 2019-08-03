@@ -148,6 +148,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         return endpoint;
     }
 
+    @Override
     public Endpoint createEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
         // check URI string to the unsafe URI characters
@@ -326,14 +327,17 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext context) {
         this.camelContext = context;
     }
 
+    @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
 
@@ -349,6 +353,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
     }
 
+    @Override
     protected void doStop() throws Exception {
         // noop
     }

@@ -30,6 +30,7 @@ public class PutAttributesCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         PutAttributesRequest request = new PutAttributesRequest()
             .withDomainName(determineDomainName())

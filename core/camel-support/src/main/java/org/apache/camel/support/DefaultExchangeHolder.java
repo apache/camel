@@ -201,6 +201,7 @@ public class DefaultExchangeHolder implements Serializable {
         payload.properties.put(key, property);
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("DefaultExchangeHolder[exchangeId=").append(exchangeId);
         sb.append("inBody=").append(inBody).append(", outBody=").append(outBody);

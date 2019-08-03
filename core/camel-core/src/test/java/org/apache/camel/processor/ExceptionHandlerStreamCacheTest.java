@@ -86,6 +86,7 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
         successEndpoint = getMockEndpoint("mock:success");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {

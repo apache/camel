@@ -33,16 +33,19 @@ public class CamelConnectionFactory extends ActiveMQConnectionFactory implements
     public CamelConnectionFactory() {
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
     // Implementation methods
     // -----------------------------------------------------------------------
+    @Override
     protected CamelConnection createActiveMQConnection(Transport transport, JMSStatsImpl stats) throws Exception {
         CamelConnection connection = new CamelConnection(transport, getClientIdGenerator(), getConnectionIdGenerator(), stats);
         CamelContext context = getCamelContext();

@@ -27,6 +27,7 @@ public class ResequencerBatchOrderTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResequencerBatchOrderTest.class);
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

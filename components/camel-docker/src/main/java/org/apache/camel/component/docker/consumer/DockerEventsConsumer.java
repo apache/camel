@@ -80,6 +80,7 @@ public class DockerEventsConsumer extends DefaultConsumer {
 
     protected class EventsCallback extends EventsResultCallback {
 
+        @Override
         public void onNext(Event event) {
             log.debug("Received Docker Event: {}", event);
 

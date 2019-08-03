@@ -59,6 +59,7 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
 
     private static final class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             if ("Kabom".equals(body)) {

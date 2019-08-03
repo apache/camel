@@ -31,6 +31,7 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
     private int sequence;
     private int tick;
 
+    @Override
     public void tick() throws Exception {
         tick++;
 

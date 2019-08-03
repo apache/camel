@@ -70,6 +70,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
         assertEquals(numAttachments, "2");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

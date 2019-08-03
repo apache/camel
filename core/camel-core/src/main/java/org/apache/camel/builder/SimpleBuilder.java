@@ -85,6 +85,7 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
         return this;
     }
 
+    @Override
     public boolean matches(Exchange exchange) {
         if (predicate == null) {
             predicate = createPredicate(exchange);
@@ -92,6 +93,7 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
         return predicate.matches(exchange);
     }
 
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         if (expression == null) {
             expression = createExpression(exchange);
@@ -139,6 +141,7 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
         }
     }
 
+    @Override
     public String toString() {
         return "Simple: " + text;
     }

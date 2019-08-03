@@ -45,6 +45,7 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
         this.assignId = assignId;
     }
 
+    @Override
     protected Class<?> getBeanClass(Element element) {
         return type;
     }
@@ -58,6 +59,7 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
                 && !attributeName.equals("xmlns") && !attributeName.startsWith("xmlns:");
     }
 
+    @Override
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
         NamedNodeMap attributes = element.getAttributes();
         for (int x = 0; x < attributes.getLength(); x++) {

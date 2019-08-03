@@ -52,6 +52,7 @@ public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends CamelTest
         assertEquals("Hello E", template.requestBody("direct:start2", "E"));
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

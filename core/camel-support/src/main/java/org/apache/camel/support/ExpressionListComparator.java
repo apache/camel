@@ -34,6 +34,7 @@ public class ExpressionListComparator implements Comparator<Exchange> {
         this.expressions = expressions;
     }
 
+    @Override
     public int compare(Exchange e1, Exchange e2) {
         for (Expression expression : expressions) {
             Object o1 = expression.evaluate(e1, Object.class);

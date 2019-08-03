@@ -37,6 +37,7 @@ public class MailUsingCustomSessionTest extends CamelTestSupport {
     @BindToRegistry("myCustomMailSession")
     private Session mailSession = Session.getInstance(new Properties());
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

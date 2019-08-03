@@ -281,6 +281,7 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         assertEquals("queue://b", mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

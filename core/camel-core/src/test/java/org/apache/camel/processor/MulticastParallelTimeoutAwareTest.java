@@ -69,6 +69,7 @@ public class MulticastParallelTimeoutAwareTest extends ContextTestSupport {
 
     private class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
             // we can't assert on the expected values here as the contract of this method doesn't
             // allow to throw any Throwable (including AssertionError) so that we assert
@@ -81,6 +82,7 @@ public class MulticastParallelTimeoutAwareTest extends ContextTestSupport {
             receivedTimeout = timeout;
         }
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

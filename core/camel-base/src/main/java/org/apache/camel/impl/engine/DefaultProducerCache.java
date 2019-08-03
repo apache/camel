@@ -70,10 +70,12 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         internalProcessor = new SharedCamelInternalProcessor(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
     }
 
+    @Override
     public boolean isEventNotifierEnabled() {
         return eventNotifierEnabled;
     }
 
+    @Override
     public void setEventNotifierEnabled(boolean eventNotifierEnabled) {
         this.eventNotifierEnabled = eventNotifierEnabled;
     }
@@ -93,10 +95,12 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         return camelContext;
     }
 
+    @Override
     public Object getSource() {
         return source;
     }
 
+    @Override
     public AsyncProducer acquireProducer(Endpoint endpoint) {
         try {
             AsyncProducer producer = producers.acquire(endpoint);
@@ -109,10 +113,12 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
     }
 
+    @Override
     public void releaseProducer(Endpoint endpoint, AsyncProducer producer) {
         producers.release(endpoint, producer);
     }
 
+    @Override
     public Exchange send(Endpoint endpoint, Exchange exchange, Processor resultProcessor) {
         if (camelContext.isStopped()) {
             exchange.setException(new RejectedExecutionException("CamelContext is stopped"));
@@ -181,6 +187,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         return asyncSendExchange(endpoint, pattern, processor, resultProcessor, null, future);
     }
 
+    @Override
     public CompletableFuture<Exchange> asyncSendExchange(Endpoint endpoint,
                                                          ExchangePattern pattern,
                                                          Processor processor,
@@ -218,6 +225,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         return future;
     }
 
+    @Override
     public boolean doInAsyncProducer(Endpoint endpoint,
                                      Exchange exchange,
                                      AsyncCallback callback,
@@ -312,6 +320,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         return producers.acquire(endpoint);
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (extendedStatistics) {
             int max = maxCacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : maxCacheSize;
@@ -321,6 +330,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         ServiceHelper.startService(producers, statistics);
     }
 
+    @Override
     protected void doStop() throws Exception {
         // when stopping we intend to shutdown
         ServiceHelper.stopAndShutdownServices(statistics, producers);
@@ -329,6 +339,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
     }
 
+    @Override
     public int size() {
         int size = producers.size();
 
@@ -336,22 +347,27 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         return size;
     }
 
+    @Override
     public int getCapacity() {
         return maxCacheSize;
     }
 
+    @Override
     public long getHits() {
         return producers.getHits();
     }
 
+    @Override
     public long getMisses() {
         return producers.getMisses();
     }
 
+    @Override
     public long getEvicted() {
         return producers.getEvicted();
     }
 
+    @Override
     public void resetCacheStatistics() {
         producers.resetStatistics();
         if (statistics != null) {
@@ -359,6 +375,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
     }
 
+    @Override
     public synchronized void purge() {
         try {
             producers.stop();
@@ -371,10 +388,12 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
     }
 
+    @Override
     public void cleanUp() {
         producers.cleanUp();
     }
 
+    @Override
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
         return statistics;
     }

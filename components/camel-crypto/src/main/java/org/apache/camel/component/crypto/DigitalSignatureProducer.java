@@ -31,6 +31,7 @@ public class DigitalSignatureProducer extends DefaultProducer {
         this.processor = processor;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         processor.process(exchange);
     }

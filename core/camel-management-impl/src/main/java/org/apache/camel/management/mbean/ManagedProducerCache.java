@@ -34,6 +34,7 @@ public class ManagedProducerCache extends ManagedService implements ManagedProdu
         return producerCache;
     }
 
+    @Override
     public String getSource() {
         if (producerCache.getSource() != null) {
             return producerCache.getSource().toString();
@@ -41,34 +42,42 @@ public class ManagedProducerCache extends ManagedService implements ManagedProdu
         return null;
     }
 
+    @Override
     public Integer getSize() {
         return producerCache.size();
     }
 
+    @Override
     public Integer getMaximumCacheSize() {
         return producerCache.getCapacity();
     }
 
+    @Override
     public Long getHits() {
         return producerCache.getHits();
     }
 
+    @Override
     public Long getMisses() {
         return producerCache.getMisses();
     }
 
+    @Override
     public Long getEvicted() {
         return producerCache.getEvicted();
     }
 
+    @Override
     public void resetStatistics() {
         producerCache.resetCacheStatistics();
     }
 
+    @Override
     public void purge() {
         producerCache.purge();
     }
 
+    @Override
     public Boolean isEventNotifierEnabled() {
         return producerCache.isEventNotifierEnabled();
     }

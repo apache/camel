@@ -28,6 +28,7 @@ public class HttpBodyWithOtherProtocalNameTest extends HttpBodyTest {
         setProtocolString("newHttp://");
     }
     
+    @Override
     public CamelContext createCamelContext() throws Exception {
         CamelContext answer = super.createCamelContext();
         // register the a new HttpComponent with different protocol name

@@ -52,6 +52,7 @@ public class LuceneQueryProducer extends DefaultProducer {
         super.doStop();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Hits hits;
         

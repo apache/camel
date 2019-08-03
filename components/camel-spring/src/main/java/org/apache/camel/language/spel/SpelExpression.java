@@ -59,6 +59,7 @@ public class SpelExpression extends org.apache.camel.support.ExpressionSupport {
         return new SpelExpression(expression, Object.class);
     }
 
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
         try {
             Expression expression = parseExpression();
@@ -97,6 +98,7 @@ public class SpelExpression extends org.apache.camel.support.ExpressionSupport {
         return type;
     }
 
+    @Override
     protected String assertionFailureMessage(Exchange exchange) {
         return expressionString;
     }

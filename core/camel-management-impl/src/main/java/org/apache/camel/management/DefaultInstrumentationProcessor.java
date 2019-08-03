@@ -49,6 +49,7 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
         this.type = type;
     }
 
+    @Override
     public void setCounter(Object counter) {
         ManagedPerformanceCounter mpc = null;
         if (counter instanceof ManagedPerformanceCounter) {

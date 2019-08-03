@@ -38,6 +38,7 @@ public class UseMessageIdAsCorrelationIdMessageSentCallback implements MessageSe
         this.requestTimeout = requestTimeout;
     }
 
+    @Override
     public void sent(Connection session, byte[] message, String destination) {
         String newCorrelationID = UUID.randomUUID().toString();
         if (newCorrelationID != null) {

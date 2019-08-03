@@ -29,6 +29,7 @@ import org.junit.Test;
 
 public class SimulatorTest extends ContextTestSupport {
 
+    @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         answer.bind("foo", new MyBean("foo"));
@@ -62,6 +63,7 @@ public class SimulatorTest extends ContextTestSupport {
         assertStringContains(text, containedText);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

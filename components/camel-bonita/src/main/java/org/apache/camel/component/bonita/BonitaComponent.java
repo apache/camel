@@ -34,6 +34,7 @@ public class BonitaComponent extends DefaultComponent {
         super(context);
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BonitaConfiguration configuration = new BonitaConfiguration();
         setProperties(configuration, parameters);

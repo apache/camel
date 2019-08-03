@@ -60,6 +60,7 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello Copenhagen", "copenhagen.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -71,6 +72,7 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
     // START SNIPPET: e1
     public class MyRemoteFileSorter implements Comparator<RemoteFile<?>> {
 
+        @Override
         public int compare(RemoteFile<?> o1, RemoteFile<?> o2) {
             return o1.getFileNameOnly().compareToIgnoreCase(o2.getFileNameOnly());
         }

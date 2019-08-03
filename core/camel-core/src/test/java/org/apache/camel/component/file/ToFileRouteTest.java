@@ -41,6 +41,7 @@ public class ToFileRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         // bind our processor in the registry with the given id
         JndiRegistry reg = super.createRegistry();
@@ -48,6 +49,7 @@ public class ToFileRouteTest extends ContextTestSupport {
         return reg;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -60,6 +62,7 @@ public class ToFileRouteTest extends ContextTestSupport {
 
     private static class ProcessReport implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             // do some business logic here

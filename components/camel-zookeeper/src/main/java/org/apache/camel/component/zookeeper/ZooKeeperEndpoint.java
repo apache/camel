@@ -44,10 +44,12 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         this.connectionManager = new ZooKeeperConnectionManager(this);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new ZooKeeperProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         ZooKeeperConsumer answer = new ZooKeeperConsumer(this, processor);
         configureConsumer(answer);

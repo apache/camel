@@ -94,6 +94,7 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
     }
 
     public static class ContextConfig extends RouteBuilder {
+        @Override
         public void configure() {
 
             // default should errors go to mock:error

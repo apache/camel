@@ -37,6 +37,7 @@ public class RssPollingConsumerWithFeedHeaderDisabledTest extends CamelTestSuppo
         assertNull(in.getHeader(RssConstants.RSS_FEED));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

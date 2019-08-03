@@ -54,6 +54,7 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
         return "rests";
     }
 
+    @Override
     public String getLabel() {
         return "Rest " + getId();
     }
@@ -61,6 +62,7 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     // Properties
     //-----------------------------------------------------------------------
 
+    @Override
     public List<RestDefinition> getRests() {
         return rests;
     }
@@ -68,6 +70,7 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     /**
      * The rest services
      */
+    @Override
     public void setRests(List<RestDefinition> rests) {
         this.rests = rests;
     }

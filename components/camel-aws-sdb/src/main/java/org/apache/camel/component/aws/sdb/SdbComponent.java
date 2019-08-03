@@ -36,6 +36,7 @@ public class SdbComponent extends DefaultComponent {
         registerExtension(new SdbComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SdbConfiguration configuration = new SdbConfiguration();
         setProperties(configuration, parameters);

@@ -28,6 +28,7 @@ public class SimpleUuidGenerator implements UuidGenerator {
     
     private final AtomicLong id = new AtomicLong(1);
 
+    @Override
     public String generateUuid() {
         return String.valueOf(id.getAndIncrement());
     }

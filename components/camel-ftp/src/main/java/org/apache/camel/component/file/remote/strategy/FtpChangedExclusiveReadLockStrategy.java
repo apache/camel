@@ -45,6 +45,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
         // noop
     }
 
+    @Override
     public boolean acquireExclusiveReadLock(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
         boolean exclusive = false;
 

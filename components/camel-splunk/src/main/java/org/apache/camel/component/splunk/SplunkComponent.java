@@ -35,6 +35,7 @@ public class SplunkComponent extends DefaultComponent {
     public SplunkComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SplunkConfiguration configuration = splunkConfigurationFactory.parseMap(parameters);
         configuration.setName(remaining);

@@ -34,6 +34,7 @@ import org.junit.Test;
  */
 public class StringTemplateContentCacheTest extends CamelTestSupport {
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -123,6 +124,7 @@ public class StringTemplateContentCacheTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

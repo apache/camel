@@ -58,12 +58,14 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
         this.statement = statement;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(statementType, "statementType", this);
         ObjectHelper.notNull(statement, "statement", this);
         return new MyBatisProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(statement, "statement", this);
         MyBatisConsumer consumer = new MyBatisConsumer(this, processor);

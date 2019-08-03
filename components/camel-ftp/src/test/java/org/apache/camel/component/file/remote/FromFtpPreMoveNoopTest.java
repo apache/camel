@@ -70,6 +70,7 @@ public class FromFtpPreMoveNoopTest extends FtpServerTestSupport {
         producer.stop();
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

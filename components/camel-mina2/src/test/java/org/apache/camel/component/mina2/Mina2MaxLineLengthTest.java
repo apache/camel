@@ -55,6 +55,7 @@ public class Mina2MaxLineLengthTest extends BaseMina2Test {
     // START SNIPPET: e2
     private static class MyServerProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             // get the input from the IN body
             String request = exchange.getIn().getBody(String.class);

@@ -106,6 +106,7 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
         return subscribers.computeIfAbsent(name, n -> new ReactiveStreamsCamelSubscriber(name));
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> Subscriber<T> streamSubscriber(String name, Class<T> type) {
         final Subscriber<Exchange> subscriber = streamSubscriber(name);

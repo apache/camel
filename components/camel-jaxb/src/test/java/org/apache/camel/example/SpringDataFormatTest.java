@@ -39,6 +39,7 @@ public class SpringDataFormatTest extends CamelSpringTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/example/springDataFormat.xml");
     }

@@ -78,11 +78,13 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
             return invoked;
         }
 
+        @Override
         public void beforeWrap(RouteContext routeContext, NamedNode definition) {
             SetBodyDefinition bodyDef = (SetBodyDefinition) ((ProcessorDefinition<?>) definition).getOutputs().get(0);
             bodyDef.setExpression(new ConstantExpression("body was altered"));
         }
 
+        @Override
         public Processor wrap(final RouteContext routeContext, final Processor processor) {
             return new Processor() {
                 public void process(Exchange exchange) throws Exception {

@@ -33,6 +33,7 @@ public class FilterCustomPredicateAsFilterTest extends ContextTestSupport {
 
         private List<String> bodies = new ArrayList<>();
 
+        @Override
         public boolean matches(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
             bodies.add(body);

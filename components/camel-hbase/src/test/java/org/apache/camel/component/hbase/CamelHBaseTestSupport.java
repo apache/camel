@@ -87,6 +87,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
         }
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         if (systemReady) {
@@ -100,6 +101,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
         }
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         if (systemReady) {

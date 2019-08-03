@@ -38,6 +38,7 @@ public class AllRedisProcessorsCreator implements RedisProcessorsCreator {
         this.processors.putAll(new GeoRedisProcessorsCreator().getProcessors(redisClient, exchangeConverter));
     }
 
+    @Override
     public Map<Command, Processor> getRedisProcessors() {
         return processors;
     }

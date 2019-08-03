@@ -32,6 +32,7 @@ import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_BLOCKS_OBSE
 @Ignore("Requires a local node or registration at Infura")
 public class Web3jConsumerMainnetTest extends Web3jIntegrationTestSupport {
 
+    @Override
     protected String getUrl() {
         return "https://mainnet.infura.io/YOUR_INFURA_ID?";
     }

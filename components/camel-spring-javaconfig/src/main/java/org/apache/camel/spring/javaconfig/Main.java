@@ -121,6 +121,7 @@ public class Main extends org.apache.camel.spring.Main {
         return answer.toArray(new Class<?>[answer.size()]);
     }
         
+    @Override
     protected AbstractApplicationContext createDefaultApplicationContext() {
         ApplicationContext parentContext = getParentApplicationContext();
         AnnotationConfigApplicationContext acApplicationContext = new AnnotationConfigApplicationContext();

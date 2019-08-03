@@ -71,21 +71,25 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
         return camelContext != null ? camelContext.isMessageHistory() : false;
     }
 
+    @Override
     @ManagedAttribute(description = "Whether a copy of the message is included in the message history")
     public boolean isCopyMessage() {
         return copyMessage;
     }
 
+    @Override
     @ManagedAttribute(description = "Whether a copy of the message is included in the message history")
     public void setCopyMessage(boolean copyMessage) {
         this.copyMessage = copyMessage;
     }
 
+    @Override
     @ManagedAttribute(description = "Pattern to filter EIPs")
     public String getNodePattern() {
         return nodePattern;
     }
 
+    @Override
     @ManagedAttribute(description = "Pattern to filter EIPs")
     public void setNodePattern(String nodePattern) {
         this.nodePattern = nodePattern;

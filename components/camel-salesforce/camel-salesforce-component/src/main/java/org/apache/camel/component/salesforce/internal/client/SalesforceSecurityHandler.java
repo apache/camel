@@ -276,6 +276,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
     }
 
     // no @Override annotation here to keep it compatible with Jetty 9.2, getName was added in 9.3
+    @Override
     public String getName() {
         return "CamelSalesforceSecurityHandler";
     }

@@ -74,6 +74,7 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         }
     }
 
+    @Override
     public WebsocketEndpoint getEndpoint() {
         return endpoint;
     }

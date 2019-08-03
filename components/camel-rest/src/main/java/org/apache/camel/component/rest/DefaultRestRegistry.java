@@ -45,12 +45,14 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     private final Map<Consumer, RestService> registry = new LinkedHashMap<>();
     private transient Producer apiProducer;
 
+    @Override
     public void addRestService(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
                                String consumes, String produces, String inType, String outType, String routeId, String description) {
         RestServiceEntry entry = new RestServiceEntry(consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, routeId, description);
         registry.put(consumer, entry);
     }
 
+    @Override
     public void removeRestService(Consumer consumer) {
         registry.remove(consumer);
     }
@@ -121,10 +123,12 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         return null;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -175,46 +179,57 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
             this.description = description;
         }
 
+        @Override
         public Consumer getConsumer() {
             return consumer;
         }
 
+        @Override
         public String getUrl() {
             return url;
         }
 
+        @Override
         public String getBaseUrl() {
             return baseUrl;
         }
 
+        @Override
         public String getBasePath() {
             return basePath;
         }
 
+        @Override
         public String getUriTemplate() {
             return uriTemplate;
         }
 
+        @Override
         public String getMethod() {
             return method;
         }
 
+        @Override
         public String getConsumes() {
             return consumes;
         }
 
+        @Override
         public String getProduces() {
             return produces;
         }
 
+        @Override
         public String getInType() {
             return inType;
         }
 
+        @Override
         public String getOutType() {
             return outType;
         }
 
+        @Override
         public String getState() {
             // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
             ServiceStatus status = null;
@@ -228,10 +243,12 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
             return status.name();
         }
 
+        @Override
         public String getRouteId() {
             return routeId;
         }
 
+        @Override
         public String getDescription() {
             return description;
         }

@@ -63,6 +63,7 @@ public class MulticastStreamCachingTest extends ContextTestSupport {
         z = getMockEndpoint("mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         final Processor processor = new Processor() {
             public void process(Exchange exchange) {

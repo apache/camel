@@ -43,6 +43,7 @@ public class JiraComponent extends DefaultComponent {
         registerExtension(new JiraVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // override configuration from route parameters
         setProperties(configuration, parameters);

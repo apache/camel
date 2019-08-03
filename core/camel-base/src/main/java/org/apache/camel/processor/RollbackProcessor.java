@@ -40,6 +40,7 @@ public class RollbackProcessor extends AsyncProcessorSupport implements Traceabl
         this.message = message;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (isMarkRollbackOnlyLast()) {
             // only mark the last route (current) as rollback
@@ -76,14 +77,17 @@ public class RollbackProcessor extends AsyncProcessorSupport implements Traceabl
         }
     }
 
+    @Override
     public String getTraceLabel() {
         return "rollback";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

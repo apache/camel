@@ -60,6 +60,7 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
         return this;
     }
 
+    @Override
     public String getNamespaceURI(String prefix) {
         String answer = map.get(prefix);
         if (answer == null && parent != null) {
@@ -68,6 +69,7 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
         return answer;
     }
 
+    @Override
     public String getPrefix(String namespaceURI) {
         for (Entry<String, String> entry : map.entrySet()) {
             if (namespaceURI.equals(entry.getValue())) {
@@ -80,6 +82,7 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
         return null;
     }
 
+    @Override
     public Iterator<String> getPrefixes(String namespaceURI) {
         Set<String> set = new HashSet<>();
         for (Entry<String, String> entry : map.entrySet()) {
@@ -96,10 +99,12 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
         return set.iterator();
     }
 
+    @Override
     public void setNamespaces(Map<String, String> namespaces) {
         map.putAll(namespaces);
     }
 
+    @Override
     public Map<String, String> getNamespaces() {
         return map;
     }

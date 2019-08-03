@@ -178,6 +178,7 @@ public class BeanInfoTest extends Assert {
 
     public static class OverloadOnMethod implements MyOneWayInterface {
 
+        @Override
         public void inOnlyMethod() {
         }
     }
@@ -189,9 +190,11 @@ public class BeanInfoTest extends Assert {
 
     public static class OverloadOnInterface implements MyOneWayInterfaceWithOverloadedMethod {
 
+        @Override
         public void inOnlyMethod() {
         }
 
+        @Override
         public Object inOutMethod() {
             return null;
         }

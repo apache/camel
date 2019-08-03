@@ -59,6 +59,7 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         this.topicName = topicName;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         // producer requires an operation, topicName must be the invalid operation name
         if (operationName == null) {
@@ -73,6 +74,7 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // consumer requires a topicName, operation name must be the invalid topic name
         if (topicName == null) {
@@ -91,6 +93,7 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         return (SalesforceComponent) super.getComponent();
     }
 
+    @Override
     public boolean isSingleton() {
         // re-use endpoint instance across multiple threads
         // the description of this method is a little confusing

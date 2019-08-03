@@ -56,6 +56,7 @@ public class PullRequestStateProducer extends AbstractGitHubProducer {
         targetUrl = endpoint.getTargetUrl();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         String pullRequestNumberSHA = exchange.getIn().getHeader(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, String.class);
         String text = exchange.getIn().getBody(String.class);

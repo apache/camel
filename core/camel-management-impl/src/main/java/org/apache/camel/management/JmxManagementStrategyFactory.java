@@ -29,6 +29,7 @@ import org.apache.camel.support.PropertyBindingSupport;
  */
 public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
 
+    @Override
     public ManagementStrategy create(CamelContext context, Map<String, Object> options) throws Exception {
         DefaultManagementAgent agent = new DefaultManagementAgent(context);
         if (options != null) {

@@ -20,10 +20,12 @@ import org.junit.Ignore;
 
 @Ignore("Requires JCE unlimited strength jurisdiction policy files on CI server")
 public class PGPDataFormatElGamalTest extends PGPDataFormatTest {
+    @Override
     protected String getKeyFileName() {
         return "org/apache/camel/component/crypto/pubring-ElGamal.gpg";
     }
     
+    @Override
     protected String getKeyFileNameSec() {
         return "org/apache/camel/component/crypto/secring-ElGamal.gpg";
     }

@@ -67,6 +67,7 @@ public class UserProducerInOutTest extends CamelTwitterTestSupport {
         assertNotNull(receivedTweet.getId());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

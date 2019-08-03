@@ -76,6 +76,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         this.camelContext = camelContext;
     }
 
+    @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws Exception {
         LOG.trace("Camel bean processing before initialization for bean: {}", beanName);
 
@@ -106,6 +107,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         return bean;
     }
 
+    @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws Exception {
         LOG.trace("Camel bean processing after initialization for bean: {}", beanName);
 

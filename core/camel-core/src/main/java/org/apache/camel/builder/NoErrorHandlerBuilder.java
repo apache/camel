@@ -31,6 +31,7 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
  */
 public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
+    @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
         return new DelegateAsyncProcessor(processor) {
             @Override
@@ -55,6 +56,7 @@ public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         };
     }
 
+    @Override
     public boolean supportTransacted() {
         return false;
     }

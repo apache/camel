@@ -58,6 +58,7 @@ public class DefaultAhcBinding implements AhcBinding {
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
     protected HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
 
+    @Override
     public Request prepareRequest(AhcEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
         if (endpoint.isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);

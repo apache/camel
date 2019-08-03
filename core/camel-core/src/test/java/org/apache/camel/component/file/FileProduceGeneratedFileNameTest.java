@@ -44,6 +44,7 @@ public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
         assertEquals("The generated file should exists: " + file, true, file.exists());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

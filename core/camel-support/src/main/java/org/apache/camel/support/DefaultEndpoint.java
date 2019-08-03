@@ -118,6 +118,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     protected DefaultEndpoint() {
     }
 
+    @Override
     public int hashCode() {
         return getEndpointUri().hashCode() * 37 + 1;
     }
@@ -153,10 +154,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * Returns a unique String ID which can be used for aliasing without having
      * to use the whole URI which is not unique
      */
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public String getEndpointUri() {
         if (endpointUri == null) {
             endpointUri = createEndpointUri();
@@ -168,6 +171,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         return endpointUri;
     }
 
+    @Override
     public String getEndpointKey() {
         if (isLenientProperties()) {
             // only use the endpoint uri without parameters as the properties are lenient
@@ -183,6 +187,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         }
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -203,10 +208,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         return component;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public PollingConsumer createPollingConsumer() throws Exception {
         // should not call configurePollingConsumer when its EventDrivenPollingConsumer
         if (log.isDebugEnabled()) {
@@ -219,10 +226,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         return consumer;
     }
 
+    @Override
     public Exchange createExchange() {
         return createExchange(getExchangePattern());
     }
 
+    @Override
     public Exchange createExchange(ExchangePattern pattern) {
         return new DefaultExchange(this, pattern);
     }
@@ -383,6 +392,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         this.pollingConsumerBlockTimeout = pollingConsumerBlockTimeout;
     }
 
+    @Override
     public void configureProperties(Map<String, Object> options) {
         Map<String, Object> consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
         if (consumerProperties != null && !consumerProperties.isEmpty()) {

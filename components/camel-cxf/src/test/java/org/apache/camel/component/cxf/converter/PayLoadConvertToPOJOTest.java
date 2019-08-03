@@ -47,6 +47,7 @@ public class PayLoadConvertToPOJOTest extends CamelTestSupport {
         return CXFTestSupport.getPort1();
     }
    
+    @Override
     @Before
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();
@@ -54,6 +55,7 @@ public class PayLoadConvertToPOJOTest extends CamelTestSupport {
         assertNotNull("Should have created a valid spring context", applicationContext);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);

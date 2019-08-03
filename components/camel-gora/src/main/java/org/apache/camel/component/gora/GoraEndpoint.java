@@ -65,6 +65,7 @@ public class GoraEndpoint extends DefaultEndpoint {
         return new GoraProducer(this, this.configuration, this.dataStore);
     }
 
+    @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
         return new GoraConsumer(this, processor, this.configuration, this.dataStore);
     }

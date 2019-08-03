@@ -42,6 +42,7 @@ public class SWFWorkflowProducer extends DefaultProducer {
         this.camelSWFClient = camelSWFClient;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         LOGGER.debug("processing workflow task " + exchange);
 

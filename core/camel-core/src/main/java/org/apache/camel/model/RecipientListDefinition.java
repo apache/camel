@@ -258,6 +258,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * To use a custom Thread Pool to be used for parallel processing.
      * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
      */
+    @Override
     public RecipientListDefinition<Type> executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
@@ -267,6 +268,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * Refers to a custom Thread Pool to be used for parallel processing.
      * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
      */
+    @Override
     public RecipientListDefinition<Type> executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -412,10 +414,12 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
+    @Override
     public String getExecutorServiceRef() {
         return executorServiceRef;
     }
 
+    @Override
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }
@@ -448,10 +452,12 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.aggregationStrategy = aggregationStrategy;
     }
 
+    @Override
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
+    @Override
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }

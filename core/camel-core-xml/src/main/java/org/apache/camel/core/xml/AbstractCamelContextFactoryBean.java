@@ -700,8 +700,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract T getContext(boolean create);
 
+    @Override
     public abstract List<RouteDefinition> getRoutes();
 
+    @Override
     public abstract List<RestDefinition> getRests();
 
     public abstract RestConfigurationDefinition getRestConfiguration();

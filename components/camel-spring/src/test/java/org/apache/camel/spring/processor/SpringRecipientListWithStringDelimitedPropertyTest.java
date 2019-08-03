@@ -22,6 +22,7 @@ import org.apache.camel.processor.RecipientListWithStringDelimitedPropertyTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringRecipientListWithStringDelimitedPropertyTest extends RecipientListWithStringDelimitedPropertyTest {
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
                 "org/apache/camel/spring/processor/recipientListWithStringDelimitedProperty.xml");

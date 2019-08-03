@@ -32,14 +32,17 @@ public class CamelTopic extends CamelDestination implements Topic {
         super(uri);
     }
 
+    @Override
     public String getTopicName() throws JMSException {
         return getUri();
     }
 
+    @Override
     public TopicPublisher createPublisher(ActiveMQSession session) throws JMSException {
         return new CamelTopicPublisher(this, resolveEndpoint(session), session);
     }
 
+    @Override
     public TopicSubscriber createDurableSubscriber(ActiveMQSession session, String name, String messageSelector, boolean noLocal) {
         return new CamelTopicSubscriber(this, resolveEndpoint(session), session, name, messageSelector, noLocal);
     }

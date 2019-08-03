@@ -88,10 +88,12 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
         }
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return context;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         // TODO: this is wrong a configuration should not have CamelContext
         this.context = camelContext;

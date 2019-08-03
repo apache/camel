@@ -37,6 +37,7 @@ import org.junit.Test;
 
 public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeaderTestAbstract {
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
         return new RouteBuilder() {

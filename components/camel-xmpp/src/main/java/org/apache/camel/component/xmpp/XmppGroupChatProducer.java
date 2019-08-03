@@ -46,6 +46,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void process(Exchange exchange) {
 
         if (connection == null) {

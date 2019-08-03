@@ -48,50 +48,62 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
         return registry;
     }
 
+    @Override
     public long getNoopCounter() {
         return registry.getStatistics().getNoopCounter();
     }
 
+    @Override
     public long getAttemptCounter() {
         return registry.getStatistics().getAttemptCounter();
     }
 
+    @Override
     public long getHitCounter() {
         return registry.getStatistics().getHitCounter();
     }
 
+    @Override
     public long getMissCounter() {
         return registry.getStatistics().getMissCounter();
     }
 
+    @Override
     public long getFailedCounter() {
         return registry.getStatistics().getFailedCounter();
     }
 
+    @Override
     public void resetTypeConversionCounters() {
         registry.getStatistics().reset();
     }
 
+    @Override
     public boolean isStatisticsEnabled() {
         return registry.getStatistics().isStatisticsEnabled();
     }
 
+    @Override
     public void setStatisticsEnabled(boolean statisticsEnabled) {
         registry.getStatistics().setStatisticsEnabled(statisticsEnabled);
     }
 
+    @Override
     public int getNumberOfTypeConverters() {
         return registry.size();
     }
 
+    @Override
     public String getTypeConverterExistsLoggingLevel() {
         return registry.getTypeConverterExistsLoggingLevel().name();
     }
 
+    @Override
     public String getTypeConverterExists() {
         return registry.getTypeConverterExists().name();
     }
 
+    @Override
     public boolean hasTypeConverter(String fromType, String toType) {
         try {
             Class<?> from = getContext().getClassResolver().resolveMandatoryClass(fromType);
@@ -102,6 +114,7 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
         }
     }
 
+    @Override
     public TabularData listTypeConverters() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listTypeConvertersTabularType());

@@ -52,6 +52,7 @@ public class CxfClientCallback extends ClientCallback {
         this.endpoint = endpoint;
     }
     
+    @Override
     public void handleResponse(Map<String, Object> ctx, Object[] res) {
         try {
             super.handleResponse(ctx, res);            
@@ -79,6 +80,7 @@ public class CxfClientCallback extends ClientCallback {
         }
     }
     
+    @Override
     public void handleException(Map<String, Object> ctx, Throwable ex) {
         try {
             super.handleException(ctx, ex);

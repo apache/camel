@@ -36,6 +36,7 @@ public class JsonTokenExtractor implements AccessTokenExtractor {
         accessTokenPattern = Pattern.compile(tokenRegex);
     }
 
+    @Override
     public Token extract(String response) {
         Preconditions.checkEmptyString(response, "Cannot extract a token from a null or empty String");
         Matcher matcher = accessTokenPattern.matcher(response);

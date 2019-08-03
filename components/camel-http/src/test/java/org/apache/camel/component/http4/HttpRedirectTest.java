@@ -113,6 +113,7 @@ public class HttpRedirectTest extends BaseHttpTest {
             this.code = code;
         }
 
+        @Override
         public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) throws HttpException, IOException {
             httpResponse.setHeader("location", "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/someplaceelse");
             httpResponse.setStatusCode(code);

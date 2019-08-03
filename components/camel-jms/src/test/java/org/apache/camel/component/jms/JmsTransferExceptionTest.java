@@ -69,6 +69,7 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
         assertEquals(3, counter);
     }
   
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

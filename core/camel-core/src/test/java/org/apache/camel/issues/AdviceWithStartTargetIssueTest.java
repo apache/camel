@@ -73,6 +73,7 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
         private static final Logger LOG = LoggerFactory.getLogger(ContainerWideInterceptor.class);
         private static int count;
 
+        @Override
         public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
                                                      final Processor target, final Processor nextTarget) throws Exception {
 

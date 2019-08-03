@@ -84,10 +84,12 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         this.keyspace = keyspace;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new CassandraProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         CassandraConsumer consumer = new CassandraConsumer(this, processor);
         configureConsumer(consumer);

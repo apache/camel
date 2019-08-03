@@ -56,6 +56,7 @@ public class EvaluateExpressionProcessor extends AsyncProcessorSupport implement
         return "EvalExpression[" + expression + "]";
     }
 
+    @Override
     public String getTraceLabel() {
         return "eval[" + expression + "]";
     }

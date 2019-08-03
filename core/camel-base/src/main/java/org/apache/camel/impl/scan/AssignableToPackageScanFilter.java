@@ -42,6 +42,7 @@ public class AssignableToPackageScanFilter implements PackageScanFilter {
         parents.add(parentType);
     }
 
+    @Override
     public boolean matches(Class<?> type) {
         if (parents != null && parents.size() > 0) {
             for (Class<?> parent : parents) {

@@ -60,6 +60,7 @@ public class DeferServiceStartupListener implements StartupListener, Ordered {
         }
     }
 
+    @Override
     public int getOrder() {
         // we want to be last, so the other startup listeners run first
         return Ordered.LOWEST;

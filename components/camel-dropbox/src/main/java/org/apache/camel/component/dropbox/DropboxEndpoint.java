@@ -60,6 +60,7 @@ public class DropboxEndpoint extends DefaultEndpoint {
      * @return the camel producer
      * @throws Exception
      */
+    @Override
     public Producer createProducer() throws Exception {
         LOG.trace("Resolve producer dropbox endpoint {{}}", configuration.getOperation());
         LOG.trace("Resolve producer dropbox attached client: {}", configuration.getClient());
@@ -84,6 +85,7 @@ public class DropboxEndpoint extends DefaultEndpoint {
      * @return the camel consumer
      * @throws Exception
      */
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         LOG.trace("Resolve consumer dropbox endpoint {{}}", configuration.getOperation());
         LOG.trace("Resolve consumer dropbox attached client: {}", configuration.getClient());

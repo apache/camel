@@ -86,6 +86,7 @@ public class Mina2VMTransferExchangeOptionTest extends BaseMina2Test {
         assertNull(exchange.getProperty("Charset"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 

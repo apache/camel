@@ -76,6 +76,7 @@ public class LevelDBAggregateTimeoutCompletionRestartTest extends CamelTestSuppo
 
     public static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

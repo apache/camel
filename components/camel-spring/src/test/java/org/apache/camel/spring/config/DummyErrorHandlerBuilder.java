@@ -35,10 +35,12 @@ public class DummyErrorHandlerBuilder extends ErrorHandlerBuilderSupport impleme
         this.beanName = beanName;
     }
 
+    @Override
     public void setBeanName(String beanName) {
         this.beanName = beanName;
     }
 
+    @Override
     public boolean supportTransacted() {
         return false;
     }
@@ -51,6 +53,7 @@ public class DummyErrorHandlerBuilder extends ErrorHandlerBuilderSupport impleme
         return answer;
     }
 
+    @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         return new DelegateProcessor(processor) {
             @Override

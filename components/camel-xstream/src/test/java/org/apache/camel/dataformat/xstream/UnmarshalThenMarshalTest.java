@@ -50,6 +50,7 @@ public class UnmarshalThenMarshalTest extends CamelTestSupport {
         assertEquals("Received body", expectedBody, actualBody);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

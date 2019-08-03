@@ -89,6 +89,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         super.doStop();
     }
 
+    @Override
     protected int poll() throws Exception {
         // must reset for each poll
         shutdownRunningTask = null;
@@ -175,6 +176,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         return polledMessages;
     }
 
+    @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 

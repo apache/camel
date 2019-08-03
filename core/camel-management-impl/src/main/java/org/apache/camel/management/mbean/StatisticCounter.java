@@ -22,10 +22,12 @@ public class StatisticCounter extends Statistic {
 
     private final AtomicLong value = new AtomicLong(0);
 
+    @Override
     public void updateValue(long newValue) {
         value.getAndAdd(newValue);
     }
 
+    @Override
     public long getValue() {
         return value.get();
     }
@@ -35,6 +37,7 @@ public class StatisticCounter extends Statistic {
         return "" + value.get();
     }
 
+    @Override
     public void reset() {
         value.set(0);
     }

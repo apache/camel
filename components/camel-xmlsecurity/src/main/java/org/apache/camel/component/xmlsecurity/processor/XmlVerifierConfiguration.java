@@ -63,6 +63,7 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         }
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         super.setCamelContext(camelContext);
         setKeySelector(keySelectorName);

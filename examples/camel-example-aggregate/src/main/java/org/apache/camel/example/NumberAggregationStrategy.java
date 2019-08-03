@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 // START SNIPPET: e1
 public class NumberAggregationStrategy implements AggregationStrategy {
 
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange == null) {
             return newExchange;

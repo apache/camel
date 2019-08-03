@@ -37,6 +37,7 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
     protected JdbcTemplate jdbc;
     protected boolean useTransactionErrorHandler = true;
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("/org/apache/camel/spring/interceptor/transactionalClientDataSource.xml");
     }
@@ -72,6 +73,7 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
         assertEquals("Number of books", 1, count);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         // Notice that we use the SpringRouteBuilder that has a few more features than
         // the standard RouteBuilder

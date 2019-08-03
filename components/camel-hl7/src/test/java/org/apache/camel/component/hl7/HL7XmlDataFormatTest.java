@@ -59,6 +59,7 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
         assertEquals("O01", new Terser(received).get("MSH-9-2"));
     }    
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         HapiContext hapiContext = new DefaultHapiContext();
         hapiContext.setValidationContext(new NoValidation());

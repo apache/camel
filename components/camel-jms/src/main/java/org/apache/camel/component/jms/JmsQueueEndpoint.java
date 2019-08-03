@@ -89,6 +89,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
         this.maximumBrowseSize = maximumBrowseSize;
     }
 
+    @Override
     public List<Exchange> getExchanges() {
         if (queueBrowseStrategy == null) {
             return Collections.emptyList();

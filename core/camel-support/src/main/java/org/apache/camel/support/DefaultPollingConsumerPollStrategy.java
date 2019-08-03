@@ -29,14 +29,17 @@ public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollSt
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
+    @Override
     public boolean begin(Consumer consumer, Endpoint endpoint) {
         return true;
     }
 
+    @Override
     public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
         // noop
     }
 
+    @Override
     public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
         // we do not want to retry
         return false;

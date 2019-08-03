@@ -46,6 +46,7 @@ public class WireTapBeanTest extends ContextTestSupport {
         result = getMockEndpoint("mock:result");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

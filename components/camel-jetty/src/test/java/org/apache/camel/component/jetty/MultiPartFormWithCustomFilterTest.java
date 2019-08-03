@@ -92,6 +92,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         assertNotNull("Did not use custom multipart filter", httppost.getResponseHeader("MyMultipartFilter"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

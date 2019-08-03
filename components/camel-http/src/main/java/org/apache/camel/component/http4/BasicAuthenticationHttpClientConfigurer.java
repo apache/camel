@@ -36,6 +36,7 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
         this.host = host;
     }
 
+    @Override
     public void configureHttpClient(HttpClientBuilder clientBuilder) {
         Credentials defaultcreds;
         if (domain != null) {

@@ -58,6 +58,7 @@ public class BindyComplexCsvUnmarshallUnwrapSingleInstanceTest extends AbstractJ
     }
 
     public static class ContextConfig extends RouteBuilder {
+        @Override
         public void configure() {
             from("direct:start")
                 .unmarshal().bindy(BindyType.Csv, TYPE, false)

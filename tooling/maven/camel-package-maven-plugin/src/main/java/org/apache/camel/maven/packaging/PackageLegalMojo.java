@@ -54,6 +54,7 @@ public class PackageLegalMojo extends AbstractGeneratorMojo {
      *                 threads it generated failed.
      * @throws MojoFailureException something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         processLegal(legalOutDir.toPath());
     }

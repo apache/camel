@@ -24,6 +24,7 @@ import org.springframework.jms.support.destination.DestinationResolver;
 
 public class MyDestinationResolver implements DestinationResolver {
 
+    @Override
     public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain) throws JMSException {
         if ("logicalNameForTestBQueue".equals(destinationName)) {
             return session.createQueue("test.b");

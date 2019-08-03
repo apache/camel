@@ -39,6 +39,7 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
         z = getMockEndpoint("mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -73,6 +74,7 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
     // START SNIPPET: e2
     public static class MyLoadBalancer extends LoadBalancerSupport {
 
+        @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             String body = exchange.getIn().getBody(String.class);
             try {

@@ -24,6 +24,7 @@ import org.apache.camel.support.builder.Namespaces;
  */
 public class XPathNamespaceResultTypeTest extends XPathNamespaceTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -143,6 +143,7 @@ public class CamelNodeDetails {
         this.methodName = methodName;
     }
 
+    @Override
     public String toString() {
         return name;
     }

@@ -56,6 +56,7 @@ public class SplitterOnPrepareExceptionTest extends ContextTestSupport {
 
     public static final class FixNamePrepare implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             String name = exchange.getIn().getBody(String.class);
             if ("Kaboom".equals(name)) {

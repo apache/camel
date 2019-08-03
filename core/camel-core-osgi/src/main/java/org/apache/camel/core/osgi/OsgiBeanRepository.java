@@ -52,6 +52,7 @@ public class OsgiBeanRepository extends LifecycleStrategySupport implements Bean
     /**
      * Support to lookup the Object with filter with the (name=NAME) and class type
      */
+    @Override
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         Object service = null;
         ServiceReference<?> sr;
@@ -73,6 +74,7 @@ public class OsgiBeanRepository extends LifecycleStrategySupport implements Bean
     /**
      * It's only support to look up the ServiceReference with Class name or service PID
      */
+    @Override
     public Object lookupByName(String name) {
         Object service = null;
         ServiceReference<?> sr = bundleContext.getServiceReference(name);
@@ -99,6 +101,7 @@ public class OsgiBeanRepository extends LifecycleStrategySupport implements Bean
         return service;
     }
 
+    @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         Map<String, T> result = new HashMap<>();
         int count = 0;
@@ -129,6 +132,7 @@ public class OsgiBeanRepository extends LifecycleStrategySupport implements Bean
         return result;
     }
 
+    @Override
     public <T> Set<T> findByType(Class<T> type) {
         Map<String, T> map = findByTypeWithName(type);
         return new HashSet<>(map.values());

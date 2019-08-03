@@ -21,6 +21,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class PGPKeyAccessDataFormatTest extends CamelTestSupport {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {

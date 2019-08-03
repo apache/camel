@@ -37,6 +37,7 @@ public abstract class HeaderFilterStrategyComponent extends DefaultComponent imp
         super(context);
     }
     
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -44,6 +45,7 @@ public abstract class HeaderFilterStrategyComponent extends DefaultComponent imp
     /**
      * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
     }

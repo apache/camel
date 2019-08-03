@@ -58,6 +58,7 @@ public class AtomixValueConfiguration extends AtomixClientConfiguration {
     // Copy
     // ****************************************
 
+    @Override
     public AtomixValueConfiguration copy() {
         try {
             return (AtomixValueConfiguration) super.clone();

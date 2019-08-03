@@ -79,10 +79,12 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return (TimerComponent) super.getComponent();
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         throw new RuntimeCamelException("Cannot produce to a TimerEndpoint: " + getEndpointUri());
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer answer = new TimerConsumer(this, processor);
         configureConsumer(answer);
@@ -104,6 +106,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         super.doStop();
     }
 
+    @Override
     @ManagedAttribute
     public boolean isMultipleConsumersSupported() {
         return true;

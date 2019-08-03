@@ -48,6 +48,7 @@ public class HipchatProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Message message = getMessageForResponse(exchange);
         String user = exchange.getIn().getHeader(HipchatConstants.TO_USER, String.class);

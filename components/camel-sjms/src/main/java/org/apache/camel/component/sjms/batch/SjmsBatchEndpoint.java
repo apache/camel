@@ -334,6 +334,7 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
         this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new SjmsHeaderFilterStrategy(isIncludeAllJMSXProperties());
@@ -344,6 +345,7 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }

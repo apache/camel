@@ -68,6 +68,7 @@ public class SoapCxfServerTest extends RouteBuilder {
         }
     }
 
+    @Override
     public void configure() throws Exception {
         String jaxbPackage = GetCustomersByName.class.getPackage().getName();
         ElementNameStrategy elNameStrat = new ServiceInterfaceStrategy(CustomerService.class, true);

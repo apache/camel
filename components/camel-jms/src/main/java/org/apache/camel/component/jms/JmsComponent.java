@@ -1034,6 +1034,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     /**
      * Sets the Spring ApplicationContext to use
      */
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

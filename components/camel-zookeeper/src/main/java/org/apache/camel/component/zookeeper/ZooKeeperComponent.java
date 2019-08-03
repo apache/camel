@@ -42,6 +42,7 @@ public class ZooKeeperComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (getCamelContext() == null) {
             throw new CamelException("No Camel context has been provided to this zookeeper component");

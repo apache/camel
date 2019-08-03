@@ -372,6 +372,7 @@ public class SignatureTest extends CamelTestSupport {
         }
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         setUpKeys("DSA");

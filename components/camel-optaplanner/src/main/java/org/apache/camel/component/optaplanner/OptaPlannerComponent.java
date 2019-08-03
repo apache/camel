@@ -30,6 +30,7 @@ import org.kie.api.KieServices;
 @Component("optaplanner")
 public class OptaPlannerComponent extends DefaultComponent {
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         OptaPlannerConfiguration configuration = new OptaPlannerConfiguration();
         configuration.setConfigFile(remaining);

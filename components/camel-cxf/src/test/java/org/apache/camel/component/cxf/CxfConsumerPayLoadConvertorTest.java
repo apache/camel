@@ -32,6 +32,7 @@ import org.apache.cxf.binding.soap.SoapHeader;
 
 public class CxfConsumerPayLoadConvertorTest extends CxfConsumerPayloadTest {
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

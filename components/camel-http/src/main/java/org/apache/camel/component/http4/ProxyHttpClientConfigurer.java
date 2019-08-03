@@ -51,6 +51,7 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
         this.ntHost = ntHost;
     }
 
+    @Override
     public void configureHttpClient(HttpClientBuilder clientBuilder) {
         clientBuilder.setProxy(new HttpHost(host, port, scheme));
 

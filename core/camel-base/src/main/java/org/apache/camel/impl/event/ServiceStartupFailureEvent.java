@@ -39,6 +39,7 @@ public class ServiceStartupFailureEvent extends EventObject implements CamelEven
         return context;
     }
 
+    @Override
     public Object getService() {
         return service;
     }

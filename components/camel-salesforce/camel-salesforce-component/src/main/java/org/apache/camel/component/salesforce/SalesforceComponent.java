@@ -231,6 +231,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         registerExtension(SalesforceMetaDataExtension::new);
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // get Operation from remaining URI
         OperationName operationName = null;

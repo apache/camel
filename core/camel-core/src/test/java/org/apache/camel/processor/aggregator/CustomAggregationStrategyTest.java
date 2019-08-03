@@ -67,6 +67,7 @@ public class CustomAggregationStrategyTest extends ContextTestSupport {
     // START SNIPPET: e3
     private static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 // the first time we only have the new exchange so it wins the first round

@@ -44,6 +44,7 @@ public class AtmosComponent extends DefaultComponent {
         super(context);
     }
 
+    @Override
     protected AtmosEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         AtmosConfiguration configuration = new AtmosConfiguration();
 

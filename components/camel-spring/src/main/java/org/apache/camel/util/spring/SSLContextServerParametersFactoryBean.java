@@ -39,6 +39,7 @@ public class SSLContextServerParametersFactoryBean extends AbstractSSLContextSer
         return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }

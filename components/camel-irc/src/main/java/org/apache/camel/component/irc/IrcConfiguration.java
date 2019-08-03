@@ -487,6 +487,7 @@ public class IrcConfiguration implements Cloneable {
         this.namesOnJoin = namesOnJoin;
     }
 
+    @Override
     public String toString() {
         return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", username=" + username
                 + "]";

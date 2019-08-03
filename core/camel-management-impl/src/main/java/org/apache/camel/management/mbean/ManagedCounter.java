@@ -35,19 +35,23 @@ public abstract class ManagedCounter implements ManagedCounterMBean {
         resetTimestamp = now;
     }
 
+    @Override
     public void reset() {
         exchangesTotal.reset();
         resetTimestamp = new Date();
     }
 
+    @Override
     public Date getStartTimestamp() {
         return startTimestamp;
     }
 
+    @Override
     public Date getResetTimestamp() {
         return resetTimestamp;
     }
 
+    @Override
     public long getExchangesTotal() throws Exception {
         return exchangesTotal.getValue();
     }

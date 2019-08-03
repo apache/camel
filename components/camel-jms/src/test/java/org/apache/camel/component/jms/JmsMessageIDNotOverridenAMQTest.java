@@ -54,6 +54,7 @@ public class JmsMessageIDNotOverridenAMQTest extends CamelTestSupport {
         assertNotEquals("id1", id);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

@@ -19,6 +19,7 @@ package org.apache.camel.component.rss;
 import org.apache.camel.builder.RouteBuilder;
 
 public class RssEntrySortDefaultsTest extends RssEntrySortTest {
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -59,6 +59,7 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
         state.remove(consumer);
     }
 
+    @Override
     public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
         // keep track how many times in a row we have rolled back
         Integer times = state.get(consumer);
@@ -110,10 +111,12 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
         return false;
     }
 
+    @Override
     public void start() {
         // noop
     }
 
+    @Override
     public void stop() {
         state.clear();
     }

@@ -48,12 +48,14 @@ public class RssDataFormat extends ServiceSupport implements DataFormat, DataFor
         return "rss";
     }
 
+    @Override
     public void marshal(Exchange exchange, Object body, OutputStream out) throws Exception {
         SyndFeed feed = ExchangeHelper.convertToMandatoryType(exchange, SyndFeed.class, body);
         String xml = RssConverter.feedToXml(feed);
         out.write(xml.getBytes());
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream in) throws Exception {
         String xml = ExchangeHelper.convertToMandatoryType(exchange, String.class, in);
         return RssConverter.xmlToFeed(xml);

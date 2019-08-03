@@ -65,6 +65,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
         return new SftpConsumer(this, processor, createRemoteFileOperations(), processStrategy != null ? processStrategy : createGenericFileStrategy());
     }
 
+    @Override
     protected GenericFileProducer<SftpRemoteFile> buildProducer() {
         if (this.getMoveExistingFileStrategy() == null) {
             this.setMoveExistingFileStrategy(createDefaultSftpMoveExistingFileStrategy());
@@ -80,6 +81,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
         return new SftpDefaultMoveExistingFileStrategy();
     }
 
+    @Override
     public RemoteFileOperations<SftpRemoteFile> createRemoteFileOperations() {
         SftpOperations operations = new SftpOperations(proxy);
         operations.setEndpoint(this);

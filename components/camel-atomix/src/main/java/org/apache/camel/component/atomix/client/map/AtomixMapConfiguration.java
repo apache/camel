@@ -72,6 +72,7 @@ public final class AtomixMapConfiguration extends AtomixClientConfiguration {
     // Copy
     // ****************************************
 
+    @Override
     public AtomixMapConfiguration copy() {
         try {
             return (AtomixMapConfiguration) super.clone();

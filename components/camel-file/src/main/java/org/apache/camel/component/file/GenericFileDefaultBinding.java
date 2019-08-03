@@ -26,14 +26,17 @@ import org.apache.camel.Exchange;
 public class GenericFileDefaultBinding<T> implements GenericFileBinding<T> {
     private Object body;
 
+    @Override
     public Object getBody(GenericFile<T> file) {
         return body;
     }
 
+    @Override
     public void setBody(GenericFile<T> file, Object body) {
         this.body = body;
     }
 
+    @Override
     public void loadContent(Exchange exchange, GenericFile<?> file) throws IOException {
         // noop as the body is already loaded
     }

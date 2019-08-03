@@ -33,6 +33,7 @@ public class SpringXPathFilterWithNamespaceOnRouteContextTest extends XPathFilte
         super.setUp();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/xpathFilterWithNamespaceOnRouteContext.xml");
     }

@@ -46,6 +46,7 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
         this.processor = processor;
     }
 
+    @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         this.sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
@@ -69,14 +70,17 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
         return true;
     }
 
+    @Override
     public SendDynamicProcessor getProcessor() {
         return processor;
     }
 
+    @Override
     public String getUri() {
         return uri;
     }
 
+    @Override
     public String getMessageExchangePattern() {
         if (processor.getPattern() != null) {
             return processor.getPattern().name();
@@ -85,18 +89,22 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
         }
     }
 
+    @Override
     public Integer getCacheSize() {
         return processor.getCacheSize();
     }
 
+    @Override
     public Boolean isIgnoreInvalidEndpoint() {
         return processor.isIgnoreInvalidEndpoint();
     }
 
+    @Override
     public Boolean isAllowOptimisedComponents() {
         return processor.isAllowOptimisedComponents();
     }
 
+    @Override
     public Boolean isOptimised() {
         return processor.getDynamicAware() != null;
     }

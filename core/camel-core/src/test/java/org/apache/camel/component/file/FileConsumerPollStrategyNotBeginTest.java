@@ -66,6 +66,7 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
         assertTrue(event.startsWith("beginbegincommit"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -76,6 +77,7 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
 
     private static class MyPollStrategy implements PollingConsumerPollStrategy {
 
+        @Override
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             event += "begin";
             if (counter++ == 0) {
@@ -85,10 +87,12 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
             return true;
         }
 
+        @Override
         public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
             event += "commit";
         }
 
+        @Override
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
             event += "rollback";
             return false;

@@ -28,6 +28,7 @@ public class RandomLoadBalancer extends QueueLoadBalancer {
 
     private transient int index;
 
+    @Override
     protected AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
         int size = processors.length;
         if (size == 0) {

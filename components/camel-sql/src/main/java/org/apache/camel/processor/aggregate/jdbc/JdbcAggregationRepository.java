@@ -393,18 +393,22 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
      * @param interval  the interval
      * @param timeUnit  the time unit
      */
+    @Override
     public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
         this.recoveryInterval = timeUnit.toMillis(interval);
     }
 
+    @Override
     public void setRecoveryInterval(long interval) {
         this.recoveryInterval = interval;
     }
 
+    @Override
     public long getRecoveryIntervalInMillis() {
         return recoveryInterval;
     }
 
+    @Override
     public boolean isUseRecovery() {
         return useRecovery;
     }
@@ -414,18 +418,22 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
      * @param useRecovery Whether or not recovery is enabled. This option is by default true. When enabled the Camel
      *                    Aggregator automatic recover failed aggregated exchange and have them resubmittedd
      */
+    @Override
     public void setUseRecovery(boolean useRecovery) {
         this.useRecovery = useRecovery;
     }
 
+    @Override
     public int getMaximumRedeliveries() {
         return maximumRedeliveries;
     }
 
+    @Override
     public void setMaximumRedeliveries(int maximumRedeliveries) {
         this.maximumRedeliveries = maximumRedeliveries;
     }
 
+    @Override
     public String getDeadLetterUri() {
         return deadLetterUri;
     }
@@ -437,6 +445,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
      *                       Important note : if the deadletter route throws an exception, it will be send again to DLQ
      *                       until it succeed !
      */
+    @Override
     public void setDeadLetterUri(String deadLetterUri) {
         this.deadLetterUri = deadLetterUri;
     }

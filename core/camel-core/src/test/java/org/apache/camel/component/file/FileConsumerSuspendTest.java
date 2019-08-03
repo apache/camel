@@ -69,6 +69,7 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
 
         private int counter;
 
+        @Override
         public void onExchangeDone(Route route, Exchange exchange) {
             // only stop it at first run
             if (counter++ == 0) {

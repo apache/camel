@@ -32,6 +32,7 @@ public class RecipientListInvalidEndpointIgnoreInvalidEndpointsTest extends Cont
         assertMockEndpointsSatisfied();
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

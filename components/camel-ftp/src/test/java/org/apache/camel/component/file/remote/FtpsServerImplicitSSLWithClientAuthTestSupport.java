@@ -26,6 +26,7 @@ public abstract class FtpsServerImplicitSSLWithClientAuthTestSupport extends Ftp
     /*
      * @see org.apache.camel.component.file.remote.FtpServerSecureTestSupport#getClientAuth()
      */
+    @Override
     protected String getClientAuth() {
         return "true";
     }
@@ -33,6 +34,7 @@ public abstract class FtpsServerImplicitSSLWithClientAuthTestSupport extends Ftp
     /*
      * @see org.apache.camel.component.file.remote.FtpServerSecureTestSupport#useImplicit()
      */
+    @Override
     protected boolean useImplicit() {
         return true;
     }
@@ -40,6 +42,7 @@ public abstract class FtpsServerImplicitSSLWithClientAuthTestSupport extends Ftp
     /*
      * @see org.apache.camel.component.file.remote.FtpServerSecureTestSupport#getAuthValue()
      */
+    @Override
     protected String getAuthValue() {
         return AUTH_VALUE_SSL;
     }

@@ -41,6 +41,7 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
     private int routeResumeRepeatCount;
     private long routeResumeRepeatInterval;    
     
+    @Override
     public void onInit(Route route) {
         try {
             doOnInit(route);

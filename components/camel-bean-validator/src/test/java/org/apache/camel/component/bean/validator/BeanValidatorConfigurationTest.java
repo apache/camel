@@ -80,10 +80,12 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
 
     class MyMessageInterpolator implements MessageInterpolator {
 
+        @Override
         public String interpolate(String messageTemplate, Context context) {
             return null;
         }
 
+        @Override
         public String interpolate(String messageTemplate, Context context, Locale locale) {
             return null;
         }
@@ -91,10 +93,12 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
 
     class MyTraversableResolver implements TraversableResolver {
 
+        @Override
         public boolean isCascadable(Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject, ElementType elementType) {
             return false;
         }
 
+        @Override
         public boolean isReachable(Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject, ElementType elementType) {
             return false;
         }
@@ -102,6 +106,7 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
 
     class MyConstraintValidatorFactory implements ConstraintValidatorFactory {
 
+        @Override
         public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
             return null;
         }

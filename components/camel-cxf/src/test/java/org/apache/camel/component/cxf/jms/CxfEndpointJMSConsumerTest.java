@@ -34,6 +34,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();
@@ -41,6 +42,7 @@ public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
         assertNotNull("Should have created a valid spring context", applicationContext);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         
@@ -57,6 +59,7 @@ public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jms/camel-context.xml");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -51,6 +51,7 @@ public class SchematronProducer extends DefaultProducer {
      * @param exchange
      * @throws Exception
      */
+    @Override
     public void process(Exchange exchange) throws Exception {
         final SchematronProcessor schematronProcessor = SchematronProcessorFactory.newSchematronEngine(endpoint.getRules());
         final Object payload = exchange.getIn().getBody();

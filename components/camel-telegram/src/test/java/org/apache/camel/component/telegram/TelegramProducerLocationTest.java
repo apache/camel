@@ -50,6 +50,7 @@ public class TelegramProducerLocationTest extends TelegramTestSupport {
     @Mock
     private RestBotAPI restBotAPI;
 
+    @Override
     @Before
     public void setUp() {
         service = new TelegramServiceRestBotAPIAdapter(restBotAPI);

@@ -37,10 +37,12 @@ public class HipchatEndpoint extends ScheduledPollEndpoint {
         configuration = new HipchatConfiguration();
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new HipchatProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         HipchatConsumer consumer =  new HipchatConsumer(this, processor);
         //Default delay of 500 millis is too often and would result in Rate Limit error's from

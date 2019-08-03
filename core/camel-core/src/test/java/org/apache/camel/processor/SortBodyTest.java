@@ -40,6 +40,7 @@ public class SortBodyTest extends ContextTestSupport {
         assertEquals("William", list.get(2));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -31,6 +31,7 @@ public class MyRouteBuilder extends RouteBuilder {
         new Main().run(args);
     }
 
+    @Override
     public void configure() {
         // populate the message queue with some messages
         from("file:src/data?noop=true").

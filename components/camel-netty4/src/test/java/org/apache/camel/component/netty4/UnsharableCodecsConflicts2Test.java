@@ -72,6 +72,7 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

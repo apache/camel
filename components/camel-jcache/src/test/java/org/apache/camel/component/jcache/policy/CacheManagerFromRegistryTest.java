@@ -67,6 +67,7 @@ public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
         };
     }
 
+    @Override
     @After
     public void after() {
         super.after();

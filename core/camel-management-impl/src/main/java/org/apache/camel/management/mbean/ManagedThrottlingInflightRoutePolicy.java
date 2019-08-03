@@ -35,34 +35,42 @@ public class ManagedThrottlingInflightRoutePolicy extends ManagedService impleme
         return policy;
     }
 
+    @Override
     public int getMaxInflightExchanges() {
         return getPolicy().getMaxInflightExchanges();
     }
 
+    @Override
     public void setMaxInflightExchanges(int maxInflightExchanges) {
         getPolicy().setMaxInflightExchanges(maxInflightExchanges);
     }
 
+    @Override
     public int getResumePercentOfMax() {
         return getPolicy().getResumePercentOfMax();
     }
 
+    @Override
     public void setResumePercentOfMax(int resumePercentOfMax) {
         getPolicy().setResumePercentOfMax(resumePercentOfMax);
     }
 
+    @Override
     public String getScope() {
         return getPolicy().getScope().name();
     }
 
+    @Override
     public void setScope(String scope) {
         getPolicy().setScope(ThrottlingInflightRoutePolicy.ThrottlingScope.valueOf(scope));
     }
 
+    @Override
     public String getLoggingLevel() {
         return getPolicy().getLoggingLevel().name();
     }
 
+    @Override
     public void setLoggingLevel(String loggingLevel) {
         LoggingLevel level = LoggingLevel.valueOf(loggingLevel);
         getPolicy().setLoggingLevel(level);

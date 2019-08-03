@@ -55,6 +55,7 @@ public class FacebookComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         FacebookEndpointConfiguration config = copyComponentProperties();
         final FacebookEndpoint endpoint = new FacebookEndpoint(uri, this, remaining, config);

@@ -177,6 +177,7 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
             return running;
         }
 
+        @Override
         public void run() {
             LOG.debug("FileWatcherStrategy is starting watching folder: {}", folder);
 

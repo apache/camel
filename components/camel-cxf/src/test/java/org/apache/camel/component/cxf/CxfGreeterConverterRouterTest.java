@@ -40,6 +40,7 @@ public class CxfGreeterConverterRouterTest extends AbstractCXFGreeterRouterTest 
         endpoint = Endpoint.publish(address, implementor); 
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterConverterEndpointsRouterContext.xml");
     }

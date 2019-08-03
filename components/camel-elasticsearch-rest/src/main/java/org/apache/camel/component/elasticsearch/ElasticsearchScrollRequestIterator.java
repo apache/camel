@@ -118,6 +118,7 @@ public class ElasticsearchScrollRequestIterator implements Iterator<SearchHit>, 
         return searchResponse;
     }
 
+    @Override
     public void close() {
         if (!closed) {
             try {

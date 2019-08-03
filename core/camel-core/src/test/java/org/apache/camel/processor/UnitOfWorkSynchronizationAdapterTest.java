@@ -23,6 +23,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 
 public class UnitOfWorkSynchronizationAdapterTest extends UnitOfWorkTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

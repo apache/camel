@@ -141,6 +141,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
     }
 
     // START SNIPPET: payload
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

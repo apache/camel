@@ -54,6 +54,7 @@ public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
         // END SNIPPET: e1
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

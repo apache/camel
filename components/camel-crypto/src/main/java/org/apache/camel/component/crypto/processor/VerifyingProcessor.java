@@ -37,6 +37,7 @@ public class VerifyingProcessor extends DigitalSignatureProcessor {
         super(configuration);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Signature signer = createSignatureService();
         Certificate cert = getCertificate(exchange);

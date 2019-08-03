@@ -64,6 +64,7 @@ public class MultiPartFormTest extends BaseUndertowTest {
         assertEquals("Get a wrong result", "A binary file of some kind", result);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

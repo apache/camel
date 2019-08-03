@@ -29,6 +29,7 @@ public class BindyDataFormatReifier extends DataFormatReifier<BindyDataFormat> {
         super((BindyDataFormat) definition);
     }
 
+    @Override
     protected DataFormat doCreateDataFormat(CamelContext camelContext) {
         if (definition.getClassTypeAsString() == null && definition.getClassType() == null) {
             throw new IllegalArgumentException("Either packages or classType must be specified");

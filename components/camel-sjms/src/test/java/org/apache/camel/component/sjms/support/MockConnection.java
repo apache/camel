@@ -32,6 +32,7 @@ public class MockConnection extends ActiveMQConnection {
         this.returnBadSessionNTimes = returnBadSessionNTimes;
     }
 
+    @Override
     public Session createSession(boolean transacted, int acknowledgeMode) throws JMSException {
         this.checkClosedOrFailed();
         this.ensureConnectionInfoSent();

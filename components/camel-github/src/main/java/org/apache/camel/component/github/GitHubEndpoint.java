@@ -87,6 +87,7 @@ public class GitHubEndpoint extends DefaultEndpoint {
         super(uri, component);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         if (type == GitHubType.CLOSEPULLREQUEST) {
             return new ClosePullRequestProducer(this);
@@ -104,6 +105,7 @@ public class GitHubEndpoint extends DefaultEndpoint {
         throw new IllegalArgumentException("Cannot create producer with type " + type);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (type == GitHubType.COMMIT) {
             StringHelper.notEmpty(branchName, "branchName", this);

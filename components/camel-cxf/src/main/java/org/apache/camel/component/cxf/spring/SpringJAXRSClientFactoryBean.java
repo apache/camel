@@ -85,11 +85,13 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
         }
     }
 
-    public String getBeanId() {            
+    @Override
+    public String getBeanId() {
         return beanId;
     }
 
-    public void setBeanId(String id) {            
+    @Override
+    public void setBeanId(String id) {
         beanId = id;            
     }
     
@@ -107,6 +109,7 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
         }
     }
 
+    @Override
     public void setProperties(Map<String, Object> properties) {
         if (this.getProperties() != null && properties != null) {
             this.getProperties().putAll(properties);

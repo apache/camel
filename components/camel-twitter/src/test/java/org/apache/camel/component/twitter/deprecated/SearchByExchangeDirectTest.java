@@ -116,6 +116,7 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
         assertTrue(mock.getReceivedCounter() >= total);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

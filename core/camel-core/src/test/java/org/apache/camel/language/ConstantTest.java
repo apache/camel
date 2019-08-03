@@ -33,6 +33,7 @@ public class ConstantTest extends LanguageTestSupport {
         assertPredicate("another value");
     }
 
+    @Override
     protected String getLanguageName() {
         return "constant";
     }

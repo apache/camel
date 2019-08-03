@@ -35,6 +35,7 @@ public class MyBarSingleton implements IsSingleton {
         this.name = name;
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

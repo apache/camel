@@ -163,6 +163,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     }
 
 
+    @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 

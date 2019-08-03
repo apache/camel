@@ -37,10 +37,12 @@ public class CharacterFormatFactory extends AbstractFormatFactory {
 
     private static class CharacterFormat implements Format<Character> {
 
+        @Override
         public String format(Character object) throws Exception {
             return object.toString();
         }
 
+        @Override
         public Character parse(String string) throws Exception {
             if (string.length() > 1) {
                 throw new ParseException("The string \"" + string + "\" cannot be parsed to a character (size > 1).", 1);

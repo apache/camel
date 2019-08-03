@@ -61,6 +61,7 @@ public class RemovePropertyTest extends ContextTestSupport {
         mid = getMockEndpoint("mock:mid");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

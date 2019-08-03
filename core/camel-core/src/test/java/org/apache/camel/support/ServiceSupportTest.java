@@ -24,9 +24,11 @@ public class ServiceSupportTest extends TestSupport {
 
     private static class MyService extends ServiceSupport {
 
+        @Override
         protected void doStart() throws Exception {
         }
 
+        @Override
         protected void doStop() throws Exception {
         }
     }
@@ -87,6 +89,7 @@ public class ServiceSupportTest extends TestSupport {
             shutdown = true;
         }
 
+        @Override
         public boolean isShutdown() {
             return shutdown;
         }

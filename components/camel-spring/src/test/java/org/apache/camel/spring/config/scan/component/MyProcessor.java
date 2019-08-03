@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MyProcessor implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         exchange.getIn().setBody("foo");
     }

@@ -81,6 +81,7 @@ public class Mina2VMCustomCodecTest extends BaseMina2Test {
         }
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 

@@ -102,6 +102,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
 
     protected int doPoll() throws Exception {
         class ExcludePathFilter implements PathFilter {
+            @Override
             public boolean accept(Path path) {
                 return !(path.toString().endsWith(config.getOpenedSuffix()) || path.toString().endsWith(config.getReadSuffix()));
             }

@@ -59,6 +59,7 @@ public class JdbcProducer extends DefaultProducer {
     /**
      * Execute sql of exchange and set results on output
      */
+    @Override
     public void process(Exchange exchange) throws Exception {
         if (getEndpoint().isResetAutoCommit()) {
             processingSqlBySettingAutoCommit(exchange);

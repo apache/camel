@@ -46,6 +46,7 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
         super(context);
     }
 
+    @Override
     protected GenericFileEndpoint<T> createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         // create the correct endpoint based on the protocol

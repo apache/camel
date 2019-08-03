@@ -70,6 +70,7 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -80,6 +81,7 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     public class MyFileFilter<T> implements GenericFileFilter<T> {
+        @Override
         public boolean accept(GenericFile<T> file) {
             // we want all directories
             if (file.isDirectory()) {

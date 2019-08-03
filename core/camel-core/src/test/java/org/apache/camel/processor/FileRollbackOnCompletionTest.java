@@ -35,10 +35,12 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
     public static final class FileRollback implements Synchronization {
 
+        @Override
         public void onComplete(Exchange exchange) {
             // this method is invoked when the Exchange completed with no failure
         }
 
+        @Override
         public void onFailure(Exchange exchange) {
             // delete the file
             String name = exchange.getIn().getHeader(Exchange.FILE_NAME_PRODUCED, String.class);

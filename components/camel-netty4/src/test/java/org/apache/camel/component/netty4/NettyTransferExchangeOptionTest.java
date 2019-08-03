@@ -89,6 +89,7 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
         assertNull(exchange.getProperty("Charset"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

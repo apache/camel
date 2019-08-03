@@ -113,6 +113,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
      */
     public static class MyOrderStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             // put order together in old exchange by adding the order from new exchange
 

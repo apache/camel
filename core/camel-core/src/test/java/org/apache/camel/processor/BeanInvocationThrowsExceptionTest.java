@@ -46,6 +46,7 @@ public class BeanInvocationThrowsExceptionTest extends ContextTestSupport {
         assertEquals("Forced exception", out.getException().getMessage());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

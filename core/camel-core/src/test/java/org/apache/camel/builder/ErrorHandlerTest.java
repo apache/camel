@@ -33,12 +33,14 @@ import org.junit.Test;
 
 public class ErrorHandlerTest extends TestSupport {
 
+    @Override
     @Before
     public void setUp() throws Exception {
         // make SEDA testing faster
         System.setProperty("CamelSedaPollTimeout", "10");
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         System.clearProperty("CamelSedaPollTimeout");

@@ -159,6 +159,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @param executorService  the custom thread pool (must be scheduled)
      * @return the builder
      */
+    @Override
     public ThrottleDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
@@ -170,6 +171,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @param executorServiceRef the reference id of the thread pool (must be scheduled)
      * @return the builder
      */
+    @Override
     public ThrottleDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -211,18 +213,22 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 
+    @Override
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
+    @Override
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
+    @Override
     public String getExecutorServiceRef() {
         return executorServiceRef;
     }
 
+    @Override
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }

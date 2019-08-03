@@ -56,10 +56,12 @@ public class LdapEndpoint extends DefaultEndpoint {
         this.dirContextName = remaining;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new RuntimeCamelException("An LDAP Consumer would be the LDAP server itself! No such support here");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new LdapProducer(this, dirContextName, base, toSearchControlScope(scope), pageSize, returnedAttributes);
     }

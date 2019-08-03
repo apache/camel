@@ -52,6 +52,7 @@ public class SnsComponent extends DefaultComponent {
         registerExtension(new SnsComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SnsConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);

@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
  */
 public class FaultResponseProcessor implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         exchange.setException(new RuntimeException("Sample Error"));
     }

@@ -42,6 +42,7 @@ public class PurchaseOrder {
         return amount;
     }
 
+    @Override
     public String toString() {
         return "Ordering " + amount + " of " + name + " at total " + price;
     }

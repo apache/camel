@@ -32,6 +32,7 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
 
     private static final Path BASE_FILE = new Path(new File("target/test/test-camel-simple-write-BASE_FILE").getAbsolutePath());
 
+    @Override
     @Before
     public void setUp() throws Exception {
         if (!canTest()) {

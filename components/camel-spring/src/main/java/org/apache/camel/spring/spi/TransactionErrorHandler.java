@@ -75,6 +75,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         this.transactionKey = ObjectHelper.getIdentityHashCode(transactionTemplate);
     }
 
+    @Override
     public boolean supportTransacted() {
         return true;
     }

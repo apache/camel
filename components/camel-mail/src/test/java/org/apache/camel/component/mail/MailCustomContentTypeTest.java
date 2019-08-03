@@ -107,6 +107,7 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
         assertEquals("Hello World", msg.getContent());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

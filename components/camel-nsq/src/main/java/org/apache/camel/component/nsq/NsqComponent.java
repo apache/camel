@@ -33,6 +33,7 @@ public class NsqComponent extends DefaultComponent implements SSLContextParamete
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         NsqConfiguration configuration = new NsqConfiguration();
         setProperties(configuration, parameters);

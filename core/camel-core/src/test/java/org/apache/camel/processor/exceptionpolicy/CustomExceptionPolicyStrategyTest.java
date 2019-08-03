@@ -44,6 +44,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     // START SNIPPET e2
     public static class MyPolicy implements ExceptionPolicyStrategy {
 
+        @Override
         public ExceptionPolicyKey getExceptionPolicy(Set<ExceptionPolicyKey> exceptionPolicices,
                                                      Exchange exchange,
                                                      Throwable exception) {
@@ -70,6 +71,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             // START SNIPPET e1

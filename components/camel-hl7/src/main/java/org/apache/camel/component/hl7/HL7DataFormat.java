@@ -116,6 +116,7 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFor
         return "hl7";
     }
 
+    @Override
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         Message message = ExchangeHelper.convertToMandatoryType(exchange, Message.class, body);
         String charsetName = HL7Charset.getCharsetName(message, exchange);
@@ -123,6 +124,7 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFor
         outputStream.write(encoded.getBytes(charsetName));
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         byte[] body = ExchangeHelper.convertToMandatoryType(exchange, byte[].class, inputStream);
         String charsetName = HL7Charset.getCharsetName(body, guessCharsetName(body, exchange));

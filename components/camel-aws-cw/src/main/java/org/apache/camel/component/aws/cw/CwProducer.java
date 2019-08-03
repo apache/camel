@@ -45,6 +45,7 @@ public class CwProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         List<MetricDatum> metricData = getMetricData(exchange);
 

@@ -58,14 +58,17 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
         return (HttpEndpoint) super.getEndpoint();
     }
 
+    @Override
     public Exchange receive() {
         return doReceive(-1);
     }
 
+    @Override
     public Exchange receive(long timeout) {
         return doReceive((int) timeout);
     }
 
+    @Override
     public Exchange receiveNoWait() {
         return doReceive(-1);
     }
@@ -164,9 +167,11 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
         return new HttpGet(uri);
     }
 
+    @Override
     protected void doStart() throws Exception {
     }
 
+    @Override
     protected void doStop() throws Exception {
     }
 }

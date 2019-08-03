@@ -38,6 +38,7 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "FileConsumer";
 
+    @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/idempotent");

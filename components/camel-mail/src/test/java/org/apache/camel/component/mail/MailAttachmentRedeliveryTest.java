@@ -94,6 +94,7 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
         assertEquals("logo.jpeg", names.get(2));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

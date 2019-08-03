@@ -109,6 +109,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         assertFalse("File " + lock + " should be deleted", file.exists());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -132,6 +133,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
     }
 
     private static class MyValidatorProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             if ("London".equals(body)) {

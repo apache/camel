@@ -32,6 +32,7 @@ public class SpringSignatureTest extends SignatureTest {
 
     private static KeyPair rsaPair;
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         rsaPair = getKeyPair("RSA");
         return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/component/crypto/SpringSignatureTest.xml"), true);

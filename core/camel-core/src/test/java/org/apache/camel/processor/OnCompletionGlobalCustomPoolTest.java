@@ -26,6 +26,7 @@ public class OnCompletionGlobalCustomPoolTest extends OnCompletionGlobalTest {
 
     private ExecutorService pool; 
     
+    @Override
     @Before
     public void setUp() throws Exception {
         // use a pool with 2 concurrent tasks so we cannot run too fast
@@ -33,6 +34,7 @@ public class OnCompletionGlobalCustomPoolTest extends OnCompletionGlobalTest {
         super.setUp();
     }
     
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

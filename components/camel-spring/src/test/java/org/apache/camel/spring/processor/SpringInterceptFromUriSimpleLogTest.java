@@ -29,6 +29,7 @@ public class SpringInterceptFromUriSimpleLogTest extends InterceptFromUriSimpleL
         return false;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringInterceptFromUriSimpleLogTest.xml");
     }

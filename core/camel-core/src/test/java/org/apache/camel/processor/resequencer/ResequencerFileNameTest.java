@@ -31,6 +31,7 @@ public class ResequencerFileNameTest extends ContextTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

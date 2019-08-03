@@ -44,6 +44,7 @@ public class JmsAsyncStopListenerTest extends CamelTestSupport {
         result.assertIsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -55,6 +56,7 @@ public class JmsAsyncStopListenerTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

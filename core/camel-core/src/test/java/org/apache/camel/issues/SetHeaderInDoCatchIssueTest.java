@@ -59,6 +59,7 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
         assertEquals("ExceptionGeneral", exchange.getMessage().getHeader("Status"));
     }
 
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = new JndiRegistry(createJndiContext());
 

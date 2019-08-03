@@ -50,6 +50,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
         setDeadLetterUri(uri);
     }
     
+    @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         validateDeadLetterUri(routeContext);
 
@@ -62,6 +63,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
         return answer;
     }
 
+    @Override
     public boolean supportTransacted() {
         return false;
     }
@@ -76,6 +78,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
     // Properties
     // -------------------------------------------------------------------------
 
+    @Override
     public Processor getFailureProcessor() {
         if (failureProcessor == null) {
             // wrap in our special safe fallback error handler if sending to dead letter channel fails
@@ -96,6 +99,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
         }
     }
 
+    @Override
     protected CamelLogger createLogger() {
         return new CamelLogger(LoggerFactory.getLogger(DeadLetterChannel.class), LoggingLevel.ERROR);
     }

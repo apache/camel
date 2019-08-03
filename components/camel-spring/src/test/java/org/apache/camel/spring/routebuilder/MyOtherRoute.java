@@ -24,10 +24,12 @@ public class MyOtherRoute extends SpringRouteBuilder implements CamelContextAwar
 
     private CamelContext ctx;
 
+    @Override
     public void configure() throws Exception {
         from("direct:b").to("mock:b");
     }
 
+    @Override
     public void setCamelContext(CamelContext context) {
         this.ctx = context;
         if (!"foo".equals(context.getName())) {
@@ -35,6 +37,7 @@ public class MyOtherRoute extends SpringRouteBuilder implements CamelContextAwar
         }
     }
     
+    @Override
     public CamelContext getCamelContext() {
         return ctx;
     }

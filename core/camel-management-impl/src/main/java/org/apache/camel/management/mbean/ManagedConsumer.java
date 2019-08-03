@@ -34,10 +34,12 @@ public class ManagedConsumer extends ManagedService implements ManagedConsumerMB
         return consumer;
     }
 
+    @Override
     public String getEndpointUri() {
         return consumer.getEndpoint().getEndpointUri();
     }
 
+    @Override
     public Integer getInflightExchanges() {
         if (getRouteId() != null) {
             return getContext().getInflightRepository().size(getRouteId());

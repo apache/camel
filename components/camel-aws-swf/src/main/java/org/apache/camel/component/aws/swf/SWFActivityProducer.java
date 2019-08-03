@@ -37,6 +37,7 @@ public class SWFActivityProducer extends DefaultProducer {
         this.camelSWFClient = camelSWFActivityClient;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         String eventName = getEventName(exchange);
         String version = getVersion(exchange);

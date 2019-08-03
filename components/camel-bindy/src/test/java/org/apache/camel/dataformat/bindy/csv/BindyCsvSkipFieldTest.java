@@ -57,6 +57,7 @@ public class BindyCsvSkipFieldTest  extends AbstractJUnit4SpringContextTests {
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(CsvSkipField.class);
 
+        @Override
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat)
                     .process(new Processor() {

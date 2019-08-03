@@ -39,6 +39,7 @@ public class TransformProcessor extends AsyncProcessorSupport implements Traceab
         this.expression = expression;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             Object newBody = expression.evaluate(exchange, Object.class);
@@ -84,14 +85,17 @@ public class TransformProcessor extends AsyncProcessorSupport implements Traceab
         return "Transform(" + expression + ")";
     }
 
+    @Override
     public String getTraceLabel() {
         return "transform[" + expression + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

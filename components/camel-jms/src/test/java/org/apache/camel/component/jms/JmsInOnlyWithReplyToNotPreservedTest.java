@@ -41,6 +41,7 @@ public class JmsInOnlyWithReplyToNotPreservedTest extends CamelTestSupport {
         assertNull("Should be no message on bar queue", msg);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

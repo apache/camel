@@ -50,6 +50,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     private static final Path TEMP_DIR = new Path(new File("target/test/").getAbsolutePath());
 
+    @Override
     @Before
     public void setUp() throws Exception {
         if (!canTest()) {

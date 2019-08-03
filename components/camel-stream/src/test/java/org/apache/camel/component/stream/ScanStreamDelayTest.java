@@ -61,6 +61,7 @@ public class ScanStreamDelayTest extends CamelTestSupport {
         assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -23,6 +23,7 @@ import org.junit.Test;
 
 public class OnExceptionWithTwoBeansTest extends ContextTestSupport {
     
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = new JndiRegistry(createJndiContext());
         registry.bind("checkin", new MyBean1());

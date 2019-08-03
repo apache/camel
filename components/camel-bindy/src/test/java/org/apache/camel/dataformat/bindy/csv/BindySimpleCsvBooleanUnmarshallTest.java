@@ -108,6 +108,7 @@ public class BindySimpleCsvBooleanUnmarshallTest extends AbstractJUnit4SpringCon
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
             org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
 
+        @Override
         public void configure() {
             // from("file://src/test/data?move=./target/done").unmarshal(camelDataFormat).to("mock:result");
 

@@ -100,6 +100,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
     // here we can do what we want in the java code, such as altering the message
     public static class MyRedeliverProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             // the message is being redelivered so we can alter it
 
@@ -119,6 +120,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
 
     public static class MyIORedeliverProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             // just for show and tell, here we set a special header to instruct
             // the receive a given timeout value
@@ -129,6 +131,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
 
     public static class ThrowExceptionProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             // force some error so Camel will do redelivery
             if (++counter <= 3) {
@@ -140,6 +143,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
 
     public static class ThrowIOExceptionProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             // force some error so Camel will do redelivery
             if (++counter <= 3) {

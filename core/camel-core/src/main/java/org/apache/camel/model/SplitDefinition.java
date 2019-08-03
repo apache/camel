@@ -230,6 +230,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * To use a custom Thread Pool to be used for parallel processing.
      * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
      */
+    @Override
     public SplitDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
@@ -239,6 +240,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * Refers to a custom Thread Pool to be used for parallel processing.
      * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
      */
+    @Override
     public SplitDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -366,10 +368,12 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return stopOnException != null && stopOnException;
     }
 
+    @Override
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
+    @Override
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
@@ -409,10 +413,12 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
+    @Override
     public String getExecutorServiceRef() {
         return executorServiceRef;
     }
 
+    @Override
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }

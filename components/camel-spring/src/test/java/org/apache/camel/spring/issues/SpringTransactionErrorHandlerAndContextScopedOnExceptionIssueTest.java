@@ -29,6 +29,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest extends SpringTestSupport {
     protected JdbcTemplate jdbc;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

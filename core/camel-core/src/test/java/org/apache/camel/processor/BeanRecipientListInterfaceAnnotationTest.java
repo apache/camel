@@ -53,6 +53,7 @@ public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListT
             return "MyBean:" + id;
         }
         
+        @Override
         public String[] route(String body) {
             return new String[] {"mock:a", "mock:b"};
         }

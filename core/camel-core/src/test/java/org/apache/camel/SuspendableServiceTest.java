@@ -25,20 +25,25 @@ public class SuspendableServiceTest extends Assert {
 
         private boolean suspended;
 
+        @Override
         public void start() {
         }
 
+        @Override
         public void stop() {
         }
 
+        @Override
         public void suspend() {
             suspended = true;
         }
 
+        @Override
         public void resume() {
             suspended = false;
         }
 
+        @Override
         public boolean isSuspended() {
             return suspended;
         }

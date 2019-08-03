@@ -41,6 +41,7 @@ public class IrcOnReplyTest extends IrcIntegrationTestSupport {
         }
     }   
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -58,6 +59,7 @@ public class IrcOnReplyTest extends IrcIntegrationTestSupport {
         };
     }
 
+    @Override
     protected String fromUri() {
         StringBuilder sb = new StringBuilder(super.fromUri());
         return sb.append("&onReply=true").toString();

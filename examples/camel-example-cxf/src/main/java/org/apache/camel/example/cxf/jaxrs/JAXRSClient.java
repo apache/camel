@@ -45,6 +45,7 @@ public final class JAXRSClient {
         public TestResponseExceptionMapper() {
         }
         
+        @Override
         public BookNotFoundFault fromResponse(Response r) {
             Object value = r.getMetadata().getFirst("BOOK-HEADER");
             if (value != null) {

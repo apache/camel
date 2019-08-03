@@ -26,10 +26,12 @@ import org.apache.camel.Exchange;
  */
 public abstract class ExpressionAdapter extends ExpressionSupport {
 
+    @Override
     protected String assertionFailureMessage(Exchange exchange) {
         return toString();
     }
 
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         Object value = evaluate(exchange);
         if (Object.class == type) {

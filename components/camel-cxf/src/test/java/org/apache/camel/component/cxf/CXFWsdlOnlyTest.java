@@ -43,10 +43,12 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
     private static int port3 = CXFTestSupport.getPort3(); 
     private static int port4 = CXFTestSupport.getPort4(); 
         
+    @Override
     public boolean isCreateCamelContextPerClass() {
         return true;
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         System.setProperty("CXFWsdlOnlyTest.port1", Integer.toString(port1));
         System.setProperty("CXFWsdlOnlyTest.port2", Integer.toString(port2));
@@ -58,6 +60,7 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlOnlyBeans.xml");
     }
 
+    @Override
     protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);
     }

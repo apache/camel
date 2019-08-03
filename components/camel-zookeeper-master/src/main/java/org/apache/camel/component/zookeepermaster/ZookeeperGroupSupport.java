@@ -142,6 +142,7 @@ public class ZookeeperGroupSupport extends ServiceSupport implements CamelContex
         managedGroupFactory = ManagedGroupFactoryBuilder.create(curator, getClass().getClassLoader(), getCamelContext().getClassResolver(), this);
     }
 
+    @Override
     public CuratorFramework call() throws Exception {
         String connectString = getZooKeeperUrl();
         if (connectString == null) {

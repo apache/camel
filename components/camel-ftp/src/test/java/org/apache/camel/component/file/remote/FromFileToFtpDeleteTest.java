@@ -51,6 +51,7 @@ public class FromFileToFtpDeleteTest extends FtpServerTestSupport {
         assertTrue("File should exist on ftp server", file.exists());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -55,6 +55,7 @@ public class RecipientListExchangePropertyAggregationStrategyTest extends Contex
         assertEquals("direct://c", strategy.getUris().get(2));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

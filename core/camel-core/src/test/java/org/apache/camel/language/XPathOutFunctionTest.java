@@ -92,6 +92,7 @@ public class XPathOutFunctionTest extends ContextTestSupport {
         end = getMockEndpoint("mock:end");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

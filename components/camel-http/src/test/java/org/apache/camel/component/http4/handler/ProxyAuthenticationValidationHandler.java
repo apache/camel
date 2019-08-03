@@ -37,6 +37,7 @@ public class ProxyAuthenticationValidationHandler extends BasicValidationHandler
         this.password = password;
     }
 
+    @Override
     public void handle(final HttpRequest request, final HttpResponse response,
                        final HttpContext context) throws HttpException, IOException {
 

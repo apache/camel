@@ -51,17 +51,20 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
     }
     
     public static class MyExceptionProcessor implements Processor {        
+        @Override
         public void process(Exchange exchange) throws Exception {
             throw new MyException();            
         }        
     }
     
     public static class MyAnotherExceptionProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             throw new MyAnotherException();            
         }
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

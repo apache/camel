@@ -106,6 +106,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         successEndpoint = getMockEndpoint("mock:success");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         final Processor processor = new Processor() {
             public void process(Exchange exchange) {

@@ -40,6 +40,7 @@ public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat
         return "gzipdeflater";
     }
 
+    @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
@@ -52,6 +53,7 @@ public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat
         }
     }
 
+    @Override
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         GZIPInputStream unzipInput = null;
 

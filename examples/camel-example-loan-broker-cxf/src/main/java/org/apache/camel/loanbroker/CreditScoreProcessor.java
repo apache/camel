@@ -49,6 +49,7 @@ public class CreditScoreProcessor implements Processor {
         return (CreditAgencyWS) proxyFactory.create();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         List<Object> request = exchange.getIn().getBody(List.class);

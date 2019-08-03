@@ -167,6 +167,7 @@ public class NeutronEndpoint extends AbstractOpenstackEndpoint {
         this.host = host;
     }
 
+    @Override
     public Config getConfig() {
         return config;
     }
@@ -178,6 +179,7 @@ public class NeutronEndpoint extends AbstractOpenstackEndpoint {
         this.config = config;
     }
 
+    @Override
     public String getApiVersion() {
         return apiVersion;
     }

@@ -40,6 +40,7 @@ public interface Group<T extends NodeState> extends Closeable {
      * When the member is closed, any memberships registered via this
      * Group will be removed from the group.
      */
+    @Override
     void close() throws IOException;
 
     /**

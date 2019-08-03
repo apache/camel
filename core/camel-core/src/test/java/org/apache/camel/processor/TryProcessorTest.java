@@ -62,6 +62,7 @@ public class TryProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -106,20 +107,24 @@ public class TryProcessorTest extends ContextTestSupport {
     }
 
     private class ProcessorFail implements Processor, Predicate, Expression {
+        @Override
         public void process(Exchange exchange) throws Exception {
             throw new RuntimeCamelException(new CamelException("Force to fail"));
         }
 
+        @Override
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             throw new RuntimeCamelException(new CamelException("Force to fail"));
         }
 
+        @Override
         public boolean matches(Exchange exchange) {
             throw new RuntimeCamelException(new CamelException("Force to fail"));
         }
     }
 
     private class ProcessorHandle implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             handled = true;
 

@@ -44,6 +44,7 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
     public IrcComponent() {
     }
 
+    @Override
     public IrcEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // every endpoint gets it's own configuration
         IrcConfiguration config = new IrcConfiguration();
@@ -146,6 +147,7 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
         return new IrcLogger(log, hostname);
     }
 
+    @Override
     @Deprecated
     protected String preProcessUri(String uri) {
         return IrcConfiguration.sanitize(uri);

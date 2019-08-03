@@ -42,10 +42,12 @@ public class BigIntegerFormatFactory extends AbstractFormatFactory {
 
     private static class BigIntegerFormat extends AbstractNumberFormat<BigInteger> {
 
+        @Override
         public String format(BigInteger object) throws Exception {
             return object.toString();
         }
 
+        @Override
         public BigInteger parse(String string) throws Exception {
             return new BigInteger(string);
         }

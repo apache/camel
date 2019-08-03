@@ -37,6 +37,7 @@ public class SpringIntegrationProducerTest extends CamelSpringTestSupport {
         assertEquals("We should call the service", service.getGreetName(), "Greet");        
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/integration/producer.xml");
     }

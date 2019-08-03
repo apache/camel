@@ -27,6 +27,7 @@ public class LoanBrokerRoute extends RouteBuilder {
     /**
      * Let's configure the Camel routing rules using Java code...
      */
+    @Override
     public void configure() {
         // START SNIPPET: dsl-2
         from("jms:queue:loan")

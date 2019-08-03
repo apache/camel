@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class VelocityEndpointTest extends VelocityTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws Exception {

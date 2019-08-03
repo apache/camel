@@ -43,6 +43,7 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -60,12 +61,14 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
     }
 
     private class ProcessorFail implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             throw new IllegalStateException("Force to fail");
         }
     }
 
     private class ProcessorHandle implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             handled = true;
 

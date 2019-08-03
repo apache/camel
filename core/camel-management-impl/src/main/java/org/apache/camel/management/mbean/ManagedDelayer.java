@@ -37,19 +37,23 @@ public class ManagedDelayer extends ManagedProcessor implements ManagedDelayerMB
         return delayer;
     }
 
+    @Override
     public Long getDelay() {
         return delayer.getDelayValue();
     }
 
+    @Override
     public void constantDelay(Integer millis) {
         Expression delay = ExpressionBuilder.constantExpression(millis);
         delayer.setDelay(delay);
     }
 
+    @Override
     public int getDelayedCount() {
         return delayer.getDelayedCount();
     }
 
+    @Override
     public Boolean isAsyncDelayed() {
         return delayer.isAsyncDelayed();
     }

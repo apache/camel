@@ -66,10 +66,12 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
         this.configuration = endpointConfiguration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new FhirProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // make sure inBody is not set for consumers
         if (inBody != null) {
@@ -86,6 +88,7 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
         return FhirPropertiesHelper.getHelper();
     }
 
+    @Override
     protected String getThreadProfileName() {
         return FhirConstants.THREAD_PROFILE_NAME;
     }

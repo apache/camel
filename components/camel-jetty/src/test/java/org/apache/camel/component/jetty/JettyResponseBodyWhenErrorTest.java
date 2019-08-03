@@ -56,6 +56,7 @@ public class JettyResponseBodyWhenErrorTest extends BaseJettyTest {
     }
 
     public class MyBookService implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             throw new IllegalArgumentException("Damm");
         }

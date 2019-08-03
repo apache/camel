@@ -21,6 +21,7 @@ import org.junit.Test;
 
 public class AhcProduceClientConfigWithClientConfigUriParametersTest extends AhcProduceClientConfigTest {
 
+    @Override
     @Test
     public void testAhcProduceClientConfig() throws Exception {
         super.testAhcProduceClientConfig();

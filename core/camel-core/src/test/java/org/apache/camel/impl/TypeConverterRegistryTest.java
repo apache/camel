@@ -123,6 +123,7 @@ public class TypeConverterRegistryTest extends Assert {
     // START SNIPPET: e2
     private static class MyOrderTypeConverter extends TypeConverterSupport {
 
+        @Override
         @SuppressWarnings("unchecked")
         public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
             // converter from value to the MyOrder bean

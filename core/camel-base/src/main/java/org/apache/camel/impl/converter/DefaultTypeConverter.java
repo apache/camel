@@ -80,6 +80,7 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
         }
     }
 
+    @Override
     protected void initTypeConverterLoaders() {
         if (resolver != null) {
             typeConverterLoaders.add(new FastAnnotationTypeConverterLoader(resolver));

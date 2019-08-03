@@ -41,6 +41,7 @@ public class DataInInterceptor extends AbstractInDatabindingInterceptor {
         super(Phase.UNMARSHAL);
     }
 
+    @Override
     public void handleMessage(Message message) throws Fault {
         DepthXMLStreamReader xmlReader = getXMLStreamReader(message);
         try {

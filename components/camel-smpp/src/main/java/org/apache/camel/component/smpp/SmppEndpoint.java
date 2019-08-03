@@ -55,12 +55,14 @@ public class SmppEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         SmppConsumer answer = new SmppConsumer(this, configuration, processor);
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new SmppProducer(this, configuration);
     }

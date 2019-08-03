@@ -41,6 +41,7 @@ public class XmlSignerEndpoint extends XmlSignatureEndpoint {
         return new XmlSignerProcessor(getConfiguration());
     }
 
+    @Override
     public XmlSignerConfiguration getConfiguration() {
         return configuration;
     }

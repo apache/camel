@@ -65,6 +65,7 @@ public class WireTapShutdownBeanTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

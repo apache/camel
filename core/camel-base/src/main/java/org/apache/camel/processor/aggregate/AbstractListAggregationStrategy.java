@@ -61,6 +61,7 @@ public abstract class AbstractListAggregationStrategy<V> implements AggregationS
         return true;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void onCompletion(Exchange exchange) {
         if (exchange != null && isStoreAsBodyOnCompletion()) {
@@ -78,6 +79,7 @@ public abstract class AbstractListAggregationStrategy<V> implements AggregationS
      * @param newExchange The newest exchange, can be null
      * @return a composite exchange of the old and/or new exchanges
      */
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         List<V> list;
 

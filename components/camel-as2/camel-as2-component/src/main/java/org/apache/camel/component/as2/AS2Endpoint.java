@@ -79,10 +79,12 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         return as2ServerConnection;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new AS2Producer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // make sure inBody is not set for consumers
         if (inBody != null) {
@@ -228,6 +230,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         return AS2PropertiesHelper.getHelper();
     }
 
+    @Override
     protected String getThreadProfileName() {
         return AS2Constants.THREAD_PROFILE_NAME;
     }

@@ -152,6 +152,7 @@ public class LevelDBFile implements Service {
         return options;
     }
 
+    @Override
     public void start() {
         if (getFile() == null) {
             throw new IllegalArgumentException("A file must be configured");
@@ -201,6 +202,7 @@ public class LevelDBFile implements Service {
         throw new IllegalStateException("Can't find implementation of org.iq80.leveldb.DBFactory");
     }
 
+    @Override
     public void stop() {
         File file = getFile();
 

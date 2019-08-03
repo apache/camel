@@ -51,6 +51,7 @@ public class GrpcEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         GrpcProducer producer = new GrpcProducer(this, configuration);
         if (isSynchronous()) {
@@ -60,6 +61,7 @@ public class GrpcEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new GrpcConsumer(this, processor, configuration);
     }

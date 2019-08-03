@@ -61,6 +61,7 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
         }
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         CommitFile file = exchange.getIn().getBody(CommitFile.class);
 

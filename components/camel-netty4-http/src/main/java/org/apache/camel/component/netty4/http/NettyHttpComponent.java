@@ -252,6 +252,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         super.setConfiguration(configuration);
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -259,6 +260,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }

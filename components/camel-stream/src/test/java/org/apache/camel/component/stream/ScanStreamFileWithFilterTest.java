@@ -71,6 +71,7 @@ public class ScanStreamFileWithFilterTest extends CamelTestSupport {
         fos.close();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

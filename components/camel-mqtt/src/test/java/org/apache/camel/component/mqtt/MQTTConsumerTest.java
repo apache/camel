@@ -47,6 +47,7 @@ public class MQTTConsumerTest extends MQTTBaseTest {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {

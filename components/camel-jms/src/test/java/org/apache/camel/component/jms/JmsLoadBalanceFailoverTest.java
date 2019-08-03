@@ -65,6 +65,7 @@ public class JmsLoadBalanceFailoverTest extends CamelTestSupport {
         };
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

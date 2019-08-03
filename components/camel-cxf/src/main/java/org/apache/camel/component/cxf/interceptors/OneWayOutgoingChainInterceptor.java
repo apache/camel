@@ -32,6 +32,7 @@ public class OneWayOutgoingChainInterceptor extends AbstractPhaseInterceptor<Mes
         this.addBefore(OutgoingChainInterceptor.class.getName());
     }
 
+    @Override
     public void handleMessage(Message message) {
         closeInput(message);
         return;

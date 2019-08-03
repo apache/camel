@@ -21,6 +21,7 @@ import org.apache.camel.support.builder.Namespaces;
 
 public class XPathWithNamespaceBuilderFilterAndResultTypeTest extends XPathWithNamespaceBuilderFilterTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

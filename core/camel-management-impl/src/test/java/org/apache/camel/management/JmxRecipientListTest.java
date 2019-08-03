@@ -113,6 +113,7 @@ public class JmxRecipientListTest extends ManagementTestSupport {
                 "mock:x,mock:y,mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

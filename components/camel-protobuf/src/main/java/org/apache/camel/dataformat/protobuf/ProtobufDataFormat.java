@@ -69,10 +69,12 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Da
         return "protobuf";
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -117,6 +119,7 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Da
      * @see org.apache.camel.spi.DataFormat#marshal(org.apache.camel.Exchange,
      * java.lang.Object, java.io.OutputStream)
      */
+    @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream outputStream) throws Exception {
         String contentTypeHeader = CONTENT_TYPE_HEADER_NATIVE;
         if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_JSON)) {
@@ -142,6 +145,7 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Da
      * @see org.apache.camel.spi.DataFormat#unmarshal(org.apache.camel.Exchange,
      * java.io.InputStream)
      */
+    @Override
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         ObjectHelper.notNull(defaultInstance, "defaultInstance or instanceClassName must be set", this);
         Builder builder = defaultInstance.newBuilderForType();

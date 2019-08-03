@@ -54,6 +54,7 @@ public class EventComponent extends DefaultComponent implements ApplicationConte
     /**
      * The Spring ApplicationContext
      */
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
@@ -67,6 +68,7 @@ public class EventComponent extends DefaultComponent implements ApplicationConte
         }
     }
 
+    @Override
     protected EventEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         EventEndpoint answer = new EventEndpoint(uri, this, remaining);
         setProperties(answer, parameters);

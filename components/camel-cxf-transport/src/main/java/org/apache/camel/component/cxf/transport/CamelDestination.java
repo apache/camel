@@ -83,6 +83,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         this.checkException = checkException;
     }
 
+    @Override
     protected java.util.logging.Logger getLogger() {
         return JUL_LOG;
     }
@@ -99,11 +100,13 @@ public class CamelDestination extends AbstractDestination implements Configurabl
      * @param inMessage the incoming message
      * @return the inbuilt backchannel
      */
+    @Override
     protected Conduit getInbuiltBackChannel(Message inMessage) {
         //we can pass the message back by looking up the camelExchange from inMessage
         return new BackChannelConduit(inMessage);
     }
 
+    @Override
     public void activate() {
         LOG.debug("CamelDestination activate().... ");
         ObjectHelper.notNull(camelContext, "CamelContext", this);
@@ -125,6 +128,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         }
     }
 
+    @Override
     public void deactivate() {
         try {
             ServiceHelper.stopService(consumer);
@@ -133,6 +137,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         }
     }
 
+    @Override
     public void shutdown() {
         LOG.debug("CamelDestination shutdown()");
         this.deactivate();
@@ -160,6 +165,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         incomingObserver.onMessage(inMessage);
     }
 
+    @Override
     public String getBeanName() {
         if (endpointInfo == null || endpointInfo.getName() == null) {
             return "default" + BASE_BEAN_NAME_SUFFIX;
@@ -182,6 +188,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     protected class ConsumerProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) {
             try {
                 incoming(exchange);
@@ -208,6 +215,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
          *
          * @param observer the observer to notify on receipt of incoming
          */
+        @Override
         public void setMessageObserver(MessageObserver observer) {
             // shouldn't be called for a back channel conduit
         }
@@ -218,11 +226,13 @@ public class CamelDestination extends AbstractDestination implements Configurabl
          *
          * @param message the message to be sent.
          */
+        @Override
         public void prepare(Message message) throws IOException {
             message.put(CamelTransportConstants.CAMEL_EXCHANGE, inMessage.get(CamelTransportConstants.CAMEL_EXCHANGE));
             message.setContent(OutputStream.class, new CamelOutputStream(message));
         }
 
+        @Override
         protected java.util.logging.Logger getLogger() {
             return JUL_LOG;
         }

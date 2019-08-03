@@ -59,6 +59,7 @@ public class SqsProducer extends DefaultProducer {
         }
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         SqsOperations operation = determineOperation(exchange);
         if (ObjectHelper.isEmpty(operation)) {

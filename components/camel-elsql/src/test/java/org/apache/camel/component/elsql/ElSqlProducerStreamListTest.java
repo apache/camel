@@ -77,6 +77,7 @@ public class ElSqlProducerStreamListTest extends CamelTestSupport {
         return result.assertExchangeReceived(index).getIn().getBody();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

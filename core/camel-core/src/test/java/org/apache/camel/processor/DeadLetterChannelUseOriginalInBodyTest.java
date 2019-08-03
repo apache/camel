@@ -80,6 +80,7 @@ public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
         public MyThrowProcessor() {
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             assertEquals("Hello World", exchange.getIn().getBody(String.class));
             throw new IllegalArgumentException("Forced");

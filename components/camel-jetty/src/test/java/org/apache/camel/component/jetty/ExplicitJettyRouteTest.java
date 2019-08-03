@@ -46,6 +46,7 @@ public class ExplicitJettyRouteTest extends BaseJettyTest {
     }
 
     public class MyBookService implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             // just get the body as a string
             String body = exchange.getIn().getBody(String.class);

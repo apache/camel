@@ -121,14 +121,17 @@ public final class CamelVersionHelper {
                 this.value = new BigInteger(str);
             }
 
+            @Override
             public int getType() {
                 return INTEGER_ITEM;
             }
 
+            @Override
             public boolean isNull() {
                 return BIG_INTEGER_ZERO.equals(value);
             }
 
+            @Override
             public int compareTo(Item item) {
                 if (item == null) {
                     return BIG_INTEGER_ZERO.equals(value) ? 0 : 1; // 1.0 == 1,
@@ -150,6 +153,7 @@ public final class CamelVersionHelper {
                 }
             }
 
+            @Override
             public String toString() {
                 return value.toString();
             }
@@ -199,10 +203,12 @@ public final class CamelVersionHelper {
                 this.value = ALIASES.getProperty(value, value);
             }
 
+            @Override
             public int getType() {
                 return STRING_ITEM;
             }
 
+            @Override
             public boolean isNull() {
                 return comparableQualifier(value).compareTo(RELEASE_VERSION_INDEX) == 0;
             }
@@ -227,6 +233,7 @@ public final class CamelVersionHelper {
                 return i == -1 ? (QUALIFIERS_LIST.size() + "-" + qualifier) : String.valueOf(i);
             }
 
+            @Override
             public int compareTo(Item item) {
                 if (item == null) {
                     // 1-rc < 1, 1-ga > 1
@@ -247,6 +254,7 @@ public final class CamelVersionHelper {
                 }
             }
 
+            @Override
             public String toString() {
                 return value;
             }
@@ -259,10 +267,12 @@ public final class CamelVersionHelper {
          */
         @SuppressWarnings("serial")
         private static class ListItem extends ArrayList<Item> implements Item {
+            @Override
             public int getType() {
                 return LIST_ITEM;
             }
 
+            @Override
             public boolean isNull() {
                 return size() == 0;
             }
@@ -280,6 +290,7 @@ public final class CamelVersionHelper {
                 }
             }
 
+            @Override
             public int compareTo(Item item) {
                 if (item == null) {
                     if (size() == 0) {
@@ -319,6 +330,7 @@ public final class CamelVersionHelper {
                 }
             }
 
+            @Override
             public String toString() {
                 StringBuilder buffer = new StringBuilder();
                 for (Item item : this) {
@@ -410,18 +422,22 @@ public final class CamelVersionHelper {
             return isDigit ? new IntegerItem(buf) : new StringItem(buf, false);
         }
 
+        @Override
         public int compareTo(ComparableVersion o) {
             return items.compareTo(o.items);
         }
 
+        @Override
         public String toString() {
             return value;
         }
 
+        @Override
         public boolean equals(Object o) {
             return (o instanceof ComparableVersion) && canonical.equals(((ComparableVersion)o).canonical);
         }
 
+        @Override
         public int hashCode() {
             return canonical.hashCode();
         }

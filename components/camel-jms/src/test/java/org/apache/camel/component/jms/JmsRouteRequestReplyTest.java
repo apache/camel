@@ -72,6 +72,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     }
 
     public static class SingleNodeDeadEndRouteBuilder extends RouteBuilder {
+        @Override
         public void configure() throws Exception {
             from(endpointUriA)
                 // We are not expect the response here
@@ -84,6 +85,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     };
 
     public static class SingleNodeRouteBuilder extends RouteBuilder {
+        @Override
         public void configure() throws Exception {
             from(endpointUriA).process(new Processor() {
                 public void process(Exchange e) {
@@ -95,6 +97,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     };
 
     public static class MultiNodeRouteBuilder extends RouteBuilder {
+        @Override
         public void configure() throws Exception {
             from(endpointUriA).to(endpointUriB);
             from(endpointUriB).process(new Processor() {
@@ -107,6 +110,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     };
 
     public static class MultiNodeReplyToRouteBuilder extends RouteBuilder {
+        @Override
         public void configure() throws Exception {
             from(endpointUriA).to(endpointReplyToUriB);
             from(endpointUriB).process(new Processor() {
@@ -123,6 +127,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     };
 
     public static class MultiNodeDiffCompRouteBuilder extends RouteBuilder {
+        @Override
         public void configure() throws Exception {
             from(endpointUriA).to(endpointUriB1);
             from(endpointUriB1).process(new Processor() {
@@ -135,6 +140,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     };
 
     public static class ContextBuilderMessageID implements ContextBuilder {
+        @Override
         public CamelContext buildContext(CamelContext context) throws Exception {
             ConnectionFactory connectionFactory =
                 CamelJmsTestHelper.createConnectionFactory();
@@ -279,6 +285,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             this.fromUri = fromUri;
         }
 
+        @Override
         public Task call() throws Exception {
             for (int i = 0; i < maxCalls; i++) {
                 int callId = counter.incrementAndGet();
@@ -302,6 +309,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         }
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         init();
@@ -459,11 +467,13 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         context.getExecutorServiceManager().shutdownNow(executor);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         return contextBuilders.get(getTestMethodName()).buildContext(camelContext);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return routeBuilders.get(getTestMethodName());
     }

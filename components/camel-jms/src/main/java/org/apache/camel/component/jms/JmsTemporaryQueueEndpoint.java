@@ -59,10 +59,12 @@ public class JmsTemporaryQueueEndpoint extends JmsQueueEndpoint implements Desti
      *
      * @return true
      */
+    @Override
     public boolean isSingleton() {
         return true;
     }
     
+    @Override
     public synchronized Destination getJmsDestination(Session session) throws JMSException {
         if (jmsDestination == null) {
             jmsDestination = createJmsDestination(session);

@@ -511,6 +511,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("isSubscriptionDurable()", true, listenerContainer.isSubscriptionDurable());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

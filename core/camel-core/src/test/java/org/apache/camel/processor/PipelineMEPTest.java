@@ -65,6 +65,7 @@ public class PipelineMEPTest extends ContextTestSupport {
         assertEquals(ExchangePattern.InOut, mock.getExchanges().get(0).getPattern());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         final Processor inProcessor = new Processor() {
             public void process(Exchange exchange) {

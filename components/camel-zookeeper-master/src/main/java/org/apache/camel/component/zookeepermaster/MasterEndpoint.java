@@ -55,6 +55,7 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
         this.consumerEndpoint = getCamelContext().getEndpoint(consumerEndpointUri);
     }
 
+    @Override
     public Endpoint getEndpoint() {
         return consumerEndpoint;
     }
@@ -78,6 +79,7 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
         throw new UnsupportedOperationException("Cannot produce from this endpoint");
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new MasterConsumer(this, processor);
     }
@@ -88,6 +90,7 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
         return true;
     }
 
+    @Override
     public MasterComponent getComponent() {
         return component;
     }

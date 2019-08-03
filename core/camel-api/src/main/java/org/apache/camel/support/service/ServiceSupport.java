@@ -52,6 +52,7 @@ public abstract class ServiceSupport implements StatefulService {
     protected final Object lock = new Object();
     protected volatile int status = NEW;
 
+    @Override
     public void init() {
         if (status == NEW) {
             synchronized (lock) {
@@ -74,6 +75,7 @@ public abstract class ServiceSupport implements StatefulService {
      * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
      * invoke the operation in a safe manner.
      */
+    @Override
     public void start() {
         synchronized (lock) {
             if (status == STARTED) {
@@ -118,6 +120,7 @@ public abstract class ServiceSupport implements StatefulService {
      * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
      * invoke the operation in a safe manner.
      */
+    @Override
     public void stop() {
         synchronized (lock) {
             if (status == FAILED) {

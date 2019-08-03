@@ -83,6 +83,7 @@ public class LoopTest extends ContextTestSupport {
         resultEndpoint.reset();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         final Processor loopTest = new LoopTestProcessor(10);
 
