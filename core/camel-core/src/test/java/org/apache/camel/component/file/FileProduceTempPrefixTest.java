@@ -84,6 +84,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         template.sendBody("direct:a", "Bye World");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -36,6 +36,7 @@ public class IncrementRoute extends RouteBuilder {
     }
     
     private static final class IncrementProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             IncrementRequest request = exchange.getIn().getBody(IncrementRequest.class);
             IncrementResponse response = new IncrementResponse();

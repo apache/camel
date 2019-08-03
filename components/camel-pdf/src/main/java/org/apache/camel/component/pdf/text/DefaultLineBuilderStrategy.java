@@ -155,6 +155,7 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
             wordsCount = 0;
         }
 
+        @Override
         public LineBuilder clone() {
             return new LineBuilder(this.line.toString(), this.wordsCount);
         }

@@ -65,6 +65,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
     private JAXBContext jaxb;
     private CloseableHttpClient httpclient;
     
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -72,12 +73,14 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         jaxb = JAXBContext.newInstance(CustomerList.class, Customer.class, Order.class, Product.class);
     }
     
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         httpclient.close();
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

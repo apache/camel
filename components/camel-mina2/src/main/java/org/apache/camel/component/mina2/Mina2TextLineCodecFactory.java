@@ -46,10 +46,12 @@ public class Mina2TextLineCodecFactory implements ProtocolCodecFactory {
         decoder = new TextLineDecoder(charset, delimiter);
     }
 
+    @Override
     public ProtocolEncoder getEncoder(IoSession session) throws Exception {
         return encoder;
     }
 
+    @Override
     public ProtocolDecoder getDecoder(IoSession session) throws Exception {
         return decoder;
     }

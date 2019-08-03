@@ -36,6 +36,7 @@ public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
         + "xmlns:ns2=\"http://cxf.component.camel.apache.org/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>"
         + "<ns1:echo><ns2:arg0 xsi:type=\"xsd:string\">Hello World!</ns2:arg0></ns1:echo></soap:Body></soap:Envelope>";
     
+    @Override
     protected void checkRequest(String expect, String request) {
         if (expect.equals(ECHO_REQUEST)) {
             // just check the namespace of xsd
@@ -43,6 +44,7 @@ public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
         }
     }
     
+    @Override
     @Test
     public void testInvokingServiceFromClient() throws Exception {
         // just send a request which has all the namespace in the soap header

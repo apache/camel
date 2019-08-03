@@ -46,6 +46,7 @@ public class JmsDeadLetterChannelInOutTest extends CamelTestSupport {
         assertEquals("Hello World", dead);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

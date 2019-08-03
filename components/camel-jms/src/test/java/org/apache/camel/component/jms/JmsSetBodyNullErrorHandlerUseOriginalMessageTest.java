@@ -29,6 +29,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends CamelTestSupport {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();

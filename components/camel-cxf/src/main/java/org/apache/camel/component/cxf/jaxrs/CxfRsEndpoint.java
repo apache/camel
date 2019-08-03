@@ -171,6 +171,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return httpClientAPI;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -178,16 +179,19 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         CxfRsConsumer answer = new CxfRsConsumer(this, processor);
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         if (bindingStyle == BindingStyle.SimpleConsumer) {
             throw new IllegalArgumentException("The SimpleConsumer Binding Style cannot be used in a camel-cxfrs producer");

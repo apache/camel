@@ -60,6 +60,7 @@ public class NettyUdpWithInOutUsingPlainSocketTest extends BaseNettyTest {
         return new String(receive.getData(), 0, receive.getLength());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

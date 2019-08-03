@@ -129,6 +129,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     
     public class MyOtherOtherBuilderBean extends MyOtherBuilderBean {
         
+        @Override
         public MyOtherOtherBuilderBean setName(String name) {
             super.setName(name);
             return this;

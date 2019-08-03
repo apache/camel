@@ -35,6 +35,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSupport {
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/component/jms/tx/JMSTransactionIsTransactedRedeliveredTest.xml");
@@ -104,6 +105,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
     public static class MyProcessor implements Processor {
         private int count;
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             ++count;
 

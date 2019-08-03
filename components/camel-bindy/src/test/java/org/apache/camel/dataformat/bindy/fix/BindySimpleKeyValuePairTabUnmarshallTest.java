@@ -44,6 +44,7 @@ public class BindySimpleKeyValuePairTabUnmarshallTest extends CommonBindyTest {
     public static class ContextConfig extends RouteBuilder {
         BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(Order.class);
 
+        @Override
         public void configure() {
             from(URI_FILE_FIX_TAB).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
         }

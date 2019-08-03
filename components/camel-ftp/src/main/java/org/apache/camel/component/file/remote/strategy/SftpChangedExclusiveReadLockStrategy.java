@@ -46,6 +46,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
         // noop
     }
 
+    @Override
     public boolean acquireExclusiveReadLock(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
         boolean exclusive = false;
 

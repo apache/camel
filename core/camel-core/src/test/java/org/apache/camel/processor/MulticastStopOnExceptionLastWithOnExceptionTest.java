@@ -21,6 +21,7 @@ import org.junit.Test;
 
 public class MulticastStopOnExceptionLastWithOnExceptionTest extends MulticastStopOnExceptionWithOnExceptionTest {
 
+    @Override
     @Test
     public void testMulticastStopOnExceptionStop() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Kaboom");

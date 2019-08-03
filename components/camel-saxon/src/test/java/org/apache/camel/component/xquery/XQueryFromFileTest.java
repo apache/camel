@@ -47,6 +47,7 @@ public class XQueryFromFileTest extends CamelTestSupport {
             + "<body>Hello world!</body></mail></transformed>", xml);
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/xquery");

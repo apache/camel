@@ -22,6 +22,7 @@ import org.junit.Test;
 @Ignore("Does not run well on CI due test uses JMX mbeans")
 public class RestApiJettyYamlTest extends RestApiJettyTest {
 
+    @Override
     @Test
     public void testApi() throws Exception {
         String out = template.requestBody("jetty:http://localhost:{{port}}/api-doc/swagger.yaml", null, String.class);

@@ -111,6 +111,7 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
     // Utilities
     // *************************************************************************
 
+    @Override
     protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception  {
         List<String> servers = List.class.cast(parameters.get("servers"));
 

@@ -43,6 +43,7 @@ public class BodyMappingStrategy implements CellMappingStrategy {
     /**
      * Applies the cells to the {@link org.apache.camel.Exchange}.
      */
+    @Override
     public void applyGetResults(Message message, HBaseData data) {
         if (data == null) {
             return;
@@ -53,6 +54,7 @@ public class BodyMappingStrategy implements CellMappingStrategy {
     /**
      * Applies the cells to the {@link org.apache.camel.Exchange}.
      */
+    @Override
     public void applyScanResults(Message message, HBaseData data) {
         if (data == null) {
             return;

@@ -43,6 +43,7 @@ public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSu
         assertNull(failedEndpoint.getExchanges().get(0).getException());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

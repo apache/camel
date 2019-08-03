@@ -43,14 +43,17 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
         return (JmsEndpoint)super.getEndpoint();
     }
 
+    @Override
     public Exchange receiveNoWait() {
         return receive(JmsDestinationAccessor.RECEIVE_TIMEOUT_NO_WAIT);
     }
 
+    @Override
     public Exchange receive() {
         return receive(JmsDestinationAccessor.RECEIVE_TIMEOUT_INDEFINITE_WAIT);
     }
 
+    @Override
     public Exchange receive(long timeout) {
         setReceiveTimeout(timeout);
         Message message;
@@ -66,10 +69,12 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
         return null;
     }
 
+    @Override
     protected void doStart() throws Exception {
         // noop
     }
 
+    @Override
     protected void doStop() throws Exception {
         // noop
     }

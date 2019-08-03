@@ -52,6 +52,7 @@ public class ProxyReturnNullIssueTest extends ContextTestSupport {
 
     public static class MyEchoBean implements Echo {
 
+        @Override
         public String echo(String text) {
             return text;
         }

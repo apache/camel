@@ -54,6 +54,7 @@ public class SpringFileRouteTest extends SpringRunWithTestSupport {
         result.assertIsSatisfied();
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/test-default-inbox");

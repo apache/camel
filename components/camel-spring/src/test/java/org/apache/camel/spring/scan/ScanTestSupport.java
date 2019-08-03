@@ -27,6 +27,7 @@ public abstract class ScanTestSupport extends TestCase {
 
     protected PatternBasedPackageScanFilter filter;
 
+    @Override
     public void setUp() throws Exception {
         filter = new PatternBasedPackageScanFilter();
     }

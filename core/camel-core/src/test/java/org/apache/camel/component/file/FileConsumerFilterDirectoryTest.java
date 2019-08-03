@@ -65,6 +65,7 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

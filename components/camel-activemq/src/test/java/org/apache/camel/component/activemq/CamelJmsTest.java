@@ -99,6 +99,7 @@ public class CamelJmsTest extends CamelSpringTestSupport {
         return 0;
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/spring.xml");
     }

@@ -70,13 +70,16 @@ public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSup
 
     private class MyPoll implements PollingConsumerPollStrategy {
 
+        @Override
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             return true;
         }
 
+        @Override
         public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
         }
 
+        @Override
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
             GenericFileOperationFailedException e = assertIsInstanceOf(GenericFileOperationFailedException.class, cause);
             assertEquals(530, e.getCode());

@@ -48,6 +48,7 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
         this.timeout = timeout;
     }
 
+    @Override
     public void onReply(String correlationId, AMQP.BasicProperties properties, byte[] reply) {
         // create holder object with the reply
         log.debug("onReply with correlationId: {}", correlationId);
@@ -56,6 +57,7 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
         replyManager.processReply(holder);
     }
 
+    @Override
     public void onTimeout(String correlationId) {
         // create holder object without the reply which means a timeout occurred
         log.debug("onTimeout with correlationId: {}", correlationId);

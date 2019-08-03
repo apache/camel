@@ -23,12 +23,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringComponentTest extends ComponentTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
 
         return SpringCamelContext.springCamelContext(
                 new ClassPathXmlApplicationContext("SpringCryptoCmsTests.xml"), true);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

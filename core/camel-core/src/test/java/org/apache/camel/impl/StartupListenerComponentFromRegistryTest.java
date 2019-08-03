@@ -55,6 +55,7 @@ public class StartupListenerComponentFromRegistryTest extends ContextTestSupport
 
         private int invoked;
 
+        @Override
         public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
             invoked++;
 

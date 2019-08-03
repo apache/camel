@@ -107,6 +107,7 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @Metadata(description = "Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.")
     private String exchangeFormatterRef;
 
+    @Override
     public RedeliveryPolicy getObject() throws Exception {
         RedeliveryPolicy answer = new RedeliveryPolicy();
         CamelContext context = getCamelContext();
@@ -192,6 +193,7 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         return answer;
     }
 
+    @Override
     public Class<RedeliveryPolicy> getObjectType() {
         return RedeliveryPolicy.class;
     }

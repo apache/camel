@@ -43,6 +43,7 @@ public class RecipientListExchangePropertyTest extends ContextTestSupport {
         assertSame("Should be same instance", myStuff, stuff);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

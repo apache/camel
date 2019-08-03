@@ -71,6 +71,7 @@ public class FilterTest extends AbstractJUnit4SpringContextTests {
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
+        @Override
         @Bean
         public RouteBuilder route() {
             return new RouteBuilder() {

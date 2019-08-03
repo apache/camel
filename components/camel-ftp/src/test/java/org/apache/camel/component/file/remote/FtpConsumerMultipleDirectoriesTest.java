@@ -73,6 +73,7 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Goodday World", "sub/sub2/godday.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

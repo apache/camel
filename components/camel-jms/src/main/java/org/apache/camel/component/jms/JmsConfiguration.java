@@ -527,6 +527,7 @@ public class JmsConfiguration implements Cloneable {
             }, false);
         }
 
+        @Override
         public void send(final String destinationName,
                          final MessageCreator messageCreator) throws JmsException {
             execute(new SessionCallback<Object>() {
@@ -537,6 +538,7 @@ public class JmsConfiguration implements Cloneable {
             }, false);
         }
 
+        @Override
         public void send(final Destination destination,
                          final MessageCreator messageCreator) throws JmsException {
             execute(new SessionCallback<Object>() {

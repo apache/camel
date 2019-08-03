@@ -34,6 +34,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
 
     private static final Path TEMP_DIR = new Path(new File("target/outbox/").getAbsolutePath());
 
+    @Override
     @Before
     public void setUp() throws Exception {
         if (!canTest()) {

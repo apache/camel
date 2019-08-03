@@ -49,10 +49,12 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
 
     private HL7MLLPConfig config = new HL7MLLPConfig();
 
+    @Override
     public ProtocolDecoder getDecoder(IoSession session) throws Exception {
         return new HL7MLLPDecoder(config);
     }
 
+    @Override
     public ProtocolEncoder getEncoder(IoSession session) throws Exception {
         return new HL7MLLPEncoder(config);
     }

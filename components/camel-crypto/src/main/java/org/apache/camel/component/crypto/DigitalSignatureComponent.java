@@ -40,6 +40,7 @@ public class DigitalSignatureComponent extends DefaultComponent {
         super(context);
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "CamelContext");
 

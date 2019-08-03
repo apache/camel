@@ -256,6 +256,7 @@ public class CamelServlet extends HttpServlet {
         consumers.remove(consumer.getEndpoint().getEndpointUri());
     }
 
+    @Override
     public String getServletName() {
         return servletName;
     }

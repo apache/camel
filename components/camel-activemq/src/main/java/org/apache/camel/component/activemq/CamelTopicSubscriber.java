@@ -41,6 +41,7 @@ public class CamelTopicSubscriber extends CamelMessageConsumer implements TopicS
      *             for this topic subscriber due to some internal error.
      */
 
+    @Override
     public Topic getTopic() throws JMSException {
         checkClosed();
         return (Topic)super.getDestination();
@@ -56,6 +57,7 @@ public class CamelTopicSubscriber extends CamelMessageConsumer implements TopicS
      *             some internal error.
      */
 
+    @Override
     public boolean getNoLocal() throws JMSException {
         checkClosed();
         return super.isNoLocal();

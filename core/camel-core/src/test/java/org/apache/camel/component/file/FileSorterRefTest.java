@@ -72,6 +72,7 @@ public class FileSorterRefTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     public class MyFileSorter<T> implements Comparator<GenericFile<T>> {
+        @Override
         public int compare(GenericFile<T> o1, GenericFile<T> o2) {
             return o1.getFileName().compareToIgnoreCase(o2.getFileName());
         }

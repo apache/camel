@@ -23,6 +23,7 @@ import org.apache.camel.processor.StaticRecipientListTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringStaticRecipientListTest extends StaticRecipientListTest {
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/staticRecipientList.xml");
     }

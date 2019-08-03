@@ -63,6 +63,7 @@ public class Mina2UdpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         return new String(receive.getData(), 0, receive.getLength());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 

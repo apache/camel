@@ -27,6 +27,7 @@ import org.apache.camel.example.telegram.Application;
 
 public class GetUpdatesUsage implements TelegramMethodUsage {
 
+    @Override
     public void run(CamelContext context) {
         TelegramService service = TelegramServiceProvider.get().getService();
         UpdateResult message = service.getUpdates(Application.AUTHORIZATION_TOKEN, (long) 10, 10, 10);

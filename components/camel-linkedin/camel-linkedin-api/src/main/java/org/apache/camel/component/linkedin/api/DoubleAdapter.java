@@ -20,10 +20,12 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class DoubleAdapter extends XmlAdapter<String, Double> {
 
+    @Override
     public Double unmarshal(String value) {
         return javax.xml.bind.DatatypeConverter.parseDouble(value);
     }
 
+    @Override
     public String marshal(Double value) {
         if (value == null) {
             return null;

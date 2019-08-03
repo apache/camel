@@ -40,6 +40,7 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
         return true;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();
 

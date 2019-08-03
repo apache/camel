@@ -71,6 +71,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         return "SedaConsumer[" + endpoint + "]";
     }
 
+    @Override
     public Endpoint getEndpoint() {
         return endpoint;
     }
@@ -83,16 +84,19 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         this.exceptionHandler = exceptionHandler;
     }
 
+    @Override
     public Processor getProcessor() {
         return processor;
     }
 
+    @Override
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
         // deny stopping on shutdown as we want seda consumers to run in case some other queues
         // depend on this consumer to run, so it can complete its exchanges
         return true;
     }
 
+    @Override
     public int getPendingExchangesSize() {
         // the route is shutting down, so either we should purge the queue,
         // or return how many exchanges are still on the queue
@@ -142,6 +146,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         return super.isRunAllowed();
     }
 
+    @Override
     public void run() {
         taskCount.incrementAndGet();
         try {
@@ -290,6 +295,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         }
     }
 
+    @Override
     protected void doStart() throws Exception {
         latch = new CountDownLatch(endpoint.getConcurrentConsumers());
         shutdownPending = false;
@@ -309,6 +315,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         endpoint.onStarted(this);
     }
 
+    @Override
     protected void doStop() throws Exception {
         // ensure queue is purged if we stop the consumer
         if (endpoint.isPurgeWhenStopping()) {

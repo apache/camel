@@ -37,6 +37,7 @@ public class RawMessageWSDLGetOutInterceptor extends AbstractPhaseInterceptor<Me
         super(Phase.PRE_STREAM);
     }
 
+    @Override
     public void handleMessage(Message message) throws Fault {
 
         Document doc = (Document)message.get(RawMessageWSDLGetInterceptor.DOCUMENT_HOLDER);

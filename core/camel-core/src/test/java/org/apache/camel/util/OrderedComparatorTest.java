@@ -186,6 +186,7 @@ public class OrderedComparatorTest extends Assert {
             this.order = order;
         }
 
+        @Override
         public int getOrder() {
             return order;
         }

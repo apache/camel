@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 
 public class BodyOutAggregatingStrategy implements AggregationStrategy {
 
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange != null) {
             String oldBody = oldExchange.getIn().getBody(String.class);

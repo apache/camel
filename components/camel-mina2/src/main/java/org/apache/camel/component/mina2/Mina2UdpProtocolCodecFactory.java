@@ -36,6 +36,7 @@ public class Mina2UdpProtocolCodecFactory implements ProtocolCodecFactory {
         this.context = context;
     }
 
+    @Override
     public ProtocolEncoder getEncoder(IoSession session) throws Exception {
         return new ProtocolEncoder() {
 
@@ -51,6 +52,7 @@ public class Mina2UdpProtocolCodecFactory implements ProtocolCodecFactory {
         };
     }
 
+    @Override
     public ProtocolDecoder getDecoder(IoSession session) throws Exception {
         return new ProtocolDecoder() {
 

@@ -66,6 +66,7 @@ public class JmsRouteWithCustomListenerContainerTest extends CamelTestSupport {
         assertIsInstanceOf(MyListenerContainer.class, jmsEndpoint.createMessageListenerContainer());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

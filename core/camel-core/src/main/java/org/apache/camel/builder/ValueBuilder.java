@@ -50,6 +50,7 @@ public class ValueBuilder extends org.apache.camel.support.builder.ValueBuilder 
         return onNewValueBuilder(newExp);
     }
 
+    @Override
     protected ValueBuilder onNewValueBuilder(Expression exp) {
         return new ValueBuilder(exp);
     }

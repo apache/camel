@@ -49,6 +49,7 @@ public class StreamToUrlTest extends CamelTestSupport {
         super.tearDown();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -37,6 +37,7 @@ public class CamelSpringRunnerUseAdviceWithTest extends CamelSpringRunnerPlainTe
         Thread.sleep(1000);
     }
     
+    @Override
     @Test
     public void testStopwatch() {
         StopWatch stopWatch = StopWatchTestExecutionListener.getStopWatch();

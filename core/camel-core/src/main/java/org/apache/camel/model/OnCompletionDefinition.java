@@ -211,6 +211,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * To use a custom Thread Pool to be used for parallel processing.
      * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
      */
+    @Override
     public OnCompletionDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
@@ -220,6 +221,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * Refers to a custom Thread Pool to be used for parallel processing.
      * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
      */
+    @Override
     public OnCompletionDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -247,6 +249,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         return this;
     }
 
+    @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
@@ -292,18 +295,22 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         this.onWhen = onWhen;
     }
 
+    @Override
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
+    @Override
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
+    @Override
     public String getExecutorServiceRef() {
         return executorServiceRef;
     }
 
+    @Override
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }

@@ -92,6 +92,7 @@ public class CafeRouteBuilderTest extends CamelTestSupport {
         waiter.verifyDrinks();
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new CafeRouteBuilder();
     }

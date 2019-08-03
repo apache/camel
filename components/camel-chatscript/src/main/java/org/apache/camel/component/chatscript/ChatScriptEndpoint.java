@@ -91,10 +91,12 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
         this.chatUserName = chatusername;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new ChatScriptProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Chatscript consumer not supported");
     }

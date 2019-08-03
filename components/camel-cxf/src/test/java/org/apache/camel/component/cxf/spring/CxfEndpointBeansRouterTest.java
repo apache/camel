@@ -34,6 +34,7 @@ import org.junit.Test;
 
 public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
 
+    @Override
     protected String[] getApplicationContextFiles() {
         CXFTestSupport.getPort1();
         return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouter.xml"};

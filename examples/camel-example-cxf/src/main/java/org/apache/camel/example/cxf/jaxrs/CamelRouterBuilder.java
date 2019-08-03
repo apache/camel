@@ -85,6 +85,7 @@ public class CamelRouterBuilder extends RouteBuilder {
         System.exit(0);
     }
 
+    @Override
     public void configure() {
         errorHandler(noErrorHandler());
         
@@ -108,6 +109,7 @@ public class CamelRouterBuilder extends RouteBuilder {
             instance = obj;
         }
          
+        @Override
         public void process(Exchange exchange) throws Exception {
             String operationName = exchange.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
             Method method = findMethod(operationName, exchange.getIn().getBody(Object[].class));

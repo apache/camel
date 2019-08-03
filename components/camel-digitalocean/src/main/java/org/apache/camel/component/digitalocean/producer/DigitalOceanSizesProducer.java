@@ -30,6 +30,7 @@ public class DigitalOceanSizesProducer extends DigitalOceanProducer {
         super(endpoint, configuration);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Sizes sizes = getEndpoint().getDigitalOceanClient().getAvailableSizes(configuration.getPage());
         LOG.trace("All Sizes : page {} [{}] ", sizes.getSizes(), configuration.getPage());

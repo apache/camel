@@ -56,6 +56,7 @@ public class DdbComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(exchange.getIn().getHeader(DdbConstants.ITEMS, List.class));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

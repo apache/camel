@@ -36,6 +36,7 @@ public class SpringInjector implements Injector {
         this.applicationContext = applicationContext;
     }
 
+    @Override
     public <T> T newInstance(Class<T> type) {
         return newInstance(type, true);
     }

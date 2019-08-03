@@ -154,6 +154,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         return outputsWithoutCatches;
     }
 
+    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         initialized = false;
         super.setOutputs(outputs);

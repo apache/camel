@@ -33,10 +33,12 @@ public class CustomEndpoint extends MockEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }
 
+    @Override
     protected String createEndpointUri() {
         return "custom";
     }
@@ -46,6 +48,7 @@ public class CustomEndpoint extends MockEndpoint {
         return "bar";
     }
 
+    @Override
     @ManagedAttribute
     public String getEndpointUri() {
         return super.getEndpointUri();

@@ -63,18 +63,22 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         this.camelContext = camelContext;
     }
 
+    @Override
     public void setScheduledExecutorService(ScheduledExecutorService executorService) {
         this.scheduledExecutorService = executorService;
     }
 
+    @Override
     public void setOnTimeoutExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
+    @Override
     public void setEndpoint(JmsEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void setReplyTo(Destination replyTo) {
         log.trace("ReplyTo destination: {}", replyTo);
         this.replyTo = replyTo;
@@ -87,6 +91,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         this.correlationProperty = correlationProperty;
     }
 
+    @Override
     public Destination getReplyTo() {
         if (replyTo != null) {
             return replyTo;
@@ -108,6 +113,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         return replyTo;
     }
     
+    @Override
     public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout) {
         // add to correlation map
@@ -126,6 +132,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected abstract ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout);
 
+    @Override
     public void onMessage(Message message, Session session) throws JMSException {
         String correlationID = null;
 
@@ -150,6 +157,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         handleReplyMessage(correlationID, message, session);
     }
 
+    @Override
     public void processReply(ReplyHolder holder) {
         if (holder != null && isRunAllowed()) {
             try {

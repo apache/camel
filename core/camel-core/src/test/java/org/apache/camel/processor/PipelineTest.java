@@ -33,7 +33,8 @@ public class PipelineTest extends ContextTestSupport {
      * the pipe and feeds it in as input into the next stage.
      */
     private static final class InToOut implements Processor {
-        public void process(Exchange exchange) throws Exception {            
+        @Override
+        public void process(Exchange exchange) throws Exception {
             exchange.getOut().copyFrom(exchange.getIn());
             Integer counter = exchange.getIn().getHeader("copy-counter", Integer.class);
             if (counter == null) {
@@ -95,6 +96,7 @@ public class PipelineTest extends ContextTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         final Processor processor = new Processor() {
             public void process(Exchange exchange) {

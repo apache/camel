@@ -101,6 +101,7 @@ public class JmsResequencerTest extends CamelTestSupport  {
        
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

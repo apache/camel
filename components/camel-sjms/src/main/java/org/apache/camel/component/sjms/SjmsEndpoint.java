@@ -316,6 +316,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
         return destinationName;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new SjmsHeaderFilterStrategy(isIncludeAllJMSXProperties());
@@ -326,6 +327,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }
@@ -362,6 +364,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
 
+    @Override
     public boolean isSynchronous() {
         return synchronous;
     }
@@ -369,6 +372,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     /**
      * Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
      */
+    @Override
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
     }

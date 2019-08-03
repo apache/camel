@@ -26,6 +26,7 @@ import org.jvnet.mock_javamail.Mailbox;
  */
 public class MailIdempotentRepositoryDuplicateNotRemoveTest extends MailIdempotentRepositoryDuplicateTest {
 
+    @Override
     @Test
     public void testIdempotent() throws Exception {
         assertEquals(1, myRepo.getCacheSize());
@@ -47,6 +48,7 @@ public class MailIdempotentRepositoryDuplicateNotRemoveTest extends MailIdempote
         assertEquals(5, myRepo.getCacheSize());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

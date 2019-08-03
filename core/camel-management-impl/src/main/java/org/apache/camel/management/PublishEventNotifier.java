@@ -44,6 +44,7 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
     private String endpointUri;
     private Producer producer;
 
+    @Override
     public void notify(CamelEvent event) throws Exception {
         // only notify when we are started
         if (!isStarted()) {
@@ -72,14 +73,17 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
         }
     }
 
+    @Override
     public boolean isEnabled(CamelEvent event) {
         return true;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

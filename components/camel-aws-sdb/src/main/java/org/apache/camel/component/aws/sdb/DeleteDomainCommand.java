@@ -27,6 +27,7 @@ public class DeleteDomainCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         DeleteDomainRequest request = new DeleteDomainRequest()
             .withDomainName(determineDomainName());

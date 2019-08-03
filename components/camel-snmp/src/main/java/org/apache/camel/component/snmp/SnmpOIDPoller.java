@@ -207,6 +207,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
         return 1;
     }
 
+    @Override
     public void onResponse(ResponseEvent event) {
         // Always cancel async request when response has been received
         // otherwise a memory leak is created! Not canceling a request

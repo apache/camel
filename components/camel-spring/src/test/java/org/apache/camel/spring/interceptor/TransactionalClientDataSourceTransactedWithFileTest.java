@@ -56,6 +56,7 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
         });
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {

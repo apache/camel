@@ -63,10 +63,12 @@ public class IOTAEndpoint extends DefaultEndpoint {
         super(uri, component);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new IOTAProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("IOTAConsumer is not supported!");
     }

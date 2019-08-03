@@ -50,6 +50,7 @@ public class XQueryExpression extends NamespaceAwareExpression {
         super(expression);
     }
 
+    @Override
     public String getLanguage() {
         return "xquery";
     }

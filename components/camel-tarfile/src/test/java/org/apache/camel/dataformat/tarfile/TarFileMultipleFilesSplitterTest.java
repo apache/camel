@@ -27,6 +27,7 @@ import org.junit.Test;
 public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
     static final String PROCESSED_FILES_HEADER_NAME = "processedFiles";
     
+    @Override
     @Test
     public void testSplitter() throws InterruptedException {
         MockEndpoint processTarEntry = getMockEndpoint("mock:processTarEntry");

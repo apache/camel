@@ -53,6 +53,7 @@ public class FromFtpSimpleRelativeMoveToRelativeTest extends FtpServerTestSuppor
         template.sendBodyAndHeader(getFtpUrl(), "Goodday", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

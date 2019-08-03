@@ -29,6 +29,7 @@ public class BeanMockTest extends ApplicationContextTestSupport {
         bean.assertEndpointsValid();
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/mock/spring.xml");
     }

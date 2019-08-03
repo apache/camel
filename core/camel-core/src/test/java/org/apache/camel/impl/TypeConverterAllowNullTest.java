@@ -56,6 +56,7 @@ public class TypeConverterAllowNullTest extends Assert {
             return true;
         }
 
+        @Override
         @SuppressWarnings("unchecked")
         public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
             if ("0".equals(value)) {

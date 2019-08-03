@@ -40,6 +40,7 @@ public class UnmarshalTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

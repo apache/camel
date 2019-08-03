@@ -46,7 +46,8 @@ public class RestletPostFormTest extends RestletTestSupport {
     }
     
     class PostProcessor implements Processor {
-        public void process(Exchange exchange) throws Exception {   
+        @Override
+        public void process(Exchange exchange) throws Exception {
             assertEquals("bar", exchange.getIn().getHeader("foo", String.class));
             exchange.getIn().setBody("OK");
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");

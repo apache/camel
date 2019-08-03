@@ -24,6 +24,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  */
 public class MyPostProcessor implements BeanPostProcessor {
     
+    @Override
     public Object postProcessBeforeInitialization(Object bean, String name) throws BeansException {
         if (bean instanceof Cheese) {
             Cheese cheese = (Cheese) bean;
@@ -32,6 +33,7 @@ public class MyPostProcessor implements BeanPostProcessor {
         return bean;
     }
 
+    @Override
     public Object postProcessAfterInitialization(Object bean, String name) throws BeansException {
         if (bean instanceof Cheese) {
             Cheese cheese = (Cheese) bean;

@@ -85,12 +85,14 @@ public class JcrEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         JcrConsumer answer = new JcrConsumer(this, processor);
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new JcrProducer(this);
     }

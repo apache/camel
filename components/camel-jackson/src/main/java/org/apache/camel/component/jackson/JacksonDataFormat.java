@@ -151,14 +151,17 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
         return "json-jackson";
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         this.objectMapper.writerWithView(jsonView).writeValue(stream, graph);
 
@@ -171,6 +174,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
         }
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
 
         // is there a header with the unmarshal type?

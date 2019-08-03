@@ -65,6 +65,7 @@ public class ChoiceWhenBeanExpressionTest extends ContextTestSupport {
         otherGrade = getMockEndpoint("mock:otherGrade");
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {                

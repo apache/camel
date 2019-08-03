@@ -75,6 +75,7 @@ public class TcpServerAcceptThread extends Thread {
      * NOTE:  When a connection is received, the Socket is checked after a brief delay in an attempt to determine if this is a load-balancer probe.  The test is done before the
      * ConsumerClientSocketThread is created to avoid creating a large number of short lived threads, which is what can occur if the load balancer polling interval is very short.
      */
+    @Override
     public void run() {
         running = true;
         String originalThreadName = Thread.currentThread().getName();

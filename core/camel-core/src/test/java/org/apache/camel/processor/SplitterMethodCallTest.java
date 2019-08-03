@@ -37,12 +37,14 @@ public class SplitterMethodCallTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("splitterBean", new SplitWordsBean());
         return jndi;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

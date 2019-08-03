@@ -29,6 +29,7 @@ public class ListDomainsCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         ListDomainsRequest request = new ListDomainsRequest()
             .withMaxNumberOfDomains(determineMaxNumberOfDomains())

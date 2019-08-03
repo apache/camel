@@ -23,6 +23,7 @@ import org.junit.Test;
 
 public class ChoiceWithTranfromTest extends ContextTestSupport {
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

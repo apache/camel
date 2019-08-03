@@ -47,6 +47,7 @@ public class XQueryTransformTest extends CamelTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -44,6 +44,7 @@ public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
         assertEquals("Forced exception by unit test", e.getMessage());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

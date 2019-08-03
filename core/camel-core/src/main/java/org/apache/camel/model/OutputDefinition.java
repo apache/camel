@@ -37,6 +37,7 @@ public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends Pr
     @XmlElementRef
     protected List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
+    @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }

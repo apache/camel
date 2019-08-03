@@ -210,6 +210,7 @@ public class ThrottlerTest extends ContextTestSupport {
         return ((long)Math.ceil((double)messageCount / (double)throttleRate)) * periodMs;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

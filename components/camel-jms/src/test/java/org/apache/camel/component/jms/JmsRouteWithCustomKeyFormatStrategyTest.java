@@ -28,6 +28,7 @@ public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefault
     @BindToRegistry("myJmsKeyStrategy")
     private MyCustomKeyFormatStrategy strategy = new MyCustomKeyFormatStrategy();
 
+    @Override
     protected String getUri() {
         return "activemq:queue:foo?jmsKeyFormatStrategy=#myJmsKeyStrategy";
     }
@@ -46,10 +47,12 @@ public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefault
 
     private static class MyCustomKeyFormatStrategy implements JmsKeyFormatStrategy {
 
+        @Override
         public String encodeKey(String key) {
             return "FOO" + key + "BAR";
         }
 
+        @Override
         public String decodeKey(String key) {
             return StringHelper.between(key, "FOO", "BAR");
         }

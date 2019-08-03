@@ -34,6 +34,7 @@ public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyCons
 
     private static final long serialVersionUID = 26L;
 
+    @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         LOG.debug("Running ScheduledJob: jobExecutionContext={}", jobExecutionContext);
 

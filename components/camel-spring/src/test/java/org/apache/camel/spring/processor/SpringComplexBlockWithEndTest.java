@@ -64,12 +64,14 @@ public class SpringComplexBlockWithEndTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringComplexBlockWithEndTest.xml");
     }
 
     public static class SplitAggregate implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             newExchange.getMessage().setBody("Cowboys");
             return newExchange;

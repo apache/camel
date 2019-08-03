@@ -163,18 +163,22 @@ public class JndiContext implements Context, Serializable {
         }
     }
 
+    @Override
     public Object addToEnvironment(String propName, Object propVal) throws NamingException {
         return environment.put(propName, propVal);
     }
 
+    @Override
     public Hashtable<String, Object> getEnvironment() throws NamingException {
         return CastUtils.cast((Hashtable<?, ?>)environment.clone(), String.class, Object.class);
     }
 
+    @Override
     public Object removeFromEnvironment(String propName) throws NamingException {
         return environment.remove(propName);
     }
 
+    @Override
     public Object lookup(String name) throws NamingException {
         if (name.length() == 0) {
             return this;
@@ -235,26 +239,31 @@ public class JndiContext implements Context, Serializable {
         return result;
     }
 
+    @Override
     public Object lookup(Name name) throws NamingException {
         return lookup(name.toString());
     }
 
+    @Override
     public Object lookupLink(String name) throws NamingException {
         return lookup(name);
     }
 
+    @Override
     public Name composeName(Name name, Name prefix) throws NamingException {
         Name result = (Name)prefix.clone();
         result.addAll(name);
         return result;
     }
 
+    @Override
     public String composeName(String name, String prefix) throws NamingException {
         CompositeName result = new CompositeName(prefix);
         result.addAll(new CompositeName(name));
         return result.toString();
     }
 
+    @Override
     public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
         Object o = lookup(name);
         if (o == this) {
@@ -266,6 +275,7 @@ public class JndiContext implements Context, Serializable {
         }
     }
 
+    @Override
     public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
         Object o = lookup(name);
         if (o == this) {
@@ -277,22 +287,27 @@ public class JndiContext implements Context, Serializable {
         }
     }
 
+    @Override
     public Object lookupLink(Name name) throws NamingException {
         return lookupLink(name.toString());
     }
 
+    @Override
     public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
         return list(name.toString());
     }
 
+    @Override
     public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
         return listBindings(name.toString());
     }
 
+    @Override
     public void bind(Name name, Object value) throws NamingException {
         bind(name.toString(), value);
     }
 
+    @Override
     public void bind(String name, Object value) throws NamingException {
         if (isFrozen()) {
             throw new OperationNotSupportedException();
@@ -301,58 +316,72 @@ public class JndiContext implements Context, Serializable {
         }
     }
 
+    @Override
     public void close() throws NamingException {
         // ignore
     }
 
+    @Override
     public Context createSubcontext(Name name) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
+    @Override
     public Context createSubcontext(String name) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
+    @Override
     public void destroySubcontext(Name name) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
+    @Override
     public void destroySubcontext(String name) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
+    @Override
     public String getNameInNamespace() throws NamingException {
         return nameInNamespace;
     }
 
+    @Override
     public NameParser getNameParser(Name name) throws NamingException {
         return NAME_PARSER;
     }
 
+    @Override
     public NameParser getNameParser(String name) throws NamingException {
         return NAME_PARSER;
     }
 
+    @Override
     public void rebind(Name name, Object value) throws NamingException {
         bind(name, value);
     }
 
+    @Override
     public void rebind(String name, Object value) throws NamingException {
         bind(name, value);
     }
 
+    @Override
     public void rename(Name oldName, Name newName) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
+    @Override
     public void rename(String oldName, String newName) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
+    @Override
     public void unbind(Name name) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
+    @Override
     public void unbind(String name) throws NamingException {
         bindings.remove(name);
         treeBindings.remove(name);
@@ -361,10 +390,12 @@ public class JndiContext implements Context, Serializable {
     private abstract class LocalNamingEnumeration implements NamingEnumeration<Object> {
         private Iterator<Map.Entry<String, Object>> i = bindings.entrySet().iterator();
 
+        @Override
         public boolean hasMore() throws NamingException {
             return i.hasNext();
         }
 
+        @Override
         public boolean hasMoreElements() {
             return i.hasNext();
         }
@@ -373,6 +404,7 @@ public class JndiContext implements Context, Serializable {
             return i.next();
         }
 
+        @Override
         public void close() throws NamingException {
         }
     }
@@ -381,10 +413,12 @@ public class JndiContext implements Context, Serializable {
         ListEnumeration() {
         }
 
+        @Override
         public Object next() throws NamingException {
             return nextElement();
         }
 
+        @Override
         public Object nextElement() {
             Map.Entry<String, Object> entry = getNext();
             return new NameClassPair(entry.getKey(), entry.getValue().getClass().getName());
@@ -395,10 +429,12 @@ public class JndiContext implements Context, Serializable {
         ListBindingEnumeration() {
         }
 
+        @Override
         public Object next() throws NamingException {
             return nextElement();
         }
 
+        @Override
         public Object nextElement() {
             Map.Entry<String, Object> entry = getNext();
             return new Binding(entry.getKey(), entry.getValue());

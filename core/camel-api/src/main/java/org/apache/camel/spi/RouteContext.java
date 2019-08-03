@@ -187,6 +187,7 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      *
      * @param autoStartup whether to start up automatically.
      */
+    @Override
     void setAutoStartup(Boolean autoStartup);
 
     /**
@@ -196,6 +197,7 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      *
      * @return <tt>true</tt> if route should automatically start
      */
+    @Override
     Boolean isAutoStartup();
 
     void setStartupOrder(Integer startupOrder);

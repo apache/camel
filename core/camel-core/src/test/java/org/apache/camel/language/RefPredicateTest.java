@@ -49,6 +49,7 @@ public class RefPredicateTest extends LanguageTestSupport {
         assertPredicate("myPredicate", false);
     }
 
+    @Override
     protected String getLanguageName() {
         return "ref";
     }

@@ -42,6 +42,7 @@ public abstract class AbstractRouteCommand extends AbstractCamelCommand {
         this.context = context;
     }
 
+    @Override
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
         List<Map<String, String>> camelRoutes = camelController.getRoutes(context, RegexUtil.wildcardAsRegex(route));
         if (camelRoutes == null || camelRoutes.isEmpty()) {

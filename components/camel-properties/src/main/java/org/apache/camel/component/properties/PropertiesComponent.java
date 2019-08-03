@@ -163,15 +163,18 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         return answer;
     }
 
+    @Override
     public String parseUri(String uri) {
         return parseUri(uri, propertiesLookup);
     }
 
+    @Override
     public Optional<String> resolveProperty(String key) {
         String value = parseUri(key, propertiesLookup);
         return Optional.of(value);
     }
 
+    @Override
     public Properties loadProperties() {
         Properties prop = new OrderedProperties();
 
@@ -215,6 +218,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         return propertiesParser.parseUri(uri, properties, defaultFallbackEnabled);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<String> getLocations() {
         if (locations.isEmpty()) {
@@ -270,6 +274,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         setLocations(locations);
     }
 
+    @Override
     public void addLocation(String location) {
         if (location != null) {
             List<PropertiesLocation> newLocations = new ArrayList<>();
@@ -288,6 +293,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      * A list of locations to load properties. You can use comma to separate multiple locations.
      * This option will override any default locations and only use the locations from this option.
      */
+    @Override
     public void setLocation(String location) {
         if (location != null) {
             setLocations(location.split(","));
@@ -340,6 +346,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     /**
      * Whether to silently ignore if a location cannot be located, such as a properties file not found.
      */
+    @Override
     public void setIgnoreMissingLocation(boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
     }
@@ -351,6 +358,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     /**
      * Sets initial properties which will be used before any locations are resolved.
      */
+    @Override
     public void setInitialProperties(Properties initialProperties) {
         this.initialProperties = initialProperties;
     }
@@ -363,6 +371,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      * Sets a special list of override properties that take precedence
      * and will use first, if a property exist.
      */
+    @Override
     public void setOverrideProperties(Properties overrideProperties) {
         this.overrideProperties = overrideProperties;
     }
@@ -426,6 +435,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.environmentVariableMode = environmentVariableMode;
     }
 
+    @Override
     public void addPropertiesSource(PropertiesSource propertiesSource) {
         if (propertiesSource instanceof CamelContextAware) {
             ((CamelContextAware) propertiesSource).setCamelContext(getCamelContext());

@@ -24,10 +24,12 @@ import org.junit.Test;
 
 public class MyBatisQueueTest extends MyBatisTestSupport {
     
+    @Override
     protected boolean createTestData() {
         return false;
     }
     
+    @Override
     protected String getCreateStatement() {
         return "create table ACCOUNT (ACC_ID INTEGER, ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255), PROCESSED BOOLEAN DEFAULT false)";
     }

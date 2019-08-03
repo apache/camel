@@ -26,6 +26,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         try {
             createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryCatchMustHaveExceptionConfiguredTest.xml");

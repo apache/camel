@@ -33,14 +33,17 @@ public class HeaderLanguage implements Language, IsSingleton {
         return ExpressionBuilder.headerExpression(headerName);
     }
 
+    @Override
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
 
+    @Override
     public Expression createExpression(String expression) {
         return HeaderLanguage.header(expression);
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

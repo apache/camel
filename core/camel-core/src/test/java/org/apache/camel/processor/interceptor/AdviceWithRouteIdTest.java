@@ -22,6 +22,7 @@ import org.junit.Test;
 
 public class AdviceWithRouteIdTest extends AdviceWithTest {
 
+    @Override
     @Test
     public void testAdvised() throws Exception {
         RouteReifier.adviceWith(context.getRouteDefinition("myRoute"), context, new RouteBuilder() {

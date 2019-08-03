@@ -65,6 +65,7 @@ public class ValidateSimpleTest extends ContextTestSupport {
     }
 
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

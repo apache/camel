@@ -46,10 +46,12 @@ public class NsqEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new NsqProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (ObjectHelper.isEmpty(configuration.getTopic())) {
             throw new RuntimeCamelException("Missing required endpoint configuration: topic must be defined for NSQ consumer");

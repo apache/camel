@@ -66,6 +66,7 @@ public class BindySimpleKeyValuePairUnicodeNextLineTest extends AbstractJUnit4Sp
 
         BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(UnicodeFixOrder.class);
 
+        @Override
         public void configure() {
             from(URI_DIRECT_START).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
         }

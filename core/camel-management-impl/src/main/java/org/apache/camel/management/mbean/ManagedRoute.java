@@ -94,6 +94,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return context;
     }
 
+    @Override
     public String getRouteId() {
         String id = route.getId();
         if (id == null) {
@@ -102,6 +103,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return id;
     }
 
+    @Override
     public String getRouteGroup() {
         return route.getGroup();
     }
@@ -132,6 +134,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -144,6 +147,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return VALUE_UNKNOWN;
     }
 
+    @Override
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         ServiceStatus status = context.getRouteController().getRouteStatus(route.getId());
@@ -154,10 +158,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return status.name();
     }
 
+    @Override
     public String getUptime() {
         return route.getUptime();
     }
 
+    @Override
     public long getUptimeMillis() {
         return route.getUptimeMillis();
     }
@@ -166,30 +172,37 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return (int) super.getExchangesInflight();
     }
 
+    @Override
     public String getCamelId() {
         return context.getName();
     }
 
+    @Override
     public String getCamelManagementName() {
         return context.getManagementName();
     }
 
+    @Override
     public Boolean getTracing() {
         return route.getRouteContext().isTracing();
     }
 
+    @Override
     public void setTracing(Boolean tracing) {
         route.getRouteContext().setTracing(tracing);
     }
 
+    @Override
     public Boolean getMessageHistory() {
         return route.getRouteContext().isMessageHistory();
     }
 
+    @Override
     public Boolean getLogMask() {
         return route.getRouteContext().isLogMask();
     }
 
+    @Override
     public String getRoutePolicyList() {
         List<RoutePolicy> policyList = route.getRouteContext().getRoutePolicyList();
 
@@ -210,6 +223,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return sb.toString();
     }
 
+    @Override
     public String getLoad01() {
         double load1 = load.getLoad1();
         if (Double.isNaN(load1)) {
@@ -220,6 +234,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
     }
 
+    @Override
     public String getLoad05() {
         double load5 = load.getLoad5();
         if (Double.isNaN(load5)) {
@@ -230,6 +245,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
     }
 
+    @Override
     public String getLoad15() {
         double load15 = load.getLoad15();
         if (Double.isNaN(load15)) {
@@ -245,6 +261,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         load.update(getInflightExchanges());
     }
 
+    @Override
     public void start() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -252,6 +269,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         context.getRouteController().startRoute(getRouteId());
     }
 
+    @Override
     public void stop() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -259,6 +277,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         context.getRouteController().stopRoute(getRouteId());
     }
 
+    @Override
     public void stop(long timeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -266,6 +285,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         context.getRouteController().stopRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 
+    @Override
     public boolean stop(Long timeout, Boolean abortAfterTimeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -291,6 +311,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         context.removeRoute(routeId);
     }
 
+    @Override
     public boolean remove() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -317,10 +338,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         start();
     }
 
+    @Override
     public String dumpRouteAsXml() throws Exception {
         return dumpRouteAsXml(false, false);
     }
 
+    @Override
     public String dumpRouteAsXml(boolean resolvePlaceholders) throws Exception {
         return dumpRouteAsXml(resolvePlaceholders, false);
     }
@@ -336,6 +359,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return null;
     }
 
+    @Override
     public void updateRouteFromXml(String xml) throws Exception {
         // convert to model from xml
         RouteDefinition def = ModelHelper.createModelFromXml(context, xml, RouteDefinition.class);
@@ -366,6 +390,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
     }
 
+    @Override
     public String dumpRouteStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
         // in this logic we need to calculate the accumulated processing time for the processor in the route
         // and hence why the logic is a bit more complicated to do this, as we need to calculate that from
@@ -451,6 +476,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return answer.toString();
     }
 
+    @Override
     public String dumpStepStatsAsXml(boolean fullStats) throws Exception {
         // in this logic we need to calculate the accumulated processing time for the processor in the route
         // and hence why the logic is a bit more complicated to do this, as we need to calculate that from
@@ -506,6 +532,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return answer.toString();
     }
 
+    @Override
     public void reset(boolean includeProcessors) throws Exception {
         reset();
 
@@ -539,6 +566,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return getContext().getInflightRepository().oldest(getRouteId());
     }
 
+    @Override
     public Long getOldestInflightDuration() {
         InflightRepository.InflightExchange oldest = getOldestInflightEntry();
         if (oldest == null) {
@@ -548,6 +576,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
     }
 
+    @Override
     public String getOldestInflightExchangeId() {
         InflightRepository.InflightExchange oldest = getOldestInflightEntry();
         if (oldest == null) {

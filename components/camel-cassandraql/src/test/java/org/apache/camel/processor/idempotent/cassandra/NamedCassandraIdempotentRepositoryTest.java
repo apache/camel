@@ -38,6 +38,7 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
     private Session session;
     private CassandraIdempotentRepository idempotentRepository;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         if (canTest()) {
@@ -49,6 +50,7 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
         }
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         if (canTest()) {

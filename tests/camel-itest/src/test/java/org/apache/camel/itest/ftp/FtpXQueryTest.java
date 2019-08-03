@@ -80,12 +80,14 @@ public class FtpXQueryTest extends CamelTestSupport {
         };
     }
 
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         initFtpServer();
         ftpServer.start();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

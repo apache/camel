@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class DataFormatComponentTest extends DataFormatTest {
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

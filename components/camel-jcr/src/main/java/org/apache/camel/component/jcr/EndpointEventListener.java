@@ -46,6 +46,7 @@ public class EndpointEventListener implements EventListener {
         this.processor = processor;
     }
 
+    @Override
     public void onEvent(EventIterator events) {
         LOG.trace("onEvent START");
         LOG.debug("{} consumer received JCR events: {}", endpoint, events);

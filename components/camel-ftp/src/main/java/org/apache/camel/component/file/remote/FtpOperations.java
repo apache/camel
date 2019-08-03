@@ -64,6 +64,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         this.clientConfig = clientConfig;
     }
 
+    @Override
     public void setEndpoint(GenericFileEndpoint<FTPFile> endpoint) {
         this.endpoint = (FtpEndpoint<FTPFile>) endpoint;
         // setup download listener/logger when we have the endpoint configured
@@ -78,6 +79,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         this.clientActivityListener = clientActivityListener;
     }
 
+    @Override
     public boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
         client.setCopyStreamListener(clientActivityListener);
 
@@ -256,10 +258,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         return true;
     }
 
+    @Override
     public boolean isConnected() throws GenericFileOperationFailedException {
         return client.isConnected();
     }
 
+    @Override
     public void disconnect() throws GenericFileOperationFailedException {
         try {
             doDisconnect();
@@ -293,6 +297,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         clientActivityListener.onDisconnected(endpoint.getConfiguration().remoteServerInformation());
     }
 
+    @Override
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         log.debug("Deleting file: {}", name);
 
@@ -331,6 +336,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         return result;
     }
 
+    @Override
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         log.debug("Renaming file: {} to: {}", from, to);
         try {
@@ -340,6 +346,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @Override
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         // must normalize directory first
         directory = endpoint.getConfiguration().normalizePath(directory);
@@ -373,6 +380,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @Override
     public boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // store the name of the file to download on the listener
         clientActivityListener.setDownload(true);
@@ -602,6 +610,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         return result;
     }
 
+    @Override
     public boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
@@ -735,6 +744,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @Override
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         log.trace("existsFile({})", name);
         if (endpoint.isFastExistsCheck()) {
@@ -780,6 +790,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @Override
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
         log.trace("getCurrentDirectory()");
         try {
@@ -791,6 +802,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @Override
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         log.trace("changeCurrentDirectory({})", path);
         if (org.apache.camel.util.ObjectHelper.isEmpty(path)) {
@@ -851,6 +863,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @Override
     public void changeToParentDirectory() throws GenericFileOperationFailedException {
         try {
             client.changeToParentDirectory();
@@ -859,6 +872,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @Override
     public List<FTPFile> listFiles() throws GenericFileOperationFailedException {
         log.trace("listFiles()");
         clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), null);
@@ -876,6 +890,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @Override
     public List<FTPFile> listFiles(String path) throws GenericFileOperationFailedException {
         log.trace("listFiles({})", path);
         clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), path);
@@ -899,6 +914,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @Override
     public boolean sendNoop() throws GenericFileOperationFailedException {
         log.trace("sendNoOp");
         try {
@@ -908,6 +924,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @Override
     public boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
         log.trace("sendSiteCommand({})", command);
         try {

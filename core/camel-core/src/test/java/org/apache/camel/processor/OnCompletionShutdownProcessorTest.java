@@ -62,14 +62,17 @@ public class OnCompletionShutdownProcessorTest extends ContextTestSupport {
         public MyProcessor() {
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().setBody("Bye World");
         }
 
+        @Override
         protected void doStart() throws Exception {
             // noop
         }
 
+        @Override
         protected void doStop() throws Exception {
             // noop
         }

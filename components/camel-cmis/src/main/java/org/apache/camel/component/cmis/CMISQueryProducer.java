@@ -43,6 +43,7 @@ public class CMISQueryProducer extends DefaultProducer {
         return (CMISEndpoint) super.getEndpoint();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         List<Map<String, Object>> nodes = executeQuery(exchange);
         exchange.getOut().setBody(nodes);

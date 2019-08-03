@@ -37,6 +37,7 @@ public class MockMessageConsumer extends ActiveMQMessageConsumer {
         this.isBadSession = isBadSession;
     }
 
+    @Override
     public Message receive(long timeout) throws JMSException {
         if (isBadSession) {
             throw new IllegalStateException("asdf");

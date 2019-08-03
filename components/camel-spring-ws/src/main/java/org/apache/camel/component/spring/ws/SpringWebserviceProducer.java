@@ -67,6 +67,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
         return (SpringWebserviceEndpoint) super.getEndpoint();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         // Let Camel TypeConverter hierarchy handle the conversion of XML messages to Source objects
         Source sourcePayload = exchange.getIn().getMandatoryBody(Source.class);
@@ -276,6 +277,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
             this.exchange = exchange;
         }
 
+        @Override
         public void doWithMessage(WebServiceMessage message) throws IOException, TransformerException {
             // Add SoapAction to webservice request. Note that exchange header
             // takes precedence over endpoint option

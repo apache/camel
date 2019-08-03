@@ -23,6 +23,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringBatchResequencerJMSPriorityTest extends BatchResequencerJMSPriorityTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/BatchResequencerJMSPriorityTest.xml");
     }

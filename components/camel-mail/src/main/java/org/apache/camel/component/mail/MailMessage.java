@@ -49,6 +49,7 @@ public class MailMessage extends DefaultMessage {
         return "MailMessage@" + ObjectHelper.getIdentityHashCode(this);
     }
 
+    @Override
     public MailMessage copy() {
         MailMessage answer = (MailMessage)super.copy();
         answer.originalMailMessage = originalMailMessage;
@@ -107,6 +108,7 @@ public class MailMessage extends DefaultMessage {
         }
     }
 
+    @Override
     public void copyFrom(org.apache.camel.Message that) {
         // only do a deep copy if we need to (yes when that is not a mail message, or if the mapMailMessage is true)
         boolean needCopy = !(that instanceof MailMessage) || (((MailMessage) that).mapMailMessage);

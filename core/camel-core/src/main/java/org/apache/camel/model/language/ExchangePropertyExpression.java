@@ -37,6 +37,7 @@ public class ExchangePropertyExpression extends ExpressionDefinition {
         super(name);
     }
 
+    @Override
     public String getLanguage() {
         return "exchangeProperty";
     }

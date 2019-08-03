@@ -36,6 +36,7 @@ public class RestNettyHttpBinding extends DefaultNettyHttpBinding {
         super(headerFilterStrategy);
     }
 
+    @Override
     public RestNettyHttpBinding copy() {
         try {
             return (RestNettyHttpBinding)this.clone();

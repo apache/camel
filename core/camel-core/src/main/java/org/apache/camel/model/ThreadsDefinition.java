@@ -83,6 +83,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     /**
      * To use a custom thread pool
      */
+    @Override
     public ThreadsDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
@@ -91,6 +92,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     /**
      * To refer to a custom thread pool or use a thread pool profile (as overlay)
      */
+    @Override
     public ThreadsDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -203,18 +205,22 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
         return this;
     }
 
+    @Override
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
+    @Override
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
+    @Override
     public String getExecutorServiceRef() {
         return executorServiceRef;
     }
 
+    @Override
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }

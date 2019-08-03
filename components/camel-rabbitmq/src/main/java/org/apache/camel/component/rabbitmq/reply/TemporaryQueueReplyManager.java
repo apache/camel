@@ -39,11 +39,13 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         super(camelContext);
     }
 
+    @Override
     protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                               String originalCorrelationId, String correlationId, long requestTimeout) {
         return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
     }
 
+    @Override
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
         log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
 

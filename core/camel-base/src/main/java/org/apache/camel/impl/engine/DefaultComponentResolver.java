@@ -42,6 +42,7 @@ public class DefaultComponentResolver implements ComponentResolver {
 
     private FactoryFinder factoryFinder;
 
+    @Override
     public Component resolveComponent(String name, CamelContext context) {
         // lookup in registry first
         Component componentReg = ResolverHelper.lookupComponentInRegistryWithFallback(context, name);

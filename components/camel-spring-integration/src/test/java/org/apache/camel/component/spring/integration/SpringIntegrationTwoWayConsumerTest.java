@@ -57,6 +57,7 @@ public class SpringIntegrationTwoWayConsumerTest extends CamelSpringTestSupport 
         assertTrue(latch.await(1, TimeUnit.SECONDS));
     }
 
+    @Override
     public ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/integration/twoWayConsumer.xml");
     }

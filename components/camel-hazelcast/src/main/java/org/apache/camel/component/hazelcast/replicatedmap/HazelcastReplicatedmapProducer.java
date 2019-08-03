@@ -37,6 +37,7 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
         this.cache = hazelcastInstance.getReplicatedMap(cacheName);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         Map<String, Object> headers = exchange.getIn().getHeaders();

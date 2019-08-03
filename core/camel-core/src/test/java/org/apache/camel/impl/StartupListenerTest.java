@@ -38,6 +38,7 @@ public class StartupListenerTest extends ContextTestSupport {
         private int invoked;
         private boolean alreadyStarted;
 
+        @Override
         public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
             invoked++;
             this.alreadyStarted = alreadyStarted;

@@ -155,6 +155,7 @@ public class JmsMessage extends DefaultMessage {
         }
     }
 
+    @Override
     public Object getHeader(String name) {
         ensureInitialHeaders();
         return super.getHeader(name);

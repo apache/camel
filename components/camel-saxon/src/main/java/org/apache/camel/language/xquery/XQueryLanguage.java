@@ -25,11 +25,13 @@ import org.apache.camel.support.LanguageSupport;
 @Language("xquery")
 public class XQueryLanguage extends LanguageSupport {
 
+    @Override
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
         return XQueryBuilder.xquery(expression);
     }
 
+    @Override
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
         return XQueryBuilder.xquery(expression);

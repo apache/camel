@@ -24,6 +24,7 @@ import org.junit.Test;
 
 public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends MulticastStopOnExceptionWithOnExceptionIssueTest {
 
+    @Override
     @Test
     public void testEnd1FailureTest() throws Exception {
         MockEndpoint end1 = getMockEndpoint("mock:end1");
@@ -44,6 +45,7 @@ public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends Mu
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     @Test
     public void testEnd2FailureTest() throws Exception {
         MockEndpoint end2 = getMockEndpoint("mock:end2");

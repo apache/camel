@@ -124,14 +124,17 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
             setEndpointUri(endpointUri);
         }
 
+        @Override
         public Producer createProducer() throws Exception {
             return new MyProducer(this);
         }
 
+        @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             return new MyConsumer(this, null);
         }
 
+        @Override
         public boolean isSingleton() {
             return true;
         }
@@ -153,6 +156,7 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
             super(endpoint);
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             // noop
         }

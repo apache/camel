@@ -19,11 +19,13 @@ package org.apache.camel.loanbroker.credit;
 //START SNIPPET: creditAgencyImpl
 public class CreditAgency implements CreditAgencyWS {
 
+    @Override
     public int getCreditHistoryLength(String ssn) {
         int creditScore = (int) (Math.random() * 600 + 300);
         return creditScore;
     }
 
+    @Override
     public int getCreditScore(String ssn) {
         int creditHistoryLength = (int) (Math.random() * 19 + 1);
         return creditHistoryLength;

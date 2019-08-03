@@ -44,6 +44,7 @@ public class BeanPipelineTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -54,6 +55,7 @@ public class BeanPipelineTest extends ContextTestSupport {
         };
     }
 
+    @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         answer.bind("foo", new FooBean());

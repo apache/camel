@@ -38,6 +38,7 @@ public class HeaderValidationHandler extends BasicValidationHandler {
         this.expectedHeaders = expectedHeaders;
     }
 
+    @Override
     public void handle(final HttpRequest request, final HttpResponse response,
                        final HttpContext context) throws HttpException, IOException {
 

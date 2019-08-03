@@ -80,6 +80,7 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupp
         };
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -94,6 +95,7 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupp
         public MyProcessor() {
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             if ("Kabom".equals(exchange.getIn().getBody())) {
                 throw new IllegalArgumentException("Kabom");

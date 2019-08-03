@@ -42,6 +42,7 @@ public class MarshalProcessor extends AsyncProcessorSupport implements Traceable
         this.dataFormat = dataFormat;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         ObjectHelper.notNull(dataFormat, "dataFormat");
 
@@ -75,22 +76,27 @@ public class MarshalProcessor extends AsyncProcessorSupport implements Traceable
         return "Marshal[" + dataFormat + "]";
     }
 
+    @Override
     public String getTraceLabel() {
         return "marshal[" + dataFormat + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

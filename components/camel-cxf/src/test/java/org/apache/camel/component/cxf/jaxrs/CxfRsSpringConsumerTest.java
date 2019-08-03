@@ -37,6 +37,7 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1(); 
     
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final Processor testProcessor = new Processor() {
             public void process(Exchange exchange) throws Exception {

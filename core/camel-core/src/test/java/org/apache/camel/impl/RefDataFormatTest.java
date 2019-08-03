@@ -77,12 +77,14 @@ public class RefDataFormatTest extends ContextTestSupport {
     // START SNIPPET: e2
     public static final class MyReverseDataFormat extends ServiceSupport implements DataFormat {
 
+        @Override
         public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
             byte[] bytes = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, graph);
             String body = reverseBytes(bytes);
             stream.write(body.getBytes());
         }
 
+        @Override
         public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
             byte[] bytes = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, stream);
             String body = reverseBytes(bytes);

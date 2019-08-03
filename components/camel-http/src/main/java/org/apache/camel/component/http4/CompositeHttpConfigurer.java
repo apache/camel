@@ -35,6 +35,7 @@ public class CompositeHttpConfigurer implements HttpClientConfigurer {
         configurers.remove(configurer);
     }
 
+    @Override
     public void configureHttpClient(HttpClientBuilder clientBuilder) {
         for (HttpClientConfigurer configurer : configurers) {
             configurer.configureHttpClient(clientBuilder);

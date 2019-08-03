@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
  */
 public abstract class QueueLoadBalancer extends LoadBalancerSupport {
 
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         AsyncProcessor[] list = doGetProcessors();
         if (list.length > 0) {

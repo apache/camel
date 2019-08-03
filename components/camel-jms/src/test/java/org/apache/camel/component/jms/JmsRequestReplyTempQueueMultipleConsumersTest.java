@@ -89,6 +89,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
         assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
     }
     
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         

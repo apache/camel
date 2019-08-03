@@ -52,6 +52,7 @@ public class FopProducer extends DefaultProducer {
         this.outputFormat = outputFormat;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         Map<String, Object> headers = exchange.getIn().getHeaders();

@@ -45,6 +45,7 @@ public class DataFormatDataSetTest extends CamelTestSupport {
         registry.bind("beer", ds);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

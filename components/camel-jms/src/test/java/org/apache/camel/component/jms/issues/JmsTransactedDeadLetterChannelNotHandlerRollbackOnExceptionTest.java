@@ -25,6 +25,7 @@ public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionTest ext
         return false;
     }
 
+    @Override
     @Test
     public void shouldNotLoseMessagesOnExceptionInErrorHandler() throws Exception {
         template.sendBody(testingEndpoint, "Hello World");

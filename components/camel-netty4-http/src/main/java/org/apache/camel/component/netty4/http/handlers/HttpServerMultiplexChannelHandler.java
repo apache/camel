@@ -69,16 +69,19 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         // must have default no-arg constructor to allow IoC containers to manage it
     }
 
+    @Override
     public void init(int port) {
         this.port = port;
         this.token = ":" + port;
         this.len = token.length();
     }
 
+    @Override
     public void addConsumer(NettyHttpConsumer consumer) {
         consumers.add(new HttpServerChannelHandler(consumer));
     }
 
+    @Override
     public void removeConsumer(NettyHttpConsumer consumer) {
         for (HttpServerChannelHandler handler : consumers) {
             if (handler.getConsumer() == consumer) {
@@ -87,14 +90,17 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         }
     }
 
+    @Override
     public int consumers() {
         return consumers.size();
     }
 
+    @Override
     public int getPort() {
         return port;
     }
 
+    @Override
     public ChannelHandler getChannelHandler() {
         return this;
     }

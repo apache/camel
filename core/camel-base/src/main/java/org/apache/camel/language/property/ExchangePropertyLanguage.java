@@ -33,14 +33,17 @@ public class ExchangePropertyLanguage implements Language, IsSingleton {
         return ExpressionBuilder.exchangePropertyExpression(propertyName);
     }
 
+    @Override
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
 
+    @Override
     public Expression createExpression(String expression) {
         return ExchangePropertyLanguage.exchangeProperty(expression);
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

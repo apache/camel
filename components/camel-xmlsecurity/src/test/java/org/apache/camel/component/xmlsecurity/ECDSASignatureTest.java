@@ -240,6 +240,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
         return mock;
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         disableJMX();

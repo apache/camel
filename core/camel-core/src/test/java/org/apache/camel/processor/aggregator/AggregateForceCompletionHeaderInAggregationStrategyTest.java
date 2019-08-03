@@ -53,6 +53,7 @@ public class AggregateForceCompletionHeaderInAggregationStrategyTest extends Con
 
     public static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 // we start a new correlation group, so complete all previous groups

@@ -79,6 +79,7 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
         this.schemaReader = schemaReader;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             doProcess(exchange);

@@ -75,5 +75,6 @@ public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
         return git;
     }
 
+    @Override
     protected abstract int poll() throws Exception;
 }

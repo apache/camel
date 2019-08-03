@@ -60,6 +60,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         super.tearDown();
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/xpath/XPathLanguageTest.xml");
     }

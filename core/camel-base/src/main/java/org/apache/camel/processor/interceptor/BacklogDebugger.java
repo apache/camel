@@ -451,10 +451,12 @@ public final class BacklogDebugger extends ServiceSupport {
         return false;
     }
 
+    @Override
     protected void doStart() throws Exception {
         // noop
     }
 
+    @Override
     protected void doStop() throws Exception {
         if (enabled.get()) {
             disableDebugger();

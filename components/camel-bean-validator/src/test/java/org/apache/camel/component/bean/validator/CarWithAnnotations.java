@@ -33,18 +33,22 @@ public class CarWithAnnotations implements Car {
         this.licensePlate = licencePlate;
     }
 
+    @Override
     public String getManufacturer() {
         return manufacturer;
     }
 
+    @Override
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
     }
 
+    @Override
     public String getLicensePlate() {
         return licensePlate;
     }
 
+    @Override
     public void setLicensePlate(String licensePlate) {
         this.licensePlate = licensePlate;
     }

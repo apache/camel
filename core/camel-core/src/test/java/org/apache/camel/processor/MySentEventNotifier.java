@@ -31,6 +31,7 @@ public class MySentEventNotifier extends EventNotifierSupport {
         return events;
     }
 
+    @Override
     public void notify(CamelEvent event) throws Exception {
         if (event instanceof ExchangeSentEvent) {
             events.add(event);

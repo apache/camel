@@ -73,6 +73,7 @@ public class BindyComplexCsvUnmarshallTest extends AbstractJUnit4SpringContextTe
     }
 
     public static class ContextConfig extends RouteBuilder {
+        @Override
         public void configure() {
             from("direct:start")
                 .unmarshal(new BindyCsvDataFormat(TYPE))

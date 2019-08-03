@@ -29,6 +29,7 @@ public class SpringInterceptSimpleRouteStopTest extends InterceptSimpleRouteStop
         return false;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringInterceptSimpleRouteStopTest.xml");
     }

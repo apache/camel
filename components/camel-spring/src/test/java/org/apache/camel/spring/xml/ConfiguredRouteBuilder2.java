@@ -22,6 +22,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ConfiguredRouteBuilder2 extends RouteBuilder {
     private String queueName;
 
+    @Override
     public void configure() throws Exception {
         ObjectHelper.notNull(queueName, "queueName");
 

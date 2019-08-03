@@ -54,6 +54,7 @@ public class CouchDbChangesetTracker implements Runnable {
                 .since(since).heartBeat(endpoint.getHeartbeat()).continuousChanges();
     }
 
+    @Override
     public void run() {
 
         String lastSequence = null;

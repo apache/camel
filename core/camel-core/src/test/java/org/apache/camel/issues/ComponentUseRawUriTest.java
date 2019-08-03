@@ -43,10 +43,12 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
             this.remaining = remaining;
         }
 
+        @Override
         public Producer createProducer() throws Exception {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             throw new UnsupportedOperationException("Not supported yet.");
         }
@@ -67,6 +69,7 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
             this.bar = bar;
         }
 
+        @Override
         public boolean isSingleton() {
             return true;
         }

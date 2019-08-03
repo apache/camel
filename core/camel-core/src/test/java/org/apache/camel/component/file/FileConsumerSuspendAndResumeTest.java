@@ -88,6 +88,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         private int counter;
         private Consumer consumer;
 
+        @Override
         public void onExchangeDone(Route route, Exchange exchange) {
             this.consumer = route.getConsumer();
             // only stop it at first run

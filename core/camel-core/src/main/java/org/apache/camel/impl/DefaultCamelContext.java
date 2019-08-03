@@ -153,12 +153,14 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         super(init);
     }
 
+    @Override
     protected TypeConverter createTypeConverter() {
         return new DefaultTypeConverter(
                 this, getPackageScanClassResolver(),
                 getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
     }
 
+    @Override
     protected TypeConverterRegistry createTypeConverterRegistry() {
         TypeConverter typeConverter = getTypeConverter();
         if (typeConverter instanceof TypeConverterRegistry) {
@@ -167,6 +169,7 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         return null;
     }
 
+    @Override
     protected Injector createInjector() {
         FactoryFinder finder = getDefaultFactoryFinder();
         try {
@@ -177,70 +180,87 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         }
     }
 
+    @Override
     protected CamelBeanPostProcessor createBeanPostProcessor() {
         return new DefaultCamelBeanPostProcessor(this);
     }
 
+    @Override
     protected ComponentResolver createComponentResolver() {
         return new DefaultComponentResolver();
     }
 
+    @Override
     protected Registry createRegistry() {
         return new DefaultRegistry();
     }
 
+    @Override
     protected UuidGenerator createUuidGenerator() {
         return new DefaultUuidGenerator();
     }
 
+    @Override
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
         return new DefaultModelJAXBContextFactory();
     }
 
+    @Override
     protected NodeIdFactory createNodeIdFactory() {
         return new DefaultNodeIdFactory();
     }
 
+    @Override
     protected FactoryFinderResolver createFactoryFinderResolver() {
         return new DefaultFactoryFinderResolver();
     }
 
+    @Override
     protected ClassResolver createClassResolver() {
         return new DefaultClassResolver(this);
     }
 
+    @Override
     protected ProcessorFactory createProcessorFactory() {
         return new DefaultProcessorFactory();
     }
 
+    @Override
     protected DataFormatResolver createDataFormatResolver() {
         return new DefaultDataFormatResolver();
     }
 
+    @Override
     protected MessageHistoryFactory createMessageHistoryFactory() {
         return new DefaultMessageHistoryFactory();
     }
 
+    @Override
     protected InflightRepository createInflightRepository() {
         return new DefaultInflightRepository();
     }
 
+    @Override
     protected AsyncProcessorAwaitManager createAsyncProcessorAwaitManager() {
         return new DefaultAsyncProcessorAwaitManager();
     }
 
+    @Override
     protected RouteController createRouteController() {
         return new DefaultRouteController(this);
     }
 
+    @Override
     protected HealthCheckRegistry createHealthCheckRegistry() {
         return new DefaultHealthCheckRegistry(this);
     }
 
+    @Override
     protected ShutdownStrategy createShutdownStrategy() {
         return new DefaultShutdownStrategy(this);
     }
 
+    @Override
     protected PackageScanClassResolver createPackageScanClassResolver() {
         PackageScanClassResolver packageScanClassResolver;
         // use WebSphere specific resolver if running on WebSphere
@@ -253,46 +273,57 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         return packageScanClassResolver;
     }
 
+    @Override
     protected ExecutorServiceManager createExecutorServiceManager() {
         return new DefaultExecutorServiceManager(this);
     }
 
+    @Override
     protected ServicePool<Producer> createProducerServicePool() {
         return new ServicePool<>(Endpoint::createProducer, Producer::getEndpoint, 100);
     }
 
+    @Override
     protected ServicePool<PollingConsumer> createPollingConsumerServicePool() {
         return new ServicePool<>(Endpoint::createPollingConsumer, PollingConsumer::getEndpoint, 100);
     }
 
+    @Override
     protected UnitOfWorkFactory createUnitOfWorkFactory() {
         return new DefaultUnitOfWorkFactory();
     }
 
+    @Override
     protected RuntimeCamelCatalog createRuntimeCamelCatalog() {
         return new DefaultRuntimeCamelCatalog(this, true);
     }
 
+    @Override
     protected CamelContextNameStrategy createCamelContextNameStrategy() {
         return new DefaultCamelContextNameStrategy();
     }
 
+    @Override
     protected ManagementNameStrategy createManagementNameStrategy() {
         return new DefaultManagementNameStrategy(this);
     }
 
+    @Override
     protected HeadersMapFactory createHeadersMapFactory() {
         return new HeadersMapFactoryResolver().resolve(this);
     }
 
+    @Override
     protected BeanProxyFactory createBeanProxyFactory() {
         return new BeanProxyFactoryResolver().resolve(this);
     }
 
+    @Override
     protected BeanProcessorFactory createBeanProcessorFactory() {
         return new BeanProcessorFactoryResolver().resolve(this);
     }
 
+    @Override
     protected Tracer createTracer() {
         Tracer tracer = null;
         if (getRegistry() != null) {
@@ -312,22 +343,27 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         return tracer;
     }
 
+    @Override
     protected LanguageResolver createLanguageResolver() {
         return new DefaultLanguageResolver();
     }
 
+    @Override
     protected RestRegistryFactory createRestRegistryFactory() {
         return new RestRegistryFactoryResolver().resolve(this);
     }
 
+    @Override
     protected EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints) {
         return new DefaultEndpointRegistry(this, endpoints);
     }
 
+    @Override
     protected StreamCachingStrategy createStreamCachingStrategy() {
         return new DefaultStreamCachingStrategy();
     }
 
+    @Override
     protected ReactiveExecutor createReactiveExecutor() {
         return new ReactiveExecutorResolver().resolve(this);
     }

@@ -22,6 +22,7 @@ import org.apache.camel.support.TypeConverterSupport;
 
 public class MyMessageToProcessorConverter extends TypeConverterSupport {
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return (T) new Processor() {

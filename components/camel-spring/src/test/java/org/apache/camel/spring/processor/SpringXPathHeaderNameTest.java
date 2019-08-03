@@ -22,6 +22,7 @@ import org.apache.camel.builder.xml.XPathHeaderNameTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringXPathHeaderNameTest extends XPathHeaderNameTest {
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/xPathHeaderNameContext.xml");
     }

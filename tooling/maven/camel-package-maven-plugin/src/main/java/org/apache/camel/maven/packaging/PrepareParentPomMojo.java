@@ -81,6 +81,7 @@ public class PrepareParentPomMojo extends AbstractMojo {
      *                                                        threads it generated failed.
      * @throws MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         updateParentPom(componentsDir, "camel components");
         updateParentPom(startersDir, "camel starters");

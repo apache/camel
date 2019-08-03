@@ -85,11 +85,13 @@ public class PolicyPerProcessorTest extends ContextTestSupport {
             this.name = name;
         }
 
+        @Override
         public void beforeWrap(RouteContext routeContext,
                                NamedNode definition) {
             // no need to modify the route
         }
 
+        @Override
         public Processor wrap(RouteContext routeContext, final Processor processor) {
             return new Processor() {
                 public void process(Exchange exchange) throws Exception {

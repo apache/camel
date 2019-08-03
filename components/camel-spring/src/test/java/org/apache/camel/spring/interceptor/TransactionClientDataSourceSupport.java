@@ -28,6 +28,7 @@ public class TransactionClientDataSourceSupport extends SpringTestSupport {
     protected JdbcTemplate jdbc;
     protected boolean useTransactionErrorHandler = true;
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/spring/interceptor/transactionalClientDataSource.xml");

@@ -68,6 +68,7 @@ public class SplitterOnCompletionTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             if ("Kaboom".equals(body)) {

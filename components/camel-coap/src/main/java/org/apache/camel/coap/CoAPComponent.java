@@ -112,6 +112,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
         return server;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new CoAPEndpoint(uri, this);
         setProperties(endpoint, parameters);

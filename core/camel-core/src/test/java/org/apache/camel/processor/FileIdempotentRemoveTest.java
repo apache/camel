@@ -70,6 +70,7 @@ public class FileIdempotentRemoveTest extends ContextTestSupport {
         assertEquals("B\n", data);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

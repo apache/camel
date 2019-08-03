@@ -53,12 +53,14 @@ public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements
      * @param exchange the message exchange
      * @throws Exception
      */
+    @Override
     public void process(Exchange exchange) throws Exception {
         // invoke when interceptor wants to invoke
         boolean done = interceptor.process(exchange, callback.get());
         interceptorDone.set(done);
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // remember the callback to be used by the interceptor
         this.callback.set(callback);

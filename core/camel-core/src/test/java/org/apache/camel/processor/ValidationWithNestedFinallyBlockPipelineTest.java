@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
  * The handle catch clause has a pipeline processing the exception.
  */
 public class ValidationWithNestedFinallyBlockPipelineTest extends ValidationTest {
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

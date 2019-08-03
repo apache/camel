@@ -58,10 +58,12 @@ public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, Zendesk
         return (ZendeskComponent) super.getComponent();
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new ZendeskProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // make sure inBody is not set for consumers
         if (inBody != null) {
@@ -91,6 +93,7 @@ public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, Zendesk
         return ZendeskPropertiesHelper.getHelper();
     }
 
+    @Override
     protected String getThreadProfileName() {
         return ZendeskConstants.THREAD_PROFILE_NAME;
     }

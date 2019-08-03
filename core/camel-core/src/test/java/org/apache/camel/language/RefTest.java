@@ -51,6 +51,7 @@ public class RefTest extends LanguageTestSupport {
         assertPredicate("myExp");
     }
 
+    @Override
     protected String getLanguageName() {
         return "ref";
     }

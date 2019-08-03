@@ -53,10 +53,12 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
         return transactionTemplate;
     }
 
+    @Override
     public boolean supportTransacted() {
         return true;
     }
 
+    @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         if (transactionTemplate == null) {
             // lookup in context if no transaction template has been configured
@@ -161,6 +163,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
     // Implementation
     // -------------------------------------------------------------------------
 
+    @Override
     protected CamelLogger createLogger() {
         return new CamelLogger(LoggerFactory.getLogger(TransactionErrorHandler.class), LoggingLevel.ERROR);
     }

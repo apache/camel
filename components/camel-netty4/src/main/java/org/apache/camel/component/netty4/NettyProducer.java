@@ -187,6 +187,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         super.doStop();
     }
 
+    @Override
     public boolean process(final Exchange exchange, AsyncCallback callback) {
         if (!isRunAllowed()) {
             if (exchange.getException() == null) {

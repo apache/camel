@@ -38,10 +38,12 @@ public class CxfNonWrapperTest extends CamelSpringTestSupport {
         return true;
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/nonWrapperProcessor.xml");
     }
 
+    @Override
     protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);
     }

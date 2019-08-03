@@ -63,18 +63,21 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
         endpoint.addConsumer(this);
     }
 
+    @Override
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
         // deny stopping on shutdown as we want direct consumers to run in case some other queues
         // depend on this consumer to run, so it can complete its exchanges
         return true;
     }
 
+    @Override
     public int getPendingExchangesSize() {
         // return 0 as we do not have an internal memory queue with a variable size
         // of inflight messages. 
         return 0;
     }
 
+    @Override
     public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // noop
     }

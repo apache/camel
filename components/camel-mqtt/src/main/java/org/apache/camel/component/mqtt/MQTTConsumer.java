@@ -32,6 +32,7 @@ public class MQTTConsumer extends DefaultConsumer {
         return (MQTTEndpoint) super.getEndpoint();
     }
 
+    @Override
     protected void doStart() throws Exception {
         getEndpoint().addConsumer(this);
         if (!getEndpoint().isConnected()) {
@@ -40,6 +41,7 @@ public class MQTTConsumer extends DefaultConsumer {
         super.doStart();
     }
 
+    @Override
     protected void doStop() throws Exception {
         getEndpoint().removeConsumer(this);
         super.doStop();

@@ -32,6 +32,7 @@ public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
         assertEquals("Connector should have been removed", 0, JettyHttpComponent.CONNECTORS.size());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

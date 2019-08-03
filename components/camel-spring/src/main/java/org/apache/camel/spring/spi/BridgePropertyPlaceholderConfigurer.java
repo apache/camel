@@ -141,6 +141,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
             this.properties = properties;
         }
 
+        @Override
         public String resolvePlaceholder(String placeholderName) {
             String propVal = null;
             if (systemPropertiesMode == SYSTEM_PROPERTIES_MODE_OVERRIDE) {

@@ -490,6 +490,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     }
 
+    @Override
     protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {

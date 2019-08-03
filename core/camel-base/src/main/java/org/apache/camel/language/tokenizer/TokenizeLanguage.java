@@ -90,6 +90,7 @@ public class TokenizeLanguage implements Language, IsSingleton {
         return language.createExpression(null);
     }
 
+    @Override
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
@@ -142,6 +143,7 @@ public class TokenizeLanguage implements Language, IsSingleton {
         return answer;
     }
 
+    @Override
     public Expression createExpression(String expression) {
         if (ObjectHelper.isNotEmpty(expression)) {
             this.token = expression;
@@ -229,6 +231,7 @@ public class TokenizeLanguage implements Language, IsSingleton {
         this.skipFirst = skipFirst;
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }

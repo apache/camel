@@ -89,14 +89,17 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
 
     private static class MyPollStrategy implements PollingConsumerPollStrategy {
 
+        @Override
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             return true;
         }
 
+        @Override
         public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
             event += "commit";
         }
 
+        @Override
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
             event += "rollback";
             rollbackCause = cause;

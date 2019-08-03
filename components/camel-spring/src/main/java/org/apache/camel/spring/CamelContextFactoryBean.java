@@ -232,6 +232,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         return SpringCamelContext.class;
     }
 
+    @Override
     protected <S> S getBeanForType(Class<S> clazz) {
         S bean = null;
         String[] names = getApplicationContext().getBeanNamesForType(clazz, true, true);
@@ -269,6 +270,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         finder.appendBuilders(builders);
     }
 
+    @Override
     protected void initBeanPostProcessor(SpringCamelContext context) {
         if (beanPostProcessor != null) {
             if (beanPostProcessor instanceof ApplicationContextAware) {
@@ -284,6 +286,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         }
     }
 
+    @Override
     protected void postProcessBeforeInit(RouteBuilder builder) {
         if (beanPostProcessor != null) {
             // Inject the annotated resource
@@ -306,6 +309,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         LOG.debug("afterPropertiesSet() took {} millis", watch.taken());
     }
 
+    @Override
     protected void initCustomRegistry(SpringCamelContext context) {
         Registry registry = getBeanForType(Registry.class);
         if (registry != null) {
@@ -465,6 +469,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         return new SpringCamelContext(getApplicationContext());
     }
 
+    @Override
     public SpringCamelContext getContext(boolean create) {
         if (context == null && create) {
             context = createContext();
@@ -478,6 +483,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.context = context;
     }
 
+    @Override
     public List<RouteDefinition> getRoutes() {
         return routes;
     }
@@ -485,10 +491,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     /**
      * Contains the Camel routes
      */
+    @Override
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
     }
 
+    @Override
     public List<RestDefinition> getRests() {
         return rests;
     }
@@ -496,10 +504,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     /**
      * Contains the rest services defined using the rest-dsl
      */
+    @Override
     public void setRests(List<RestDefinition> rests) {
         this.rests = rests;
     }
 
+    @Override
     public RestConfigurationDefinition getRestConfiguration() {
         return restConfiguration;
     }
@@ -511,6 +521,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.restConfiguration = restConfiguration;
     }
 
+    @Override
     public List<CamelEndpointFactoryBean> getEndpoints() {
         return endpoints;
     }
@@ -522,10 +533,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.endpoints = endpoints;
     }
 
+    @Override
     public List<CamelRedeliveryPolicyFactoryBean> getRedeliveryPolicies() {
         return redeliveryPolicies;
     }
 
+    @Override
     public List<InterceptDefinition> getIntercepts() {
         return intercepts;
     }
@@ -537,6 +550,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.intercepts = intercepts;
     }
 
+    @Override
     public List<InterceptFromDefinition> getInterceptFroms() {
         return interceptFroms;
     }
@@ -548,6 +562,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.interceptFroms = interceptFroms;
     }
 
+    @Override
     public List<InterceptSendToEndpointDefinition> getInterceptSendToEndpoints() {
         return interceptSendToEndpoints;
     }
@@ -572,6 +587,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.globalOptions = globalOptions;
     }
 
+    @Override
     public String[] getPackages() {
         return packages;
     }
@@ -591,6 +607,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.packages = packages;
     }
 
+    @Override
     public PackageScanDefinition getPackageScan() {
         return packageScan;
     }
@@ -602,10 +619,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      *
      * @param packageScan the package scan
      */
+    @Override
     public void setPackageScan(PackageScanDefinition packageScan) {
         this.packageScan = packageScan;
     }
 
+    @Override
     public ContextScanDefinition getContextScan() {
         return contextScan;
     }
@@ -617,10 +636,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      *
      * @param contextScan the context scan
      */
+    @Override
     public void setContextScan(ContextScanDefinition contextScan) {
         this.contextScan = contextScan;
     }
 
+    @Override
     public CamelPropertyPlaceholderDefinition getCamelPropertyPlaceholder() {
         return camelPropertyPlaceholder;
     }
@@ -632,6 +653,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.camelPropertyPlaceholder = camelPropertyPlaceholder;
     }
 
+    @Override
     public CamelStreamCachingStrategyDefinition getCamelStreamCachingStrategy() {
         return camelStreamCachingStrategy;
     }
@@ -650,6 +672,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         camelJMXAgent = agent;
     }
 
+    @Override
     public String getTrace() {
         return trace;
     }
@@ -661,6 +684,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.trace = trace;
     }
 
+    @Override
     public String getTracePattern() {
         return tracePattern;
     }
@@ -675,6 +699,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.tracePattern = tracePattern;
     }
 
+    @Override
     public String getMessageHistory() {
         return messageHistory;
     }
@@ -686,6 +711,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.messageHistory = messageHistory;
     }
 
+    @Override
     public String getLogMask() {
         return logMask;
     }
@@ -697,6 +723,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.logMask = logMask;
     }
 
+    @Override
     public String getLogExhaustedMessageBody() {
         return logExhaustedMessageBody;
     }
@@ -708,6 +735,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.logExhaustedMessageBody = logExhaustedMessageBody;
     }
 
+    @Override
     public String getStreamCache() {
         return streamCache;
     }
@@ -719,6 +747,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.streamCache = streamCache;
     }
 
+    @Override
     public String getDelayer() {
         return delayer;
     }
@@ -731,6 +760,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.delayer = delayer;
     }
 
+    @Override
     public String getAutoStartup() {
         return autoStartup;
     }
@@ -762,6 +792,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.shutdownEager = shutdownEager;
     }
 
+    @Override
     public String getUseMDCLogging() {
         return useMDCLogging;
     }
@@ -773,6 +804,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.useMDCLogging = useMDCLogging;
     }
 
+    @Override
     public String getUseDataType() {
         return useDataType;
     }
@@ -791,6 +823,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.useDataType = useDataType;
     }
 
+    @Override
     public String getUseBreadcrumb() {
         return useBreadcrumb;
     }
@@ -802,6 +835,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.useBreadcrumb = useBreadcrumb;
     }
 
+    @Override
     public String getAllowUseOriginalMessage() {
         return allowUseOriginalMessage;
     }
@@ -816,6 +850,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.allowUseOriginalMessage = allowUseOriginalMessage;
     }
 
+    @Override
     public String getRuntimeEndpointRegistryEnabled() {
         return runtimeEndpointRegistryEnabled;
     }
@@ -827,6 +862,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.runtimeEndpointRegistryEnabled = runtimeEndpointRegistryEnabled;
     }
 
+    @Override
     public String getManagementNamePattern() {
         return managementNamePattern;
     }
@@ -838,6 +874,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.managementNamePattern = managementNamePattern;
     }
 
+    @Override
     public String getThreadNamePattern() {
         return threadNamePattern;
     }
@@ -874,6 +911,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.loadTypeConverters = loadTypeConverters;
     }
 
+    @Override
     public Boolean getTypeConverterStatisticsEnabled() {
         return typeConverterStatisticsEnabled;
     }
@@ -892,6 +930,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
     }
 
+    @Override
     public TypeConverterExists getTypeConverterExists() {
         return typeConverterExists;
     }
@@ -905,6 +944,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.typeConverterExists = typeConverterExists;
     }
 
+    @Override
     public LoggingLevel getTypeConverterExistsLoggingLevel() {
         return typeConverterExistsLoggingLevel;
     }
@@ -918,10 +958,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.typeConverterExistsLoggingLevel = typeConverterExistsLoggingLevel;
     }
 
+    @Override
     public CamelJMXAgentDefinition getCamelJMXAgent() {
         return camelJMXAgent;
     }
 
+    @Override
     public List<RouteBuilderDefinition> getBuilderRefs() {
         return builderRefs;
     }
@@ -933,6 +975,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.builderRefs = builderRefs;
     }
 
+    @Override
     public List<RouteContextRefDefinition> getRouteRefs() {
         return routeRefs;
     }
@@ -944,6 +987,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.routeRefs = routeRefs;
     }
 
+    @Override
     public List<RestContextRefDefinition> getRestRefs() {
         return restRefs;
     }
@@ -955,6 +999,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.restRefs = restRefs;
     }
 
+    @Override
     public String getErrorHandlerRef() {
         return errorHandlerRef;
     }
@@ -973,6 +1018,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.dataFormats = dataFormats;
     }
 
+    @Override
     public DataFormatsDefinition getDataFormats() {
         return dataFormats;
     }
@@ -984,6 +1030,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.transformers = transformers;
     }
 
+    @Override
     public TransformersDefinition getTransformers() {
         return transformers;
     }
@@ -995,6 +1042,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.validators = validators;
     }
 
+    @Override
     public ValidatorsDefinition getValidators() {
         return validators;
     }
@@ -1085,10 +1133,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.onExceptions = onExceptions;
     }
 
+    @Override
     public List<OnExceptionDefinition> getOnExceptions() {
         return onExceptions;
     }
 
+    @Override
     public List<OnCompletionDefinition> getOnCompletions() {
         return onCompletions;
     }
@@ -1100,6 +1150,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.onCompletions = onCompletions;
     }
 
+    @Override
     public ShutdownRoute getShutdownRoute() {
         return shutdownRoute;
     }
@@ -1111,6 +1162,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.shutdownRoute = shutdownRoute;
     }
 
+    @Override
     public ShutdownRunningTask getShutdownRunningTask() {
         return shutdownRunningTask;
     }
@@ -1122,6 +1174,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.shutdownRunningTask = shutdownRunningTask;
     }
 
+    @Override
     public List<ThreadPoolProfileDefinition> getThreadPoolProfiles() {
         return threadPoolProfiles;
     }
@@ -1144,6 +1197,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.threadPools = threadPools;
     }
 
+    @Override
     public String getDependsOn() {
         return dependsOn;
     }

@@ -40,6 +40,7 @@ public class AtomixMapConsumerTest extends AtomixClientTestSupport {
     // Setup
     // ************************************
 
+    @Override
     @BindToRegistry("atomix-map")
     public Map<String, Component> createComponents() {
         AtomixMapComponent component = new AtomixMapComponent();

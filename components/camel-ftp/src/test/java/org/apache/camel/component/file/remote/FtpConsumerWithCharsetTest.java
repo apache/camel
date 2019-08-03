@@ -116,6 +116,7 @@ public class FtpConsumerWithCharsetTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), payload, "iso.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

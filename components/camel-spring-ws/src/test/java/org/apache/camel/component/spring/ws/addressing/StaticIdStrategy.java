@@ -26,6 +26,7 @@ import org.springframework.ws.soap.addressing.messageid.UuidMessageIdStrategy;
  */
 public class StaticIdStrategy extends UuidMessageIdStrategy {
 
+    @Override
     public URI newMessageId(SoapMessage message) {
         return URI.create("staticTestId");
     }

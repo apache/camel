@@ -28,6 +28,7 @@ public class GroovyLanguageTest extends LanguageTestSupport {
         assertExpression("headers.foo", "abc");
     }
 
+    @Override
     protected String getLanguageName() {
         return "groovy";
     }

@@ -73,6 +73,7 @@ public class CustomFailveOverProcessor extends ContextTestSupport {
             this.uris = Arrays.asList(uris);
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             for (String uri : uris) {
                 // reset exception to avoid it being a problem if/when we retry

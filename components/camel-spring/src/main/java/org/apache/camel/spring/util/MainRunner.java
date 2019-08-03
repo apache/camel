@@ -40,10 +40,12 @@ public class MainRunner implements InitializingBean, Runnable {
     private boolean asyncRun = true;
     private long delay;
 
+    @Override
     public String toString() {
         return "MainRunner(" + name(main) + " " + Arrays.asList(getArgs()) + ")";
     }
 
+    @Override
     public void run() {
         try {
             runMethodWithoutCatchingExceptions();
@@ -105,6 +107,7 @@ public class MainRunner implements InitializingBean, Runnable {
         this.delay = delay;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         if (main == null) {
             throw new IllegalArgumentException("You must specify a main class!");

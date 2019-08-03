@@ -39,6 +39,7 @@ public class FreemarkerContentCacheTest extends CamelTestSupport {
         return true;
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -154,6 +155,7 @@ public class FreemarkerContentCacheTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

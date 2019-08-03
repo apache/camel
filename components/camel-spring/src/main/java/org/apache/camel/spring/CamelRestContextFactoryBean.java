@@ -40,14 +40,17 @@ public class CamelRestContextFactoryBean extends IdentifiedType implements Facto
     @XmlElement(name = "rest", required = true)
     private List<RestDefinition> rests = new ArrayList<>();
 
+    @Override
     public List<RestDefinition> getObject() throws Exception {
         return rests;
     }
 
+    @Override
     public Class<?> getObjectType() {
         return rests.getClass();
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

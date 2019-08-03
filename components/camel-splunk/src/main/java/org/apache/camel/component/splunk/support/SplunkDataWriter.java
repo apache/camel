@@ -46,10 +46,12 @@ public abstract class SplunkDataWriter implements DataWriter {
 
     protected abstract Socket createSocket(Service service) throws IOException;
 
+    @Override
     public void write(SplunkEvent event) throws Exception {
         doWrite(event.toString());
     }
 
+    @Override
     public void write(String event) throws Exception {
         doWrite(event + SplunkEvent.LINEBREAK);
     }
@@ -85,6 +87,7 @@ public abstract class SplunkDataWriter implements DataWriter {
         }
     }
 
+    @Override
     public boolean isConnected() {
         return connected;
     }

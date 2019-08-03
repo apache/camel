@@ -62,10 +62,12 @@ public class ExecEndpoint extends DefaultEndpoint {
         this.binding = new DefaultExecBinding();
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new ExecProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported for ExecEndpoint!");
     }

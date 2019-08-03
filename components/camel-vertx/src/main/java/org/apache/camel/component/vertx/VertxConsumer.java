@@ -68,6 +68,7 @@ public class VertxConsumer extends DefaultConsumer {
         }
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Registering EventBus handler on address {}", endpoint.getAddress());
@@ -79,6 +80,7 @@ public class VertxConsumer extends DefaultConsumer {
         super.doStart();
     }
 
+    @Override
     protected void doStop() throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Unregistering EventBus handler on address {}", endpoint.getAddress());

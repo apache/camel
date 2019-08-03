@@ -86,26 +86,32 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
         }
     }
 
+    @Override
     public void destroy() throws Exception {
         // we let CamelContext manage the lifecycle of the producer and shut it down when Camel stops
     }
 
+    @Override
     public Class<?> getServiceInterface() {
         return super.getServiceInterface();
     }
 
+    @Override
     public String getServiceUrl() {
         return super.getServiceUrl();
     }
 
+    @Override
     public Object getObject() throws Exception {
         return serviceProxy;
     }
 
+    @Override
     public Class<?> getObjectType() {
         return getServiceInterface();
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }
@@ -134,10 +140,12 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
         this.endpoint = endpoint;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -146,6 +154,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
         this.camelContextId = contextId;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

@@ -136,6 +136,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         return answer;
     }
     
+    @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 

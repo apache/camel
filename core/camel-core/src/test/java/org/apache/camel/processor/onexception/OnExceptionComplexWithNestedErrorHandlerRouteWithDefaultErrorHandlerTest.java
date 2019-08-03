@@ -22,6 +22,7 @@ import org.junit.Test;
 
 public class OnExceptionComplexWithNestedErrorHandlerRouteWithDefaultErrorHandlerTest extends OnExceptionComplexWithNestedErrorHandlerRouteTest {
 
+    @Override
     @Test
     public void testFunctionalError() throws Exception {
         // override as we dont support redelivery with DefaultErrorHandler

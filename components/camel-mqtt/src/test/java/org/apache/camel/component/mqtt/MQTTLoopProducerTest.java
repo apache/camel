@@ -68,6 +68,7 @@ public class MQTTLoopProducerTest extends MQTTBaseTest {
         assertTrue("Messages not consumed = " + latch.getCount(), latch.getCount() == 0);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

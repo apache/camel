@@ -206,8 +206,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         super(endpointUri, component);
     }
 
+    @Override
     public abstract GenericFileConsumer<T> createConsumer(Processor processor) throws Exception;
 
+    @Override
     public abstract GenericFileProducer<T> createProducer() throws Exception;
 
     public abstract Exchange createExchange(GenericFile<T> file);

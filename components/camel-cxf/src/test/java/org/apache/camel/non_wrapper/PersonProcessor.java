@@ -29,6 +29,7 @@ public class PersonProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(PersonProcessor.class);
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         LOG.info("processing exchange in camel");
 

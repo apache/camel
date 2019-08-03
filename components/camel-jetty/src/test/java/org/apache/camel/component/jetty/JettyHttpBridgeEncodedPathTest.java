@@ -32,6 +32,7 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
         assertEquals("Get a wrong response", "param1=+447777111222", response);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

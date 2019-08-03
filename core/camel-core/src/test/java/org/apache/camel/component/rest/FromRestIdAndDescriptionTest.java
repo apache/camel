@@ -24,6 +24,7 @@ import org.junit.Test;
 
 public class FromRestIdAndDescriptionTest extends FromRestGetTest {
 
+    @Override
     @Test
     public void testFromRestModel() throws Exception {
         super.testFromRestModel();

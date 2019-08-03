@@ -54,6 +54,7 @@ public class MultiPartFormOkHttpTest extends BaseJettyTest {
         assertEquals("Thanks", response.body().string());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

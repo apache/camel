@@ -57,6 +57,7 @@ public class NettyHttpMethodRestrictTest extends BaseNettyTest {
         assertEquals("Get a wrong response status", 405, status);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

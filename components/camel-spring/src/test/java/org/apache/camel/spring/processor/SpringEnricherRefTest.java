@@ -41,6 +41,7 @@ public class SpringEnricherRefTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/enricherref.xml");
     }

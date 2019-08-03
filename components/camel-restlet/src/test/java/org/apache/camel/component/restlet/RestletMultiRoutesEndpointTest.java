@@ -51,6 +51,7 @@ public class RestletMultiRoutesEndpointTest extends RestletTestSupport {
         assertHttpResponse(response, 200, "text/plain", "GET");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override

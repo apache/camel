@@ -45,6 +45,7 @@ public class AtomixQueueConfiguration extends AtomixClientConfiguration {
     // Copy
     // ****************************************
 
+    @Override
     public AtomixQueueConfiguration copy() {
         try {
             return (AtomixQueueConfiguration) super.clone();

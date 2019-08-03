@@ -31,6 +31,7 @@ public class FromFtpToBinarySampleTest extends CamelTestSupport {
     }
 
     // START SNIPPET: e1
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

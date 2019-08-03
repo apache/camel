@@ -54,10 +54,12 @@ public class ZooKeeperConnectionManager {
             holder = new ConnectionHolder(configuration);
         }
 
+        @Override
         public ConnectionHolder getConnection() {
             return holder;
         }
 
+        @Override
         public void shutdown() {
             LOG.debug("Shutting down connection to ZooKeeper: {}", configuration);
             holder.closeConnection();

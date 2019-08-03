@@ -41,34 +41,42 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         return streamCachingStrategy;
     }
 
+    @Override
     public boolean isEnabled() {
         return streamCachingStrategy.isEnabled();
     }
 
+    @Override
     public String getSpoolDirectory() {
         return streamCachingStrategy.getSpoolDirectory().getPath();
     }
 
+    @Override
     public String getSpoolCipher() {
         return streamCachingStrategy.getSpoolCipher();
     }
 
+    @Override
     public void setSpoolThreshold(long threshold) {
         streamCachingStrategy.setSpoolThreshold(threshold);
     }
 
+    @Override
     public long getSpoolThreshold() {
         return streamCachingStrategy.getSpoolThreshold();
     }
 
+    @Override
     public void setSpoolUsedHeapMemoryThreshold(int percentage) {
         streamCachingStrategy.setSpoolUsedHeapMemoryThreshold(percentage);
     }
 
+    @Override
     public int getSpoolUsedHeapMemoryThreshold() {
         return streamCachingStrategy.getSpoolUsedHeapMemoryThreshold();
     }
 
+    @Override
     public void setSpoolUsedHeapMemoryLimit(SpoolUsedHeapMemoryLimit limit) {
         StreamCachingStrategy.SpoolUsedHeapMemoryLimit l;
         if (limit == null) {
@@ -88,6 +96,7 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         streamCachingStrategy.setSpoolUsedHeapMemoryLimit(l);
     }
 
+    @Override
     public SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit() {
         StreamCachingStrategy.SpoolUsedHeapMemoryLimit l = streamCachingStrategy.getSpoolUsedHeapMemoryLimit();
         if (l == null) {
@@ -104,62 +113,77 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         }
     }
 
+    @Override
     public void setBufferSize(int bufferSize) {
         streamCachingStrategy.setBufferSize(bufferSize);
     }
 
+    @Override
     public int getBufferSize() {
         return streamCachingStrategy.getBufferSize();
     }
 
+    @Override
     public void setRemoveSpoolDirectoryWhenStopping(boolean remove) {
         streamCachingStrategy.setRemoveSpoolDirectoryWhenStopping(remove);
     }
 
+    @Override
     public boolean isRemoveSpoolDirectoryWhenStopping() {
         return streamCachingStrategy.isRemoveSpoolDirectoryWhenStopping();
     }
 
+    @Override
     public void setAnySpoolRules(boolean any) {
         streamCachingStrategy.setAnySpoolRules(any);
     }
 
+    @Override
     public boolean isAnySpoolRules() {
         return streamCachingStrategy.isAnySpoolRules();
     }
 
+    @Override
     public long getCacheMemoryCounter() {
         return streamCachingStrategy.getStatistics().getCacheMemoryCounter();
     }
 
+    @Override
     public long getCacheMemorySize() {
         return streamCachingStrategy.getStatistics().getCacheMemorySize();
     }
 
+    @Override
     public long getCacheMemoryAverageSize() {
         return streamCachingStrategy.getStatistics().getCacheMemoryAverageSize();
     }
 
+    @Override
     public long getCacheSpoolCounter() {
         return streamCachingStrategy.getStatistics().getCacheSpoolCounter();
     }
 
+    @Override
     public long getCacheSpoolSize() {
         return streamCachingStrategy.getStatistics().getCacheSpoolSize();
     }
 
+    @Override
     public long getCacheSpoolAverageSize() {
         return streamCachingStrategy.getStatistics().getCacheSpoolAverageSize();
     }
 
+    @Override
     public boolean isStatisticsEnabled() {
         return streamCachingStrategy.getStatistics().isStatisticsEnabled();
     }
 
+    @Override
     public void setStatisticsEnabled(boolean enabled) {
         streamCachingStrategy.getStatistics().setStatisticsEnabled(enabled);
     }
 
+    @Override
     public void resetStatistics() {
         streamCachingStrategy.getStatistics().reset();
     }

@@ -35,10 +35,12 @@ public class ResequencerEngineTest extends TestSupport {
     private ResequencerRunner<Integer> runner;
     private SequenceBuffer<Integer> buffer;
     
+    @Override
     @Before
     public void setUp() throws Exception {
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         if (runner != null) {

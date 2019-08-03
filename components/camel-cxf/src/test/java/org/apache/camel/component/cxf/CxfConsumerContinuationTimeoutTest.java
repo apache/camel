@@ -53,6 +53,7 @@ public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
         return true;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

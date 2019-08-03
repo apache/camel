@@ -193,6 +193,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
             return zk.getData(znode, false, new Stat());
         }
 
+        @Override
         public void process(WatchedEvent event) {
             if (event.getState() == KeeperState.SyncConnected) {
                 log.info("TestClient connected");

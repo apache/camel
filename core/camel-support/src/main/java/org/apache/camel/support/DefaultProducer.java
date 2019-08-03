@@ -42,6 +42,7 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
         return producerToString;
     }
 
+    @Override
     public Endpoint getEndpoint() {
         return endpoint;
     }

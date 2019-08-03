@@ -62,11 +62,13 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         super.tearDown();
     }
 
+    @Override
     protected void setSystemProp(String key, String value) {
         String originalValue = System.setProperty(key, value);
         originalValues.put(key, originalValue != null ? originalValue : NULL_VALUE_MARKER);
     }
 
+    @Override
     protected void restoreSystemProperties() {
         for (Object key : originalValues.keySet()) {
             Object value = originalValues.get(key);
@@ -78,6 +80,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         }
     }
 
+    @Override
     @Test
     public void testEndpoint() throws Exception {
         // these tests does not run well on Windows
@@ -108,6 +111,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
     }
     
+    @Override
     @Test
     public void testEndpointWithoutHttps() throws Exception {
         // these tests does not run well on Windows
@@ -124,6 +128,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         assertTrue("mock endpoint was not called", mockEndpoint.getExchanges().isEmpty());
     }
 
+    @Override
     @Test
     public void testHelloEndpoint() throws Exception {
         // these tests does not run well on Windows
@@ -147,6 +152,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         assertEquals("<b>Hello World</b>", data);
     }
     
+    @Override
     @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
         // these tests does not run well on Windows
@@ -161,6 +167,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         }
     }
     
+    @Override
     protected void invokeHttpEndpoint() throws IOException {
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type", "application/xml");

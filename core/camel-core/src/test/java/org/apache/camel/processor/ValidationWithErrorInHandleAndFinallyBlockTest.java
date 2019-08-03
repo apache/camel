@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class ValidationWithErrorInHandleAndFinallyBlockTest extends ValidationTest {
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

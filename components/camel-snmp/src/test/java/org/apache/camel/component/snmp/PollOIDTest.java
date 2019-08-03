@@ -51,6 +51,7 @@ public class PollOIDTest extends CamelTestSupport {
         // do nothing here , just make sure the camel route can started.
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

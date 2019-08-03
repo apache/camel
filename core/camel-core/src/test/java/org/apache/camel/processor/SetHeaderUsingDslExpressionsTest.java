@@ -37,10 +37,12 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
             value2 = v2;
         }
         
+        @Override
         public int hashCode() {
             return value1.hashCode() * 10 + value2.hashCode();
         }
         
+        @Override
         public boolean equals(Object obj) {
             boolean result = false;        
             if (obj instanceof MyValueClass) {

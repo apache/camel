@@ -26,6 +26,7 @@ public class BaseClass implements MessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseClass.class);
 
+    @Override
     public void onMessage(Message message) {
         LOG.info("base called");
     }

@@ -58,6 +58,7 @@ public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
         return new SftpEndpoint(uri, this, config);
     }
 
+    @Override
     protected void afterPropertiesSet(GenericFileEndpoint<SftpRemoteFile> endpoint) throws Exception {
         // noop
     }

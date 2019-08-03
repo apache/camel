@@ -36,6 +36,7 @@ public class EventAdminConsumer extends DefaultConsumer implements EventHandler 
         this.endpoint = endpoint;
     }
 
+    @Override
     public void handleEvent(Event event) {
         Exchange exchange = endpoint.createExchange();
         // TODO: populate exchange headers

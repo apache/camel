@@ -56,6 +56,7 @@ public class FileConsumerPreMoveLastModifiedTest extends ContextTestSupport {
 
     private static class LastModifiedCheckerProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             assertTrue(exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class) > 0L);
             assertTrue(exchange.getIn().getHeader(Exchange.FILE_LENGTH, Long.class) > 0L);

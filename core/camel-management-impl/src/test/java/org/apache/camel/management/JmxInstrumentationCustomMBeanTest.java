@@ -40,6 +40,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         return true;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
@@ -90,6 +91,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         assertEquals(2, s.size());
     }
 
+    @Override
     @Test
     public void testCounters() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
@@ -106,6 +108,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         verifyCounter(mbsc, new ObjectName(domainName + ":type=routes,*"));
     }
 
+    @Override
     @Test
     public void testMBeansRegistered() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
@@ -141,6 +144,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
     }
 
     private static class CustomComponent extends DefaultComponent {
+        @Override
         protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
             return new CustomEndpoint(uri, this);
         }

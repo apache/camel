@@ -35,6 +35,7 @@ public class HazelcastRingbufferProducer extends HazelcastDefaultProducer {
         this.ringbuffer = hazelcastInstance.getRingbuffer(cacheName);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         HazelcastOperation operation = lookupOperation(exchange);

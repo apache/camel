@@ -77,6 +77,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         assertEquals("The file should have been renamed replacing any existing files", "Hello London", content);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

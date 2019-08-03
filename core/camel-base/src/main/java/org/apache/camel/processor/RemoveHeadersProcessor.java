@@ -53,14 +53,17 @@ public class RemoveHeadersProcessor extends AsyncProcessorSupport implements Tra
         return "RemoveHeaders(" + pattern + ")";
     }
 
+    @Override
     public String getTraceLabel() {
         return "removeHeaders[" + pattern + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

@@ -26,6 +26,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringRefDataFormatTest extends RefDataFormatTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/impl/SpringRefDataFormatTest.xml");
     }

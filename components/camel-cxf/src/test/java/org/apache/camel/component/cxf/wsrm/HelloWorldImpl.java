@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 public class HelloWorldImpl implements HelloWorld {
     private static Logger logger = LoggerFactory.getLogger(HelloWorldImpl.class);
 
+    @Override
     public String sayHi(String text) {
         logger.info("***** Entering Implementation Code ******");
         

@@ -93,6 +93,7 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
 
         BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order.class);
        
+        @Override
         public void configure() {
             from(URI_DIRECT_START).marshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
         }

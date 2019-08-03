@@ -44,6 +44,7 @@ public class BonitaEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         if (configuration.getOperation() == BonitaOperation.startCase) {
             return new BonitaStartProducer(this, configuration);
@@ -52,6 +53,7 @@ public class BonitaEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported");
     }

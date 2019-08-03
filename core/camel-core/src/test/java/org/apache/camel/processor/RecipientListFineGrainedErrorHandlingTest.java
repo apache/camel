@@ -173,6 +173,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
 
     public static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             // check whether we have attempted redelivery
             Boolean redelivered = newExchange.getIn().getHeader(Exchange.REDELIVERED, Boolean.class);

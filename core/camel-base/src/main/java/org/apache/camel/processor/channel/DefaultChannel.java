@@ -66,6 +66,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     private RouteContext routeContext;
     private boolean routeScoped = true;
 
+    @Override
     public Processor getOutput() {
         // the errorHandler is already decorated with interceptors
         // so it contain the entire chain of processors, so we can safely use it directly as output
@@ -93,6 +94,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         this.output = output;
     }
 
+    @Override
     public Processor getNextProcessor() {
         return nextProcessor;
     }
@@ -106,10 +108,12 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         this.errorHandler = errorHandler;
     }
 
+    @Override
     public Processor getErrorHandler() {
         return errorHandler;
     }
 
+    @Override
     public NamedNode getProcessorDefinition() {
         return definition;
     }
@@ -118,6 +122,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         this.definition = definition;
     }
 
+    @Override
     public RouteContext getRouteContext() {
         return routeContext;
     }

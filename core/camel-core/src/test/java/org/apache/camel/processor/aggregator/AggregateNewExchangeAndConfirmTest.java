@@ -70,6 +70,7 @@ public class AggregateNewExchangeAndConfirmTest extends ContextTestSupport {
 
     private class MyNewExchangeAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             String body = "";
             if (oldExchange != null) {

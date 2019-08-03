@@ -161,6 +161,7 @@ public class CassandraProducer extends DefaultProducer {
         return resultSet;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         // copy the header of in message to the out message
         exchange.getOut().copyFrom(exchange.getIn());

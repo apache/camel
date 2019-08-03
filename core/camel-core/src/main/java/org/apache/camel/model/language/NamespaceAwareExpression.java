@@ -44,6 +44,7 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
     }
 
 
+    @Override
     public Map<String, String> getNamespaces() {
         return namespaces;
     }
@@ -53,6 +54,7 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
      *
      * @param namespaces the XML namespaces with the key of prefixes and the value the URIs
      */
+    @Override
     public void setNamespaces(Map<String, String> namespaces) {
         this.namespaces = namespaces;
     }

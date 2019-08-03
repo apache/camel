@@ -19,6 +19,7 @@ package org.apache.camel.component.jpa;
 import org.apache.camel.examples.SendEmail;
 
 public class JpaUsingCustomPersistenceUnitTest extends JpaTest {
+    @Override
     protected String getEndpointUri() {
         return "jpa://" + SendEmail.class.getName() + "?persistenceUnit=custom";
     }

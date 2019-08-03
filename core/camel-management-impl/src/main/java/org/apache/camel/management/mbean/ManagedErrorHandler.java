@@ -54,18 +54,22 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return errorHandlerBuilder;
     }
 
+    @Override
     public String getCamelId() {
         return routeContext.getCamelContext().getName();
     }
 
+    @Override
     public String getCamelManagementName() {
         return routeContext.getCamelContext().getManagementName();
     }
 
+    @Override
     public boolean isSupportRedelivery() {
         return errorHandler instanceof RedeliveryErrorHandler;
     }
 
+    @Override
     public boolean isDeadLetterChannel() {
         if (!isSupportRedelivery()) {
             return false;
@@ -75,6 +79,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getDeadLetter() != null;
     }
 
+    @Override
     public boolean isDeadLetterUseOriginalMessage() {
         if (!isSupportRedelivery()) {
             return false;
@@ -84,6 +89,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.isUseOriginalMessagePolicy();
     }
 
+    @Override
     public boolean isDeadLetterUseOriginalBody() {
         if (!isSupportRedelivery()) {
             return false;
@@ -93,6 +99,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.isUseOriginalBodyPolicy();
     }
 
+    @Override
     public boolean isDeadLetterHandleNewException() {
         if (!isSupportRedelivery()) {
             return false;
@@ -103,6 +110,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return isDeadLetterChannel() && redelivery.isDeadLetterHandleNewException();
     }
 
+    @Override
     public boolean isSupportTransactions() {
         if (errorHandler instanceof ErrorHandlerSupport) {
             ErrorHandlerSupport ehs = (ErrorHandlerSupport) errorHandler;
@@ -112,6 +120,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         }
     }
 
+    @Override
     public String getDeadLetterChannelEndpointUri() {
         if (!isSupportRedelivery()) {
             return null;
@@ -121,6 +130,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getDeadLetterUri();
     }
 
+    @Override
     public Integer getMaximumRedeliveries() {
         if (!isSupportRedelivery()) {
             return null;
@@ -130,6 +140,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().getMaximumRedeliveries();
     }
 
+    @Override
     public void setMaximumRedeliveries(Integer maximum) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -139,6 +150,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setMaximumRedeliveries(maximum);
     }
 
+    @Override
     public Long getMaximumRedeliveryDelay() {
         if (!isSupportRedelivery()) {
             return null;
@@ -148,6 +160,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().getMaximumRedeliveryDelay();
     }
 
+    @Override
     public void setMaximumRedeliveryDelay(Long delay) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -157,6 +170,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setMaximumRedeliveryDelay(delay);
     }
 
+    @Override
     public Long getRedeliveryDelay() {
         if (!isSupportRedelivery()) {
             return null;
@@ -166,6 +180,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().getRedeliveryDelay();
     }
 
+    @Override
     public void setRedeliveryDelay(Long delay) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -175,6 +190,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setRedeliveryDelay(delay);
     }
 
+    @Override
     public Double getBackOffMultiplier() {
         if (!isSupportRedelivery()) {
             return null;
@@ -184,6 +200,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().getBackOffMultiplier();
     }
 
+    @Override
     public void setBackOffMultiplier(Double multiplier) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -193,6 +210,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setBackOffMultiplier(multiplier);
     }
 
+    @Override
     public Double getCollisionAvoidanceFactor() {
         if (!isSupportRedelivery()) {
             return null;
@@ -202,6 +220,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().getCollisionAvoidanceFactor();
     }
 
+    @Override
     public void setCollisionAvoidanceFactor(Double factor) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -211,6 +230,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setCollisionAvoidanceFactor(factor);
     }
 
+    @Override
     public Double getCollisionAvoidancePercent() {
         if (!isSupportRedelivery()) {
             return null;
@@ -220,6 +240,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return (double) redelivery.getRedeliveryPolicy().getCollisionAvoidancePercent();  
     }
 
+    @Override
     public void setCollisionAvoidancePercent(Double percent) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -229,6 +250,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setCollisionAvoidancePercent(percent);
     }
 
+    @Override
     public String getDelayPattern() {
         if (!isSupportRedelivery()) {
             return null;
@@ -238,6 +260,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().getDelayPattern();
     }
 
+    @Override
     public void setDelayPattern(String pattern) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -247,6 +270,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setDelayPattern(pattern);
     }
 
+    @Override
     public String getRetriesExhaustedLogLevel() {
         if (!isSupportRedelivery()) {
             return null;
@@ -256,6 +280,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().getRetriesExhaustedLogLevel().name();
     }
 
+    @Override
     public void setRetriesExhaustedLogLevel(String level) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -265,6 +290,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setRetriesExhaustedLogLevel(LoggingLevel.valueOf(level));
     }
 
+    @Override
     public String getRetryAttemptedLogLevel() {
         if (!isSupportRedelivery()) {
             return null;
@@ -274,6 +300,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().getRetryAttemptedLogLevel().name();
     }
 
+    @Override
     public void setRetryAttemptedLogLevel(String level) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -283,6 +310,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setRetryAttemptedLogLevel(LoggingLevel.valueOf(level));
     }
 
+    @Override
     public Boolean getLogStackTrace() {
         if (!isSupportRedelivery()) {
             return null;
@@ -292,6 +320,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().isLogStackTrace();
     }
 
+    @Override
     public void setLogStackTrace(Boolean log) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -301,6 +330,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setLogStackTrace(log);
     }
 
+    @Override
     public Boolean getLogRetryStackTrace() {
         if (!isSupportRedelivery()) {
             return null;
@@ -310,6 +340,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().isLogRetryStackTrace();
     }
 
+    @Override
     public void setLogRetryStackTrace(Boolean log) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -319,6 +350,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setLogRetryStackTrace(log);
     }
 
+    @Override
     public Boolean getLogHandled() {
         if (!isSupportRedelivery()) {
             return null;
@@ -328,6 +360,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().isLogHandled();
     }
 
+    @Override
     public void setLogHandled(Boolean log) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -337,6 +370,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setLogHandled(log);
     }
 
+    @Override
     public Boolean getLogNewException() {
         if (!isSupportRedelivery()) {
             return null;
@@ -346,6 +380,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().isLogNewException();
     }
 
+    @Override
     public void setLogNewException(Boolean log) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -355,6 +390,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setLogNewException(log);
     }
 
+    @Override
     public Boolean getLogExhaustedMessageHistory() {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -364,6 +400,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().isLogExhaustedMessageHistory();
     }
 
+    @Override
     public void setLogExhaustedMessageHistory(Boolean log) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -373,6 +410,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setLogExhaustedMessageHistory(log);
     }
 
+    @Override
     public Boolean getLogExhaustedMessageBody() {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -382,6 +420,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().isLogExhaustedMessageBody();
     }
 
+    @Override
     public void setLogExhaustedMessageBody(Boolean log) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -391,6 +430,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setLogExhaustedMessageBody(log);
     }
 
+    @Override
     public Boolean getLogContinued() {
         if (!isSupportRedelivery()) {
             return null;
@@ -400,6 +440,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().isLogHandled();
     }
 
+    @Override
     public void setLogContinued(Boolean log) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -409,6 +450,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setLogContinued(log);
     }
 
+    @Override
     public Boolean getLogExhausted() {
         if (!isSupportRedelivery()) {
             return null;
@@ -418,6 +460,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().isLogExhausted();
     }
 
+    @Override
     public void setLogExhausted(Boolean log) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -427,6 +470,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setLogExhausted(log);
     }
 
+    @Override
     public Boolean getUseCollisionAvoidance() {
         if (!isSupportRedelivery()) {
             return null;
@@ -436,6 +480,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().isUseCollisionAvoidance();
     }
 
+    @Override
     public void setUseCollisionAvoidance(Boolean avoidance) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -445,6 +490,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setUseCollisionAvoidance(avoidance);
     }
 
+    @Override
     public Boolean getUseExponentialBackOff() {
         if (!isSupportRedelivery()) {
             return null;
@@ -454,6 +500,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().isUseExponentialBackOff();
     }
 
+    @Override
     public void setUseExponentialBackOff(Boolean backoff) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -463,6 +510,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setUseExponentialBackOff(backoff);
     }
 
+    @Override
     public Boolean getAllowRedeliveryWhileStopping() {
         if (!isSupportRedelivery()) {
             return null;
@@ -472,6 +520,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.getRedeliveryPolicy().isAllowRedeliveryWhileStopping();
     }
 
+    @Override
     public void setAllowRedeliveryWhileStopping(Boolean allow) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");
@@ -481,6 +530,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setAllowRedeliveryWhileStopping(allow);
     }
 
+    @Override
     public Integer getPendingRedeliveryCount() {
         if (!isSupportRedelivery()) {
             return null;

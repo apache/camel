@@ -164,6 +164,7 @@ public class NovaEndpoint extends AbstractOpenstackEndpoint {
         this.host = host;
     }
 
+    @Override
     public Config getConfig() {
         return config;
     }
@@ -175,6 +176,7 @@ public class NovaEndpoint extends AbstractOpenstackEndpoint {
         this.config = config;
     }
 
+    @Override
     public String getApiVersion() {
         return apiVersion;
     }

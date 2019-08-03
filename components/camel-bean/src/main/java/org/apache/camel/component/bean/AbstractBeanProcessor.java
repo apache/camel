@@ -60,6 +60,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         return "BeanProcessor[" + beanHolder + (method != null ? "#" + method : "") + "]";
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // do we have an explicit method name we always should invoke (either configured on endpoint or as a header)
         String explicitMethodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, method, String.class);
@@ -197,6 +198,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
     // Implementation methods
     //-------------------------------------------------------------------------
+    @Override
     protected void doStart() throws Exception {
         // optimize to only get (create) a processor if really needed
         if (beanHolder.supportProcessor() && allowProcessor(method, beanHolder.getBeanInfo())) {
@@ -213,6 +215,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         }
     }
 
+    @Override
     protected void doStop() throws Exception {
         if (processor != null) {
             ServiceHelper.stopService(processor);

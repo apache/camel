@@ -56,6 +56,7 @@ public class FromFtpMoveFileAbsoluteFolderRecursiveTest extends FtpServerTestSup
         template.sendBodyAndHeader(getFtpUrl(), "Goodday", Exchange.FILE_NAME, "goodday/goodday.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

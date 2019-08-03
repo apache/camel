@@ -165,12 +165,14 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
 
     // Properties
     // -------------------------------------------------------------------------
+    @Override
     public String getBeanId() {
         return beanId;
     }
     
     // this property will be set by spring
-    public void setBeanId(String id) {       
+    @Override
+    public void setBeanId(String id) {
         this.beanId = id;
     }
     
@@ -242,6 +244,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         return qn.getNamespaceURI();
     }
     
+    @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         applicationContext = ctx;
 

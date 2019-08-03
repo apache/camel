@@ -54,6 +54,7 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
         }
     }
 
+    @Override
     @Test
     public void httpsGet() throws Exception {
 

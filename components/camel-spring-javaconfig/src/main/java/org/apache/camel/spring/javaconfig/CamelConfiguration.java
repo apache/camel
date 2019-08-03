@@ -52,6 +52,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     private AutowireCapableBeanFactory autowireCapableBeanFactory;
     private ApplicationContext applicationContext;
 
+    @Override
     public void setBeanFactory(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
         if (beanFactory instanceof AutowireCapableBeanFactory) {
@@ -63,6 +64,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
         return this.beanFactory;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext ac) {
         this.applicationContext = ac;
     }

@@ -46,6 +46,7 @@ public class ClosePullRequestProducer extends AbstractGitHubProducer {
         initService(pullRequestService);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Integer pullRequestNumber = exchange.getIn().getHeader(GitHubConstants.GITHUB_PULLREQUEST, Integer.class);
         PullRequest pullRequest = pullRequestService.getPullRequest(getRepository(), pullRequestNumber);

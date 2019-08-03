@@ -54,6 +54,7 @@ public class ElSqlComponentTest extends CamelTestSupport {
         assertEquals("Linux", row.get("PROJECT"));
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

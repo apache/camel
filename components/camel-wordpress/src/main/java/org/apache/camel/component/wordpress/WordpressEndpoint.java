@@ -84,6 +84,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
         this.operationDetail = operationDetail;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         switch (WordpressOperationType.valueOf(operation)) {
         case post:
@@ -96,6 +97,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException(String.format("Operation '%s' not supported.", operation));
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         switch (WordpressOperationType.valueOf(operation)) {
         case post:

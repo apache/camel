@@ -41,10 +41,12 @@ public class EnumFormatFactory extends AbstractFormatFactory {
             this.clazz = clazz;
         }
 
+        @Override
         public String format(final T object) throws Exception {
             return object.name();
         }
 
+        @Override
         public T parse(final String string) throws Exception {
             return Enum.valueOf(clazz, string);
         }

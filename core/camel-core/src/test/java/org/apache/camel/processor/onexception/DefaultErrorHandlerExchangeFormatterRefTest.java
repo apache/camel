@@ -60,6 +60,7 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
 
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             throw new MyFunctionalException("Sorry you cannot do this");
         }

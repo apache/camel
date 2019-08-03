@@ -29,6 +29,7 @@ public interface ManagedSendProcessorMBean extends ManagedProcessorMBean, Manage
     @ManagedAttribute(description = "Message Exchange Pattern")
     String getMessageExchangePattern();
 
+    @Override
     @ManagedOperation(description = "Statistics of the endpoint which has been sent to")
     TabularData extendedInformation();
 

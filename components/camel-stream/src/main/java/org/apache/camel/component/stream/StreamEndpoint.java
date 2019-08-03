@@ -81,6 +81,7 @@ public class StreamEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         StreamConsumer answer = new StreamConsumer(this, processor, getEndpointUri());
         if (isFileWatcher() && !"file".equals(getKind())) {
@@ -90,6 +91,7 @@ public class StreamEndpoint extends DefaultEndpoint {
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new StreamProducer(this, getEndpointUri());
     }
@@ -341,6 +343,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     // Implementations
     //-------------------------------------------------------------------------
 
+    @Override
     protected void doStart() throws Exception {
         charset = loadCharset();
     }

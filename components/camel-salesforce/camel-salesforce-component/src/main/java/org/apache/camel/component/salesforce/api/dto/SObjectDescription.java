@@ -50,6 +50,7 @@ public class SObjectDescription extends SObject {
         this.fields = fields;
     }
 
+    @Override
     public SObjectDescriptionUrls getUrls() {
         return urls;
     }

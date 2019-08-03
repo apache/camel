@@ -51,6 +51,7 @@ public class SqlEndpointLikeTest extends CamelTestSupport {
         return reg;
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

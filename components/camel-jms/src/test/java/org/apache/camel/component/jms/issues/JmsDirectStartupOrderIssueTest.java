@@ -58,6 +58,7 @@ public class JmsDirectStartupOrderIssueTest extends CamelTestSupport {
         assertEquals("amq", order.get(1).getRoute().getId());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -67,6 +68,7 @@ public class JmsDirectStartupOrderIssueTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

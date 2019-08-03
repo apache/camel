@@ -90,6 +90,7 @@ public class LevelDBAggregateConcurrentDifferentGroupsTest extends CamelTestSupp
 
     private static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

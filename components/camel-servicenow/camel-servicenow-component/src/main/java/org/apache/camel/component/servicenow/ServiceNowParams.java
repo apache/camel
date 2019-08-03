@@ -98,26 +98,32 @@ public enum ServiceNowParams implements ServiceNowParam {
         this.defaultValueSupplier = defaultValueSupplier;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public String getHeader() {
         return header;
     }
 
+    @Override
     public Class<?> getType() {
         return type;
     }
 
+    @Override
     public Object getDefaultValue(ServiceNowConfiguration configuration) {
         return defaultValueSupplier != null ? defaultValueSupplier.apply(configuration) : null;
     }
 
+    @Override
     public Object getHeaderValue(Message message) {
         return message.getHeader(header, type);
     }
 
+    @Override
     public Object getHeaderValue(Message message, ServiceNowConfiguration configuration) {
         return message.getHeader(header, getDefaultValue(configuration), type);
     }

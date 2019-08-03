@@ -27,6 +27,7 @@ import org.junit.Test;
 public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
     static final String PROCESSED_FILES_HEADER_NAME = "processedFiles";
     
+    @Override
     @Test
     public void testSplitter() throws InterruptedException {
         MockEndpoint processZipEntry = getMockEndpoint("mock:processZipEntry");

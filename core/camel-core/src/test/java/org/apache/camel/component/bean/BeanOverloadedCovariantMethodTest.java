@@ -116,6 +116,7 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
 
     public static class MySuperBean extends MyBean {
 
+        @Override
         public String hello(String name) {
             return "Hello " + name + " from super class";
         }

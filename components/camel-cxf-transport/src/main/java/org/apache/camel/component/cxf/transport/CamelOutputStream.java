@@ -61,16 +61,19 @@ class CamelOutputStream extends CachedOutputStream {
         outMessage = m;
     }
 
+    @Override
     protected void doFlush() throws IOException {
         // do nothing here
     }
 
+    @Override
     protected void doClose() throws IOException {
         isOneWay = outMessage.getExchange().isOneWay();
         
         commitOutputMessage();
     }
 
+    @Override
     protected void onWrite() throws IOException {
         // do nothing here
     }

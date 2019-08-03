@@ -23,6 +23,7 @@ public class SimpleLanguageWithSpringPropertyPlaceholderRoute extends RouteBuild
     private String fromEndpoint;
     private String toEndpoint;
 
+    @Override
     public void configure() throws Exception {
         from(fromEndpoint).to(toEndpoint);
     }

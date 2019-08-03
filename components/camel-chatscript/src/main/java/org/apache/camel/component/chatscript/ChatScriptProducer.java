@@ -35,6 +35,7 @@ public class ChatScriptProducer extends DefaultProducer {
         }
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         Object body = exchange.getIn().getBody();

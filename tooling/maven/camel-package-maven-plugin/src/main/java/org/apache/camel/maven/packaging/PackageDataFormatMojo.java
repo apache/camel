@@ -65,6 +65,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
      *                                                        threads it generated failed.
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
     }

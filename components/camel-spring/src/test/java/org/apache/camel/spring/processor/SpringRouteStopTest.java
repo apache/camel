@@ -29,6 +29,7 @@ public class SpringRouteStopTest extends RouteStopTest {
         return false;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringRouteStopTest.xml");
     }

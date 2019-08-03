@@ -28,6 +28,7 @@ public class AnotherExampleBean {
     private Boolean goldCustomer;
     private boolean little;
 
+    @Override
     public String toString() {
         return "AnotherExampleBean[name: " + name + " price: " + price + " id: " + id + "]";
     }

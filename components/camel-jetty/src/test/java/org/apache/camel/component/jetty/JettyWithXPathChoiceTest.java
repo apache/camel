@@ -63,6 +63,7 @@ public class JettyWithXPathChoiceTest extends BaseJettyTest {
         z = getMockEndpoint("mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

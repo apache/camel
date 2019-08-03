@@ -75,6 +75,7 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
 
     private static class MySlowFileProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             LOG.info("Creating a slow file ...");
             File file = new File(FTP_ROOT_DIR + "/slowfile/hello.txt");

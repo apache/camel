@@ -71,10 +71,12 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         super(uri, component);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new GeoCoderProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Cannot consume from this component");
     }

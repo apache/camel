@@ -33,6 +33,7 @@ public class Mina2VMTextlineProtocolTest extends BaseMina2Test {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

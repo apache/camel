@@ -51,102 +51,127 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
         return backlogTracer.isEnabled();
     }
 
+    @Override
     public String getCamelId() {
         return camelContext.getName();
     }
 
+    @Override
     public String getCamelManagementName() {
         return camelContext.getManagementName();
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         backlogTracer.setEnabled(enabled);
     }
 
+    @Override
     public boolean isEnabled() {
         return backlogTracer.isEnabled();
     }
 
+    @Override
     public int getBacklogSize() {
         return backlogTracer.getBacklogSize();
     }
 
+    @Override
     public void setBacklogSize(int backlogSize) {
         backlogTracer.setBacklogSize(backlogSize);
     }
 
+    @Override
     public boolean isRemoveOnDump() {
         return backlogTracer.isRemoveOnDump();
     }
 
+    @Override
     public void setRemoveOnDump(boolean removeOnDump) {
         backlogTracer.setRemoveOnDump(removeOnDump);
     }
 
+    @Override
     public void setTracePattern(String pattern) {
         backlogTracer.setTracePattern(pattern);
     }
 
+    @Override
     public String getTracePattern() {
         return backlogTracer.getTracePattern();
     }
 
+    @Override
     public void setTraceFilter(String predicate) {
         backlogTracer.setTraceFilter(predicate);
     }
 
+    @Override
     public String getTraceFilter() {
         return backlogTracer.getTraceFilter();
     }
 
+    @Override
     public long getTraceCounter() {
         return backlogTracer.getTraceCounter();
     }
 
+    @Override
     public void resetTraceCounter() {
         backlogTracer.resetTraceCounter();
     }
 
+    @Override
     public int getBodyMaxChars() {
         return backlogTracer.getBodyMaxChars();
     }
 
+    @Override
     public void setBodyMaxChars(int bodyMaxChars) {
         backlogTracer.setBodyMaxChars(bodyMaxChars);
     }
 
+    @Override
     public boolean isBodyIncludeStreams() {
         return backlogTracer.isBodyIncludeStreams();
     }
 
+    @Override
     public void setBodyIncludeStreams(boolean bodyIncludeStreams) {
         backlogTracer.setBodyIncludeStreams(bodyIncludeStreams);
     }
 
+    @Override
     public boolean isBodyIncludeFiles() {
         return backlogTracer.isBodyIncludeFiles();
     }
 
+    @Override
     public void setBodyIncludeFiles(boolean bodyIncludeFiles) {
         backlogTracer.setBodyIncludeFiles(bodyIncludeFiles);
     }
 
+    @Override
     public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeOrRouteId) {
         return backlogTracer.dumpTracedMessages(nodeOrRouteId);
     }
 
+    @Override
     public List<BacklogTracerEventMessage> dumpAllTracedMessages() {
         return backlogTracer.dumpAllTracedMessages();
     }
 
+    @Override
     public String dumpTracedMessagesAsXml(String nodeOrRouteId) {
         return backlogTracer.dumpTracedMessagesAsXml(nodeOrRouteId);
     }
 
+    @Override
     public String dumpAllTracedMessagesAsXml() {
         return backlogTracer.dumpAllTracedMessagesAsXml();
     }
 
+    @Override
     public void clear() {
         backlogTracer.clear();
     }

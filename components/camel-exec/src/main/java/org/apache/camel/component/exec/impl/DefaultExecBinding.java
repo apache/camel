@@ -40,6 +40,7 @@ public class DefaultExecBinding implements ExecBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExecBinding.class);
 
+    @Override
     @SuppressWarnings("unchecked")
     public ExecCommand readInput(Exchange exchange, ExecEndpoint endpoint) {
         ObjectHelper.notNull(exchange, "exchange");
@@ -92,6 +93,7 @@ public class DefaultExecBinding implements ExecBinding {
         return true;
     }
 
+    @Override
     public void writeOutput(Exchange exchange, ExecResult result) {
         ObjectHelper.notNull(exchange, "exchange");
         ObjectHelper.notNull(result, "result");

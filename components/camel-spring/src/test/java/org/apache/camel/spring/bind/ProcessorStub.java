@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 public class ProcessorStub implements Processor {
     private List<Exchange> exchanges = new CopyOnWriteArrayList<>();
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         exchanges.add(exchange);
     }

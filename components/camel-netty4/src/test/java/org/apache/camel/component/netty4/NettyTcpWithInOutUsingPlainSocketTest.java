@@ -115,6 +115,7 @@ public class NettyTcpWithInOutUsingPlainSocketTest extends BaseNettyTest {
         return sb.toString();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

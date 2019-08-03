@@ -27,6 +27,7 @@ public class EchoServiceSessionImpl implements EchoService {
     @Resource
     private WebServiceContext context;
 
+    @Override
     public String echo(String text) {
         // Find the HttpSession
         MessageContext mc = context.getMessageContext();

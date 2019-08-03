@@ -27,6 +27,7 @@ public class AnnotatedConsumeImpl implements AnnotatedConsume {
     @Produce("mock:book")
     ProducerTemplate producer;
 
+    @Override
     @Consume("seda:book")
     public void handleTitle(String title) {
         Transactional tx = this.getClass().getAnnotation(Transactional.class);

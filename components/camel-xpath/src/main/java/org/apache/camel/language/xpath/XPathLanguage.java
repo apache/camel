@@ -37,6 +37,7 @@ public class XPathLanguage extends LanguageSupport {
     private Boolean logNamespaces;
     private String headerName;
 
+    @Override
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
 
@@ -45,6 +46,7 @@ public class XPathLanguage extends LanguageSupport {
         return builder;
     }
 
+    @Override
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
 
@@ -139,6 +141,7 @@ public class XPathLanguage extends LanguageSupport {
         }
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }

@@ -37,6 +37,7 @@ public class BeanImplicitMethodTest extends ContextTestSupport {
         assertEquals(1, intResponse.intValue());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

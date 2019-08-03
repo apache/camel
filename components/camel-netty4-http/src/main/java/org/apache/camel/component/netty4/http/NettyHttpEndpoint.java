@@ -161,6 +161,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
         this.nettyHttpBinding = nettyHttpBinding;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -168,6 +169,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
         getNettyHttpBinding().setHeaderFilterStrategy(headerFilterStrategy);

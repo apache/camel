@@ -106,6 +106,7 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
         setPath(remaining);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("This component does not support producer");
     }

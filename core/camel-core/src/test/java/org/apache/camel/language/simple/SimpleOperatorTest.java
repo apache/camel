@@ -695,6 +695,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.body} endsWith 'Hi'", false);
     }
 
+    @Override
     protected String getLanguageName() {
         return "simple";
     }

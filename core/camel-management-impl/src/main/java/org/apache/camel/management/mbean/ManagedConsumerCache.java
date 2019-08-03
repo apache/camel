@@ -34,6 +34,7 @@ public class ManagedConsumerCache extends ManagedService implements ManagedConsu
         return consumerCache;
     }
 
+    @Override
     public String getSource() {
         if (consumerCache.getSource() != null) {
             return consumerCache.getSource().toString();
@@ -41,30 +42,37 @@ public class ManagedConsumerCache extends ManagedService implements ManagedConsu
         return null;
     }
 
+    @Override
     public Integer getSize() {
         return consumerCache.size();
     }
 
+    @Override
     public Integer getMaximumCacheSize() {
         return consumerCache.getCapacity();
     }
 
+    @Override
     public Long getHits() {
         return consumerCache.getHits();
     }
 
+    @Override
     public Long getMisses() {
         return consumerCache.getMisses();
     }
 
+    @Override
     public Long getEvicted() {
         return consumerCache.getEvicted();
     }
 
+    @Override
     public void resetStatistics() {
         consumerCache.resetCacheStatistics();
     }
 
+    @Override
     public void purge() {
         consumerCache.purge();
     }

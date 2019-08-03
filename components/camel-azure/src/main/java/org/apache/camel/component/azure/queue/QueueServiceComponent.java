@@ -44,6 +44,7 @@ public class QueueServiceComponent extends DefaultComponent {
         this.configuration = new QueueServiceConfiguration();
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final QueueServiceConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);

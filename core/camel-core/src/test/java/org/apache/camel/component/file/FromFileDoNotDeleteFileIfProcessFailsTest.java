@@ -53,6 +53,7 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
         assertTrue("The file should NOT have been deleted", file.exists());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

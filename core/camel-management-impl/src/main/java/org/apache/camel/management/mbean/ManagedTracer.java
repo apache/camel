@@ -53,34 +53,42 @@ public class ManagedTracer implements ManagedTracerMBean {
         return tracer.isEnabled();
     }
 
+    @Override
     public String getCamelId() {
         return camelContext.getName();
     }
 
+    @Override
     public String getCamelManagementName() {
         return camelContext.getManagementName();
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         tracer.setEnabled(enabled);
     }
 
+    @Override
     public boolean isEnabled() {
         return tracer.isEnabled();
     }
 
+    @Override
     public void setTracePattern(String pattern) {
         tracer.setTracePattern(pattern);
     }
 
+    @Override
     public String getTracePattern() {
         return tracer.getTracePattern();
     }
 
+    @Override
     public long getTraceCounter() {
         return tracer.getTraceCounter();
     }
 
+    @Override
     public void resetTraceCounter() {
         tracer.resetTraceCounter();
     }

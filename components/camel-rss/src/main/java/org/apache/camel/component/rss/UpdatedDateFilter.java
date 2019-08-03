@@ -43,6 +43,7 @@ public class UpdatedDateFilter implements EntryFilter {
         this.lastUpdate = lastUpdate;
     }
 
+    @Override
     public boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry) {
         Date updated = ((SyndEntry) entry).getUpdatedDate();
         if (updated == null) {

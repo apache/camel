@@ -29,6 +29,7 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsToJmsTransactedSecurityTest.class);
     
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("/org/apache/camel/component/jms/tx/JmsToJmsTransactedSecurityTest.xml");
     }

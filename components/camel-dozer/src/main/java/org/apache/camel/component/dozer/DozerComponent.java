@@ -34,6 +34,7 @@ public class DozerComponent extends DefaultComponent {
         super(context);
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DozerConfiguration config = new DozerConfiguration();
         config.setName(remaining);

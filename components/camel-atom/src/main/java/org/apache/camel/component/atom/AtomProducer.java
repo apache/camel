@@ -28,6 +28,7 @@ public class AtomProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         throw new UnsupportedOperationException("AtomProducer is not implemented");
     }

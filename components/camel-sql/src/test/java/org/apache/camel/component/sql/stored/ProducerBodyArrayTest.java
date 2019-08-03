@@ -33,6 +33,7 @@ public class ProducerBodyArrayTest extends CamelTestSupport {
 
     EmbeddedDatabase db;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -40,6 +41,7 @@ public class ProducerBodyArrayTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

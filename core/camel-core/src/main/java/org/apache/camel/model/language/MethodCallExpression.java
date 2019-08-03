@@ -89,6 +89,7 @@ public class MethodCallExpression extends ExpressionDefinition {
         setMethod(method);
     }
 
+    @Override
     public String getLanguage() {
         return "bean";
     }

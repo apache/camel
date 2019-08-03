@@ -140,14 +140,17 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         this.camelContext = camelContext;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
         Object mc = getManagementObjectStrategy().getManagedObjectForCamelContext(context);
 
@@ -289,6 +292,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         preServices.clear();
     }
 
+    @Override
     public void onContextStop(CamelContext context) {
         // the agent hasn't been started
         if (!initialized) {
@@ -328,6 +332,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         camelContextMBean = null;
     }
 
+    @Override
     public void onComponentAdd(String name, Component component) {
         // always register components as there are only a few of those
         if (!initialized) {
@@ -345,6 +350,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
     }
 
+    @Override
     public void onComponentRemove(String name, Component component) {
         // the agent hasn't been started
         if (!initialized) {
@@ -365,6 +371,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
      *
      * @param endpoint the Endpoint attempted to be added
      */
+    @Override
     public void onEndpointAdd(Endpoint endpoint) {
         if (!initialized) {
             // pre register so we can register later when we have been initialized
@@ -391,6 +398,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
     }
 
+    @Override
     public void onEndpointRemove(Endpoint endpoint) {
         // the agent hasn't been started
         if (!initialized) {
@@ -405,6 +413,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
     }
 
+    @Override
     public void onServiceAdd(CamelContext context, Service service, Route route) {
         if (!initialized) {
             // pre register so we can register later when we have been initialized
@@ -441,6 +450,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
     }
 
+    @Override
     public void onServiceRemove(CamelContext context, Service service, Route route) {
         // the agent hasn't been started
         if (!initialized) {
@@ -577,6 +587,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         return managedObject;
     }
 
+    @Override
     public void onRoutesAdd(Collection<Route> routes) {
         for (Route route : routes) {
 
@@ -631,6 +642,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
     }
 
+    @Override
     public void onRoutesRemove(Collection<Route> routes) {
         // the agent hasn't been started
         if (!initialized) {
@@ -661,6 +673,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         removeWrappedProcessorsForRoutes(routes);
     }
 
+    @Override
     public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         if (!shouldRegister(errorHandler, null)) {
             // avoid registering if not needed
@@ -682,6 +695,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
     }
 
+    @Override
     public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         if (!initialized) {
             return;
@@ -697,6 +711,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
     }
 
+    @Override
     public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
                                 String sourceId, String routeId, String threadPoolProfileId) {
 
@@ -723,6 +738,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
     }
 
+    @Override
     public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
         if (!initialized) {
             return;
@@ -745,6 +761,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
     }
 
+    @Override
     public void onRouteContextCreate(RouteContext routeContext) {
         if (!initialized) {
             return;

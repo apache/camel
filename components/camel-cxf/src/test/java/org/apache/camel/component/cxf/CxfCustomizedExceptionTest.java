@@ -89,6 +89,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
         super.tearDown();       
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -121,6 +122,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
     }
     
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
     }

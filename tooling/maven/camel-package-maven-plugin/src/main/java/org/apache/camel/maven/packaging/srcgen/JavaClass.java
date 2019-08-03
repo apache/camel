@@ -224,6 +224,7 @@ public class JavaClass {
         return properties;
     }
 
+    @Override
     public String toString() {
         return "JavaClass[" + getCanonicalName() + "]";
     }

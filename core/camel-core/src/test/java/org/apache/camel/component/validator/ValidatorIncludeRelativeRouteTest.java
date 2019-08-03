@@ -23,6 +23,7 @@ import org.junit.Test;
 
 public class ValidatorIncludeRelativeRouteTest extends ValidatorIncludeRouteTest {
     
+    @Override
     @Test
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);

@@ -42,6 +42,7 @@ public class SpringThreadsCorePoolTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/ThreadsCorePoolTest.xml");
     }

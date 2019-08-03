@@ -48,6 +48,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory  {
         }
     }
 
+    @Override
     protected void initChannel(Channel ch) throws Exception {
         // create a new pipeline
         ChannelPipeline channelPipeline = ch.pipeline();

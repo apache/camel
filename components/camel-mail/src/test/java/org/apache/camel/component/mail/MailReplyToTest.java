@@ -73,6 +73,7 @@ public class MailReplyToTest extends CamelTestSupport {
         assertEquals(body, mailbox.get(0).getContent());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

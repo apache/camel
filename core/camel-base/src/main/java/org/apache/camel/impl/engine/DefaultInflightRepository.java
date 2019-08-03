@@ -41,14 +41,17 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     private final ConcurrentMap<String, Exchange> inflight = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<>();
 
+    @Override
     public void add(Exchange exchange) {
         inflight.put(exchange.getExchangeId(), exchange);
     }
 
+    @Override
     public void remove(Exchange exchange) {
         inflight.remove(exchange.getExchangeId());
     }
 
+    @Override
     public void add(Exchange exchange, String routeId) {
         AtomicInteger existing = routeCount.get(routeId);
         if (existing != null) {
@@ -56,6 +59,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
     }
 
+    @Override
     public void remove(Exchange exchange, String routeId) {
         AtomicInteger existing = routeCount.get(routeId);
         if (existing != null) {
@@ -63,6 +67,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
     }
 
+    @Override
     public int size() {
         return inflight.size();
     }

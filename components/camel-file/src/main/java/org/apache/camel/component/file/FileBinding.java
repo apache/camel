@@ -29,6 +29,7 @@ public class FileBinding implements GenericFileBinding<File> {
     private File body;
     private byte[] content;
 
+    @Override
     public Object getBody(GenericFile<File> file) {
         // if file content has been loaded then return it
         if (content != null) {
@@ -47,10 +48,12 @@ public class FileBinding implements GenericFileBinding<File> {
         return body;
     }
 
+    @Override
     public void setBody(GenericFile<File> file, Object body) {
         // noop
     }
 
+    @Override
     public void loadContent(Exchange exchange, GenericFile<?> file) throws IOException {
         if (content == null) {
             try {

@@ -36,10 +36,12 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
 
     private CamelContext camelContext;
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

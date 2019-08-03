@@ -36,6 +36,7 @@ public class StickyLoadBalanceTest extends ContextTestSupport {
         z = getMockEndpoint("mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

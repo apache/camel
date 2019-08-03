@@ -42,6 +42,7 @@ public class MockPullRequestService extends PullRequestService {
     private Map<Long, List<CommitComment>> allComments = new HashMap<>();
     private Map<Integer, List<CommitFile>> files = new HashMap<>();
 
+    @Override
     public List<CommitComment> getComments(IRepositoryIdProvider repository, int pullRequestId) {
         Long id = new Long(pullRequestId);
         if (allComments.containsKey(id)) {

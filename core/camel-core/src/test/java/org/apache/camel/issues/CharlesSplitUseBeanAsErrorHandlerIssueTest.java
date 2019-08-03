@@ -100,6 +100,7 @@ public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSuppo
 
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             if ("Forced".equals(body)) {

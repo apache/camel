@@ -92,6 +92,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return headerFilterStrategy;
     }
 
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -100,6 +101,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return transferException;
     }
 
+    @Override
     public void setTransferException(Boolean transferException) {
         this.transferException = transferException;
     }

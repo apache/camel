@@ -38,6 +38,7 @@ public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
     @BindToRegistry("myIdGenerator")
     MyIdGenerator idGenerator = new MyIdGenerator();
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -46,6 +47,7 @@ public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

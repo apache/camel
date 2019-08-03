@@ -55,11 +55,13 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         return super.getReplyTo();
     }
     
+    @Override
     protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                               String originalCorrelationId, String correlationId, long requestTimeout) {
         return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
     }
 
+    @Override
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
         log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
 
@@ -87,6 +89,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         }
     }
 
+    @Override
     public void setReplyToSelectorHeader(org.apache.camel.Message camelMessage, Message jmsMessage) throws JMSException {
         // noop
     }
@@ -194,6 +197,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         private TemporaryQueue queue;
         private final AtomicBoolean refreshWanted = new AtomicBoolean(false);
 
+        @Override
         public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain) throws JMSException {
             // use a temporary queue to gather the reply message
             synchronized (refreshWanted) {

@@ -138,6 +138,7 @@ public class JiraEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) {
         if (type == JiraType.NEWCOMMENTS) {
             return new NewCommentsConsumer(this, processor);
@@ -147,6 +148,7 @@ public class JiraEndpoint extends DefaultEndpoint {
         throw new IllegalArgumentException("Consumer does not support type: " + type);
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

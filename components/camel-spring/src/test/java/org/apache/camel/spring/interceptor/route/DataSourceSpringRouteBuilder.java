@@ -21,6 +21,7 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
 
 public class DataSourceSpringRouteBuilder extends SpringRouteBuilder {
     
+    @Override
     public void configure() throws Exception {
         // get the required policy
         SpringTransactionPolicy required = lookup("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);

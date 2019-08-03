@@ -80,6 +80,7 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
         assertDirectoryEquals("target/data/work/claus.tmp", tempFileName);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

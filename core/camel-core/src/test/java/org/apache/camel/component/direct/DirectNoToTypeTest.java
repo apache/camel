@@ -33,6 +33,7 @@ public class DirectNoToTypeTest extends ContextTestSupport {
         assertEquals("Hello World", response);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

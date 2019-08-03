@@ -83,6 +83,7 @@ public class ControlBusStatsTest extends ContextTestSupport {
         assertTrue(xml.contains("exchangesCompleted=\"1\""));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

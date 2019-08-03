@@ -38,6 +38,7 @@ public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
         }
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 

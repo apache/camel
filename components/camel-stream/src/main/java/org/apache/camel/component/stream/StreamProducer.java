@@ -66,6 +66,7 @@ public class StreamProducer extends DefaultProducer {
         closeStream(null, true);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         delay(endpoint.getDelay());
 

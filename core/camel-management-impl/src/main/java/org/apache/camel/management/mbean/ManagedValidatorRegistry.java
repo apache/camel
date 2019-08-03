@@ -43,6 +43,7 @@ public class ManagedValidatorRegistry extends ManagedService implements ManagedV
         this.validatorRegistry = validatorRegistry;
     }
 
+    @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
     }
@@ -51,30 +52,37 @@ public class ManagedValidatorRegistry extends ManagedService implements ManagedV
         return validatorRegistry;
     }
 
+    @Override
     public String getSource() {
         return validatorRegistry.toString();
     }
 
+    @Override
     public Integer getDynamicSize() {
         return validatorRegistry.dynamicSize();
     }
 
+    @Override
     public Integer getStaticSize() {
         return validatorRegistry.staticSize();
     }
 
+    @Override
     public Integer getSize() {
         return validatorRegistry.size();
     }
 
+    @Override
     public Integer getMaximumCacheSize() {
         return validatorRegistry.getMaximumCacheSize();
     }
 
+    @Override
     public void purge() {
         validatorRegistry.purge();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public TabularData listValidators() {
         try {

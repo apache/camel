@@ -52,6 +52,7 @@ public class GeoCoderProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         try {
             // headers take precedence

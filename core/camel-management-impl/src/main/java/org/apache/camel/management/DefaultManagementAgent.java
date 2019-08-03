@@ -186,162 +186,202 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
     }
 
+    @Override
     public void setRegistryPort(Integer port) {
         registryPort = port;
     }
 
+    @Override
     public Integer getRegistryPort() {
         return registryPort;
     }
 
+    @Override
     public void setConnectorPort(Integer port) {
         connectorPort = port;
     }
 
+    @Override
     public Integer getConnectorPort() {
         return connectorPort;
     }
 
+    @Override
     public void setMBeanServerDefaultDomain(String domain) {
         mBeanServerDefaultDomain = domain;
     }
 
+    @Override
     public String getMBeanServerDefaultDomain() {
         return mBeanServerDefaultDomain;
     }
 
+    @Override
     public void setMBeanObjectDomainName(String domainName) {
         mBeanObjectDomainName = domainName;
     }
 
+    @Override
     public String getMBeanObjectDomainName() {
         return mBeanObjectDomainName;
     }
 
+    @Override
     public void setServiceUrlPath(String url) {
         serviceUrlPath = url;
     }
 
+    @Override
     public String getServiceUrlPath() {
         return serviceUrlPath;
     }
 
+    @Override
     public void setCreateConnector(Boolean flag) {
         createConnector = flag;
     }
 
+    @Override
     public Boolean getCreateConnector() {
         return createConnector;
     }
 
+    @Override
     public void setUsePlatformMBeanServer(Boolean flag) {
         usePlatformMBeanServer = flag;
     }
 
+    @Override
     public Boolean getUsePlatformMBeanServer() {
         return usePlatformMBeanServer;
     }
 
+    @Override
     public Boolean getOnlyRegisterProcessorWithCustomId() {
         return onlyRegisterProcessorWithCustomId;
     }
 
+    @Override
     public void setOnlyRegisterProcessorWithCustomId(Boolean onlyRegisterProcessorWithCustomId) {
         this.onlyRegisterProcessorWithCustomId = onlyRegisterProcessorWithCustomId;
     }
 
+    @Override
     public void setMBeanServer(MBeanServer mbeanServer) {
         server = mbeanServer;
     }
 
+    @Override
     public MBeanServer getMBeanServer() {
         return server;
     }
 
+    @Override
     public Boolean getRegisterAlways() {
         return registerAlways != null && registerAlways;
     }
 
+    @Override
     public void setRegisterAlways(Boolean registerAlways) {
         this.registerAlways = registerAlways;
     }
 
+    @Override
     public Boolean getRegisterNewRoutes() {
         return registerNewRoutes != null && registerNewRoutes;
     }
 
+    @Override
     public void setRegisterNewRoutes(Boolean registerNewRoutes) {
         this.registerNewRoutes = registerNewRoutes;
     }
 
+    @Override
     public Boolean getMask() {
         return mask != null && mask;
     }
 
+    @Override
     public void setMask(Boolean mask) {
         this.mask = mask;
     }
 
+    @Override
     public Boolean getIncludeHostName() {
         return includeHostName != null && includeHostName;
     }
 
+    @Override
     public void setIncludeHostName(Boolean includeHostName) {
         this.includeHostName = includeHostName;
     }
 
+    @Override
     public Boolean getUseHostIPAddress() {
         return useHostIPAddress != null && useHostIPAddress;
     }
 
+    @Override
     public void setUseHostIPAddress(Boolean useHostIPAddress) {
         this.useHostIPAddress = useHostIPAddress;
     }
 
+    @Override
     public String getManagementNamePattern() {
         return managementNamePattern;
     }
 
+    @Override
     public void setManagementNamePattern(String managementNamePattern) {
         this.managementNamePattern = managementNamePattern;
     }
 
+    @Override
     public Boolean getLoadStatisticsEnabled() {
         return loadStatisticsEnabled;
     }
 
+    @Override
     public void setLoadStatisticsEnabled(Boolean loadStatisticsEnabled) {
         this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
 
+    @Override
     public Boolean getEndpointRuntimeStatisticsEnabled() {
         return endpointRuntimeStatisticsEnabled;
     }
 
+    @Override
     public void setEndpointRuntimeStatisticsEnabled(Boolean endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
     }
 
+    @Override
     public ManagementStatisticsLevel getStatisticsLevel() {
         return statisticsLevel;
     }
 
+    @Override
     public void setStatisticsLevel(ManagementStatisticsLevel statisticsLevel) {
         this.statisticsLevel = statisticsLevel;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public void register(Object obj, ObjectName name) throws JMException {
         register(obj, name, false);
     }
 
+    @Override
     public void register(Object obj, ObjectName name, boolean forceRegistration) throws JMException {
         try {
             registerMBeanWithServer(obj, name, forceRegistration);
@@ -356,6 +396,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
     }
 
+    @Override
     public void unregister(ObjectName name) throws JMException {
         if (isRegistered(name)) {
             ObjectName on = mbeansRegistered.remove(name);
@@ -366,6 +407,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
     }
 
+    @Override
     public boolean isRegistered(ObjectName name) {
         if (server == null) {
             return false;
@@ -375,6 +417,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
                 || server.isRegistered(name);
     }
 
+    @Override
     public <T> T newProxyClient(ObjectName name, Class<T> mbean) {
         if (isRegistered(name)) {
             ObjectName on = mbeansRegistered.get(name);
@@ -384,6 +427,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
     }
 
+    @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
@@ -403,6 +447,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         LOG.debug("Starting JMX agent on server: {}", getMBeanServer());
     }
 
+    @Override
     protected void doStop() throws Exception {
         // close JMX Connector, if it was created
         if (cs != null) {

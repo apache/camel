@@ -43,14 +43,17 @@ public class ProcessorPollingConsumer extends PollingConsumerSupport implements 
         return processor;
     }
 
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(processor);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(processor);
     }
 
+    @Override
     public Exchange receive() {
         // must be started
         if (!isRunAllowed() || !isStarted()) {
@@ -66,10 +69,12 @@ public class ProcessorPollingConsumer extends PollingConsumerSupport implements 
         return exchange;
     }
 
+    @Override
     public Exchange receiveNoWait() {
         return receive();
     }
 
+    @Override
     public Exchange receive(long timeout) {
         return receive();
     }

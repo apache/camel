@@ -32,6 +32,7 @@ public abstract class DefaultPollingEndpoint extends ScheduledPollEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer result = new DefaultScheduledPollConsumer(this, processor);
         configureConsumer(result);

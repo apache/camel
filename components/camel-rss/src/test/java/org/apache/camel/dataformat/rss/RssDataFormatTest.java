@@ -54,6 +54,7 @@ public class RssDataFormatTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -52,6 +52,7 @@ public class JmsRouteTimeoutCheckerIntervalTest extends CamelTestSupport {
         assertEquals("Bye World", out);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -64,6 +65,7 @@ public class JmsRouteTimeoutCheckerIntervalTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

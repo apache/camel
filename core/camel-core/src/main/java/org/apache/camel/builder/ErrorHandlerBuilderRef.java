@@ -38,11 +38,13 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         this.ref = ref;
     }
 
+    @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         ErrorHandlerFactory handler = lookupErrorHandler(routeContext);
         return ErrorHandlerReifier.reifier(handler).createErrorHandler(routeContext, processor);
     }
 
+    @Override
     public boolean supportTransacted() {
         return supportTransacted;
     }

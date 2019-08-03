@@ -53,6 +53,7 @@ public class CamelMessageConsumer implements MessageConsumer {
         this.noLocal = noLocal;
     }
 
+    @Override
     public void close() throws JMSException {
         if (!closed) {
             closed = true;
@@ -69,10 +70,12 @@ public class CamelMessageConsumer implements MessageConsumer {
         }
     }
 
+    @Override
     public MessageListener getMessageListener() throws JMSException {
         return messageListener;
     }
 
+    @Override
     public void setMessageListener(MessageListener messageListener) throws JMSException {
         this.messageListener = messageListener;
         if (messageListener != null && consumer == null) {
@@ -80,16 +83,19 @@ public class CamelMessageConsumer implements MessageConsumer {
         }
     }
 
+    @Override
     public Message receive() throws JMSException {
         Exchange exchange = getPollingConsumer().receive();
         return createMessage(exchange);
     }
 
+    @Override
     public Message receive(long timeoutMillis) throws JMSException {
         Exchange exchange = getPollingConsumer().receive(timeoutMillis);
         return createMessage(exchange);
     }
 
+    @Override
     public Message receiveNoWait() throws JMSException {
         Exchange exchange = getPollingConsumer().receiveNoWait();
         return createMessage(exchange);
@@ -106,6 +112,7 @@ public class CamelMessageConsumer implements MessageConsumer {
         return endpoint;
     }
 
+    @Override
     public String getMessageSelector() {
         return messageSelector;
     }

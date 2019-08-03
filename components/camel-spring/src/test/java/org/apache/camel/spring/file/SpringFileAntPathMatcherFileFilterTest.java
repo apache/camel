@@ -50,6 +50,7 @@ public class SpringFileAntPathMatcherFileFilterTest extends SpringRunWithTestSup
         result.assertIsSatisfied();
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/antpathmatcher");

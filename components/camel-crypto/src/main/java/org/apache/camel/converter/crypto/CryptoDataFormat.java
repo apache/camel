@@ -124,6 +124,7 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         return cipher;
     }
 
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
         byte[] iv = getInitializationVector(exchange);
         Key key = getKey(exchange);
@@ -154,6 +155,7 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         }
     }
 
+    @Override
     public Object unmarshal(final Exchange exchange, final InputStream encryptedStream) throws Exception {
         if (encryptedStream != null) {
             byte[] iv = getInlinedInitializationVector(exchange, encryptedStream);

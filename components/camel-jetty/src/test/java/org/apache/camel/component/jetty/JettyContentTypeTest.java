@@ -85,6 +85,7 @@ public class JettyContentTypeTest extends BaseJettyTest {
     }
 
     public class MyBookService implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             String user = exchange.getIn().getHeader("User", String.class);
             String contentType = ExchangeHelper.getContentType(exchange);

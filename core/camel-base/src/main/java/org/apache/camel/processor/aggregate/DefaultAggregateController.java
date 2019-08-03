@@ -23,14 +23,17 @@ public class DefaultAggregateController implements AggregateController {
 
     private AggregateProcessor processor;
 
+    @Override
     public void onStart(AggregateProcessor processor) {
         this.processor = processor;
     }
 
+    @Override
     public void onStop(AggregateProcessor processor) {
         this.processor = null;
     }
 
+    @Override
     public int forceCompletionOfGroup(String key) {
         if (processor != null) {
             return processor.forceCompletionOfGroup(key);
@@ -39,6 +42,7 @@ public class DefaultAggregateController implements AggregateController {
         }
     }
 
+    @Override
     public int forceCompletionOfAllGroups() {
         if (processor != null) {
             return processor.forceCompletionOfAllGroups();

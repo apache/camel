@@ -32,6 +32,7 @@ public abstract class InfinispanCustomListener extends InfinispanEventListener {
         return infinispanConsumer;
     }
 
+    @Override
     public void setInfinispanConsumer(InfinispanConsumer infinispanConsumer) {
         this.infinispanConsumer = infinispanConsumer;
     }

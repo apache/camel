@@ -26,6 +26,7 @@ import org.junit.Test;
  */
 public class TransactionalClientDataSourceNotTransactedTest extends TransactionalClientDataSourceTest {
 
+    @Override
     @Test
     public void testTransactionRollback() throws Exception {
         try {
@@ -42,6 +43,7 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
         assertEquals("Number of books", 2, count);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {

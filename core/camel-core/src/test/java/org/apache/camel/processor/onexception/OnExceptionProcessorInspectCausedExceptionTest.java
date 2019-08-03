@@ -67,6 +67,7 @@ public class OnExceptionProcessorInspectCausedExceptionTest extends ContextTestS
     // START SNIPPET: e2
     public static class MyFunctionFailureHandler implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             // the caused by exception is stored in a property on the exchange
             Throwable caused = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);

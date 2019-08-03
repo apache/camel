@@ -226,6 +226,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * To use a custom Thread Pool to be used for parallel processing.
      * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
      */
+    @Override
     public MulticastDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
@@ -235,6 +236,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * Refers to a custom Thread Pool to be used for parallel processing.
      * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
      */
+    @Override
     public MulticastDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -336,10 +338,12 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         this.stopOnException = stopOnException;
     }
 
+    @Override
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
+    @Override
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
@@ -379,6 +383,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
+    @Override
     public String getExecutorServiceRef() {
         return executorServiceRef;
     }
@@ -387,6 +392,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * Refers to a custom Thread Pool to be used for parallel processing.
      * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
      */
+    @Override
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }

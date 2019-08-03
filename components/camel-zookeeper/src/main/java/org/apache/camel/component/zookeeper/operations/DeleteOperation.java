@@ -34,6 +34,7 @@ public class DeleteOperation extends ZooKeeperOperation<Boolean> {
         super(connection, node);
     }
 
+    @Override
     public OperationResult<Boolean> getResult() {
         try {
             connection.delete(node, version);

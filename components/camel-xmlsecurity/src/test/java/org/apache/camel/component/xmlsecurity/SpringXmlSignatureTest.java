@@ -41,6 +41,7 @@ public class SpringXmlSignatureTest extends XmlSignatureTest {
 
     private static KeyPair rsaPair;
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         rsaPair = getKeyPair("RSA", 1024);
         return SpringCamelContext.springCamelContext(

@@ -36,12 +36,14 @@ public class HazelcastMultimapEndpoint extends HazelcastDefaultEndpoint {
         setCommand(HazelcastCommand.multimap);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         HazelcastMultimapConsumer answer = new HazelcastMultimapConsumer(hazelcastInstance, this, processor, cacheName);
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new HazelcastMultimapProducer(hazelcastInstance, this, cacheName);
     }

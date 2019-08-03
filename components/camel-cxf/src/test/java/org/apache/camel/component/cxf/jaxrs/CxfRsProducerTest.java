@@ -50,6 +50,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     private static int port2 = CXFTestSupport.getPort("CxfRsProducerTest.jetty"); 
     
     public static class JettyProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             // check the query
             Message inMessage = exchange.getIn();

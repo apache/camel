@@ -43,7 +43,8 @@ public class RestletPostContentTest extends RestletTestSupport {
     }
     
     class SetUserProcessor implements Processor {
-        public void process(Exchange exchange) throws Exception {   
+        @Override
+        public void process(Exchange exchange) throws Exception {
             assertEquals(MSG_BODY, exchange.getIn().getBody(String.class));
         }
     }

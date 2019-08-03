@@ -1343,6 +1343,7 @@ public class NotifyBuilder {
      */
     private final class ExchangeNotifier extends EventNotifierSupport {
 
+        @Override
         public void notify(CamelEvent event) throws Exception {
             if (event instanceof ExchangeCreatedEvent) {
                 onExchangeCreated((ExchangeCreatedEvent) event);
@@ -1358,6 +1359,7 @@ public class NotifyBuilder {
             computeMatches();
         }
 
+        @Override
         public boolean isEnabled(CamelEvent event) {
             return true;
         }
@@ -1494,26 +1496,32 @@ public class NotifyBuilder {
 
     private abstract class EventPredicateSupport implements EventPredicate {
 
+        @Override
         public boolean isAbstract() {
             return false;
         }
 
+        @Override
         public void reset() {
             // noop
         }
 
+        @Override
         public boolean onExchangeCreated(Exchange exchange) {
             return onExchange(exchange);
         }
 
+        @Override
         public boolean onExchangeCompleted(Exchange exchange) {
             return onExchange(exchange);
         }
 
+        @Override
         public boolean onExchangeFailed(Exchange exchange) {
             return onExchange(exchange);
         }
 
+        @Override
         public boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken) {
             // no need to invoke onExchange as this is a special case when the Exchange
             // was sent to a specific endpoint
@@ -1566,10 +1574,12 @@ public class NotifyBuilder {
             this.predicates.addAll(predicates);
         }
 
+        @Override
         public boolean isAbstract() {
             return false;
         }
 
+        @Override
         public boolean matches() {
             for (EventPredicate predicate : predicates) {
                 boolean answer = predicate.matches();
@@ -1582,6 +1592,7 @@ public class NotifyBuilder {
             return true;
         }
 
+        @Override
         public void reset() {
             for (EventPredicate predicate : predicates) {
                 LOG.trace("reset() {}", predicate);
@@ -1589,6 +1600,7 @@ public class NotifyBuilder {
             }
         }
 
+        @Override
         public boolean onExchangeCreated(Exchange exchange) {
             for (EventPredicate predicate : predicates) {
                 boolean answer = predicate.onExchangeCreated(exchange);
@@ -1601,6 +1613,7 @@ public class NotifyBuilder {
             return true;
         }
 
+        @Override
         public boolean onExchangeCompleted(Exchange exchange) {
             for (EventPredicate predicate : predicates) {
                 boolean answer = predicate.onExchangeCompleted(exchange);
@@ -1613,6 +1626,7 @@ public class NotifyBuilder {
             return true;
         }
 
+        @Override
         public boolean onExchangeFailed(Exchange exchange) {
             for (EventPredicate predicate : predicates) {
                 boolean answer = predicate.onExchangeFailed(exchange);

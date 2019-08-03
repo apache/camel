@@ -20,10 +20,12 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class LongAdapter extends XmlAdapter<String, Long> {
 
+    @Override
     public Long unmarshal(String value) {
         return new Long(value);
     }
 
+    @Override
     public String marshal(Long value) {
         if (value == null) {
             return null;

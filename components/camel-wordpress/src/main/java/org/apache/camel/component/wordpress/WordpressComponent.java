@@ -59,6 +59,7 @@ public class WordpressComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final WordpressComponentConfiguration endpointConfiguration = this.copyComponentProperties();
 

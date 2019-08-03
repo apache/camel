@@ -38,6 +38,7 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
     protected TransactionTemplate transactionTemplate;
     protected EntityManager entityManager;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -48,6 +49,7 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
         cleanupRepository();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

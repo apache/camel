@@ -56,6 +56,7 @@ public class XQueryRecipientListTest extends CamelTestSupport {
         tampaEndpoint = getMockEndpoint("mock:foo.Tampa");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

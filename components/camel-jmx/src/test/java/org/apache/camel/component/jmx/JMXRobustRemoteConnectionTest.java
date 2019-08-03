@@ -62,6 +62,7 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
         startContext();
     }
     
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

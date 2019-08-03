@@ -36,6 +36,7 @@ public abstract class MQTTBaseTest extends CamelTestSupport {
     protected int numberOfMessages = 10;
 
 
+    @Override
     @Before
     public void setUp() throws Exception {
         brokerService = MQTTTestSupport.newBrokerService();
@@ -44,6 +45,7 @@ public abstract class MQTTBaseTest extends CamelTestSupport {
     }
 
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

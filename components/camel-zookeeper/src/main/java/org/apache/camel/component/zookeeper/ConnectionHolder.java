@@ -75,6 +75,7 @@ public class ConnectionHolder implements Watcher {
         }
     }
 
+    @Override
     public void process(WatchedEvent event) {
         if (event.getState() == KeeperState.SyncConnected) {
             connectionLatch.countDown();

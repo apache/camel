@@ -93,6 +93,7 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
+    @Override
     public Exchange copy() {
         DefaultExchange exchange = new DefaultExchange(this);
 
@@ -144,10 +145,12 @@ public final class DefaultExchange implements Exchange {
         return answer;
     }
 
+    @Override
     public CamelContext getContext() {
         return context;
     }
 
+    @Override
     public Object getProperty(String name) {
         if (properties != null) {
             return properties.get(name);
@@ -155,11 +158,13 @@ public final class DefaultExchange implements Exchange {
         return null;
     }
 
+    @Override
     public Object getProperty(String name, Object defaultValue) {
         Object answer = getProperty(name);
         return answer != null ? answer : defaultValue;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name, Class<T> type) {
         Object value = getProperty(name);
@@ -180,6 +185,7 @@ public final class DefaultExchange implements Exchange {
         return ExchangeHelper.convertToType(this, type, value);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name, Object defaultValue, Class<T> type) {
         Object value = getProperty(name, defaultValue);
@@ -200,6 +206,7 @@ public final class DefaultExchange implements Exchange {
         return ExchangeHelper.convertToType(this, type, value);
     }
 
+    @Override
     public void setProperty(String name, Object value) {
         if (value != null) {
             // avoid the NullPointException
@@ -212,6 +219,7 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
+    @Override
     public Object removeProperty(String name) {
         if (!hasProperties()) {
             return null;
@@ -219,10 +227,12 @@ public final class DefaultExchange implements Exchange {
         return getProperties().remove(name);
     }
 
+    @Override
     public boolean removeProperties(String pattern) {
         return removeProperties(pattern, (String[]) null);
     }
 
+    @Override
     public boolean removeProperties(String pattern, String... excludePatterns) {
         if (!hasProperties()) {
             return false;
@@ -253,6 +263,7 @@ public final class DefaultExchange implements Exchange {
         return matches;
     }
 
+    @Override
     public Map<String, Object> getProperties() {
         if (properties == null) {
             properties = createProperties();
@@ -260,6 +271,7 @@ public final class DefaultExchange implements Exchange {
         return properties;
     }
 
+    @Override
     public boolean hasProperties() {
         return properties != null && !properties.isEmpty();
     }
@@ -268,6 +280,7 @@ public final class DefaultExchange implements Exchange {
         this.properties = properties;
     }
 
+    @Override
     public Message getIn() {
         if (in == null) {
             in = new DefaultMessage(getContext());
@@ -276,6 +289,7 @@ public final class DefaultExchange implements Exchange {
         return in;
     }
 
+    @Override
     public <T> T getIn(Class<T> type) {
         Message in = getIn();
 
@@ -289,11 +303,13 @@ public final class DefaultExchange implements Exchange {
         return context.getTypeConverter().convertTo(type, this, in);
     }
 
+    @Override
     public void setIn(Message in) {
         this.in = in;
         configureMessage(in);
     }
 
+    @Override
     public Message getOut() {
         // lazy create
         if (out == null) {
@@ -304,6 +320,7 @@ public final class DefaultExchange implements Exchange {
         return out;
     }
 
+    @Override
     public <T> T getOut(Class<T> type) {
         if (!hasOut()) {
             return null;
@@ -321,23 +338,28 @@ public final class DefaultExchange implements Exchange {
         return context.getTypeConverter().convertTo(type, this, out);
     }
 
+    @Override
     public boolean hasOut() {
         return out != null;
     }
 
+    @Override
     public void setOut(Message out) {
         this.out = out;
         configureMessage(out);
     }
 
+    @Override
     public Message getMessage() {
         return hasOut() ? getOut() : getIn();
     }
 
+    @Override
     public <T> T getMessage(Class<T> type) {
         return hasOut() ? getOut(type) : getIn(type);
     }
 
+    @Override
     public void setMessage(Message message) {
         if (hasOut()) {
             setOut(message);
@@ -347,14 +369,17 @@ public final class DefaultExchange implements Exchange {
     }
 
 
+    @Override
     public Exception getException() {
         return exception;
     }
 
+    @Override
     public <T> T getException(Class<T> type) {
         return ObjectHelper.getException(type, exception);
     }
 
+    @Override
     public void setException(Throwable t) {
         if (t == null) {
             this.exception = null;
@@ -370,30 +395,37 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
+    @Override
     public ExchangePattern getPattern() {
         return pattern;
     }
 
+    @Override
     public void setPattern(ExchangePattern pattern) {
         this.pattern = pattern;
     }
 
+    @Override
     public Endpoint getFromEndpoint() {
         return fromEndpoint;
     }
 
+    @Override
     public void setFromEndpoint(Endpoint fromEndpoint) {
         this.fromEndpoint = fromEndpoint;
     }
 
+    @Override
     public String getFromRouteId() {
         return fromRouteId;
     }
 
+    @Override
     public void setFromRouteId(String fromRouteId) {
         this.fromRouteId = fromRouteId;
     }
 
+    @Override
     public String getExchangeId() {
         if (exchangeId == null) {
             exchangeId = createExchangeId();
@@ -401,14 +433,17 @@ public final class DefaultExchange implements Exchange {
         return exchangeId;
     }
 
+    @Override
     public void setExchangeId(String id) {
         this.exchangeId = id;
     }
 
+    @Override
     public boolean isFailed() {
         return exception != null;
     }
 
+    @Override
     public boolean isTransacted() {
         UnitOfWork uow = getUnitOfWork();
         if (uow != null) {
@@ -418,6 +453,7 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
+    @Override
     public Boolean isExternalRedelivered() {
         Boolean answer = null;
 
@@ -443,14 +479,17 @@ public final class DefaultExchange implements Exchange {
         return answer;
     }
 
+    @Override
     public boolean isRollbackOnly() {
         return Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY)) || Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY_LAST));
     }
 
+    @Override
     public UnitOfWork getUnitOfWork() {
         return unitOfWork;
     }
 
+    @Override
     public void setUnitOfWork(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
         if (unitOfWork != null && onCompletions != null) {
@@ -466,6 +505,7 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
+    @Override
     public void addOnCompletion(Synchronization onCompletion) {
         if (unitOfWork == null) {
             // unit of work not yet registered so we store the on completion temporary
@@ -479,6 +519,7 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
+    @Override
     public boolean containsOnCompletion(Synchronization onCompletion) {
         if (unitOfWork != null) {
             // if there is an unit of work then the completions is moved there
@@ -489,6 +530,7 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
+    @Override
     public void handoverCompletions(Exchange target) {
         if (onCompletions != null) {
             for (Synchronization onCompletion : onCompletions) {
@@ -503,6 +545,7 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
+    @Override
     public List<Synchronization> handoverCompletions() {
         List<Synchronization> answer = null;
         if (onCompletions != null) {

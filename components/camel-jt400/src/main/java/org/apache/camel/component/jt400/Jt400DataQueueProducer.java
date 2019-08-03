@@ -51,6 +51,7 @@ public class Jt400DataQueueProducer extends DefaultProducer {
      * If the endpoint is configured to publish to a {@link KeyedDataQueue},
      * then the {@link org.apache.camel.Message} header <code>KEY</code> must be set.
      */
+    @Override
     public void process(Exchange exchange) throws Exception {
         BaseDataQueue queue = queueService.getDataQueue();
         if (endpoint.isKeyed()) {

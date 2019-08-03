@@ -51,94 +51,117 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
         return eventNotifier;
     }
     
+    @Override
     public boolean isIgnoreCamelContextEvents() {
         return getEventNotifier().isIgnoreCamelContextEvents();
     }
     
+    @Override
     public void setIgnoreCamelContextEvents(boolean ignoreCamelContextEvents) {
         getEventNotifier().setIgnoreCamelContextEvents(ignoreCamelContextEvents);
     }
     
+    @Override
     public boolean isIgnoreRouteEvents() {
         return getEventNotifier().isIgnoreRouteEvents();
     }
     
+    @Override
     public void setIgnoreRouteEvents(boolean ignoreRouteEvents) {
         getEventNotifier().setIgnoreRouteEvents(ignoreRouteEvents);
     }
     
+    @Override
     public boolean isIgnoreServiceEvents() {
         return getEventNotifier().isIgnoreServiceEvents();
     }
    
+    @Override
     public void setIgnoreServiceEvents(boolean ignoreServiceEvents) {
         getEventNotifier().setIgnoreServiceEvents(ignoreServiceEvents);
     }
    
+    @Override
     public boolean isIgnoreExchangeEvents() {
         return getEventNotifier().isIgnoreExchangeEvents();
     }
     
+    @Override
     public void setIgnoreExchangeEvents(boolean ignoreExchangeEvents) {
         getEventNotifier().setIgnoreExchangeEvents(ignoreExchangeEvents);
     }
     
+    @Override
     public boolean isIgnoreExchangeCreatedEvent() {
         return getEventNotifier().isIgnoreExchangeCreatedEvent();
     }
    
+    @Override
     public void setIgnoreExchangeCreatedEvent(boolean ignoreExchangeCreatedEvent) {
         getEventNotifier().setIgnoreExchangeCreatedEvent(ignoreExchangeCreatedEvent);
     }
     
+    @Override
     public boolean isIgnoreExchangeCompletedEvent() {
         return getEventNotifier().isIgnoreExchangeCompletedEvent();
     }
     
+    @Override
     public void setIgnoreExchangeCompletedEvent(boolean ignoreExchangeCompletedEvent) {
         getEventNotifier().setIgnoreExchangeCompletedEvent(ignoreExchangeCompletedEvent);
     }
     
+    @Override
     public boolean isIgnoreExchangeFailedEvents() {
         return getEventNotifier().isIgnoreExchangeFailedEvents();
     }
     
+    @Override
     public void setIgnoreExchangeFailedEvents(boolean ignoreExchangeFailedEvents) {
         getEventNotifier().setIgnoreExchangeFailedEvents(ignoreExchangeFailedEvents);
     }
 
+    @Override
     public boolean isIgnoreExchangeRedeliveryEvents() {
         return getEventNotifier().isIgnoreExchangeRedeliveryEvents();
     }
 
+    @Override
     public void setIgnoreExchangeRedeliveryEvents(boolean ignoreExchangeRedeliveryEvents) {
         getEventNotifier().setIgnoreExchangeRedeliveryEvents(ignoreExchangeRedeliveryEvents);
     }
 
+    @Override
     public boolean isIgnoreExchangeSentEvents() {
         return getEventNotifier().isIgnoreExchangeSentEvents();
     }
  
+    @Override
     public void setIgnoreExchangeSentEvents(boolean ignoreExchangeSentEvents) {
         getEventNotifier().setIgnoreExchangeSentEvents(ignoreExchangeSentEvents);
     }
     
+    @Override
     public boolean isIgnoreExchangeSendingEvents() {
         return getEventNotifier().isIgnoreExchangeSendingEvents();
     }
 
+    @Override
     public void setIgnoreExchangeSendingEvents(boolean ignoreExchangeSendingEvents) {
         getEventNotifier().setIgnoreExchangeSendingEvents(ignoreExchangeSendingEvents);
     }
 
+    @Override
     public boolean isIgnoreStepEvents() {
         return getEventNotifier().isIgnoreStepEvents();
     }
 
+    @Override
     public void setIgnoreStepEvents(boolean ignoreStepEvents) {
         getEventNotifier().setIgnoreStepEvents(ignoreStepEvents);
     }
 
+    @Override
     public MBeanNotificationInfo[] getNotificationInfo() {
         // all the class names in the event package
         String[] names = {"CamelContextStartedEvent", "CamelContextStartingEvent", "CamelContextStartupFailureEvent",

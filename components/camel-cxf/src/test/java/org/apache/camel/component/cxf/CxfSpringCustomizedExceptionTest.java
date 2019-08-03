@@ -58,6 +58,7 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
         return true;
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         CXFTestSupport.getPort1();
@@ -66,6 +67,7 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
         assertNotNull("Should have created a valid spring context", applicationContext);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);

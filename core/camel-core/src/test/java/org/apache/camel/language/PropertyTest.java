@@ -33,6 +33,7 @@ public class PropertyTest extends LanguageTestSupport {
         assertPredicate("quote");
     }
 
+    @Override
     protected String getLanguageName() {
         return "exchangeProperty";
     }

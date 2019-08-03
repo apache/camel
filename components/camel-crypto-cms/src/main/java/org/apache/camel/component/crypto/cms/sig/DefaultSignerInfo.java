@@ -192,6 +192,7 @@ public class DefaultSignerInfo extends DefaultCryptoCmsConfiguration implements 
         return unsignedAttributeGenerator;
     }
 
+    @Override
     public String toString() {
         return "private key alias=" + privateKeyAlias + ", signature algorithm=" + signatureAlgorithm + ", isIncludeCertificates=" + includeCertificates;
     }

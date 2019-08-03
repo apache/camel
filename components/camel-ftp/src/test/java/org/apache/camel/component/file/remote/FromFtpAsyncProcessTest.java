@@ -60,6 +60,7 @@ public class FromFtpAsyncProcessTest extends FtpServerTestSupport {
         assertFalse("File should not exist " + bye, bye.exists());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

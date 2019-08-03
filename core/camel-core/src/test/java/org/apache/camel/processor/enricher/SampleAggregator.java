@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 
 public class SampleAggregator implements AggregationStrategy {
 
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (newExchange == null) {
             return oldExchange;

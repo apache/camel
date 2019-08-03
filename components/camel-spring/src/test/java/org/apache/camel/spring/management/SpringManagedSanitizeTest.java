@@ -28,6 +28,7 @@ public class SpringManagedSanitizeTest extends ManagedSanitizeTest {
         return true;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedSanitizeTest.xml");
     }

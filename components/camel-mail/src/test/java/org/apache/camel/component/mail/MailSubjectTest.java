@@ -47,6 +47,7 @@ public class MailSubjectTest extends CamelTestSupport {
         assertFalse("Should not have attachements", mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

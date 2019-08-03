@@ -42,6 +42,7 @@ public class SpringSetHeaderNameDynamicTest extends ContextTestSupport {
                 .EXCHANGE_PROP_TX_FAILED, Boolean.class));
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/setHeaderNameDynamic.xml");
     }

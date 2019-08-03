@@ -116,6 +116,7 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
         this.blueprintContainer = blueprintContainer;
     }
 
+    @Override
     protected CamelContext getCamelContextWithId(String camelContextId) {
         if (blueprintContainer != null) {
             return (CamelContext) blueprintContainer.getComponentInstance(camelContextId);

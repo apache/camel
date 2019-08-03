@@ -41,6 +41,7 @@ public class LogComponent extends DefaultComponent {
     public LogComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         LoggingLevel level = getLoggingLevel(parameters);
         Logger providedLogger = getLogger(parameters);

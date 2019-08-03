@@ -22,6 +22,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class DefaultSplunkConfigurationFactory implements SplunkConfigurationFactory {
 
+    @Override
     public SplunkConfiguration parseMap(Map<String, Object> parameters) {
         String username = (String)parameters.get("username");
         String password = (String)parameters.get("password");

@@ -143,6 +143,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         this.parent = parentUnitOfWork;
     }
 
+    @Override
     public UnitOfWork createChildUnitOfWork(Exchange childExchange) {
         // create a new child unit of work, and mark me as its parent
         UnitOfWork answer = newInstance(childExchange);
@@ -150,10 +151,12 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         return answer;
     }
 
+    @Override
     public void start() {
         id = null;
     }
 
+    @Override
     public void stop() {
         // need to clean up when we are stopping to not leak memory
         if (synchronizations != null) {
@@ -168,6 +171,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         id = null;
     }
 
+    @Override
     public synchronized void addSynchronization(Synchronization synchronization) {
         if (synchronizations == null) {
             synchronizations = new ArrayList<>();
@@ -176,16 +180,19 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         synchronizations.add(synchronization);
     }
 
+    @Override
     public synchronized void removeSynchronization(Synchronization synchronization) {
         if (synchronizations != null) {
             synchronizations.remove(synchronization);
         }
     }
 
+    @Override
     public synchronized boolean containsSynchronization(Synchronization synchronization) {
         return synchronizations != null && synchronizations.contains(synchronization);
     }
 
+    @Override
     public void handoverSynchronization(Exchange target) {
         handoverSynchronization(target, null);
     }
@@ -217,6 +224,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
     }
 
+    @Override
     public void done(Exchange exchange) {
         log.trace("UnitOfWork done for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
 
@@ -259,6 +267,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         UnitOfWorkHelper.afterRouteSynchronizations(route, exchange, synchronizations, log);
     }
 
+    @Override
     public String getId() {
         if (id == null) {
             id = context.getUuidGenerator().generateUuid();
@@ -266,6 +275,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         return id;
     }
 
+    @Override
     public Message getOriginalInMessage() {
         if (originalInMessage == null && !context.isAllowUseOriginalMessage()) {
             throw new IllegalStateException("AllowUseOriginalMessage is disabled. Cannot access the original message.");
@@ -273,39 +283,48 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         return originalInMessage;
     }
 
+    @Override
     public boolean isTransacted() {
         return transactedBy != null && !transactedBy.isEmpty();
     }
 
+    @Override
     public boolean isTransactedBy(Object key) {
         return getTransactedBy().contains(key);
     }
 
+    @Override
     public void beginTransactedBy(Object key) {
         getTransactedBy().add(key);
     }
 
+    @Override
     public void endTransactedBy(Object key) {
         getTransactedBy().remove(key);
     }
 
+    @Override
     public RouteContext getRouteContext() {
         return routeContextStack.peek();
     }
 
+    @Override
     public void pushRouteContext(RouteContext routeContext) {
         routeContextStack.push(routeContext);
     }
 
+    @Override
     public RouteContext popRouteContext() {
         return routeContextStack.pollFirst();
     }
 
+    @Override
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
         // no wrapping needed
         return callback;
     }
 
+    @Override
     public void afterProcess(Processor processor, Exchange exchange, AsyncCallback callback, boolean doneSync) {
     }
 

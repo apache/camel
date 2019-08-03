@@ -60,6 +60,7 @@ public class ApnsProducer extends DefaultProducer {
         return tokenList != null;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         notify(exchange);
     }

@@ -26,6 +26,7 @@ import org.junit.Test;
 
 public class RestSwaggerReaderOverrideHostApiDocsTest extends RestSwaggerReaderApiDocsTest {
 
+    @Override
     @Test
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();

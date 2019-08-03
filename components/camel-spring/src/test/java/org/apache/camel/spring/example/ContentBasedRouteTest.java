@@ -59,6 +59,7 @@ public class ContentBasedRouteTest extends SpringTestSupport {
         notMatchedEndpoint = getMockEndpoint("mock:notMatched");
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/contentBasedRoute.xml");
     }

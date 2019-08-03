@@ -58,6 +58,7 @@ public class MulticastTest extends ContextTestSupport {
         z = getMockEndpoint("mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         final Processor processor = new AppendingProcessor();
 

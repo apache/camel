@@ -69,6 +69,7 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             // START SNIPPET e1

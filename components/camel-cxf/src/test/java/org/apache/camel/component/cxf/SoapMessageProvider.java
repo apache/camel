@@ -29,6 +29,7 @@ import javax.xml.ws.WebServiceProvider;
 @ServiceMode(value = Service.Mode.MESSAGE)
 public class SoapMessageProvider implements Provider<SOAPMessage> {
 
+    @Override
     public SOAPMessage invoke(SOAPMessage request) {
         //request should not come here as camel route would intercept the call before this is invoked.
         throw new UnsupportedOperationException("Placeholder method");

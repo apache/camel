@@ -51,6 +51,7 @@ public class SesComponent extends DefaultComponent {
         registerExtension(new SesComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SesConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);

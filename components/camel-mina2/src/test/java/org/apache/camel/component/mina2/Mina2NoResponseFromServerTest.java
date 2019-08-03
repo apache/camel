@@ -54,6 +54,7 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 
@@ -65,6 +66,7 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
 
     private static class MyCodec implements ProtocolCodecFactory {
 
+        @Override
         public ProtocolEncoder getEncoder(IoSession session) throws Exception {
             return new ProtocolEncoder() {
 
@@ -80,6 +82,7 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
 
         }
 
+        @Override
         public ProtocolDecoder getDecoder(IoSession session) throws Exception {
             return new ProtocolDecoder() {
 

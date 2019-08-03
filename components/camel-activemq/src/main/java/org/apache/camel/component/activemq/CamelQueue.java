@@ -32,14 +32,17 @@ public class CamelQueue extends CamelDestination implements Queue {
         super(uri);
     }
 
+    @Override
     public String getQueueName() throws JMSException {
         return getUri();
     }
 
+    @Override
     public QueueSender createSender(ActiveMQSession session) throws JMSException {
         return new CamelQueueSender(this, resolveEndpoint(session), session);
     }
 
+    @Override
     public QueueReceiver createReceiver(ActiveMQSession session, String messageSelector) {
         return new CamelQueueReceiver(this, resolveEndpoint(session), session, messageSelector);
     }

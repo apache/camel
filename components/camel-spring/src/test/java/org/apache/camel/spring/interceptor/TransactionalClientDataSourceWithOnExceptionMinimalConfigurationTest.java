@@ -24,6 +24,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
  */
 public class TransactionalClientDataSourceWithOnExceptionMinimalConfigurationTest extends TransactionalClientDataSourceWithOnExceptionTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {

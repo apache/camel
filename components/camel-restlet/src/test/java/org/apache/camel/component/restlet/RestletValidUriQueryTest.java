@@ -39,7 +39,8 @@ public class RestletValidUriQueryTest extends RestletTestSupport {
     
     class SetUserProcessor implements Processor {
 
-        public void process(Exchange exchange) throws Exception {   
+        @Override
+        public void process(Exchange exchange) throws Exception {
             assertEquals(QUERY_STRING, exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class));
         }
         

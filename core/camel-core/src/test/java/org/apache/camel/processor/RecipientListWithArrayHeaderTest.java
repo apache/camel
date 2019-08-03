@@ -43,6 +43,7 @@ public class RecipientListWithArrayHeaderTest extends ContextTestSupport {
                 new String[] {"mock:x", "mock:y", "mock:z"});
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

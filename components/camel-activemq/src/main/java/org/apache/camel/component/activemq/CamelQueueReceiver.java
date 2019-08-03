@@ -41,6 +41,7 @@ public class CamelQueueReceiver extends CamelMessageConsumer implements QueueRec
      *             queue receiver due to some internal error.
      */
 
+    @Override
     public Queue getQueue() throws JMSException {
         checkClosed();
         return (Queue)super.getDestination();

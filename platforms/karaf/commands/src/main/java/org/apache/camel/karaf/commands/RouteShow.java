@@ -24,6 +24,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 @Service
 public class RouteShow extends AbstractRouteCommand {
 
+    @Override
     public Object execute() throws Exception {
         RouteShowCommand command = new RouteShowCommand(route, context);
         return command.execute(this, System.out, System.err);

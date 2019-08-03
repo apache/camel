@@ -30,6 +30,7 @@ public class ExpressionListComparatorTest extends ContextTestSupport {
 
     private static class MyFooExpression implements Expression {
 
+        @Override
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             return (T) "foo";
@@ -38,6 +39,7 @@ public class ExpressionListComparatorTest extends ContextTestSupport {
 
     private static class MyBarExpression implements Expression {
 
+        @Override
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             return (T) "bar";

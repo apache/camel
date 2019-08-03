@@ -36,18 +36,22 @@ class PrintDocument implements Doc {
         this.docFlavor = docFlavor;
     }
    
-    public DocFlavor getDocFlavor() { 
+    @Override
+    public DocFlavor getDocFlavor() {
         return docFlavor;
     }
 
+    @Override
     public DocAttributeSet getAttributes() {
         return null;
     }
 
+    @Override
     public Object getPrintData() throws IOException {
         return getStreamForBytes();
     }
 
+    @Override
     public Reader getReaderForText() throws IOException {
         synchronized (this) {
             if (reader != null) {
@@ -73,6 +77,7 @@ class PrintDocument implements Doc {
         }
     }
 
+    @Override
     public InputStream getStreamForBytes() throws IOException {
         return stream; 
     }

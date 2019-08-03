@@ -58,6 +58,7 @@ public class Mina2UdpTest extends BaseMina2Test {
         }
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -125,6 +125,7 @@ public class VertxComponent extends DefaultComponent {
         this.timeout = timeout;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         VertxEndpoint endpoint = new VertxEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);

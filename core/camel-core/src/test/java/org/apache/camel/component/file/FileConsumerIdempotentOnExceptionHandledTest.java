@@ -45,6 +45,7 @@ public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSup
         assertFileExists("target/data/messages/input/.camel/hello.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

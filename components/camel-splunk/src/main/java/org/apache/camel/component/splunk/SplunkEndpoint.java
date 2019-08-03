@@ -50,6 +50,7 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         String[] uriSplit = splitUri(getEndpointUri());
         if (uriSplit.length > 0) {
@@ -59,6 +60,7 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
         throw new IllegalArgumentException("Cannot create any producer with uri " + getEndpointUri() + ". A producer type was not provided (or an incorrect pairing was used).");
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (configuration.getInitEarliestTime() == null) {
             throw new IllegalArgumentException("Required initialEarliestTime option could not be found");

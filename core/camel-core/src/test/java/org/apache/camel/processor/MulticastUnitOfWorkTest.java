@@ -84,6 +84,7 @@ public class MulticastUnitOfWorkTest extends ContextTestSupport {
             this.id = id;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getUnitOfWork().addSynchronization(new Synchronization() {
                 public void onComplete(Exchange exchange) {

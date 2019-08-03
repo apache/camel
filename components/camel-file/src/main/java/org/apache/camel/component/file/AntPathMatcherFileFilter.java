@@ -36,6 +36,7 @@ public class AntPathMatcherFileFilter implements FileFilter {
     private String[] includes;
     private boolean caseSensitive = true;
 
+    @Override
     public boolean accept(File pathname) {
         return acceptPathName(pathname.getPath());
     }

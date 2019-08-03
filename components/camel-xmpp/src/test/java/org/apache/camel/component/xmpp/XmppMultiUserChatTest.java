@@ -54,6 +54,7 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
         consumerEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

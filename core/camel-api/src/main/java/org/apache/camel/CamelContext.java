@@ -122,6 +122,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @throws RuntimeCamelException is thrown if starting failed
      */
+    @Override
     void start();
 
     /**
@@ -131,6 +132,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @throws RuntimeCamelException is thrown if stopping failed
      */
+    @Override
     void stop();
 
     /**
@@ -196,6 +198,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @return the status
      */
+    @Override
     ServiceStatus getStatus();
 
     /**

@@ -55,6 +55,7 @@ public class FtpConsumerIncludeNameTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Report 2", "report2.xml");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

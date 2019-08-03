@@ -34,6 +34,7 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         Producer answer = new MyAsyncProducer(this);
         if (isSynchronous()) {
@@ -44,10 +45,12 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported");
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

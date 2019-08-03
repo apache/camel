@@ -46,6 +46,7 @@ public class RssPollingConsumerTest extends CamelTestSupport {
         assertEquals(10, body.getEntries().size());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

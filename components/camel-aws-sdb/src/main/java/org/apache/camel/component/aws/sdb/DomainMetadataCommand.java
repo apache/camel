@@ -29,6 +29,7 @@ public class DomainMetadataCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         DomainMetadataRequest request = new DomainMetadataRequest()
             .withDomainName(determineDomainName());

@@ -62,6 +62,7 @@ public class Mina2ProducerShutdownTest extends TestSupport {
 
     private class AssertShutdownHook extends Thread {
 
+        @Override
         public void run() {
             long diff = System.currentTimeMillis() - start;
             if (diff > 5000) {

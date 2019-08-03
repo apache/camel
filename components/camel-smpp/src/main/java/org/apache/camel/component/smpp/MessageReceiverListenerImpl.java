@@ -47,6 +47,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         this.exceptionHandler = exceptionHandler;
     }
 
+    @Override
     public void onAcceptAlertNotification(AlertNotification alertNotification) {
         LOG.debug("Received an alertNotification {}", alertNotification);
 
@@ -62,6 +63,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         }
     }
 
+    @Override
     public void onAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
         LOG.debug("Received a deliverSm {}", deliverSm);
 
@@ -88,6 +90,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         }
     }
 
+    @Override
     public DataSmResult onAcceptDataSm(DataSm dataSm, Session session) throws ProcessRequestException {
         LOG.debug("Received a dataSm {}", dataSm);
 

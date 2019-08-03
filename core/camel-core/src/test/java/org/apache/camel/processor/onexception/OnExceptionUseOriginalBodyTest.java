@@ -83,6 +83,7 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
             this.camelException = camelException;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             assertEquals("Hello World", exchange.getIn().getBody(String.class));
             if (camelException) {

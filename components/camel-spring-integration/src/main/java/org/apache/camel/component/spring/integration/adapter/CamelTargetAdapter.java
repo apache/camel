@@ -91,6 +91,7 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
         return result;
     }
 
+    @Override
     public void handleMessage(Message<?> message) throws MessageDeliveryException {
         try {
             send(message);

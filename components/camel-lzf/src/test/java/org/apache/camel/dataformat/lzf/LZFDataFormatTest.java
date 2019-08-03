@@ -64,6 +64,7 @@ public class LZFDataFormatTest extends CamelTestSupport {
         result.assertIsSatisfied();
     }
 
+    @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

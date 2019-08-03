@@ -49,6 +49,7 @@ public class TransactionalClientDataSourceOnExceptionRedeliveryTest extends Tran
         assertEquals(false, out.getProperty(Exchange.ERRORHANDLER_HANDLED));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {

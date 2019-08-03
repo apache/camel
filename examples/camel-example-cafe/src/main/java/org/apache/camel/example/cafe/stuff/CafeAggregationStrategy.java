@@ -25,6 +25,7 @@ import org.apache.camel.example.cafe.Drink;
 
 public class CafeAggregationStrategy implements AggregationStrategy {
 
+    @Override
     @SuppressWarnings("unchecked")
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         List<Drink> drinks;

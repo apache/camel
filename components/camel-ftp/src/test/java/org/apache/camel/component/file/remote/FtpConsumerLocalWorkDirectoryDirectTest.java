@@ -72,6 +72,7 @@ public class FtpConsumerLocalWorkDirectoryDirectTest extends FtpServerTestSuppor
         assertFalse("Local work file should have been deleted", local.exists());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

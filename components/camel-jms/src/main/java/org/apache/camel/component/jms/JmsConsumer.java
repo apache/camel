@@ -49,6 +49,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         this.listenerContainer.setMessageListener(getEndpointMessageListener());
     }
 
+    @Override
     public JmsEndpoint getEndpoint() {
         return (JmsEndpoint) super.getEndpoint();
     }

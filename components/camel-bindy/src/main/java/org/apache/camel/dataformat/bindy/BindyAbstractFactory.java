@@ -67,6 +67,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      *
      * @throws Exception
      */
+    @Override
     public void initModel() throws Exception {
         models = new HashSet<>();
         modelClassNames = new HashSet<>();
@@ -123,8 +124,10 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      */
     public abstract void initAnnotatedFields() throws Exception;
 
+    @Override
     public abstract void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line) throws Exception;
     
+    @Override
     public abstract String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception;
 
     /**

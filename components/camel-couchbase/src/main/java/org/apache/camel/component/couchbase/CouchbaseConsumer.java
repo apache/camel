@@ -48,6 +48,7 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
         init();
     }
 
+    @Override
     protected void doInit() {
 
         query.setIncludeDocs(true);

@@ -39,6 +39,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport im
 
     abstract Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location);
 
+    @Override
     public PropertiesLocation getLocation() {
         return location;
     }

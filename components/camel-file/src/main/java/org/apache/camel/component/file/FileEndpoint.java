@@ -81,6 +81,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         super(endpointUri, component);
     }
 
+    @Override
     public FileConsumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(operations, "operations");
         ObjectHelper.notNull(file, "file");
@@ -158,6 +159,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return result;
     }
 
+    @Override
     public GenericFileProducer<File> createProducer() throws Exception {
         ObjectHelper.notNull(operations, "operations");
 
@@ -178,6 +180,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return new GenericFileProducer<>(this, operations);
     }
 
+    @Override
     public Exchange createExchange(GenericFile<File> file) {
         Exchange exchange = createExchange();
         if (file != null) {

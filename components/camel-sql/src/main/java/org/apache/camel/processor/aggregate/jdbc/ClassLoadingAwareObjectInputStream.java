@@ -51,11 +51,13 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
         inLoader = camelContext.getApplicationContextClassLoader();
     }
 
+    @Override
     protected Class<?> resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         return load(classDesc.getName(), cl, inLoader);
     }
 
+    @Override
     protected Class<?> resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Class[] cinterfaces = new Class[interfaces.length];

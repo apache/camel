@@ -83,6 +83,7 @@ public class AsyncEndpointDelayUoWTest extends ContextTestSupport {
         private AtomicInteger onComplete = new AtomicInteger();
         private AtomicInteger onFailure = new AtomicInteger();
 
+        @Override
         public void onComplete(Exchange exchange) {
             onComplete.incrementAndGet();
         }

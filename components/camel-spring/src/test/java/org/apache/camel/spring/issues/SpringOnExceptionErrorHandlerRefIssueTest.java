@@ -26,6 +26,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringOnExceptionErrorHandlerRefIssueTest extends OnExceptionErrorHandlerRefIssueTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringOnExceptionErrorHandlerRefIssueTest.xml");
     }

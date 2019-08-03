@@ -27,6 +27,7 @@ public class SayService implements ISay {
     public SayService() {
     }
 
+    @Override
     public String say(String name) {
         LOG.info("Invoking say() method with {}", name);
         return message + " " + name;

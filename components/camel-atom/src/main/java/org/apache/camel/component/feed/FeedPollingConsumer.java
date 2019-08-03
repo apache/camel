@@ -32,6 +32,7 @@ public abstract class FeedPollingConsumer extends ScheduledPollConsumer {
         this.endpoint = endpoint;
     }
 
+    @Override
     protected int poll() throws Exception {
         Object feed = createFeed();
         if (feed != null) {

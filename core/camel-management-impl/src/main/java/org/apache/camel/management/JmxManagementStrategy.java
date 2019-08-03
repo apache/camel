@@ -45,6 +45,7 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
         context.setExtension(ManagedCamelContext.class, new ManagedCamelContextImpl(context));
     }
 
+    @Override
     public void manageObject(Object managedObject) throws Exception {
         ObjectName objectName = getManagementObjectNameStrategy().getObjectName(managedObject);
         if (objectName != null) {
@@ -52,6 +53,7 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
         }
     }
 
+    @Override
     public void unmanageObject(Object managedObject) throws Exception {
         ObjectName objectName = getManagementObjectNameStrategy().getObjectName(managedObject);
         if (objectName != null) {
@@ -59,6 +61,7 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
         }
     }
 
+    @Override
     public boolean isManaged(Object managedObject) {
         try {
             ObjectName name = getManagementObjectNameStrategy().getObjectName(managedObject);
@@ -71,6 +74,7 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
         return false;
     }
 
+    @Override
     public boolean isManagedName(Object name) {
         try {
             if (name instanceof ObjectName) {
@@ -93,10 +97,12 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
         doStartManagementStrategy();
     }
 
+    @Override
     protected ManagementObjectNameStrategy createManagementObjectNameStrategy(String domain) {
         return new DefaultManagementObjectNameStrategy(domain);
     }
 
+    @Override
     protected ManagementObjectStrategy createManagementObjectStrategy() {
         return new DefaultManagementObjectStrategy();
     }

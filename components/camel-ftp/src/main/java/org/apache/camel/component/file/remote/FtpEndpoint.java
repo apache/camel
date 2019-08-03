@@ -102,6 +102,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
     }
 
+    @Override
     protected GenericFileProducer<FTPFile> buildProducer() {
         try {
             if (this.getMoveExistingFileStrategy() == null) {
@@ -121,6 +122,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         return new FtpDefaultMoveExistingFileStrategy();
     }
 
+    @Override
     public RemoteFileOperations<FTPFile> createRemoteFileOperations() throws Exception {
         // configure ftp client
         FTPClient client = ftpClient;

@@ -192,6 +192,7 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
         BindyCsvDataFormat formatMandatory = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory.Order.class);
         BindyCsvDataFormat formatEmptyStream = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassemptystream.Order.class);
 
+        @Override
         public void configure() {
             from("direct:start1").unmarshal(formatOptional).to("mock:result1");
             from("direct:start2").unmarshal(formatMandatory).to("mock:result2");

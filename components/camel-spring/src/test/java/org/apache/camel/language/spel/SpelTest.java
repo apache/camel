@@ -58,6 +58,7 @@ public class SpelTest extends LanguageTestSupport {
         assertTrue(exchange.hasOut());
     }
 
+    @Override
     protected String getLanguageName() {
         return "spel";
     }

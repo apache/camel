@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 public class FromFtpSimpleRelativeMoveToRelativeNotStepwiseTest extends FromFtpSimpleRelativeMoveToRelativeTest {
 
+    @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false"
                 + "&move=.done&initialDelay=2500&delay=5000&stepwise=false";

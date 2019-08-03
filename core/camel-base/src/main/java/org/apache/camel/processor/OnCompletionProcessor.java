@@ -90,14 +90,17 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         return camelContext;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (processor != null) {
             // register callback
@@ -209,6 +212,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
     private final class OnCompletionSynchronizationAfterConsumer extends SynchronizationAdapter implements Ordered {
 
+        @Override
         public int getOrder() {
             // we want to be last
             return Ordered.LOWEST;
@@ -243,6 +247,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             }
         }
 
+        @Override
         public void onFailure(final Exchange exchange) {
             if (onCompleteOnly) {
                 return;
@@ -294,6 +299,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
     private final class OnCompletionSynchronizationBeforeConsumer extends SynchronizationAdapter implements Ordered {
 
+        @Override
         public int getOrder() {
             // we want to be last
             return Ordered.LOWEST;
@@ -343,6 +349,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         return "OnCompletionProcessor[" + processor + "]";
     }
 
+    @Override
     public String getTraceLabel() {
         return "onCompletion";
     }

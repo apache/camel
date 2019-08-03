@@ -35,6 +35,7 @@ public class DefaultAuthenticator extends Authenticator {
     /**
      * Returns an authenticator object for use in sessions
      */
+    @Override
     public PasswordAuthentication getPasswordAuthentication() {
         return new PasswordAuthentication(username, password);
     }

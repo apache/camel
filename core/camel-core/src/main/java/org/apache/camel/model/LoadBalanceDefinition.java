@@ -99,6 +99,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @param loadBalancer  the load balancer
      * @return the builder
      */
+    @Override
     public LoadBalanceDefinition loadBalance(LoadBalancer loadBalancer) {
         CustomLoadBalancerDefinition def = new CustomLoadBalancerDefinition();
         def.setCustomLoadBalancer(loadBalancer);

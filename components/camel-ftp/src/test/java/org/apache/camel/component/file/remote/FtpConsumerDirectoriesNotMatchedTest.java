@@ -56,6 +56,7 @@ public class FtpConsumerDirectoriesNotMatchedTest extends FtpServerTestSupport {
         sendFile(getFtpUrl() + "/2008/?password=admin", "2008 report", "report2008.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

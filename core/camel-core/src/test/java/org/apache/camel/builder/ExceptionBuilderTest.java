@@ -165,6 +165,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         private static final long serialVersionUID = 1L;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @SuppressWarnings("unchecked")

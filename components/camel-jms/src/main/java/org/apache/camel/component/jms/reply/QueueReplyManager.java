@@ -45,12 +45,14 @@ public class QueueReplyManager extends ReplyManagerSupport {
         super(camelContext);
     }
 
+    @Override
     protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                               String originalCorrelationId, String correlationId, long requestTimeout) {
         return new QueueReplyHandler(replyManager, exchange, callback,
                 originalCorrelationId, correlationId, requestTimeout);
     }  
 
+    @Override
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
         log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
 
@@ -63,6 +65,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         correlation.put(newCorrelationId, handler, requestTimeout);
     }
 
+    @Override
     protected void handleReplyMessage(String correlationID, Message message, Session session) {
         ReplyHandler handler = correlation.get(correlationID);
         if (handler == null && endpoint.isUseMessageIDAsCorrelationID()) {
@@ -81,6 +84,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         }
     }
 
+    @Override
     public void setReplyToSelectorHeader(org.apache.camel.Message camelMessage, Message jmsMessage) throws JMSException {
         String replyToSelectorName = endpoint.getReplyToDestinationSelectorName();
         if (replyToSelectorName != null && replyToSelectorValue != null) {
@@ -97,6 +101,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
             this.delegate = delegate;
         }
 
+        @Override
         public Destination resolveDestinationName(Session session, String destinationName,
                                                   boolean pubSubDomain) throws JMSException {
             synchronized (QueueReplyManager.this) {
@@ -110,6 +115,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         }
     };
 
+    @Override
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
         DefaultMessageListenerContainer answer;
 

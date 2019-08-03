@@ -83,30 +83,37 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return context;
     }
 
+    @Override
     public String getCamelId() {
         return context.getName();
     }
 
+    @Override
     public String getManagementName() {
         return context.getManagementName();
     }
 
+    @Override
     public String getCamelVersion() {
         return context.getVersion();
     }
 
+    @Override
     public String getState() {
         return context.getStatus().name();
     }
 
+    @Override
     public String getUptime() {
         return context.getUptime();
     }
 
+    @Override
     public long getUptimeMillis() {
         return context.getUptimeMillis();
     }
 
+    @Override
     public String getManagementStatisticsLevel() {
         if (context.getManagementStrategy().getManagementAgent() != null) {
             return context.getManagementStrategy().getManagementAgent().getStatisticsLevel().name();
@@ -115,14 +122,17 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Override
     public String getClassResolver() {
         return context.getClassResolver().getClass().getName();
     }
 
+    @Override
     public String getPackageScanClassResolver() {
         return context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver().getClass().getName();
     }
 
+    @Override
     public String getApplicationContextClassName() {
         if (context.getApplicationContextClassLoader() != null) {
             return context.getApplicationContextClassLoader().getClass().getName();
@@ -154,10 +164,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         context.getGlobalOptions().put(key, value);
     }
 
+    @Override
     public Boolean getTracing() {
         return context.isTracing();
     }
 
+    @Override
     public void setTracing(Boolean tracing) {
         context.setTracing(tracing);
     }
@@ -166,10 +178,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return (int) super.getExchangesInflight();
     }
 
+    @Override
     public Integer getTotalRoutes() {
         return context.getRoutes().size();
     }
 
+    @Override
     public Integer getStartedRoutes() {
         int started = 0;
         for (Route route : context.getRoutes()) {
@@ -180,30 +194,37 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return started;
     }
 
+    @Override
     public void setTimeout(long timeout) {
         context.getShutdownStrategy().setTimeout(timeout);
     }
 
+    @Override
     public long getTimeout() {
         return context.getShutdownStrategy().getTimeout();
     }
 
+    @Override
     public void setTimeUnit(TimeUnit timeUnit) {
         context.getShutdownStrategy().setTimeUnit(timeUnit);
     }
 
+    @Override
     public TimeUnit getTimeUnit() {
         return context.getShutdownStrategy().getTimeUnit();
     }
 
+    @Override
     public void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout) {
         context.getShutdownStrategy().setShutdownNowOnTimeout(shutdownNowOnTimeout);
     }
 
+    @Override
     public boolean isShutdownNowOnTimeout() {
         return context.getShutdownStrategy().isShutdownNowOnTimeout();
     }
 
+    @Override
     public String getLoad01() {
         double load1 = load.getLoad1();
         if (Double.isNaN(load1)) {
@@ -214,6 +235,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Override
     public String getLoad05() {
         double load5 = load.getLoad5();
         if (Double.isNaN(load5)) {
@@ -224,6 +246,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Override
     public String getLoad15() {
         double load15 = load.getLoad15();
         if (Double.isNaN(load15)) {
@@ -234,34 +257,42 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Override
     public boolean isUseBreadcrumb() {
         return context.isUseBreadcrumb();
     }
 
+    @Override
     public boolean isAllowUseOriginalMessage() {
         return context.isAllowUseOriginalMessage();
     }
 
+    @Override
     public boolean isMessageHistory() {
         return context.isMessageHistory() != null ? context.isMessageHistory() : false;
     }
 
+    @Override
     public boolean isLogMask() {
         return context.isLogMask() != null ? context.isLogMask() : false;
     }
 
+    @Override
     public boolean isUseMDCLogging() {
         return context.isUseMDCLogging();
     }
 
+    @Override
     public boolean isUseDataType() {
         return context.isUseDataType();
     }
 
+    @Override
     public void onTimer() {
         load.update(getInflightExchanges());
     }
 
+    @Override
     public void start() throws Exception {
         if (context.isSuspended()) {
             context.resume();
@@ -270,19 +301,23 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Override
     public void stop() throws Exception {
         context.stop();
     }
 
+    @Override
     public void restart() throws Exception {
         context.stop();
         context.start();
     }
 
+    @Override
     public void suspend() throws Exception {
         context.suspend();
     }
 
+    @Override
     public void resume() throws Exception {
         if (context.isSuspended()) {
             context.resume();
@@ -291,10 +326,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Override
     public void startAllRoutes() throws Exception {
         context.getRouteController().startAllRoutes();
     }
 
+    @Override
     public boolean canSendToEndpoint(String endpointUri) {
         try {
             Endpoint endpoint = context.getEndpoint(endpointUri);
@@ -309,6 +346,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return false;
     }
 
+    @Override
     public void sendBody(String endpointUri, Object body) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         try {
@@ -318,10 +356,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Override
     public void sendStringBody(String endpointUri, String body) throws Exception {
         sendBody(endpointUri, body);
     }
 
+    @Override
     public void sendBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         try {
@@ -331,6 +371,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Override
     public Object requestBody(String endpointUri, Object body) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         Object answer = null;
@@ -342,10 +383,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return answer;
     }
 
+    @Override
     public Object requestStringBody(String endpointUri, String body) throws Exception {
         return requestBody(endpointUri, body);
     }
 
+    @Override
     public Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         Object answer = null;
@@ -357,6 +400,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return answer;
     }
 
+    @Override
     public String dumpRestsAsXml() throws Exception {
         return dumpRestsAsXml(false);
     }
@@ -400,6 +444,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return xml;
     }
 
+    @Override
     public String dumpRoutesAsXml() throws Exception {
         return dumpRoutesAsXml(false, false);
     }
@@ -423,11 +468,13 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return ModelHelper.dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
     }
 
+    @Override
     public void addOrUpdateRoutesFromXml(String xml) throws Exception {
         // do not decode so we function as before
         addOrUpdateRoutesFromXml(xml, false);
     }
 
+    @Override
     public void addOrUpdateRoutesFromXml(String xml, boolean urlDecode) throws Exception {
         // decode String as it may have been encoded, from its xml source
         if (urlDecode) {
@@ -446,6 +493,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Override
     public String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
         StringBuilder sb = new StringBuilder();
         sb.append("<camelContextStat").append(String.format(" id=\"%s\" state=\"%s\"", getCamelId(), getState()));
@@ -507,6 +555,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return sb.toString();
     }
 
+    @Override
     public String dumpStepStatsAsXml(boolean fullStats) throws Exception {
         StringBuilder sb = new StringBuilder();
         sb.append("<camelContextStat").append(String.format(" id=\"%s\" state=\"%s\"", getCamelId(), getState()));
@@ -564,6 +613,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return sb.toString();
     }
 
+    @Override
     public String dumpRoutesCoverageAsXml() throws Exception {
         StringBuilder sb = new StringBuilder();
         sb.append("<camelContextRouteCoverage")
@@ -583,6 +633,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return sb.toString();
     }
 
+    @Override
     public boolean createEndpoint(String uri) throws Exception {
         if (context.hasEndpoint(uri) != null) {
             // endpoint already exists
@@ -605,28 +656,34 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Override
     public int removeEndpoints(String pattern) throws Exception {
         // endpoints is always removed from JMX if removed from context
         Collection<Endpoint> removed = context.removeEndpoints(pattern);
         return removed.size();
     }
 
+    @Override
     public String componentParameterJsonSchema(String componentName) throws Exception {
         return context.adapt(CatalogCamelContext.class).getComponentParameterJsonSchema(componentName);
     }
 
+    @Override
     public String dataFormatParameterJsonSchema(String dataFormatName) throws Exception {
         return context.adapt(CatalogCamelContext.class).getDataFormatParameterJsonSchema(dataFormatName);
     }
 
+    @Override
     public String languageParameterJsonSchema(String languageName) throws Exception {
         return context.adapt(CatalogCamelContext.class).getLanguageParameterJsonSchema(languageName);
     }
 
+    @Override
     public String eipParameterJsonSchema(String eipName) throws Exception {
         return context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema(eipName);
     }
 
+    @Override
     public void reset(boolean includeRoutes) throws Exception {
         reset();
 

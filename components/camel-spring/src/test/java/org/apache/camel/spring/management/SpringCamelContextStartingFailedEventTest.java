@@ -31,6 +31,7 @@ public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport
         return true;
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         try {
             new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringCamelContextStartingFailedEventTest.xml");

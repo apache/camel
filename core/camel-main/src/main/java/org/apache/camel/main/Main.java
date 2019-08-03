@@ -123,6 +123,7 @@ public class Main extends MainSupport {
         }
     }
 
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
         if (getCamelContext() != null) {
@@ -130,6 +131,7 @@ public class Main extends MainSupport {
         }
     }
 
+    @Override
     protected ProducerTemplate findOrCreateCamelTemplate() {
         if (getCamelContext() != null) {
             return getCamelContext().createProducerTemplate();
@@ -138,6 +140,7 @@ public class Main extends MainSupport {
         }
     }
 
+    @Override
     protected CamelContext createCamelContext() {
         return new DefaultCamelContext(registry);
     }

@@ -28,6 +28,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("json-validator")
 public class JsonValidatorComponent extends DefaultComponent {
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JsonValidatorEndpoint endpoint = new JsonValidatorEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);

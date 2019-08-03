@@ -41,6 +41,7 @@ public class MyBatisProducer extends DefaultProducer {
         this.statement = endpoint.getStatement();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         SqlSession session;
 

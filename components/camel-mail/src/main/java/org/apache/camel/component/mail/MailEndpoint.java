@@ -82,6 +82,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
         setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         JavaMailSender sender = configuration.getJavaMailSender();
         if (sender == null) {
@@ -98,6 +99,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
         return new MailProducer(this, sender);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (configuration.getProtocol().startsWith("smtp")) {
             throw new IllegalArgumentException("Protocol " + configuration.getProtocol()
@@ -121,6 +123,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
         return answer;
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }
@@ -160,6 +163,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
         this.configuration = configuration;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -167,6 +171,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     /**
      * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter headers.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }

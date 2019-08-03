@@ -57,14 +57,17 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
         return "convertBodyTo[" + type.getCanonicalName() + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Message old = exchange.getMessage();
 

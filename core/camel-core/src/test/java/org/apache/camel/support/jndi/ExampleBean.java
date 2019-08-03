@@ -21,6 +21,7 @@ public class ExampleBean {
     private String name;
     private double price;
 
+    @Override
     public String toString() {
         return "ExampleBean[name: " + name + " price: " + price + " id: " + id + "]";
     }

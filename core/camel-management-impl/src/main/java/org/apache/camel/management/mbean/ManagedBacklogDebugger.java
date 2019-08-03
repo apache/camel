@@ -50,62 +50,77 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         return backlogDebugger;
     }
 
+    @Override
     public String getCamelId() {
         return camelContext.getName();
     }
 
+    @Override
     public String getCamelManagementName() {
         return camelContext.getManagementName();
     }
 
+    @Override
     public String getLoggingLevel() {
         return backlogDebugger.getLoggingLevel();
     }
 
+    @Override
     public void setLoggingLevel(String level) {
         backlogDebugger.setLoggingLevel(level);
     }
 
+    @Override
     public boolean isEnabled() {
         return backlogDebugger.isEnabled();
     }
 
+    @Override
     public void enableDebugger() {
         backlogDebugger.enableDebugger();
     }
 
+    @Override
     public void disableDebugger() {
         backlogDebugger.disableDebugger();
     }
 
+    @Override
     public void addBreakpoint(String nodeId) {
         backlogDebugger.addBreakpoint(nodeId);
     }
 
+    @Override
     public void addConditionalBreakpoint(String nodeId, String language, String predicate) {
         backlogDebugger.addConditionalBreakpoint(nodeId, language, predicate);
     }
 
+    @Override
     public void removeBreakpoint(String nodeId) {
         backlogDebugger.removeBreakpoint(nodeId);
     }
 
+    @Override
     public void removeAllBreakpoints() {
         backlogDebugger.removeAllBreakpoints();
     }
 
+    @Override
     public Set<String> getBreakpoints() {
         return backlogDebugger.getBreakpoints();
     }
 
+    @Override
     public void resumeBreakpoint(String nodeId) {
         backlogDebugger.resumeBreakpoint(nodeId);
     }
 
+    @Override
     public void setMessageBodyOnBreakpoint(String nodeId, Object body) {
         backlogDebugger.setMessageBodyOnBreakpoint(nodeId, body);
     }
 
+    @Override
     public void setMessageBodyOnBreakpoint(String nodeId, Object body, String type) {
         try {
             Class<?> classType = camelContext.getClassResolver().resolveMandatoryClass(type);
@@ -115,10 +130,12 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         }
     }
 
+    @Override
     public void removeMessageBodyOnBreakpoint(String nodeId) {
         backlogDebugger.removeMessageBodyOnBreakpoint(nodeId);
     }
 
+    @Override
     public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value) {
         try {
             backlogDebugger.setMessageHeaderOnBreakpoint(nodeId, headerName, value);
@@ -127,6 +144,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         }
     }
 
+    @Override
     public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value, String type) {
         try {
             Class<?> classType = camelContext.getClassResolver().resolveMandatoryClass(type);
@@ -136,74 +154,92 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         }
     }
 
+    @Override
     public void removeMessageHeaderOnBreakpoint(String nodeId, String headerName) {
         backlogDebugger.removeMessageHeaderOnBreakpoint(nodeId, headerName);
     }
 
+    @Override
     public void resumeAll() {
         backlogDebugger.resumeAll();
     }
 
+    @Override
     public void stepBreakpoint(String nodeId) {
         backlogDebugger.stepBreakpoint(nodeId);
     }
 
+    @Override
     public boolean isSingleStepMode() {
         return backlogDebugger.isSingleStepMode();
     }
 
+    @Override
     public void step() {
         backlogDebugger.step();
     }
 
+    @Override
     public Set<String> getSuspendedBreakpointNodeIds() {
         return backlogDebugger.getSuspendedBreakpointNodeIds();
     }
 
+    @Override
     public void disableBreakpoint(String nodeId) {
         backlogDebugger.disableBreakpoint(nodeId);
     }
 
+    @Override
     public void enableBreakpoint(String nodeId) {
         backlogDebugger.enableBreakpoint(nodeId);
     }
 
+    @Override
     public int getBodyMaxChars() {
         return backlogDebugger.getBodyMaxChars();
     }
 
+    @Override
     public void setBodyMaxChars(int bodyMaxChars) {
         backlogDebugger.setBodyMaxChars(bodyMaxChars);
     }
 
+    @Override
     public boolean isBodyIncludeStreams() {
         return backlogDebugger.isBodyIncludeStreams();
     }
 
+    @Override
     public void setBodyIncludeStreams(boolean bodyIncludeStreams) {
         backlogDebugger.setBodyIncludeStreams(bodyIncludeStreams);
     }
 
+    @Override
     public boolean isBodyIncludeFiles() {
         return backlogDebugger.isBodyIncludeFiles();
     }
 
+    @Override
     public void setBodyIncludeFiles(boolean bodyIncludeFiles) {
         backlogDebugger.setBodyIncludeFiles(bodyIncludeFiles);
     }
 
+    @Override
     public String dumpTracedMessagesAsXml(String nodeId) {
         return backlogDebugger.dumpTracedMessagesAsXml(nodeId);
     }
 
+    @Override
     public long getDebugCounter() {
         return backlogDebugger.getDebugCounter();
     }
 
+    @Override
     public void resetDebugCounter() {
         backlogDebugger.resetDebugCounter();
     }
 
+    @Override
     public String validateConditionalBreakpoint(String language, String predicate) {
         Language lan = null;
         try {
@@ -219,10 +255,12 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         }
     }
     
+    @Override
     public long getFallbackTimeout() {
         return backlogDebugger.getFallbackTimeout();
     }
    
+    @Override
     public void setFallbackTimeout(long fallbackTimeout) {
         backlogDebugger.setFallbackTimeout(fallbackTimeout);
     }

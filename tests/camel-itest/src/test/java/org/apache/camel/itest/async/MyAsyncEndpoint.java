@@ -32,14 +32,17 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new MyAsyncProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported");
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }

@@ -23,6 +23,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringClaimCheckEipPushPopTest extends ClaimCheckEipPushPopTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/ClaimCheckEipPushPopTest.xml");
     }

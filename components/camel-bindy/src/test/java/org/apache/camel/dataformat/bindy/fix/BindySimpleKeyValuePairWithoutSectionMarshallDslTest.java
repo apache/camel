@@ -97,6 +97,7 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends Abstra
 
         BindyKeyValuePairDataFormat orderBindyDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.withoutsection.Order.class);
 
+        @Override
         public void configure() {
 
             // default should errors go to mock:error

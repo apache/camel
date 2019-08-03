@@ -45,6 +45,7 @@ public class XQueryComponent extends DefaultComponent {
     public XQueryComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         XQueryEndpoint answer = new XQueryEndpoint(uri, this);
         answer.setConfiguration(configuration);

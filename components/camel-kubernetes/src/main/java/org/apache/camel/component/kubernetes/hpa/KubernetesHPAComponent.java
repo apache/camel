@@ -23,6 +23,7 @@ import org.apache.camel.spi.annotations.Component;
 @Component("kubernetes-hpa")
 public class KubernetesHPAComponent extends AbstractKubernetesComponent {
 
+    @Override
     protected KubernetesHPAEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {
         KubernetesHPAEndpoint endpoint = new KubernetesHPAEndpoint(uri, this, config);
         return endpoint;

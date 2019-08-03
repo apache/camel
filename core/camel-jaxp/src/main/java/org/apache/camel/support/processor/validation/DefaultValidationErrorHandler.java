@@ -39,6 +39,7 @@ public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
     private List<SAXParseException> errors = new ArrayList<>();
     private List<SAXParseException> fatalErrors = new ArrayList<>();
 
+    @Override
     public void warning(SAXParseException e) throws SAXException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Validation warning: {}", e, e);
@@ -46,6 +47,7 @@ public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
         warnings.add(e);
     }
 
+    @Override
     public void error(SAXParseException e) throws SAXException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Validation error: {}", e, e);
@@ -53,6 +55,7 @@ public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
         errors.add(e);
     }
 
+    @Override
     public void fatalError(SAXParseException e) throws SAXException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Validation fatalError: {}", e, e);
@@ -60,6 +63,7 @@ public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
         fatalErrors.add(e);
     }
 
+    @Override
     public void reset() {
         warnings.clear();
         errors.clear();
@@ -70,6 +74,7 @@ public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
         return errors.isEmpty() && fatalErrors.isEmpty();
     }
 
+    @Override
     public void handleErrors(Exchange exchange, Schema schema, Result result) throws ValidationException {
         if (!isValid()) {
             throw new SchemaValidationException(exchange, schema, fatalErrors, errors, warnings);

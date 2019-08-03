@@ -62,6 +62,7 @@ public class ShiroSecurityTokenInjector implements Processor {
         return ShiroSecurityHelper.encrypt(securityToken, passPhrase, cipherService);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         ByteSource bytes = encrypt();
 

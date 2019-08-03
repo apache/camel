@@ -43,6 +43,7 @@ public class KinesisFirehoseComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(exchange.getIn().getHeader(KinesisFirehoseConstants.RECORD_ID));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

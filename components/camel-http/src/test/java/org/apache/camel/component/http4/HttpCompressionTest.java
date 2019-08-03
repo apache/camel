@@ -123,6 +123,7 @@ public class HttpCompressionTest extends BaseHttpTest {
 
     static class RequestDecompressingInterceptor implements HttpRequestInterceptor {
 
+        @Override
         public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
             Header contentEncoding = request.getFirstHeader("Content-Encoding");
 
@@ -162,6 +163,7 @@ public class HttpCompressionTest extends BaseHttpTest {
 
     static class ResponseCompressingInterceptor implements HttpResponseInterceptor {
 
+        @Override
         public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
             response.setHeader("Content-Encoding", "gzip");
             HttpEntity entity = response.getEntity();

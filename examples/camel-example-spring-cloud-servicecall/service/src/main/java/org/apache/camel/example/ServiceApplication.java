@@ -30,6 +30,7 @@ public class ServiceApplication {
     
     @Component
     public class Service1Route extends RouteBuilder {
+        @Override
         public void configure() throws Exception {
             from("undertow:http://localhost:9011")
                 .to("log:org.apache.camel.example?level=INFO&showAll=true&multiline=true")
@@ -45,6 +46,7 @@ public class ServiceApplication {
 
     @Component
     public class Service2Route extends RouteBuilder {
+        @Override
         public void configure() throws Exception {
             from("undertow:http://localhost:9021")
                 .to("log:org.apache.camel.example?level=INFO&showAll=true&multiline=true")

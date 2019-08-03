@@ -31,10 +31,12 @@ public class StringResultHandler implements ResultHandler {
     private StringWriter buffer = new StringWriter();
     private StreamResult result = new StreamResult(buffer);
 
+    @Override
     public Result getResult() {
         return result;
     }
 
+    @Override
     public void setBody(Message in) {
         in.setBody(buffer.toString());
     }

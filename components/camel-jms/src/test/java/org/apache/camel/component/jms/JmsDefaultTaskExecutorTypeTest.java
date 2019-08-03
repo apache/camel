@@ -115,6 +115,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         return nextThreadCount;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

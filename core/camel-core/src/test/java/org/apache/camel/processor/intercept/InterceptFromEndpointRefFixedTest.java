@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class InterceptFromEndpointRefFixedTest extends InterceptFromEndpointRefTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

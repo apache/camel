@@ -66,6 +66,7 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
     }
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -79,6 +80,7 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
     }
 
     private static class MyParamsProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             HttpMessage message = (HttpMessage)exchange.getIn();
             assertNotNull(message.getRequest());

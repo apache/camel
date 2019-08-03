@@ -44,28 +44,33 @@ public class DelegatePerformanceCounter implements PerformanceCounter {
         this.counter.setStatisticsEnabled(statisticsEnabled);
     }
 
+    @Override
     public void processExchange(Exchange exchange) {
         if (counter != null) {
             counter.processExchange(exchange);
         }
     }
 
+    @Override
     public void completedExchange(Exchange exchange, long time) {
         if (counter != null) {
             counter.completedExchange(exchange, time);
         }
     }
 
+    @Override
     public void failedExchange(Exchange exchange) {
         counter.failedExchange(exchange);
     }
 
+    @Override
     public boolean isStatisticsEnabled() {
         // statistics is only considered enabled if we have a counter to delegate to
         // otherwise we do not want to gather statistics (we are just a delegate with none to delegate to)
         return counter != null && counter.isStatisticsEnabled();
     }
 
+    @Override
     public void setStatisticsEnabled(boolean statisticsEnabled) {
         if (counter != null) {
             counter.setStatisticsEnabled(statisticsEnabled);

@@ -31,6 +31,7 @@ public class ServiceApplication {
 
     @Component
     public class Services extends RouteBuilder {
+        @Override
         public void configure() throws Exception {
             fromF("service:my-service:undertow:http://localhost:%d/path/to/service/1", SocketUtils.findAvailableTcpPort())
                 .transform().simple("Hi!, I'm service-1 on path: /path/to/service/1");

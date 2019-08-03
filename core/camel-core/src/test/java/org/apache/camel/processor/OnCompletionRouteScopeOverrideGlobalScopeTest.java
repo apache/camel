@@ -87,6 +87,7 @@ public class OnCompletionRouteScopeOverrideGlobalScopeTest extends ContextTestSu
         public MyProcessor() {
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             if ("Kabom".equals(exchange.getIn().getBody())) {
                 throw new IllegalArgumentException("Kabom");

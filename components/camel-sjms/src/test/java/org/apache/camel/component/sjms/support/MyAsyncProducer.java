@@ -41,10 +41,12 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
         this.executor = endpoint.getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MyProducer");
     }
 
+    @Override
     public MyAsyncEndpoint getEndpoint() {
         return (MyAsyncEndpoint) super.getEndpoint();
     }
 
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         executor.submit(new Callable<Object>() {
             public Object call() throws Exception {

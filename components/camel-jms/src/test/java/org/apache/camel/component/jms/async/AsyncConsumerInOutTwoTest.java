@@ -37,6 +37,7 @@ public class AsyncConsumerInOutTwoTest extends CamelTestSupport {
         assertEquals("Bye World", out);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

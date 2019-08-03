@@ -25,6 +25,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 @Ignore
 public class SpringPollEnricherRefTest extends PollEnricherTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/pollEnricherRef.xml");
     }

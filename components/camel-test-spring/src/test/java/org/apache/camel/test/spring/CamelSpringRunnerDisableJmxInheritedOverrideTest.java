@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 public class CamelSpringRunnerDisableJmxInheritedOverrideTest
         extends CamelSpringRunnerDisableJmxTest {
 
+    @Override
     @Test
     public void testJmx() throws Exception {
         assertEquals(DefaultManagementStrategy.class, camelContext.getManagementStrategy().getClass());

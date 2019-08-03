@@ -45,22 +45,27 @@ public class ManagedThroughputLogger extends ManagedProcessor implements Managed
         logger.reset();
     }
 
+    @Override
     public int getReceivedCounter() {
         return logger.getReceivedCounter();
     }
 
+    @Override
     public double getAverage() {
         return logger.getAverage();
     }
 
+    @Override
     public double getRate() {
         return logger.getRate();
     }
 
+    @Override
     public String getLastLogMessage() {
         return logger.getLastLogMessage();
     }
 
+    @Override
     public void resetThroughputLogger() {
         logger.reset();
     }

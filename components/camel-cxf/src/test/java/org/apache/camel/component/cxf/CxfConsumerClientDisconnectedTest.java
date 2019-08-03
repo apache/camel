@@ -38,6 +38,7 @@ public class CxfConsumerClientDisconnectedTest extends CamelTestSupport {
     private String cxfRsEndpointUri = "cxf://http://localhost:" + CXT + "/rest?synchronous=" + isSynchronous()
                                       + "&serviceClass=org.apache.camel.component.cxf.ServiceProvider&dataFormat=PAYLOAD";
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
         return new RouteBuilder() {

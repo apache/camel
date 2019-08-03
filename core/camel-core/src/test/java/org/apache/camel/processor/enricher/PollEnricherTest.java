@@ -122,6 +122,7 @@ public class PollEnricherTest extends ContextTestSupport {
         assertNull(exchange.getException());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

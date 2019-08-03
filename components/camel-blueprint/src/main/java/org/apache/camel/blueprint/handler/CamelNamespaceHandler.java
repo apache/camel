@@ -177,6 +177,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         }
     }
 
+    @Override
     public URL getSchemaLocation(String namespace) {
         if (BLUEPRINT_NS.equals(namespace)) {
             return getClass().getClassLoader().getResource("camel-blueprint.xsd");
@@ -184,11 +185,13 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         return null;
     }
 
+    @Override
     @SuppressWarnings({"rawtypes"})
     public Set<Class> getManagedClasses() {
         return new HashSet<>(Arrays.asList(BlueprintCamelContext.class));
     }
 
+    @Override
     public Metadata parse(Element element, ParserContext context) {
         LOG.trace("Parsing element {}", element);
 
@@ -661,6 +664,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         return (BlueprintContainer) ptm.getObject();
     }
 
+    @Override
     public ComponentMetadata decorate(Node node, ComponentMetadata component, ParserContext context) {
         return null;
     }
@@ -796,6 +800,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             this.value = value;
         }
 
+        @Override
         public T call() throws Exception {
             return value;
         }
@@ -823,6 +828,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             return null;
         }
 
+        @Override
         public Object beforeInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
             LOG.trace("Before init of bean: {} -> {}", beanName, bean);
             // prefer to inject later in afterInit
@@ -964,6 +970,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
         }
 
+        @Override
         public Object afterInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
             LOG.trace("After init of bean: {} -> {}", beanName, bean);
             // we cannot inject CamelContextAware beans as the CamelContext may not be ready
@@ -973,9 +980,11 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             return bean;
         }
 
+        @Override
         public void beforeDestroy(Object bean, String beanName) {
         }
 
+        @Override
         public void afterDestroy(Object bean, String beanName) {
         }
 
@@ -1011,6 +1020,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             this.blueprintContainer = blueprintContainer;
         }
 
+        @Override
         public void process(ComponentDefinitionRegistry componentDefinitionRegistry) {
             CamelContextFactoryBean ccfb = (CamelContextFactoryBean) blueprintContainer.getComponentInstance(".camelBlueprint.factory." + camelContextName);
             CamelContext camelContext = ccfb.getContext();

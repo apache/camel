@@ -58,6 +58,7 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
         return type.toString();
     }
 
+    @Override
     public Object getBean()  {
         // only create a bean if we have constructors
         if (beanInfo.hasPublicConstructors()) {
@@ -67,22 +68,27 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
         }
     }
 
+    @Override
     public Processor getProcessor() {
         return null;
     }
 
+    @Override
     public boolean supportProcessor() {
         return false;
     }
 
+    @Override
     public BeanInfo getBeanInfo() {
         return beanInfo;
     }
 
+    @Override
     public BeanInfo getBeanInfo(Object bean) {
         return null;
     }
 
+    @Override
     public Class<?> getType() {
         return type;
     }

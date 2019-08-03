@@ -477,6 +477,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         }
     }
 
+    @Override
     protected void setAccessToken(Request request) {
         // replace old token
         request.getHeaders().put(TOKEN_HEADER, TOKEN_PREFIX + accessToken);

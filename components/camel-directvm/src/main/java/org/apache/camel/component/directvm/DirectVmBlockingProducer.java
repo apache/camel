@@ -42,10 +42,12 @@ public class DirectVmBlockingProducer extends DefaultAsyncProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         getConsumer(exchange).getProcessor().process(exchange);
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             return getConsumer(exchange).getAsyncProcessor().process(exchange, callback);

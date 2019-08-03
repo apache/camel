@@ -46,6 +46,7 @@ public class HL7MLLPCodecStandAndEndBytesTest extends HL7TestSupport {
         return codec;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

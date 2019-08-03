@@ -29,10 +29,12 @@ public class MyMockFolder extends MockFolder {
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getFullName() {
         return name;
     }

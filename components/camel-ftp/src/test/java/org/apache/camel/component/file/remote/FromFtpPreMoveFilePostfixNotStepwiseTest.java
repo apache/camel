@@ -21,6 +21,7 @@ package org.apache.camel.component.file.remote;
  */
 public class FromFtpPreMoveFilePostfixNotStepwiseTest extends FromFtpPreMoveFilePostfixTest {
 
+    @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false"
                 + "&preMove=${file:name}.old&stepwise=false";

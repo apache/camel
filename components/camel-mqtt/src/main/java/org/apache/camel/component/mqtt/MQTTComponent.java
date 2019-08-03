@@ -38,6 +38,7 @@ public class MQTTComponent extends DefaultComponent {
     public MQTTComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MQTTConfiguration configuration = new MQTTConfiguration();
 

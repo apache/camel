@@ -45,10 +45,12 @@ public class BytesSource extends StreamSource implements Serializable {
         setSystemId(systemId);
     }
 
+    @Override
     public InputStream getInputStream() {
         return new ByteArrayInputStream(data);
     }
 
+    @Override
     public Reader getReader() {
         return new InputStreamReader(getInputStream());
     }
@@ -57,6 +59,7 @@ public class BytesSource extends StreamSource implements Serializable {
         return data;
     }
 
+    @Override
     public String toString() {
         return "BytesSource[" + new String(data) + "]";
     }

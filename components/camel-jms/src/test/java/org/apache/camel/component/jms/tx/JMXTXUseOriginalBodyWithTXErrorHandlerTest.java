@@ -52,6 +52,7 @@ public class JMXTXUseOriginalBodyWithTXErrorHandlerTest extends JMXTXUseOriginal
         return new ClassPathXmlApplicationContext("/org/apache/camel/component/jms/tx/JMXTXUseOriginalBodyWithTXErrorHandlerTest.xml");
     }
 
+    @Override
     @Test
     public void testWithConstant() throws InterruptedException {
         endpoint.expectedMessageCount(0);
@@ -64,6 +65,7 @@ public class JMXTXUseOriginalBodyWithTXErrorHandlerTest extends JMXTXUseOriginal
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     @Test
     public void testWithBean() throws InterruptedException {
         endpoint.expectedMessageCount(0);

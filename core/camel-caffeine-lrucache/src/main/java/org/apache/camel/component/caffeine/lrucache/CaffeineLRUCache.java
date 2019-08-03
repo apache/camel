@@ -205,6 +205,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
         return map.remove(o);
     }
 
+    @Override
     public void putAll(Map<? extends K, ? extends V> map) {
         this.cache.putAll(map);
     }
@@ -242,6 +243,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     /**
      * Gets the number of cache hits
      */
+    @Override
     public long getHits() {
         return hits.longValue();
     }
@@ -249,6 +251,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     /**
      * Gets the number of cache misses.
      */
+    @Override
     public long getMisses() {
         return misses.longValue();
     }
@@ -256,6 +259,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     /**
      * Gets the number of evicted entries.
      */
+    @Override
     public long getEvicted() {
         return evicted.longValue();
     }
@@ -263,6 +267,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     /**
      * Returns the maxCacheSize.
      */
+    @Override
     public int getMaxCacheSize() {
         return maxCacheSize;
     }
@@ -270,12 +275,14 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     /**
      * Rest the cache statistics such as hits and misses.
      */
+    @Override
     public void resetStatistics() {
         hits.reset();
         misses.reset();
         evicted.reset();
     }
 
+    @Override
     public void cleanUp() {
         cache.cleanUp();
     }

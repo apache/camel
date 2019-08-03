@@ -41,6 +41,7 @@ public class LinkedInException extends WebApplicationException {
         return error;
     }
 
+    @Override
     public Response getResponse() {
         return response;
     }

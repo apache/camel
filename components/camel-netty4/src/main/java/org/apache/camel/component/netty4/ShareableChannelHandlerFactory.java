@@ -29,6 +29,7 @@ public class ShareableChannelHandlerFactory extends DefaultChannelHandlerFactory
         this.channelHandler = channelHandler;
     }
     
+    @Override
     public ChannelHandler newChannelHandler() {
         return channelHandler;
     }

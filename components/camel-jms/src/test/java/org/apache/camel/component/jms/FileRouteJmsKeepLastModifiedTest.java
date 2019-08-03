@@ -57,6 +57,7 @@ public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
         assertEquals("Should keep last modified", inbox.lastModified(), outbox.lastModified());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -66,6 +67,7 @@ public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

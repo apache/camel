@@ -67,6 +67,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         return "bindy-kvp";
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         final BindyAbstractFactory factory = getFactory();
@@ -91,6 +92,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         }
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyKeyValuePairFactory factory = (BindyKeyValuePairFactory) getFactory();
 
@@ -177,6 +179,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         }
     }
 
+    @Override
     protected BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception {
         BindyKeyValuePairFactory bindyKeyValuePairFactory = new BindyKeyValuePairFactory(getClassType());
         bindyKeyValuePairFactory.setFormatFactory(formatFactory);

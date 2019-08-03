@@ -37,6 +37,7 @@ public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends Spring
     @Produce("direct:startSimple")
     protected ProducerTemplate template;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/outBox");

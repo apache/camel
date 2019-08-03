@@ -35,6 +35,7 @@ public class JmsRequestReplyTemporaryCacheNoneTest extends CamelTestSupport {
 
     protected String componentName = "activemq";
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

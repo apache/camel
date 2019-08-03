@@ -73,6 +73,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
 
     private boolean supportRedirect;
 
+    @Override
     public void init(Exchange exchange, JettyHttpBinding jettyBinding,
                      final HttpClient client, AsyncCallback callback) {
         this.exchange = exchange;
@@ -128,11 +129,13 @@ public class JettyContentExchange9 implements JettyContentExchange {
         doTaskCompleted(ex);
     }
 
+    @Override
     public byte[] getBody() {
         // must return the content as raw bytes
         return getResponseContentBytes();
     }
 
+    @Override
     public String getUrl() {
         try {
             return this.request.getURI().toURL().toExternalForm();
@@ -169,47 +172,58 @@ public class JettyContentExchange9 implements JettyContentExchange {
         }
     }
 
+    @Override
     public void setRequestContentType(String contentType) {
         this.requestContentType = contentType;
     }
 
+    @Override
     public int getResponseStatus() {
         return this.response.getStatus();
     }
 
+    @Override
     public void setMethod(String method) {
         this.request.method(method);
     }
 
+    @Override
     public void setTimeout(long timeout) {
         this.request.timeout(timeout, TimeUnit.MILLISECONDS);
     }
 
+    @Override
     public void setURL(String url) {
         this.request = client.newRequest(url);
     }
 
+    @Override
     public void setRequestContent(byte[] byteArray) {
         this.request.content(new BytesContentProvider(byteArray), this.requestContentType);
     }
 
+    @Override
     public void setRequestContent(String data, String charset) throws UnsupportedEncodingException {
         StringContentProvider cp = charset != null ? new StringContentProvider(data, charset) : new StringContentProvider(data);
         this.request.content(cp, this.requestContentType);
     }
 
+    @Override
     public void setRequestContent(InputStream ins) {
         this.request.content(new InputStreamContentProvider(ins), this.requestContentType);
     }
 
+    @Override
     public void setRequestContent(InputStream ins, int contentLength) {
         this.request.content(new CamelInputStreamContentProvider(ins, contentLength), this.requestContentType);
     }
 
+    @Override
     public void addRequestHeader(String key, String s) {
         this.request.header(key, s);
     }
 
+    @Override
     public void send(HttpClient client) throws IOException {
         org.eclipse.jetty.client.api.Request.Listener listener = new Request.Listener.Adapter() {
 
@@ -268,6 +282,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
         this.response = response;
     }
 
+    @Override
     public byte[] getResponseContentBytes() {
         return responseContent;
     }
@@ -298,10 +313,12 @@ public class JettyContentExchange9 implements JettyContentExchange {
         }
     }
 
+    @Override
     public Map<String, Collection<String>> getRequestHeaders() {
         return getFieldsAsMap(request.getHeaders());
     }
 
+    @Override
     public Map<String, Collection<String>> getResponseHeaders() {
         return getFieldsAsMap(response.getHeaders());
     }

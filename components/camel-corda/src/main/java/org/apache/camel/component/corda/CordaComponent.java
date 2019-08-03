@@ -48,6 +48,7 @@ public class CordaComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         CordaConfiguration conf =  configuration != null ? configuration.copy() : new CordaConfiguration();
         setProperties(conf, parameters);

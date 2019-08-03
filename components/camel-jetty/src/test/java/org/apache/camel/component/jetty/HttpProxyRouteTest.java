@@ -62,6 +62,7 @@ public class HttpProxyRouteTest extends BaseJettyTest {
         assertEquals("Get a wrong response message", "username=abc&pass=password", out);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

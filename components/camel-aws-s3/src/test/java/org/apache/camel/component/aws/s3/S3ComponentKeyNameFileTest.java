@@ -70,6 +70,7 @@ public class S3ComponentKeyNameFileTest extends CamelTestSupport {
         writer.close();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

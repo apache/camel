@@ -26,6 +26,7 @@ import org.junit.Test;
  */
 public class TransactedInterceptSendToEndpointTest extends TransactionalClientDataSourceTest {
 
+    @Override
     @Test
     public void testTransactionSuccess() throws Exception {
         MockEndpoint intercepted = getMockEndpoint("mock:intercepted");
@@ -36,6 +37,7 @@ public class TransactedInterceptSendToEndpointTest extends TransactionalClientDa
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint intercepted = getMockEndpoint("mock:intercepted");
@@ -46,6 +48,7 @@ public class TransactedInterceptSendToEndpointTest extends TransactionalClientDa
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {

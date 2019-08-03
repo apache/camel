@@ -137,6 +137,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
     }
 
+    @Override
     public void process(Exchange exchange) {
         if (output == null) {
             // no output then just return
@@ -148,6 +149,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     /**
      * Process the exchange using redelivery error handling.
      */
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // Create the redelivery state object for this exchange
         RedeliveryState state = new RedeliveryState(exchange, callback);
@@ -160,6 +162,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return false;
     }
 
+    @Override
     public CompletableFuture<Exchange> processAsync(Exchange exchange) {
         AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
         process(exchange, callback);
@@ -178,6 +181,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.outputAsync = AsyncProcessorConverterHelper.convert(output);
     }
 
+    @Override
     public boolean supportTransacted() {
         return false;
     }
@@ -296,6 +300,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     /**
      * Returns the output processor
      */
+    @Override
     public Processor getOutput() {
         return output;
     }
@@ -377,6 +382,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             this.callback = callback;
         }
 
+        @Override
         public String toString() {
             return "Step[" + exchange.getExchangeId() + "," + RedeliveryErrorHandler.this + "]";
         }
@@ -384,6 +390,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         /**
          * Redelivery logic.
          */
+        @Override
         public void run() {
             // can we still run
             if (!isRunAllowed()) {

@@ -104,6 +104,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return "XQuery[" + expression + "]";
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Object body = evaluate(exchange);
         exchange.getOut().setBody(body);
@@ -112,6 +113,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
     }
     
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         Object result = evaluate(exchange);
         return exchange.getContext().getTypeConverter().convertTo(type, result);
@@ -214,6 +216,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return answer;
     }
 
+    @Override
     public boolean matches(Exchange exchange) {
         LOG.debug("Matches: {} for exchange: {}", expression, exchange);
         try {
@@ -369,12 +372,14 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     /**
      * Configures the namespace context from the given DOM element
      */
+    @Override
     public void setNamespaces(Map<String, String> namespaces) {
         namespacePrefixes.putAll(namespaces);
         // more namespace, we must re initialize
         initialized.set(false);
     }
 
+    @Override
     public Map<String, String> getNamespaces() {
         return namespacePrefixes;
     }

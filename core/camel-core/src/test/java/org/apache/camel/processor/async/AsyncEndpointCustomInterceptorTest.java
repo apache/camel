@@ -91,6 +91,7 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
     private static class MyInterceptor implements InterceptStrategy {
         private AtomicInteger counter = new AtomicInteger();
 
+        @Override
         public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
                                                      final Processor target, final Processor nextTarget) throws Exception {
 

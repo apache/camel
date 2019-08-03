@@ -55,6 +55,7 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
         template.sendBodyAndHeader(url, "", Exchange.FILE_NAME, "empty2.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

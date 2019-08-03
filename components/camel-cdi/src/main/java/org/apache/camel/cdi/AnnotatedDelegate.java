@@ -42,6 +42,7 @@ class AnnotatedDelegate implements Annotated {
         this.annotations = delegate.getAnnotations();
     }
 
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> type) {
         return annotations.stream()
             .filter(isAnnotationType(type))
@@ -50,6 +51,7 @@ class AnnotatedDelegate implements Annotated {
             .orElse(null);
     }
 
+    @Override
     public <T extends Annotation> Set<T> getAnnotations(Class<T> type) {
         return annotations.stream()
             .filter(isAnnotationType(type))
@@ -57,30 +59,37 @@ class AnnotatedDelegate implements Annotated {
             .collect(toSet());
     }
 
+    @Override
     public Set<Annotation> getAnnotations() {
         return annotations;
     }
 
+    @Override
     public Type getBaseType() {
         return delegate.getBaseType();
     }
 
+    @Override
     public Set<Type> getTypeClosure() {
         return delegate.getTypeClosure();
     }
 
+    @Override
     public boolean isAnnotationPresent(Class<? extends Annotation> type) {
         return annotations.stream().anyMatch(isAnnotationType(type));
     }
 
+    @Override
     public String toString() {
         return delegate.toString();
     }
     
+    @Override
     public int hashCode() {
         return delegate.hashCode();
     }
     
+    @Override
     public boolean equals(Object object) {
         return delegate.equals(object);
     }

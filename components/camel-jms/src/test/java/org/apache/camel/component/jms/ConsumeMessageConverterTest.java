@@ -39,6 +39,7 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
     @BindToRegistry("myMessageConverter")
     private MyMessageConverter conv = new MyMessageConverter();
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -70,6 +71,7 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -80,10 +82,12 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
 
     private static class MyMessageConverter implements MessageConverter {
 
+        @Override
         public Message toMessage(Object object, Session session) throws JMSException, MessageConversionException {
             return null;
         }
 
+        @Override
         public Object fromMessage(Message message) throws JMSException, MessageConversionException {
             // just return the underlying JMS message directly so we can test
             // that this converter is used

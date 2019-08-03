@@ -98,6 +98,7 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
 
     private class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
             invoked.incrementAndGet();
 
@@ -112,6 +113,7 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
             receivedTimeout = timeout;
         }
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

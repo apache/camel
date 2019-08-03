@@ -60,10 +60,12 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
         return component;
     }
 
+    @Override
     public String getComponentName() {
         return name;
     }
 
+    @Override
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (component instanceof StatefulService) {
@@ -75,14 +77,17 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
         return ServiceStatus.Started.name();
     }
 
+    @Override
     public String getCamelId() {
         return component.getCamelContext().getName();
     }
 
+    @Override
     public String getCamelManagementName() {
         return component.getCamelContext().getManagementName();
     }
 
+    @Override
     public Object getInstance() {
         return component;
     }

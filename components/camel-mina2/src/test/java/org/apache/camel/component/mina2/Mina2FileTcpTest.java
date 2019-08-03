@@ -31,6 +31,7 @@ public class Mina2FileTcpTest extends BaseMina2Test {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 

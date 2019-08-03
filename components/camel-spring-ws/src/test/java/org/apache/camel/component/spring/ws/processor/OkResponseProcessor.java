@@ -37,6 +37,7 @@ public class OkResponseProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(OkResponseProcessor.class);
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         LOG.info("Crafting standard response in StockQuoteResponseProcessor");
         InputStream is = getClass().getResourceAsStream("/stockquote-response.xml");

@@ -104,10 +104,12 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
         this.setPermissionsList(permissionsList);
     }
 
+    @Override
     public void beforeWrap(RouteContext routeContext, NamedNode definition) {
         // noop
     }
     
+    @Override
     public Processor wrap(RouteContext routeContext, final Processor processor) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Securing route {} using Shiro policy {}", routeContext.getRouteId(), this);

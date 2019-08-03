@@ -91,6 +91,7 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
         return xs;
     }
 
+    @Override
     protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {
         if (isPrettyPrint()) {
             try {
@@ -104,6 +105,7 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
         return new StaxWriter(new QNameMap(), mof.createXMLStreamWriter(stream));
     }
 
+    @Override
     protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {
         return new StaxReader(new QNameMap(), mif.createXMLStreamReader(stream));
     }

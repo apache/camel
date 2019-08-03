@@ -56,6 +56,7 @@ public class SortProcessor<T> extends AsyncProcessorSupport implements IdAware, 
         return true;
     }
 
+    @Override
     public String toString() {
         return "Sort[" + expression + "]";
     }
@@ -65,10 +66,12 @@ public class SortProcessor<T> extends AsyncProcessorSupport implements IdAware, 
         return "sort[" + expression + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

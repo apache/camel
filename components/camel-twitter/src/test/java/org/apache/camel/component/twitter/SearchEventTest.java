@@ -50,6 +50,7 @@ public class SearchEventTest extends CamelTwitterTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -70,6 +71,7 @@ public class SearchEventTest extends CamelTwitterTestSupport {
     }
 
     public class TwitterHandler implements InvocationHandler {
+        @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             //mock some methods
             if ("addListener".equals(method.getName())) {

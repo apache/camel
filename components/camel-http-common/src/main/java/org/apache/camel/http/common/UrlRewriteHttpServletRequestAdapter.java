@@ -43,6 +43,7 @@ public final class UrlRewriteHttpServletRequestAdapter extends HttpServletReques
         this.contextPath = contextPath;
     }
 
+    @Override
     public String getContextPath() {
         return contextPath != null ? contextPath : super.getContextPath();
     }

@@ -45,6 +45,7 @@ public class ThriftEndpoint extends DefaultEndpoint {
         servicePackage = ThriftUtils.extractServicePackage(configuration.getService());
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         ThriftProducer producer = new ThriftProducer(this, configuration);
         if (isSynchronous()) {
@@ -54,6 +55,7 @@ public class ThriftEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new ThriftConsumer(this, processor, configuration);
     }

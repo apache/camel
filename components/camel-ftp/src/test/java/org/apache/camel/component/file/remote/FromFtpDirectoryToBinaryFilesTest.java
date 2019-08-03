@@ -71,6 +71,7 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl(), IOConverter.toFile("src/test/data/ftpbinarytest/logo1.jpeg"), Exchange.FILE_NAME, "logo1.jpeg");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

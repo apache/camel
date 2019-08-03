@@ -70,6 +70,7 @@ public class Mina2ProducerShutdownMockTest extends BaseMina2Test {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 

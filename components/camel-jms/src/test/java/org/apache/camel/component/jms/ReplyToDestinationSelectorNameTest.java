@@ -45,6 +45,7 @@ public class ReplyToDestinationSelectorNameTest extends CamelTestSupport {
         assertEquals("Bye Camel", body2);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

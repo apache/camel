@@ -54,10 +54,12 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
         this.scheduledExecutorService = scheduledExecutorService;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

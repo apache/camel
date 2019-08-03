@@ -45,17 +45,20 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent9.class);
 
+    @Override
     protected CamelHttpClient createCamelHttpClient(HttpClientTransport transport, SslContextFactory sslContextFactory) {
         return new CamelHttpClient9(transport, sslContextFactory);
     }
 
+    @Override
     protected JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException {
         return new JettyHttpEndpoint9(this, endpointUri.toString(), httpUri);
     }
     
+    @Override
     protected AbstractConnector createConnectorJettyInternal(Server server,
-                                                      JettyHttpEndpoint endpoint,
-                                                      SslContextFactory sslcf) {
+                                                             JettyHttpEndpoint endpoint,
+                                                             SslContextFactory sslcf) {
         try {
             String host = endpoint.getHttpUri().getHost();
             int port = endpoint.getPort();

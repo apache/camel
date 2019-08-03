@@ -32,6 +32,7 @@ public class ValidatingDomProcessorTest extends ValidatingProcessorTest {
         super.setUp();
     }
 
+    @Override
     @Test
     public void testNonWellFormedXml() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:invalid");

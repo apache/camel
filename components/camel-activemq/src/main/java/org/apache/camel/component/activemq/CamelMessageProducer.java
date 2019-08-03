@@ -56,6 +56,7 @@ public class CamelMessageProducer extends ActiveMQMessageProducerSupport {
         }
     }
 
+    @Override
     public CamelDestination getDestination() throws JMSException {
         return destination;
     }
@@ -64,6 +65,7 @@ public class CamelMessageProducer extends ActiveMQMessageProducerSupport {
         return endpoint;
     }
 
+    @Override
     public void close() throws JMSException {
         if (!closed) {
             closed = true;
@@ -75,6 +77,7 @@ public class CamelMessageProducer extends ActiveMQMessageProducerSupport {
         }
     }
 
+    @Override
     public void send(Destination destination, Message message, int deliveryMode, int priority, long timeToLive) throws JMSException {
         CamelDestination camelDestination = null;
         if (ObjectHelper.equal(destination, this.destination)) {
@@ -94,6 +97,7 @@ public class CamelMessageProducer extends ActiveMQMessageProducerSupport {
         }
     }
 
+    @Override
     protected void checkClosed() throws IllegalStateException {
         if (closed) {
             throw new IllegalStateException("The producer is closed");

@@ -135,9 +135,11 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedOperation(description = " Reset the statistics counters")
     void resetStatistics();
 
+    @Override
     @ManagedAttribute(description = "Sets whether statistics is enabled")
     boolean isStatisticsEnabled();
 
+    @Override
     @ManagedAttribute(description = "Sets whether statistics is enabled")
     void setStatisticsEnabled(boolean statisticsEnabled);
 

@@ -131,6 +131,7 @@ public class RoutingSlipTest extends ContextTestSupport {
         template.sendBody("direct:a", ANSWER);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

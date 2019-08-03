@@ -41,6 +41,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTe
     private String url = "direct:start?block=false";
     private MockEndpoint result;
     
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

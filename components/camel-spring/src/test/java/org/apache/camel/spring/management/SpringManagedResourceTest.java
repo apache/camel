@@ -28,6 +28,7 @@ public class SpringManagedResourceTest extends ManagedResourceTest {
         return true;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedResourceTest.xml");
     }

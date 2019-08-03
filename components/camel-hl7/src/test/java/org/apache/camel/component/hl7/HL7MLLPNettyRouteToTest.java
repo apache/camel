@@ -51,6 +51,7 @@ public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
         return encoder;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

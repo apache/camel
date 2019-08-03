@@ -39,6 +39,7 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
         return true;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedCamelContextTest.xml");
     }

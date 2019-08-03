@@ -65,6 +65,7 @@ public class CxfRsBindingConfigurationSelectionTest extends CamelTestSupport {
         return (CxfRsEndpoint) context.getRoute(routeId).getConsumer().getEndpoint();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

@@ -55,6 +55,7 @@ public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
             }
         }
 
+        @Override
         public boolean isStopped() {
             return stopped.get();
         }

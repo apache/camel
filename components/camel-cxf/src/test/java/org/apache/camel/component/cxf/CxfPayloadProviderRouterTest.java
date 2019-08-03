@@ -71,6 +71,7 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfProviderRouterBeans.xml");
     }
 
+    @Override
     @Test
     public void testPublishEndpointUrl() throws Exception {
         final String path = getClass().getSimpleName() + "/CamelContext/RouterPort/" + getClass().getSimpleName();

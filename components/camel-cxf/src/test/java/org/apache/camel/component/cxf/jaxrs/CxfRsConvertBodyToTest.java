@@ -36,6 +36,7 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
     private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConvertBodyToTest";
     private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + CXT + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

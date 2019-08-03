@@ -33,6 +33,7 @@ public class MockConnectionFactory extends ActiveMQConnectionFactory {
     public MockConnectionFactory(String brokerURL) {
         super(createURI(brokerURL));
     }
+    @Override
     public Connection createConnection() throws JMSException {
         return this.createActiveMQConnection();
     }
@@ -44,6 +45,7 @@ public class MockConnectionFactory extends ActiveMQConnectionFactory {
         }
     }
 
+    @Override
     protected ActiveMQConnection createActiveMQConnection(Transport transport, JMSStatsImpl stats) throws Exception {
         MockConnection connection = new MockConnection(transport, this.getClientIdGenerator(), this.getConnectionIdGenerator(), stats, returnBadSessionNTimes);
         return connection;

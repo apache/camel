@@ -32,6 +32,7 @@ import org.apache.karaf.shell.support.completers.StringsCompleter;
 @Service
 public class CamelContextCompleter extends CamelControllerImpl implements Completer {
 
+    @Override
     public int complete(Session session, CommandLine commandLine, List<String> candidates) {
         try {
             StringsCompleter delegate = new StringsCompleter();

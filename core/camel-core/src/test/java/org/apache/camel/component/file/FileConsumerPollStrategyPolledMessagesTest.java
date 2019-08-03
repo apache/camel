@@ -72,6 +72,7 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
         assertEquals(2, maxPolls);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -83,10 +84,12 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
 
     private class MyPollStrategy implements PollingConsumerPollStrategy {
 
+        @Override
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             return true;
         }
 
+        @Override
         public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
             if (polledMessages > maxPolls) {
                 maxPolls = polledMessages;
@@ -94,6 +97,7 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
             latch.countDown();
         }
 
+        @Override
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
             return false;
         }

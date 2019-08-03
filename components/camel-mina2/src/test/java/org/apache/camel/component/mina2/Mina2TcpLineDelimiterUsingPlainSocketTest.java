@@ -114,6 +114,7 @@ public class Mina2TcpLineDelimiterUsingPlainSocketTest extends BaseMina2Test {
         return sb.toString();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 

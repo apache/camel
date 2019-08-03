@@ -48,10 +48,12 @@ public class FopEndpoint extends DefaultEndpoint {
         this.outputType = outputType;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new FopProducer(this, fopFactory, outputType.getFormatExtended());
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported for FOP endpoint");
     }

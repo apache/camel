@@ -112,6 +112,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         return operationConfig;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         if (configuration.getDisconnect() && client == null) {
             startClient();

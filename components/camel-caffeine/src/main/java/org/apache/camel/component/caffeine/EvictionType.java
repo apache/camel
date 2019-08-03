@@ -42,6 +42,7 @@ public enum EvictionType {
         throw new IllegalArgumentException(String.format("Eviction type '%s' is not supported by this component.", name));
     }
 
+    @Override
     public String toString() {
         return type;
     }

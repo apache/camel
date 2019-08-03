@@ -127,10 +127,12 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         return (SedaComponent) super.getComponent();
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new SedaProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull(), getOfferTimeout());
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (getComponent() != null) {
             // all consumers must match having the same multipleConsumers options
@@ -419,10 +421,12 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 /**
      * Returns the current pending exchanges
      */
+    @Override
     public List<Exchange> getExchanges() {
         return new ArrayList<>(getQueue());
     }
 
+    @Override
     @ManagedAttribute
     public boolean isMultipleConsumersSupported() {
         return isMultipleConsumers();

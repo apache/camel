@@ -44,6 +44,7 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
         this.endpointRegistry = endpointRegistry;
     }
 
+    @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
@@ -53,30 +54,37 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
         return endpointRegistry;
     }
 
+    @Override
     public String getSource() {
         return endpointRegistry.toString();
     }
 
+    @Override
     public Integer getDynamicSize() {
         return endpointRegistry.dynamicSize();
     }
 
+    @Override
     public Integer getStaticSize() {
         return endpointRegistry.staticSize();
     }
 
+    @Override
     public Integer getSize() {
         return endpointRegistry.size();
     }
 
+    @Override
     public Integer getMaximumCacheSize() {
         return endpointRegistry.getMaximumCacheSize();
     }
 
+    @Override
     public void purge() {
         endpointRegistry.purge();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public TabularData listEndpoints() {
         try {

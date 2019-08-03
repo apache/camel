@@ -44,14 +44,17 @@ public class DefaultJavaMailSender implements JavaMailSender {
     private String protocol;
     private Session session;
 
+    @Override
     public String getHost() {
         return host;
     }
 
+    @Override
     public void setHost(String host) {
         this.host = host;
     }
 
+    @Override
     public Properties getJavaMailProperties() {
         if (javaMailProperties == null) {
             javaMailProperties = new Properties();
@@ -59,18 +62,22 @@ public class DefaultJavaMailSender implements JavaMailSender {
         return javaMailProperties;
     }
 
+    @Override
     public void setJavaMailProperties(Properties javaMailProperties) {
         this.javaMailProperties = javaMailProperties;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @Override
     public Session getSession() {
         if (session == null) {
             session = Session.getInstance(getJavaMailProperties(), new DefaultAuthenticator(username, password));
@@ -78,30 +85,37 @@ public class DefaultJavaMailSender implements JavaMailSender {
         return session;
     }
 
+    @Override
     public void setSession(Session session) {
         this.session = session;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
 
+    @Override
     public int getPort() {
         return port;
     }
 
+    @Override
     public void setPort(int port) {
         this.port = port;
     }
 
+    @Override
     public String getProtocol() {
         return protocol;
     }
 
+    @Override
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }

@@ -71,6 +71,7 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
         deadEndpoint = resolveMandatoryEndpoint("mock:dead", MockEndpoint.class);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

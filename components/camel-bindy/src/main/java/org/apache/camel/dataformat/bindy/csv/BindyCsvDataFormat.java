@@ -69,6 +69,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         return "bindy-csv";
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 
@@ -138,6 +139,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         return canReturnEmptyListOfModels;
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyCsvFactory factory = (BindyCsvFactory)getFactory();
         org.apache.camel.util.ObjectHelper.notNull(factory, "not instantiated");

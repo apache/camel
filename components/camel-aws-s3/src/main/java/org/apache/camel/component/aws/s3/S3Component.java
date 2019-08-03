@@ -52,6 +52,7 @@ public class S3Component extends DefaultComponent {
         registerExtension(new S3ComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final S3Configuration configuration = this.configuration.copy();
         setProperties(configuration, parameters);

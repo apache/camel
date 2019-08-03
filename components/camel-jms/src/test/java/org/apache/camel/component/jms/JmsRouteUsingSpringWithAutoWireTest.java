@@ -20,6 +20,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JmsRouteUsingSpringWithAutoWireTest extends JmsRouteUsingSpringAndJmsNameTest {
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpringWithAutoWire.xml");
     }

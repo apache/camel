@@ -31,6 +31,7 @@ public class YammerMessageAndUserRouteTest extends CamelTestSupport {
     private static final String YAMMER_CURRENT_USER_CONSUMER = "yammer:current?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken";
     private static final String YAMMER_MESSAGES_CONSUMER = "yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken";
 
+    @Override
     @Before
     public void setUp() throws Exception { 
         super.setUp();

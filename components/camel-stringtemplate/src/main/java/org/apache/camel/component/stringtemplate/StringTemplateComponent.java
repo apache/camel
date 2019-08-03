@@ -29,6 +29,7 @@ public class StringTemplateComponent extends DefaultComponent {
     public StringTemplateComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         StringTemplateEndpoint answer = new StringTemplateEndpoint(uri, this, remaining);
         setProperties(answer, parameters);

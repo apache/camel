@@ -41,6 +41,7 @@ public class FileHeaderFileNameProducedTest extends ContextTestSupport {
     }
 
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

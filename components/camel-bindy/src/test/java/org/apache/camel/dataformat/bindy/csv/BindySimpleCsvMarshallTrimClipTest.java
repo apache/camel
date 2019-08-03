@@ -62,6 +62,7 @@ public class BindySimpleCsvMarshallTrimClipTest extends AbstractJUnit4SpringCont
     }
 
     public static class ContextConfig extends RouteBuilder {
+        @Override
         public void configure() {
             BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
                 org.apache.camel.dataformat.bindy.model.simple.oneclassandtrimandclip.Customer.class);

@@ -53,12 +53,14 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
     }
 
 
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("error", new GenerateError());
         return jndi;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

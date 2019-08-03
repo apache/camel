@@ -166,6 +166,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     private List<X509Certificate> certList;
     private AS2SignedDataGenerator gen;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

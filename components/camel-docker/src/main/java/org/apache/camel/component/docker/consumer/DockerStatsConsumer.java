@@ -73,6 +73,7 @@ public class DockerStatsConsumer extends DefaultConsumer {
 
     protected class StatsCallback extends ResultCallbackTemplate<StatsCallback, Statistics> {
 
+        @Override
         public void onNext(Statistics statistics) {
             LOGGER.debug("Received Docker Statistics Event: " + statistics);
 

@@ -23,6 +23,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 
 public class BeanCallDerivedClassTest extends CamelSpringTestSupport {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/itest/issues/BeanCallDerivedClassTest-context.xml");
     }

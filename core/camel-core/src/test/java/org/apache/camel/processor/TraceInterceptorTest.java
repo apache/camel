@@ -31,6 +31,7 @@ public class TraceInterceptorTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "This is Copenhagen calling", "from", "Claus");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

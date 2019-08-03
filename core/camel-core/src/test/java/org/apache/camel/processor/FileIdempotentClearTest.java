@@ -62,6 +62,7 @@ public class FileIdempotentClearTest extends ContextTestSupport {
         assertFalse(repo.contains("B"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

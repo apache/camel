@@ -462,6 +462,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
         }
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         setUpKeys("RSA", 2048);
@@ -537,6 +538,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
      * then the public key will be ignored.
      */
     static class KeyValueKeySelector extends KeySelector {
+        @Override
         public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context)
             throws KeySelectorException {
             if (keyInfo == null) {
@@ -578,6 +580,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
             this.pk = pk;
         }
 
+        @Override
         public Key getKey() {
             return pk;
         }

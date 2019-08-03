@@ -77,6 +77,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
         return new MemoryIdempotentRepository(cache);
     }
 
+    @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
         synchronized (cache) {
@@ -89,6 +90,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
         }
     }
 
+    @Override
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
         synchronized (cache) {
@@ -96,6 +98,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
         }
     }
 
+    @Override
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
         synchronized (cache) {
@@ -103,11 +106,13 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
         }
     }
 
+    @Override
     public boolean confirm(String key) {
         // noop
         return true;
     }
     
+    @Override
     @ManagedOperation(description = "Clear the store")
     public void clear() {
         synchronized (cache) {

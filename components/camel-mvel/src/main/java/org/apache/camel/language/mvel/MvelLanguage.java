@@ -27,11 +27,13 @@ import org.apache.camel.support.LanguageSupport;
 @Language("mvel")
 public class MvelLanguage extends LanguageSupport {
 
+    @Override
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
         return new MvelExpression(this, expression, Boolean.class);
     }
 
+    @Override
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
         return new MvelExpression(this, expression, Object.class);

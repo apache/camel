@@ -39,6 +39,7 @@ public class MethodCallProcessor extends AsyncProcessorSupport implements Tracea
         this.expression = expression;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             Object newBody = expression.evaluate(exchange, Object.class);
@@ -88,14 +89,17 @@ public class MethodCallProcessor extends AsyncProcessorSupport implements Tracea
         return "MethodCall(" + expression + ")";
     }
 
+    @Override
     public String getTraceLabel() {
         return "methodCall[" + expression + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

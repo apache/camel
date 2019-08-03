@@ -41,6 +41,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
     private String url = "seda:foo?concurrentConsumers=2";
     private MockEndpoint result;
     
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

@@ -44,6 +44,7 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         // do nothing
     }
 
+    @Override
     public boolean isStaticService() {
         return service instanceof StaticService;
     }
@@ -64,6 +65,7 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         this.route = route;
     }
 
+    @Override
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (service instanceof StatefulService) {
@@ -75,14 +77,17 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         return ServiceStatus.Started.name();
     }
 
+    @Override
     public String getCamelId() {
         return context.getName();
     }
 
+    @Override
     public String getCamelManagementName() {
         return context.getManagementName();
     }
 
+    @Override
     public String getRouteId() {
         if (route != null) {
             return route.getId();
@@ -90,6 +95,7 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         return null;
     }
 
+    @Override
     public String getServiceType() {
         if (service != null) {
             return service.getClass().getSimpleName();
@@ -97,6 +103,7 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         return null;
     }
 
+    @Override
     public void start() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -104,6 +111,7 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         service.start();
     }
 
+    @Override
     public void stop() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -111,10 +119,12 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         service.stop();
     }
 
+    @Override
     public boolean isSupportSuspension() {
         return service instanceof Suspendable && service instanceof SuspendableService;
     }
 
+    @Override
     public boolean isSuspended() {
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
@@ -124,6 +134,7 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         }
     }
 
+    @Override
     public void suspend() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -136,6 +147,7 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         }
     }
 
+    @Override
     public void resume() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -148,6 +160,7 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         }
     }
 
+    @Override
     public Object getInstance() {
         return service;
     }

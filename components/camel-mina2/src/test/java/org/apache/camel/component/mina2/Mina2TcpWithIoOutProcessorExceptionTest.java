@@ -35,6 +35,7 @@ public class Mina2TcpWithIoOutProcessorExceptionTest extends BaseMina2Test {
         assertEquals("result is IllegalArgumentException", result, "java.lang.IllegalArgumentException: Forced exception");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 

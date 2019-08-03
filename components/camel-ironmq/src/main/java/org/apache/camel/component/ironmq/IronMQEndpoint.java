@@ -48,10 +48,12 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
         this.configuration = ironMQConfiguration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new IronMQProducer(this, getClient().queue(configuration.getQueueName()));
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         IronMQConsumer ironMQConsumer = new IronMQConsumer(this, processor, getClient().queue(configuration.getQueueName()));
         configureConsumer(ironMQConsumer);

@@ -72,6 +72,7 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
         return "flatback";
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         ObjectHelper.notNull(graph, "The object to marshal must be provided");
@@ -105,6 +106,7 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
         }
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         InputStreamReader reader = new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange));
         try {

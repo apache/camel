@@ -48,6 +48,7 @@ public class Web3jComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         Web3jConfiguration conf =  configuration != null ? configuration.copy() : new Web3jConfiguration();
         setProperties(conf, parameters);

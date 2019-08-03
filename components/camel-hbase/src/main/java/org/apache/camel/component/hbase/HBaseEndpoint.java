@@ -93,10 +93,12 @@ public class HBaseEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new HBaseProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         HBaseConsumer consumer = new HBaseConsumer(this, processor);
         configureConsumer(consumer);

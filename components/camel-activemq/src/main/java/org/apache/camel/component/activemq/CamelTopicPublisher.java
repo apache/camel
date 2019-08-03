@@ -42,6 +42,7 @@ public class CamelTopicPublisher extends CamelMessageProducer implements TopicPu
      *             <CODE>TopicPublisher</CODE> due to some internal error.
      */
 
+    @Override
     public Topic getTopic() throws JMSException {
         return (Topic)super.getDestination();
     }
@@ -67,6 +68,7 @@ public class CamelTopicPublisher extends CamelMessageProducer implements TopicPu
      * @see javax.jms.MessageProducer#getPriority()
      */
 
+    @Override
     public void publish(Message message) throws JMSException {
         super.send(message);
     }
@@ -92,6 +94,7 @@ public class CamelTopicPublisher extends CamelMessageProducer implements TopicPu
      *             at creation time.
      */
 
+    @Override
     public void publish(Message message, int deliveryMode, int priority, long timeToLive) throws JMSException {
         super.send(message, deliveryMode, priority, timeToLive);
     }
@@ -119,6 +122,7 @@ public class CamelTopicPublisher extends CamelMessageProducer implements TopicPu
      * @see javax.jms.MessageProducer#getPriority()
      */
 
+    @Override
     public void publish(Topic topic, Message message) throws JMSException {
         super.send(topic, message);
     }
@@ -145,6 +149,7 @@ public class CamelTopicPublisher extends CamelMessageProducer implements TopicPu
      *             method with an invalid topic.
      */
 
+    @Override
     public void publish(Topic topic, Message message, int deliveryMode, int priority, long timeToLive) throws JMSException {
         super.send(topic, message, deliveryMode, priority, timeToLive);
     }

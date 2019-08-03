@@ -60,6 +60,7 @@ public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Godday World", "godday.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -59,6 +59,7 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -69,6 +70,7 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
 
     // START SNIPPET: e1
     public class MyFileFilter<T> implements GenericFileFilter<T> {
+        @Override
         public boolean accept(GenericFile<T> file) {
             // we don't accept any files starting with skip in the name
             return !file.getFileName().startsWith("skip");

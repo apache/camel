@@ -71,6 +71,7 @@ public class Hl7v2PatientToFhirPatientIntegrationTest extends AbstractFhirTestSu
         assertTrue(result.getCreated());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

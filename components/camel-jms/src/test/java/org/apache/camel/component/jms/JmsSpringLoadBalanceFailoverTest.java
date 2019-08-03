@@ -30,6 +30,7 @@ public class JmsSpringLoadBalanceFailoverTest extends JmsLoadBalanceFailoverTest
         return false;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(
                 new ClassPathXmlApplicationContext("org/apache/camel/component/jms/JmsSpringLoadBalanceFailoverTest.xml"), true);

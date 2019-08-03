@@ -77,6 +77,7 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
 
     public static class ContextConfig extends RouteBuilder {
 
+        @Override
         public void configure() {
 
             BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);

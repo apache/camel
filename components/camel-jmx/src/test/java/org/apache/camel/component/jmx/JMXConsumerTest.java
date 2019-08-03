@@ -31,6 +31,7 @@ public class JMXConsumerTest extends SimpleBeanFixture {
 
     ISimpleMXBean simpleBean;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

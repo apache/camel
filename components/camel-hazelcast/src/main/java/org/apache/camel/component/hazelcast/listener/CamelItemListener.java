@@ -31,10 +31,12 @@ public class CamelItemListener extends CamelListener implements ItemListener<Obj
         super(consumer, cacheName);
     }
 
+    @Override
     public void itemAdded(ItemEvent<Object> itemEvent) {
         this.sendExchange(HazelcastConstants.ADDED, null, itemEvent);
     }
 
+    @Override
     public void itemRemoved(ItemEvent<Object> itemEvent) {
         this.sendExchange(HazelcastConstants.REMOVED, null, itemEvent);
     }

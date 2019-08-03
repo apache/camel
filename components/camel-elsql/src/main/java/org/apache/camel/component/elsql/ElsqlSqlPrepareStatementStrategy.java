@@ -27,14 +27,17 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 public class ElsqlSqlPrepareStatementStrategy implements SqlPrepareStatementStrategy {
 
+    @Override
     public String prepareQuery(String query, boolean allowNamedParameters, Exchange exchange) throws SQLException {
         return query;
     }
 
+    @Override
     public Iterator<?> createPopulateIterator(String query, String preparedQuery, int expectedParams, Exchange exchange, Object value) throws SQLException {
         return null;
     }
 
+    @Override
     public void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams) throws SQLException {
         // noop
     }

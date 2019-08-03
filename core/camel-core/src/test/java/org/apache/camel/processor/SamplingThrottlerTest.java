@@ -154,6 +154,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         assertEquals(expectedNotDroppedCount, notDropped);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

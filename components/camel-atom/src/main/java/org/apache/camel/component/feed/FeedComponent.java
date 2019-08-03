@@ -28,6 +28,7 @@ public abstract class FeedComponent extends DefaultComponent {
     public FeedComponent() {
     }
 
+    @Override
     protected abstract FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception;
 
 }

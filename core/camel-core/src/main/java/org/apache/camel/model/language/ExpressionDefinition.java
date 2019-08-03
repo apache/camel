@@ -122,6 +122,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
         return evaluate(exchange, Object.class);
     }
 
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         if (expressionValue == null) {
             expressionValue = createExpression(exchange.getContext());
@@ -136,6 +137,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
         }
     }
 
+    @Override
     public boolean matches(Exchange exchange) {
         if (predicate == null) {
             predicate = createPredicate(exchange.getContext());
@@ -189,6 +191,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
         return createExpression(routeContext.getCamelContext());
     }
 
+    @Override
     public Expression createExpression(CamelContext camelContext) {
         if (getExpressionValue() == null) {
             if (getExpressionType() != null) {

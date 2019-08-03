@@ -39,6 +39,7 @@ public class GridFsProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         String operation = endpoint.getOperation();
         if (operation == null) {

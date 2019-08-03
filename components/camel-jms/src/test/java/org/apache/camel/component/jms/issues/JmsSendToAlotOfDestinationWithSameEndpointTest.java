@@ -52,6 +52,7 @@ public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringT
         // Thread.sleep(99999999);
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(new String[]{"classpath:org/apache/camel/component/jms/issues/broker.xml",
             "classpath:org/apache/camel/component/jms/issues/camelBrokerClient.xml"});

@@ -151,6 +151,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
         }
     }
 
+    @Override
     protected InputStream getRequestStream(Exchange exchange) throws SalesforceException {
         try {
             // get request stream from In message

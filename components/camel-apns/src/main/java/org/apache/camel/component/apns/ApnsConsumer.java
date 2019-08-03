@@ -42,6 +42,7 @@ public class ApnsConsumer extends ScheduledPollConsumer {
         setUseFixedDelay(DEFAULT_APNS_FIXED_DELAY);
     }
 
+    @Override
     protected int poll() throws Exception {
         List<InactiveDevice> inactiveDeviceList = getInactiveDevices();
 

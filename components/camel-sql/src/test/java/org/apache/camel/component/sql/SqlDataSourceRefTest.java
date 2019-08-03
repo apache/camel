@@ -75,6 +75,7 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
         // END SNIPPET: e3
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

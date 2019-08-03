@@ -799,6 +799,7 @@ public final class SimpleExpressionBuilder {
             this.keyedEntityRetrievalStrategy = keyedEntityRetrievalStrategy;
         }
 
+        @Override
         public Object evaluate(Exchange exchange) {
             // try with full name first
             Object property = keyedEntityRetrievalStrategy.getKeyedEntity(exchange, ognl);

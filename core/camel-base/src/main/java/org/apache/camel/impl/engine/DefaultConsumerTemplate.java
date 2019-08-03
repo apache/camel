@@ -44,14 +44,17 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         this.camelContext = camelContext;
     }
 
+    @Override
     public int getMaximumCacheSize() {
         return maximumCacheSize;
     }
 
+    @Override
     public void setMaximumCacheSize(int maximumCacheSize) {
         this.maximumCacheSize = maximumCacheSize;
     }
 
+    @Override
     public int getCurrentCacheSize() {
         if (consumerCache == null) {
             return 0;
@@ -59,43 +62,52 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return consumerCache.size();
     }
 
+    @Override
     public void cleanUp() {
         if (consumerCache != null) {
             consumerCache.cleanUp();
         }
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public Exchange receive(String endpointUri) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         return getConsumerCache().receive(endpoint);
     }
 
+    @Override
     public Exchange receive(Endpoint endpoint) {
         return receive(endpoint.getEndpointUri());
     }
 
+    @Override
     public Exchange receive(String endpointUri, long timeout) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         return getConsumerCache().receive(endpoint, timeout);
     }
 
+    @Override
     public Exchange receive(Endpoint endpoint, long timeout) {
         return receive(endpoint.getEndpointUri(), timeout);
     }
 
+    @Override
     public Exchange receiveNoWait(String endpointUri) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         return getConsumerCache().receiveNoWait(endpoint);
     }
 
+    @Override
     public Exchange receiveNoWait(Endpoint endpoint) {
         return receiveNoWait(endpoint.getEndpointUri());
     }
 
+    @Override
     public Object receiveBody(String endpointUri) {
         Object answer = null;
         Exchange exchange = receive(endpointUri);
@@ -107,10 +119,12 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return answer;
     }
 
+    @Override
     public Object receiveBody(Endpoint endpoint) {
         return receiveBody(endpoint.getEndpointUri());
     }
 
+    @Override
     public Object receiveBody(String endpointUri, long timeout) {
         Object answer = null;
         Exchange exchange = receive(endpointUri, timeout);
@@ -122,10 +136,12 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return answer;
     }
 
+    @Override
     public Object receiveBody(Endpoint endpoint, long timeout) {
         return receiveBody(endpoint.getEndpointUri(), timeout);
     }
 
+    @Override
     public Object receiveBodyNoWait(String endpointUri) {
         Object answer = null;
         Exchange exchange = receiveNoWait(endpointUri);
@@ -137,10 +153,12 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return answer;
     }
 
+    @Override
     public Object receiveBodyNoWait(Endpoint endpoint) {
         return receiveBodyNoWait(endpoint.getEndpointUri());
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T receiveBody(String endpointUri, Class<T> type) {
         Object answer = null;
@@ -154,10 +172,12 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return (T) answer;
     }
 
+    @Override
     public <T> T receiveBody(Endpoint endpoint, Class<T> type) {
         return receiveBody(endpoint.getEndpointUri(), type);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T receiveBody(String endpointUri, long timeout, Class<T> type) {
         Object answer = null;
@@ -171,10 +191,12 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return (T) answer;
     }
 
+    @Override
     public <T> T receiveBody(Endpoint endpoint, long timeout, Class<T> type) {
         return receiveBody(endpoint.getEndpointUri(), timeout, type);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T receiveBodyNoWait(String endpointUri, Class<T> type) {
         Object answer = null;
@@ -188,10 +210,12 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return (T) answer;
     }
 
+    @Override
     public <T> T receiveBodyNoWait(Endpoint endpoint, Class<T> type) {
         return receiveBodyNoWait(endpoint.getEndpointUri(), type);
     }
 
+    @Override
     public void doneUoW(Exchange exchange) {
         try {
             // The receiveBody method will get a null exchange
@@ -246,6 +270,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return consumerCache;
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (consumerCache == null) {
             consumerCache = new DefaultConsumerCache(this, camelContext, maximumCacheSize);
@@ -253,6 +278,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         ServiceHelper.startService(consumerCache);
     }
 
+    @Override
     protected void doStop() throws Exception {
         // we should shutdown the services as this is our intention, to not re-use the services anymore
         ServiceHelper.stopAndShutdownService(consumerCache);

@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 
 public class BodyInPreCompleteAggregatingStrategy implements AggregationStrategy {
 
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange == null) {
             return newExchange;

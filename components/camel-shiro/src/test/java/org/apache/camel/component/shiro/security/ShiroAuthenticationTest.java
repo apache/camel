@@ -100,6 +100,7 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
         failureEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
         
@@ -125,6 +126,7 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
             super(shiroSecurityToken, bytes);
         }
         
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, encrypt());
             exchange.getIn().setBody("Beatle Mania");

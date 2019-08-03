@@ -81,6 +81,7 @@ public class KinesisComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(resultExchange.getIn().getHeader(KinesisConstants.SEQUENCE_NUMBER));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

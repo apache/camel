@@ -46,6 +46,7 @@ public class XQueryWithExplicitTypeTest extends CamelSpringTestSupport {
     }
 
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/xquery/xqueryWithExplicitTypeContext.xml");
     }

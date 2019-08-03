@@ -43,6 +43,7 @@ public class JmsSelectorTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -52,6 +53,7 @@ public class JmsSelectorTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

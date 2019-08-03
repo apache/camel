@@ -35,6 +35,7 @@ public class SigningProcessor extends DigitalSignatureProcessor {
         super(configuration);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Signature service = initSignatureService(exchange);
         calculateSignature(exchange, service);

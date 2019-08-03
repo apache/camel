@@ -29,6 +29,7 @@ public class DefaultModelJAXBContextFactory implements ModelJAXBContextFactory {
 
     private volatile JAXBContext context;
 
+    @Override
     public JAXBContext newJAXBContext() throws JAXBException {
         if (context == null) {
             synchronized (this) {

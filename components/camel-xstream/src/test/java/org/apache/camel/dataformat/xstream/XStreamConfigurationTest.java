@@ -181,11 +181,13 @@ public class XStreamConfigurationTest extends CamelTestSupport {
 
     public static class PurchaseOrderConverter implements Converter {
 
+        @Override
         @SuppressWarnings("rawtypes")
         public boolean canConvert(Class type) {
             return PurchaseOrder.class.isAssignableFrom(type);
         }
 
+        @Override
         public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
             PurchaseOrder order = new PurchaseOrder();
             order.setName(reader.getAttribute("name"));
@@ -194,6 +196,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
             return order;
         }
 
+        @Override
         public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
 
             writer.addAttribute("name", ((PurchaseOrder) object).getName());
@@ -211,13 +214,16 @@ public class XStreamConfigurationTest extends CamelTestSupport {
             }
         }
 
+        @Override
         public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
         }
 
+        @Override
         public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
             return null;
         }
 
+        @Override
         @SuppressWarnings("rawtypes")
         public boolean canConvert(Class type) {
             return false;
@@ -237,13 +243,16 @@ public class XStreamConfigurationTest extends CamelTestSupport {
             }
         }
 
+        @Override
         public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
         }
 
+        @Override
         public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
             return null;
         }
 
+        @Override
         @SuppressWarnings("rawtypes")
         public boolean canConvert(Class type) {
             return false;

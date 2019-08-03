@@ -37,6 +37,7 @@ import javax.xml.ws.WebServiceProvider;
 // START SNIPPET: e2
 public class GreeterProvider implements Provider<SOAPMessage> {
 
+    @Override
     public SOAPMessage invoke(SOAPMessage message) {
         // Requests should not come here as the Camel route will
         // intercept the call before this is invoked.

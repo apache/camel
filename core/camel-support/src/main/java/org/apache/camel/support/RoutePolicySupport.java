@@ -34,12 +34,14 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
 
     private ExceptionHandler exceptionHandler;
 
+    @Override
     public void onInit(Route route) {
         if (exceptionHandler == null) {
             exceptionHandler = new LoggingExceptionHandler(route.getCamelContext(), getClass());
         }
     }
 
+    @Override
     public void onRemove(Route route) {
         // noop
     }
@@ -64,10 +66,12 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
         // noop
     }
 
+    @Override
     public void onExchangeBegin(Route route, Exchange exchange) {
         // noop
     }
 
+    @Override
     public void onExchangeDone(Route route, Exchange exchange) {
         // noop
     }

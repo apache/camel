@@ -89,6 +89,7 @@ public class ManagedCustomProcessorTest extends ManagementTestSupport {
             this.foo = foo;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().setHeader("foo", getFoo());
         }

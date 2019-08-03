@@ -51,14 +51,17 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
             super(endpointUri, component);
         }
 
+        @Override
         public boolean isSingleton() {
             return true;
         }
 
+        @Override
         public Producer createProducer() throws Exception {
             return null;
         }
 
+        @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             return null;
         }
@@ -90,6 +93,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
             super(context);
         }
 
+        @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             MyEndpoint result = new MyEndpoint(uri, this);
             setProperties(result, parameters);

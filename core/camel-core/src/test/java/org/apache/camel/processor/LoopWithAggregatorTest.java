@@ -67,6 +67,7 @@ public class LoopWithAggregatorTest extends ContextTestSupport {
     
     public static class ExampleAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange original, Exchange resource) {
             String originalBody = original.getIn().getBody(String.class);
             if (original.getOut().getBody() != null) {

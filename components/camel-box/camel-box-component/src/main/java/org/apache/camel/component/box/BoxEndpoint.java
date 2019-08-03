@@ -79,10 +79,12 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
         return boxConnection;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new BoxProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // make sure inBody is not set for consumers
         if (inBody != null) {
@@ -99,6 +101,7 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
         return BoxPropertiesHelper.getHelper();
     }
 
+    @Override
     protected String getThreadProfileName() {
         return BoxConstants.THREAD_PROFILE_NAME;
     }

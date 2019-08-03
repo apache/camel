@@ -48,6 +48,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         LOG.debug("Creating XmppPrivateChatProducer to participant {}", participant);
     }
 
+    @Override
     public void process(Exchange exchange) {
 
         // make sure we are connected

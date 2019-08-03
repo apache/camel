@@ -163,6 +163,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         Producer answer = new JmsProducer(this);
         if (isSynchronous()) {
@@ -172,6 +173,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
     }
 
+    @Override
     public JmsConsumer createConsumer(Processor processor) throws Exception {
         AbstractMessageListenerContainer listenerContainer = createMessageListenerContainer();
         return createConsumer(processor, listenerContainer);
@@ -320,6 +322,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return configuration.createInOutTemplate(this, pubSubDomain, destinationName, configuration.getRequestTimeout());
     }
 
+    @Override
     public boolean isMultipleConsumersSupported() {
         // JMS allows multiple consumers on both queues and topics
         return true;
@@ -337,6 +340,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return (JmsComponent) super.getComponent();
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new JmsHeaderFilterStrategy(isIncludeAllJMSXProperties());
@@ -347,6 +351,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }

@@ -43,6 +43,7 @@ public class ManagedTransformerRegistry extends ManagedService implements Manage
         this.transformerRegistry = transformerRegistry;
     }
 
+    @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
     }
@@ -51,30 +52,37 @@ public class ManagedTransformerRegistry extends ManagedService implements Manage
         return transformerRegistry;
     }
 
+    @Override
     public String getSource() {
         return transformerRegistry.toString();
     }
 
+    @Override
     public Integer getDynamicSize() {
         return transformerRegistry.dynamicSize();
     }
 
+    @Override
     public Integer getStaticSize() {
         return transformerRegistry.staticSize();
     }
 
+    @Override
     public Integer getSize() {
         return transformerRegistry.size();
     }
 
+    @Override
     public Integer getMaximumCacheSize() {
         return transformerRegistry.getMaximumCacheSize();
     }
 
+    @Override
     public void purge() {
         transformerRegistry.purge();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public TabularData listTransformers() {
         try {

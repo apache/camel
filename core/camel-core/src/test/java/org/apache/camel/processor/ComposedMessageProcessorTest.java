@@ -73,6 +73,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
         assertFalse(validatedOrder.get(1).valid);
     }   
     
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("orderItemHelper", new OrderItemHelper());
@@ -81,6 +82,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
         return jndi;
     }    
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -164,6 +166,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
     // START SNIPPET: e7  
     public static final class MyOrderAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

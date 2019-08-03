@@ -37,10 +37,12 @@ public class HazelcastAtomicnumberEndpoint extends HazelcastDefaultEndpoint {
         setCommand(HazelcastCommand.atomicvalue);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot send messages to this endpoint: " + getEndpointUri());
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new HazelcastAtomicnumberProducer(hazelcastInstance, this, cacheName);
     }

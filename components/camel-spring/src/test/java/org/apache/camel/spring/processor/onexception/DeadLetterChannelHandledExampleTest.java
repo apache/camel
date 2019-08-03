@@ -58,6 +58,7 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "/org/apache/camel/spring/processor/onexception/deadLetterChannelHandledExampleTest.xml");
     }

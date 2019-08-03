@@ -90,6 +90,7 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
 
     private static class TestClientConfigurer implements HttpClientConfigurer {
 
+        @Override
         public void configureHttpClient(HttpClientBuilder clientBuilder) {
         }
     }

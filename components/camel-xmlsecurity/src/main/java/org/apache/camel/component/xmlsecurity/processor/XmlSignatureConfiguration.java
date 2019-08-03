@@ -52,10 +52,12 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
     public XmlSignatureConfiguration() {
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return context;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.context = camelContext;
     }

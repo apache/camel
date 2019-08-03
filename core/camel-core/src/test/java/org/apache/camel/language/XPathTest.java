@@ -46,6 +46,7 @@ public class XPathTest extends LanguageTestSupport {
         assertExpression("hello/@id", "m123");
     }
 
+    @Override
     protected String getLanguageName() {
         return "xpath";
     }

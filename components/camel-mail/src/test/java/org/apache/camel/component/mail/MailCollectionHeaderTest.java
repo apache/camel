@@ -47,6 +47,7 @@ public class MailCollectionHeaderTest extends CamelTestSupport {
         assertEquals("Heineken", list.get(1));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

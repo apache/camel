@@ -59,6 +59,7 @@ public class ZipDeflaterDataFormat extends ServiceSupport implements DataFormat,
         this.compressionLevel = compressionLevel;
     }
 
+    @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         // ask for a mandatory type conversion to avoid a possible NPE beforehand as we do copy from the InputStream
         final InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
@@ -80,6 +81,7 @@ public class ZipDeflaterDataFormat extends ServiceSupport implements DataFormat,
         }
     }
 
+    @Override
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         InflaterInputStream inflaterInputStream = new InflaterInputStream(inputStream);
         OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);

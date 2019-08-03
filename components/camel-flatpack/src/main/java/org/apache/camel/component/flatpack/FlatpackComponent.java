@@ -35,6 +35,7 @@ public class FlatpackComponent extends DefaultComponent {
     public FlatpackComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         boolean fixed = false;
 

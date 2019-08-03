@@ -37,6 +37,7 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
         return true;
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

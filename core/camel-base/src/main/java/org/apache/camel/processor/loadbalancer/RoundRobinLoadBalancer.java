@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 public class RoundRobinLoadBalancer extends QueueLoadBalancer {
     private AtomicInteger counter = new AtomicInteger(-1);
 
+    @Override
     protected AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
         int size = processors.length;
         int c = counter.updateAndGet(x -> ++x < size ? x : 0);

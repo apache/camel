@@ -29,6 +29,7 @@ public class SpringXPathFilterWithNamespaceTest extends XPathFilterTest {
         super.setUp();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/xpathFilterWithNamespace.xml");
     }

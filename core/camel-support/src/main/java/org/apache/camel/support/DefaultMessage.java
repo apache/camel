@@ -48,6 +48,7 @@ public class DefaultMessage extends MessageSupport {
         setCamelContext(camelContext);
     }
 
+    @Override
     public Object getHeader(String name) {
         if (hasHeaders()) {
             return getHeaders().get(name);
@@ -56,11 +57,13 @@ public class DefaultMessage extends MessageSupport {
         }
     }
 
+    @Override
     public Object getHeader(String name, Object defaultValue) {
         Object answer = getHeaders().get(name);
         return answer != null ? answer : defaultValue;
     }
 
+    @Override
     public Object getHeader(String name, Supplier<Object> defaultValueSupplier) {
         ObjectHelper.notNull(name, "name");
         ObjectHelper.notNull(defaultValueSupplier, "defaultValueSupplier");
@@ -68,6 +71,7 @@ public class DefaultMessage extends MessageSupport {
         return answer != null ? answer : defaultValueSupplier.get();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Class<T> type) {
         Object value = getHeader(name);
@@ -93,6 +97,7 @@ public class DefaultMessage extends MessageSupport {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Object defaultValue, Class<T> type) {
         Object value = getHeader(name, defaultValue);
@@ -118,6 +123,7 @@ public class DefaultMessage extends MessageSupport {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Supplier<Object> defaultValueSupplier, Class<T> type) {
         ObjectHelper.notNull(name, "name");
@@ -146,6 +152,7 @@ public class DefaultMessage extends MessageSupport {
         }
     }
 
+    @Override
     public void setHeader(String name, Object value) {
         if (headers == null) {
             headers = createHeaders();
@@ -153,6 +160,7 @@ public class DefaultMessage extends MessageSupport {
         headers.put(name, value);
     }
 
+    @Override
     public Object removeHeader(String name) {
         if (!hasHeaders()) {
             return null;
@@ -160,10 +168,12 @@ public class DefaultMessage extends MessageSupport {
         return headers.remove(name);
     }
 
+    @Override
     public boolean removeHeaders(String pattern) {
         return removeHeaders(pattern, (String[]) null);
     }
 
+    @Override
     public boolean removeHeaders(String pattern, String... excludePatterns) {
         if (!hasHeaders()) {
             return false;
@@ -190,6 +200,7 @@ public class DefaultMessage extends MessageSupport {
         return matches;
     }
 
+    @Override
     public Map<String, Object> getHeaders() {
         if (headers == null) {
             headers = createHeaders();
@@ -197,6 +208,7 @@ public class DefaultMessage extends MessageSupport {
         return headers;
     }
 
+    @Override
     public void setHeaders(Map<String, Object> headers) {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
@@ -208,6 +220,7 @@ public class DefaultMessage extends MessageSupport {
         }
     }
 
+    @Override
     public boolean hasHeaders() {
         if (!hasPopulatedHeaders()) {
             // force creating headers
@@ -216,6 +229,7 @@ public class DefaultMessage extends MessageSupport {
         return headers != null && !headers.isEmpty();
     }
 
+    @Override
     public DefaultMessage newInstance() {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 

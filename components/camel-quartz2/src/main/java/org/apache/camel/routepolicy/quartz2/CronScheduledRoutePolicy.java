@@ -35,6 +35,7 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
     private String timeZoneString;
     private TimeZone timeZone;
 
+    @Override
     public void onInit(Route route) {
         try {
             doOnInit(route);

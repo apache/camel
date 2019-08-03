@@ -26,6 +26,7 @@ public class FromRestIdAndDescriptionTest extends FromRestGetTest {
         return "org/apache/camel/test/blueprint/component/rest/FromRestIdAndDescriptionTest.xml";
     }
 
+    @Override
     @Test
     public void testFromRestModel() throws Exception {
         super.testFromRestModel();

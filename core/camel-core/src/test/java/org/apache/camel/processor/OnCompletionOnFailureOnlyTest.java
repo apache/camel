@@ -22,6 +22,7 @@ import org.junit.Test;
 
 public class OnCompletionOnFailureOnlyTest extends OnCompletionTest {
 
+    @Override
     @Test
     public void testSynchronizeComplete() throws Exception {
         // do not expect a message since we only do onFailureOnly

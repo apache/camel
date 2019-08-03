@@ -59,6 +59,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
             this.id = id;
         }
 
+        @Override
         public long getDelay(TimeUnit unit) {
             // if the answer is 0 then this task is ready to be taken
             long answer = id - index.get();
@@ -76,6 +77,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
             return answer;
         }
 
+        @Override
         @SuppressWarnings("unchecked")
         public int compareTo(Delayed o) {
             SubmitOrderFutureTask other = (SubmitOrderFutureTask) o;
@@ -99,6 +101,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         this.executor = executor;
     }
 
+    @Override
     public Future<V> submit(Callable<V> task) {
         if (task == null) {
             throw new IllegalArgumentException("Task must be provided");
@@ -108,6 +111,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         return f;
     }
 
+    @Override
     public Future<V> submit(Runnable task, Object result) {
         if (task == null) {
             throw new IllegalArgumentException("Task must be provided");
@@ -117,11 +121,13 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         return f;
     }
 
+    @Override
     public Future<V> take() throws InterruptedException {
         index.incrementAndGet();
         return completionQueue.take();
     }
 
+    @Override
     public Future<V> poll() {
         index.incrementAndGet();
         Future<V> answer = completionQueue.poll();
@@ -132,6 +138,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         return answer;
     }
 
+    @Override
     public Future<V> poll(long timeout, TimeUnit unit) throws InterruptedException {
         index.incrementAndGet();
         Future<V> answer = completionQueue.poll(timeout, unit);

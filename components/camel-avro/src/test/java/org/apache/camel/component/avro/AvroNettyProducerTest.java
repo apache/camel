@@ -40,6 +40,7 @@ public class AvroNettyProducerTest extends AvroProducerTestSupport {
         }
     }
 
+    @Override
     public RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

@@ -52,6 +52,7 @@ public class JmsDiscoveryTest extends CamelTestSupport {
         assertTrue("There should be 1 or more, was: " + map.size(), map.size() >= 1);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -67,6 +68,7 @@ public class JmsDiscoveryTest extends CamelTestSupport {
         registry.bind("registry", myRegistry);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

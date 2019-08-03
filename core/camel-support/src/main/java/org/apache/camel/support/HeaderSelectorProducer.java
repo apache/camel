@@ -158,6 +158,7 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
         return handlers.get(action);
     }
 
+    @Override
     protected void onMissingProcessor(Exchange exchange) throws Exception {
         throw new IllegalStateException(
             "Unsupported operation " + exchange.getIn().getHeader(headerSupplier.get())

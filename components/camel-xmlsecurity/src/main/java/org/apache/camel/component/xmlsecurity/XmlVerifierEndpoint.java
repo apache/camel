@@ -40,6 +40,7 @@ public class XmlVerifierEndpoint extends XmlSignatureEndpoint {
         return new XmlVerifierProcessor(getConfiguration());
     }
 
+    @Override
     public XmlVerifierConfiguration getConfiguration() {
         return configuration;
     }

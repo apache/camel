@@ -50,6 +50,7 @@ public abstract class MimeEntity extends AbstractHttpEntity {
             super(os);
         }
 
+        @Override
         public void close() {
             // do nothing
         }

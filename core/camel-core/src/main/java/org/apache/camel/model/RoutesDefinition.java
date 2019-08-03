@@ -69,16 +69,19 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         return "routes";
     }
 
+    @Override
     public String getLabel() {
         return "Route " + getId();
     }
 
     // Properties
     //-----------------------------------------------------------------------
+    @Override
     public List<RouteDefinition> getRoutes() {
         return routes;
     }
 
+    @Override
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
     }

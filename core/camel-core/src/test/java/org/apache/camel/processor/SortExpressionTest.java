@@ -57,6 +57,7 @@ public class SortExpressionTest extends ContextTestSupport {
         assertEquals("Claus", list.get(2));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -78,6 +79,7 @@ public class SortExpressionTest extends ContextTestSupport {
         public MyReverseComparator() {
         }
 
+        @Override
         public int compare(Object o1, Object o2) {
             // just reverse it for unit testing
             return ObjectHelper.compare(o1, o2) * -1;

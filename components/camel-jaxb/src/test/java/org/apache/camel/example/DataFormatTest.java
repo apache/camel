@@ -73,6 +73,7 @@ public class DataFormatTest extends CamelTestSupport {
         assertTrue("There should some sapce between <Person> and <firstName>", indexFirstName - indexPerson > 8);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

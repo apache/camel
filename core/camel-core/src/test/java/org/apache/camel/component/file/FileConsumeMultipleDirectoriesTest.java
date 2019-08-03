@@ -69,6 +69,7 @@ public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
         assertEquals("godday.txt", file.getName());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -49,6 +49,7 @@ public class ActiveMQRouteTest extends CamelTestSupport {
         template.sendBodyAndHeader(startEndpointUri, expectedBody, "cheese", 123);
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -56,6 +57,7 @@ public class ActiveMQRouteTest extends CamelTestSupport {
         resultEndpoint = (MockEndpoint)context.getEndpoint("mock:result");
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -66,6 +68,7 @@ public class ActiveMQRouteTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -121,12 +121,14 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         super(uri, component);
     }
 
+    @Override
     public Producer createProducer() {
         validateProducerOptions();
         initializeConnection();
         return new MongoDbProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         validateConsumerOptions();
 

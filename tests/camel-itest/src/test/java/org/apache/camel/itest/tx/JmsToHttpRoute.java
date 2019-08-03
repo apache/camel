@@ -46,6 +46,7 @@ public class JmsToHttpRoute extends SpringRouteBuilder {
     protected String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
     protected String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
 
+    @Override
     public void configure() throws Exception {
         port = AvailablePortFinder.getNextAvailable(8000);
 

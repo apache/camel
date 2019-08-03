@@ -71,6 +71,7 @@ public class PerformanceRouteTest extends CamelTestSupport {
         return !os.toLowerCase().contains("hp-ux");
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

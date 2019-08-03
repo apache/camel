@@ -55,6 +55,7 @@ public class SqsConsumerMessageIntegrationTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final String sqsEndpointUri = String.format("aws-sqs://camel-1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1");
 

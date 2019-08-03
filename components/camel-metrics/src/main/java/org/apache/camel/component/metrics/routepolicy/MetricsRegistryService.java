@@ -61,10 +61,12 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
         this.metricsRegistry = metricsRegistry;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -164,6 +166,7 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
         }
     }
 
+    @Override
     public String dumpStatisticsAsJsonTimeUnitSeconds() {
         ObjectWriter writer = secondsMapper.writer();
         if (isPrettyPrint()) {

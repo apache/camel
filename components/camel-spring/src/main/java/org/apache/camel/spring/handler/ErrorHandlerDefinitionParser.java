@@ -42,6 +42,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         super(null, false);
     }
 
+    @Override
     protected Class<?> getBeanClass(Element element) {
         ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
 
@@ -51,6 +52,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         return type.getTypeAsClass();
     }
     
+    @Override
     protected boolean isEligibleAttribute(String attributeName) {
         if (attributeName == null || ID_ATTRIBUTE.equals(attributeName)) {
             return false;
@@ -202,6 +204,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
             super(type, false);
         }
 
+        @Override
         protected boolean shouldGenerateId() {
             return true;
         }

@@ -61,6 +61,7 @@ public class InjectedBeanTest extends SpringTestSupport {
         bean = getMandatoryBean(InjectedBean.class, "injectedBean");
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/injectedBean.xml");
     }

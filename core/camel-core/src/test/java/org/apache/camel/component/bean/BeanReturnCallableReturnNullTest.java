@@ -41,12 +41,14 @@ public class BeanReturnCallableReturnNullTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         answer.bind("myBean", new MyBean());
         return answer;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

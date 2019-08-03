@@ -24,6 +24,7 @@ import org.springframework.security.core.Authentication;
 
 public class DefaultAuthenticationAdapter implements AuthenticationAdapter {
 
+    @Override
     public Authentication toAuthentication(Subject subject) {
         if (subject == null || subject.getPrincipals().size() == 0) {
             return null;

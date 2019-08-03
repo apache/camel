@@ -31,6 +31,7 @@ public class GeoCoderComponent extends DefaultComponent {
     public GeoCoderComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining,
                                       Map<String, Object> parameters) throws Exception {
         GeoCoderEndpoint endpoint = new GeoCoderEndpoint(uri, this);

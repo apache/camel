@@ -55,6 +55,7 @@ public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSu
         return answer;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

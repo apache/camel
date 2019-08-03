@@ -46,6 +46,7 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
         this.processor = processor;
     }
 
+    @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;

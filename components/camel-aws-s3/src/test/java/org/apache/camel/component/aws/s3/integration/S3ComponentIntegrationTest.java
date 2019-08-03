@@ -106,6 +106,7 @@ public class S3ComponentIntegrationTest extends CamelTestSupport {
         assertNull(message.getHeader(S3Constants.VERSION_ID));
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

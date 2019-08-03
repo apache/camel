@@ -327,6 +327,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
         this.file = file;
     }
 
+    @Override
     public Object getBody() {
         return getBinding().getBody(this);
     }

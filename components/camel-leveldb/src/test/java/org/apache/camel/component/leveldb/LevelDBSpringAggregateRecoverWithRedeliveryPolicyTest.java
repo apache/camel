@@ -67,6 +67,7 @@ public class LevelDBSpringAggregateRecoverWithRedeliveryPolicyTest extends Camel
 
     public static class MyFailProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             int count = counter.incrementAndGet();
             if (count <= 3) {
@@ -77,6 +78,7 @@ public class LevelDBSpringAggregateRecoverWithRedeliveryPolicyTest extends Camel
 
     public static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

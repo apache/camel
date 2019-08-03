@@ -38,6 +38,7 @@ public class JaxWsWebFaultAnnotationToFaultTest extends CamelTestSupport {
 
     protected static final String MESSAGE = "this is our test message for the exception";
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

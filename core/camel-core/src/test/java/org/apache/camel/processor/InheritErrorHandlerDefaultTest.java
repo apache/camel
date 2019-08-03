@@ -56,6 +56,7 @@ public class InheritErrorHandlerDefaultTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             counter++;
             exchange.setException(new IllegalArgumentException("Damn"));

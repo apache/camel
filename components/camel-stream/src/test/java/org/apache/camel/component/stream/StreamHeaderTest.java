@@ -46,6 +46,7 @@ public class StreamHeaderTest extends CamelTestSupport {
         assertEquals("Hello", sb.toString());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -57,6 +58,7 @@ public class StreamHeaderTest extends CamelTestSupport {
 
     private class MyOutputStream extends OutputStream {
 
+        @Override
         public void write(int b) throws IOException {
             sb.append((char)b);
         }

@@ -69,6 +69,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
 
     private static class MyCustomExpression implements Expression {
 
+        @Override
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             // must copy from the original exchange as Camel holds information about the file in progress

@@ -35,6 +35,7 @@ public class SqlConsumerOutputTypeStreamListTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -43,6 +44,7 @@ public class SqlConsumerOutputTypeStreamListTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

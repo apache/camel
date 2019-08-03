@@ -46,6 +46,7 @@ public class TestCxfFeature extends AbstractFeature {
             super(Phase.PREPARE_SEND);
         }
 
+        @Override
         public void handleMessage(Message message) throws Fault {
             Exchange ex = message.getExchange();
             

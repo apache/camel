@@ -68,6 +68,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         return "bindy-fixed";
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
@@ -175,6 +176,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         return false;
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
         org.apache.camel.util.ObjectHelper.notNull(factory, "not instantiated");

@@ -40,6 +40,7 @@ public class LoopTestProcessor implements Processor {
         this.index = 0;
     }
 
+    @Override
     public void process(Exchange exchange) {
         Integer c = exchange.getProperty(Exchange.LOOP_SIZE, Integer.class);
         Integer i = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);

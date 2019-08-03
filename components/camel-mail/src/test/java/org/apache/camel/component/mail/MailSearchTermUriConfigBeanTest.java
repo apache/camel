@@ -29,6 +29,7 @@ public class MailSearchTermUriConfigBeanTest extends MailSearchTermUriConfigTest
         return mySearchTerm;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

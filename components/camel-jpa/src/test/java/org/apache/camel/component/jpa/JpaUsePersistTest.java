@@ -29,6 +29,7 @@ public class JpaUsePersistTest extends AbstractJpaMethodTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    @Override
     public boolean usePersist() {
         return true;
     }

@@ -42,6 +42,7 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
     private MockEndpoint result;
     private int size = 100;
     
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

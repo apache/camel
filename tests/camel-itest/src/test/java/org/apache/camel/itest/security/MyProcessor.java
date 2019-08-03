@@ -25,6 +25,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 
 public class MyProcessor implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
         // Get the parameter list

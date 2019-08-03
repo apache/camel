@@ -67,6 +67,7 @@ public class FhirXmlDataformatErrorHandlerTest extends CamelTestSupport {
         assertEquals(true, patient.getActive());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

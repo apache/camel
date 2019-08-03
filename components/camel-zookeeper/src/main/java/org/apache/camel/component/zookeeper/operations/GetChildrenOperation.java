@@ -33,6 +33,7 @@ public class GetChildrenOperation extends ZooKeeperOperation<List<String>> {
         super(connection, node);
     }
 
+    @Override
     public OperationResult<List<String>> getResult() {
         try {
             Stat statistics = new Stat();

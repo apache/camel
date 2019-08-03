@@ -48,6 +48,7 @@ public class FileComponent extends GenericFileComponent<File> {
         super(context);
     }
 
+    @Override
     protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // the starting directory must be a static (not containing dynamic expressions)
         if (StringHelper.hasStartToken(remaining, "simple")) {
@@ -68,6 +69,7 @@ public class FileComponent extends GenericFileComponent<File> {
         return result;
     }
 
+    @Override
     protected void afterPropertiesSet(GenericFileEndpoint<File> endpoint) throws Exception {
         // noop
     }

@@ -66,6 +66,7 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
         assertFalse("Temporary body file should have been moved, not copied", temporaryFile.exists());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

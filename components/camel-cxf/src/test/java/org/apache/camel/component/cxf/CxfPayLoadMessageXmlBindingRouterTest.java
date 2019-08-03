@@ -69,6 +69,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
         server.start();
     }
     
+    @Override
     @Before
     public void setUp() throws Exception {       
         applicationContext = createApplicationContext();
@@ -76,6 +77,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
         assertNotNull("Should have created a valid spring context", applicationContext);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         
@@ -104,6 +106,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
         return client;
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {                

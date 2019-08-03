@@ -42,6 +42,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     private String startEndpoint = "direct:start";
     private String sqlEndpoint = "sql:overriddenByTheHeader?dataSource=#testdb";
     
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -70,6 +71,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
         return reg;
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

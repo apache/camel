@@ -94,6 +94,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
         }
     }
 
+    @Override
     public String format(Exchange exchange) {
         Message in = exchange.getIn();
 

@@ -51,14 +51,17 @@ public class LoggingExceptionHandler implements ExceptionHandler {
         this.logger = logger;
     }
 
+    @Override
     public void handleException(Throwable exception) {
         handleException(null, null, exception);
     }
 
+    @Override
     public void handleException(String message, Throwable exception) {
         handleException(message, null, exception);
     }
 
+    @Override
     public void handleException(String message, Exchange exchange, Throwable exception) {
         try {
             if (!isSuppressLogging()) {

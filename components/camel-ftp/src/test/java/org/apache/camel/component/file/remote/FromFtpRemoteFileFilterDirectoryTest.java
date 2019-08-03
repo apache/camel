@@ -67,6 +67,7 @@ public class FromFtpRemoteFileFilterDirectoryTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello World", "okDir/hello.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -78,6 +79,7 @@ public class FromFtpRemoteFileFilterDirectoryTest extends FtpServerTestSupport {
     // START SNIPPET: e1
     public class MyFileFilter<T> implements GenericFileFilter<T> {
 
+        @Override
         public boolean accept(GenericFile<T> file) {
             // we dont accept any files within directory starting with skip in
             // the name

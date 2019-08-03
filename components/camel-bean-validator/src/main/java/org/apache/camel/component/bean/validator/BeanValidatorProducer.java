@@ -37,6 +37,7 @@ public class BeanValidatorProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Object bean = exchange.getIn().getBody();
         Set<ConstraintViolation<Object>> constraintViolations;

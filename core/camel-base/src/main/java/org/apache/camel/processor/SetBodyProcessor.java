@@ -78,14 +78,17 @@ public class SetBodyProcessor extends AsyncProcessorSupport implements Traceable
         return "SetBody(" + expression + ")";
     }
 
+    @Override
     public String getTraceLabel() {
         return "setBody[" + expression + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

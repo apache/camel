@@ -38,6 +38,7 @@ public class SpringIntegrationOneWayConsumerTest extends CamelSpringTestSupport 
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     public ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/integration/oneWayConsumer.xml");
     }

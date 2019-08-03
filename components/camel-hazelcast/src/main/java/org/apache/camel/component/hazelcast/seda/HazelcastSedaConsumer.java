@@ -67,6 +67,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
         super.doStop();
     }
 
+    @Override
     public void run() {
         BaseQueue<?> queue = endpoint.getHazelcastInstance().getQueue(endpoint.getConfiguration().getQueueName());
 

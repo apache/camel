@@ -37,6 +37,7 @@ public class OsgiLanguageResolver implements LanguageResolver {
         this.bundleContext = bundleContext;
     }
 
+    @Override
     public Language resolveLanguage(String name, CamelContext context) {
         // lookup in registry first
         Language lang = ResolverHelper.lookupLanguageInRegistryWithFallback(context, name);

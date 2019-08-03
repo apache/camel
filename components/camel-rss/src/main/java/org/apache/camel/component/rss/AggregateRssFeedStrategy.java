@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 public class AggregateRssFeedStrategy implements AggregationStrategy {
     protected final Logger log = LoggerFactory.getLogger(AggregateRssFeedStrategy.class);
 
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange == null) {
             return newExchange;

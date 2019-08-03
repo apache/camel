@@ -94,6 +94,7 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
         verifyTheRecivedEmail("Content-Disposition: attachment; filename=0001");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

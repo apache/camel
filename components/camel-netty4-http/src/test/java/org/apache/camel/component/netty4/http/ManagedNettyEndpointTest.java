@@ -33,6 +33,7 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
         return true;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         return context;

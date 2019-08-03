@@ -39,6 +39,7 @@ public class RoutingSlipWithInterceptorTest extends ContextTestSupport {
         private static final Logger LOGGER = LoggerFactory.getLogger(MyInterceptStrategy.class);
         private static int doneCount;
 
+        @Override
         public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
                                                      final Processor target, final Processor nextTarget) throws Exception {
             if (definition instanceof RoutingSlipDefinition<?>) {

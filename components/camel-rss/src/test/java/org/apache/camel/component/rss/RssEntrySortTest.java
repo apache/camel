@@ -54,6 +54,7 @@ public class RssEntrySortTest extends CamelTestSupport {
         registry.bind("myBean", new MyBean());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

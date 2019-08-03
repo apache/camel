@@ -61,6 +61,7 @@ public class FtpConsumerNotEagerMaxMessagesPerPollTest extends FtpServerTestSupp
         sendFile(getFtpUrl(), "BBB", "bbb.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

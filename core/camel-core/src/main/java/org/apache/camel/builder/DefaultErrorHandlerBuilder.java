@@ -59,6 +59,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     public DefaultErrorHandlerBuilder() {
     }
 
+    @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DefaultErrorHandler answer = new DefaultErrorHandler(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), 
             getRedeliveryPolicy(), getExceptionPolicyStrategy(), getRetryWhilePolicy(routeContext.getCamelContext()),
@@ -68,6 +69,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return answer;
     }
 
+    @Override
     public boolean supportTransacted() {
         return false;
     }

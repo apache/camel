@@ -50,10 +50,12 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     private boolean caseInsensitive;
     private boolean filterOnMatch = true; // defaults to the previous behaviour
 
+    @Override
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
         return doFiltering(Direction.OUT, headerName, headerValue, exchange);
     }
 
+    @Override
     public boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange) {
         return doFiltering(Direction.IN, headerName, headerValue, exchange);
     }

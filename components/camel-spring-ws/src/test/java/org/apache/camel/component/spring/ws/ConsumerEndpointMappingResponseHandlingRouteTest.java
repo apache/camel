@@ -44,6 +44,7 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
     private String expectedResponse;
     private WebServiceTemplate webServiceTemplate;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

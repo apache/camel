@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class ValidateSimpleRegExpTest extends ValidateRegExpTest {
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

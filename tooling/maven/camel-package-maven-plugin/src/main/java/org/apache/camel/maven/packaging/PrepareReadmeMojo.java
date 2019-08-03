@@ -116,6 +116,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
      *                                threads it generated failed.
      * @throws MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // update readme file in camel-core
         executeEipsReadme();

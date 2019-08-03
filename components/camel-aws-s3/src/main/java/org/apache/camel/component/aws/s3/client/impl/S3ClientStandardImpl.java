@@ -54,6 +54,7 @@ public class S3ClientStandardImpl implements S3Client {
      * Getting the s3 aws client that is used.
      * @return Amazon S3 Client.
      */
+    @Override
     public AmazonS3 getS3Client() {
         AmazonS3 client = null;
         AmazonS3ClientBuilder clientBuilder = null;

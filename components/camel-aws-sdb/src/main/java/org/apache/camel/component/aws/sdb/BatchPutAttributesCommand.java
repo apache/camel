@@ -30,6 +30,7 @@ public class BatchPutAttributesCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         BatchPutAttributesRequest request = new BatchPutAttributesRequest()
             .withDomainName(determineDomainName())

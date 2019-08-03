@@ -59,10 +59,12 @@ public class CachedOutputStream extends OutputStream {
         currentStream = new CachedByteArrayOutputStream(strategy.getBufferSize());
     }
 
+    @Override
     public void flush() throws IOException {
         currentStream.flush();       
     }
 
+    @Override
     public void close() throws IOException {
         currentStream.close();
         // need to clean up the temp file this time
@@ -72,10 +74,12 @@ public class CachedOutputStream extends OutputStream {
         }
     }
 
+    @Override
     public boolean equals(Object obj) {
         return currentStream.equals(obj);
     }
 
+    @Override
     public int hashCode() {
         return currentStream.hashCode();
     }
@@ -84,10 +88,12 @@ public class CachedOutputStream extends OutputStream {
         return currentStream;
     }
 
+    @Override
     public String toString() {
         return "CachedOutputStream[size: " + totalLength + "]";
     }
 
+    @Override
     public void write(byte[] b, int off, int len) throws IOException {
         this.totalLength += len;
         if (inMemory && currentStream instanceof ByteArrayOutputStream && strategy.shouldSpoolCache(totalLength)) {
@@ -96,6 +102,7 @@ public class CachedOutputStream extends OutputStream {
         currentStream.write(b, off, len);
     }
 
+    @Override
     public void write(byte[] b) throws IOException {
         this.totalLength += b.length;
         if (inMemory && currentStream instanceof ByteArrayOutputStream && strategy.shouldSpoolCache(totalLength)) {
@@ -104,6 +111,7 @@ public class CachedOutputStream extends OutputStream {
         currentStream.write(b);
     }
 
+    @Override
     public void write(int b) throws IOException {
         this.totalLength++;
         if (inMemory && currentStream instanceof ByteArrayOutputStream && strategy.shouldSpoolCache(totalLength)) {

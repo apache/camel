@@ -166,6 +166,7 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         }
     }
 
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         Object result = evaluate(exchange);
         if (Object.class == type) {
@@ -176,6 +177,7 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         }
     }
 
+    @Override
     public boolean matches(Exchange exchange) {
         Object value = evaluate(exchange);
         return ObjectHelper.evaluateValuePredicate(value);

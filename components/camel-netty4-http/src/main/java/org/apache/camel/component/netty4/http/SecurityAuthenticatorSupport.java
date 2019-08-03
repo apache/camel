@@ -42,14 +42,17 @@ public abstract class SecurityAuthenticatorSupport implements SecurityAuthentica
     public SecurityAuthenticatorSupport() {
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setRoleClassNames(String roleClassNames) {
         this.roleClassNames = roleClassNames;
     }

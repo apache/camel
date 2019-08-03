@@ -74,6 +74,7 @@ public class JmsAddAndRemoveRouteManagementTest extends CamelTestSupport {
         assertEquals("Should have removed all thread pools from removed route", before.size(), after.size());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

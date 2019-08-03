@@ -91,6 +91,7 @@ public class ValidationTest extends ContextTestSupport {
         invalidEndpoint.whenAnyExchangeReceived(e -> e.getMessage().setBody("invalidResult"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

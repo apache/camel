@@ -48,26 +48,32 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
     private boolean startServer = true;
     private String threadPattern = DEFAULT_PATTERN;
 
+    @Override
     public void setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration configuration) {
         this.configuration = configuration;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public int getPort() {
         return configuration != null ? configuration.getPort() : -1;
     }
 
+    @Override
     public HttpServerConsumerChannelFactory getConsumerChannelFactory() {
         return channelFactory;
     }
 
+    @Override
     public NettyServerBootstrapFactory getServerBootstrapFactory() {
         return bootstrapFactory;
     }
 
+    @Override
     public int getConsumersSize() {
         if (channelFactory != null) {
             return channelFactory.consumers();
@@ -76,14 +82,17 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         }
     }
 
+    @Override
     public void setStartServer(boolean startServer) {
         this.startServer = startServer;
     }
 
+    @Override
     public void setThreadNamePattern(String pattern) {
         this.threadPattern = pattern;
     }
 
+    @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(configuration, "setNettyServerBootstrapConfiguration() must be called with a NettyServerBootstrapConfiguration instance", this);
 

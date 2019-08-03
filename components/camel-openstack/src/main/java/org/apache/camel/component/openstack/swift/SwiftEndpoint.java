@@ -160,6 +160,7 @@ public class SwiftEndpoint extends AbstractOpenstackEndpoint {
         this.host = host;
     }
 
+    @Override
     public Config getConfig() {
         return config;
     }
@@ -172,6 +173,7 @@ public class SwiftEndpoint extends AbstractOpenstackEndpoint {
     }
 
 
+    @Override
     public String getApiVersion() {
         return apiVersion;
     }

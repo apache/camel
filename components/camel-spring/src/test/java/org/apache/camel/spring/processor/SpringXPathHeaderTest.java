@@ -58,6 +58,7 @@ public class SpringXPathHeaderTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringXPathHeaderTest-context.xml");
     }

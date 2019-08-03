@@ -62,15 +62,18 @@ public class FileOperations implements GenericFileOperations<File> {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void setEndpoint(GenericFileEndpoint<File> endpoint) {
         this.endpoint = (FileEndpoint) endpoint;
     }
 
+    @Override
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         File file = new File(name);
         return FileUtil.deleteFile(file);
     }
 
+    @Override
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         boolean renamed = false;
         File file = new File(from);
@@ -88,6 +91,7 @@ public class FileOperations implements GenericFileOperations<File> {
         return renamed;
     }
 
+    @Override
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         File file = new File(name);
         return file.exists();
@@ -135,6 +139,7 @@ public class FileOperations implements GenericFileOperations<File> {
         return true;
     }
 
+    @Override
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");
 
@@ -183,29 +188,35 @@ public class FileOperations implements GenericFileOperations<File> {
         }
     }
 
+    @Override
     public List<File> listFiles() throws GenericFileOperationFailedException {
         // noop
         return null;
     }
 
+    @Override
     public List<File> listFiles(String path) throws GenericFileOperationFailedException {
         // noop
         return null;
     }
 
+    @Override
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         // noop
     }
 
+    @Override
     public void changeToParentDirectory() throws GenericFileOperationFailedException {
         // noop
     }
 
+    @Override
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
         // noop
         return null;
     }
 
+    @Override
     public boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // noop as we use type converters to read the body content for java.io.File
         return true;
@@ -216,6 +227,7 @@ public class FileOperations implements GenericFileOperations<File> {
         // noop as we used type converters to read the body content for java.io.File
     }
 
+    @Override
     public boolean storeFile(String fileName, Exchange exchange, long size) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");
 

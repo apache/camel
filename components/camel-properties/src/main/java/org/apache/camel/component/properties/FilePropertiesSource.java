@@ -40,6 +40,7 @@ public class FilePropertiesSource extends AbstractLocationPropertiesSource {
         return "FilePropertiesSource[" + getLocation().getPath() + "]";
     }
 
+    @Override
     protected Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location) {
         Properties answer = new OrderedProperties();
         String path = location.getPath();

@@ -52,6 +52,7 @@ public class DelegateSyncProcessor extends ServiceSupport implements org.apache.
         return "DelegateSync[" + processor + "]";
     }
 
+    @Override
     public Processor getProcessor() {
         return processor;
     }

@@ -31,6 +31,7 @@ public class GetDataOperation extends ZooKeeperOperation<byte[]> {
        super(connection, node);
     }
 
+    @Override
     public OperationResult<byte[]> getResult() {
         try {
             Stat statistics = new Stat();

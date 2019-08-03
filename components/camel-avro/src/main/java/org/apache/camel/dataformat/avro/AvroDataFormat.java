@@ -63,10 +63,12 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
         return "avro";
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -124,6 +126,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
     }
 
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
         // the schema should be from the graph class name
         Schema useSchema = actualSchema != null ? actualSchema : loadSchema(graph.getClass().getName());
@@ -134,6 +137,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
         encoder.flush();
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         ObjectHelper.notNull(actualSchema, "schema", this);
 

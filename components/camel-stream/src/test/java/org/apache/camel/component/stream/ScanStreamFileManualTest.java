@@ -49,6 +49,7 @@ public class ScanStreamFileManualTest extends CamelTestSupport {
         Thread.sleep(60000);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

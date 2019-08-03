@@ -69,6 +69,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         return dynamicUri == null || dynamicUri;
     }
 
+    @Override
     public ExchangePattern getPattern() {
         return ExchangePattern.InOnly;
     }
@@ -111,6 +112,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      *                        for sending tapped exchanges
      * @return the builder
      */
+    @Override
     public WireTapDefinition<Type> executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
@@ -123,6 +125,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      *                           to use as thread pool for sending tapped exchanges
      * @return the builder
      */
+    @Override
     public WireTapDefinition<Type> executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -314,18 +317,22 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         this.newExchangeExpression = newExchangeExpression;
     }
 
+    @Override
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
+    @Override
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
+    @Override
     public String getExecutorServiceRef() {
         return executorServiceRef;
     }
 
+    @Override
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }

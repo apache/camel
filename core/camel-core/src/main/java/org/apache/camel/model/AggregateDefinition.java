@@ -367,10 +367,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.completionOnNewCorrelationGroup = completionOnNewCorrelationGroup;
     }
 
+    @Override
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
+    @Override
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
@@ -391,10 +393,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.parallelProcessing = parallelProcessing;
     }
 
+    @Override
     public String getExecutorServiceRef() {
         return executorServiceRef;
     }
 
+    @Override
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }
@@ -870,6 +874,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * If using parallelProcessing you can specify a custom thread pool to be used.
      * In fact also if you are not using parallelProcessing this custom thread pool is used to send out aggregated exchanges as well.
      */
+    @Override
     public AggregateDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
@@ -879,6 +884,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * If using parallelProcessing you can specify a custom thread pool to be used.
      * In fact also if you are not using parallelProcessing this custom thread pool is used to send out aggregated exchanges as well.
      */
+    @Override
     public AggregateDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

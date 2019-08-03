@@ -26,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringCamelContextSimpleCustomDefaultThreadPoolProfileTest extends SpringTestSupport {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextSimpleCustomDefaultThreadPoolProfileTest.xml");
     }

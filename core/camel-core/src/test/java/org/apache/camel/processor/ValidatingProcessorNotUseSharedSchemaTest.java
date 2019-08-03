@@ -132,6 +132,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
         }
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -50,10 +50,12 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
         }
     }
 
+    @Override
     public void configureConsumer(Consumer consumer) throws Exception {
         super.configureConsumer(consumer);
     }
 
+    @Override
     @ManagedAttribute
 public TwitterConfiguration getProperties() {
         return properties;

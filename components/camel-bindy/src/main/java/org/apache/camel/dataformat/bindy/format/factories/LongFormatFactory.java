@@ -42,10 +42,12 @@ public class LongFormatFactory extends AbstractFormatFactory {
 
     private static class LongFormat extends AbstractNumberFormat<Long> {
 
+        @Override
         public String format(Long object) throws Exception {
             return object.toString();
         }
 
+        @Override
         public Long parse(String string) throws Exception {
             return new Long(string);
         }

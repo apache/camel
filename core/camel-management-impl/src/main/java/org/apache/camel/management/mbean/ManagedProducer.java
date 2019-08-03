@@ -34,10 +34,12 @@ public class ManagedProducer extends ManagedService implements ManagedProducerMB
         return producer;
     }
 
+    @Override
     public String getEndpointUri() {
         return producer.getEndpoint().getEndpointUri();
     }
 
+    @Override
     public boolean isSingleton() {
         return producer.isSingleton();
     }

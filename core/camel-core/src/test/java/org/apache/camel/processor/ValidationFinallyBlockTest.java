@@ -65,6 +65,7 @@ public class ValidationFinallyBlockTest extends ContextTestSupport {
         allEndpoint = resolveMandatoryEndpoint("mock:all", MockEndpoint.class);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

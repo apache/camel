@@ -27,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class BeanBindingTest extends SpringTestSupport {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/bean/beanBindingTest.xml");
     }

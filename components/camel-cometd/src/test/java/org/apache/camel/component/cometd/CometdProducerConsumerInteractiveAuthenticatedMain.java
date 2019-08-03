@@ -122,6 +122,7 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
             return "OK";
         }
 
+        @Override
         public boolean sendMeta(ServerSession to, ServerMessage.Mutable message) {
             if (Channel.META_HANDSHAKE.equals(message.getChannel())) {
                 if (!message.isSuccessful()) {
@@ -138,18 +139,22 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
             return true;
         }
 
+        @Override
         public void removed(ServerSession session, boolean timeout) {
             // Remove authentication data
         }
 
+        @Override
         public boolean rcv(ServerSession from, ServerMessage.Mutable message) {
             return true;
         }
 
+        @Override
         public boolean rcvMeta(ServerSession from, ServerMessage.Mutable message) {
             return true;
         }
 
+        @Override
         public boolean send(ServerSession from, ServerSession to, ServerMessage.Mutable message) {
             return true;
         }

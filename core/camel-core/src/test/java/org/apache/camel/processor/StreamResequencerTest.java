@@ -91,6 +91,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         return enable;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

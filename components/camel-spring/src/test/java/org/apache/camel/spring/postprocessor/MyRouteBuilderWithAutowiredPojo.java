@@ -29,6 +29,7 @@ public class MyRouteBuilderWithAutowiredPojo extends SpringRouteBuilder {
     @EndpointInject("mock:injected")
     private Endpoint injected;
 
+    @Override
     public void configure() throws Exception {
         from("direct:start").to("mock:result").to(injected);
     }

@@ -44,6 +44,7 @@ public class JmsSelectorInTest extends CamelTestSupport {
         assertEquals(2, endpoint.getExchanges().size());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -53,6 +54,7 @@ public class JmsSelectorInTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

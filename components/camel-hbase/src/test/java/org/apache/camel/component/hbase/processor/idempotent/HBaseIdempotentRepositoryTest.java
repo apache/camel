@@ -35,6 +35,7 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
     private String key01 = "123";
     private String key02 = "456";
 
+    @Override
     @Before
     public void setUp() throws Exception {
         if (systemReady) {
@@ -48,6 +49,7 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
         }
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         if (systemReady) {

@@ -53,9 +53,11 @@ public class DefaultCamelContextStopFailureTest extends ContextTestSupport {
             this.fail = fail;
         }
 
+        @Override
         public void start() {
         }
 
+        @Override
         public void stop() {
             stopOrder = stopOrder + name;
 

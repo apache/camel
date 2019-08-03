@@ -45,6 +45,7 @@ public class BeanComponent extends DefaultComponent {
     
     // Implementation methods
     //-----------------------------------------------------------------------
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanEndpoint endpoint = new BeanEndpoint(uri, this);
         endpoint.setBeanName(remaining);

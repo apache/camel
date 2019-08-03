@@ -44,6 +44,7 @@ public class IOTAProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         String seed = exchange.getIn().getHeader(IOTAConstants.SEED_HEADER, String.class);
 

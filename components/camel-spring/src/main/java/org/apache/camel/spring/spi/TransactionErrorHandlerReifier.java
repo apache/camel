@@ -39,6 +39,7 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
         super(definition);
     }
 
+    @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         TransactionTemplate transactionTemplate = definition.getTransactionTemplate();
         if (transactionTemplate == null) {

@@ -77,6 +77,7 @@ public interface CamelEvent {
 
         CamelContext getContext();
 
+        @Override
         default Object getSource() {
             return getContext();
         }
@@ -84,66 +85,77 @@ public interface CamelEvent {
     }
 
     interface CamelContextResumedEvent extends CamelContextEvent {
+        @Override
         default Type getType() {
             return Type.CamelContextResumed;
         }
     }
 
     interface CamelContextResumeFailureEvent extends CamelContextEvent, FailureEvent {
+        @Override
         default Type getType() {
             return Type.CamelContextResumeFailure;
         }
     }
 
     interface CamelContextResumingEvent extends CamelContextEvent {
+        @Override
         default Type getType() {
             return Type.CamelContextResuming;
         }
     }
 
     interface CamelContextStartedEvent extends CamelContextEvent {
+        @Override
         default Type getType() {
             return Type.CamelContextStarted;
         }
     }
 
     interface CamelContextStartingEvent extends CamelContextEvent {
+        @Override
         default Type getType() {
             return Type.CamelContextStarting;
         }
     }
 
     interface CamelContextStartupFailureEvent extends CamelContextEvent, FailureEvent {
+        @Override
         default Type getType() {
             return Type.CamelContextStartupFailure;
         }
     }
 
     interface CamelContextStopFailureEvent extends CamelContextEvent, FailureEvent {
+        @Override
         default Type getType() {
             return Type.CamelContextStopFailure;
         }
     }
 
     interface CamelContextStoppedEvent extends CamelContextEvent {
+        @Override
         default Type getType() {
             return Type.CamelContextStopped;
         }
     }
 
     interface CamelContextStoppingEvent extends CamelContextEvent {
+        @Override
         default Type getType() {
             return Type.CamelContextStopping;
         }
     }
 
     interface CamelContextSuspendedEvent extends CamelContextEvent {
+        @Override
         default Type getType() {
             return Type.CamelContextSuspended;
         }
     }
 
     interface CamelContextSuspendingEvent extends CamelContextEvent {
+        @Override
         default Type getType() {
             return Type.CamelContextSuspending;
         }
@@ -153,24 +165,28 @@ public interface CamelEvent {
 
         Exchange getExchange();
 
+        @Override
         default Object getSource() {
             return getExchange();
         }
     }
 
     interface ExchangeCompletedEvent extends ExchangeEvent {
+        @Override
         default Type getType() {
             return Type.ExchangeCompleted;
         }
     }
 
     interface ExchangeCreatedEvent extends ExchangeEvent {
+        @Override
         default Type getType() {
             return Type.ExchangeCreated;
         }
     }
 
     interface ExchangeFailedEvent extends ExchangeEvent, FailureEvent {
+        @Override
         default Type getType() {
             return Type.ExchangeFailed;
         }
@@ -187,12 +203,14 @@ public interface CamelEvent {
     }
 
     interface ExchangeFailureHandledEvent extends ExchangeFailureEvent {
+        @Override
         default Type getType() {
             return Type.ExchangeFailureHandled;
         }
     }
 
     interface ExchangeFailureHandlingEvent extends ExchangeFailureEvent {
+        @Override
         default Type getType() {
             return Type.ExchangeFailureHandling;
         }
@@ -202,6 +220,7 @@ public interface CamelEvent {
 
         int getAttempt();
 
+        @Override
         default Type getType() {
             return Type.ExchangeRedelivery;
         }
@@ -211,6 +230,7 @@ public interface CamelEvent {
 
         Endpoint getEndpoint();
 
+        @Override
         default Type getType() {
             return Type.ExchangeSending;
         }
@@ -222,6 +242,7 @@ public interface CamelEvent {
 
         long getTimeTaken();
 
+        @Override
         default Type getType() {
             return Type.ExchangeSent;
         }
@@ -232,18 +253,21 @@ public interface CamelEvent {
     }
 
     interface StepStartedEvent extends StepEvent {
+        @Override
         default Type getType() {
             return Type.StepStarted;
         }
     }
 
     interface StepCompletedEvent extends StepEvent {
+        @Override
         default Type getType() {
             return Type.StepCompleted;
         }
     }
 
     interface StepFailedEvent extends StepEvent, FailureEvent {
+        @Override
         default Type getType() {
             return Type.StepFailed;
         }
@@ -253,30 +277,35 @@ public interface CamelEvent {
 
         Route getRoute();
 
+        @Override
         default Object getSource() {
             return getRoute();
         }
     }
 
     interface RouteAddedEvent extends RouteEvent {
+        @Override
         default Type getType() {
             return Type.RouteAdded;
         }
     }
 
     interface RouteRemovedEvent extends RouteEvent {
+        @Override
         default Type getType() {
             return Type.RouteRemoved;
         }
     }
 
     interface RouteStartedEvent extends RouteEvent {
+        @Override
         default Type getType() {
             return Type.RouteStarted;
         }
     }
 
     interface RouteStoppedEvent extends RouteEvent {
+        @Override
         default Type getType() {
             return Type.RouteStopped;
         }
@@ -286,18 +315,21 @@ public interface CamelEvent {
 
         Object getService();
 
+        @Override
         default Object getSource() {
             return getService();
         }
     }
 
     interface ServiceStartupFailureEvent extends ServiceEvent, FailureEvent {
+        @Override
         default Type getType() {
             return Type.ServiceStartupFailure;
         }
     }
 
     interface ServiceStopFailureEvent extends ServiceEvent, FailureEvent {
+        @Override
         default Type getType() {
             return Type.ServiceStopFailure;
         }

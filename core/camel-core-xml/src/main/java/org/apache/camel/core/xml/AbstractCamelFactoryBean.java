@@ -65,6 +65,7 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
     public void destroy() throws Exception {
     }
 
+    @Override
     public CamelContext getCamelContext() {
         if (ObjectHelper.isNotEmpty(camelContextId)) {
             // always return the context by its id
@@ -73,6 +74,7 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

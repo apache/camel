@@ -98,6 +98,7 @@ public class OwbParametrizedTypeImpl implements ParameterizedType {
 
     }
 
+    @Override
     public String toString() {
         StringBuilder buffer = new StringBuilder();
         buffer.append(((Class<?>)rawType).getName());

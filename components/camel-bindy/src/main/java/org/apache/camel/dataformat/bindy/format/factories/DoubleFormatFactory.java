@@ -50,12 +50,14 @@ public class DoubleFormatFactory extends AbstractFormatFactory {
             super(impliedDecimalPosition, precision, locale);
         }
 
+        @Override
         public String format(Double object) throws Exception {
             return !super.hasImpliedDecimalPosition()
                     ? super.getFormat().format(object)
                     : super.getFormat().format(object * super.getMultiplier());
         }
 
+        @Override
         public Double parse(String string) throws Exception {
             Double value = null;
             if (!super.hasImpliedDecimalPosition()) {

@@ -88,6 +88,7 @@ public class MessageFilterResolvingTest extends AbstractSmockClientTest {
         createServer(applicationContext);
     }
 
+    @Override
     @After
     public void verify() {
         super.verify();

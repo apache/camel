@@ -36,6 +36,7 @@ public class ScriptProcessor extends AsyncProcessorSupport implements Traceable,
         this.expression = expression;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             expression.evaluate(exchange, Object.class);
@@ -52,14 +53,17 @@ public class ScriptProcessor extends AsyncProcessorSupport implements Traceable,
         return "Script(" + expression + ")";
     }
 
+    @Override
     public String getTraceLabel() {
         return "script[" + expression + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

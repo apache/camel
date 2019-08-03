@@ -39,6 +39,7 @@ import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
  */
 public class DefaultThreadPoolFactory implements ThreadPoolFactory {
 
+    @Override
     public ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
         return Executors.newCachedThreadPool(threadFactory);
     }

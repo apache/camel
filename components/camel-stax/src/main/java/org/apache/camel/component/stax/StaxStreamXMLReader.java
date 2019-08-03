@@ -411,7 +411,8 @@ public class StaxStreamXMLReader implements XMLReader {
 	 * @param ignored is ignored
 	 * @throws SAXException a SAX exception, possibly wrapping a <code>XMLStreamException</code>
 	 */
-	public final void parse(InputSource ignored) throws SAXException {
+	@Override
+    public final void parse(InputSource ignored) throws SAXException {
 		parse();
 	}
 
@@ -421,7 +422,8 @@ public class StaxStreamXMLReader implements XMLReader {
 	 * @param ignored is ignored
 	 * @throws SAXException A SAX exception, possibly wrapping a <code>XMLStreamException</code>
 	 */
-	public final void parse(String ignored) throws SAXException {
+	@Override
+    public final void parse(String ignored) throws SAXException {
 		parse();
 	}
 
@@ -488,54 +490,66 @@ public class StaxStreamXMLReader implements XMLReader {
 			this.location = location;
 		}
 
-		public String getPublicId() {
+		@Override
+        public String getPublicId() {
 			return location.getPublicId();
 		}
 
-		public String getSystemId() {
+		@Override
+        public String getSystemId() {
 			return location.getSystemId();
 		}
 
-		public int getLineNumber() {
+		@Override
+        public int getLineNumber() {
 			return location.getLineNumber();
 		}
 
-		public int getColumnNumber() {
+		@Override
+        public int getColumnNumber() {
 			return location.getColumnNumber();
 		}
 	}
 
     // AbstractXMLReader
 
+    @Override
     public ContentHandler getContentHandler() {
 		return contentHandler;
 	}
 
-	public void setContentHandler(ContentHandler contentHandler) {
+	@Override
+    public void setContentHandler(ContentHandler contentHandler) {
 		this.contentHandler = contentHandler;
 	}
 
-	public void setDTDHandler(DTDHandler dtdHandler) {
+	@Override
+    public void setDTDHandler(DTDHandler dtdHandler) {
 		this.dtdHandler = dtdHandler;
 	}
 
-	public DTDHandler getDTDHandler() {
+	@Override
+    public DTDHandler getDTDHandler() {
 		return dtdHandler;
 	}
 
-	public EntityResolver getEntityResolver() {
+	@Override
+    public EntityResolver getEntityResolver() {
 		return entityResolver;
 	}
 
-	public void setEntityResolver(EntityResolver entityResolver) {
+	@Override
+    public void setEntityResolver(EntityResolver entityResolver) {
 		this.entityResolver = entityResolver;
 	}
 
-	public ErrorHandler getErrorHandler() {
+	@Override
+    public ErrorHandler getErrorHandler() {
 		return errorHandler;
 	}
 
-	public void setErrorHandler(ErrorHandler errorHandler) {
+	@Override
+    public void setErrorHandler(ErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
 
@@ -547,7 +561,8 @@ public class StaxStreamXMLReader implements XMLReader {
 	 * Throws a <code>SAXNotRecognizedException</code> exception when the given property does not signify a lexical
 	 * handler. The property name for a lexical handler is <code>http://xml.org/sax/properties/lexical-handler</code>.
 	 */
-	public Object getProperty(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+	@Override
+    public Object getProperty(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
 		if ("http://xml.org/sax/properties/lexical-handler".equals(name)) {
 			return lexicalHandler;
 		}
@@ -560,7 +575,8 @@ public class StaxStreamXMLReader implements XMLReader {
 	 * Throws a <code>SAXNotRecognizedException</code> exception when the given property does not signify a lexical
 	 * handler. The property name for a lexical handler is <code>http://xml.org/sax/properties/lexical-handler</code>.
 	 */
-	public void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException {
+	@Override
+    public void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException {
 		if ("http://xml.org/sax/properties/lexical-handler".equals(name)) {
 			lexicalHandler = (LexicalHandler) value;
 		}

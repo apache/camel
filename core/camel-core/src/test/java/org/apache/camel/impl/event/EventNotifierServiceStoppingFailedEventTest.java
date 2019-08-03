@@ -84,9 +84,11 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
             this.fail = fail;
         }
 
+        @Override
         public void start() {
         }
 
+        @Override
         public void stop() {
             stopOrder = stopOrder + name;
 

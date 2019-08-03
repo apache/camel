@@ -25,6 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class TransactionInterceptSendToEndpointTest extends CamelSpringTestSupport {
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/component/jms/tx/TransactionInterceptSendToEndpointTest.xml");

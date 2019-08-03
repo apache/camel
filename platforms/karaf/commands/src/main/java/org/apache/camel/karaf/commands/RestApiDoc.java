@@ -33,6 +33,7 @@ public class RestApiDoc extends CamelControllerImpl implements Action {
     @Completion(CamelContextCompleter.class)
     String name;
 
+    @Override
     public Object execute() throws Exception {
         RestApiDocCommand command = new RestApiDocCommand(name);
         return command.execute(this, System.out, System.err);

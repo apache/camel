@@ -24,6 +24,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringInterceptSendToEndpointSkipTest extends ContextTestSupport {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/interceptSendToEndpointSkip.xml");
     }

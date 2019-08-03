@@ -116,6 +116,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
 
         private final int batchSize = 1000;
 
+        @Override
         @SuppressWarnings("unchecked")
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             String str = newExchange.getIn().getBody(String.class);

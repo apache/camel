@@ -94,6 +94,7 @@ public class DefaultSignedDataVerifierConfiguration extends DefaultCryptoCmsUnMa
         }
     }
 
+    @Override
     public DefaultSignedDataVerifierConfiguration copy() {
         try {
             return (DefaultSignedDataVerifierConfiguration)clone();

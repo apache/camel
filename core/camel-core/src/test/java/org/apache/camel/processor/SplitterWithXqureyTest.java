@@ -32,6 +32,7 @@ public class SplitterWithXqureyTest extends ContextTestSupport {
         + "<other><test>Three</test></other>"
         + "<other><test>Foure</test></other></workflow>";
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

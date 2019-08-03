@@ -29,6 +29,7 @@ import org.junit.Test;
 
 public class FromFileToFtpDefaultRootRenameStrategyTest extends FtpServerTestSupport {
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -80,6 +81,7 @@ public class FromFileToFtpDefaultRootRenameStrategyTest extends FtpServerTestSup
         producer.stop();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

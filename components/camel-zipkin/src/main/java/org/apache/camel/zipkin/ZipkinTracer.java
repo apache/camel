@@ -188,10 +188,12 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         }
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

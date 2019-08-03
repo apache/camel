@@ -28,6 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class TransactionErrorHandlerCustomerSpringParserTest extends CamelSpringTestSupport {
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/component/jms/tx/TransactionErrorHandlerCustomerSpringParserTest.xml");
@@ -49,6 +50,7 @@ public class TransactionErrorHandlerCustomerSpringParserTest extends CamelSpring
     public static class MyProcessor implements Processor {
         private int count;
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             if (++count <= 2) {
                 throw new IllegalArgumentException("Forced Exception number " + count + ", please retry");

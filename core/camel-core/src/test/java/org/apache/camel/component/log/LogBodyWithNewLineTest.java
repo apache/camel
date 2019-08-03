@@ -33,6 +33,7 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
 
     private StringWriter writer;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

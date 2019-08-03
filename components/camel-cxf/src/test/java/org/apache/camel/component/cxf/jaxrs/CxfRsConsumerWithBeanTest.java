@@ -39,6 +39,7 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
         registry.bind("service", new ServiceUtil());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

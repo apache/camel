@@ -32,66 +32,82 @@ public class ManagedScheduledPollConsumer extends ManagedConsumer implements Man
         this.consumer = consumer;
     }
 
+    @Override
     public ScheduledPollConsumer getConsumer() {
         return consumer;
     }
 
+    @Override
     public long getDelay() {
         return getConsumer().getDelay();
     }
 
+    @Override
     public void setDelay(long delay) {
         getConsumer().setDelay(delay);
     }
 
+    @Override
     public long getInitialDelay() {
         return getConsumer().getInitialDelay();
     }
 
+    @Override
     public void setInitialDelay(long initialDelay) {
         getConsumer().setInitialDelay(initialDelay);
     }
 
+    @Override
     public boolean isUseFixedDelay() {
         return getConsumer().isUseFixedDelay();
     }
 
+    @Override
     public void setUseFixedDelay(boolean useFixedDelay) {
         getConsumer().setUseFixedDelay(useFixedDelay);
     }
 
+    @Override
     public String getTimeUnit() {
         return getConsumer().getTimeUnit().name();
     }
 
+    @Override
     public void setTimeUnit(String timeUnit) {
         getConsumer().setTimeUnit(TimeUnit.valueOf(timeUnit));
     }
 
+    @Override
     public boolean isSchedulerStarted() {
         return getConsumer().isSchedulerStarted();
     }
 
+    @Override
     public void startScheduler() {
         getConsumer().startScheduler();
     }
 
+    @Override
     public String getSchedulerClassName() {
         return getConsumer().getScheduler().getClass().getName();
     }
 
+    @Override
     public int getBackoffMultiplier() {
         return getConsumer().getBackoffMultiplier();
     }
 
+    @Override
     public int getBackoffIdleThreshold() {
         return getConsumer().getBackoffIdleThreshold();
     }
 
+    @Override
     public int getBackoffErrorThreshold() {
         return getConsumer().getBackoffErrorThreshold();
     }
 
+    @Override
     public int getBackoffCounter() {
         return getConsumer().getBackoffCounter();
     }

@@ -80,16 +80,19 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         clientFactoryBeanCache = new ClientFactoryBeanCache(endpoint.getMaxClientCacheSize());
     }
     
+    @Override
     protected void doStart() throws Exception {
         clientFactoryBeanCache.start();
         super.doStart();
     }
     
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
         clientFactoryBeanCache.stop();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
         Boolean httpClientAPI = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.class);
@@ -104,6 +107,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         }
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             Message inMessage = exchange.getIn();

@@ -47,14 +47,17 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
             this.remaining = remaining;
         }
 
+        @Override
         public Producer createProducer() throws Exception {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        @Override
         public boolean isSingleton() {
             return true;
         }

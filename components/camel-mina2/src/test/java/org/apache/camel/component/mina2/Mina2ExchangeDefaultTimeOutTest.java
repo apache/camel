@@ -37,6 +37,7 @@ public class Mina2ExchangeDefaultTimeOutTest extends BaseMina2Test {
         }
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 

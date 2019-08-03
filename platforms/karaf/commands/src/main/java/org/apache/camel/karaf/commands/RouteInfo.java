@@ -27,6 +27,7 @@ public class RouteInfo extends AbstractRouteCommand {
 
     private StringEscape stringEscape = org.apache.camel.karaf.commands.internal.StringEscape.getInstance();
 
+    @Override
     public Object execute() throws Exception {
         RouteInfoCommand command = new RouteInfoCommand(route, context);
         command.setStringEscape(stringEscape);

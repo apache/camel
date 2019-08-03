@@ -36,6 +36,7 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
     private Cache<String, Boolean> cache;
     private JCacheIdempotentRepository repository;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         cacheManager = JCacheHelper.createManager(new JCacheConfiguration("idempotent-repository"));
@@ -46,6 +47,7 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
         repository.start();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         repository.stop();

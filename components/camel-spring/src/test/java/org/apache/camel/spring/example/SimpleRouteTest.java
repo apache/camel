@@ -34,6 +34,7 @@ public class SimpleRouteTest extends SpringTestSupport {
 
         resultEndpoint.assertIsSatisfied();
     }
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/simpleRoute.xml");
     }

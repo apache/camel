@@ -42,6 +42,7 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
         this.list = hazelcastInstance.getList(listName);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         Map<String, Object> headers = exchange.getIn().getHeaders();

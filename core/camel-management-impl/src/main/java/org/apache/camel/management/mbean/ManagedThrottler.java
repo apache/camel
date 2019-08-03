@@ -36,30 +36,37 @@ public class ManagedThrottler extends ManagedProcessor implements ManagedThrottl
         return throttler;
     }
 
+    @Override
     public long getMaximumRequestsPerPeriod() {
         return throttler.getCurrentMaximumRequestsPerPeriod();
     }
 
+    @Override
     public void setMaximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
         throttler.setMaximumRequestsPerPeriodExpression(constant(maximumRequestsPerPeriod));
     }
 
+    @Override
     public long getTimePeriodMillis() {
         return throttler.getTimePeriodMillis();
     }
 
+    @Override
     public void setTimePeriodMillis(long timePeriodMillis) {
         throttler.setTimePeriodMillis(timePeriodMillis);
     }
 
+    @Override
     public Boolean isAsyncDelayed() {
         return throttler.isAsyncDelayed();
     }
 
+    @Override
     public Boolean isCallerRunsWhenRejected() {
         return throttler.isCallerRunsWhenRejected();
     }
 
+    @Override
     public Boolean isRejectExecution() {
         return throttler.isRejectExecution();
     }

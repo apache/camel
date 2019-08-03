@@ -71,6 +71,7 @@ public class RestletMultiMethodsEndpointTest extends RestletTestSupport {
         assertTrue("PUT should be allowed", value.contains("PUT"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override

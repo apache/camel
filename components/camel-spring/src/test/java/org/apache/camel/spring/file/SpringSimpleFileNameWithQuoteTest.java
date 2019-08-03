@@ -44,6 +44,7 @@ public class SpringSimpleFileNameWithQuoteTest extends SpringRunWithTestSupport 
         result.assertIsSatisfied();
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/foo");

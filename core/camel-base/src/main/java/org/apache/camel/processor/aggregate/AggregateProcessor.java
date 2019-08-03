@@ -143,42 +143,52 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         private boolean statisticsEnabled = true;
 
+        @Override
         public long getTotalIn() {
             return totalIn.get();
         }
 
+        @Override
         public long getTotalCompleted() {
             return totalCompleted.get();
         }
 
+        @Override
         public long getCompletedBySize() {
             return completedBySize.get();
         }
 
+        @Override
         public long getCompletedByStrategy() {
             return completedByStrategy.get();
         }
 
+        @Override
         public long getCompletedByInterval() {
             return completedByInterval.get();
         }
 
+        @Override
         public long getCompletedByTimeout() {
             return completedByTimeout.get();
         }
 
+        @Override
         public long getCompletedByPredicate() {
             return completedByPredicate.get();
         }
 
+        @Override
         public long getCompletedByBatchConsumer() {
             return completedByBatchConsumer.get();
         }
 
+        @Override
         public long getCompletedByForce() {
             return completedByForce.get();
         }
 
+        @Override
         public void reset() {
             totalIn.set(0);
             totalCompleted.set(0);
@@ -190,10 +200,12 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             completedByForce.set(0);
         }
 
+        @Override
         public boolean isStatisticsEnabled() {
             return statisticsEnabled;
         }
 
+        @Override
         public void setStatisticsEnabled(boolean statisticsEnabled) {
             this.statisticsEnabled = statisticsEnabled;
         }
@@ -245,10 +257,12 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         return "AggregateProcessor[to: " + processor + "]";
     }
 
+    @Override
     public String getTraceLabel() {
         return "aggregate[" + correlationExpression + "]";
     }
 
+    @Override
     public List<Processor> next() {
         if (!hasNext()) {
             return null;
@@ -258,18 +272,22 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         return answer;
     }
 
+    @Override
     public boolean hasNext() {
         return processor != null;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             doProcess(exchange, callback);
@@ -1075,6 +1093,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             this.exchangeId = exchangeId;
         }
 
+        @Override
         public void onFailure(Exchange exchange) {
             log.trace("Aggregated exchange onFailure: {}", exchange);
 
@@ -1083,6 +1102,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             // do not remove redelivery state as we need it when we redeliver again later
         }
 
+        @Override
         public void onComplete(Exchange exchange) {
             log.trace("Aggregated exchange onComplete: {}", exchange);
 
@@ -1170,6 +1190,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
      */
     private final class AggregationIntervalTask implements Runnable {
 
+        @Override
         public void run() {
             // only run if CamelContext has been fully started
             if (!camelContext.getStatus().isStarted()) {
@@ -1227,6 +1248,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             this.recoverable = recoverable;
         }
 
+        @Override
         public void run() {
             // only run if CamelContext has been fully started
             if (!camelContext.getStatus().isStarted()) {

@@ -21,6 +21,7 @@ package org.apache.camel.component.file.remote;
  */
 public class FromFtpMoveFileAbsoluteFolderRecursiveNotStepwiseTest extends FromFtpMoveFileAbsoluteFolderRecursiveTest {
 
+    @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false"
                 + "&move=/.done/${file:name}.old&initialDelay=2500&delay=5000&stepwise=false";

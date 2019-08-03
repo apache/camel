@@ -448,6 +448,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         this.controllerSleepTimeMs = controllerSleepTimeMs;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return this.headerFilterStrategy;
     }
@@ -455,6 +456,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
     /**
      * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }

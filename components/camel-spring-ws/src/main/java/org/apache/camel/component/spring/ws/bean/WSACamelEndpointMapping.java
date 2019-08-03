@@ -238,10 +238,12 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
         }
     }
 
+    @Override
     public void addConsumer(EndpointMappingKey key, MessageEndpoint endpoint) {
         endpoints.put(key, endpoint);
     }
 
+    @Override
     public void removeConsumer(Object key) {
         endpoints.remove(key);
     }

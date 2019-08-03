@@ -25,6 +25,7 @@ import javax.net.ssl.SSLSession;
  * Add this class to ensure the SSL enabled test can pass on any machine
  */
 public class AllowAllHostnameVerifier implements HostnameVerifier {
+    @Override
     public boolean verify(String s, SSLSession sslSession) {
         return true;
     }

@@ -41,6 +41,7 @@ public class FreemarkerBodyAsDomainObjectTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -71,6 +72,7 @@ public class FreemarkerBodyAsDomainObjectTest extends CamelTestSupport {
             this.familyName = familyName;
         }
 
+        @Override
         public String toString() {
             return "MyPerson{"
                 + "givenName='"

@@ -55,6 +55,7 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
         template.sendBodyAndHeader(url, "Secret2", Exchange.FILE_NAME, "Secret2.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

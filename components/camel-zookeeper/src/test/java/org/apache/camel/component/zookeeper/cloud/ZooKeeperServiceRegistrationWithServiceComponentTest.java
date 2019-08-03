@@ -29,6 +29,7 @@ public class ZooKeeperServiceRegistrationWithServiceComponentTest extends ZooKee
     @BindToRegistry("service")
     private ServiceComponent service = new ServiceComponent();
 
+    @Override
     protected Map<String, String> getMetadata() {
         return Collections.singletonMap("service.type", "zookeeper");
     }

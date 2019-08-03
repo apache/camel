@@ -31,6 +31,7 @@ import org.junit.Test;
 public class BeanWithHeadersAndBodyInject3Test extends ContextTestSupport {
     private MyBean myBean = new MyBean();
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

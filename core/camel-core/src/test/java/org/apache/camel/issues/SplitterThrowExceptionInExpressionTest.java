@@ -59,6 +59,7 @@ public class SplitterThrowExceptionInExpressionTest extends ContextTestSupport {
 
     private static class MyExpression implements Expression {
 
+        @Override
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             // force an exception early, to test that the onException error handlers
             // can kick in anyway

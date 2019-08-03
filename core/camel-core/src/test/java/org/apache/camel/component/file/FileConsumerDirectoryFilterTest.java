@@ -80,6 +80,7 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
         assertEquals("skipDir2", list.get(3));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -91,6 +92,7 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
     // START SNIPPET: e1
     public class MyDirectoryFilter<T> implements GenericFileFilter<T> {
 
+        @Override
         public boolean accept(GenericFile<T> file) {
             // remember the name due unit testing (should not be needed in regular use-cases)
             names.add(file.getFileName());

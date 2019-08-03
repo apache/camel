@@ -85,15 +85,18 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
             this.name = name;
         }
 
+        @Override
         protected void doStart() throws Exception {
             startOrder += name;
             started = true;
         }
 
+        @Override
         protected void doStop() throws Exception {
             started = false;
         }
 
+        @Override
         public boolean isStarted() {
             return started;
         }
@@ -106,6 +109,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
             this.started = started;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
         }
     }

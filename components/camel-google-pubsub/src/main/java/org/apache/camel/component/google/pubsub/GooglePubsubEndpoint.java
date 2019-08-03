@@ -100,11 +100,13 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
         log.trace("Destination Name: {}", this.destinationName);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         afterPropertiesSet();
         return new GooglePubsubProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         afterPropertiesSet();
         setExchangePattern(ExchangePattern.InOnly);
@@ -119,6 +121,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
                                     concurrentConsumers);
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }

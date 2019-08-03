@@ -38,6 +38,7 @@ public class DigitalOceanComponent extends DefaultComponent {
     public DigitalOceanComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         DigitalOceanConfiguration configuration = new DigitalOceanConfiguration();

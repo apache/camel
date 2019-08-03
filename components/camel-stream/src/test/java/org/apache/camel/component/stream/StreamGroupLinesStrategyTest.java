@@ -41,6 +41,7 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
         }
     }
 
+    @Override
     @Test
     public void testGroupLines() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

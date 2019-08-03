@@ -43,6 +43,7 @@ public class DirectComponent extends DefaultComponent {
     public DirectComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DirectEndpoint endpoint = new DirectEndpoint(uri, this, consumers);
         endpoint.setBlock(block);

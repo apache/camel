@@ -31,6 +31,7 @@ public class GetAttributesCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         GetAttributesRequest request = new GetAttributesRequest()
             .withDomainName(determineDomainName())

@@ -105,6 +105,7 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
     /**
      * Applies the cells to the {@link org.apache.camel.Exchange}.
      */
+    @Override
     public void applyGetResults(Message message, HBaseData data) {
         message.setHeaders(message.getExchange().getIn().getHeaders());
         int index = 1;
@@ -126,6 +127,7 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
     /**
      * Applies the cells to the {@link org.apache.camel.Exchange}.
      */
+    @Override
     public void applyScanResults(Message message, HBaseData data) {
         message.setHeaders(message.getExchange().getIn().getHeaders());
         int index = 1;

@@ -181,6 +181,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
         assertTrue(qe.getTransactionBatchTimeout() == 3000);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

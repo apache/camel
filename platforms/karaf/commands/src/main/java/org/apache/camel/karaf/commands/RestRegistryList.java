@@ -42,6 +42,7 @@ public class RestRegistryList extends CamelControllerImpl implements Action {
             required = false, multiValued = false, valueToShowInHelp = "false")
     Boolean verbose = false;
 
+    @Override
     public Object execute() throws Exception {
         RestRegistryListCommand command = new RestRegistryListCommand(name, decode, verbose);
         return command.execute(this, System.out, System.err);

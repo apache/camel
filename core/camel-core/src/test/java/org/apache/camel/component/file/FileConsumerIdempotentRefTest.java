@@ -87,6 +87,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
 
     public class MyIdempotentRepository implements IdempotentRepository {
 
+        @Override
         public boolean add(String messageId) {
             // will return true 1st time, and false 2nd time
             boolean result = invoked;
@@ -95,14 +96,17 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
             return !result;
         }
 
+        @Override
         public boolean contains(String key) {
             return invoked;
         }
 
+        @Override
         public boolean remove(String key) {
             return true;
         }
 
+        @Override
         public boolean confirm(String key) {
             return true;
         }
@@ -112,9 +116,11 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
             return;  
         }
 
+        @Override
         public void start() {
         }
 
+        @Override
         public void stop() {
         }
     }

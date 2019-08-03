@@ -57,6 +57,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     public SingleTCPNettyServerBootstrapFactory() {
     }
 
+    @Override
     public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
@@ -67,6 +68,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
             : new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
     }
 
+    @Override
     public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
@@ -77,18 +79,22 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
             : new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
     }
 
+    @Override
     public void addChannel(Channel channel) {
         allChannels.add(channel);
     }
 
+    @Override
     public void removeChannel(Channel channel) {
         allChannels.remove(channel);
     }
 
+    @Override
     public void addConsumer(NettyConsumer consumer) {
         // does not allow sharing
     }
 
+    @Override
     public void removeConsumer(NettyConsumer consumer) {
         // does not allow sharing
     }

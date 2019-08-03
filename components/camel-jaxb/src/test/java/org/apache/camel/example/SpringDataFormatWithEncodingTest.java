@@ -63,6 +63,7 @@ public class SpringDataFormatWithEncodingTest extends CamelSpringTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/example/springDataFormatWithEncoding.xml");
     }

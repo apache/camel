@@ -43,6 +43,7 @@ public class CamelDirectSenderTest extends AbstractWSATests {
     @EndpointInject("mock:camelDirect")
     private MockEndpoint endpointCamelDirect;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

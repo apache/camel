@@ -36,6 +36,7 @@ public class ClassComponent extends BeanComponent {
     public ClassComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ClassEndpoint endpoint = new ClassEndpoint(uri, this);
         endpoint.setBeanName(remaining);

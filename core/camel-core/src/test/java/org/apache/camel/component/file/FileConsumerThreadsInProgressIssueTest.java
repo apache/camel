@@ -98,6 +98,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
             this.duplicate = duplicate;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             Integer integer = duplicate.get(exchange.toString());
             if (integer == null) {

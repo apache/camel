@@ -327,6 +327,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     }
 
 
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         // Retrieve the message body as input stream
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, graph);

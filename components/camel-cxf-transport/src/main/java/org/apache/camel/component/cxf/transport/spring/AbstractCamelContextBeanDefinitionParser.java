@@ -42,6 +42,7 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
         bean.addPropertyReference("camelContext", camelContextId);
     }
 
+    @Override
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
         // Parser the id attribute
         bean.setAbstract(true);
