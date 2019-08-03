@@ -108,6 +108,8 @@ We have removed all deprecated components from Camel 2.x, also including the old
 
 We removed `camel-jibx` component which wasn't working on JDK 8.
 
+We removed `camel-boon` dataformat which wasn't working on JDK 9 and later.
+
 The `camel-zookeeper` has its route policy functionality removed, instead use `ZooKeeperClusterService` or the `camel-zookeeper-master` component.
 
 The `camel-jetty` component no longer supports producer (eg to) which has been removed, instead use `camel-http4` component instead.
