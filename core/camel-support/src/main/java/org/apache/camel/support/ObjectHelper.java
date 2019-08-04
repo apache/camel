@@ -431,6 +431,9 @@ public final class ObjectHelper {
      * @return the iterator
      */
     public static Iterator<?> createIterator(Object value, String delimiter, boolean allowEmptyValues) {
+        if (value instanceof Stream) {
+            return ((Stream) value).iterator();
+        }
         return createIterable(value, delimiter, allowEmptyValues, false).iterator();
     }
 
