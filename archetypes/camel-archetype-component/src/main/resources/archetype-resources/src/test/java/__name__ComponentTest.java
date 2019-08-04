@@ -27,12 +27,12 @@ import java.util.TimerTask;
 
 public class ${name}ComponentTest extends CamelTestSupport {
 
-    final private EventBusHelper eventBusHelper = EventBusHelper.getInstance();
+    private final EventBusHelper eventBusHelper = EventBusHelper.getInstance();
 
     @Test
     public void test${name}() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(20);
+        mock.expectedMinimumMessageCount(5);
 
         // Trigger events to subscribers
         simulateEventTrigger();
@@ -56,10 +56,11 @@ public class ${name}ComponentTest extends CamelTestSupport {
             @Override
             public void run() {
                 final Date now = new Date();
+                // publish events to the event bus
                 eventBusHelper.publish(now);
             }
         };
 
-        new Timer().scheduleAtFixedRate(task, 1L, 1000L);
+        new Timer().scheduleAtFixedRate(task, 1000L, 1000L);
     }
 }

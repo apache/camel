@@ -56,10 +56,6 @@ public class ${name}Consumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
 
-        if(log.isTraceEnabled()){
-            log.trace("Shutting down consumer gracefully");
-        }
-
         // shutdown the thread pool gracefully
         getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
     }
@@ -72,10 +68,9 @@ public class ${name}Consumer extends DefaultConsumer {
         try {
             // send message to next processor in the route
             getProcessor().process(exchange);
-        } catch (Exception ex){
-            exchange.setException(new RuntimeCamelException("Message forwarding failed", ex));
+        } catch (Exception e) {
+            exchange.setException(e);
         } finally {
-            // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }

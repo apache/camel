@@ -36,7 +36,7 @@
       <!-- Camel BOM -->
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
+        <artifactId>camel-bom</artifactId>
         <version>${camel-version}</version>
         <scope>import</scope>
         <type>pom</type>
@@ -61,16 +61,19 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
+      <version>${log4j2-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
+      <version>${log4j2-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
+      <version>${log4j2-version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -129,7 +132,7 @@
         </executions>
       </plugin>
 
-      <!-- to generate the MANIFEST-FILE of the bundle -->
+      <!-- OSGi support (remove if not using OSGi) -->
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
