@@ -80,7 +80,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
         }
 
         String newFilename = filename + ".zip";
-        exchange.getOut().setHeader(FILE_NAME, newFilename);
+        exchange.getMessage().setHeader(FILE_NAME, newFilename);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
             try {
                 ZipEntry entry = zis.getNextEntry();
                 if (entry != null) {
-                    exchange.getOut().setHeader(FILE_NAME, entry.getName());
+                    exchange.getMessage().setHeader(FILE_NAME, entry.getName());
                     IOHelper.copy(zis, osb);
                 }
 
