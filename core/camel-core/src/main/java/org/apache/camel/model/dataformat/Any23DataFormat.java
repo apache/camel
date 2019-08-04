@@ -75,6 +75,10 @@ public class Any23DataFormat extends DataFormatDefinition {
     return outputFormat;
   }
 
+  /**
+   * What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS, RDFXML,
+   * JSONLD, RDFJSON, RDF4JMODEL. It is by default: RDF4JMODEL.
+   */
   public void setOutputFormat(Any23Type outputFormat) {
     this.outputFormat = outputFormat;
   }
@@ -83,6 +87,12 @@ public class Any23DataFormat extends DataFormatDefinition {
     return configurations;
   }
 
+  /**
+   * Configurations for Apache Any23 as key-value pairs in order to customize
+   * the extraction process. The list of supported parameters can be found
+   * <a href="https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.properties">here</a>.
+   * If not provided, a default configuration is used.
+   */
   public void setConfigurations(Map<String, String> configurations) {
     this.configurations = configurations;
   }
@@ -91,6 +101,12 @@ public class Any23DataFormat extends DataFormatDefinition {
     return extractors;
   }
 
+  /**
+   * List of Any23 extractors to be used in the unmarshal operation. A list of
+   * the available extractors can be found here
+   * <a href="https://any23.apache.org/getting-started.html">here</a>. If not
+   * provided, all the available extractors are used.
+   */
   public void setExtractors(List<String> extractors) {
     this.extractors = extractors;
   }
@@ -99,9 +115,12 @@ public class Any23DataFormat extends DataFormatDefinition {
     return baseURI;
   }
 
+  /**
+   * The URI to use as base for building RDF entities if only relative paths are
+   * provided.
+   */
   public void setBaseURI(String baseURI) {
     this.baseURI = baseURI;
   }
 
-  
 }

@@ -37,8 +37,23 @@ public class Any23DataFormatConfiguration
      * enabled by default.
      */
     private Boolean enabled;
+    /**
+     * Configurations for Apache Any23 as key-value pairs in order to customize
+     * the extraction process. The list of supported parameters can be found
+     * here. If not provided, a default configuration is used. The option is a
+     * java.util.Map<java.lang.String,java.lang.String> type.
+     */
     private String configurations;
+    /**
+     * List of Any23 extractors to be used in the unmarshal operation. A list of
+     * the available extractors can be found here here. If not provided, all the
+     * available extractors are used.
+     */
     private List<String> extractors;
+    /**
+     * The URI to use as base for building RDF entities if only relative paths
+     * are provided.
+     */
     private String baseURI;
     /**
      * Whether the data format should set the Content-Type header with the type
