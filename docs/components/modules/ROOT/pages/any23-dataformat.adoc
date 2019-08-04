@@ -1,6 +1,11 @@
 [[any23-dataformat]]
 == Any23 DataFormat
-== Any23 DataFormat
+Camel Any23 is a DataFormat that uses the Apache Anything To Triples (Any23) library to extract structured data in RDF from a variety of documents on the web. 
+*Available as of Camel version 3.0*
+
+The main functionality of this DataFormat focuses on its Unmarshal method which extracts RDF triplets from compatible pages, in a wide variety of RDF syntaxes.
+
+
 *Available as of Camel version 3.0*
 Any23 is a Data Format that is intended to convert HTML from a site (or file) into rdf.
 
@@ -62,7 +67,7 @@ An example where the consumer provides some HTML
 
 [source,java]
 ---------------------------------------------------------------------------
-from("file://site/inbox").unmarshal().tidyMarkup().to("file://site/blogs");
+from("direct:start").unmarshal().any23("http://mock.foo/bar").to("mock:result");
 ---------------------------------------------------------------------------
 
 ### Spring XML Example
