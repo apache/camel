@@ -16,16 +16,22 @@
  */
 package org.apache.camel.dataformat.any23;
 
+import java.io.InputStream;
 import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class Any23DataFormatHTTPTest extends CamelTestSupport {
+public class Any23DataFormatSpringTest extends CamelSpringTestSupport {
 
   private final String BASEURI = "http://mock.foo/bar";
 
@@ -36,22 +42,16 @@ public class Any23DataFormatHTTPTest extends CamelTestSupport {
     List<Exchange> list = resultEndpoint.getReceivedExchanges();
     for (Exchange exchange : list) {
       Message in = exchange.getIn();
-      Model resultingRDF = in.getBody(Model.class);
-      assertEquals(resultingRDF.size(), 1762);
+      String resultingRDF = in.getBody(String.class);
+      InputStream toInputStream = IOUtils.toInputStream(resultingRDF);
+      Model parse = Rio.parse(toInputStream, BASEURI, RDFFormat.TURTLE);
+      assertEquals(parse.size(), 1);
     }
   }
 
   @Override
-  protected RouteBuilder createRouteBuilder() {
-    return new RouteBuilder() {
-      public void configure() {
-        from("direct:start")
-            .to("http://dbpedia.org/page/Ecuador")
-            .unmarshal()
-            .any23(BASEURI)
-            .to("mock:result");
-      }
-    };
+  protected AbstractApplicationContext createApplicationContext() {
+    return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/any23/spring/SpringAny23DataFormatTest.xml");
   }
 
 }
