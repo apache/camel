@@ -16,35 +16,64 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
-import java.util.Date;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.DefaultConsumer;
+
+import java.util.concurrent.ExecutorService;
 
 /**
  * The ${name} consumer.
  */
-public class ${name}Consumer extends ScheduledPollConsumer {
+public class ${name}Consumer extends DefaultConsumer {
     private final ${name}Endpoint endpoint;
+    private final EventBusHelper eventBusHelper;
+
+    private ExecutorService executorService;
 
     public ${name}Consumer(${name}Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
+        eventBusHelper = EventBusHelper.getInstance();
     }
 
     @Override
-    protected int poll() throws Exception {
-        Exchange exchange = endpoint.createExchange();
+    protected void doStart() throws Exception {
+        super.doStart();
 
-        // create a message body
-        Date now = new Date();
-        exchange.getIn().setBody("Hello World! The time is " + now);
+        // start a single threaded pool to monitor events
+        executorService = endpoint.createExecutor();
+
+        // submit task to the thread pool
+        executorService.submit(() -> {
+            // subscribe to an event
+            eventBusHelper.subscribe(this::onEventListener);
+        });
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if(log.isTraceEnabled()){
+            log.trace("Shutting down consumer gracefully");
+        }
+
+        // shutdown the thread pool gracefully
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
+    }
+
+    private void onEventListener(final Object event) {
+        final Exchange exchange = endpoint.createExchange();
+
+        exchange.getIn().setBody("Hello World! The time is " + event);
 
         try {
             // send message to next processor in the route
             getProcessor().process(exchange);
-            return 1; // number of messages polled
+        } catch (Exception ex){
+            exchange.setException(new RuntimeCamelException("Message forwarding failed", ex));
         } finally {
             // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
