@@ -1007,7 +1007,7 @@ public abstract class CamelTestSupport extends TestSupport {
                     if (idx2 != -1) {
                         t = t.substring(0, idx2);
                     }
-                    return t.startsWith(target);
+                    return t.equals(target);
                 }).findFirst().orElse(null);
 
         if (found != null) {
