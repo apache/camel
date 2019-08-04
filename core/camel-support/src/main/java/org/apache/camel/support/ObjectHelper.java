@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -382,7 +383,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an iterator over the value if the value is a collection, an
+     * Creates an iterator over the value if the value is a {@link Stream}, collection, an
      * Object[], a String with values separated by comma,
      * or a primitive type array; otherwise to simplify the caller's code,
      * we just create a singleton collection iterator over a single value
@@ -398,7 +399,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an iterator over the value if the value is a collection, an
+     * Creates an iterator over the value if the value is a {@link Stream}, collection, an
      * Object[], a String with values separated by the given delimiter,
      * or a primitive type array; otherwise to simplify the caller's
      * code, we just create a singleton collection iterator over a single value
@@ -414,7 +415,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an iterator over the value if the value is a collection, an
+     * Creates an iterator over the value if the value is a {@link Stream}, collection, an
      * Object[], a String with values separated by the given delimiter,
      * or a primitive type array; otherwise to simplify the caller's
      * code, we just create a singleton collection iterator over a single value
@@ -434,7 +435,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an iterator over the value if the value is a collection, an
+     * Creates an iterator over the value if the value is a {@link Stream}, collection, an
      * Object[], a String with values separated by the given delimiter,
      * or a primitive type array; otherwise to simplify the caller's
      * code, we just create a singleton collection iterator over a single value
@@ -452,6 +453,9 @@ public final class ObjectHelper {
      */
     public static Iterator<?> createIterator(Object value, String delimiter,
                                                   boolean allowEmptyValues, boolean pattern) {
+        if (value instanceof Stream) {
+            return ((Stream) value).iterator();
+        }
         return createIterable(value, delimiter, allowEmptyValues, pattern).iterator();
     }
 

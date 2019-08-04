@@ -18,6 +18,7 @@ package org.apache.camel.converter;
 
 import java.math.BigInteger;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;

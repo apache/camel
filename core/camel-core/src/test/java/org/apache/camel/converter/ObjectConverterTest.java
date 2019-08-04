@@ -19,6 +19,7 @@ package org.apache.camel.converter;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,6 +31,15 @@ public class ObjectConverterTest extends Assert {
         Iterator<?> it = ObjectConverter.iterator("Claus,Jonathan");
         assertEquals("Claus", it.next());
         assertEquals("Jonathan", it.next());
+        assertEquals(false, it.hasNext());
+    }
+
+    @Test
+    public void testStreamIterator() {
+        Iterator<?> it = ObjectConverter.iterator(Stream.of("Claus", "Jonathan", "Andrea"));
+        assertEquals("Claus", it.next());
+        assertEquals("Jonathan", it.next());
+        assertEquals("Andrea", it.next());
         assertEquals(false, it.hasNext());
     }
 
