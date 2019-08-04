@@ -94,10 +94,6 @@ public final class IOConverter {
         return IOHelper.toWriter(os, ExchangeHelper.getCharsetName(exchange));
     }
 
-    public static BufferedWriter toWriter(File file, boolean append, String charset) throws IOException {
-        return IOHelper.toWriter(new FileOutputStream(file, append), charset);
-    }
-
     @Converter
     public static Reader toReader(InputStream in, Exchange exchange) throws IOException {
         return IOHelper.buffered(new InputStreamReader(in, ExchangeHelper.getCharsetName(exchange)));
