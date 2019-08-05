@@ -39,7 +39,7 @@ public interface HdfsEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the HDFS2 component.
+     * Builder for endpoint consumers for the HDFS component.
      */
     public interface HdfsEndpointConsumerBuilder
             extends
@@ -617,7 +617,7 @@ public interface HdfsEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the HDFS2 component.
+     * Advanced builder for endpoint consumers for the HDFS component.
      */
     public interface AdvancedHdfsEndpointConsumerBuilder
             extends
@@ -991,7 +991,7 @@ public interface HdfsEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the HDFS2 component.
+     * Builder for endpoint producers for the HDFS component.
      */
     public interface HdfsEndpointProducerBuilder
             extends
@@ -1235,7 +1235,7 @@ public interface HdfsEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the HDFS2 component.
+     * Advanced builder for endpoint producers for the HDFS component.
      */
     public interface AdvancedHdfsEndpointProducerBuilder
             extends
@@ -1520,7 +1520,7 @@ public interface HdfsEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the HDFS2 component.
+     * Builder for endpoint for the HDFS component.
      */
     public interface HdfsEndpointBuilder
             extends
@@ -1676,7 +1676,7 @@ public interface HdfsEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the HDFS2 component.
+     * Advanced builder for endpoint for the HDFS component.
      */
     public interface AdvancedHdfsEndpointBuilder
             extends
@@ -2011,7 +2011,7 @@ public interface HdfsEndpointBuilderFactory {
         BLOCK;
     }
     /**
-     * HDFS2 (camel-hdfs)
+     * HDFS (camel-hdfs)
      * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
      * 
      * Category: hadoop,file

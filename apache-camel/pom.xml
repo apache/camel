@@ -679,7 +679,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-hdfs2</artifactId>
+      <artifactId>camel-hdfs</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2188,7 +2188,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-hdfs2-starter</artifactId>
+      <artifactId>camel-hdfs-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

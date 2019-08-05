@@ -210,7 +210,6 @@
     <module>camel-hazelcast-starter</module>
     <module>camel-hbase-starter</module>
     <module>camel-hdfs-starter</module>
-    <module>camel-hdfs2-starter</module>
     <module>camel-hipchat-starter</module>
     <module>camel-hl7-starter</module>
     <module>camel-http-common-starter</module>

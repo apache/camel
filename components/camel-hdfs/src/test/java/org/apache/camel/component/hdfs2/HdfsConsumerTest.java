@@ -103,7 +103,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=4096&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=4096&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -139,10 +139,10 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=100&initialDelay=0").to("mock:result");
-                from("hdfs2://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=200&initialDelay=0").to("mock:result");
-                from("hdfs2://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=300&initialDelay=0").to("mock:result");
-                from("hdfs2://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=400&initialDelay=0").to("mock:result");
+                from("hdfs://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=100&initialDelay=0").to("mock:result");
+                from("hdfs://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=200&initialDelay=0").to("mock:result");
+                from("hdfs://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=300&initialDelay=0").to("mock:result");
+                from("hdfs://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=400&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -173,7 +173,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=4096&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=4096&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -206,7 +206,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=42&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=42&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -232,7 +232,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&chunkSize=4096&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&chunkSize=4096&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -261,7 +261,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.getParent().toUri() + "?scheduler=#myScheduler&pattern=*&fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0&readSuffix=handled")
+                from("hdfs:localhost/" + file.getParent().toUri() + "?scheduler=#myScheduler&pattern=*&fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0&readSuffix=handled")
                     .to("mock:result");
             }
         });
@@ -303,7 +303,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -336,7 +336,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -366,7 +366,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -396,7 +396,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -426,7 +426,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -456,7 +456,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -486,7 +486,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -516,7 +516,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -549,7 +549,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs2:localhost/" + file.getParent().toUri() + "?fileSystemType=LOCAL&fileType=ARRAY_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.getParent().toUri() + "?fileSystemType=LOCAL&fileType=ARRAY_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();

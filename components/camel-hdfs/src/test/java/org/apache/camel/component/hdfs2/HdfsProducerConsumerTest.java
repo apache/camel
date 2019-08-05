@@ -56,8 +56,8 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("hdfs2:localhost/" + file.toUri() + "?fileSystemType=LOCAL&splitStrategy=BYTES:5,IDLE:1000");
-                from("hdfs2:localhost/" + file.toUri() + "?initialDelay=2000&fileSystemType=LOCAL&chunkSize=5").to("mock:result");
+                from("direct:start").to("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&splitStrategy=BYTES:5,IDLE:1000");
+                from("hdfs:localhost/" + file.toUri() + "?initialDelay=2000&fileSystemType=LOCAL&chunkSize=5").to("mock:result");
             }
         });
         context.start();

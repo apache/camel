@@ -28,7 +28,7 @@ import org.apache.hadoop.fs.FsUrlStreamHandlerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component("hdfs,hdfs2")
+@Component("hdfs")
 public class HdfsComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(HdfsComponent.class);

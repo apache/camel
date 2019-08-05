@@ -156,7 +156,7 @@
         <include>org.apache.camel:camel-guava-eventbus</include>
         <include>org.apache.camel:camel-hazelcast</include>
         <include>org.apache.camel:camel-hbase</include>
-        <include>org.apache.camel:camel-hdfs2</include>
+        <include>org.apache.camel:camel-hdfs</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-http</include>
@@ -497,7 +497,7 @@
         <include>org.apache.camel:camel-guava-eventbus-starter</include>
         <include>org.apache.camel:camel-hazelcast-starter</include>
         <include>org.apache.camel:camel-hbase-starter</include>
-        <include>org.apache.camel:camel-hdfs2-starter</include>
+        <include>org.apache.camel:camel-hdfs-starter</include>
         <include>org.apache.camel:camel-hipchat-starter</include>
         <include>org.apache.camel:camel-hl7-starter</include>
         <include>org.apache.camel:camel-http-common-starter</include>

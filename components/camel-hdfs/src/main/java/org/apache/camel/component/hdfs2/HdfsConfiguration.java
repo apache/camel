@@ -208,7 +208,7 @@ public class HdfsConfiguration {
 
     public void parseURI(URI uri) throws URISyntaxException {
         String protocol = uri.getScheme();
-        if (!protocol.equalsIgnoreCase("hdfs2")) {
+        if (!protocol.equalsIgnoreCase("hdfs")) {
             throw new IllegalArgumentException("Unrecognized protocol: " + protocol + " for uri: " + uri);
         }
         hostName = uri.getHost();
