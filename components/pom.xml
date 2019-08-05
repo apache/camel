@@ -235,7 +235,7 @@
         <module>camel-micrometer</module>
         <module>camel-microprofile-config</module>
         <module>camel-milo</module>
-        <module>camel-mina2</module>
+        <module>camel-mina</module>
         <module>camel-mllp</module>
         <module>camel-mongodb</module>
         <module>camel-mongodb-gridfs</module>

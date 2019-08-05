@@ -100,7 +100,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- for MLLP either use mina2 or camel-netty4 -->
+        <!-- for MLLP either use mina or camel-netty4 -->
         <dependency>
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
@@ -120,7 +120,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mina2</artifactId>
+            <artifactId>camel-mina</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -1890,12 +1890,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-mina2</artifactId>
+        <artifactId>camel-mina</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-mina2-starter</artifactId>
+        <artifactId>camel-mina-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

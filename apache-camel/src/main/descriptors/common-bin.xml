@@ -217,7 +217,7 @@
         <include>org.apache.camel:camel-micrometer</include>
         <include>org.apache.camel:camel-microprofile-config</include>
         <include>org.apache.camel:camel-milo</include>
-        <include>org.apache.camel:camel-mina2</include>
+        <include>org.apache.camel:camel-mina</include>
         <include>org.apache.camel:camel-mllp</include>
         <include>org.apache.camel:camel-mock</include>
         <include>org.apache.camel:camel-mongodb</include>
@@ -557,7 +557,7 @@
         <include>org.apache.camel:camel-metrics-starter</include>
         <include>org.apache.camel:camel-micrometer-starter</include>
         <include>org.apache.camel:camel-milo-starter</include>
-        <include>org.apache.camel:camel-mina2-starter</include>
+        <include>org.apache.camel:camel-mina-starter</include>
         <include>org.apache.camel:camel-mllp-starter</include>
         <include>org.apache.camel:camel-mock-starter</include>
         <include>org.apache.camel:camel-mongodb-gridfs-starter</include>
