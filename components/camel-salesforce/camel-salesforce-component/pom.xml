@@ -367,6 +367,11 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                                         <property name="password" value="${env.SALESFORCE_PASSWORD}"
                                                   if:set="env.SALESFORCE_PASSWORD"/>
 
+                                        <property name="serverurl" value="${prop.salesforce.login.url}"
+                                                  if:set="prop.salesforce.login.url"/>
+                                        <property name="serverurl" value="${env.SALESFORCE_LOGIN_URL}"
+                                                  if:set="env.SALESFORCE_LOGIN_URL"/>
+
                                         <fail unless:set="username" message="To run the migrations you need to specify either `salesforce.username`
 in: ${project.build.directory}/generated-resources/test-salesforce-login.properties
 or set SALESFORCE_USERNAME environment variable"/>
@@ -375,10 +380,15 @@ or set SALESFORCE_USERNAME environment variable"/>
 in: ${project.build.directory}/generated-resources/test-salesforce-login.properties
 or set SALESFORCE_PASSWORD environment variable"/>
 
+                                        <fail unless:set="serverurl" message="To run the migrations you need to specify either `salesforce.login.url`
+in: ${project.build.directory}/generated-resources/test-salesforce-login.properties
+or set SALESFORCE_LOGIN_URL environment variable"/>
+
                                         <sf:deploy xmlns:sf="antlib:com.salesforce" username="${username}"
                                                    password="${password}"
                                                    deployRoot="${salesforce.component.root}/it/resources/salesforce"
-                                                   rollbackOnError="true"/>
+                                                   rollbackOnError="true"
+                                                   serverurl="${serverurl}" />
                                     </target>
                                 </configuration>
                             </execution>
