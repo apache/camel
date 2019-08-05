@@ -83,8 +83,8 @@
         <!-- these two avro bundles relates to camel-hdfs2 karaf feature -->
         <avro-bundle-version>1.8.2_1</avro-bundle-version>
         <awaitility-version>3.1.6</awaitility-version>
-        <aws-java-sdk-bundle-version>1.11.573_1</aws-java-sdk-bundle-version>
-        <aws-java-sdk-version>1.11.573</aws-java-sdk-version>
+        <aws-java-sdk-bundle-version>1.11.595_1</aws-java-sdk-bundle-version>
+        <aws-java-sdk-version>1.11.595</aws-java-sdk-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.2.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
