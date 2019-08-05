@@ -163,8 +163,8 @@
         <disruptor-version>3.4.2</disruptor-version>
         <dnsjava-version>2.1.9</dnsjava-version>
         <dnsjava-bundle-version>2.1.9_1</dnsjava-bundle-version>
-        <docker-java-version>3.1.2</docker-java-version>
-        <docker-java-bundle-version>3.1.2_1</docker-java-bundle-version>
+        <docker-java-version>3.1.4</docker-java-version>
+        <docker-java-bundle-version>3.1.4_1</docker-java-bundle-version>
         <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
         <dozer-version>6.4.1</dozer-version>
         <!-- Avoid upgrading to newer version for the moment: see https://issues.apache.org/jira/browse/CAMEL-13654 -->
