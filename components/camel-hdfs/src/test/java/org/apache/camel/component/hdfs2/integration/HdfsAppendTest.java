@@ -61,7 +61,7 @@ public class HdfsAppendTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start1").to("hdfs2://localhost:9000/tmp/test/test-camel-simple-write-file1?append=true&fileSystemType=HDFS");
+                from("direct:start1").to("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file1?append=true&fileSystemType=HDFS");
             }
         });
         startCamelContext();
@@ -91,17 +91,17 @@ public class HdfsAppendTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start1").to("hdfs2://localhost:9000/tmp/test-dynamic/?append=true&fileSystemType=HDFS");
+                from("direct:start1").to("hdfs://localhost:9000/tmp/test-dynamic/?append=true&fileSystemType=HDFS");
             }
         });
         startCamelContext();
 
         for (int i = 0; i < ITERATIONS; ++i) {
-            template.sendBodyAndHeader("direct:start1", "HELLO", Exchange.FILE_NAME, "camel-hdfs2.log");
+            template.sendBodyAndHeader("direct:start1", "HELLO", Exchange.FILE_NAME, "camel-hdfs.log");
         }
 
         Configuration conf = new Configuration();
-        Path file = new Path("hdfs://localhost:9000/tmp/test-dynamic/camel-hdfs2.log");
+        Path file = new Path("hdfs://localhost:9000/tmp/test-dynamic/camel-hdfs.log");
         FileSystem fs = FileSystem.get(file.toUri(), conf);
         FSDataInputStream in = fs.open(file);
         byte[] buffer = new byte[5];

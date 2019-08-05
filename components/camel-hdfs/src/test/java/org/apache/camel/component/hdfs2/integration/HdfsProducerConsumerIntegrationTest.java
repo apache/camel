@@ -52,8 +52,8 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("hdfs2://localhost:9000/tmp/test/test-camel-simple-write-file?fileSystemType=HDFS&splitStrategy=BYTES:5,IDLE:1000");
-                from("hdfs2://localhost:9000/tmp/test/test-camel-simple-write-file?pattern=*&initialDelay=2000&fileSystemType=HDFS&chunkSize=5").to("mock:result");
+                from("direct:start").to("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file?fileSystemType=HDFS&splitStrategy=BYTES:5,IDLE:1000");
+                from("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file?pattern=*&initialDelay=2000&fileSystemType=HDFS&chunkSize=5").to("mock:result");
             }
         });
         context.start();
@@ -107,10 +107,10 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // difference in chunkSize only to allow multiple consumers
-                from("hdfs2://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=128").to("mock:result");
-                from("hdfs2://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=256").to("mock:result");
-                from("hdfs2://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=512").to("mock:result");
-                from("hdfs2://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=1024").to("mock:result");
+                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=128").to("mock:result");
+                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=256").to("mock:result");
+                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=512").to("mock:result");
+                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=1024").to("mock:result");
             }
         });
         context.start();

@@ -106,7 +106,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/inbox?delete=true")
-                    .to("hdfs2:localhost/" + TEMP_DIR.toUri() + "/output.txt?fileSystemType=LOCAL");
+                    .to("hdfs:localhost/" + TEMP_DIR.toUri() + "/output.txt?fileSystemType=LOCAL");
             }
         };
     }
