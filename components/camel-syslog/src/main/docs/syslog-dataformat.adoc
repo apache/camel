@@ -92,7 +92,7 @@ ND
 *Available as of Camel 2.14*
 
 To expose a Syslog listener service we reuse the
-existing xref:mina2-component.adoc[Mina2 Component] component
+existing xref:mina-component.adoc[Mina Component] component
 or xref:netty4-component.adoc[Netty4 Component] where we just use
 the `SyslogDataFormat` to marshal and unmarshal messages
 

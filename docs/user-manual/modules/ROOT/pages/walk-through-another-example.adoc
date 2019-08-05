@@ -132,7 +132,7 @@ sendConfirmEmail bean
 In the route lets imagine that the registration of the order has to be
 done by sending data to a TCP socket that could be a big mainframe. As
 Camel has many xref:components::index.adoc[Components] we will use the
-camel-mina component that supports xref:components::mina2-component.adoc[TCP] connectivity. So
+camel-mina component that supports xref:components::mina-component.adoc[TCP] connectivity. So
 we change the route to:
 
 [source,syntaxhighlighter-pre]

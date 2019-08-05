@@ -1,5 +1,5 @@
-[[mina2-component]]
-= Mina2 Component
+[[mina-component]]
+= Mina Component
 
 *Available as of Camel version 2.10*
 
@@ -9,7 +9,7 @@ http://mina.apache.org/[Apache MINA 2.x]
 TIP: Favor using xref:netty4-component.adoc[Netty] as Netty is a much more active
 maintained and popular project than Apache Mina currently is.
 
-WARNING: Be careful with `sync=false` on consumer endpoints. Since camel-mina2 all
+WARNING: Be careful with `sync=false` on consumer endpoints. Since camel-mina all
 consumer exchanges are InOut. This is different to camel-mina.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -19,7 +19,7 @@ for this component:
 ------------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-mina2</artifactId>
+    <artifactId>camel-mina</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
@@ -29,9 +29,9 @@ for this component:
 
 [source,java]
 -------------------------------------
-mina2:tcp://hostname[:port][?options]
-mina2:udp://hostname[:port][?options]
-mina2:vm://hostname[:port][?options]
+mina:tcp://hostname[:port][?options]
+mina:udp://hostname[:port][?options]
+mina:vm://hostname[:port][?options]
 -------------------------------------
 
 You can specify a codec in the Registry using the
@@ -64,7 +64,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mina2 component supports 4 options, which are listed below.
+The Mina component supports 4 options, which are listed below.
 
 
 
@@ -86,10 +86,10 @@ The Mina2 component supports 4 options, which are listed below.
 
 
 // endpoint options: START
-The Mina2 endpoint is configured using URI syntax:
+The Mina endpoint is configured using URI syntax:
 
 ----
-mina2:protocol:host:port
+mina:protocol:host:port
 ----
 
 with the following path and query parameters:
@@ -152,7 +152,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-mina2-starter</artifactId>
+  <artifactId>camel-mina-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -166,36 +166,36 @@ The component supports 30 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.mina2.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.mina2.configuration.allow-default-codec* | The mina component installs a default codec if both, codec is null and textline is false. Setting allowDefaultCodec to false prevents the mina component from installing a default codec as the first element in the filter chain. This is useful in scenarios where another filter must be the first in the filter chain, like the SSL filter. | true | Boolean
-| *camel.component.mina2.configuration.auto-start-tls* | Whether to auto start SSL handshake. | true | Boolean
-| *camel.component.mina2.configuration.cached-address* | Whether to create the InetAddress once and reuse. Setting this to false allows to pickup DNS changes in the network. | true | Boolean
-| *camel.component.mina2.configuration.client-mode* | If the clientMode is true, mina consumer will connect the address as a TCP client. | false | Boolean
-| *camel.component.mina2.configuration.codec* | To use a custom minda codec implementation. |  | ProtocolCodecFactory
-| *camel.component.mina2.configuration.decoder-max-line-length* | To set the textline protocol decoder max line length. By default the default value of Mina itself is used which are 1024. | 1024 | Integer
-| *camel.component.mina2.configuration.disconnect* | Whether or not to disconnect(close) from Mina session right after use. Can be used for both consumer and producer. | false | Boolean
-| *camel.component.mina2.configuration.disconnect-on-no-reply* | If sync is enabled then this option dictates MinaConsumer if it should disconnect where there is no reply to send back. | true | Boolean
-| *camel.component.mina2.configuration.encoder-max-line-length* | To set the textline protocol encoder max line length. By default the default value of Mina itself is used which are Integer.MAX_VALUE. | -1 | Integer
-| *camel.component.mina2.configuration.encoding* | You can configure the encoding (a charset name) to use for the TCP textline codec and the UDP protocol. If not provided, Camel will use the JVM default Charset |  | String
-| *camel.component.mina2.configuration.filters* | You can set a list of Mina IoFilters to use. |  | List
-| *camel.component.mina2.configuration.host* | Hostname to use. Use localhost or 0.0.0.0 for local server as consumer. For producer use the hostname or ip address of the remote server. |  | String
-| *camel.component.mina2.configuration.lazy-session-creation* | Sessions can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started. | true | Boolean
-| *camel.component.mina2.configuration.maximum-pool-size* | Number of worker threads in the worker pool for TCP and UDP | 16 | Integer
-| *camel.component.mina2.configuration.mina-logger* | You can enable the Apache MINA logging filter. Apache MINA uses slf4j logging at INFO level to log all input and output. | false | Boolean
-| *camel.component.mina2.configuration.no-reply-log-level* | If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back. |  | LoggingLevel
-| *camel.component.mina2.configuration.ordered-thread-pool-executor* | Whether to use ordered thread pool, to ensure events are processed orderly on the same channel. | true | Boolean
-| *camel.component.mina2.configuration.port* | Port number |  | Integer
-| *camel.component.mina2.configuration.protocol* | Protocol to use |  | String
-| *camel.component.mina2.configuration.ssl-context-parameters* | To configure SSL security. |  | SSLContextParameters
-| *camel.component.mina2.configuration.sync* | Setting to set endpoint as one-way or request-response. | true | Boolean
-| *camel.component.mina2.configuration.textline* | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP. | false | Boolean
-| *camel.component.mina2.configuration.textline-delimiter* | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided, Camel will use DEFAULT. This delimiter is used to mark the end of text. |  | Mina2TextLineDelimiter
-| *camel.component.mina2.configuration.timeout* | You can configure the timeout that specifies how long to wait for a response from a remote server. The timeout unit is in milliseconds, so 60000 is 60 seconds. | 30000 | Long
-| *camel.component.mina2.configuration.transfer-exchange* | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | Boolean
-| *camel.component.mina2.configuration.write-timeout* | Maximum amount of time it should take to send data to the MINA session. Default is 10000 milliseconds. | 10000 | Long
-| *camel.component.mina2.enabled* | Enable mina2 component | true | Boolean
-| *camel.component.mina2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.mina2.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+| *camel.component.mina.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.mina.configuration.allow-default-codec* | The mina component installs a default codec if both, codec is null and textline is false. Setting allowDefaultCodec to false prevents the mina component from installing a default codec as the first element in the filter chain. This is useful in scenarios where another filter must be the first in the filter chain, like the SSL filter. | true | Boolean
+| *camel.component.mina.configuration.auto-start-tls* | Whether to auto start SSL handshake. | true | Boolean
+| *camel.component.mina.configuration.cached-address* | Whether to create the InetAddress once and reuse. Setting this to false allows to pickup DNS changes in the network. | true | Boolean
+| *camel.component.mina.configuration.client-mode* | If the clientMode is true, mina consumer will connect the address as a TCP client. | false | Boolean
+| *camel.component.mina.configuration.codec* | To use a custom minda codec implementation. |  | ProtocolCodecFactory
+| *camel.component.mina.configuration.decoder-max-line-length* | To set the textline protocol decoder max line length. By default the default value of Mina itself is used which are 1024. | 1024 | Integer
+| *camel.component.mina.configuration.disconnect* | Whether or not to disconnect(close) from Mina session right after use. Can be used for both consumer and producer. | false | Boolean
+| *camel.component.mina.configuration.disconnect-on-no-reply* | If sync is enabled then this option dictates MinaConsumer if it should disconnect where there is no reply to send back. | true | Boolean
+| *camel.component.mina.configuration.encoder-max-line-length* | To set the textline protocol encoder max line length. By default the default value of Mina itself is used which are Integer.MAX_VALUE. | -1 | Integer
+| *camel.component.mina.configuration.encoding* | You can configure the encoding (a charset name) to use for the TCP textline codec and the UDP protocol. If not provided, Camel will use the JVM default Charset |  | String
+| *camel.component.mina.configuration.filters* | You can set a list of Mina IoFilters to use. |  | List
+| *camel.component.mina.configuration.host* | Hostname to use. Use localhost or 0.0.0.0 for local server as consumer. For producer use the hostname or ip address of the remote server. |  | String
+| *camel.component.mina.configuration.lazy-session-creation* | Sessions can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started. | true | Boolean
+| *camel.component.mina.configuration.maximum-pool-size* | Number of worker threads in the worker pool for TCP and UDP | 16 | Integer
+| *camel.component.mina.configuration.mina-logger* | You can enable the Apache MINA logging filter. Apache MINA uses slf4j logging at INFO level to log all input and output. | false | Boolean
+| *camel.component.mina.configuration.no-reply-log-level* | If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back. |  | LoggingLevel
+| *camel.component.mina.configuration.ordered-thread-pool-executor* | Whether to use ordered thread pool, to ensure events are processed orderly on the same channel. | true | Boolean
+| *camel.component.mina.configuration.port* | Port number |  | Integer
+| *camel.component.mina.configuration.protocol* | Protocol to use |  | String
+| *camel.component.mina.configuration.ssl-context-parameters* | To configure SSL security. |  | SSLContextParameters
+| *camel.component.mina.configuration.sync* | Setting to set endpoint as one-way or request-response. | true | Boolean
+| *camel.component.mina.configuration.textline* | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP. | false | Boolean
+| *camel.component.mina.configuration.textline-delimiter* | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided, Camel will use DEFAULT. This delimiter is used to mark the end of text. |  | Mina2TextLineDelimiter
+| *camel.component.mina.configuration.timeout* | You can configure the timeout that specifies how long to wait for a response from a remote server. The timeout unit is in milliseconds, so 60000 is 60 seconds. | 30000 | Long
+| *camel.component.mina.configuration.transfer-exchange* | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | Boolean
+| *camel.component.mina.configuration.write-timeout* | Maximum amount of time it should take to send data to the MINA session. Default is 10000 milliseconds. | 10000 | Long
+| *camel.component.mina.enabled* | Whether to enable auto configuration of the mina component. This is enabled by default. |  | Boolean
+| *camel.component.mina.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.mina.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -219,7 +219,7 @@ Mina consumer endpoint that listens on port 6200:
 
 [source,java]
 ---------------------------------------------------------------------------------------
-from("mina2:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:result");
+from("mina:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:result");
 ---------------------------------------------------------------------------------------
 
 As the sample is part of a unit test, we test it by sending some data to
@@ -230,7 +230,7 @@ it on port 6200.
 MockEndpoint mock = getMockEndpoint("mock:result");
 mock.expectedBodiesReceived("Hello World");
  
-template.sendBody("mina2:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
+template.sendBody("mina:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
  
 assertMockEndpointsSatisfied();
 -------------------------------------------------------------------------------------------------
@@ -244,7 +244,7 @@ consumer.
 
 [source,java]
 ---------------------------------------------------------------------------------------------
-from("mina2:tcp://localhost:" + port2 + "?textline=true&sync=true").process(new Processor() {
+from("mina:tcp://localhost:" + port2 + "?textline=true&sync=true").process(new Processor() {
     public void process(Exchange exchange) throws Exception {
         String body = exchange.getIn().getBody(String.class);
         exchange.getOut().setBody("Bye " + body);
@@ -259,19 +259,19 @@ fact, something we have dynamically set in our processor code logic.
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------
-String response = (String)template.requestBody("mina2:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
+String response = (String)template.requestBody("mina:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
 assertEquals("Bye World", response);
 -----------------------------------------------------------------------------------------------------------------------
 
 == Sample with Spring DSL
 
-Spring DSL can, of course, also be used for xref:mina2-component.adoc[MINA]. In the
+Spring DSL can, of course, also be used for xref:mina-component.adoc[MINA]. In the
 sample below we expose a TCP server on port 5555:
 
 [source,xml]
 -----------------------------------------------------------
    <route>
-     <from uri="mina2:tcp://localhost:5555?textline=true"/>
+     <from uri="mina:tcp://localhost:5555?textline=true"/>
      <to uri="bean:myTCPOrderHandler"/>
   </route>
 -----------------------------------------------------------
@@ -301,7 +301,7 @@ written the `bye` message back to the client:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------
-        from("mina2:tcp://localhost:8080?sync=true&textline=true").process(new Processor() {
+        from("mina:tcp://localhost:8080?sync=true&textline=true").process(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 String body = exchange.getIn().getBody(String.class);
                 exchange.getOut().setBody("Bye " + body);

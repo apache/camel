@@ -233,7 +233,7 @@
 * xref:microprofile-config.adoc[MicroProfile Config Component]
 * xref:milo-client-component.adoc[OPC UA Client Component]
 * xref:milo-server-component.adoc[OPC UA Server Component]
-* xref:mina2-component.adoc[Mina2 Component]
+* xref:mina-component.adoc[Mina Component]
 * xref:mllp-component.adoc[MLLP Component]
 * xref:mock-component.adoc[Mock Component]
 * xref:mongodb-gridfs-component.adoc[MongoDB GridFS Component]
