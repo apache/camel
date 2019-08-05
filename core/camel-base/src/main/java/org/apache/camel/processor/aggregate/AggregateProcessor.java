@@ -685,10 +685,6 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         return aggregationStrategy.aggregate(oldExchange, newExchange);
     }
 
-    protected boolean onPreCompletionAggregation(Exchange oldExchange, Exchange newExchange) {
-        return aggregationStrategy.preComplete(oldExchange, newExchange);
-    }
-
     protected Exchange onCompletion(final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout) {
         // store the correlation key as property before we remove so the repository has that information
         if (original != null) {
