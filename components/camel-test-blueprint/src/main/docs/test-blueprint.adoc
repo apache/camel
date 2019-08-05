@@ -22,7 +22,8 @@ Also notice the use of *`getBlueprintDescriptor`* to specify the
 location of the OSGi Blueprint XML file. +
  If you have multiple OSGi Blueprint XML files, then you can specify
 them with a comma-separated list in the *`getBlueprintDescriptor`*
-method.
+method. Notice that only **one** `CamelContext` is supported per blueprint bundle,
+so if you have multiple XML files then only one of them should have `<camelContext>`.
 
 Here's the
 http://svn.apache.org/viewvc/camel/trunk/components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml?view=markup[Blueprint
