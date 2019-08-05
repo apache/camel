@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 import org.slf4j.MDC;
 
-/**
- * //TODO: check mdc
- */
 public class MDCWireTapTest extends ContextTestSupport {
 
     @Test
@@ -51,18 +48,16 @@ public class MDCWireTapTest extends ContextTestSupport {
                         public void process(Exchange exchange) throws Exception {
                             assertEquals("route-a", MDC.get("camel.routeId"));
                             assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-
-                            //MDC.put("custom.id", "1");
+                            MDC.put("custom.id", "1");
                         }
                     })
                     .to("log:before-wiretap")
                     .wireTap("direct:b")
-                    .delay(2000)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 assertEquals("route-a", MDC.get("camel.routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                                //assertEquals("1", MDC.get("custom.id"));
+                                assertEquals("1", MDC.get("custom.id"));
                             }
                         })
                     .to("log:a-done")
@@ -73,7 +68,8 @@ public class MDCWireTapTest extends ContextTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 assertEquals("route-b", MDC.get("camel.routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                                //assertEquals("1", MDC.get("custom.id"));
+                                // custom MDC is not propagated
+                                assertNull(MDC.get("custom.id"));
                             }
                         })
                     .to("log:b-done")
