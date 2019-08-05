@@ -285,6 +285,14 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         JmsConsumer consumer = new JmsConsumer(this, processor, listenerContainer);
         configureListenerContainer(listenerContainer, consumer);
         configureConsumer(consumer);
+
+        String replyTo = consumer.getEndpoint().getReplyTo();
+        if (replyTo != null && consumer.getEndpoint().getDestinationName().equals(replyTo)) {
+            throw new IllegalArgumentException("Invalid Endpoint configuration: " + consumer.getEndpoint()
+                    + ". ReplyTo=" + replyTo + " cannot be the same as the destination name on the JmsConsumer as that"
+                    + " would lead to the consumer sending reply messages to itself in an endless loop.");
+        }
+
         return consumer;
     }
 
