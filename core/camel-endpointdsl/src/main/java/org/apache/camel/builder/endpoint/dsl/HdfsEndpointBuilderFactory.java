@@ -2011,12 +2011,12 @@ public interface HdfsEndpointBuilderFactory {
         BLOCK;
     }
     /**
-     * HDFS2 (camel-hdfs2)
+     * HDFS2 (camel-hdfs)
      * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
      * 
      * Category: hadoop,file
      * Available as of version: 2.14
-     * Maven coordinates: org.apache.camel:camel-hdfs2
+     * Maven coordinates: org.apache.camel:camel-hdfs
      * 
      * Syntax: <code>hdfs:hostName:port/path</code>
      * 

@@ -24,9 +24,9 @@
     <artifactId>components-starter</artifactId>
     <version>3.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>camel-hdfs2-starter</artifactId>
+  <artifactId>camel-hdfs-starter</artifactId>
   <packaging>jar</packaging>
-  <name>Spring-Boot Starter :: Camel :: HDFS2</name>
+  <name>Spring-Boot Starter :: Camel :: HDFS</name>
   <description>Spring-Boot Starter for Camel HDFS support with Hadoop 2.x libraries</description>
   <dependencies>
     <dependency>
@@ -36,7 +36,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-hdfs2</artifactId>
+      <artifactId>camel-hdfs</artifactId>
       <version>${project.version}</version>
       <!--START OF GENERATED CODE-->
       <exclusions>

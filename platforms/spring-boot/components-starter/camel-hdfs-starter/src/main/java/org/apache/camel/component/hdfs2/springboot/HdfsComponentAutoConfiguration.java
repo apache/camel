@@ -70,7 +70,7 @@ public class HdfsComponentAutoConfiguration {
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
-            super("camel.component", "camel.component.hdfs2");
+            super("camel.component", "camel.component.hdfs");
         }
     }
 
@@ -110,12 +110,12 @@ public class HdfsComponentAutoConfiguration {
                         ? HierarchicalPropertiesEvaluator.evaluate(
                                 applicationContext.getEnvironment(),
                                 "camel.component.customizer",
-                                "camel.component.hdfs2.customizer",
+                                "camel.component.hdfs.customizer",
                                 ((HasId) customizer).getId())
                         : HierarchicalPropertiesEvaluator.evaluate(
                                 applicationContext.getEnvironment(),
                                 "camel.component.customizer",
-                                "camel.component.hdfs2.customizer");
+                                "camel.component.hdfs.customizer");
                 if (useCustomizer) {
                     LOGGER.debug("Configure component {}, with customizer {}",
                             component, customizer);
