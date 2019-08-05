@@ -23,6 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
+import net.sf.saxon.trans.UncheckedXPathException;
+
 public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
 
     @Test
@@ -39,7 +41,7 @@ public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
         } catch (Exception ex) {
             // expect an exception here
             assertTrue("Get a wrong exception", ex instanceof CamelExecutionException);
-            assertTrue("Get a wrong exception cause", ex.getCause() instanceof TransformerException);
+            assertTrue("Get a wrong exception cause", ex.getCause() instanceof UncheckedXPathException);
         }
        
     }
