@@ -120,6 +120,14 @@ The `test` component has been renamed to `dataset-test` and moved out of `camel-
 
 The `http4` component has been renamed to `http`. The supported schemes are now only `http` and `https`.
 
+The `hdfs2` component has been renamed to `hdfs`. The supported scheme is now `hdfs2`.
+
+The `mina2` component has been renamed to `mina`. The supported scheme is now `mina`.
+
+The `mongodb3` component has been renamed to `mongodb`. The supported scheme is now `mongodb`.
+
+The `rxjava2` component has been renamed to `rxjava`.
+
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
 ### Tracing
