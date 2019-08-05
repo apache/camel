@@ -24,9 +24,9 @@
     <artifactId>components-starter</artifactId>
     <version>3.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>camel-rxjava2-starter</artifactId>
+  <artifactId>camel-rxjava-starter</artifactId>
   <packaging>jar</packaging>
-  <name>Spring-Boot Starter :: Camel :: RxJava2</name>
+  <name>Spring-Boot Starter :: Camel :: RxJava</name>
   <description>Spring-Boot Starter for RxJava2 based back-end for Camel's reactive streams component</description>
   <dependencies>
     <dependency>
@@ -36,7 +36,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-rxjava2</artifactId>
+      <artifactId>camel-rxjava</artifactId>
       <version>${project.version}</version>
     </dependency>
     <!--START OF GENERATED CODE-->
