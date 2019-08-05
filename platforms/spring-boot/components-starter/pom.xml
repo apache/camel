@@ -269,7 +269,7 @@
     <module>camel-metrics-starter</module>
     <module>camel-micrometer-starter</module>
     <module>camel-milo-starter</module>
-    <module>camel-mina2-starter</module>
+    <module>camel-mina-starter</module>
     <module>camel-mllp-starter</module>
     <module>camel-mock-starter</module>
     <module>camel-mongodb-gridfs-starter</module>
