@@ -136,15 +136,6 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         if (stepId == null) {
             MDC.remove(MDC_STEP_ID);
         }
-
-        /*
-        if (!doneSync) {
-            // must clear MDC on current thread as the exchange is being processed asynchronously
-            // by another thread
-            clear();
-        }
-        super.afterProcess(processor, exchange, callback, doneSync);
-        */
     }
 
     /**

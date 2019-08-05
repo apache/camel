@@ -114,9 +114,10 @@ public class MDCAsyncTest extends ContextTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             if (threadId != null) {
-                assertNotEquals(threadId, Long.valueOf(Thread.currentThread().getId()));
+                Long currId = Thread.currentThread().getId();
+                assertNotEquals(threadId, currId);
             } else {
-                threadId = Long.valueOf(Thread.currentThread().getId());
+                threadId = Thread.currentThread().getId();
             }
             
             if (routeId != null) {
