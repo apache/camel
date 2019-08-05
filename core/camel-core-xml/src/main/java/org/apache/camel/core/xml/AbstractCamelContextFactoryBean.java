@@ -750,6 +750,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getUseMDCLogging();
 
+    public abstract String getMDCLoggingKeysPattern();
+
     public abstract String getUseDataType();
 
     public abstract String getUseBreadcrumb();
@@ -851,6 +853,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getUseMDCLogging() != null) {
             context.setUseMDCLogging(CamelContextHelper.parseBoolean(context, getUseMDCLogging()));
+        }
+        if (getMDCLoggingKeysPattern() != null) {
+            context.setMDCLoggingKeysPattern(CamelContextHelper.parseText(context, getMDCLoggingKeysPattern()));
         }
         if (getUseDataType() != null) {
             context.setUseDataType(CamelContextHelper.parseBoolean(context, getUseDataType()));

@@ -125,6 +125,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute
     private String useMDCLogging;
     @XmlAttribute
+    private String mdcLoggingKeysPattern;
+    @XmlAttribute
     private String useDataType;
     @XmlAttribute
     private String useBreadcrumb;
@@ -802,6 +804,28 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setUseMDCLogging(String useMDCLogging) {
         this.useMDCLogging = useMDCLogging;
+    }
+
+    public String getMDCLoggingKeysPattern() {
+        return mdcLoggingKeysPattern;
+    }
+
+    /**
+     * Sets the pattern used for determine which custom MDC keys to propagate during message routing when
+     * the routing engine continues routing asynchronously for the given message. Setting this pattern to * will
+     * propagate all custom keys. Or setting the pattern to foo*,bar* will propagate any keys starting with
+     * either foo or bar.
+     * Notice that a set of standard Camel MDC keys are always propagated which starts with camel. as key name.
+     *
+     * The match rules are applied in this order (case insensitive):
+     *
+     * 1. exact match, returns true
+     * 2. wildcard match (pattern ends with a * and the name starts with the pattern), returns true
+     * 3. regular expression match, returns true
+     * 4. otherwise returns false
+     */
+    public void setMDCLoggingKeysPattern(String mdcLoggingKeysPattern) {
+        this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
     }
 
     @Override

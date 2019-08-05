@@ -204,6 +204,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private Boolean loadTypeConverters = Boolean.TRUE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
+    private String mdcLoggingKeysPattern;
     private Boolean useDataType = Boolean.FALSE;
     private Boolean useBreadcrumb = Boolean.FALSE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
@@ -2534,7 +2535,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         if (isUseMDCLogging()) {
             // log if MDC has been enabled
-            log.info("MDC logging is enabled on CamelContext: {}", getName());
+            String pattern = getMDCLoggingKeysPattern();
+            if (pattern != null) {
+                log.info("MDC logging (keys-pattern: {}) is enabled on CamelContext: {}", pattern, getName());
+            } else {
+                log.info("MDC logging is enabled on CamelContext: {}", getName());
+            }
         }
 
         if (getDelayer() != null && getDelayer() > 0) {
@@ -3723,6 +3729,16 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     @Override
     public void setUseMDCLogging(Boolean useMDCLogging) {
         this.useMDCLogging = useMDCLogging;
+    }
+
+    @Override
+    public String getMDCLoggingKeysPattern() {
+        return mdcLoggingKeysPattern;
+    }
+
+    @Override
+    public void setMDCLoggingKeysPattern(String pattern) {
+        this.mdcLoggingKeysPattern = pattern;
     }
 
     @Override

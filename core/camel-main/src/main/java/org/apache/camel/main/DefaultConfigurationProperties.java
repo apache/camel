@@ -64,6 +64,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String jmxManagementNamePattern = "#name#";
     private boolean jmxCreateConnector;
     private boolean useMdcLogging;
+    private String mdcLoggingKeysPattern;
     private String threadNamePattern;
     private String routeFilterIncludePattern;
     private String routeFilterExcludePattern;
@@ -587,6 +588,28 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setUseMdcLogging(boolean useMdcLogging) {
         this.useMdcLogging = useMdcLogging;
+    }
+
+    public String getMdcLoggingKeysPattern() {
+        return mdcLoggingKeysPattern;
+    }
+
+    /**
+     * Sets the pattern used for determine which custom MDC keys to propagate during message routing when
+     * the routing engine continues routing asynchronously for the given message. Setting this pattern to * will
+     * propagate all custom keys. Or setting the pattern to foo*,bar* will propagate any keys starting with
+     * either foo or bar.
+     * Notice that a set of standard Camel MDC keys are always propagated which starts with camel. as key name.
+     *
+     * The match rules are applied in this order (case insensitive):
+     *
+     * 1. exact match, returns true
+     * 2. wildcard match (pattern ends with a * and the name starts with the pattern), returns true
+     * 3. regular expression match, returns true
+     * 4. otherwise returns false
+     */
+    public void setMdcLoggingKeysPattern(String mdcLoggingKeysPattern) {
+        this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
     }
 
     public String getThreadNamePattern() {
