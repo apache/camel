@@ -428,6 +428,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      * Return the location(s) of the bundle descriptors from the classpath.
      * Separate multiple locations by comma, or return a single location.
      * <p/>
+     * Only one CamelContext is supported per blueprint bundle,
+     * so if you have multiple XML files then only one of them should have <tt>&lt;camelContext&gt</tt>.
+     * <p/>
      * For example override this method and return <tt>OSGI-INF/blueprint/camel-context.xml</tt>
      *
      * @return the location of the bundle descriptor file.
