@@ -341,6 +341,20 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return completionTimeoutExpression;
     }
 
+    /**
+     * Time in millis that an aggregated exchange should be inactive before its complete (timeout).
+     * This option can be set as either a fixed value or using an Expression which allows you to evaluate
+     * a timeout dynamically - will use Long as result.
+     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
+     * You cannot use this option together with completionInterval, only one of the two can be used.
+     * <p/>
+     * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option
+     * to configure how frequently to run the checker.
+     * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
+     * It is not recommended to use very low timeout values or checker intervals.
+     *
+     * @param completionTimeoutExpression  the timeout as an {@link Expression} which is evaluated as a {@link Long} type
+     */
     public void setCompletionTimeoutExpression(ExpressionSubElementDefinition completionTimeoutExpression) {
         this.completionTimeoutExpression = completionTimeoutExpression;
     }
@@ -349,6 +363,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return completionSizeExpression;
     }
 
+    /**
+     * Number of messages aggregated before the aggregation is complete. This option can be set as either
+     * a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result.
+     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
+     *
+     * @param completionSizeExpression  the completion size as an {@link org.apache.camel.Expression} which is evaluated as a {@link Integer} type
+     */
     public void setCompletionSizeExpression(ExpressionSubElementDefinition completionSizeExpression) {
         this.completionSizeExpression = completionSizeExpression;
     }
