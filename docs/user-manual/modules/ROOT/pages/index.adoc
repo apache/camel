@@ -274,7 +274,7 @@ camel routes without them knowing
 ** xref:components::hazelcast-set-component.adoc[Hazelcast Set]
 ** xref:components::hazelcast-topic-component.adoc[Hazelcast Topic]
 ** xref:components::hbase-component.adoc[HBase]
-** xref:components::hdfs2-component.adoc[HDFS2]
+** xref:components::hdfs-component.adoc[HDFS]
 ** xref:components::hipchat-component.adoc[Hipchat]
 ** xref:components::http-component.adoc[HTTP]
 ** xref:components::iec60870-client-component.adoc[IEC 60870 Client]

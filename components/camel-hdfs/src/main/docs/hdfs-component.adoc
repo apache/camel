@@ -150,7 +150,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-hdfs2-starter</artifactId>
+  <artifactId>camel-hdfs-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -164,10 +164,10 @@ The component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.hdfs2.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.hdfs2.enabled* | Enable hdfs2 component | true | Boolean
-| *camel.component.hdfs2.j-a-a-s-configuration* | To use the given configuration for security with JAAS. The option is a javax.security.auth.login.Configuration type. |  | String
-| *camel.component.hdfs2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.hdfs.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.hdfs.enabled* | Whether to enable auto configuration of the hdfs component. This is enabled by default. |  | Boolean
+| *camel.component.hdfs.j-a-a-s-configuration* | To use the given configuration for security with JAAS. The option is a javax.security.auth.login.Configuration type. |  | String
+| *camel.component.hdfs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
