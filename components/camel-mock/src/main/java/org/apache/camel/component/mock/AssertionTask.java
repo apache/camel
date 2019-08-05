@@ -26,6 +26,6 @@ public interface AssertionTask extends Runnable {
      *
      * @param index the n'th received message
      */
-    public void assertOnIndex(int index);
+    void assertOnIndex(int index);
 
 }
