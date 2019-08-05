@@ -376,8 +376,8 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 | link:camel-hbase/src/main/docs/hbase-component.adoc[HBase] (camel-hbase) +
 `hbase:tableName` | 2.10 | For reading/writing from/to an HBase store (Hadoop database).
 
-| link:camel-hdfs2/src/main/docs/hdfs2-component.adoc[HDFS2] (camel-hdfs2) +
-`hdfs2:hostName:port/path` | 2.14 | For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
+| link:camel-hdfs/src/main/docs/hdfs-component.adoc[HDFS] (camel-hdfs) +
+`hdfs:hostName:port/path` | 2.14 | For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
 
 | link:camel-hipchat/src/main/docs/hipchat-component.adoc[Hipchat] (camel-hipchat) +
 `hipchat:protocol:host:port` | 2.15 | The hipchat component supports producing and consuming messages from/to Hipchat service.

@@ -148,7 +148,7 @@
 * xref:hazelcast-topic-component.adoc[Hazelcast Topic Component]
 * xref:hazelcast.adoc[Hazelcast Component]
 * xref:hbase-component.adoc[HBase Component]
-* xref:hdfs2-component.adoc[HDFS2 Component]
+* xref:hdfs-component.adoc[HDFS Component]
 * xref:hipchat-component.adoc[Hipchat Component]
 * xref:hl7-dataformat.adoc[HL7 DataFormat]
 * xref:hl7terser-language.adoc[HL7 Terser Language]

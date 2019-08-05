@@ -1,9 +1,9 @@
-[[hdfs2-component]]
-= HDFS2 Component
+[[hdfs-component]]
+= HDFS Component
 
 *Available as of Camel version 2.14*
 
-The HDFS2 component enables you to read and write messages from/to an
+The HDFS component enables you to read and write messages from/to an
 HDFS file system using Hadoop 2.x. HDFS is the distributed file system
 at the heart of http://hadoop.apache.org[Hadoop].
 
@@ -14,7 +14,7 @@ for this component:
 ------------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-hdfs2</artifactId>
+    <artifactId>camel-hdfs</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
@@ -24,7 +24,7 @@ for this component:
 
 [source,java]
 ----------------------------------------
-hdfs2://hostname[:port][/path][?options]
+hdfs://hostname[:port][/path][?options]
 ----------------------------------------
 
 You can append query options to the URI in the following format,
@@ -41,7 +41,7 @@ a different file per split named using the configured
 UuidGenerator.
 
 
-When consuming from hdfs2 then in normal mode, a file is split into
+When consuming from hdfs then in normal mode, a file is split into
 chunks, producing a message per chunk. You can configure the size of the
 chunk using the chunkSize option. If you want to read from hdfs and
 write to a regular file using the file component, then you can use the
@@ -54,7 +54,7 @@ fileMode=Append to append each of the chunks together.
 
 
 // component options: START
-The HDFS2 component supports 3 options, which are listed below.
+The HDFS component supports 3 options, which are listed below.
 
 
 
@@ -73,10 +73,10 @@ The HDFS2 component supports 3 options, which are listed below.
 
 
 // endpoint options: START
-The HDFS2 endpoint is configured using URI syntax:
+The HDFS endpoint is configured using URI syntax:
 
 ----
-hdfs2:hostName:port/path
+hdfs:hostName:port/path
 ----
 
 with the following path and query parameters:
@@ -150,7 +150,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-hdfs2-starter</artifactId>
+  <artifactId>camel-hdfs-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -164,10 +164,10 @@ The component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.hdfs2.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.hdfs2.enabled* | Enable hdfs2 component | true | Boolean
-| *camel.component.hdfs2.j-a-a-s-configuration* | To use the given configuration for security with JAAS. The option is a javax.security.auth.login.Configuration type. |  | String
-| *camel.component.hdfs2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.hdfs.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.hdfs.enabled* | Whether to enable auto configuration of the hdfs component. This is enabled by default. |  | Boolean
+| *camel.component.hdfs.j-a-a-s-configuration* | To use the given configuration for security with JAAS. The option is a javax.security.auth.login.Configuration type. |  | String
+| *camel.component.hdfs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -223,7 +223,7 @@ for example:
 
 [source,java]
 -----------------------------------------------------------------
-hdfs2://localhost/tmp/simple-file?splitStrategy=IDLE:1000,BYTES:5
+hdfs://localhost/tmp/simple-file?splitStrategy=IDLE:1000,BYTES:5
 -----------------------------------------------------------------
 
 it means: a new file is created either when it has been idle for more
@@ -249,7 +249,7 @@ split strategy.
 
 == Controlling to close file stream
 
-When using the xref:hdfs2-component.adoc[HDFS2] producer *without* a split
+When using the xref:hdfs-component.adoc[HDFS] producer *without* a split
 strategy, then the file output stream is by default closed after the
 write. However you may want to keep the stream open, and only explicitly
 close the stream later. For that you can use the header
