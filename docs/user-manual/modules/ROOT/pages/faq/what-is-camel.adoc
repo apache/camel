@@ -15,7 +15,7 @@ routing rules in your IDE, whether in a Java, Scala or XML editor.
 Apache Camel uses xref:uris.adoc[URIs] to work directly with any kind of
 xref:transport.adoc[Transport] or messaging model such as
 xref:components::http-component.adoc[HTTP], xref:components::activemq-component.adoc[ActiveMQ], xref:components::jms-component.adoc[JMS],
-JBI, SCA, xref:components::mina2-component.adoc[MINA] or xref:components::cxf-component.adoc[CXF], as
+JBI, SCA, xref:components::mina-component.adoc[MINA] or xref:components::cxf-component.adoc[CXF], as
 well as pluggable xref:component.adoc[Components] and
 xref:data-format.adoc[Data Format] options. Apache Camel is a small
 library with minimal xref:what-are-the-dependencies.adoc[dependencies]

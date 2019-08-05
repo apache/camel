@@ -74,7 +74,7 @@ image:async.data/camel_sync_request_reply.png[image]
 \1. The client sends a sync Request Reply
 message over xref:components::http-component.adoc[HTTP] to Camel. The client application will
 wait for the response that Camel routes and processes. +
- 2. The message invokes an external xref:components::mina2-component.adoc[TCP] service using
+ 2. The message invokes an external xref:components::mina-component.adoc[TCP] service using
 synchronous Request Reply. The client
 application still waits for the response. +
  3. The response is send back to the client.
@@ -95,7 +95,7 @@ image:async.data/camel_async_request_reply.png[image]
 Request Reply message over HTTP
 to Camel. The control is immediately returned to the client application,
 that can continue and do other work while Camel routes the message. +
- 2. Camel invokes an external xref:components::mina2-component.adoc[TCP] service using
+ 2. Camel invokes an external xref:components::mina-component.adoc[TCP] service using
 synchronous Request Reply. The client
 application can do other work simultaneously. +
  3. The client wants to get the reply so it uses the Future handle it
@@ -115,7 +115,7 @@ image:async.data/camel_sync_request_only.png[image]
 \1. The client sends a Request only and we can
 still use xref:components::http-component.adoc[HTTP] despite http being
 Request Reply by nature. +
- 2. Camel invokes an external xref:components::mina2-component.adoc[TCP] service using
+ 2. Camel invokes an external xref:components::mina-component.adoc[TCP] service using
 synchronous Request Reply. The client
 application is still waiting. +
  3. The message is processed completely and the control is returned to
@@ -145,7 +145,7 @@ still use xref:components::http-component.adoc[HTTP] despite http being
 Request Reply by nature. The control is
 immediately returned to the client application, that can continue and do
 other work while Camel routes the message. +
- 2. Camel invokes an external xref:components::mina2-component.adoc[TCP] service using
+ 2. Camel invokes an external xref:components::mina-component.adoc[TCP] service using
 synchronous Request Reply. The client
 application can do other work simultaneously. +
  3. The message completes but no result is returned to the client.

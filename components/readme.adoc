@@ -565,8 +565,8 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 | link:camel-micrometer/src/main/docs/micrometer-component.adoc[Micrometer] (camel-micrometer) +
 `micrometer:metricsType:metricsName` | 2.22 | To collect various metrics directly from Camel routes using the Micrometer library.
 
-| link:camel-mina2/src/main/docs/mina2-component.adoc[Mina2] (camel-mina2) +
-`mina2:protocol:host:port` | 2.10 | Socket level networking using TCP or UDP with the Apache Mina 2.x library.
+| link:camel-mina/src/main/docs/mina-component.adoc[Mina] (camel-mina) +
+`mina:protocol:host:port` | 2.10 | Socket level networking using TCP or UDP with the Apache Mina 2.x library.
 
 | link:camel-mllp/src/main/docs/mllp-component.adoc[MLLP] (camel-mllp) +
 `mllp:hostname:port` | 2.17 | Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.

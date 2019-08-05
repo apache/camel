@@ -331,7 +331,7 @@ camel routes without them knowing
 ** xref:components::master-component.adoc[Master]
 ** xref:components::metrics-component.adoc[Metrics]
 ** xref:components::micrometer-component.adoc[Micrometer]
-** xref:components::mina2-component.adoc[Mina2]
+** xref:components::mina-component.adoc[Mina]
 ** xref:components::mllp-component.adoc[MLLP]
 ** xref:components::mongodb-component.adoc[MongoDB]
 ** xref:components::mongodb-gridfs-component.adoc[MongoDB GridFS]

@@ -20,7 +20,7 @@ stopping the Producer at each invocation. So where is it needed then?
 Well these components uses pooled producers:
 
 * xref:components::ftp-component.adoc[FTP]
-* xref:components::mina2-component.adoc[Mina]
+* xref:components::mina-component.adoc[Mina]
 
 [[ServicePool-Usage]]
 == Usage
