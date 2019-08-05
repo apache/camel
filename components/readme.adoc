@@ -1085,7 +1085,7 @@ Number of Miscellaneous Components: 33 in 33 JAR artifacts (0 deprecated)
 
 | link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
-| link:camel-rxjava2/src/main/docs/rxjava2.adoc[Rxjava2] (camel-rxjava2) | 2.22 | RxJava2 based back-end for Camel's reactive streams component
+| link:camel-rxjava/src/main/docs/rxjava.adoc[Rxjava] (camel-rxjava) | 2.22 | RxJava2 based back-end for Camel's reactive streams component
 
 | link:camel-shiro/src/main/docs/shiro.adoc[Shiro] (camel-shiro) | 2.5 | Security using Shiro
 

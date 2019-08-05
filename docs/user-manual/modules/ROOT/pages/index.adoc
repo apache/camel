@@ -443,7 +443,7 @@ camel routes without them knowing
 ** xref:components::opentracing.adoc[OpenTracing]
 ** xref:components::reactor-component.adoc[Reactor]
 ** xref:components::ribbon.adoc[Ribbon]
-** xref:components::rxjava2.adoc[Rxjava2]
+** xref:components::rxjava.adoc[Rxjava]
 ** xref:components::shiro.adoc[Shiro]
 ** xref:components::spring-boot.adoc[Spring Boot]
 ** xref:components::spring-cloud.adoc[Spring Cloud]
