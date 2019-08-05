@@ -1,5 +1,5 @@
-[[mina2-component]]
-= Mina2 Component
+[[mina-component]]
+= Mina Component
 
 *Available as of Camel version 2.10*
 
@@ -9,7 +9,7 @@ http://mina.apache.org/[Apache MINA 2.x]
 TIP: Favor using xref:netty4-component.adoc[Netty] as Netty is a much more active
 maintained and popular project than Apache Mina currently is.
 
-WARNING: Be careful with `sync=false` on consumer endpoints. Since camel-mina2 all
+WARNING: Be careful with `sync=false` on consumer endpoints. Since camel-mina all
 consumer exchanges are InOut. This is different to camel-mina.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -19,7 +19,7 @@ for this component:
 ------------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-mina2</artifactId>
+    <artifactId>camel-mina</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
@@ -29,9 +29,9 @@ for this component:
 
 [source,java]
 -------------------------------------
-mina2:tcp://hostname[:port][?options]
-mina2:udp://hostname[:port][?options]
-mina2:vm://hostname[:port][?options]
+mina:tcp://hostname[:port][?options]
+mina:udp://hostname[:port][?options]
+mina:vm://hostname[:port][?options]
 -------------------------------------
 
 You can specify a codec in the Registry using the
@@ -219,7 +219,7 @@ Mina consumer endpoint that listens on port 6200:
 
 [source,java]
 ---------------------------------------------------------------------------------------
-from("mina2:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:result");
+from("mina:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:result");
 ---------------------------------------------------------------------------------------
 
 As the sample is part of a unit test, we test it by sending some data to
@@ -230,7 +230,7 @@ it on port 6200.
 MockEndpoint mock = getMockEndpoint("mock:result");
 mock.expectedBodiesReceived("Hello World");
  
-template.sendBody("mina2:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
+template.sendBody("mina:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
  
 assertMockEndpointsSatisfied();
 -------------------------------------------------------------------------------------------------
@@ -244,7 +244,7 @@ consumer.
 
 [source,java]
 ---------------------------------------------------------------------------------------------
-from("mina2:tcp://localhost:" + port2 + "?textline=true&sync=true").process(new Processor() {
+from("mina:tcp://localhost:" + port2 + "?textline=true&sync=true").process(new Processor() {
     public void process(Exchange exchange) throws Exception {
         String body = exchange.getIn().getBody(String.class);
         exchange.getOut().setBody("Bye " + body);
@@ -259,19 +259,19 @@ fact, something we have dynamically set in our processor code logic.
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------
-String response = (String)template.requestBody("mina2:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
+String response = (String)template.requestBody("mina:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
 assertEquals("Bye World", response);
 -----------------------------------------------------------------------------------------------------------------------
 
 == Sample with Spring DSL
 
-Spring DSL can, of course, also be used for xref:mina2-component.adoc[MINA]. In the
+Spring DSL can, of course, also be used for xref:mina-component.adoc[MINA]. In the
 sample below we expose a TCP server on port 5555:
 
 [source,xml]
 -----------------------------------------------------------
    <route>
-     <from uri="mina2:tcp://localhost:5555?textline=true"/>
+     <from uri="mina:tcp://localhost:5555?textline=true"/>
      <to uri="bean:myTCPOrderHandler"/>
   </route>
 -----------------------------------------------------------
@@ -301,7 +301,7 @@ written the `bye` message back to the client:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------
-        from("mina2:tcp://localhost:8080?sync=true&textline=true").process(new Processor() {
+        from("mina:tcp://localhost:8080?sync=true&textline=true").process(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 String body = exchange.getIn().getBody(String.class);
                 exchange.getOut().setBody("Bye " + body);
