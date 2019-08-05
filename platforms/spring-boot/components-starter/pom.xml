@@ -312,7 +312,6 @@
     <module>camel-ribbon-starter</module>
     <module>camel-rss-starter</module>
     <module>camel-rxjava-starter</module>
-    <module>camel-rxjava2-starter</module>
     <module>camel-saga-starter</module>
     <module>camel-salesforce-starter</module>
     <module>camel-sap-netweaver-starter</module>
