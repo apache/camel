@@ -38,7 +38,7 @@ public class HdfsOsgiHelper {
      */
     public HdfsOsgiHelper(Map<String, String> fileSystems) {
         try {
-            // get bundle classloader for camel-hdfs2 bundle
+            // get bundle classloader for camel-hdfs bundle
             ClassLoader cl = getClass().getClassLoader();
             Configuration conf = new Configuration();
             // set that as the hdfs configuration's classloader
