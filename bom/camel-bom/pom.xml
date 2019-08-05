@@ -2340,12 +2340,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-rxjava2</artifactId>
+        <artifactId>camel-rxjava</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-rxjava2-starter</artifactId>
+        <artifactId>camel-rxjava-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
