@@ -27,9 +27,9 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-rxjava2</artifactId>
+    <artifactId>camel-rxjava</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: RxJava2</name>
+    <name>Camel :: RxJava</name>
     <description>RxJava2 based back-end for Camel's reactive streams component</description>
 
     <properties>
