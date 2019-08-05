@@ -1202,8 +1202,8 @@
     <bundle dependency='true'>mvn:com.hazelcast/hazelcast-client/${hazelcast-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hazelcast/${project.version}</bundle>
   </feature>
-  <feature name='camel-hdfs2' version='${project.version}' start-level='50'>
-    <details>The camel-hdfs2 feature can only run if you have libsnappyjava.dylib in java.library.path</details>
+  <feature name='camel-hdfs' version='${project.version}' start-level='50'>
+    <details>The camel-hdfs feature can only run if you have libsnappyjava.dylib in java.library.path</details>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
@@ -1233,7 +1233,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.apache.htrace/htrace-core/${htrace-version}$Bundle-SymbolicName=Apache-HTrace-Core</bundle>
-    <bundle>mvn:org.apache.camel/camel-hdfs2/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-hdfs/${project.version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hadoop-client/${hadoop2-bundle-version}</bundle>
   </feature>
   <feature name='camel-headersmap' version='${project.version}' start-level='50'>
