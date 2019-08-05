@@ -109,6 +109,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute
     private Boolean discardOnCompletionTimeout;
     @XmlAttribute
+    private Boolean discardOnAggregationFailure;
+    @XmlAttribute
     private Boolean forceCompletionOnStop;
     @XmlAttribute
     private Boolean completeAllOnStop;
@@ -450,7 +452,15 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public void setDiscardOnCompletionTimeout(Boolean discardOnCompletionTimeout) {
         this.discardOnCompletionTimeout = discardOnCompletionTimeout;
     }
-    
+
+    public Boolean getDiscardOnAggregationFailure() {
+        return discardOnAggregationFailure;
+    }
+
+    public void setDiscardOnAggregationFailure(Boolean discardOnAggregationFailure) {
+        this.discardOnAggregationFailure = discardOnAggregationFailure;
+    }
+
     public void setTimeoutCheckerExecutorService(ScheduledExecutorService timeoutCheckerExecutorService) {
         this.timeoutCheckerExecutorService = timeoutCheckerExecutorService;
     }
@@ -555,9 +565,24 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
+     * Discards the aggregated message when aggregation failed (an exception was thrown from {@link AggregationStrategy}.
+     * This means the partly aggregated message is dropped and not sent out of the aggregator.
+     * <p/>
+     * This option cannot be used together with completionFromBatchConsumer.
+     *
+     * @return builder
+     */
+    public AggregateDefinition discardOnAggregationFailure() {
+        setDiscardOnAggregationFailure(true);
+        return this;
+    }
+
+    /**
      * Enables the batch completion mode where we aggregate from a {@link org.apache.camel.BatchConsumer}
      * and aggregate the total number of exchanges the {@link org.apache.camel.BatchConsumer} has reported
      * as total by checking the exchange property {@link org.apache.camel.Exchange#BATCH_COMPLETE} when its complete.
+     * <p/>
+     * This option cannot be used together with discardOnAggregationFailure.
      *
      * @return builder
      */
