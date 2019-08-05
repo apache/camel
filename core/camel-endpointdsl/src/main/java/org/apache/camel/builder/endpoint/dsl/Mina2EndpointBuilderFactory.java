@@ -35,7 +35,7 @@ public interface Mina2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Mina2 component.
+     * Builder for endpoint consumers for the Mina component.
      */
     public interface Mina2EndpointConsumerBuilder
             extends
@@ -479,7 +479,7 @@ public interface Mina2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the Mina2 component.
+     * Advanced builder for endpoint consumers for the Mina component.
      */
     public interface AdvancedMina2EndpointConsumerBuilder
             extends
@@ -736,7 +736,7 @@ public interface Mina2EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the Mina2 component.
+     * Builder for endpoint producers for the Mina component.
      */
     public interface Mina2EndpointProducerBuilder
             extends
@@ -1160,7 +1160,7 @@ public interface Mina2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the Mina2 component.
+     * Advanced builder for endpoint producers for the Mina component.
      */
     public interface AdvancedMina2EndpointProducerBuilder
             extends
@@ -1359,7 +1359,7 @@ public interface Mina2EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Mina2 component.
+     * Builder for endpoint for the Mina component.
      */
     public interface Mina2EndpointBuilder
             extends
@@ -1740,7 +1740,7 @@ public interface Mina2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Mina2 component.
+     * Advanced builder for endpoint for the Mina component.
      */
     public interface AdvancedMina2EndpointBuilder
             extends
@@ -1896,13 +1896,13 @@ public interface Mina2EndpointBuilderFactory {
         MAC;
     }
     /**
-     * Mina2 (camel-mina2)
+     * Mina (camel-mina)
      * Socket level networking using TCP or UDP with the Apache Mina 2.x
      * library.
      * 
      * Category: networking,tcp,udp
      * Available as of version: 2.10
-     * Maven coordinates: org.apache.camel:camel-mina2
+     * Maven coordinates: org.apache.camel:camel-mina
      * 
      * Syntax: <code>mina:protocol:host:port</code>
      * 
