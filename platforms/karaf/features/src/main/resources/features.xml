@@ -1770,10 +1770,10 @@
     <bundle dependency='true'>mvn:org.eclipse.milo/bsd-parser-gson/${milo-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-milo/${project.version}</bundle>
   </feature>
-  <feature name='camel-mina2' version='${project.version}' start-level='50'>
+  <feature name='camel-mina' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-mina2/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-mina/${project.version}</bundle>
   </feature>
   <feature name='camel-mllp' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
