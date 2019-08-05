@@ -100,6 +100,11 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         answer.setTimeoutCheckerExecutorService(timeoutThreadPool);
         answer.setShutdownTimeoutCheckerExecutorService(shutdownTimeoutThreadPool);
 
+        if (definition.getCompletionFromBatchConsumer() != null && definition.getCompletionFromBatchConsumer()
+                && definition.getDiscardOnAggregationFailure() != null && definition.getDiscardOnAggregationFailure()) {
+            throw new IllegalArgumentException("Cannot use both completionFromBatchConsumer and discardOnAggregationFailure on: " + definition);
+        }
+
         // set other options
         answer.setParallelProcessing(parallel);
         if (definition.getOptimisticLocking() != null) {
@@ -147,6 +152,9 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         }
         if (definition.getDiscardOnCompletionTimeout() != null) {
             answer.setDiscardOnCompletionTimeout(definition.getDiscardOnCompletionTimeout());
+        }
+        if (definition.getDiscardOnAggregationFailure() != null) {
+            answer.setDiscardOnAggregationFailure(definition.getDiscardOnAggregationFailure());
         }
         if (definition.getForceCompletionOnStop() != null) {
             answer.setForceCompletionOnStop(definition.getForceCompletionOnStop());

@@ -229,6 +229,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
     private boolean completionOnNewCorrelationGroup;
     private AtomicInteger batchConsumerCounter = new AtomicInteger();
     private boolean discardOnCompletionTimeout;
+    private boolean discardOnAggregationFailure;
     private boolean forceCompletionOnStop;
     private boolean completeAllOnStop;
     private long completionTimeoutCheckerInterval = 1000;
@@ -477,7 +478,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         if (preCompletion && complete != null) {
             // need to pre complete the current group before we aggregate
-            doAggregationComplete(complete, list, key, originalExchange, oldExchange);
+            doAggregationComplete(complete, list, key, originalExchange, oldExchange, false);
             // as we complete the current group eager, we should indicate the new group is not complete
             complete = null;
             // and clear old/original exchange as we start on a new group
@@ -490,11 +491,24 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         }
 
         // aggregate the exchanges
+        boolean aggregateFailed = false;
         try {
             answer = onAggregation(oldExchange, newExchange);
         } catch (Throwable e) {
-            // must catch any exception from aggregation
-            throw new CamelExchangeException("Error occurred during aggregation", newExchange, e);
+            aggregateFailed = true;
+            if (isDiscardOnAggregationFailure()) {
+                // discard due failure in aggregation strategy
+                log.debug("Aggregation for correlation key {} discarding aggregated exchange: {} due to failure in AggregationStrategy caused by: {}", key, oldExchange, e.getMessage());
+                complete = COMPLETED_BY_STRATEGY;
+                answer = oldExchange;
+                if (answer == null) {
+                    // first message in group failed during aggregation and we should just discard this
+                    return null;
+                }
+            } else {
+                // must catch any exception from aggregation
+                throw new CamelExchangeException("Error occurred during aggregation", newExchange, e);
+            }
         }
         if (answer == null) {
             throw new CamelExchangeException("AggregationStrategy " + aggregationStrategy + " returned null which is not allowed", newExchange);
@@ -529,19 +543,20 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             }
         }
 
-        if (complete == null) {
+        if (!aggregateFailed && complete == null) {
             // only need to update aggregation repository if we are not complete
             doAggregationRepositoryAdd(newExchange.getContext(), key, originalExchange, answer);
         } else {
             // if we are complete then add the answer to the list
-            doAggregationComplete(complete, list, key, originalExchange, answer);
+            doAggregationComplete(complete, list, key, originalExchange, answer, aggregateFailed);
         }
 
         log.trace("onAggregation +++  end  +++ with correlation key: {}", key);
         return list;
     }
 
-    protected void doAggregationComplete(String complete, List<Exchange> list, String key, Exchange originalExchange, Exchange answer) {
+    protected void doAggregationComplete(String complete, List<Exchange> list, String key,
+                                         Exchange originalExchange, Exchange answer, boolean aggregateFailed) {
         if (COMPLETED_BY_CONSUMER.equals(complete)) {
             for (String batchKey : batchConsumerCorrelationKeys) {
                 Exchange batchAnswer;
@@ -554,7 +569,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
                 if (batchAnswer != null) {
                     batchAnswer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
-                    onCompletion(batchKey, originalExchange, batchAnswer, false);
+                    onCompletion(batchKey, originalExchange, batchAnswer, false, aggregateFailed);
                     list.add(batchAnswer);
                 }
             }
@@ -564,7 +579,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         } else if (answer != null) {
             // we are complete for this exchange
             answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
-            answer = onCompletion(key, originalExchange, answer, false);
+            answer = onCompletion(key, originalExchange, answer, false, aggregateFailed);
         }
 
         if (answer != null) {
@@ -685,7 +700,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         return aggregationStrategy.aggregate(oldExchange, newExchange);
     }
 
-    protected Exchange onCompletion(final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout) {
+    protected Exchange onCompletion(final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout, boolean aggregateFailed) {
         // store the correlation key as property before we remove so the repository has that information
         if (original != null) {
             original.setProperty(Exchange.AGGREGATED_CORRELATION_KEY, key);
@@ -725,6 +740,15 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             // and remove redelivery state as well
             redeliveryState.remove(aggregated.getExchangeId());
             // the completion was from timeout and we should just discard it
+            answer = null;
+        } else if (aggregateFailed && isDiscardOnAggregationFailure()) {
+            // discard due aggregation failed
+            log.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
+            // must confirm the discarded exchange
+            aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());
+            // and remove redelivery state as well
+            redeliveryState.remove(aggregated.getExchangeId());
+            // the completion was failed during aggregation and we should just discard it
             answer = null;
         } else {
             // the aggregated exchange should be published (sent out)
@@ -1006,6 +1030,14 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         this.discardOnCompletionTimeout = discardOnCompletionTimeout;
     }
 
+    public boolean isDiscardOnAggregationFailure() {
+        return discardOnAggregationFailure;
+    }
+
+    public void setDiscardOnAggregationFailure(boolean discardOnAggregationFailure) {
+        this.discardOnAggregationFailure = discardOnAggregationFailure;
+    }
+
     public void setForceCompletionOnStop(boolean forceCompletionOnStop) {
         this.forceCompletionOnStop = forceCompletionOnStop;
     }
@@ -1165,7 +1197,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 // indicate it was completed by timeout
                 answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, COMPLETED_BY_TIMEOUT);
                 try {
-                    answer = onCompletion(key, answer, answer, true);
+                    answer = onCompletion(key, answer, answer, true, false);
                     if (answer != null) {
                         onSubmitCompletion(key, answer);
                     }
@@ -1213,7 +1245,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                             // indicate it was completed by interval
                             exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, COMPLETED_BY_INTERVAL);
                             try {
-                                Exchange answer = onCompletion(key, exchange, exchange, false);
+                                Exchange answer = onCompletion(key, exchange, exchange, false, false);
                                 if (answer != null) {
                                     onSubmitCompletion(key, answer);
                                 }
@@ -1573,7 +1605,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 log.trace("Force completion triggered for correlation key: {}", key);
                 // indicate it was completed by a force completion request
                 exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, COMPLETED_BY_FORCE);
-                Exchange answer = onCompletion(key, exchange, exchange, false);
+                Exchange answer = onCompletion(key, exchange, exchange, false, false);
                 if (answer != null) {
                     onSubmitCompletion(key, answer);
                 }
@@ -1615,7 +1647,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                         log.trace("Force completion triggered for correlation key: {}", key);
                         // indicate it was completed by a force completion request
                         exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, COMPLETED_BY_FORCE);
-                        Exchange answer = onCompletion(key, exchange, exchange, false);
+                        Exchange answer = onCompletion(key, exchange, exchange, false, false);
                         if (answer != null) {
                             onSubmitCompletion(key, answer);
                         }
