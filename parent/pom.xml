@@ -393,8 +393,8 @@
         <jython-version>2.5.3</jython-version>
         <jzlib-version>1.1.3</jzlib-version>
         <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
-        <kafka-version>2.2.1</kafka-version>
-        <kafka-bundle-version>2.2.1_1</kafka-bundle-version>
+        <kafka-version>2.3.0</kafka-version>
+        <kafka-bundle-version>2.3.0_1</kafka-bundle-version>
         <karaf4-version>4.2.6</karaf4-version>
         <!-- Avoid upgrading to newer version for the moment: see https://issues.apache.org/jira/browse/CAMEL-13654 -->
         <kie-version>7.22.0.Final</kie-version>
