@@ -1,8 +1,8 @@
-= RxJava2 Component
+= RxJava Component
 
 *Available as of Camel version 2.22*
 
-RxJava2 based back-end for Camel's reactive streams component.
+RxJava based back-end for Camel's reactive streams component.
 
 See more details in the camel-streams-component documentation.
 
@@ -13,7 +13,7 @@ for this component:
 ------------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-rxjava2</artifactId>
+    <artifactId>camel-rxjava</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>

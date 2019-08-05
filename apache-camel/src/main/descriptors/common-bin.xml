@@ -262,7 +262,7 @@
         <include>org.apache.camel:camel-restlet</include>
         <include>org.apache.camel:camel-ribbon</include>
         <include>org.apache.camel:camel-rss</include>
-        <include>org.apache.camel:camel-rxjava2</include>
+        <include>org.apache.camel:camel-rxjava</include>
         <include>org.apache.camel:camel-saga</include>
         <include>org.apache.camel:camel-salesforce</include>
         <include>org.apache.camel:camel-sap-netweaver</include>
@@ -599,7 +599,7 @@
         <include>org.apache.camel:camel-restlet-starter</include>
         <include>org.apache.camel:camel-ribbon-starter</include>
         <include>org.apache.camel:camel-rss-starter</include>
-        <include>org.apache.camel:camel-rxjava2-starter</include>
+        <include>org.apache.camel:camel-rxjava-starter</include>
         <include>org.apache.camel:camel-saga-starter</include>
         <include>org.apache.camel:camel-salesforce-starter</include>
         <include>org.apache.camel:camel-sap-netweaver-starter</include>
