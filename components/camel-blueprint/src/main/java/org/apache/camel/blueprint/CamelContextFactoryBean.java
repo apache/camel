@@ -110,6 +110,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     private String useMDCLogging;
     @XmlAttribute
+    private String mdcLoggingKeysPattern;
+    @XmlAttribute
     private String useDataType;
     @XmlAttribute
     private String useBreadcrumb;
@@ -398,6 +400,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setUseMDCLogging(String useMDCLogging) {
         this.useMDCLogging = useMDCLogging;
+    }
+
+    @Override
+    public String getMDCLoggingKeysPattern() {
+        return mdcLoggingKeysPattern;
+    }
+
+    public void setMDCLoggingKeysPattern(String mdcLoggingKeysPattern) {
+        this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
     }
 
     @Override

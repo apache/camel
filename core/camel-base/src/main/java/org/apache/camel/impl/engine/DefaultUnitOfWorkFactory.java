@@ -29,7 +29,7 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
     public UnitOfWork createUnitOfWork(Exchange exchange) {
         UnitOfWork answer;
         if (exchange.getContext().isUseMDCLogging()) {
-            answer = new MDCUnitOfWork(exchange);
+            answer = new MDCUnitOfWork(exchange, exchange.getContext().getMDCLoggingKeysPattern());
         } else {
             answer = new DefaultUnitOfWork(exchange);
         }

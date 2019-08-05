@@ -52,10 +52,19 @@ public class MDCAsyncTest extends ContextTestSupport {
                 // enable MDC and breadcrumb
                 context.setUseMDCLogging(true);
                 context.setUseBreadcrumb(true);
+                context.setMDCLoggingKeysPattern("custom*,my*");
 
                 MdcCheckerProcessor checker = new MdcCheckerProcessor();
                 
                 from("direct:a").routeId("route-async")
+                    .process(e -> {
+                        // custom is propagated
+                        MDC.put("custom.hello", "World");
+                        // foo is not propagated
+                        MDC.put("foo", "Bar");
+                        // myKey is propagated
+                        MDC.put("myKey", "Baz");
+                    })
                     .process(checker)
                     .to("log:foo")
                     .process(new MyAsyncProcessor())
@@ -110,9 +119,21 @@ public class MDCAsyncTest extends ContextTestSupport {
         private String breadcrumbId;
         private String contextId;
         private Long threadId;
+        private String foo;
 
         @Override
         public void process(Exchange exchange) throws Exception {
+            // custom is propagated as its pattern matches
+            assertEquals("World", MDC.get("custom.hello"));
+            assertEquals("Baz", MDC.get("myKey"));
+
+            if (foo != null) {
+                // foo is not propagated
+                assertNotEquals(foo, MDC.get("foo"));
+            } else {
+                foo = MDC.get("foo");
+            }
+
             if (threadId != null) {
                 Long currId = Thread.currentThread().getId();
                 assertNotEquals(threadId, currId);
