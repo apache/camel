@@ -55,7 +55,7 @@ provide all of the functionality required to effectively handle the MLLP protoco
 The camel-hl7 Mina2 codec and Netty4 decoder do not handle MLLP Framing errors very well - the component will hang waiting
 for frames to complete in some instances.
 
-While both camel-mina2 and camel-netty4 provide a "timeout" function, it is only applied to Producers.  MLLP Consumers
+While both camel-mina and camel-netty4 provide a "timeout" function, it is only applied to Producers.  MLLP Consumers
 also need to be able to timeout to recover from MLLP framing errors.  Additionally, the timeout functionality of the
 camel-netty4 component is disable after any data is received on the connection, making in ineffective for detecting
 timeouts after the first messages is received.
@@ -64,7 +64,7 @@ Also, neither the Mina2 codec nor the Netty4 decoder interrogate HL7 Acknowledgm
 difficult to use the redelivery and error handling features Camel provides.
 
 The above issues may be addressable by updating/patching the existing components, but there is one more that is not.
-Both camel-netty4 and camel-mina2 are designed to handle a large number of concurrent connections, rapid connect/disconnect
+Both camel-netty4 and camel-mina are designed to handle a large number of concurrent connections, rapid connect/disconnect
 rates, and asynchronous communication.  Forcing, these components to deal with the small number of stateful connections
 inherent to the MLLP protocol seems inappropriate.
 

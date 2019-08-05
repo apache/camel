@@ -50,7 +50,7 @@ public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").unmarshal().hl7().process(new Processor() {
+                from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").unmarshal().hl7().process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message input = exchange.getIn().getBody(Message.class);
                         Message response = input.generateACK();

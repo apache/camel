@@ -47,7 +47,7 @@ public class HL7MLLPCodecBoundaryTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(new Processor() {
+                from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // check presence of correct message type
                         exchange.getIn().getBody(MDM_T02.class);
@@ -71,7 +71,7 @@ public class HL7MLLPCodecBoundaryTest extends HL7TestSupport {
         assertEquals(1022, message.length());
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
-        template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message);
+        template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message);
         mockEndpoint.assertIsSatisfied();
     }
 
