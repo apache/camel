@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka.embedded;
 
+import java.util.function.Supplier;
+
 import org.apache.kafka.common.utils.Time;
 
 class SystemTime implements Time {
@@ -43,4 +45,9 @@ class SystemTime implements Time {
     public long hiResClockMs() {
         return 0;
     }
+
+	@Override
+	public void waitObject(Object obj, Supplier<Boolean> condition, long timeoutMs) throws InterruptedException {
+		// NOOP	
+	}
 }
