@@ -60,6 +60,10 @@ public final class LoginConfigHelper {
         if (ObjectHelper.isNotEmpty(explicitType)) {
             loginConfig.setType(AuthenticationType.valueOf(explicitType));
         }
+        final String loginUrl = configuration.get("salesforce.login.url");
+        if (ObjectHelper.isNotEmpty(loginUrl)) {
+            loginConfig.setLoginUrl(loginUrl);
+        }
         loginConfig.setClientId(configuration.get("salesforce.client.id"));
         loginConfig.setClientSecret(configuration.get("salesforce.client.secret"));
         loginConfig.setUserName(configuration.get("salesforce.username"));
