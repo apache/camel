@@ -286,7 +286,7 @@
 * xref:ribbon.adoc[Ribbon Component]
 * xref:rss-component.adoc[RSS Component]
 * xref:rss-dataformat.adoc[RSS DataFormat]
-* xref:rxjava2.adoc[RxJava2 Component]
+* xref:rxjava.adoc[RxJava Component]
 * xref:saga-component.adoc[Saga Component]
 * xref:salesforce-component.adoc[Salesforce Component]
 * xref:sap-netweaver-component.adoc[SAP NetWeaver Component]
