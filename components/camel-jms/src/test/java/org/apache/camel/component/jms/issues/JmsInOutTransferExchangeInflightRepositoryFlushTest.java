@@ -65,17 +65,21 @@ public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends CamelTe
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .inOut("activemq:responseGenerator?transferExchange=true&requestTimeout=5000")
-                        .to("mock:result");
+                        .log("A ${exchangeId}")
+                        .inOut("activemq:responseGenerator?transferExchange=true&requestTimeout=20000")
+                        .log("A ${exchangeId}")
+                        .to("log:result", "mock:result");
 
                 from("activemq:responseGenerator?transferExchange=true")
+                        .log("B ${exchangeId}")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // there are 2 inflight (one for both routes)
                                 assertEquals(2, exchange.getContext().getInflightRepository().size());
-                                exchange.getIn().setBody(new SerializableResponseDto(true));
+                                exchange.getMessage().setBody(new SerializableResponseDto(true));
                             }
-                        });
+                        }).to("log:reply")
+                        .log("B ${exchangeId}");
             }
         };
     }
