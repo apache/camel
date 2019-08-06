@@ -138,6 +138,9 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Total number of exchanged completed by completion force trigger")
     long getCompletedByForce();
 
+    @ManagedAttribute(description = "Total number of exchanged discarded")
+    long getDiscarded();
+
     @ManagedOperation(description = " Reset the statistics counters")
     void resetStatistics();
 
