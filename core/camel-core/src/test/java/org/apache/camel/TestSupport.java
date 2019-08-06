@@ -25,6 +25,7 @@ import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PredicateAssertHelper;
@@ -378,6 +379,9 @@ public abstract class TestSupport extends Assert {
      */
     public static Channel unwrapChannel(Processor processor) {
         while (true) {
+            if (processor instanceof Pipeline) {
+                processor = ((Pipeline) processor).getProcessors().get(0);
+            }
             if (processor instanceof Channel) {
                 return (Channel) processor;
             } else if (processor instanceof DelegateProcessor) {

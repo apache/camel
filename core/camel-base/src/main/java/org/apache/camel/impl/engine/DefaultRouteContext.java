@@ -171,7 +171,9 @@ public class DefaultRouteContext implements RouteContext {
     public Route commit() {
         // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {
-            Processor target = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
+            // always use an pipeline even if there are only 1 processor as the pipeline
+            // handles preparing the response from the exchange in regard to IN vs OUT messages etc
+            Processor target = new Pipeline(getCamelContext(), eventDrivenProcessors);
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             CamelInternalProcessor internal = new CamelInternalProcessor(target);

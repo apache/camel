@@ -49,7 +49,7 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) throws Exception {
                 // do something else with the request properties as usual
                 // do something else with the response
-                exchange.getOut().getBody(Customer.class).setId(246);
+                exchange.getMessage().getBody(Customer.class).setId(246);
             }  
         };
         return new RouteBuilder() {

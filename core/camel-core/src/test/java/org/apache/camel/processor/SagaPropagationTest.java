@@ -67,7 +67,7 @@ public class SagaPropagationTest extends ContextTestSupport {
         context.createFluentProducerTemplate().to("direct:supports").request();
 
         assertListSize(sagaIds, 2);
-        assertNonNullSagaIds(1);
+        assertNonNullSagaIds(2);
     }
 
     @Test
@@ -184,7 +184,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     }
 
     private Processor addSagaIdToList() {
-        return ex -> sagaIds.add(ex.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION, String.class));
+        return ex -> sagaIds.add(ex.getMessage().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION, String.class));
     }
 
     private void assertUniqueNonNullSagaIds(int num) {
