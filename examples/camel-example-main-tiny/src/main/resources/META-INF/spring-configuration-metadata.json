@@ -893,7 +893,7 @@
 			"defaultValue":"true"
 		},
 		{
-			"name":"camel.component.quartz2.start-delayed-seconds",
+			"name":"camel.component.quartz.start-delayed-seconds",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
 			"description":"Seconds to wait before starting the quartz scheduler."
