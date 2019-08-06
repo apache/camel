@@ -102,6 +102,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean skipExchangeDeclare;
     @UriParam(label = "common")
     private Address[] addresses;
+    @UriParam(label = "common", defaultValue = "true")
+    private Boolean automaticRecoveryEnabled = Boolean.TRUE;
     @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT;
     @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CHANNEL_MAX)
@@ -116,8 +118,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private TrustManager trustManager;
     @UriParam(label = "advanced")
     private Map<String, Object> clientProperties;
-    @UriParam(label = "advanced")
-    private Boolean automaticRecoveryEnabled;
     @UriParam(label = "advanced", defaultValue = "5000")
     private Integer networkRecoveryInterval = 5000;
     @UriParam(label = "advanced")
@@ -567,8 +567,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     /**
      * Enables connection automatic recovery (uses connection implementation
-     * that performs automatic recovery when connection shutdown is not
-     * initiated by the application)
+     * that performs automatic recovery when existing connection has failures)
      */
     public void setAutomaticRecoveryEnabled(Boolean automaticRecoveryEnabled) {
         this.automaticRecoveryEnabled = automaticRecoveryEnabled;

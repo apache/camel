@@ -95,6 +95,35 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enables connection automatic recovery (uses connection implementation
+         * that performs automatic recovery when existing connection has
+         * failures).
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
+         */
+        default RabbitMQEndpointConsumerBuilder automaticRecoveryEnabled(
+                Boolean automaticRecoveryEnabled) {
+            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
+            return this;
+        }
+        /**
+         * Enables connection automatic recovery (uses connection implementation
+         * that performs automatic recovery when existing connection has
+         * failures).
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default RabbitMQEndpointConsumerBuilder automaticRecoveryEnabled(
+                String automaticRecoveryEnabled) {
+            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
+            return this;
+        }
+        /**
          * To use a custom RabbitMQ connection factory. When this option is set,
          * all connection options (connectionTimeout, requestedChannelMax...)
          * set on URI are not used.
@@ -836,35 +865,6 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enables connection automatic recovery (uses connection implementation
-         * that performs automatic recovery when connection shutdown is not
-         * initiated by the application).
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedRabbitMQEndpointConsumerBuilder automaticRecoveryEnabled(
-                Boolean automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
-            return this;
-        }
-        /**
-         * Enables connection automatic recovery (uses connection implementation
-         * that performs automatic recovery when connection shutdown is not
-         * initiated by the application).
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedRabbitMQEndpointConsumerBuilder automaticRecoveryEnabled(
-                String automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
-            return this;
-        }
-        /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
          * 
@@ -1231,6 +1231,35 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder autoDelete(String autoDelete) {
             setProperty("autoDelete", autoDelete);
+            return this;
+        }
+        /**
+         * Enables connection automatic recovery (uses connection implementation
+         * that performs automatic recovery when existing connection has
+         * failures).
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
+         */
+        default RabbitMQEndpointProducerBuilder automaticRecoveryEnabled(
+                Boolean automaticRecoveryEnabled) {
+            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
+            return this;
+        }
+        /**
+         * Enables connection automatic recovery (uses connection implementation
+         * that performs automatic recovery when existing connection has
+         * failures).
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default RabbitMQEndpointProducerBuilder automaticRecoveryEnabled(
+                String automaticRecoveryEnabled) {
+            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
             return this;
         }
         /**
@@ -1955,35 +1984,6 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enables connection automatic recovery (uses connection implementation
-         * that performs automatic recovery when connection shutdown is not
-         * initiated by the application).
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedRabbitMQEndpointProducerBuilder automaticRecoveryEnabled(
-                Boolean automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
-            return this;
-        }
-        /**
-         * Enables connection automatic recovery (uses connection implementation
-         * that performs automatic recovery when connection shutdown is not
-         * initiated by the application).
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedRabbitMQEndpointProducerBuilder automaticRecoveryEnabled(
-                String automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
-            return this;
-        }
-        /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
          * 
@@ -2350,6 +2350,35 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder autoDelete(String autoDelete) {
             setProperty("autoDelete", autoDelete);
+            return this;
+        }
+        /**
+         * Enables connection automatic recovery (uses connection implementation
+         * that performs automatic recovery when existing connection has
+         * failures).
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
+         */
+        default RabbitMQEndpointBuilder automaticRecoveryEnabled(
+                Boolean automaticRecoveryEnabled) {
+            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
+            return this;
+        }
+        /**
+         * Enables connection automatic recovery (uses connection implementation
+         * that performs automatic recovery when existing connection has
+         * failures).
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default RabbitMQEndpointBuilder automaticRecoveryEnabled(
+                String automaticRecoveryEnabled) {
+            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
             return this;
         }
         /**
@@ -2782,35 +2811,6 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder args(String args) {
             setProperty("args", args);
-            return this;
-        }
-        /**
-         * Enables connection automatic recovery (uses connection implementation
-         * that performs automatic recovery when connection shutdown is not
-         * initiated by the application).
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedRabbitMQEndpointBuilder automaticRecoveryEnabled(
-                Boolean automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
-            return this;
-        }
-        /**
-         * Enables connection automatic recovery (uses connection implementation
-         * that performs automatic recovery when connection shutdown is not
-         * initiated by the application).
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedRabbitMQEndpointBuilder automaticRecoveryEnabled(
-                String automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
             return this;
         }
         /**
