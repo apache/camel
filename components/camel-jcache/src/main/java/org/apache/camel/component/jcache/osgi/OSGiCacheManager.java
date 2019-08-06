@@ -56,9 +56,7 @@ public final class OSGiCacheManager<K, V> extends JCacheManager {
 
             return cache;
         } finally {
-            if (jcl != null) {
-                Thread.currentThread().setContextClassLoader(tccl);
-            }
+            Thread.currentThread().setContextClassLoader(tccl);
         }
     }
 

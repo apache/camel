@@ -153,7 +153,6 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             URL urls[] = {new URL("jar:" + url.toString() + "!/")};
             URLClassLoader classLoader = new URLClassLoader(urls, savedClassLoader);
 
-
             Thread.currentThread().setContextClassLoader(classLoader);
 
             // recreate resolver since we mess with context class loader
@@ -165,9 +164,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             assertEquals(1, scanned.size());
             assertEquals("class a.b.c.Test", scanned.iterator().next().toString());            
         } finally {
-            if (savedClassLoader != null) {
-                Thread.currentThread().setContextClassLoader(savedClassLoader);
-            } 
+            Thread.currentThread().setContextClassLoader(savedClassLoader);
         }
     }
     
@@ -193,9 +190,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             assertEquals(1, scanned.size());
             assertEquals("class a.b.c.Test", scanned.iterator().next().toString());
         } finally {
-            if (savedClassLoader != null) {
-                Thread.currentThread().setContextClassLoader(savedClassLoader);
-            }
+            Thread.currentThread().setContextClassLoader(savedClassLoader);
         }
     }
 

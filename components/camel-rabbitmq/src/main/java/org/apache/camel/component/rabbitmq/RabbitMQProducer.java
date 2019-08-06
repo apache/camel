@@ -340,9 +340,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
                 } catch (Exception e) {
                     throw new FailedToCreateProducerException(getEndpoint(), e);
                 } finally {
-                    if (ac != null) {
-                        Thread.currentThread().setContextClassLoader(current);
-                    }
+                    Thread.currentThread().setContextClassLoader(current);
                 }
                 started.set(true);
             }
