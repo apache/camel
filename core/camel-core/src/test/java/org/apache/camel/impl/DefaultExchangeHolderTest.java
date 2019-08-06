@@ -31,8 +31,6 @@ import org.junit.Test;
 
 public class DefaultExchangeHolderTest extends ContextTestSupport {
 
-    private String id;
-
     @Test
     public void testMarshal() throws Exception {
         DefaultExchangeHolder holder = createHolder(true);
@@ -56,7 +54,6 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
 
     @Test
     public void testUnmarshal() throws Exception {
-        id = null;
         Exchange exchange = new DefaultExchange(context);
 
         DefaultExchangeHolder.unmarshal(exchange, createHolder(true));
@@ -66,7 +63,6 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertEquals("Hi Camel", exchange.getIn().getHeader("CamelFoo"));
         assertEquals(444, exchange.getProperty("bar"));
         assertEquals(555, exchange.getProperty("CamelBar"));
-        assertEquals(id, exchange.getExchangeId());
     }
 
     @Test
@@ -174,7 +170,6 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
 
     private DefaultExchangeHolder createHolder(boolean includeProperties) {
         Exchange exchange = new DefaultExchange(context);
-        id = exchange.getExchangeId();
         exchange.getIn().setBody("Hello World");
         exchange.getIn().setHeader("foo", 123);
         exchange.getIn().setHeader("CamelFoo", "Hi Camel");
