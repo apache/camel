@@ -42,7 +42,8 @@ import org.apache.commons.net.ftp.FTPSClient;
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "ftps", extendsScheme = "file", title = "FTPS",
         syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName",
-        label = "file")
+        label = "file",
+        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService")
 @ManagedResource(description = "Managed FtpsEndpoint")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     @UriParam
