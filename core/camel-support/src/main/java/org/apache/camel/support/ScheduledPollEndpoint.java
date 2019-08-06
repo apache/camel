@@ -129,7 +129,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
                     Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(QUARTZ_2_SCHEDULER, ScheduledPollConsumerScheduler.class);
                     setScheduler(getCamelContext().getInjector().newInstance(clazz));
                 } catch (ClassNotFoundException e) {
-                    throw new IllegalArgumentException("Cannot load " + QUARTZ_2_SCHEDULER + " from classpath. Make sure camel-quartz2.jar is on the classpath.", e);
+                    throw new IllegalArgumentException("Cannot load " + QUARTZ_2_SCHEDULER + " from classpath. Make sure camel-quartz.jar is on the classpath.", e);
                 }
             } else {
                 // must refer to a custom scheduler by the given name

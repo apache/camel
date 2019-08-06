@@ -26,7 +26,7 @@ import org.apache.camel.ShutdownableService;
  * The default implementation {@link org.apache.camel.support.DefaultScheduledPollConsumerScheduler} is
  * using the {@link java.util.concurrent.ScheduledExecutorService} from the JDK to schedule and run the poll task.
  * <p/>
- * An alternative implementation is in <tt>camel-quartz2</tt> component that allows to use CRON expression
+ * An alternative implementation is in <tt>camel-quartz</tt> component that allows to use CRON expression
  * to define when the scheduler should run.
  */
 public interface ScheduledPollConsumerScheduler extends ShutdownableService, CamelContextAware {
