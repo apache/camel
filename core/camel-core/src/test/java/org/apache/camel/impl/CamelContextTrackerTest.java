@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelContextTracker;
-import org.apache.camel.support.LifecycleStrategySupport;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,19 +32,17 @@ public class CamelContextTrackerTest extends Assert {
 
         @Override
         public void contextCreated(CamelContext camelContext) {
-            camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
-                @Override
-                public void onContextStop(CamelContext context) {
-                    names.remove(context.getName());
-                }
-            });
             names.add(camelContext.getName());
+        }
+
+        @Override
+        public void contextDestroyed(CamelContext camelContext) {
+            names.remove(camelContext.getName());
         }
     }
 
     @Test
     public void testContainerSet() throws Exception {
-
         MyContextTracker tracker = new MyContextTracker();
 
         CamelContext camel1 = new DefaultCamelContext();

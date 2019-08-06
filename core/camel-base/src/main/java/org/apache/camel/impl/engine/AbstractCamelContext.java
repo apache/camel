@@ -323,9 +323,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     @Override
     public void doInit() throws Exception {
         // setup management first since end users may use it to add event
-        // notifiers
-        // using the management strategy before the CamelContext has been
-        // started
+        // notifiers using the management strategy before the CamelContext has been started
         setupManagement(null);
 
         // Call all registered trackers with this context
@@ -2817,6 +2815,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         // and clear start date
         startDate = null;
+
+        // Call all registered trackers with this context
+        // Note, this may use a partially constructed object
+        CamelContextTracker.notifyContextDestroyed(this);
     }
 
     /**
