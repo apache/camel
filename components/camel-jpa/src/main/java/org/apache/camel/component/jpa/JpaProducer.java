@@ -42,6 +42,7 @@ public class JpaProducer extends DefaultProducer {
     private String query;
     private String namedQuery;
     private String nativeQuery;
+    private boolean findEntity;
     private Map<String, Object> parameters;
     private Class<?> resultClass;
     private QueryFactory queryFactory;
@@ -111,7 +112,15 @@ public class JpaProducer extends DefaultProducer {
     public void setQuery(String query) {
         this.query = query;
     }
-    
+
+    public boolean isFindEntity() {
+        return findEntity;
+    }
+
+    public void setFindEntity(boolean findEntity) {
+        this.findEntity = findEntity;
+    }
+
     public Class<?> getResultClass() {
         return resultClass;
     }
@@ -151,7 +160,9 @@ public class JpaProducer extends DefaultProducer {
         final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory,
                 getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
 
-        if (getQueryFactory() != null) {
+        if (findEntity) {
+            processFind(exchange, entityManager);
+        } else if (getQueryFactory() != null) {
             processQuery(exchange, entityManager);
         } else {
             processEntity(exchange, entityManager);
@@ -201,6 +212,32 @@ public class JpaProducer extends DefaultProducer {
                     resolvedValue = SimpleLanguage.expression((String)value).evaluate(exchange, Object.class);
                 }
                 query.setParameter(key, resolvedValue);
+            });
+        }
+    }
+
+    protected void processFind(Exchange exchange, EntityManager entityManager) {
+        final Object key = exchange.getMessage().getBody();
+
+        if (key != null) {
+            transactionTemplate.execute(new TransactionCallback<Object>() {
+                public Object doInTransaction(TransactionStatus status) {
+                    if (getEndpoint().isJoinTransaction()) {
+                        entityManager.joinTransaction();
+                    }
+
+                    Object answer = entityManager.find(getEndpoint().getEntityType(), key);
+                    log.debug("Find: {} -> {}", key, answer);
+
+                    Message target = exchange.getPattern().isOutCapable() ? exchange.getOut() : exchange.getIn();
+                    target.setBody(answer);
+
+                    if (getEndpoint().isFlushOnSend()) {
+                        entityManager.flush();
+                    }
+
+                    return null;
+                }
             });
         }
     }

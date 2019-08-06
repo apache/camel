@@ -103,6 +103,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean remove;
     @UriParam(label = "producer")
     private Boolean useExecuteUpdate;
+    @UriParam(label = "producer")
+    private boolean findEntity;
 
     @UriParam(label = "advanced", prefix = "emf.", multiValue = true)
     private Map<String, Object> entityManagerProperties;
@@ -132,6 +134,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         producer.setNativeQuery(getNativeQuery());
         producer.setParameters(getParameters());
         producer.setResultClass(getResultClass());
+        producer.setFindEntity(isFindEntity());
         producer.setUseExecuteUpdate(isUseExecuteUpdate());
         return producer;
     }
@@ -180,7 +183,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     protected String createEndpointUri() {
         return "jpa" + (entityType != null ? "://" + entityType.getName() : "");
     }
-
 
     // Properties
     // -------------------------------------------------------------------------
@@ -508,6 +510,18 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setUseExecuteUpdate(Boolean useExecuteUpdate) {
         this.useExecuteUpdate = useExecuteUpdate;
+    }
+
+    public boolean isFindEntity() {
+        return findEntity;
+    }
+
+    /**
+     * If enabled then the producer will find a single entity by using the message body as key and entityType as the class type.
+     * This can be used instead of a query to find a single entity.
+     */
+    public void setFindEntity(boolean findEntity) {
+        this.findEntity = findEntity;
     }
 
     // Implementation methods

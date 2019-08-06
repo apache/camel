@@ -1193,6 +1193,32 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled then the producer will find a single entity by using the
+         * message body as key and entityType as the class type. This can be
+         * used instead of a query to find a single entity.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default JpaEndpointProducerBuilder findEntity(boolean findEntity) {
+            setProperty("findEntity", findEntity);
+            return this;
+        }
+        /**
+         * If enabled then the producer will find a single entity by using the
+         * message body as key and entityType as the class type. This can be
+         * used instead of a query to find a single entity.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default JpaEndpointProducerBuilder findEntity(String findEntity) {
+            setProperty("findEntity", findEntity);
+            return this;
+        }
+        /**
          * Flushes the EntityManager after the entity bean has been persisted.
          * 
          * The option is a: <code>boolean</code> type.
