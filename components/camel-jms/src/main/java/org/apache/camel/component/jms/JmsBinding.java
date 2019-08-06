@@ -519,7 +519,7 @@ public class JmsBinding {
         // special for transferExchange
         if (endpoint != null && endpoint.isTransferExchange()) {
             LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
-            Serializable holder = DefaultExchangeHolder.marshal(exchange, true, endpoint.isAllowSerializedHeaders());
+            Serializable holder = DefaultExchangeHolder.marshal(exchange, true, endpoint.isAllowSerializedHeaders(), false);
             Message answer = session.createObjectMessage(holder);
             // ensure default delivery mode is used by default
             answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
