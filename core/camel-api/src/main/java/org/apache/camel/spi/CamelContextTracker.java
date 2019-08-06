@@ -48,11 +48,7 @@ public class CamelContextTracker implements Closeable {
     private final Filter filter;
 
     public CamelContextTracker() {
-        filter = new Filter() {
-            public boolean accept(CamelContext camelContext) {
-                return !camelContext.getClass().getName().contains("Proxy");
-            }
-        };
+        filter = camelContext -> !camelContext.getClass().getName().contains("Proxy");
     }
 
     public CamelContextTracker(Filter filter) {
@@ -73,6 +69,13 @@ public class CamelContextTracker implements Closeable {
         // do nothing
     }
 
+    /**
+     * Called when a context has been shutdown.
+     */
+    public void contextDestroyed(CamelContext camelContext) {
+        // do nothing
+    }
+
     public final void open() {
         TRACKERS.add(this);
     }
@@ -87,6 +90,18 @@ public class CamelContextTracker implements Closeable {
             try {
                 if (tracker.accept(camelContext)) {
                     tracker.contextCreated(camelContext);
+                }
+            } catch (Exception e) {
+                LOG.warn("Error calling CamelContext tracker. This exception is ignored.", e);
+            }
+        }
+    }
+
+    public static synchronized void notifyContextDestroyed(CamelContext camelContext) {
+        for (CamelContextTracker tracker : TRACKERS) {
+            try {
+                if (tracker.accept(camelContext)) {
+                    tracker.contextDestroyed(camelContext);
                 }
             } catch (Exception e) {
                 LOG.warn("Error calling CamelContext tracker. This exception is ignored.", e);
