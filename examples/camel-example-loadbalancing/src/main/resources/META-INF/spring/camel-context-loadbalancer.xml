@@ -41,8 +41,8 @@
       <from uri="direct:loadbalance"/>
       <loadBalance inheritErrorHandler="false">
         <failover roundRobin="true"/>
-        <to uri="mina2:tcp://localhost:9991?sync=true"/>
-        <to uri="mina2:tcp://localhost:9992?sync=true"/>
+        <to uri="mina:tcp://localhost:9991?sync=true"/>
+        <to uri="mina:tcp://localhost:9992?sync=true"/>
       </loadBalance>
       <log message="${body}"/>
     </route>
