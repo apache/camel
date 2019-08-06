@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
+import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -103,6 +104,15 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      */
     public SplitDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+
+    /**
+     * Sets the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single outgoing message from the Splitter.
+     * By default Camel will use the original incoming message to the splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
+     */
+    public SplitDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy.get());
         return this;
     }
 
@@ -256,6 +266,19 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      */
     public SplitDefinition onPrepare(Processor onPrepare) {
         setOnPrepare(onPrepare);
+        return this;
+    }
+
+    /**
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send.
+     * This can be used to deep-clone messages that should be send, or any custom logic needed before
+     * the exchange is send.
+     *
+     * @param onPrepare the processor
+     * @return the builder
+     */
+    public SplitDefinition onPrepare(Supplier<Processor> onPrepare) {
+        setOnPrepare(onPrepare.get());
         return this;
     }
 

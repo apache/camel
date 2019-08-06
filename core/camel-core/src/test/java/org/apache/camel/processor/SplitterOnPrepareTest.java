@@ -49,7 +49,7 @@ public class SplitterOnPrepareTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split(body()).onPrepare(new FixNamePrepare())
+                    .split(body()).onPrepare(FixNamePrepare::new)
                         .to("direct:a");
 
                 from("direct:a").process(new ProcessorA()).to("mock:a");

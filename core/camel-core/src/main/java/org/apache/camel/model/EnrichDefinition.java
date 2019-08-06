@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -84,6 +85,15 @@ public class EnrichDefinition extends ExpressionNode {
      */
     public EnrichDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+
+    /**
+     * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message.
+     * By default Camel will use the reply from the external service as outgoing message.
+     */
+    public EnrichDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy.get());
         return this;
     }
 

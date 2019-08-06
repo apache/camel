@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {
+
     @XmlAttribute(required = true)
     private String message;
     @XmlAttribute @Metadata(defaultValue = "INFO")

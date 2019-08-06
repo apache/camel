@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
+import java.util.function.Supplier;
 
 import org.apache.camel.ExecutorServiceAware;
 
@@ -32,6 +33,16 @@ public interface ExecutorServiceAwareDefinition<Type extends ProcessorDefinition
      * @return the builder
      */
     Type executorService(ExecutorService executorService);
+
+    /**
+     * Setting the executor service for executing
+     *
+     * @param executorService the executor service
+     * @return the builder
+     */
+    default Type executorService(Supplier<ExecutorService> executorService) {
+        return executorService(executorService.get());
+    }
 
     /**
      * Setting the executor service for executing

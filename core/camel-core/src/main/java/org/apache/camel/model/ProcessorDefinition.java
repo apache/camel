@@ -2253,6 +2253,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds the custom processor to this destination which could be a final
+     * destination, or could be a transformation in a pipeline
+     *
+     * @param processor  the custom {@link Processor}
+     * @return the builder
+     */
+    public Type process(Supplier<Processor> processor) {
+        return process(processor.get());
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds the custom processor reference to this destination which could be a final
      * destination, or could be a transformation in a pipeline
      *
@@ -2304,6 +2316,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param bean  the bean to invoke, or a reference to a bean if the type is a String
+     * @return the builder
+     */
+    public Type bean(Supplier<Object> bean) {
+        return bean(bean.get());
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param bean  the bean to invoke, or a reference to a bean if the type is a String
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return the builder
      */
@@ -2318,7 +2341,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return asType();
     }
-    
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param bean  the bean to invoke, or a reference to a bean if the type is a String
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @return the builder
+     */
+    public Type bean(Supplier<Object> bean, String method) {
+        return bean(bean.get(), method);
+    }
+
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline

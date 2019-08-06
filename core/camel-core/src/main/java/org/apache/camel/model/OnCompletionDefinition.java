@@ -107,12 +107,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @param definition the parent definition that is the route
      */
     public void removeAllOnCompletionDefinition(ProcessorDefinition<?> definition) {
-        for (Iterator<ProcessorDefinition<?>> it = definition.getOutputs().iterator(); it.hasNext();) {
-            ProcessorDefinition<?> out = it.next();
-            if (out instanceof OnCompletionDefinition) {
-                it.remove();
-            }
-        }
+        definition.getOutputs().removeIf(out -> out instanceof OnCompletionDefinition);
     }
 
     @Override

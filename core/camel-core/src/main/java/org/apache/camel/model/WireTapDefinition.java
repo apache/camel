@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -204,6 +205,18 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     }
 
     /**
+     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
+     *
+     * @param processor  processor preparing the new exchange to send
+     * @return the builder
+     * @see #newExchangeHeader(String, org.apache.camel.Expression)
+     */
+    public WireTapDefinition<Type> newExchange(Supplier<Processor> processor) {
+        setNewExchangeProcessor(processor.get());
+        return this;
+    }
+
+    /**
      * Sets a header on the <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}.
      * <p/>
      * Use this together with the {@link #newExchangeBody(org.apache.camel.Expression)} or {@link #newExchange(org.apache.camel.Processor)}
@@ -228,6 +241,19 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      */
     public WireTapDefinition<Type> onPrepare(Processor onPrepare) {
         setOnPrepare(onPrepare);
+        return this;
+    }
+
+    /**
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send.
+     * This can be used to deep-clone messages that should be send, or any custom logic needed before
+     * the exchange is send.
+     *
+     * @param onPrepare the processor
+     * @return the builder
+     */
+    public WireTapDefinition<Type> onPrepare(Supplier<Processor> onPrepare) {
+        setOnPrepare(onPrepare.get());
         return this;
     }
 
