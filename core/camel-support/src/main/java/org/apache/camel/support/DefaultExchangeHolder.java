@@ -103,6 +103,7 @@ public class DefaultExchangeHolder implements Serializable {
 
         DefaultExchangeHolder payload = new DefaultExchangeHolder();
 
+        payload.exchangeId = exchange.getExchangeId();
         payload.inBody = checkSerializableBody("in body", exchange, exchange.getIn().getBody());
         payload.safeSetInHeaders(exchange, false);
         if (exchange.hasOut()) {
@@ -136,6 +137,7 @@ public class DefaultExchangeHolder implements Serializable {
 
         DefaultExchangeHolder payload = new DefaultExchangeHolder();
 
+        payload.exchangeId = exchange.getExchangeId();
         payload.inBody = checkSerializableBody("in body", exchange, exchange.getIn().getBody());
         payload.safeSetInHeaders(exchange, allowSerializedHeaders);
         if (exchange.hasOut()) {
@@ -160,6 +162,7 @@ public class DefaultExchangeHolder implements Serializable {
         ObjectHelper.notNull(exchange, "exchange");
         ObjectHelper.notNull(payload, "payload");
 
+        exchange.setExchangeId(payload.exchangeId);
         exchange.getIn().setBody(payload.inBody);
         if (payload.inHeaders != null) {
             exchange.getIn().setHeaders(payload.inHeaders);
