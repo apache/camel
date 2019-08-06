@@ -44,7 +44,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Quartz2 component supports 12 options, which are listed below.
+The Quartz component supports 12 options, which are listed below.
 
 
 
@@ -70,10 +70,10 @@ The Quartz2 component supports 12 options, which are listed below.
 
 
 // endpoint options: START
-The Quartz2 endpoint is configured using URI syntax:
+The Quartz endpoint is configured using URI syntax:
 
 ----
-quartz2:groupName/triggerName
+quartz:groupName/triggerName
 ----
 
 with the following path and query parameters:
@@ -126,7 +126,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-quartz2-starter</artifactId>
+  <artifactId>camel-quartz-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -140,19 +140,19 @@ The component supports 13 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.quartz2.auto-start-scheduler* | Whether or not the scheduler should be auto started. This options is default true | true | Boolean
-| *camel.component.quartz2.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.quartz2.enable-jmx* | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true | true | Boolean
-| *camel.component.quartz2.enabled* | Enable quartz2 component | true | Boolean
-| *camel.component.quartz2.interrupt-jobs-on-shutdown* | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. | false | Boolean
-| *camel.component.quartz2.prefix-instance-name* | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's. | true | Boolean
-| *camel.component.quartz2.prefix-job-name-with-endpoint-id* | Whether to prefix the quartz job with the endpoint id. This option is default false. | false | Boolean
-| *camel.component.quartz2.properties* | Properties to configure the Quartz scheduler. The option is a java.util.Properties type. |  | String
-| *camel.component.quartz2.properties-file* | File name of the properties to load from the classpath |  | String
-| *camel.component.quartz2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.quartz2.scheduler* | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. The option is a org.quartz.Scheduler type. |  | String
-| *camel.component.quartz2.scheduler-factory* | To use the custom SchedulerFactory which is used to create the Scheduler. The option is a org.quartz.SchedulerFactory type. |  | String
-| *camel.component.quartz2.start-delayed-seconds* | Seconds to wait before starting the quartz scheduler. |  | Integer
+| *camel.component.quartz.auto-start-scheduler* | Whether or not the scheduler should be auto started. This options is default true | true | Boolean
+| *camel.component.quartz.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.quartz.enable-jmx* | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true | true | Boolean
+| *camel.component.quartz.enabled* | Whether to enable auto configuration of the quartz component. This is enabled by default. |  | Boolean
+| *camel.component.quartz.interrupt-jobs-on-shutdown* | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. | false | Boolean
+| *camel.component.quartz.prefix-instance-name* | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's. | true | Boolean
+| *camel.component.quartz.prefix-job-name-with-endpoint-id* | Whether to prefix the quartz job with the endpoint id. This option is default false. | false | Boolean
+| *camel.component.quartz.properties* | Properties to configure the Quartz scheduler. The option is a java.util.Properties type. |  | String
+| *camel.component.quartz.properties-file* | File name of the properties to load from the classpath |  | String
+| *camel.component.quartz.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.quartz.scheduler* | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. The option is a org.quartz.Scheduler type. |  | String
+| *camel.component.quartz.scheduler-factory* | To use the custom SchedulerFactory which is used to create the Scheduler. The option is a org.quartz.SchedulerFactory type. |  | String
+| *camel.component.quartz.start-delayed-seconds* | Seconds to wait before starting the quartz scheduler. |  | Integer
 |===
 // spring-boot-auto-configure options: END
 

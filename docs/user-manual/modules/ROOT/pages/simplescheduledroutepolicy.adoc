@@ -4,7 +4,7 @@
 SimpleScheduledRoutePolicy is a
 xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] that facilitates
 route activation, de-activation, suspension and resumption of routes
-based on a xref:components::quartz2-component.adoc[Quartz] SimpleTrigger.
+based on a xref:components::quartz-component.adoc[Quartz] SimpleTrigger.
 
 Maven users will need to add a `camel-quartz` dependency to their
 `pom.xml` to avail this capability.
@@ -25,10 +25,10 @@ All Scheduled route policies share the scheduler created by the Quartz
 component. In this way, scheduler, jobs and triggers can be managed in a
 common and consistent way.
 
-**Relationship to the [Quartz2] component**
+**Relationship to the [Quartz] component**
 
 From Camel 2.12.2 onwards you can also make use of the
-xref:components::quartz2-component.adoc[Quartz2] based implementation of this route policy.
+xref:components::quartz-component.adoc[Quartz] based implementation of this route policy.
 
 == How it works
 
@@ -150,4 +150,4 @@ xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] - for information
 on policy based scheduling capability for camel routes +
 xref:route-policy.adoc[RoutePolicy] - for information on route policies
 in general
-xref:components::quartz2-component.adoc[Quartz] -for more information on the quartz component
+xref:components::quartz-component.adoc[Quartz] -for more information on the quartz component

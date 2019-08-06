@@ -679,8 +679,8 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 | link:camel-pubnub/src/main/docs/pubnub-component.adoc[PubNub] (camel-pubnub) +
 `pubnub:channel` | 2.19 | To send and receive messages to PubNub data stream network for connected devices.
 
-| link:camel-quartz2/src/main/docs/quartz2-component.adoc[Quartz2] (camel-quartz2) +
-`quartz2:groupName/triggerName` | 2.12 | Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
+| link:camel-quartz/src/main/docs/quartz-component.adoc[Quartz] (camel-quartz) +
+`quartz:groupName/triggerName` | 2.12 | Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
 
 | link:camel-quickfix/src/main/docs/quickfix-component.adoc[QuickFix] (camel-quickfix) +
 `quickfix:configurationName` | 2.1 | The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.

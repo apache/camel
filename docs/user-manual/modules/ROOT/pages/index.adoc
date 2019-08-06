@@ -366,7 +366,7 @@ camel routes without them knowing
 ** xref:components::pgevent-component.adoc[PostgresSQL Event]
 ** xref:components::lpr-component.adoc[Printer]
 ** xref:components::pubnub-component.adoc[PubNub]
-** xref:components::quartz2-component.adoc[Quartz2]
+** xref:components::quartz-component.adoc[Quartz]
 ** xref:components::quickfix-component.adoc[QuickFix]
 ** xref:components::rabbitmq-component.adoc[RabbitMQ]
 ** xref:components::reactive-streams-component.adoc[Reactive Streams]

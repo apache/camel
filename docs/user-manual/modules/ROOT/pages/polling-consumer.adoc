@@ -162,7 +162,7 @@ then fire message exchanges.
 Since this a such a common pattern, polling components can extend the
 https://github.com/apache/camel/blob/master/core/camel-support/src/main/java/org/apache/camel/support/ScheduledPollConsumer.java[ScheduledPollConsumer]
 base class which makes it simpler to implement this pattern. There is
-also the xref:components::quartz2-component.adoc[Quartz Component] which provides scheduled
+also the xref:components::quartz-component.adoc[Quartz Component] which provides scheduled
 delivery of messages using the Quartz enterprise scheduler.
 
 For more details see:
@@ -179,7 +179,7 @@ For more details see:
 ** xref:components::jpa-component.adoc[JPA]
 ** xref:components::mail-component.adoc[Mail]
 ** xref:components::mybatis-component.adoc[MyBatis]
-** xref:components::quartz2-component.adoc[Quartz]
+** xref:components::quartz-component.adoc[Quartz]
 ** xref:components::snmp-component.adoc[SNMP]
 ** xref:components::aws-s3-component.adoc[AWS-S3]
 ** xref:components::aws-sqs-component.adoc[AWS-SQS]
@@ -243,20 +243,20 @@ option allows you to share a thread pool among multiple consumers.
 *`org.apache.camel.spi.ScheduledPollConsumerScheduler`* to use as the
 scheduler for firing when the polling consumer runs. The default
 implementation uses the *`ScheduledExecutorService`* and there is a
-xref:components::quartz2-component.adoc[Quartz2], and xref:spring.adoc[Spring] based which
+xref:components::quartz-component.adoc[Quartz], and xref:spring.adoc[Spring] based which
 supports CRON expressions. *Notice:* If using a custom scheduler then
 the options for *`initialDelay`, `useFixedDelay`*, *`timeUnit`* and
-*`scheduledExecutorService`* may not be in use. Use the text *`quartz2`*
-to refer to use the xref:components::quartz2-component.adoc[Quartz2] scheduler; and use the
+*`scheduledExecutorService`* may not be in use. Use the text *`quartz`*
+to refer to use the xref:components::quartz-component.adoc[Quartz] scheduler; and use the
 text `spring` to use the xref:spring.adoc[Spring] based; and use the
 text *`#myScheduler`* to refer to a custom scheduler by its id in the
 xref:registry.adoc[Registry].
 
-See xref:components::quartz2-component.adoc[Quartz2] page for an example.
+See xref:components::quartz-component.adoc[Quartz] page for an example.
 
 |`scheduler.xxx` |`null` |*Camel 2.12:* To configure additional
 properties when using a custom *`scheduler`* or any of the
-xref:components::quartz2-component.adoc[Quartz2], xref:spring.adoc[Spring] based scheduler.
+xref:components::quartz-component.adoc[Quartz], xref:spring.adoc[Spring] based scheduler.
 
 |`sendEmptyMessageWhenIdle` |`false` |*Camel 2.9:* If the polling
 consumer did not poll any files, you can enable this option to send an
@@ -340,7 +340,7 @@ implement a custom scheduler to control when the
 xref:polling-consumer.adoc[Polling Consumer] runs. The default
 implementation is based on the JDKs *`ScheduledExecutorService`* with a
 single thread in the thread pool. There is a CRON based implementation
-in the xref:components::quartz2-component.adoc[Quartz2], and xref:spring.adoc[Spring]
+in the xref:components::quartz-component.adoc[Quartz], and xref:spring.adoc[Spring]
 components.
 
 For an example of developing and using a custom scheduler, see the unit
