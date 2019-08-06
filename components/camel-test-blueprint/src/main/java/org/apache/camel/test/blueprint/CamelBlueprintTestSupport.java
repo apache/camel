@@ -36,6 +36,7 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.camel.util.IOHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -120,7 +121,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         Properties initialConfiguration = new Properties();
         String pid = setConfigAdminInitialConfiguration(initialConfiguration);
         if (pid != null) {
-            configAdminPidFiles = new String[][] {{prepareInitialConfigFile(initialConfiguration), pid}};
+            configAdminPidFiles = new String[][]{{prepareInitialConfigFile(initialConfiguration), pid}};
         }
 
         final String symbolicName = getClass().getSimpleName();
@@ -529,8 +530,6 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
     /**
      * Create a temporary File with persisted configuration for ConfigAdmin
-     * @param initialConfiguration
-     * @return
      */
     private String prepareInitialConfigFile(Properties initialConfiguration) throws IOException {
         File dir = new File("target/etc");
@@ -540,7 +539,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         try {
             initialConfiguration.store(writer, null);
         } finally {
-            writer.close();
+            IOHelper.close(writer);
         }
         return cfg.getAbsolutePath();
     }
