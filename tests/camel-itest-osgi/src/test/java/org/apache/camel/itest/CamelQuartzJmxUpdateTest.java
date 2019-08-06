@@ -48,19 +48,19 @@ import static org.junit.Assert.assertNotEquals;
  * CAMEL-11471: Unable to update the cron details from Quartz scheduler MBean
  */
 @RunWith(PaxExam.class)
-public class CamelQuartz2JmxUpdateTest extends AbstractFeatureTest {
+public class CamelQuartzJmxUpdateTest extends AbstractFeatureTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CamelQuartz2JmxUpdateTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CamelQuartzJmxUpdateTest.class);
 
     @Test
     public void testUpdateCronDetails() throws Exception {
-        // install camel-quartz2 here as 'wrap:' is not available at boot time
-        installCamelFeature("camel-quartz2");
+        // install camel-quartz here as 'wrap:' is not available at boot time
+        installCamelFeature("camel-quartz");
 
         // install the camel blueprint xml file we use in this test
         URL url = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelQuartz2JmxUpdateTest.xml",
-            CamelQuartz2JmxUpdateTest.class.getClassLoader());
-        installBlueprintAsBundle("CamelQuartz2JmxUpdateTest", url, true);
+            CamelQuartzJmxUpdateTest.class.getClassLoader());
+        installBlueprintAsBundle("CamelQuartzJmxUpdateTest", url, true);
 
         // lookup Camel from OSGi
         CamelContext camel = getOsgiService(bundleContext, CamelContext.class);
