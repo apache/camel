@@ -19,7 +19,6 @@ package org.apache.camel.test.junit5;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
