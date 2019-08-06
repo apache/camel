@@ -32,7 +32,7 @@ public interface QuartzEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the Quartz2 component.
+     * Builder for endpoint for the Quartz component.
      */
     public interface QuartzEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedQuartzEndpointBuilder advanced() {
@@ -282,7 +282,7 @@ public interface QuartzEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Quartz2 component.
+     * Advanced builder for endpoint for the Quartz component.
      */
     public interface AdvancedQuartzEndpointBuilder
             extends
@@ -474,14 +474,14 @@ public interface QuartzEndpointBuilderFactory {
         }
     }
     /**
-     * Quartz2 (camel-quartz2)
+     * Quartz (camel-quartz)
      * Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
      * 
      * Category: scheduling
      * Available as of version: 2.12
-     * Maven coordinates: org.apache.camel:camel-quartz2
+     * Maven coordinates: org.apache.camel:camel-quartz
      * 
-     * Syntax: <code>quartz2:groupName/triggerName</code>
+     * Syntax: <code>quartz:groupName/triggerName</code>
      * 
      * Path parameter: groupName
      * The quartz group name to use. The combination of group name and timer
@@ -495,7 +495,7 @@ public interface QuartzEndpointBuilderFactory {
     default QuartzEndpointBuilder quartz(String path) {
         class QuartzEndpointBuilderImpl extends AbstractEndpointBuilder implements QuartzEndpointBuilder, AdvancedQuartzEndpointBuilder {
             public QuartzEndpointBuilderImpl(String path) {
-                super("quartz2", path);
+                super("quartz", path);
             }
         }
         return new QuartzEndpointBuilderImpl(path);
