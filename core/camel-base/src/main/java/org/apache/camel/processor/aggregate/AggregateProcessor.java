@@ -133,6 +133,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
     private final AtomicLong completedByPredicate = new AtomicLong();
     private final AtomicLong completedByBatchConsumer = new AtomicLong();
     private final AtomicLong completedByForce = new AtomicLong();
+    private final AtomicLong discarded = new AtomicLong();
 
     // keep booking about redelivery
     private class RedeliveryData {
@@ -189,6 +190,11 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         }
 
         @Override
+        public long getDiscarded() {
+            return discarded.get();
+        }
+
+        @Override
         public void reset() {
             totalIn.set(0);
             totalCompleted.set(0);
@@ -198,6 +204,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             completedByPredicate.set(0);
             completedByBatchConsumer.set(0);
             completedByForce.set(0);
+            discarded.set(0);
         }
 
         @Override
@@ -733,6 +740,8 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         Exchange answer;
         if (fromTimeout && isDiscardOnCompletionTimeout()) {
+            // this exchange is discarded
+            discarded.incrementAndGet();
             // discard due timeout
             log.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
             // must confirm the discarded exchange
@@ -742,7 +751,9 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             // the completion was from timeout and we should just discard it
             answer = null;
         } else if (aggregateFailed && isDiscardOnAggregationFailure()) {
-            // discard due aggregation failed
+            // this exchange is discarded
+            discarded.incrementAndGet();
+            // discard due aggregation failed (or by force)
             log.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
             // must confirm the discarded exchange
             aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());

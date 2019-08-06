@@ -298,6 +298,11 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
     }
 
     @Override
+    public long getDiscarded() {
+        return processor.getStatistics().getDiscarded();
+    }
+
+    @Override
     public void resetStatistics() {
         processor.getStatistics().reset();
     }
