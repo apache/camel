@@ -1220,11 +1220,11 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                         value = parameters.get("consumer.scheduler");
                     }
                     if (value != null) {
-                        // the scheduler can be quartz2 or spring based, so add reference to camel component
+                        // the scheduler can be quartz or spring based, so add reference to camel component
                         // from these components os blueprint knows about the requirement
                         String name = value.toString();
-                        if ("quartz2".equals(name)) {
-                            components.add("quartz2");
+                        if ("quartz".equals(name)) {
+                            components.add("quartz");
                         } else if ("spring".equals(name)) {
                             components.add("spring-event");
                         }
