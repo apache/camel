@@ -31,18 +31,13 @@ import io.swagger.models.auth.In;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Producer;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.spi.RestConfiguration;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -74,27 +69,6 @@ public class RestSwaggerEndpointTest {
         assertThat(endpoint.queryParameter(new QueryParameter())).isEqualTo("");
         assertThat(endpoint.queryParameter(new QueryParameter().name("param"))).isEqualTo("param={param?}");
         assertThat(endpoint.queryParameter(new QueryParameter().name("literal"))).isEqualTo("literal=value");
-    }
-
-    @Test
-    public void shouldCreateProducers() throws Exception {
-        final CamelContext camelContext = mock(CamelContext.class);
-        when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
-        final Endpoint endpointDelegate = mock(Endpoint.class);
-        when(camelContext.getEndpoint("rest:GET:/v2:/pet/{petId}")).thenReturn(endpointDelegate);
-        when(camelContext.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
-        final Producer delegateProducer = mock(Producer.class);
-        when(endpointDelegate.createProducer()).thenReturn(delegateProducer);
-
-        final RestSwaggerComponent component = new RestSwaggerComponent(camelContext);
-        component.setHost("http://petstore.swagger.io");
-
-        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:getPetById", "getPetById", component,
-            Collections.emptyMap());
-
-        final Producer producer = endpoint.createProducer();
-
-        assertThat(producer).isSameAs(delegateProducer);
     }
 
     @Test

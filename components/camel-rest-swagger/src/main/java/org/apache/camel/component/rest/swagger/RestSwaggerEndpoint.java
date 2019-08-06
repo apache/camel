@@ -61,6 +61,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.LazyStartProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -279,9 +280,13 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
         final Endpoint endpoint = camelContext.getEndpoint(componentEndpointUri.toString());
 
-        setProperties(endpoint, determineEndpointParameters(swagger, operation));
+        Map<String, Object> params = determineEndpointParameters(swagger, operation);
+        boolean hasHost = params.containsKey("host");
+        setProperties(endpoint, params);
 
-        return endpoint.createProducer();
+        // if there is a host then we should use this hardcoded host instead of any Header that may have an existing
+        // Host header from some other HTTP input, and if so then lets remove it
+        return new RestSwaggerProducer(endpoint.createAsyncProducer(), hasHost);
     }
 
     String determineBasePath(final Swagger swagger) {
