@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class CamelQuartz2Test extends AbstractSpringBootTestSupport {
+public class CamelQuartzTest extends AbstractSpringBootTestSupport {
 
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
@@ -34,7 +34,7 @@ public class CamelQuartz2Test extends AbstractSpringBootTestSupport {
 
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
-                .module(inferModuleName(CamelQuartz2Test.class))
+                .module(inferModuleName(CamelQuartzTest.class))
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseQuartzTest$|QuartzTwoCamelContextSameNameClashTest$)") // unrelated test
                 .build();
     }
