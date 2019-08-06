@@ -105,6 +105,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlAttribute
     private String useMDCLogging;
+    
+    @XmlAttribute
+    private String mdcLoggingKeysPattern;
 
     @XmlAttribute
     private String useDataType;
@@ -874,4 +877,17 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     public void setErrorHandlers(List<ErrorHandlerDefinition> errorHandlers) {
         this.errorHandlers = errorHandlers;
     }
+
+	public String getMdcLoggingKeysPattern() {
+		return mdcLoggingKeysPattern;
+	}
+
+	public void setMdcLoggingKeysPattern(String mdcLoggingKeysPattern) {
+		this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
+	}
+
+	@Override
+	public String getMDCLoggingKeysPattern() {
+		return mdcLoggingKeysPattern;
+	}
 }
