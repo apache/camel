@@ -264,7 +264,7 @@
         <module>camel-protobuf</module>
         <module>camel-pubnub</module>
         <module>camel-pulsar</module>
-        <module>camel-quartz2</module>
+        <module>camel-quartz</module>
         <module>camel-quickfix</module>
         <module>camel-rabbitmq</module>
         <module>camel-reactive-executor-vertx</module>
