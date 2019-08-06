@@ -97,6 +97,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean allowNullBody;
     @UriParam(label = "producer", defaultValue = "true")
     protected boolean jailStartingDirectory = true;
+    @UriParam(label = "producer")
+    protected String appendChars;
 
     // consumer options
 
@@ -1237,6 +1239,45 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setJailStartingDirectory(boolean jailStartingDirectory) {
         this.jailStartingDirectory = jailStartingDirectory;
+    }
+
+    public String getAppendChars() {
+        return appendChars;
+    }
+
+    /**
+     * Used to append characters (text) after writing files. This can for example be used to add new lines or other
+     * separators when writing and appending to existing files.
+     * <p/>
+     * To specify new-line (\n or \r) or tab (\t) characters then escape with an extra slash, eg \\n
+     */
+    public void setAppendChars(String appendChars) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < appendChars.length(); i++) {
+            char ch = appendChars.charAt(i);
+            boolean escaped = '\\' == ch;
+            if (escaped && i < appendChars.length() - 1) {
+                // grab next character to escape
+                char next = appendChars.charAt(i + 1);
+                // special for new line, tabs and carriage return
+                if ('n' == next) {
+                    sb.append("\n");
+                    i++;
+                    continue;
+                } else if ('t' == next) {
+                    sb.append("\t");
+                    i++;
+                    continue;
+                } else if ('r' == next) {
+                    sb.append("\r");
+                    i++;
+                    continue;
+                }
+            }
+            // not special just a regular character
+            sb.append(ch);
+        }
+        this.appendChars = sb.toString();
     }
 
     public ExceptionHandler getOnCompletionExceptionHandler() {

@@ -412,6 +412,7 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     private void writeFileByStream(InputStream in, File target) throws IOException {
+        boolean exists = target.exists();
         try (SeekableByteChannel out = prepareOutputFileChannel(target)) {
             
             LOG.debug("Using InputStream to write file: {}", target);
@@ -426,12 +427,21 @@ public class FileOperations implements GenericFileOperations<File> {
                 out.write(byteBuffer);
                 byteBuffer.clear();
             }
+
+            boolean append = endpoint.getFileExist() == GenericFileExist.Append;
+            if (append && exists && endpoint.getAppendChars() != null) {
+                byteBuffer = ByteBuffer.wrap(endpoint.getAppendChars().getBytes());
+                out.write(byteBuffer);
+                byteBuffer.clear();
+            }
+
         } finally {
             IOHelper.close(in, target.getName(), LOG);
         }
     }
 
     private void writeFileByReaderWithCharset(Reader in, File target, String charset) throws IOException {
+        boolean exists = target.exists();
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
         try (Writer out = Files.newBufferedWriter(target.toPath(), Charset.forName(charset), 
                                                   StandardOpenOption.WRITE,
@@ -440,6 +450,10 @@ public class FileOperations implements GenericFileOperations<File> {
             LOG.debug("Using Reader to write file: {} with charset: {}", target, charset);
             int size = endpoint.getBufferSize();
             IOHelper.copy(in, out, size);
+
+            if (append && exists && endpoint.getAppendChars() != null) {
+                out.write(endpoint.getAppendChars());
+            }
         } finally {
             IOHelper.close(in, target.getName(), LOG);
         }

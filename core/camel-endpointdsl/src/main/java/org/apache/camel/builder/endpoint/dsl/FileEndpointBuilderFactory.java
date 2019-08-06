@@ -2346,6 +2346,20 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
+         * Used to append characters (text) after writing files. This can for
+         * example be used to add new lines or other separators when writing and
+         * appending to existing files. To specify new-line (
+         * or ) or tab (	) characters then escape with an extra slash, eg \n.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default FileEndpointProducerBuilder appendChars(String appendChars) {
+            setProperty("appendChars", appendChars);
+            return this;
+        }
+        /**
          * What to do if a file already exists with the same name. Override,
          * which is the default, replaces the existing file. Append - adds
          * content to the existing file. Fail - throws a
