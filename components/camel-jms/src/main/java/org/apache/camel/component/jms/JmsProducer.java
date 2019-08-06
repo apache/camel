@@ -81,7 +81,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                 // must use the classloader from the application context when creating reply manager,
                 // as it should inherit the classloader from app context and not the current which may be
                 // a different classloader
-                ClassLoader current = Thread.currentThread().getContextClassLoader();
+                ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
                 ClassLoader ac = endpoint.getCamelContext().getApplicationContextClassLoader();
                 try {
                     if (ac != null) {
@@ -108,9 +108,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                 } catch (Exception e) {
                     throw new FailedToCreateProducerException(endpoint, e);
                 } finally {
-                    if (ac != null) {
-                        Thread.currentThread().setContextClassLoader(current);
-                    }
+                    Thread.currentThread().setContextClassLoader(oldClassLoader);
                 }
                 started.set(true);
             }

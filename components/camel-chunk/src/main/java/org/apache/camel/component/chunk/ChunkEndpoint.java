@@ -147,9 +147,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
             return newChunk;
         } finally {
             resourceReader.close();
-            if (oldcl != null) {
-                Thread.currentThread().setContextClassLoader(oldcl);
-            }
+            Thread.currentThread().setContextClassLoader(oldcl);
         }
     }
 

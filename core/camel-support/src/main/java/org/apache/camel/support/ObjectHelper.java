@@ -297,16 +297,14 @@ public final class ObjectHelper {
      * @return the result of Callable return
      */
     public static Object callWithTCCL(Callable<?> call, ClassLoader classloader) throws Exception {
-        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
             if (classloader != null) {
                 Thread.currentThread().setContextClassLoader(classloader);
             }
             return call.call();
         } finally {
-            if (tccl != null) {
-                Thread.currentThread().setContextClassLoader(tccl);
-            }
+            Thread.currentThread().setContextClassLoader(tccl);
         }
     }
 
