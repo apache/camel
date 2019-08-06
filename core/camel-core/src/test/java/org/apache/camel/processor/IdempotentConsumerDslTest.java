@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.Test;
 
@@ -39,6 +40,10 @@ public class IdempotentConsumerDslTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    public IdempotentRepository createRepo() {
+        return MemoryIdempotentRepository.memoryIdempotentRepository(200);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -47,7 +52,7 @@ public class IdempotentConsumerDslTest extends ContextTestSupport {
                 from("direct:start")
                     .idempotentConsumer()
                         .message(m -> m.getHeader("messageId"))
-                        .messageIdRepository(MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .messageIdRepository(() -> createRepo())
                     .to("mock:result");
             }
         };

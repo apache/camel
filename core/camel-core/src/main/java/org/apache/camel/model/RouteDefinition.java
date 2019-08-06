@@ -17,8 +17,10 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -452,10 +454,18 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
         if (routePolicies == null) {
             routePolicies = new ArrayList<>();
         }
-        for (RoutePolicy policy : policies) {
-            routePolicies.add(policy);
-        }
+        routePolicies.addAll(Arrays.asList(policies));
         return this;
+    }
+
+    /**
+     * Configures route policy for this route
+     *
+     * @param policy route policy
+     * @return the builder
+     */
+    public RouteDefinition routePolicy(Supplier<RoutePolicy> policy) {
+        return routePolicy(policy.get());
     }
 
     /**

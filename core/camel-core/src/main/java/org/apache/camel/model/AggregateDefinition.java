@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -730,7 +731,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     /**
      * Sets the AggregationStrategy to use with a fluent builder.
+     *
+     * @deprecated use {@link #aggregationStrategy()}
      */
+    @Deprecated
     public AggregationStrategyClause<AggregateDefinition> strategy() {
         return aggregationStrategy();
     }
@@ -740,7 +744,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      *
      * @param aggregationStrategy  the aggregate strategy to use
      * @return the builder
+     * @deprecated use {@link #aggregationStrategy(AggregationStrategy)}
      */
+    @Deprecated
     public AggregateDefinition strategy(AggregationStrategy aggregationStrategy) {
         return aggregationStrategy(aggregationStrategy);
     }
@@ -753,6 +759,17 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+
+    /**
+     * Sets the aggregate strategy to use
+     *
+     * @param aggregationStrategy  the aggregate strategy to use
+     * @return the builder
+     */
+    public AggregateDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy.get());
         return this;
     }
 
@@ -798,6 +815,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition aggregationRepository(AggregationRepository aggregationRepository) {
         setAggregationRepository(aggregationRepository);
+        return this;
+    }
+
+    /**
+     * Sets the custom aggregate repository to use.
+     * <p/>
+     * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
+     *
+     * @param aggregationRepository  the aggregate repository to use
+     * @return the builder
+     */
+    public AggregateDefinition aggregationRepository(Supplier<AggregationRepository> aggregationRepository) {
+        setAggregationRepository(aggregationRepository.get());
         return this;
     }
 
@@ -951,6 +981,16 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * background thread is created to check for the completion for every aggregator.
      * Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator.
      */
+    public AggregateDefinition timeoutCheckerExecutorService(Supplier<ScheduledExecutorService> executorService) {
+        setTimeoutCheckerExecutorService(executorService.get());
+        return this;
+    }
+
+    /**
+     * If using either of the completionTimeout, completionTimeoutExpression, or completionInterval options a
+     * background thread is created to check for the completion for every aggregator.
+     * Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator.
+     */
     public AggregateDefinition timeoutCheckerExecutorServiceRef(String executorServiceRef) {
         setTimeoutCheckerExecutorServiceRef(executorServiceRef);
         return this;
@@ -962,6 +1002,15 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition aggregateController(AggregateController aggregateController) {
         setAggregateController(aggregateController);
+        return this;
+    }
+
+    /**
+     * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
+     * this aggregator.
+     */
+    public AggregateDefinition aggregateController(Supplier<AggregateController> aggregateController) {
+        setAggregateController(aggregateController.get());
         return this;
     }
 

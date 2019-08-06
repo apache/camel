@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -137,6 +138,15 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
      */
     public ClaimCheckDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+
+    /**
+     * To use a custom {@link AggregationStrategy} instead of the default implementation.
+     * Notice you cannot use both custom aggregation strategy and configure data at the same time.
+     */
+    public ClaimCheckDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy.get());
         return this;
     }
 

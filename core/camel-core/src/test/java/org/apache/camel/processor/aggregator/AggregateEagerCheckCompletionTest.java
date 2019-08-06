@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.concurrent.ForkJoinPool;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
@@ -56,7 +58,8 @@ public class AggregateEagerCheckCompletionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy())
+                    .aggregate(header("id"))
+                        .aggregationStrategy(BodyInAggregatingStrategy::new)
                         .completionPredicate(body().isEqualTo("A+B+END"))
                         .to("mock:result");
             }

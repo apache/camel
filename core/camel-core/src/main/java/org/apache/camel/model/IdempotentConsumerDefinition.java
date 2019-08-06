@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -93,6 +94,17 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
      */
     public IdempotentConsumerDefinition messageIdRepository(IdempotentRepository idempotentRepository) {
         setMessageIdRepository(idempotentRepository);
+        return this;
+    }
+
+    /**
+     * Sets the message id repository for the idempotent consumer
+     *
+     * @param idempotentRepository the repository instance of idempotent
+     * @return builder
+     */
+    public IdempotentConsumerDefinition messageIdRepository(Supplier<IdempotentRepository> idempotentRepository) {
+        setMessageIdRepository(idempotentRepository.get());
         return this;
     }
 

@@ -98,7 +98,9 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> implem
      *
      * @param exceptionClasses  a list of the exception classes
      * @return the builder
+     * @deprecated use {@link #exception(Class[])}
      */
+    @Deprecated
     public CatchDefinition exceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
         setExceptionClasses(exceptionClasses);
         return this;
@@ -139,7 +141,9 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> implem
      *
      * @param exception  the exception of class
      * @return the builder
+     * @deprecated use {@link #exception(Class[])}
      */
+    @Deprecated
     public CatchDefinition exceptionClasses(Class<? extends Throwable> exception) {
         List<Class<? extends Throwable>> list = getExceptionClasses();
         list.add(exception);
