@@ -104,7 +104,7 @@ The properties component will now use OS environment variables as preferred valu
 
 ### Removed components
 
-We have removed all deprecated components from Camel 2.x, also including the old `camel-http` component. Instead you can use `camel-http4`.
+We have removed all deprecated components from Camel 2.x, also including the old `camel-http` component. `camel-http4` has been renamed to `camel-http`.
 
 We removed `camel-jibx` component which wasn't working on JDK 8.
 
