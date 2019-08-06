@@ -105,7 +105,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlAttribute
     private String useMDCLogging;
-    
+
     @XmlAttribute
     private String mdcLoggingKeysPattern;
 
@@ -166,12 +166,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class)
     private CamelJMXAgentDefinition camelJMXAgent;
 
-    @XmlElements({
-        @XmlElement(name = "consumerTemplate", type = ConsumerTemplateFactoryBean.class),
-        @XmlElement(name = "redeliveryPolicyProfile", type = RedeliveryPolicyFactoryBean.class),
-        @XmlElement(name = "template", type = ProducerTemplateFactoryBean.class),
-        @XmlElement(name = "threadPool", type = ThreadPoolFactoryBean.class),
-    })
+    @XmlElements({@XmlElement(name = "consumerTemplate", type = ConsumerTemplateFactoryBean.class),
+                  @XmlElement(name = "redeliveryPolicyProfile", type = RedeliveryPolicyFactoryBean.class), @XmlElement(name = "template", type = ProducerTemplateFactoryBean.class),
+                  @XmlElement(name = "threadPool", type = ThreadPoolFactoryBean.class)})
     private List<AbstractCamelFactoryBean<?>> beansFactory;
 
     @XmlTransient
@@ -276,7 +273,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
             return null;
         }
 
-        return (S) manager.getReference(bean, clazz, manager.createCreationalContext(bean));
+        return (S)manager.getReference(bean, clazz, manager.createCreationalContext(bean));
     }
 
     @Override
@@ -284,7 +281,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
         // add filter to class resolver which then will filter
         getContext().getPackageScanClassResolver().addFilter(filter);
 
-        PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(getContext(), packages, getContextClassLoaderOnStart(), getContext().getPackageScanClassResolver());
+        PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(getContext(), packages, getContextClassLoaderOnStart(),
+                                                                                 getContext().getPackageScanClassResolver());
         finder.appendBuilders(builders);
 
         // and remove the filter
@@ -476,11 +474,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     /**
      * Sets the package names to be recursively searched for Java classes which
-     * extend {@link org.apache.camel.builder.RouteBuilder} to be auto-wired up to the
-     * {@link CamelContext} as a route. Note that classes are excluded if
+     * extend {@link org.apache.camel.builder.RouteBuilder} to be auto-wired up
+     * to the {@link CamelContext} as a route. Note that classes are excluded if
      * they are specifically configured in the deployment.
      * <p/>
-     * A more advanced configuration can be done using {@link #setPackageScan(org.apache.camel.model.PackageScanDefinition)}
+     * A more advanced configuration can be done using
+     * {@link #setPackageScan(org.apache.camel.model.PackageScanDefinition)}
      *
      * @param packages the package names which are recursively searched
      * @see #setPackageScan(org.apache.camel.model.PackageScanDefinition)
@@ -512,9 +511,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     /**
-     * Sets the context scanning information.
-     * Context scanning allows for the automatic discovery of Camel routes runtime for inclusion
-     * e.g. {@link org.apache.camel.builder.RouteBuilder} implementations
+     * Sets the context scanning information. Context scanning allows for the
+     * automatic discovery of Camel routes runtime for inclusion e.g.
+     * {@link org.apache.camel.builder.RouteBuilder} implementations
      *
      * @param contextScan the context scan
      */
@@ -878,16 +877,16 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
         this.errorHandlers = errorHandlers;
     }
 
-	public String getMdcLoggingKeysPattern() {
-		return mdcLoggingKeysPattern;
-	}
+    public String getMdcLoggingKeysPattern() {
+        return mdcLoggingKeysPattern;
+    }
 
-	public void setMdcLoggingKeysPattern(String mdcLoggingKeysPattern) {
-		this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
-	}
+    public void setMdcLoggingKeysPattern(String mdcLoggingKeysPattern) {
+        this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
+    }
 
-	@Override
-	public String getMDCLoggingKeysPattern() {
-		return mdcLoggingKeysPattern;
-	}
+    @Override
+    public String getMDCLoggingKeysPattern() {
+        return mdcLoggingKeysPattern;
+    }
 }
