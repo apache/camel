@@ -68,12 +68,12 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     @UriParam(optionalPrefix = "consumer.", label = "consumer,scheduler",
             description = "If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages.")
     private boolean greedy;
-    @UriParam(optionalPrefix = "consumer.", enums = "none,spring,quartz2",
-            defaultValue = "none", label = "consumer,scheduler", description = "To use a cron scheduler from either camel-spring or camel-quartz2 component")
+    @UriParam(optionalPrefix = "consumer.", enums = "none,spring,quartz",
+            defaultValue = "none", label = "consumer,scheduler", description = "To use a cron scheduler from either camel-spring or camel-quartz component")
     private ScheduledPollConsumerScheduler scheduler;
     private String schedulerName = "none"; // used when configuring scheduler using a string value
     @UriParam(prefix = "scheduler.", multiValue = true, label = "consumer,scheduler",
-            description = "To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler.")
+            description = "To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler.")
     private Map<String, Object> schedulerProperties;
     @UriParam(optionalPrefix = "consumer.", label = "consumer,scheduler",
             description = "Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.")
@@ -116,15 +116,15 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
                 // no cron scheduler in use
                 scheduler = null;
             } else if ("spring".equals(schedulerName)) {
-                // special for scheduler if its "spring" or "quartz2"
+                // special for scheduler if its "spring" or "quartz"
                 try {
                     Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(SPRING_SCHEDULER, ScheduledPollConsumerScheduler.class);
                     setScheduler(getCamelContext().getInjector().newInstance(clazz));
                 } catch (ClassNotFoundException e) {
                     throw new IllegalArgumentException("Cannot load " + SPRING_SCHEDULER + " from classpath. Make sure camel-spring.jar is on the classpath.", e);
                 }
-            } else if ("quartz2".equals(schedulerName)) {
-                // special for scheduler if its "spring" or "quartz2"
+            } else if ("quartz".equals(schedulerName)) {
+                // special for scheduler if its "spring" or "quartz"
                 try {
                     Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(QUARTZ_2_SCHEDULER, ScheduledPollConsumerScheduler.class);
                     setScheduler(getCamelContext().getInjector().newInstance(clazz));
@@ -339,12 +339,12 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     /**
      * Allow to plugin a custom org.apache.camel.spi.ScheduledPollConsumerScheduler to use as the scheduler for
      * firing when the polling consumer runs. The default implementation uses the ScheduledExecutorService and
-     * there is a Quartz2, and Spring based which supports CRON expressions.
+     * there is a Quartz, and Spring based which supports CRON expressions.
      *
      * Notice: If using a custom scheduler then the options for initialDelay, useFixedDelay, timeUnit,
-     * and scheduledExecutorService may not be in use. Use the text quartz2 to refer to use the Quartz2 scheduler;
+     * and scheduledExecutorService may not be in use. Use the text quartz to refer to use the Quartz scheduler;
      * and use the text spring to use the Spring based; and use the text #myScheduler to refer to a custom scheduler
-     * by its id in the Registry. See Quartz2 page for an example.
+     * by its id in the Registry. See Quartz page for an example.
      */
     public void setScheduler(ScheduledPollConsumerScheduler scheduler) {
         this.scheduler = scheduler;
@@ -353,7 +353,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     /**
      * Allow to plugin a custom org.apache.camel.spi.ScheduledPollConsumerScheduler to use as the scheduler for
      * firing when the polling consumer runs. This option is used for referring to one of the built-in schedulers
-     * either <tt>spring</tt>, or <tt>quartz2</tt>. Using <tt>none</tt> refers to no scheduler to be used.
+     * either <tt>spring</tt>, or <tt>quartz</tt>. Using <tt>none</tt> refers to no scheduler to be used.
      */
     public void setScheduler(String schedulerName) {
         this.schedulerName = schedulerName;
@@ -364,7 +364,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler.
+     * To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler.
      */
     public void setSchedulerProperties(Map<String, Object> schedulerProperties) {
         this.schedulerProperties = schedulerProperties;
