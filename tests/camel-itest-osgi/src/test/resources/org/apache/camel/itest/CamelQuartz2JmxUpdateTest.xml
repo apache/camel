@@ -24,7 +24,7 @@
 
   <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/blueprint">
     <route>
-      <from uri="quartz2://myGroup/myTimer?cron=0/1 * * * * ?" />
+      <from uri="quartz://myGroup/myTimer?cron=0/1 * * * * ?" />
       <transform>
         <constant>Hello World</constant>
       </transform>
