@@ -1149,7 +1149,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-quartz2</artifactId>
+      <artifactId>camel-quartz</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2638,7 +2638,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-quartz2-starter</artifactId>
+      <artifactId>camel-quartz-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
