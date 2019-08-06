@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link CamelContext} creation tracker.
+ * A {@link CamelContext} creation and destruction tracker.
  */
 public class CamelContextTracker implements Closeable {
 
@@ -76,10 +76,16 @@ public class CamelContextTracker implements Closeable {
         // do nothing
     }
 
+    /**
+     * Opens the tracker to start tracking when new {@link CamelContext} is created or destroyed.
+     */
     public final void open() {
         TRACKERS.add(this);
     }
 
+    /**
+     * Closes the tracker so it not longer tracks.
+     */
     @Override
     public final void close() {
         TRACKERS.remove(this);
