@@ -2052,12 +2052,12 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.pulsar-client-admin/${pulsar-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-pulsar/${project.version}</bundle>
   </feature>
-  <feature name='camel-quartz2' version='${project.version}' start-level='50'>
+  <feature name='camel-quartz' version='${project.version}' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}</bundle>
     <bundle dependency='true'>mvn:com.zaxxer/HikariCP-java7/${hikaricp-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.quartz-scheduler/quartz/${quartz2-version}$overwrite=merge&amp;DynamicImport-Package=org.apache.camel.component.quartz2</bundle>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.camel/camel-quartz2/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-quartz/${project.version}</bundle>
   </feature>
   <feature name='camel-quickfix' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
