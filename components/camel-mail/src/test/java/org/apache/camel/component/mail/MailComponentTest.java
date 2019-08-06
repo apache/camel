@@ -312,7 +312,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertSame(config, comp.getConfiguration());
         assertNull(comp.getContentTypeResolver());
 
-        MailEndpoint endpoint = (MailEndpoint)comp.createEndpoint("imap://myhost?scheduler=quartz2&scheduler.cron=0%2F5+*+0-23+%3F+*+*+*&scheduler.timeZone=Europe%2FBerlin");
+        MailEndpoint endpoint = (MailEndpoint)comp.createEndpoint("imap://myhost?scheduler=quartz&scheduler.cron=0%2F5+*+0-23+%3F+*+*+*&scheduler.timeZone=Europe%2FBerlin");
         assertEquals("james", endpoint.getConfiguration().getUsername());
         assertEquals("secret", endpoint.getConfiguration().getPassword());
         assertEquals("myhost", endpoint.getConfiguration().getHost());
