@@ -44,7 +44,7 @@ import org.apache.commons.net.ftp.FTPFile;
 @UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP",
         syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName",
         label = "file",
-        excludeProperties = "readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService")
+        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService")
 @ManagedResource(description = "Managed FtpEndpoint")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
     protected int soTimeout;
