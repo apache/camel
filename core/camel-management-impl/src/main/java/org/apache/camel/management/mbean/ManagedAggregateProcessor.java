@@ -225,6 +225,24 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
     }
 
     @Override
+    public int forceDiscardingOfGroup(String key) {
+        if (processor.getAggregateController() != null) {
+            return processor.getAggregateController().forceDiscardingOfGroup(key);
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int forceDiscardingOfAllGroups() {
+        if (processor.getAggregateController() != null) {
+            return processor.getAggregateController().forceDiscardingOfAllGroups();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
     public int getClosedCorrelationKeysCacheSize() {
         return processor.getClosedCorrelationKeysCacheSize();
     }

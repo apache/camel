@@ -99,6 +99,12 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedOperation(description = "To force complete of all groups")
     int forceCompletionOfAllGroups();
 
+    @ManagedOperation(description = "To force discarding a specific group by its key")
+    int forceDiscardingOfGroup(String key);
+
+    @ManagedOperation(description = "To force discarding of all groups")
+    int forceDiscardingOfAllGroups();
+
     @ManagedAttribute(description = "Current number of closed correlation keys in the memory cache")
     int getClosedCorrelationKeysCacheSize();
 

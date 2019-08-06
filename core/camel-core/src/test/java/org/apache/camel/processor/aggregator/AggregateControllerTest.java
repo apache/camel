@@ -77,6 +77,67 @@ public class AggregateControllerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testForceDiscardingOfGroup() throws Exception {
+        getMockEndpoint("mock:aggregated").expectedMessageCount(1);
+        getMockEndpoint("mock:aggregated").expectedHeaderReceived("id", "1");
+        // the first 5 messages are discarded
+        getMockEndpoint("mock:aggregated").message(0).body().startsWith("test6");
+
+        template.sendBodyAndHeader("direct:start", "test1", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test2", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test3", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test4", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test5", "id", "1");
+
+        int groups = getAggregateController().forceDiscardingOfGroup("1");
+        assertEquals(1, groups);
+
+        template.sendBodyAndHeader("direct:start", "test6", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test7", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test8", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test9", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test10", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test11", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test12", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test13", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test14", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test15", "id", "1");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testForceDiscardingOfAll() throws Exception {
+        getMockEndpoint("mock:aggregated").expectedMessageCount(1);
+        getMockEndpoint("mock:aggregated").expectedHeaderReceived("id", "1");
+        // the first 5 messages are discarded
+        getMockEndpoint("mock:aggregated").message(0).body().startsWith("test6");
+
+        template.sendBodyAndHeader("direct:start", "test0", "id", "2");
+        template.sendBodyAndHeader("direct:start", "test1", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test2", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test3", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test4", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test5", "id", "1");
+
+        int groups = getAggregateController().forceDiscardingOfAllGroups();
+        assertEquals(2, groups);
+
+        template.sendBodyAndHeader("direct:start", "test6", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test7", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test8", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test9", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test10", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test11", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test12", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test13", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test14", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test15", "id", "1");
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -85,7 +146,7 @@ public class AggregateControllerTest extends ContextTestSupport {
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy()).aggregateController(getAggregateController())
                         .completionSize(10)
-                        .to("mock:aggregated");
+                        .to("log:aggregated", "mock:aggregated");
             }
         };
     }

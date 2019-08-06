@@ -799,7 +799,6 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             }
         }
 
-
         log.debug("Processing aggregated exchange: {}", exchange);
 
         // add on completion task so we remember to update the inProgressCompleteExchanges
@@ -1661,6 +1660,70 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         if (total > 0) {
             log.debug("Forcing completion of all groups with {} exchanges", total);
+        }
+        return total;
+    }
+
+    public int forceDiscardingOfGroup(String key) {
+        // must acquire the shared aggregation lock to be able to trigger force completion
+        int total = 0;
+
+        lock.lock();
+        try {
+            Exchange exchange = aggregationRepository.get(camelContext, key);
+            if (exchange != null) {
+                total = 1;
+                log.trace("Force discarded triggered for correlation key: {}", key);
+                // force discarding by setting aggregate failed as true
+                onCompletion(key, exchange, exchange, false, true);
+            }
+        } finally {
+            lock.unlock();
+        }
+        log.trace("Completed force discarded of group {}", key);
+
+        if (total > 0) {
+            log.debug("Forcing discarding of group {} with {} exchanges", key, total);
+        }
+        return total;
+    }
+
+    public int forceDiscardingOfAllGroups() {
+
+        // only run if CamelContext has been fully started or is stopping
+        boolean allow = camelContext.getStatus().isStarted() || camelContext.getStatus().isStopping();
+        if (!allow) {
+            log.warn("Cannot start force discarding of all groups because CamelContext({}) has not been started", camelContext.getName());
+            return 0;
+        }
+
+        log.trace("Starting force discarding of all groups task");
+
+        // trigger completion for all in the repository
+        Set<String> keys = aggregationRepository.getKeys();
+
+        int total = 0;
+        if (keys != null && !keys.isEmpty()) {
+            // must acquire the shared aggregation lock to be able to trigger force completion
+            lock.lock();
+            total = keys.size();
+            try {
+                for (String key : keys) {
+                    Exchange exchange = aggregationRepository.get(camelContext, key);
+                    if (exchange != null) {
+                        log.trace("Force discarded triggered for correlation key: {}", key);
+                        // force discarding by setting aggregate failed as true
+                        onCompletion(key, exchange, exchange, false, true);
+                    }
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        log.trace("Completed force discarding of all groups task");
+
+        if (total > 0) {
+            log.debug("Forcing discarding of all groups with {} exchanges", total);
         }
         return total;
     }
