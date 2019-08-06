@@ -89,7 +89,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 126 options, which are listed below.
+The component supports 127 options, which are listed below.
 
 
 
@@ -164,6 +164,7 @@ The component supports 126 options, which are listed below.
 | *camel.springboot.log-exhausted-message-body* | Sets whether to log exhausted message body with message history. Default is false. | false | Boolean
 | *camel.springboot.log-mask* | Sets whether log mask is enabled or not. Default is false. | false | Boolean
 | *camel.springboot.main-run-controller* | Whether to use the main run controller to ensure the Spring-Boot application keeps running until being stopped or the JVM terminated. You typically only need this if you run Spring-Boot standalone. If you run Spring-Boot with spring-boot-starter-web then the web container keeps the JVM running. | false | Boolean
+| *camel.springboot.mdc-logging-keys-pattern* | Sets the pattern used for determine which custom MDC keys to propagate during message routing when the routing engine continues routing asynchronously for the given message. Setting this pattern to * will propagate all custom keys. Or setting the pattern to foo*,bar* will propagate any keys starting with either foo or bar. Notice that a set of standard Camel MDC keys are always propagated which starts with camel. as key name. The match rules are applied in this order (case insensitive): 1. exact match, returns true 2. wildcard match (pattern ends with a * and the name starts with the pattern), returns true 3. regular expression match, returns true 4. otherwise returns false |  | String
 | *camel.springboot.message-history* | Sets whether message history is enabled or not. Default is true. | true | Boolean
 | *camel.springboot.name* | Sets the name of the CamelContext. |  | String
 | *camel.springboot.producer-template-cache-size* | Producer template endpoints cache size. | 1000 | Integer

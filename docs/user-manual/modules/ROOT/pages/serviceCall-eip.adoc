@@ -100,7 +100,7 @@ The Service Call EIP supports 14 options which are listed below:
 | Name | Description | Default | Type
 | *name* | *Required* Sets the name of the service to use |  | String
 | *uri* | The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression. |  | String
-| *component* | The component to use. | http4 | String
+| *component* | The component to use. | http | String
 | *pattern* | Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
 | *configurationRef* | Refers to a ServiceCall configuration to use |  | String
 | *serviceDiscoveryRef* | Sets a reference to a custom ServiceDiscovery to use. |  | String
