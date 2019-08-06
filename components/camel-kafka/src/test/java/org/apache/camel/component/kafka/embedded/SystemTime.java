@@ -46,8 +46,8 @@ class SystemTime implements Time {
         return 0;
     }
 
-	@Override
-	public void waitObject(Object obj, Supplier<Boolean> condition, long timeoutMs) throws InterruptedException {
-		// NOOP	
-	}
+    @Override
+    public void waitObject(Object obj, Supplier<Boolean> condition, long timeoutMs) throws InterruptedException {
+        // NOOP
+    }
 }
