@@ -51,4 +51,21 @@ public class DefaultAggregateController implements AggregateController {
         }
     }
 
+    @Override
+    public int forceDiscardingOfGroup(String key) {
+        if (processor != null) {
+            return processor.forceDiscardingOfGroup(key);
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int forceDiscardingOfAllGroups() {
+        if (processor != null) {
+            return processor.forceDiscardingOfAllGroups();
+        } else {
+            return 0;
+        }
+    }
 }
