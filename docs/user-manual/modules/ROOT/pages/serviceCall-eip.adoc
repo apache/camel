@@ -51,9 +51,9 @@ The *service name* supports a limited uri like syntax, here some examples
 |===
 |Name |Resolution
 
-|foo | http4://host:port
-|foo/path | http4://host:port/path
-|foo/path?foo=bar | http4://host:port/path?foo=bar
+|foo | http://host:port
+|foo/path | http://host:port/path
+|foo/path?foo=bar | http://host:port/path?foo=bar
 |===
 
 [source,java]
