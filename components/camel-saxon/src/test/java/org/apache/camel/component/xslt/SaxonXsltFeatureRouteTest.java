@@ -18,12 +18,12 @@ package org.apache.camel.component.xslt;
 
 import javax.xml.transform.TransformerException;
 
+import net.sf.saxon.trans.UncheckedXPathException;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import net.sf.saxon.trans.UncheckedXPathException;
 
 public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
 
