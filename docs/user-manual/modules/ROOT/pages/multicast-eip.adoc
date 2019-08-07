@@ -59,6 +59,11 @@ from("direct:start")
   .to("mock:result");
 ----
 
+NOTE: The Multicast, Recipient List, and Splitter EIPs have special support for using `AggregationStrategy` with
+access to the original input exchange. You may want to use this when you aggregate messages and
+there has been a failure in one of the messages, which you then want to enrich on the original
+input message and return as response; its the aggregate method with 3 exchange parameters.
+
 == Stop processing in case of exception
 
 The mutlicast EIP will by default continue to process
