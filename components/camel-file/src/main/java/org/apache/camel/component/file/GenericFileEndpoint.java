@@ -1249,7 +1249,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * Used to append characters (text) after writing files. This can for example be used to add new lines or other
      * separators when writing and appending to existing files.
      * <p/>
-     * To specify new-line (\n or \r) or tab (\t) characters then escape with an extra slash, eg \\n
+     * To specify new-line (slash-n or slash-r) or tab (slash-t) characters then escape with an extra slash, eg slash-slash-n
      */
     public void setAppendChars(String appendChars) {
         StringBuilder sb = new StringBuilder();
