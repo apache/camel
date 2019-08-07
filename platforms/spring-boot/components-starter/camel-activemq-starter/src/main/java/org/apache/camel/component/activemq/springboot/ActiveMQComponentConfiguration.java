@@ -441,7 +441,10 @@ public class ActiveMQComponentConfiguration
      * enabled, this option takes precedence. The caught exception is required
      * to be serializable. The original Exception on the consumer side can be
      * wrapped in an outer exception such as
-     * org.apache.camel.RuntimeCamelException when returned to the producer.
+     * org.apache.camel.RuntimeCamelException when returned to the producer. Use
+     * this with caution as the data is using Java Object serialization and
+     * requires the received to be able to deserialize the data at Class level,
+     * which forces a strong coupling between the producers and consumer!
      */
     private Boolean transferException = false;
     /**

@@ -322,7 +322,9 @@ public class JmsConfiguration implements Cloneable {
                     + " The following fields are transferred: In body, Out body, Fault body, In headers, Out headers, Fault headers,"
                     + " exchange properties, exchange exception."
                     + " This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level."
-                    + " You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload.")
+                    + " You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload."
+                    + " Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level, "
+                    + " which forces a strong coupling between the producers and consumer having to use compatible Camel versions!")
     private boolean transferExchange;
     @UriParam(label = "advanced",
             description = "Controls whether or not to include serialized headers."
@@ -337,7 +339,9 @@ public class JmsConfiguration implements Cloneable {
                     + " Notice that if you also have transferExchange enabled, this option takes precedence."
                     + " The caught exception is required to be serializable."
                     + " The original Exception on the consumer side can be wrapped in an outer exception"
-                    + " such as org.apache.camel.RuntimeCamelException when returned to the producer.")
+                    + " such as org.apache.camel.RuntimeCamelException when returned to the producer."
+                    + " Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level, "
+                    + " which forces a strong coupling between the producers and consumer!")
     private boolean transferException;
     @UriParam(description = "Specifies whether to test the connection on startup."
             + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
@@ -1797,6 +1801,8 @@ public class JmsConfiguration implements Cloneable {
      * exchange properties, exchange exception.
      * This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.
      * You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload.
+     * Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level,
+     * which forces a strong coupling between the producers and consumer having to use compatible Camel versions!
      */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
@@ -1828,6 +1834,8 @@ public class JmsConfiguration implements Cloneable {
      * The caught exception is required to be serializable.
      * The original Exception on the consumer side can be wrapped in an outer exception
      * such as org.apache.camel.RuntimeCamelException when returned to the producer.
+     * Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level,
+     * which forces a strong coupling between the producers and consumer!
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;

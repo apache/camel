@@ -1764,6 +1764,10 @@ public interface ActiveMQEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1785,6 +1789,10 @@ public interface ActiveMQEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1803,7 +1811,11 @@ public interface ActiveMQEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1822,7 +1834,11 @@ public interface ActiveMQEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3658,6 +3674,10 @@ public interface ActiveMQEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3679,6 +3699,10 @@ public interface ActiveMQEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3697,7 +3721,11 @@ public interface ActiveMQEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3716,7 +3744,11 @@ public interface ActiveMQEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4865,6 +4897,10 @@ public interface ActiveMQEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -4886,6 +4922,10 @@ public interface ActiveMQEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4904,7 +4944,11 @@ public interface ActiveMQEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -4923,7 +4967,11 @@ public interface ActiveMQEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
