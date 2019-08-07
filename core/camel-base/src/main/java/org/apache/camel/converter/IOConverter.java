@@ -39,11 +39,14 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.InputStreamIterator;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +64,12 @@ public final class IOConverter {
      * Utility classes should not have a public constructor.
      */
     private IOConverter() {
+    }
+
+    @Converter
+    public static InputStream toInputStream(Stream stream, Exchange exchange) {
+        Iterator it = stream.iterator();
+        return new InputStreamIterator(exchange.getContext().getTypeConverter(), it);
     }
 
     @Converter
