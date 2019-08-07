@@ -211,8 +211,12 @@ And in XML it is again an attribute on the recipient list tag.
 <bean id="myStrategy" class="com.mycompany.MyOwnAggregationStrategy"/>
 ----
 
+NOTE: The Multicast, Recipient List, and Splitter EIPs have special support for using `AggregationStrategy` with
+access to the original input exchange. You may want to use this when you aggregate messages and
+there has been a failure in one of the messages, which you then want to enrich on the original
+input message and return as response; its the aggregate method with 3 exchange parameters.
+
 == Knowing which endpoint when using custom AggregationStrategy
-*Available as of Camel 2.12*
 
 When using a custom `AggregationStrategy` then the `aggregate` method is always invoked in sequential order
 (also if parallel processing is enabled) of the endpoints the Recipient List is using.
@@ -315,23 +319,7 @@ from("direct:c").to("mock:C").setBody(constant("C"));
 This timeout feature is also supported by Splitter and both multicast and recipientList.
 ===
 
-By default if a timeout occurs the `AggregationStrategy` is not invoked. However you can implement a special version `TimeoutAwareAggregationStrategy`
-
-[source,java]
-----
-public interface TimeoutAwareAggregationStrategy extends AggregationStrategy {
-
-    /**
-     * A timeout occurred
-     *
-     * @param oldExchange  the oldest exchange (is <tt>null</tt> on first aggregation as we only have the new exchange)
-     * @param index        the index
-     * @param total        the total
-     * @param timeout      the timeout value in millis
-     */
-    void timeout(Exchange oldExchange, int index, int total, long timeout);
-----
-
+By default if a timeout occurs the `AggregationStrategy` is not invoked. However you can implement the `timeout` method:
 This allows you to deal with the timeout in the `AggregationStrategy` if you really need to.
 
 [NOTE]
@@ -345,7 +333,6 @@ The remainders will be cancelled. Camel will also only invoke the `timeout` meth
 See details at the Multicast EIP
 
 == Using ExchangePattern in recipients
-*Available as of Camel 2.15*
 
 The recipient list will by default use the current Exchange Pattern. Though one can imagine use-cases where one wants to send
 a message to a recipient using a different exchange pattern. For example you may have a route that initiates as an `InOnly` route,

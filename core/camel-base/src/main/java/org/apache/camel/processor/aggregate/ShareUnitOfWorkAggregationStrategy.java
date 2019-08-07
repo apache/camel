@@ -94,6 +94,16 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
         return answer;
     }
 
+    @Override
+    public Exchange aggregate(Exchange oldExchange, Exchange newExchange, Exchange inputExchange) {
+        // aggregate using the actual strategy first
+        Exchange answer = strategy.aggregate(oldExchange, newExchange, inputExchange);
+        // ensure any errors is propagated from the new exchange to the answer
+        propagateFailure(answer, newExchange);
+
+        return answer;
+    }
+
     protected void propagateFailure(Exchange answer, Exchange newExchange) {
         // if new exchange failed then propagate all the error related properties to the answer
         boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(newExchange);

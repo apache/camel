@@ -136,6 +136,12 @@ There is a sample on this page (Split aggregate request/reply sample).
 Notice its the same strategy as the Aggregate EIP supports.
 This Splitter can be viewed as having a build in light weight Aggregate EIP.
 
+NOTE: The Multicast, Recipient List, and Splitter EIPs have special support for using `AggregationStrategy` with
+access to the original input exchange. You may want to use this when you aggregate messages and
+there has been a failure in one of the messages, which you then want to enrich on the original
+input message and return as response; its the aggregate method with 3 exchange parameters.
+
+
 == Parallel execution of distinct parts
 
 If you want to execute all parts in parallel you can use the `parallelProcessing` option as show:
@@ -182,8 +188,6 @@ from("direct:streaming")
 == Streaming big XML payloads using Tokenizer language
 
 There are two tokenizers that can be used to tokenize an XML payload. The first tokenizer uses the same principle as in the text tokenizer to scan the XML payload and extract a sequence of tokens.
-
-*Available as of Camel 2.9*
 
 If you have a big XML payload, from a file source, and want to split it in streaming mode, then you can use the Tokenizer language with start/end tokens to do this with low memory footprint.
 
@@ -258,14 +262,10 @@ from("file:inbox")
      .to("activemq:queue:order");
 ----
 
-Available as of Camel 2.13.1, you can set the above `inheritNamsepaceTagName` property to `*` to include the preceding context in each token (i.e., generating each token enclosed in its ancestor elements). It is noted that each token must share the same ancestor elements in this case.
-
+You can set the above `inheritNamsepaceTagName` property to `*` to include the preceding context in each token (i.e., generating each token enclosed in its ancestor elements). It is noted that each token must share the same ancestor elements in this case.
 The above tokenizer works well on simple structures but has some inherent limitations in handling more complex XML structures.
 
-*Available as of Camel 2.14*
-
 The second tokenizer uses a StAX parser to overcome these limitations. This tokenizer recognizes XML namespaces and also handles simple and complex XML structures more naturally and efficiently.
-
 To split using this tokenizer at {urn:shop}order, we can write
 
 [source,java]
@@ -344,7 +344,6 @@ it results in invalid xml snippets after the split. For example the snippet coul
 ----
 
 == Splitting files by grouping N lines together
-*Available as of Camel 2.10*
 
 The Tokenizer language has a new option group that allows you to group N parts together, for example to split big files into chunks of 1000 lines.
 
@@ -610,12 +609,10 @@ And using XML DSL you specify it as follows:
 ----
 
 == Using onPrepare to execute custom logic when preparing messages
-*Available as of Camel 2.8*
 
 See details at Multicast EIP
 
 == Sharing unit of work
-*Available as of Camel 2.8*
 
 The Splitter will by default not share unit of work between the parent exchange and each split exchange.
 This means each sub exchange has its own individual unit of work.

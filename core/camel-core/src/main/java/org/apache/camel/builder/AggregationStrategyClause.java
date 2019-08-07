@@ -37,6 +37,11 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
         return ObjectHelper.notNull(strategy, "AggregationStrategy").aggregate(oldExchange, newExchange);
     }
 
+    @Override
+    public Exchange aggregate(Exchange oldExchange, Exchange newExchange, Exchange inputExchange) {
+        return ObjectHelper.notNull(strategy, "AggregationStrategy").aggregate(oldExchange, newExchange, inputExchange);
+    }
+
     // *******************************
     // Exchange
     // *******************************

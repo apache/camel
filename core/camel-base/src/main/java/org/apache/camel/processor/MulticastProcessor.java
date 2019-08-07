@@ -65,10 +65,10 @@ import org.apache.camel.util.concurrent.AsyncCompletionService;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
-
 /**
  * Implements the Multicast pattern to send a message exchange to a number of
  * endpoints, each endpoint receiving a copy of the message exchange.
+ *
  * @see Pipeline
  */
 public class MulticastProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware {
@@ -281,7 +281,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
         @Override
         public String toString() {
-            return "Step[" + original.getExchangeId() + "," + MulticastProcessor.this + "]";
+            return "MulticastTask[" + original.getExchangeId() + "," + MulticastProcessor.this + "]";
         }
 
         @Override
@@ -370,7 +370,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
                 try {
                     Exchange exchange;
                     while (!done.get() && (exchange = completion.poll()) != null) {
-                        doAggregate(result, exchange);
+                        doAggregate(result, exchange, original);
                         if (nbAggregated.incrementAndGet() >= nbExchangeSent.get() && allSent.get()) {
                             doDone(result.get(), true);
                         }
@@ -398,7 +398,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
                                     nbAggregated.getAndIncrement(), nbExchangeSent.get(), timeout);
                         }
                         if (exchange != null) {
-                            doAggregate(result, exchange);
+                            doAggregate(result, exchange, original);
                             nbAggregated.incrementAndGet();
                         }
                     }
@@ -544,14 +544,13 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
      *
      * @param result   the current result
      * @param exchange the exchange to be added to the result
-     * @see #doAggregateInternal(AggregationStrategy, AtomicReference, org.apache.camel.Exchange)
-     * @see #doAggregateSync(AggregationStrategy, AtomicReference, org.apache.camel.Exchange)
+     * @param inputExchange the input exchange that was sent as input to this EIP
      */
-    protected void doAggregate(AtomicReference<Exchange> result, Exchange exchange) {
+    protected void doAggregate(AtomicReference<Exchange> result, Exchange exchange, Exchange inputExchange) {
         if (parallelAggregate) {
-            doAggregateInternal(getAggregationStrategy(exchange), result, exchange);
+            doAggregateInternal(getAggregationStrategy(exchange), result, exchange, inputExchange);
         } else {
-            doAggregateSync(getAggregationStrategy(exchange), result, exchange);
+            doAggregateSync(getAggregationStrategy(exchange), result, exchange, inputExchange);
         }
     }
 
@@ -562,10 +561,10 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
      * @param strategy the aggregation strategy to use
      * @param result   the current result
      * @param exchange the exchange to be added to the result
-     * @see #doAggregateInternal(AggregationStrategy, AtomicReference, org.apache.camel.Exchange)
+     * @param inputExchange the input exchange that was sent as input to this EIP
      */
-    protected synchronized void doAggregateSync(AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange) {
-        doAggregateInternal(strategy, result, exchange);
+    private synchronized void doAggregateSync(AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange, Exchange inputExchange) {
+        doAggregateInternal(strategy, result, exchange, inputExchange);
     }
 
     /**
@@ -576,14 +575,14 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
      * @param strategy the aggregation strategy to use
      * @param result   the current result
      * @param exchange the exchange to be added to the result
-     * @see #doAggregateSync
+     * @param inputExchange the input exchange that was sent as input to this EIP
      */
-    protected void doAggregateInternal(AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange) {
+    private void doAggregateInternal(AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange, Exchange inputExchange) {
         if (strategy != null) {
             // prepare the exchanges for aggregation
             Exchange oldExchange = result.get();
             ExchangeHelper.prepareAggregation(oldExchange, exchange);
-            result.set(strategy.aggregate(oldExchange, exchange));
+            result.set(strategy.aggregate(oldExchange, exchange, inputExchange));
         }
     }
 
