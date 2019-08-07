@@ -63,7 +63,7 @@ public class HL7MLLPNettyCodecStandAndEndBytesTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
+                from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message input = exchange.getIn().getBody(Message.class);
 
@@ -89,7 +89,7 @@ public class HL7MLLPNettyCodecStandAndEndBytesTest extends HL7TestSupport {
         in.append("\r");
         in.append(line2);
 
-        String out = template.requestBody("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder", in.toString(), String.class);
+        String out = template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder", in.toString(), String.class);
 
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123", lines[0]);

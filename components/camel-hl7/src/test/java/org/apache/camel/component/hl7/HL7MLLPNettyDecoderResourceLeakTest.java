@@ -45,7 +45,7 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty4:tcp://127.0.0.1:" + getPort() + "?decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
+                from("netty:tcp://127.0.0.1:" + getPort() + "?decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message input = exchange.getIn().getBody(Message.class);
                         exchange.getOut().setBody(input.generateACK());
@@ -60,7 +60,7 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
         String message = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|1234|P|2.4";
 
         for (int i = 0; i < 10; i++) {
-            template.sendBody("netty4:tcp://127.0.0.1:" + getPort() + "?decoder=#hl7decoder&encoder=#hl7encoder", message);
+            template.sendBody("netty:tcp://127.0.0.1:" + getPort() + "?decoder=#hl7decoder&encoder=#hl7encoder", message);
         }
     }
 }

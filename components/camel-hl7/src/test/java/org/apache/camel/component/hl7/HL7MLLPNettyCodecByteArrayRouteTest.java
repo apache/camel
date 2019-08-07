@@ -32,7 +32,7 @@ import org.apache.camel.spi.DataFormat;
 import org.junit.Test;
 
 /**
- * Unit test for HL7 routing where the netty4 endpoint passes on a byte array
+ * Unit test for HL7 routing where the netty endpoint passes on a byte array
  * instead of a string and leaves charset interpretation to the dataformat.
  */
 public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
@@ -65,7 +65,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         in.append("\r");
         in.append(line2);
 
-        String out = template.requestBody("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder", in.toString(), String.class);
+        String out = template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder", in.toString(), String.class);
 
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123|||||UNICODE UTF-8", lines[0]);
@@ -88,7 +88,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         in.append("\r");
         in.append(line2);
 
-        String out = template.requestBody("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder", in.toString(), String.class);
+        String out = template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder", in.toString(), String.class);
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADT^A01||||123|||||UNICODE UTF-8", lines[0]);
         assertEquals("PID|||123||Döe^John", lines[1]);
@@ -110,7 +110,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         in.append("\r");
         in.append(line2);
 
-        template.requestBody("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder", in.toString());
+        template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder", in.toString());
 
         assertMockEndpointsSatisfied();
     }
@@ -123,7 +123,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
                 DataFormat hl7 = new HL7DataFormat();
                 // we setup or HL7 listener on port 8888 (using the hl7codec)
                 // and in sync mode so we can return a response
-                from("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder")
+                from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder")
                     // we use the HL7 data format to unmarshal from HL7 stream
                     // to the HAPI Message model
                     // this ensures that the camel message has been enriched

@@ -56,7 +56,7 @@ public class HL7MLLPNettyCodecBoundaryTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
+                from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // check presence of correct message type
                         exchange.getIn().getBody(MDM_T02.class);
@@ -80,7 +80,7 @@ public class HL7MLLPNettyCodecBoundaryTest extends HL7TestSupport {
         assertEquals(1022, message.length());
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
-        template.requestBody("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder", message);
+        template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder", message);
         mockEndpoint.assertIsSatisfied();
     }
 
