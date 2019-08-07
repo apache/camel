@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class CamelNetty4Test extends AbstractSpringBootTestSupport {
+public class CamelNettyTest extends AbstractSpringBootTestSupport {
 
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
@@ -34,7 +34,7 @@ public class CamelNetty4Test extends AbstractSpringBootTestSupport {
 
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
-                .module(inferModuleName(CamelNetty4Test.class))
+                .module(inferModuleName(CamelNettyTest.class))
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseNettyTest$)")
                 .build();
     }
