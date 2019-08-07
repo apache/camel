@@ -51,7 +51,7 @@ public class FileConsumerQuartzSchedulerRestartTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/file/quartz?scheduler=quartz2&scheduler.cron=0/2+*+*+*+*+?&scheduler.triggerGroup=myGroup&scheduler.triggerId=myId")
+                from("file:target/file/quartz?scheduler=quartz&scheduler.cron=0/2+*+*+*+*+?&scheduler.triggerGroup=myGroup&scheduler.triggerId=myId")
                     .routeId("foo").noAutoStartup()
                         .to("mock:result");
             }
