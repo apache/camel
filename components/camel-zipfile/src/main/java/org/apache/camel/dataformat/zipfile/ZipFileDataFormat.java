@@ -75,21 +75,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
             createZipEntries(zos, filename);
         }
 
-        Object body = exchange.getIn().getBody();
-        TypeConverter converter = exchange.getContext().getTypeConverter();
-        // favour using input stream
-        InputStream is = converter.tryConvertTo(InputStream.class, exchange, body);
-        if (is == null) {
-            // okay so try to see if its an iterator which we can wrap as input stream
-            Iterator it = converter.tryConvertTo(Iterator.class, exchange, body);
-            if (it != null) {
-                is = new InputStreamIterator(converter, it);
-                is = new BufferedInputStream(is);
-            }
-        }
-        if (is == null) {
-            throw new InvalidPayloadException(exchange, body.getClass());
-        }
+        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
         try {
             IOHelper.copy(is, zos);
