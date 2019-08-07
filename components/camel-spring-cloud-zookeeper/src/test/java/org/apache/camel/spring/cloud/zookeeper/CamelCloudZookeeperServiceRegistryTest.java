@@ -92,8 +92,8 @@ public class CamelCloudZookeeperServiceRegistryTest {
             assertThat(services).hasSize(1);
             assertThat(services).first().hasFieldOrPropertyWithValue("address", SERVICE_HOST);
             assertThat(services).first().hasFieldOrPropertyWithValue("port", SERVICE_PORT);
-            assertThat(services).first().extracting("payload").first().hasFieldOrPropertyWithValue("id", SERVICE_ID);
-            assertThat(services).first().extracting("payload").first().hasFieldOrPropertyWithValue("name", SERVICE_NAME);
+            assertThat(services).first().extracting("payload").hasFieldOrPropertyWithValue("id", SERVICE_ID);
+            assertThat(services).first().extracting("payload").hasFieldOrPropertyWithValue("name", SERVICE_NAME);
 
         } finally {
             // shutdown spring context
