@@ -52,6 +52,11 @@ public class HystrixProcessorCommand extends HystrixCommand {
 
     @Override
     protected Message getFallback() {
+        // if bad request then break-out
+        if (exchange.getException() instanceof HystrixBadRequestException) {
+            return null;
+        }
+
         // guard by lock as the run command can be running concurrently in case hystrix caused a timeout which
         // can cause the fallback timer to trigger this fallback at the same time the run command may be running
         // after its processor.process method which could cause both threads to mutate the state on the exchange
@@ -154,7 +159,8 @@ public class HystrixProcessorCommand extends HystrixCommand {
             // special for HystrixBadRequestException which should not trigger fallback
             if (camelExchangeException instanceof HystrixBadRequestException) {
                 LOG.debug("Running processor: {} with exchange: {} done as bad request", processor, exchange);
-                return exchange.getMessage();
+                exchange.setException(camelExchangeException);
+                throw camelExchangeException;
             }
 
             // copy the result before its regarded as success
