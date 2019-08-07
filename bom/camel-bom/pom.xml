@@ -2010,7 +2010,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-netty4</artifactId>
+        <artifactId>camel-netty</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2025,7 +2025,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-netty4-starter</artifactId>
+        <artifactId>camel-netty-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

@@ -246,7 +246,7 @@
         <module>camel-mybatis</module>
         <module>camel-nagios</module>
         <module>camel-nats</module>
-        <module>camel-netty4</module>
+        <module>camel-netty</module>
         <module>camel-netty4-http</module>
         <module>camel-nsq</module>
         <module>camel-ognl</module>
