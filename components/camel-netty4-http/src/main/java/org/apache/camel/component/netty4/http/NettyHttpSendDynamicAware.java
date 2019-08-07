@@ -24,7 +24,7 @@ public class NettyHttpSendDynamicAware extends HttpSendDynamicAware {
 
     @Override
     protected String[] parseUri(DynamicAwareEntry entry) {
-        // camel-netty4 parses the uri a bit differently than camel-http-common base class
+        // camel-netty parses the uri a bit differently than camel-http-common base class
 
         String scheme = entry.getProperties().get("protocol");
         String host = entry.getProperties().get("host");
