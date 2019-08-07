@@ -67,7 +67,7 @@
         <dependency>
             <groupId>javax.el</groupId>
             <artifactId>javax.el-api</artifactId>
-            <version>${javax.el-api-hibernate-validator-version}</version>
+            <version>${javax-el-api-hibernate-validator-version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -104,7 +104,7 @@
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
-            <version>${javax.el-hibernate-validator-version}</version>
+            <version>${javax-el-hibernate-validator-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

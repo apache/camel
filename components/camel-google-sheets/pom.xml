@@ -63,19 +63,19 @@
             <dependency>
                 <groupId>com.consol.citrus</groupId>
                 <artifactId>citrus-core</artifactId>
-                <version>${citrus.version}</version>
+                <version>${citrus-version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.consol.citrus</groupId>
                 <artifactId>citrus-java-dsl</artifactId>
-                <version>${citrus.version}</version>
+                <version>${citrus-version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.consol.citrus</groupId>
                 <artifactId>citrus-http</artifactId>
-                <version>${citrus.version}</version>
+                <version>${citrus-version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
