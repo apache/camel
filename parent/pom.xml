@@ -115,7 +115,7 @@
         <cglib-version>3.2.12</cglib-version>
         <chunk-templates-version>3.5.0</chunk-templates-version>
         <chunk-templates-bundle-version>3.5.0_1</chunk-templates-bundle-version>
-        <citrus.version>2.8.0</citrus.version>
+        <citrus-version>2.8.0</citrus-version>
         <cmis-version>1.1.0</cmis-version>
         <cometd-java-client-version>4.0.4</cometd-java-client-version>
         <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
@@ -310,15 +310,15 @@
         <javacrumbs-version>0.22</javacrumbs-version>
         <javapoet-version>1.11.1</javapoet-version>
         <javassist-version>3.20.0-GA</javassist-version>
-        <javax.el3-version>3.0.0</javax.el3-version>
-        <javax.el-api-hibernate-validator-version>3.0.1-b04</javax.el-api-hibernate-validator-version>
-        <javax.el-hibernate-validator-version>3.0.1-b10</javax.el-hibernate-validator-version>
+        <javax-el3-version>3.0.0</javax-el3-version>
+        <javax-el-api-hibernate-validator-version>3.0.1-b04</javax-el-api-hibernate-validator-version>
+        <javax-el-hibernate-validator-version>3.0.1-b10</javax-el-hibernate-validator-version>
         <javax-activation-version-range>[0,2)</javax-activation-version-range>
         <javax-activation-version>1.2.0</javax-activation-version>
         <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
         <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
         <javax-mail-version>1.6.1</javax-mail-version>
-        <javax.servlet-api-version>3.1.0</javax.servlet-api-version>
+        <javax-servlet-api-version>3.1.0</javax-servlet-api-version>
         <jaxb-bundle-version>2.3.1_1</jaxb-bundle-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
         <jakarta-jaxb-version>2.3.2</jakarta-jaxb-version>
@@ -4454,7 +4454,7 @@
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
-                <version>${javax.servlet-api-version}</version>
+                <version>${javax-servlet-api-version}</version>
             </dependency>
             <!-- Optional Spring Support -->
             <dependency>

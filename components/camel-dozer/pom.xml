@@ -51,12 +51,12 @@
         <dependency>
             <groupId>javax.el</groupId>
             <artifactId>javax.el-api</artifactId>
-            <version>${javax.el3-version}</version>
+            <version>${javax-el3-version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
-            <version>${javax.el3-version}</version>
+            <version>${javax-el3-version}</version>
         </dependency>
 
         <!-- Testing -->
