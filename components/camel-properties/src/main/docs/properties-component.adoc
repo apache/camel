@@ -30,8 +30,8 @@ The Properties component supports 12 options, which are listed below.
 | *ignoreMissingLocation* (common) | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | boolean
 | *initialProperties* (advanced) | Sets initial properties which will be used before any locations are resolved. |  | Properties
 | *overrideProperties* (advanced) | Sets a special list of override properties that take precedence and will use first, if a property exist. |  | Properties
-| *systemPropertiesMode* (common) | Sets the system property mode. The default mode (override) is to use system properties if present, and override any existing properties. | 2 | int
-| *environmentVariableMode* (common) | Sets the OS environment variables mode. The default mode (override) is to use OS environment variables if present, and override any existing properties. | 2 | int
+| *systemPropertiesMode* (common) | Sets the JVM system property mode (0 = never, 1 = fallback, 2 = override). The default mode (override) is to use system properties if present, and override any existing properties. OS environment variable mode is checked before JVM system property mode | 2 | int
+| *environmentVariableMode* (common) | Sets the OS environment variables mode (0 = never, 1 = fallback, 2 = override). The default mode (override) is to use OS environment variables if present, and override any existing properties. OS environment variable mode is checked before JVM system property mode | 2 | int
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
@@ -118,8 +118,6 @@ You can use the method `resolvePropertyPlaceholders` on the
 
 == Using PropertyPlaceholder
 
-*Available as of Camel 2.3*
-
 Camel now provides a new `PropertiesComponent` in *camel-core* which
 allows you to use property placeholders when defining Camel
 Endpoint URIs.
@@ -178,8 +176,6 @@ with comma such as:
 pc.setLocation("com/mycompany/myprop.properties,com/mycompany/other.properties");
 ----
 
-*Available as of Camel 2.19.0*
-
 You can set which location can be discarded if missing by by setting the ``optional`` attribute, which is false by default, i.e:
 
 [source,java]
@@ -190,8 +186,6 @@ pc.setLocations(
 ----
 
 == Using system and environment variables in locations
-
-*Available as of Camel 2.7*
 
 The location now supports using placeholders for JVM system properties
 and OS environments variables.
@@ -291,7 +285,6 @@ inside the Spring as well as the Blueprint XML.
 
 == Using a Properties from the Registry
 
-*Available as of Camel 2.4* +
 For example in OSGi you may want to expose a service which returns the
 properties as a `java.util.Properties` object.
 
@@ -418,18 +411,20 @@ the `<camelContext>` tag such as `trace` as shown here:
 The properties components supports using JVM system properties and also OS environment variables
 as values which can either be used as override or fallback values.
 
-The default mode is that JVM system properties are in override mode, which means they
-are checked first.
+The default mode is that both of them are in override mode, and they are check in the following order:
 
-OS environment variables are in override mode as default mode,
-which means that if a OS environment variable exists, then it will be used.
+1. OS environment variable (override mode)
+2. JVM system property  (override mode)
+3. Property files and other locations
+4. OS environment variable (fallback mode)
+5. JVM system property  (fallback mode)
+
+The check stops at first found property value for the key.
 
 You can control these modes using the `systemPropertiesMode` and `environmentVariableMode`
 options on the properties component.
 
 == Using property placeholders for any kind of attribute in the XML DSL
-
-*Available as of Camel 2.7*
 
 In the example below we use the `prop` prefix for the namespace
 `\http://camel.apache.org/schema/placeholder` by which we can use the
@@ -446,8 +441,6 @@ stop=true
 ----
 
 == Using Blueprint property placeholder with Camel routes
-
-*Available as of Camel 2.7*
 
 Camel supports Blueprint
 which also offers a property placeholder service. Camel supports
@@ -552,8 +545,6 @@ Each location is separated by comma.
 
 == Overriding Blueprint property placeholders outside CamelContext
 
-*Available as of Camel 2.10.4*
-
 When using Blueprint property placeholder in the Blueprint XML file, you
 can declare the properties directly in the XML file as shown below:
 
@@ -571,8 +562,6 @@ return value *must* be the `persistence-id` of the
 file.
 
 == Using .cfg or .properties file for Blueprint property placeholders
-
-*Available as of Camel 2.10.4*
 
 When using Blueprint property placeholder in the Blueprint XML file, you
 can declare the properties in a `.properties` or `.cfg` file. If you use
@@ -619,8 +608,6 @@ destination=mock:result
 ----
 
 == Bridging Spring and Camel property placeholders
-
-*Available as of Camel 2.10*
 
 The Spring Framework does not allow 3rd party frameworks such as Apache
 Camel to seamless hook into the Spring property placeholder mechanism.
@@ -676,8 +663,6 @@ An alternative is to configure the `PropertyPlaceholderConfigurer` with
 
 == Overriding properties from Camel test kit
 
-*Available as of Camel 2.10*
-
 When Testing with Camel and using the
 xref:properties-component.adoc[Properties] component, you may want to be able to
 provide the properties to be used from directly within the unit test
@@ -703,8 +688,6 @@ example if you run the unit test, in an environment that does not have
 access to the location of the properties.
 
 == Using @PropertyInject
-
-*Available as of Camel 2.12*
 
 Camel allows to inject property placeholders in POJOs using the
 `@PropertyInject` annotation which can be set on fields and setter
@@ -754,8 +737,6 @@ private int timeout;
 ----
 
 == Using out of the box functions
-
-*Available as of Camel 2.14.1*
 
 The xref:properties-component.adoc[Properties] component includes the following
 functions out of the box
@@ -851,8 +832,6 @@ example to call a service on localhost, maybe for unit testing etc
 ----
 
 == Using custom functions
-
-*Available as of Camel 2.14.1*
 
 The xref:properties-component.adoc[Properties] component allow to plugin 3rd party
 functions which can be used during parsing of the property placeholders.

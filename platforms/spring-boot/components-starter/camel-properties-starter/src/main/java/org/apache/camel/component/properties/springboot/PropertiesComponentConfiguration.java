@@ -84,14 +84,17 @@ public class PropertiesComponentConfiguration
      */
     private String overrideProperties;
     /**
-     * Sets the system property mode. The default mode (override) is to use
-     * system properties if present, and override any existing properties.
+     * Sets the JVM system property mode (0 = never, 1 = fallback, 2 =
+     * override). The default mode (override) is to use system properties if
+     * present, and override any existing properties. OS environment variable
+     * mode is checked before JVM system property mode
      */
     private Integer systemPropertiesMode = 2;
     /**
-     * Sets the OS environment variables mode. The default mode (override) is to
-     * use OS environment variables if present, and override any existing
-     * properties.
+     * Sets the OS environment variables mode (0 = never, 1 = fallback, 2 =
+     * override). The default mode (override) is to use OS environment variables
+     * if present, and override any existing properties. OS environment variable
+     * mode is checked before JVM system property mode
      */
     private Integer environmentVariableMode = 2;
     /**
