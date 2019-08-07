@@ -41,7 +41,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Netty HTTP server and client using the Netty 4.x library.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "netty4-http,netty-http", extendsScheme = "netty4", title = "Netty4 HTTP",
+@UriEndpoint(firstVersion = "2.14.0", scheme = "netty4-http,netty-http", extendsScheme = "netty", title = "Netty4 HTTP",
         syntax = "netty4-http:protocol:host:port/path",  label = "http", lenientProperties = true,
         excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
                 + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager")
