@@ -36,7 +36,6 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.camel.util.IOHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -47,6 +46,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.junit.After;
 import org.junit.Before;
