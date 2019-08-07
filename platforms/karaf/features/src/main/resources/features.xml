@@ -1251,7 +1251,7 @@
     <bundle>mvn:org.apache.camel/camel-hipchat/${project.version}</bundle>
   </feature>
   <feature name='camel-hl7' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-netty4</feature>
+    <feature version='${project.version}'>camel-netty</feature>
     <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
     <bundle dependency='true'>mvn:ca.uhn.hapi/hapi-osgi-base/${hapi-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hl7/${project.version}</bundle>
@@ -1838,7 +1838,7 @@
     <bundle dependency='true'>mvn:net.i2p.crypto/eddsa/${eddsa-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-nats/${project.version}</bundle>
   </feature>
-  <feature name='camel-netty4' version='${project.version}' start-level='50'>
+  <feature name='camel-netty' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
@@ -1852,10 +1852,10 @@
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-netty4/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-netty/${project.version}</bundle>
   </feature>
   <feature name='camel-netty4-http' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-netty4</feature>
+    <feature version='${project.version}'>camel-netty</feature>
     <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-netty4-http/${project.version}</bundle>
   </feature>
@@ -2492,7 +2492,7 @@
   </feature>
   <feature name='camel-syslog' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-netty4</feature>
+    <feature version='${project.version}'>camel-netty</feature>
     <bundle>mvn:org.apache.camel/camel-syslog/${project.version}</bundle>
   </feature>
   <feature name='camel-tagsoup' version='${project.version}' start-level='50'>
