@@ -3,8 +3,8 @@
 
 *Available as of Camel version 2.14*
 
-The Netty4 HTTP component is an extension to xref:netty4-component.adoc[Netty4]
-component to facilitiate HTTP transport with xref:netty4-component.adoc[Netty4].
+The Netty4 HTTP component is an extension to xref:netty-component.adoc[Netty]
+component to facilitiate HTTP transport with xref:netty-component.adoc[Netty].
 
 This camel component supports both producer and consumer endpoints.
 
@@ -77,9 +77,9 @@ at the endpoint URI definition level (like `to` or `from` DSL elements).
 *A lot more options*
 
 This component inherits all the options from
-xref:netty4-component.adoc[Netty4], so make sure to look at
-the xref:netty4-component.adoc[Netty4] documentation as well.
-Notice that some options from xref:netty4-component.adoc[Netty4] is not
+xref:netty-component.adoc[Netty], so make sure to look at
+the xref:netty-component.adoc[Netty] documentation as well.
+Notice that some options from xref:netty-component.adoc[Netty] is not
 applicable when using this Netty4 HTTP component, such as options
 related to UDP transport.
 ====
@@ -633,6 +633,6 @@ below:
 * Endpoint
 * Getting Started
 
-* xref:netty4-component.adoc[Netty]
+* xref:netty-component.adoc[Netty]
 * Netty HTTP Server Example
 * xref:jetty-component.adoc[Jetty]

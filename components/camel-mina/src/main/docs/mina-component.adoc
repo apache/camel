@@ -6,7 +6,7 @@
 The Mina2 component is a transport for working with
 http://mina.apache.org/[Apache MINA 2.x]
 
-TIP: Favor using xref:netty4-component.adoc[Netty] as Netty is a much more active
+TIP: Favor using xref:netty-component.adoc[Netty] as Netty is a much more active
 maintained and popular project than Apache Mina currently is.
 
 WARNING: Be careful with `sync=false` on consumer endpoints. Since camel-mina all
@@ -331,4 +331,4 @@ is, after `codec` and `logger`.
 * Component
 * Endpoint
 * Getting Started
-* xref:netty4-component.adoc[Netty]
+* xref:netty-component.adoc[Netty]

@@ -27,7 +27,7 @@ Request Reply messaging over JMS). *Camel 2.9:*
 * xref:components::jms-component.adoc[JMS] *Camel 2.9:* (also consumer)
 * xref:components::mqtt-component.adoc[MQTT] *Camel 2.10.2:* (only producer)
 * NMR (both consumer and producer)
-* xref:components::netty4-component.adoc[Netty] only producer (*Camel 2.10:* also consumer)
+* xref:components::netty-component.adoc[Netty] only producer (*Camel 2.10:* also consumer)
 * xref:components::restlet-component.adoc[Restlet] *Camel 2.8:* (only producer)
 * xref:components::seda-component.adoc[SEDA] (both consumer and producer) SEDA was mistakenly
 in this list until November 3rd 2012. As of Camel 2.10.x, it still does

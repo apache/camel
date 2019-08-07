@@ -16,7 +16,7 @@ configuration utility:
 * xref:components::http-component.adoc[HTTP]
 * xref:components::jetty-component.adoc[Jetty]
 * xref:components::ahc-component.adoc[AHC]
-* xref:components::netty4-component.adoc[Netty]
+* xref:components::netty-component.adoc[Netty]
 * xref:components::cometd-component.adoc[Cometd]
 * FTP2
 * xref:components::irc-component.adoc[IRC]
