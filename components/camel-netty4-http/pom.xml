@@ -38,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-netty4</artifactId>
+            <artifactId>camel-netty</artifactId>
         </dependency>
         <!-- we use netty-all as dependency which has HTTP included -->
         <dependency>

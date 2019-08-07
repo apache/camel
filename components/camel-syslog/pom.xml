@@ -43,7 +43,7 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-netty4</artifactId>
+            <artifactId>camel-netty</artifactId>
         </dependency>
 
         <!-- test dependencies -->
