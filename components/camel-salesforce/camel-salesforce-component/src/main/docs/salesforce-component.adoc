@@ -760,7 +760,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 86 options, which are listed below.
+The component supports 88 options, which are listed below.
 
 
 
@@ -819,6 +819,8 @@ The component supports 86 options, which are listed below.
 | *camel.component.salesforce.config.serialize-nulls* | Should the NULL values of given DTO be serialized with empty (NULL) values. This affects only JSON data format. | false | Boolean
 | *camel.component.salesforce.config.update-topic* | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | Boolean
 | *camel.component.salesforce.enabled* | Enable salesforce component | true | Boolean
+| *camel.component.salesforce.http-client-connection-timeout* | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | Long
+| *camel.component.salesforce.http-client-idle-timeout* | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | Long
 | *camel.component.salesforce.http-client-properties* | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | *camel.component.salesforce.http-proxy-auth-uri* | Used in authentication against the HTTP proxy server, needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
 | *camel.component.salesforce.http-proxy-excluded-addresses* | A list of addresses for which HTTP proxy server should not be used. |  | Set
