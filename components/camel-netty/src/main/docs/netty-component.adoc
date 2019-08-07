@@ -1,9 +1,9 @@
-[[netty4-component]]
-= Netty4 Component
+[[netty-component]]
+= Netty Component
 
 *Available as of Camel version 2.14*
 
-The Netty4 component in Camel is a socket communication component,
+The Netty component in Camel is a socket communication component,
 based on the http://netty.io/[Netty] project version 4. +
  Netty is a NIO client server framework which enables quick and easy
 development of networkServerInitializerFactory applications such as
@@ -25,7 +25,7 @@ for this component:
 ----
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-netty4</artifactId>
+    <artifactId>camel-netty</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
@@ -37,8 +37,8 @@ The URI scheme for a netty component is as follows
 
 [source,text]
 ----
-netty4:tcp://0.0.0.0:99999[?options]
-netty4:udp://remotehost:99999/[?options]
+netty:tcp://0.0.0.0:99999[?options]
+netty:udp://remotehost:99999/[?options]
 ----
 
 This component supports producer and consumer endpoints for both TCP and
@@ -50,7 +50,7 @@ You can append query options to the URI in the following format,
 == Options
 
 // component options: START
-The Netty4 component supports 7 options, which are listed below.
+The Netty component supports 7 options, which are listed below.
 
 
 
@@ -69,10 +69,10 @@ The Netty4 component supports 7 options, which are listed below.
 
 
 // endpoint options: START
-The Netty4 endpoint is configured using URI syntax:
+The Netty endpoint is configured using URI syntax:
 
 ----
-netty4:protocol:host:port
+netty:protocol:host:port
 ----
 
 with the following path and query parameters:
@@ -376,7 +376,7 @@ operations.
 ----
 RouteBuilder builder = new RouteBuilder() {
   public void configure() {
-    from("netty4:udp://0.0.0.0:5155?sync=true")
+    from("netty:udp://0.0.0.0:5155?sync=true")
       .process(new Processor() {
          public void process(Exchange exchange) throws Exception {
            Poetry poetry = (Poetry) exchange.getIn().getBody();
@@ -394,7 +394,7 @@ RouteBuilder builder = new RouteBuilder() {
 ----
 RouteBuilder builder = new RouteBuilder() {
   public void configure() {
-       from("netty4:tcp://0.0.0.0:5150")
+       from("netty:tcp://0.0.0.0:5150")
            .to("mock:result");
   }
 };
@@ -402,7 +402,7 @@ RouteBuilder builder = new RouteBuilder() {
 
 === An SSL/TCP based Netty consumer endpoint using Request-Reply communication
 
-[[Netty4-UsingtheJSSEConfigurationUtility]]
+[[Netty-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
 
 The Netty component supports SSL/TLS configuration
@@ -412,7 +412,7 @@ component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how
 to use the utility with the Netty component.
 
-[[Netty4-Programmaticconfigurationofthecomponent]]
+[[Netty-Programmaticconfigurationofthecomponent]]
 Programmatic configuration of the component
 
 [source,java]
@@ -428,11 +428,11 @@ kmp.setKeyPassword("keyPassword");
 SSLContextParameters scp = new SSLContextParameters();
 scp.setKeyManagers(kmp);
 
-NettyComponent nettyComponent = getContext().getComponent("netty4", NettyComponent.class);
+NettyComponent nettyComponent = getContext().getComponent("netty", NettyComponent.class);
 nettyComponent.setSslContextParameters(scp);
 ----
 
-[[Netty4-SpringDSLbasedconfigurationofendpoint]]
+[[Netty-SpringDSLbasedconfigurationofendpoint]]
 Spring DSL based configuration of endpoint
 
 [source,xml]
@@ -448,11 +448,11 @@ Spring DSL based configuration of endpoint
     </camel:keyManagers>
   </camel:sslContextParameters>...
 ...
-  <to uri="netty4:tcp://0.0.0.0:5150?sync=true&ssl=true&sslContextParameters=#sslContextParameters"/>
+  <to uri="netty:tcp://0.0.0.0:5150?sync=true&ssl=true&sslContextParameters=#sslContextParameters"/>
 ...
 ----
 
-[[Netty4-UsingBasicSSL/TLSconfigurationontheJettyComponent]]
+[[Netty-UsingBasicSSL/TLSconfigurationontheJettyComponent]]
 Using Basic SSL/TLS configuration on the Jetty Component
 
 [source,java]
@@ -465,7 +465,7 @@ registry.bind("tsf", new File("src/test/resources/keystore.jks"));
 context.addRoutes(new RouteBuilder() {
   public void configure() {
       String netty_ssl_endpoint =
-         "netty4:tcp://0.0.0.0:5150?sync=true&ssl=true&passphrase=#password"
+         "netty:tcp://0.0.0.0:5150?sync=true&ssl=true&passphrase=#password"
          + "&keyStoreFile=#ksf&trustStoreFile=#tsf";
       String return_string =
          "When You Go Home, Tell Them Of Us And Say,"
@@ -481,12 +481,12 @@ context.addRoutes(new RouteBuilder() {
 });
 ----
 
-[[Netty4-GettingaccesstoSSLSessionandtheclientcertificate]]
+[[Netty-GettingaccesstoSSLSessionandtheclientcertificate]]
 Getting access to SSLSession and the client certificate
 
 You can get access to the `javax.net.ssl.SSLSession` if you eg need to
 get details about the client certificate. When `ssl=true` then the
-xref:netty4-component.adoc[Netty4] component will store the `SSLSession` as a
+xref:netty-component.adoc[Netty] component will store the `SSLSession` as a
 header on the Camel Message as shown below:
 
 [source,java]
@@ -593,9 +593,9 @@ a comma separated list or contained in a List e.g.
 
 [source,java]
 ----
- from("direct:multiple-codec").to("netty4:tcp://0.0.0.0:{{port}}?encoders=#encoders&sync=false");
+ from("direct:multiple-codec").to("netty:tcp://0.0.0.0:{{port}}?encoders=#encoders&sync=false");
                 
- from("netty4:tcp://0.0.0.0:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
+ from("netty:tcp://0.0.0.0:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
 ----
 
 or via XML.
@@ -605,10 +605,10 @@ or via XML.
 <camelContext id="multiple-netty-codecs-context" xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:multiple-codec"/>
-        <to uri="netty4:tcp://0.0.0.0:5150?encoders=#encoders&amp;sync=false"/>
+        <to uri="netty:tcp://0.0.0.0:5150?encoders=#encoders&amp;sync=false"/>
     </route>
     <route>
-        <from uri="netty4:tcp://0.0.0.0:5150?decoders=#length-decoder,#string-decoder&amp;sync=false"/>
+        <from uri="netty:tcp://0.0.0.0:5150?decoders=#length-decoder,#string-decoder&amp;sync=false"/>
         <to uri="mock:multiple-codec"/>
     </route>
 </camelContext>
@@ -630,7 +630,7 @@ written the bye message back to the client:
 
 [source,java]
 ----
-from("netty4:tcp://0.0.0.0:8080").process(new Processor() {
+from("netty:tcp://0.0.0.0:8080").process(new Processor() {
     public void process(Exchange exchange) throws Exception {
         String body = exchange.getIn().getBody(String.class);
         exchange.getOut().setBody("Bye " + body);
@@ -642,7 +642,7 @@ from("netty4:tcp://0.0.0.0:8080").process(new Processor() {
 });
 ----
 
-[[Netty4-Addingcustomchannelpipelinefactoriestogaincompletecontroloveracreatedpipeline]]
+[[Netty-Addingcustomchannelpipelinefactoriestogaincompletecontroloveracreatedpipeline]]
 Adding custom channel pipeline factories to gain complete control over a created pipeline
 
 == Custom pipeline
@@ -700,7 +700,7 @@ registry.bind("spf", factory);
 context.addRoutes(new RouteBuilder() {
   public void configure() {
       String netty_ssl_endpoint =
-         "netty4:tcp://0.0.0.0:5150?serverInitializerFactory=#spf"
+         "netty:tcp://0.0.0.0:5150?serverInitializerFactory=#spf"
       String return_string =
          "When You Go Home, Tell Them Of Us And Say,"
          + "For Your Tomorrow, We Gave Our Today.";
@@ -753,7 +753,7 @@ as shown below:
 [source,xml]
 ----
 <route>
-  <from uri="netty4:tcp://0.0.0.0:5021?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
+  <from uri="netty:tcp://0.0.0.0:5021?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
   <to uri="log:result"/>
   ...
 </route>
@@ -764,7 +764,7 @@ And if we have another route we can refer to the shared worker pool:
 [source,xml]
 ----
 <route>
-  <from uri="netty4:tcp://0.0.0.0:5022?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
+  <from uri="netty:tcp://0.0.0.0:5022?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
   <to uri="log:result"/>
   ...
 </route>
