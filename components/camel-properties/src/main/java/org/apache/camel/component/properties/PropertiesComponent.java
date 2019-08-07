@@ -120,7 +120,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private Properties overrideProperties;
     @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_OVERRIDE, enums = "0,1,2")
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
-    @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_FALLBACK, enums = "0,1,2")
+    @Metadata(defaultValue = "" + ENVIRONMENT_VARIABLES_MODE_OVERRIDE, enums = "0,1,2")
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
 
     public PropertiesComponent() {
