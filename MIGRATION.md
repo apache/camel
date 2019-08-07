@@ -126,6 +126,8 @@ The `mina2` component has been renamed to `mina`. The supported scheme is now `m
 
 The `mongodb3` component has been renamed to `mongodb`. The supported scheme is now `mongodb`.
 
+The `netty4` component has been renamed to `netty`. The supported scheme is now `netty`.
+
 The `quartz2` component has been renamed to `quartz`. The supported scheme is now `quartz`.
 
 The `rxjava2` component has been renamed to `rxjava`.
