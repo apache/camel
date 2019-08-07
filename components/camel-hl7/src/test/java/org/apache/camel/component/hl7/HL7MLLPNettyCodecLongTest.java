@@ -55,7 +55,7 @@ public class HL7MLLPNettyCodecLongTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder").process(new Processor() {
+                from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals(70010, exchange.getIn().getBody(byte[].class).length);
                         MDM_T02 input = (MDM_T02)exchange.getIn().getBody(Message.class);
@@ -82,7 +82,7 @@ public class HL7MLLPNettyCodecLongTest extends HL7TestSupport {
         }
         message = message.substring(0, message.length() - 1);
         assertEquals(70010, message.length());
-        String out = template.requestBody("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder", message, String.class);
+        String out = template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder", message, String.class);
         assertEquals("some response", out);
         // END SNIPPET: e2
     }

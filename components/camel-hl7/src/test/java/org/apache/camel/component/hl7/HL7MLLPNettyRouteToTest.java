@@ -55,12 +55,12 @@ public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").to("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder")
+                from("direct:start").to("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder")
                     // because HL7 message contains a bunch of control chars
                     // then the logger do not log all of the data
                     .log("HL7 message: ${body}").to("mock:result");
 
-                from("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
+                from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message input = exchange.getIn().getBody(Message.class);
 
