@@ -76,9 +76,11 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     public static final String HTTP_PROXY_USE_DIGEST_AUTH = "httpProxyUseDigestAuth";
     public static final String HTTP_PROXY_AUTH_URI = "httpProxyAuthUri";
     public static final String HTTP_PROXY_REALM = "httpProxyRealm";
+    public static final String HTTP_CONNECTION_TIMEOUT = "httpConnectionTimeout";
+    public static final String HTTP_IDLE_TIMEOUT = "httpIdleTimeout";
 
     static final int CONNECTION_TIMEOUT = 60000;
-    static final int IDLE_TIMEOUT = 5000;
+    static final int IDLE_TIMEOUT = 10000;
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
     static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
@@ -144,6 +146,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     @Metadata(description = "Global endpoint configuration - use to set values that are common to all endpoints",
         label = "common,advanced")
     private SalesforceEndpointConfig config;
+
+    @Metadata(description = "Timeout used by the HttpClient when waiting for response from the Salesforce server.",
+            label = "common", defaultValue = "" + IDLE_TIMEOUT)
+    private long httpClientIdleTimeout = IDLE_TIMEOUT;
+
+    @Metadata(description = "Connection timeout used by the HttpClient when connecting to the Salesforce server.",
+            label = "common", defaultValue = "" + CONNECTION_TIMEOUT)
+    private long httpClientConnectionTimeout = CONNECTION_TIMEOUT;
 
     @Metadata(description = "Used to set any properties that can be configured on the underlying HTTP client. Have a"
         + " look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options.",
@@ -538,6 +548,22 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
+    public long getHttpClientIdleTimeout() {
+        return httpClientIdleTimeout;
+    }
+
+    public void setHttpClientIdleTimeout(long httpClientIdleTimeout) {
+        this.httpClientIdleTimeout = httpClientIdleTimeout;
+    }
+
+    public long getHttpClientConnectionTimeout() {
+        return httpClientConnectionTimeout;
+    }
+
+    public void setHttpClientConnectionTimeout(long httpClientConnectionTimeout) {
+        this.httpClientConnectionTimeout = httpClientConnectionTimeout;
+    }
+
     public String getHttpProxyHost() {
         return httpProxyHost;
     }
@@ -723,6 +749,9 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         PropertyBindingSupport.bindProperties(camelContext, httpClient,
             new HashMap<>(httpClientProperties));
 
+        final Long httpConnectionTimeout = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_CONNECTION_TIMEOUT));
+        final Long httpIdleTimeout = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_IDLE_TIMEOUT));
+
         final String httpProxyHost = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_HOST));
         final Integer httpProxyPort = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_PROXY_PORT));
         final boolean isHttpProxySocks4 = typeConverter.convertTo(boolean.class,
@@ -742,6 +771,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final String httpProxyRealm = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_REALM));
         final boolean httpProxyUseDigestAuth = typeConverter.convertTo(boolean.class,
             httpClientProperties.get(HTTP_PROXY_USE_DIGEST_AUTH));
+
+        // set HTTP timeout settings
+        if (httpIdleTimeout != null) {
+            httpClient.setIdleTimeout(httpIdleTimeout);
+        }
+        if (httpConnectionTimeout != null) {
+            httpClient.setConnectTimeout(httpConnectionTimeout);
+        }
 
         // set HTTP proxy settings
         if (httpProxyHost != null && httpProxyPort != null) {
@@ -779,6 +816,9 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     }
 
     private static void defineComponentPropertiesIn(final Map<String, Object> httpClientProperties, final SalesforceComponent salesforce) {
+        putValueIfGivenTo(httpClientProperties, HTTP_IDLE_TIMEOUT, salesforce::getHttpClientIdleTimeout);
+        putValueIfGivenTo(httpClientProperties, HTTP_CONNECTION_TIMEOUT, salesforce::getHttpClientConnectionTimeout);
+
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_HOST, salesforce::getHttpProxyHost);
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_PORT, salesforce::getHttpProxyPort);
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_INCLUDE, salesforce::getHttpProxyIncludedAddresses);
