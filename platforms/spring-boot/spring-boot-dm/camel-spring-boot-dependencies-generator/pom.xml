@@ -159,6 +159,7 @@
                             <exclude>com.google.code.gson:*</exclude>
                             <exclude>javax.servlet:javax.servlet-api</exclude>
                             <exclude>junit:*</exclude>
+                            <exclude>org.junit.jupiter:*</exclude>
                             <exclude>net.sf.ehcache:ehcache</exclude>
 
                             <exclude>xml-apis:*</exclude>

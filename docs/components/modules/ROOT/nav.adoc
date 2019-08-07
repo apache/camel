@@ -343,6 +343,7 @@
 * xref:telegram-component.adoc[Telegram Component]
 * xref:test-blueprint.adoc[Blueprint Testing]
 * xref:test-cdi.adoc[CDI Testing]
+* xref:test-junit5.adoc[Test Module]
 * xref:test-karaf.adoc[Test Karaf]
 * xref:test-spring.adoc[Test Spring]
 * xref:test.adoc[Test Module]

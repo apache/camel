@@ -1051,7 +1051,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 33 in 33 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 34 in 34 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1110,6 +1110,8 @@ Number of Miscellaneous Components: 33 in 33 JAR artifacts (0 deprecated)
 | link:camel-test-blueprint/src/main/docs/test-blueprint.adoc[Test Blueprint] (camel-test-blueprint) | 2.10 | Camel unit testing with OSGi Blueprint
 
 | link:camel-test-cdi/src/main/docs/test-cdi.adoc[Test CDI] (camel-test-cdi) | 2.17 | Camel unit testing with CDI
+
+| link:camel-test-junit5/src/main/docs/test-junit5.adoc[Test Junit5] (camel-test-junit5) | 3.0 | Camel unit testing with JUnit 5
 
 | link:camel-test-karaf/src/main/docs/test-karaf.adoc[Test Karaf] (camel-test-karaf) | 2.18 | Camel integration testing with Apache Karaf
 
