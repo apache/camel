@@ -262,21 +262,21 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
             String value = null;
 
+            // override is the default mode for ENV
+            int envMode = propertiesComponent != null ? propertiesComponent.getEnvironmentVariableMode() : PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK;
             // override is the default mode for SYS
             int sysMode = propertiesComponent != null ? propertiesComponent.getSystemPropertiesMode() : PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE;
-            // fallback is the default mode for ENV
-            int envMode = propertiesComponent != null ? propertiesComponent.getEnvironmentVariableMode() : PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK;
 
-            if (sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+            if (envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
+                value = lookupEnvironmentVariable(key);
+                if (value != null) {
+                    log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
+                }
+            }
+            if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
                 value = System.getProperty(key);
                 if (value != null) {
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
-                }
-            }
-            if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
-                value = lookupEnvironmentVariable(key);
-                if (value != null) {
-                    log.debug("Found a environment property: {} with value: {} to be used.", key, value);
                 }
             }
 
@@ -287,17 +287,16 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 }
             }
 
+            if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK) {
+                value = lookupEnvironmentVariable(key);
+                if (value != null) {
+                    log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
+                }
+            }
             if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
                 value = System.getProperty(key);
                 if (value != null) {
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
-                }
-            }
-            if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK) {
-                // lookup OS env with upper case key
-                value = lookupEnvironmentVariable(key);
-                if (value != null) {
-                    log.debug("Found a environment property: {} with value: {} to be used.", key, value);
                 }
             }
 
