@@ -78,7 +78,7 @@ public class NettyDataFormatTest extends CamelTestSupport {
         mock2.expectedMessageCount(1);
         mock2.expectedBodiesReceived(message);
 
-        template.sendBody("netty4:udp://127.0.0.1:" + serverPort + "?sync=false&allowDefaultCodec=false&useByteBuf=true", message);
+        template.sendBody("netty:udp://127.0.0.1:" + serverPort + "?sync=false&allowDefaultCodec=false&useByteBuf=true", message);
 
         assertMockEndpointsSatisfied();
     }
@@ -92,7 +92,7 @@ public class NettyDataFormatTest extends CamelTestSupport {
                 DataFormat syslogDataFormat = new SyslogDataFormat();
 
                 // we setup a Syslog  listener on a random port.
-                from("netty4:udp://127.0.0.1:" + serverPort + "?sync=false&allowDefaultCodec=false").unmarshal(syslogDataFormat)
+                from("netty:udp://127.0.0.1:" + serverPort + "?sync=false&allowDefaultCodec=false").unmarshal(syslogDataFormat)
                     .process(new Processor() {
                         public void process(Exchange ex) {
                             assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
