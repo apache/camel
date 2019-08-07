@@ -153,6 +153,16 @@ public class SalesforceComponentConfiguration
      */
     private Boolean useGlobalSslContextParameters = false;
     /**
+     * Timeout used by the HttpClient when waiting for response from the
+     * Salesforce server.
+     */
+    private Long httpClientIdleTimeout = 10000L;
+    /**
+     * Connection timeout used by the HttpClient when connecting to the
+     * Salesforce server.
+     */
+    private Long httpClientConnectionTimeout = 60000L;
+    /**
      * Hostname of the HTTP proxy server to use.
      */
     private String httpProxyHost;
@@ -348,6 +358,22 @@ public class SalesforceComponentConfiguration
     public void setUseGlobalSslContextParameters(
             Boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    public Long getHttpClientIdleTimeout() {
+        return httpClientIdleTimeout;
+    }
+
+    public void setHttpClientIdleTimeout(Long httpClientIdleTimeout) {
+        this.httpClientIdleTimeout = httpClientIdleTimeout;
+    }
+
+    public Long getHttpClientConnectionTimeout() {
+        return httpClientConnectionTimeout;
+    }
+
+    public void setHttpClientConnectionTimeout(Long httpClientConnectionTimeout) {
+        this.httpClientConnectionTimeout = httpClientConnectionTimeout;
     }
 
     public String getHttpProxyHost() {

@@ -619,7 +619,7 @@ for details on how to generate the DTO.
 
 
 // component options: START
-The Salesforce component supports 30 options, which are listed below.
+The Salesforce component supports 32 options, which are listed below.
 
 
 
@@ -642,6 +642,8 @@ The Salesforce component supports 30 options, which are listed below.
 | *longPollingTransport Properties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
 | *sslContextParameters* (security) | SSL parameters to use, see SSLContextParameters class for all available options. |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters | false | boolean
+| *httpClientIdleTimeout* (common) | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | long
+| *httpClientConnection Timeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
 | *httpProxyHost* (proxy) | Hostname of the HTTP proxy server to use. |  | String
 | *httpProxyPort* (proxy) | Port number of the HTTP proxy server to use. |  | Integer
 | *httpProxyUsername* (security) | Username to use to authenticate against the HTTP proxy server. |  | String
