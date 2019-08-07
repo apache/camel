@@ -136,6 +136,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *addresses* (common) | If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345, server2:12345 |  | Address[]
 | *autoDelete* (common) | If it is true, the exchange will be deleted when it is no longer in use | true | boolean
+| *automaticRecoveryEnabled* (common) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when existing connection has failures) | true | Boolean
 | *connectionFactory* (common) | To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used |  | ConnectionFactory
 | *deadLetterExchange* (common) | The name of the dead letter exchange |  | String
 | *deadLetterExchangeType* (common) | The type of the dead letter exchange | direct | String
@@ -176,7 +177,6 @@ with the following path and query parameters:
 | *publisherAcknowledgements* (producer) | When true, the message will be published with publisher acknowledgements turned on | false | boolean
 | *publisherAcknowledgements Timeout* (producer) | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server |  | long
 | *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
-| *automaticRecoveryEnabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
 | *connectionTimeout* (advanced) | Connection timeout | 60000 | int
