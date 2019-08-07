@@ -52,23 +52,23 @@ eliminates the dependencies on other camel components.
 While Camel already includes some of this functionality in the camel-hl7 component, the implementation does not
 provide all of the functionality required to effectively handle the MLLP protocol - especially under adverse conditions.
   
-The camel-hl7 Mina2 codec and Netty4 decoder do not handle MLLP Framing errors very well - the component will hang waiting
+The camel-hl7 Mina2 codec and Netty decoder do not handle MLLP Framing errors very well - the component will hang waiting
 for frames to complete in some instances.
 
-While both camel-mina and camel-netty4 provide a "timeout" function, it is only applied to Producers.  MLLP Consumers
+While both camel-mina and camel-netty provide a "timeout" function, it is only applied to Producers.  MLLP Consumers
 also need to be able to timeout to recover from MLLP framing errors.  Additionally, the timeout functionality of the
-camel-netty4 component is disable after any data is received on the connection, making in ineffective for detecting
+camel-netty component is disable after any data is received on the connection, making in ineffective for detecting
 timeouts after the first messages is received.
 
-Also, neither the Mina2 codec nor the Netty4 decoder interrogate HL7 Acknowledgments.  Therefore, it is much more
+Also, neither the Mina2 codec nor the Netty decoder interrogate HL7 Acknowledgments.  Therefore, it is much more
 difficult to use the redelivery and error handling features Camel provides.
 
 The above issues may be addressable by updating/patching the existing components, but there is one more that is not.
-Both camel-netty4 and camel-mina are designed to handle a large number of concurrent connections, rapid connect/disconnect
+Both camel-netty and camel-mina are designed to handle a large number of concurrent connections, rapid connect/disconnect
 rates, and asynchronous communication.  Forcing, these components to deal with the small number of stateful connections
 inherent to the MLLP protocol seems inappropriate.
 
-An attempt was made to update the camel-netty4 decoder provided by the camel-hl7 component to deal with the nuances of 
+An attempt was made to update the camel-netty decoder provided by the camel-hl7 component to deal with the nuances of 
 the MLLP protocol, but it quickly became very complicated.  The decoder was updated to correctly deal with the MLLP 
 frame.  The current implementation is based on the Netty DelimiterBasedFrameDecoder, but this decoder only looks for a 
 single byte terminator and MLLP uses two bytes to terminate it's frame.  Additionally, the second terminating byte of the
