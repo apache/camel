@@ -37,7 +37,7 @@ public interface NettyEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Netty4 component.
+     * Builder for endpoint consumers for the Netty component.
      */
     public interface NettyEndpointConsumerBuilder
             extends
@@ -847,7 +847,7 @@ public interface NettyEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the Netty4 component.
+     * Advanced builder for endpoint consumers for the Netty component.
      */
     public interface AdvancedNettyEndpointConsumerBuilder
             extends
@@ -1594,7 +1594,7 @@ public interface NettyEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the Netty4 component.
+     * Builder for endpoint producers for the Netty component.
      */
     public interface NettyEndpointProducerBuilder
             extends
@@ -2340,7 +2340,7 @@ public interface NettyEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the Netty4 component.
+     * Advanced builder for endpoint producers for the Netty component.
      */
     public interface AdvancedNettyEndpointProducerBuilder
             extends
@@ -3051,7 +3051,7 @@ public interface NettyEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Netty4 component.
+     * Builder for endpoint for the Netty component.
      */
     public interface NettyEndpointBuilder
             extends
@@ -3695,7 +3695,7 @@ public interface NettyEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Netty4 component.
+     * Advanced builder for endpoint for the Netty component.
      */
     public interface AdvancedNettyEndpointBuilder
             extends
@@ -4099,12 +4099,12 @@ public interface NettyEndpointBuilderFactory {
         NULL;
     }
     /**
-     * Netty4 (camel-netty4)
+     * Netty (camel-netty)
      * Socket level networking using TCP or UDP with the Netty 4.x library.
      * 
      * Category: networking,tcp,udp
      * Available as of version: 2.14
-     * Maven coordinates: org.apache.camel:camel-netty4
+     * Maven coordinates: org.apache.camel:camel-netty
      * 
      * Syntax: <code>netty:protocol:host:port</code>
      * 

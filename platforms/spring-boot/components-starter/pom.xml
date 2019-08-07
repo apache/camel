@@ -281,6 +281,7 @@
     <module>camel-mybatis-starter</module>
     <module>camel-nagios-starter</module>
     <module>camel-nats-starter</module>
+    <module>camel-netty-starter</module>
     <module>camel-netty4-http-starter</module>
     <module>camel-netty4-starter</module>
     <module>camel-nsq-starter</module>
