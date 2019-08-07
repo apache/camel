@@ -31,7 +31,7 @@ The Properties component supports 12 options, which are listed below.
 | *initialProperties* (advanced) | Sets initial properties which will be used before any locations are resolved. |  | Properties
 | *overrideProperties* (advanced) | Sets a special list of override properties that take precedence and will use first, if a property exist. |  | Properties
 | *systemPropertiesMode* (common) | Sets the system property mode. The default mode (override) is to use system properties if present, and override any existing properties. | 2 | int
-| *environmentVariableMode* (common) | Sets the OS environment variables mode. The default mode (override) is to use OS environment variables if present, and override any existing properties. | 1 | int
+| *environmentVariableMode* (common) | Sets the OS environment variables mode. The default mode (override) is to use OS environment variables if present, and override any existing properties. | 2 | int
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===

@@ -93,7 +93,7 @@ public class PropertiesComponentConfiguration
      * use OS environment variables if present, and override any existing
      * properties.
      */
-    private Integer environmentVariableMode = 1;
+    private Integer environmentVariableMode = 2;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
