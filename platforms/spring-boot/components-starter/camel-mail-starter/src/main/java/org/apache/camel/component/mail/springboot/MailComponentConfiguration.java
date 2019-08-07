@@ -166,9 +166,9 @@ public class MailComponentConfiguration
         /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
-         * managed by some other resource, such as a JavaEE container. If this
-         * is not specified, Camel automatically creates the mail session for
-         * you.
+         * managed by some other resource, such as a JavaEE container. When
+         * using a custom mail session, then the hostname and port from the mail
+         * session will be used (if configured on the session).
          */
         private Session session;
         /**
