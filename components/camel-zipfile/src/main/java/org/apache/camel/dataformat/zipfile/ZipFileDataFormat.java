@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.zipfile;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,9 +28,12 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.InputStreamIterator;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -71,7 +75,21 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
             createZipEntries(zos, filename);
         }
 
-        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
+        Object body = exchange.getIn().getBody();
+        TypeConverter converter = exchange.getContext().getTypeConverter();
+        // favour using input stream
+        InputStream is = converter.tryConvertTo(InputStream.class, exchange, body);
+        if (is == null) {
+            // okay so try to see if its an iterator which we can wrap as input stream
+            Iterator it = converter.tryConvertTo(Iterator.class, exchange, body);
+            if (it != null) {
+                is = new InputStreamIterator(converter, it);
+                is = new BufferedInputStream(is);
+            }
+        }
+        if (is == null) {
+            throw new InvalidPayloadException(exchange, body.getClass());
+        }
 
         try {
             IOHelper.copy(is, zos);
