@@ -343,7 +343,7 @@ camel routes without them knowing
 ** xref:components::mybatis-bean-component.adoc[MyBatis Bean]
 ** xref:components::nagios-component.adoc[Nagios]
 ** xref:components::nats-component.adoc[Nats]
-** xref:components::netty4-component.adoc[Netty4]
+** xref:components::netty-component.adoc[Netty]
 ** xref:components::netty4-http-component.adoc[Netty4 HTTP]
 ** xref:components::nsq-component.adoc[NSQ]
 ** xref:components::olingo2-component.adoc[Olingo2]

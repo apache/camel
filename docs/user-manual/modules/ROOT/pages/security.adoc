@@ -65,7 +65,7 @@ support
 using the CXF Bus driven interceptor chain
 * xref:components::spring-ws-component.adoc[Spring Web Services] - HTTP Basic
 Authentication & WS-Security support
-* xref:components::netty4-component.adoc[Netty] - SSL support
+* xref:components::netty-component.adoc[Netty] - SSL support
 * xref:components::mina-component.adoc[MINA] - SSL support
 * xref:components::cometd-component.adoc[Cometd] - SSL support
 * xref:components::jms-component.adoc[JMS] - JAAS and SSL based security for client <-->
