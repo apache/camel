@@ -384,7 +384,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
                 try {
                     // Then use Service factory.
-                    type = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(lookupName);
+                    type = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(lookupName).orElse(null);
                 } catch (Exception e) {
                 }
 

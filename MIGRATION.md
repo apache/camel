@@ -367,6 +367,8 @@ Removed `TypeConverterAware` as you should instead use `Exchange` as parameter t
 
 The `Component` and `DataFormat` interfaces now extend `Service` as components and data formats should also have service contract to manage their lifecycle. The default base classes already implements these interfaces.
 
+The class `FactoryFinder` has changed its API to use `Optional` as return types instead of throwing checked `FactoryNotFoundException` or `ClassNotFoundException` etc.
+
 #### camel-test
 
 If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead

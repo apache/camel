@@ -1499,46 +1499,35 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // component class, which is the location
         // where the documentation exists as well
         FactoryFinder finder = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH);
-        try {
-            Class<?> clazz = null;
-            try {
-                clazz = finder.findClass(componentName);
-            } catch (NoFactoryAvailableException e) {
-                // ignore, i.e. if a component is an auto-configured spring-boot
-                // component
-            }
-
-            if (clazz == null) {
-                // fallback and find existing component
-                Component existing = hasComponent(componentName);
-                if (existing != null) {
-                    clazz = existing.getClass();
-                } else {
-                    return null;
-                }
-            }
-
-            String packageName = clazz.getPackage().getName();
-            packageName = packageName.replace('.', '/');
-            String path = packageName + "/" + componentName + ".json";
-
-            ClassResolver resolver = getClassResolver();
-            InputStream inputStream = resolver.loadResourceAsStream(path);
-            log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", componentName, resolver, inputStream);
-            if (inputStream != null) {
-                try {
-                    return IOHelper.loadText(inputStream);
-                } finally {
-                    IOHelper.close(inputStream);
-                }
-            }
-            // special for ActiveMQ as it is really just JMS
-            if ("ActiveMQComponent".equals(clazz.getSimpleName())) {
-                return getComponentParameterJsonSchema("jms");
+        Class<?> clazz = finder.findClass(componentName).orElse(null);
+        if (clazz == null) {
+            // fallback and find existing component
+            Component existing = hasComponent(componentName);
+            if (existing != null) {
+                clazz = existing.getClass();
             } else {
                 return null;
             }
-        } catch (ClassNotFoundException e) {
+        }
+
+        String packageName = clazz.getPackage().getName();
+        packageName = packageName.replace('.', '/');
+        String path = packageName + "/" + componentName + ".json";
+
+        ClassResolver resolver = getClassResolver();
+        InputStream inputStream = resolver.loadResourceAsStream(path);
+        log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", componentName, resolver, inputStream);
+        if (inputStream != null) {
+            try {
+                return IOHelper.loadText(inputStream);
+            } finally {
+                IOHelper.close(inputStream);
+            }
+        }
+        // special for ActiveMQ as it is really just JMS
+        if ("ActiveMQComponent".equals(clazz.getSimpleName())) {
+            return getComponentParameterJsonSchema("jms");
+        } else {
             return null;
         }
     }
@@ -1548,38 +1537,26 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // dataformat class, which is the location
         // where the documentation exists as well
         FactoryFinder finder = getFactoryFinder(DefaultDataFormatResolver.DATAFORMAT_RESOURCE_PATH);
-        try {
-            Class<?> clazz = null;
-            try {
-                clazz = finder.findClass(dataFormatName);
-            } catch (NoFactoryAvailableException e) {
-                // ignore, i.e. if a component is an auto-configured spring-boot
-                // data-formats
-            }
-
-            if (clazz == null) {
-                return null;
-            }
-
-            String packageName = clazz.getPackage().getName();
-            packageName = packageName.replace('.', '/');
-            String path = packageName + "/" + dataFormatName + ".json";
-
-            ClassResolver resolver = getClassResolver();
-            InputStream inputStream = resolver.loadResourceAsStream(path);
-            log.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", dataFormatName, resolver, inputStream);
-            if (inputStream != null) {
-                try {
-                    return IOHelper.loadText(inputStream);
-                } finally {
-                    IOHelper.close(inputStream);
-                }
-            }
-            return null;
-
-        } catch (ClassNotFoundException e) {
+        Class<?> clazz = finder.findClass(dataFormatName).orElse(null);
+        if (clazz == null) {
             return null;
         }
+
+        String packageName = clazz.getPackage().getName();
+        packageName = packageName.replace('.', '/');
+        String path = packageName + "/" + dataFormatName + ".json";
+
+        ClassResolver resolver = getClassResolver();
+        InputStream inputStream = resolver.loadResourceAsStream(path);
+        log.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", dataFormatName, resolver, inputStream);
+        if (inputStream != null) {
+            try {
+                return IOHelper.loadText(inputStream);
+            } finally {
+                IOHelper.close(inputStream);
+            }
+        }
+        return null;
     }
 
     public String getLanguageParameterJsonSchema(String languageName) throws IOException {
@@ -1587,38 +1564,26 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // language class, which is the location
         // where the documentation exists as well
         FactoryFinder finder = getFactoryFinder(DefaultLanguageResolver.LANGUAGE_RESOURCE_PATH);
-        try {
-            Class<?> clazz = null;
-            try {
-                clazz = finder.findClass(languageName);
-            } catch (NoFactoryAvailableException e) {
-                // ignore, i.e. if a component is an auto-configured spring-boot
-                // languages
-            }
-
-            if (clazz == null) {
-                return null;
-            }
-
-            String packageName = clazz.getPackage().getName();
-            packageName = packageName.replace('.', '/');
-            String path = packageName + "/" + languageName + ".json";
-
-            ClassResolver resolver = getClassResolver();
-            InputStream inputStream = resolver.loadResourceAsStream(path);
-            log.debug("Loading language JSON Schema for: {} using class resolver: {} -> {}", languageName, resolver, inputStream);
-            if (inputStream != null) {
-                try {
-                    return IOHelper.loadText(inputStream);
-                } finally {
-                    IOHelper.close(inputStream);
-                }
-            }
-            return null;
-
-        } catch (ClassNotFoundException e) {
+        Class<?> clazz = finder.findClass(languageName).orElse(null);
+        if (clazz == null) {
             return null;
         }
+
+        String packageName = clazz.getPackage().getName();
+        packageName = packageName.replace('.', '/');
+        String path = packageName + "/" + languageName + ".json";
+
+        ClassResolver resolver = getClassResolver();
+        InputStream inputStream = resolver.loadResourceAsStream(path);
+        log.debug("Loading language JSON Schema for: {} using class resolver: {} -> {}", languageName, resolver, inputStream);
+        if (inputStream != null) {
+            try {
+                return IOHelper.loadText(inputStream);
+            } finally {
+                IOHelper.close(inputStream);
+            }
+        }
+        return null;
     }
 
     public String getEipParameterJsonSchema(String eipName) throws IOException {
@@ -3444,21 +3409,21 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             Object comp = ResolverHelper.lookupComponentInRegistryWithFallback(this, "properties");
             if (comp == null) {
                 try {
-                    Class<?> type = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH).findClass("properties");
-                    if (type != null) {
-                        log.debug("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
-                        comp = type.getDeclaredConstructor().newInstance();
-                        globalOptions.put(PropertiesComponent.DEFAULT_CREATED, "true");
-                    }
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("No Component registered for scheme: " + "properties", e);
+                    comp = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH).newInstance("properties").orElse(null);
+                } catch (NoFactoryAvailableException e) {
+                    // ignore
+                }
+                if (comp != null) {
+                    log.debug("No existing PropertiesComponent has been configured, created a new default PropertiesComponent with name: properties");
+                    globalOptions.put(PropertiesComponent.DEFAULT_CREATED, "true");
                 }
             }
             if (comp instanceof PropertiesComponent) {
-                addComponent("properties", (PropertiesComponent)comp);
+                addComponent("properties", (PropertiesComponent) comp);
+                // this adds comp as properties component and sets this.propertiesComponent = comp
             }
             if (propertiesComponent == null) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("Cannot auto create Properties component");
             }
         }
         return propertiesComponent;
@@ -3624,15 +3589,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         if (!isJMXDisabled()) {
             try {
                 FactoryFinder finder = getFactoryFinder("META-INF/services/org/apache/camel/management/");
-                try {
-                    if (finder != null) {
-                        Object object = finder.newInstance("ManagementStrategyFactory");
-                        if (object instanceof ManagementStrategyFactory) {
-                            factory = (ManagementStrategyFactory)object;
-                        }
+                if (finder != null) {
+                    Object object = finder.newInstance("ManagementStrategyFactory").orElse(null);
+                    if (object instanceof ManagementStrategyFactory) {
+                        factory = (ManagementStrategyFactory)object;
                     }
-                } catch (NoFactoryAvailableException e) {
-                    // ignore there is no custom factory
                 }
             } catch (Exception e) {
                 log.warn("Cannot create JMX lifecycle strategy. Will fallback and disable JMX.", e);

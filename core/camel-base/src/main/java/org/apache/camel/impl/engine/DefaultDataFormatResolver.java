@@ -67,14 +67,12 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
     private DataFormat createDataFormatFromResource(String name, CamelContext context) {
         DataFormat dataFormat = null;
 
-        Class<?> type = null;
+        Class<?> type;
         try {
             if (dataformatFactory == null) {
                 dataformatFactory = context.adapt(ExtendedCamelContext.class).getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
             }
-            type = dataformatFactory.findClass(name);
-        } catch (NoFactoryAvailableException e) {
-            // ignore
+            type = dataformatFactory.findClass(name).orElse(null);
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no DataFormat registered for scheme: " + name, e);
         }

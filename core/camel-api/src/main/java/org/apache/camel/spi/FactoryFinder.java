@@ -16,10 +16,7 @@
  */
 package org.apache.camel.spi;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.apache.camel.NoFactoryAvailableException;
+import java.util.Optional;
 
 /**
  * Finder to find factories from the resource classpath, usually <b>META-INF/services/org/apache/camel/</b>.
@@ -37,32 +34,26 @@ public interface FactoryFinder {
      * Creates a new class instance using the key to lookup
      *
      * @param key is the key to add to the path to find a text file containing the factory name
-     * @return a newly created instance
-     * @throws org.apache.camel.NoFactoryAvailableException is thrown if no factories exist for the given key
+     * @return a newly created instance (if exists)
      */
-    Object newInstance(String key) throws NoFactoryAvailableException;
+    Optional<Object> newInstance(String key);
 
     /**
      * Creates a new class instance using the key to lookup
      *
      * @param key is the key to add to the path to find a text file containing the factory name
-     * @param injector injector to use
-     * @param type expected type
-     * @return a newly created instance as the expected type
-     * @throws ClassNotFoundException is thrown if not found
-     * @throws java.io.IOException is thrown if loading the class or META-INF file not found
+     * @param type the class type
+     * @return a newly created instance (if exists)
      */
-    <T> List<T> newInstances(String key, Injector injector, Class<T> type) throws ClassNotFoundException, IOException;
+    <T> Optional<T> newInstance(String key, Class<T> type);
 
     /**
      * Finds the given factory class using the key to lookup.
      *
      * @param key is the key to add to the path to find a text file containing the factory name
      * @return the factory class
-     * @throws ClassNotFoundException is thrown if class not found
-     * @throws java.io.IOException is thrown if loading the class or META-INF file not found
      */
-    Class<?> findClass(String key) throws ClassNotFoundException, IOException;
+    Optional<Class<?>> findClass(String key);
 
     /**
      * Finds the given factory class using the key to lookup.
@@ -70,10 +61,8 @@ public interface FactoryFinder {
      * @param key is the key to add to the path to find a text file containing the factory name
      * @param propertyPrefix prefix on key
      * @return the factory class
-     * @throws ClassNotFoundException is thrown if not found
-     * @throws java.io.IOException is thrown if loading the class or META-INF file not found
      */
-    Class<?> findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException;
+    Optional<Class<?>> findClass(String key, String propertyPrefix);
 
     /**
      * Finds the given factory class using the key to lookup.
@@ -82,8 +71,6 @@ public interface FactoryFinder {
      * @param propertyPrefix prefix on key
      * @param clazz the class which is used for checking compatible
      * @return the factory class
-     * @throws ClassNotFoundException is thrown if not found
-     * @throws java.io.IOException is thrown if loading the class or META-INF file not found
      */
-    Class<?> findClass(String key, String propertyPrefix, Class<?> clazz) throws ClassNotFoundException, IOException;
+    Optional<Class<?>> findClass(String key, String propertyPrefix, Class<?> clazz);
 }

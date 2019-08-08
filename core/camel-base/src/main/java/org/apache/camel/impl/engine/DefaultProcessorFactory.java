@@ -31,6 +31,7 @@ import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * Default {@link ProcessorFactory} that supports using 3rd party Camel components to implement the EIP {@link Processor}.
@@ -70,16 +71,11 @@ public class DefaultProcessorFactory implements ProcessorFactory {
     public Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception {
         String name = definition.getClass().getSimpleName();
         FactoryFinder finder = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
-        try {
-            if (finder != null) {
-                Object object = finder.newInstance(name);
-                if (object instanceof ProcessorFactory) {
-                    ProcessorFactory pc = (ProcessorFactory) object;
-                    return pc.createProcessor(routeContext, definition);
-                }
+        if (finder != null) {
+            ProcessorFactory pc = finder.newInstance(name, ProcessorFactory.class).orElse(null);
+            if (pc != null) {
+                return pc.createProcessor(routeContext, definition);
             }
-        } catch (NoFactoryAvailableException e) {
-            // ignore there is no custom factory
         }
 
         return null;

@@ -20,9 +20,9 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Optional;
 import java.util.Properties;
 
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.IOHelper;
@@ -44,11 +44,11 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
     }
 
     @Override
-    public Class<?> findClass(String key, String propertyPrefix, Class<?> checkClass) throws ClassNotFoundException, IOException {
+    public Optional<Class<?>> findClass(String key, String propertyPrefix, Class<?> checkClass) {
         final String prefix = propertyPrefix != null ? propertyPrefix : "";
         final String classKey = propertyPrefix + key;
 
-        return addToClassMap(classKey, () -> {
+        Class<?> answer = addToClassMap(classKey, () -> {
             BundleEntry entry = getResource(key, checkClass);
             if (entry != null) {
                 URL url = entry.url;
@@ -69,13 +69,15 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
                     IOHelper.close(in, key, null);
                 }
             } else {
-                throw new NoFactoryAvailableException(classKey);
+                return null;
             }
         });
+
+        return Optional.ofNullable(answer);
     }
 
     @Override
-    public Class<?> findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
+    public Optional<Class<?>> findClass(String key, String propertyPrefix) {
         return findClass(key, propertyPrefix, null);
     }
 
@@ -89,7 +91,7 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
     // The clazz can make sure we get right version of class that we need
     public BundleEntry getResource(String name, Class<?> clazz) {
         BundleEntry entry = null;
-        Bundle[] bundles = null; 
+        Bundle[] bundles;
         
         bundles = bundleContext.getBundles();
         

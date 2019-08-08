@@ -17,6 +17,7 @@
 package org.apache.camel.component.rest;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.camel.Component;
@@ -147,15 +148,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
             if (name == null) {
                 name = DEFAULT_API_COMPONENT_NAME;
             }
-            try {
-                FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
-                Object instance = finder.newInstance(name);
-                if (instance instanceof RestApiProcessorFactory) {
-                    factory = (RestApiProcessorFactory) instance;
-                }
-            } catch (NoFactoryAvailableException e) {
-                // ignore
-            }
+            FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+            factory = finder.newInstance(name, RestApiProcessorFactory.class).orElse(null);
         }
 
         if (factory != null) {
