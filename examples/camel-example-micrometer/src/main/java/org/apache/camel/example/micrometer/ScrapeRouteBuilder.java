@@ -40,8 +40,8 @@ public class ScrapeRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("netty4-http:http://0.0.0.0:8088/metrics")
-                .routeId("netty4-http:scrape")
+        from("netty-http:http://0.0.0.0:8088/metrics")
+                .routeId("netty-http:scrape")
                 .log(LoggingLevel.INFO, "Scraping metrics")
                 .transform().method(prometheusMeterRegistry, "scrape");
 
