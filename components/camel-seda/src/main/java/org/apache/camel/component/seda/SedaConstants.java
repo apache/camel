@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.component.seda;
 
 public final class SedaConstants {
-    
+
     public static final int MAX_CONCURRENT_CONSUMERS = 500;
     public static final int CONCURRENT_CONSUMERS = 1;
     public static final int QUEUE_SIZE = 1000;

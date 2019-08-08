@@ -25,7 +25,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.SedaConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,7 @@ public class SedaComponent extends DefaultComponent {
     public void setQueueSize(int size) {
         queueSize = size;
     }
-    
+
     public int getQueueSize() {
         return queueSize;
     }
@@ -70,7 +69,7 @@ public class SedaComponent extends DefaultComponent {
     public void setConcurrentConsumers(int size) {
         concurrentConsumers = size;
     }
-    
+
     public int getConcurrentConsumers() {
         return concurrentConsumers;
     }
@@ -98,12 +97,12 @@ public class SedaComponent extends DefaultComponent {
     public void setDefaultBlockWhenFull(boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
     }
-    
-    
+
+
     public long getDefaultOfferTimeout() {
         return defaultOfferTimeout;
     }
-    
+
     /**
      * Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted.
      * By default, an exception will be thrown stating that the queue is full.
@@ -204,7 +203,7 @@ public class SedaComponent extends DefaultComponent {
         boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", Boolean.class, defaultBlockWhenFull);
         // if offerTimeout is set on endpoint, defaultOfferTimeout is ignored.
         long offerTimeout = getAndRemoveParameter(parameters, "offerTimeout", long.class, defaultOfferTimeout);
-        
+
         answer.setOfferTimeout(offerTimeout);
         answer.setBlockWhenFull(blockWhenFull);
         answer.configureProperties(parameters);
@@ -237,7 +236,7 @@ public class SedaComponent extends DefaultComponent {
 
     /**
      * On shutting down the endpoint
-     * 
+     *
      * @param endpoint the endpoint
      */
     void onShutdownEndpoint(SedaEndpoint endpoint) {
