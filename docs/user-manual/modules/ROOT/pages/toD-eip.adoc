@@ -166,7 +166,7 @@ This is with the following components, which have been optimised for `toD`:
 
 - camel-http
 - camel-jetty
-- camel-netty4-http
+- camel-netty-http
 - camel-undertow
 
 For the optimisation to work, then:
