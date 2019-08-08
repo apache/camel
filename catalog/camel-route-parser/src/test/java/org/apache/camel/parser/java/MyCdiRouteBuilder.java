@@ -33,7 +33,7 @@ public class MyCdiRouteBuilder extends RouteBuilder {
     private Endpoint loga;
 
     @Inject
-    @Uri("netty4-http:http:someserver:80/hello")
+    @Uri("netty-http:http:someserver:80/hello")
     private Endpoint mynetty;
 
     @Override

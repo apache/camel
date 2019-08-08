@@ -36,7 +36,7 @@ public class MyCdiConcatRouteBuilder extends RouteBuilder {
     @Uri("log:a")
     private Endpoint loga;
 
-    @EndpointInject("netty4-http:http:someserver:" + PORT + "/hello")
+    @EndpointInject("netty-http:http:someserver:" + PORT + "/hello")
     private Endpoint mynetty;
 
     @Override
