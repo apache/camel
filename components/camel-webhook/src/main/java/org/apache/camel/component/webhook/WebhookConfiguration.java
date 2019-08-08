@@ -202,7 +202,7 @@ public class WebhookConfiguration implements Cloneable {
     }
 
     /**
-     * The Camel Rest component to use for the REST transport, such as netty4-http.
+     * The Camel Rest component to use for the REST transport, such as netty-http.
      */
     public void setWebhookComponentName(String webhookComponentName) {
         this.webhookComponentName = webhookComponentName;
