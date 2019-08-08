@@ -1284,7 +1284,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     // CHECKSTYLE:OFF
     private static boolean skipComponentOption(ComponentModel model, ComponentOptionModel option) {
-        if ("netty4-http".equals(model.getScheme()) || "netty-http".equals(model.getScheme())) {
+        if ("netty-http".equals(model.getScheme())) {
             String name = option.getName();
             if (name.equals("textline") || name.equals("delimiter") || name.equals("autoAppendDelimiter") || name.equals("decoderMaxLineLength") || name.equals("encoding")
                 || name.equals("allowDefaultCodec") || name.equals("udpConnectionlessSending") || name.equals("networkInterface") || name.equals("clientMode")
