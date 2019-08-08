@@ -18,7 +18,7 @@ The actual HTTP client that is used to call the REST service is `camel-http` whi
 in the `pom.xml` file. You can use other HTTP clients with the REST producer such as
 
 - camel-http
-- camel-netty4-http
+- camel-netty-http
 - camel-jetty
 - camel-restlet
 - camel-undertow
