@@ -571,8 +571,8 @@
         <include>org.apache.camel:camel-mybatis-starter</include>
         <include>org.apache.camel:camel-nagios-starter</include>
         <include>org.apache.camel:camel-nats-starter</include>
-        <include>org.apache.camel:camel-netty-starter</include>
         <include>org.apache.camel:camel-netty-http-starter</include>
+        <include>org.apache.camel:camel-netty-starter</include>
         <include>org.apache.camel:camel-nsq-starter</include>
         <include>org.apache.camel:camel-ognl-starter</include>
         <include>org.apache.camel:camel-olingo2-starter</include>

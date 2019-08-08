@@ -2557,12 +2557,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-netty-starter</artifactId>
+      <artifactId>camel-netty-http-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-netty-http-starter</artifactId>
+      <artifactId>camel-netty-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

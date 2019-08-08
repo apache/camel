@@ -607,8 +607,8 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 | link:camel-netty/src/main/docs/netty-component.adoc[Netty] (camel-netty) +
 `netty:protocol:host:port` | 2.14 | Socket level networking using TCP or UDP with the Netty 4.x library.
 
-| link:camel-netty4-http/src/main/docs/netty4-http-component.adoc[Netty4 HTTP] (camel-netty4-http) +
-`netty4-http:protocol:host:port/path` | 2.14 | Netty HTTP server and client using the Netty 4.x library.
+| link:camel-netty-http/src/main/docs/netty-http-component.adoc[Netty HTTP] (camel-netty-http) +
+`netty-http:protocol:host:port/path` | 2.14 | Netty HTTP server and client using the Netty 4.x library.
 
 | link:camel-nsq/src/main/docs/nsq-component.adoc[NSQ] (camel-nsq) +
 `nsq:servers` | 2.23 | Represents a nsq endpoint.
