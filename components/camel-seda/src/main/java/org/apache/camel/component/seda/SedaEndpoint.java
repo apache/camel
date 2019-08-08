@@ -45,7 +45,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.SedaConstants;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -336,12 +335,12 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
-    
+
     @ManagedAttribute
     public long getOfferTimeout() {
         return offerTimeout;
     }
-    
+
     /**
      * offerTimeout (in milliseconds)  can be added to the block case when queue is full.
      * You can disable timeout by using 0 or a negative value.

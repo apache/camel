@@ -20,14 +20,14 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.SedaConstants;
+import org.apache.camel.component.seda.SedaConstants;
 import org.junit.Test;
 
 /**
  *
  */
 public class SameVmQueueSizeAndNoSizeTest extends ContextTestSupport {
-    
+
 
     @Test
     public void testSameQueue() throws Exception {

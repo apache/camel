@@ -21,11 +21,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.SedaConstants;
 import org.junit.Test;
 
 public class SedaConfigureTest extends ContextTestSupport {
-    
+
 
     @SuppressWarnings("unchecked")
     @Test
