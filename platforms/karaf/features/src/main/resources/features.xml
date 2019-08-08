@@ -1854,10 +1854,10 @@
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-netty/${project.version}</bundle>
   </feature>
-  <feature name='camel-netty4-http' version='${project.version}' start-level='50'>
+  <feature name='camel-netty-http' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-netty</feature>
     <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-netty4-http/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-netty-http/${project.version}</bundle>
   </feature>
   <feature name='camel-nsq' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

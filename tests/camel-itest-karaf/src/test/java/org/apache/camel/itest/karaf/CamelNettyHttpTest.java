@@ -21,9 +21,9 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelNetty4HttpTest extends BaseKarafTest {
+public class CamelNettyHttpTest extends BaseKarafTest {
 
-    public static final String COMPONENT = extractName(CamelNetty4HttpTest.class);
+    public static final String COMPONENT = extractName(CamelNettyHttpTest.class);
 
     @Test
     public void test() throws Exception {
