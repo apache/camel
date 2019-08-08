@@ -54,7 +54,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-netty4-http</artifactId>
+            <artifactId>camel-netty-http</artifactId>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
