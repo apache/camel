@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class CamelNetty4HttpTest extends AbstractSpringBootTestSupport {
+public class CamelNettyHttpTest extends AbstractSpringBootTestSupport {
 
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
@@ -34,7 +34,7 @@ public class CamelNetty4HttpTest extends AbstractSpringBootTestSupport {
 
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
-                .module(inferModuleName(CamelNetty4HttpTest.class))
+                .module(inferModuleName(CamelNettyHttpTest.class))
                 //.dependency(DependencyResolver.withVersion("org.hibernate.validator:hibernate-validator"))
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseNettyTest$|ManagedNettyEndpointTest$|NettyMixedCaseHttpPathTest$|NettyHttpContentTypeTest$)")
                 .dependency("org.hibernate.validator:hibernate-validator")
