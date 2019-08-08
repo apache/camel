@@ -3417,12 +3417,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                     log.debug("No existing PropertiesComponent has been configured, created a new default PropertiesComponent with name: properties");
                     globalOptions.put(PropertiesComponent.DEFAULT_CREATED, "true");
                 }
-                if (comp instanceof PropertiesComponent) {
-                    addComponent("properties", (PropertiesComponent) comp);
-                }
-                if (propertiesComponent == null) {
-                    throw new IllegalStateException("Cannot auto create Properties component");
-                }
+            }
+            if (comp instanceof PropertiesComponent) {
+                addComponent("properties", (PropertiesComponent) comp);
+                // this adds comp as properties component and sets this.propertiesComponent = comp
+            }
+            if (propertiesComponent == null) {
+                throw new IllegalStateException("Cannot auto create Properties component");
             }
         }
         return propertiesComponent;
