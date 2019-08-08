@@ -53,7 +53,7 @@ public class ArtemisAmqpIntTest extends CamelBlueprintTestSupport {
     @Test
     public void testEmbeddedBroker() throws Exception {
         //trigger
-        String response = template.requestBody("netty4-http:http://localhost:{{netty.port}}/message", null, String.class);
+        String response = template.requestBody("netty-http:http://localhost:{{netty.port}}/message", null, String.class);
 
         //response validation
         assertEquals("not expected", "Hello from Camel's AMQP example", response);

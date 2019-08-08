@@ -46,7 +46,7 @@
 
     <!-- AMQP producer example (HTTP triggered) -->
     <route id="amqp-producer">
-      <from uri="netty4-http:http:localhost:{{netty.port}}/message"/>
+      <from uri="netty-http:http:localhost:{{netty.port}}/message"/>
       <log message="got Netty request, about to send AMQP message."/>
       <to uri="amqp:queue:myqueue"/>
     </route>
