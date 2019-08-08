@@ -38,7 +38,7 @@ public interface NettyHttpEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Netty4 HTTP component.
+     * Builder for endpoint consumers for the Netty HTTP component.
      */
     public interface NettyHttpEndpointConsumerBuilder
             extends
@@ -760,7 +760,7 @@ public interface NettyHttpEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the Netty4 HTTP component.
+     * Advanced builder for endpoint consumers for the Netty HTTP component.
      */
     public interface AdvancedNettyHttpEndpointConsumerBuilder
             extends
@@ -1873,7 +1873,7 @@ public interface NettyHttpEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the Netty4 HTTP component.
+     * Builder for endpoint producers for the Netty HTTP component.
      */
     public interface NettyHttpEndpointProducerBuilder
             extends
@@ -2570,7 +2570,7 @@ public interface NettyHttpEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the Netty4 HTTP component.
+     * Advanced builder for endpoint producers for the Netty HTTP component.
      */
     public interface AdvancedNettyHttpEndpointProducerBuilder
             extends
@@ -3373,7 +3373,7 @@ public interface NettyHttpEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Netty4 HTTP component.
+     * Builder for endpoint for the Netty HTTP component.
      */
     public interface NettyHttpEndpointBuilder
             extends
@@ -3910,7 +3910,7 @@ public interface NettyHttpEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Netty4 HTTP component.
+     * Advanced builder for endpoint for the Netty HTTP component.
      */
     public interface AdvancedNettyHttpEndpointBuilder
             extends
@@ -4465,12 +4465,12 @@ public interface NettyHttpEndpointBuilderFactory {
         }
     }
     /**
-     * Netty4 HTTP (camel-netty4-http)
+     * Netty HTTP (camel-netty-http)
      * Netty HTTP server and client using the Netty 4.x library.
      * 
      * Category: http
      * Available as of version: 2.14
-     * Maven coordinates: org.apache.camel:camel-netty4-http
+     * Maven coordinates: org.apache.camel:camel-netty-http
      * 
      * Syntax: <code>netty-http:protocol:host:port/path</code>
      * 
