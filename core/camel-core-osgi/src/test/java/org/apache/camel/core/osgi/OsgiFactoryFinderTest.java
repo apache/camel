@@ -30,18 +30,13 @@ public class OsgiFactoryFinderTest extends CamelOsgiTestSupport {
         Class<?> clazz = finder.findClass("file_test", "strategy.factory.").orElse(null);
         assertNotNull("We should get the file strategy factory here", clazz);
         
-        try {
-            finder.findClass("nofile", "strategy.factory.");
-            fail("We should get exception here");
-        } catch (Exception ex) {
-            assertTrue("Should get NoFactoryAvailableException", ex instanceof NoFactoryAvailableException);
-        }
-        
+        assertFalse(finder.findClass("nofile", "strategy.factory.").isPresent());
+
         try {
             finder.findClass("file_test", "nostrategy.factory.");
             fail("We should get exception here");
         } catch (Exception ex) {
-            assertTrue("Should get IOException", ex instanceof IOException);
+            assertTrue("Should get IOException", ex.getCause() instanceof IOException);
         }
     }
 
