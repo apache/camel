@@ -77,7 +77,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *webhookAutoRegister* (common) | Automatically register the webhook at startup and unregister it on shutdown. | true | boolean
 | *webhookBasePath* (common) | The first (base) path element where the webhook will be exposed. It's a good practice to set it to a random string, so that it cannot be guessed by unauthorized parties. |  | String
-| *webhookComponentName* (common) | The Camel Rest component to use for the REST transport, such as netty4-http. |  | String
+| *webhookComponentName* (common) | The Camel Rest component to use for the REST transport, such as netty-http. |  | String
 | *webhookExternalUrl* (common) | The URL of the current service as seen by the webhook provider |  | String
 | *webhookPath* (common) | The path where the webhook endpoint will be exposed (relative to basePath, if any) |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -122,7 +122,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.webhook.configuration.rest-configuration* | The Camel Rest Configuration used by the webhook. |  | RestConfiguration
 | *camel.component.webhook.configuration.webhook-auto-register* | Automatically register the webhook at startup and unregister it on shutdown. | true | Boolean
 | *camel.component.webhook.configuration.webhook-base-path* | The first (base) path element where the webhook will be exposed. It's a good practice to set it to a random string, so that it cannot be guessed by unauthorized parties. |  | String
-| *camel.component.webhook.configuration.webhook-component-name* | The Camel Rest component to use for the REST transport, such as netty4-http. |  | String
+| *camel.component.webhook.configuration.webhook-component-name* | The Camel Rest component to use for the REST transport, such as netty-http. |  | String
 | *camel.component.webhook.configuration.webhook-external-url* | The URL of the current service as seen by the webhook provider |  | String
 | *camel.component.webhook.configuration.webhook-path* | The path where the webhook endpoint will be exposed (relative to basePath, if any) |  | String
 | *camel.component.webhook.enabled* | Whether to enable auto configuration of the webhook component. This is enabled by default. |  | Boolean
