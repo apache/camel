@@ -22,8 +22,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DebugNoLazyTypeConverterTest.class);
 
     @Override
     protected boolean isLazyLoadingTypeConverter() {
@@ -43,7 +47,7 @@ public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
         // processor
         // from your Java editor you can just add a breakpoint in the code line
         // below
-        log.info("Before " + definition + " with body " + exchange.getIn().getBody());
+        LOG.info("Before " + definition + " with body " + exchange.getIn().getBody());
     }
     // END SNIPPET: e1
 

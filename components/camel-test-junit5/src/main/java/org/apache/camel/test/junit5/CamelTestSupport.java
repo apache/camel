@@ -108,7 +108,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * with some routes along with a {@link org.apache.camel.ProducerTemplate} for
  * use in the test case Do <tt>not</tt> use this class for Spring Boot testing.
  */
-public abstract class CamelTestSupport extends TestSupport implements BeforeEachCallback, AfterAllCallback, BeforeTestExecutionCallback, AfterTestExecutionCallback {
+public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCallback, BeforeTestExecutionCallback, AfterTestExecutionCallback {
 
     /**
      * JVM system property which can be set to true to turn on dumping route
@@ -357,9 +357,9 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
 
     @BeforeEach
     public void setUp() throws Exception {
-        log.info("********************************************************************************");
-        log.info("Testing: " + currentTestName + "(" + getClass().getName() + ")");
-        log.info("********************************************************************************");
+        LOG.info("********************************************************************************");
+        LOG.info("Testing: " + currentTestName + "(" + getClass().getName() + ")");
+        LOG.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
             INSTANCE.set(this);
@@ -421,7 +421,7 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
     }
 
     private void doSetUp() throws Exception {
-        log.debug("setUp test");
+        LOG.debug("setUp test");
         // jmx is enabled if we have configured to use it, or if dump route
         // coverage is enabled (it requires JMX)
         boolean jmx = useJmx() || isRouteCoverageEnabled();
@@ -445,7 +445,7 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
         // set debugger if enabled
         if (isUseDebugger()) {
             if (context.getStatus().equals(ServiceStatus.Started)) {
-                log.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
+                LOG.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
                 // we need to stop the context first to setup the debugger
                 context.stop();
             }
@@ -492,7 +492,7 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
         String include = getRouteFilterIncludePattern();
         String exclude = getRouteFilterExcludePattern();
         if (include != null || exclude != null) {
-            log.info("Route filtering pattern: include={}, exclude={}", include, exclude);
+            LOG.info("Route filtering pattern: include={}, exclude={}", include, exclude);
             context.getExtension(Model.class).setRouteFilterPattern(include, exclude);
         }
 
@@ -502,23 +502,23 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
         if (isUseRouteBuilder()) {
             RoutesBuilder[] builders = createRouteBuilders();
             for (RoutesBuilder builder : builders) {
-                log.debug("Using created route builder: " + builder);
+                LOG.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
             replaceFromEndpoints();
             boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
             if (skip) {
-                log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+                LOG.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
             } else if (isUseAdviceWith()) {
-                log.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
+                LOG.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
             } else {
                 startCamelContext();
             }
         } else {
             replaceFromEndpoints();
-            log.debug("Using route builder from the created context: " + context);
+            LOG.debug("Using route builder from the created context: " + context);
         }
-        log.debug("Routing Rules are: " + context.getRoutes());
+        LOG.debug("Routing Rules are: " + context.getRoutes());
 
         assertValidContext(context);
     }
@@ -542,9 +542,9 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
     public void tearDown() throws Exception {
         long time = watch.taken();
 
-        log.info("********************************************************************************");
-        log.info("Testing done: " + currentTestName + "(" + getClass().getName() + ")");
-        log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
+        LOG.info("********************************************************************************");
+        LOG.info("Testing done: " + currentTestName + "(" + getClass().getName() + ")");
+        LOG.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
 
         // if we should dump route stats, then write that to a file
         if (isRouteCoverageEnabled()) {
@@ -555,7 +555,7 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
             ManagedCamelContext mc = context != null ? context.getExtension(ManagedCamelContext.class) : null;
             ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
             if (managedCamelContext == null) {
-                log.warn("Cannot dump route coverage to file as JMX is not enabled. "
+                LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "
                          + "Add camel-management-impl JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
             } else {
                 logCoverageSummary(managedCamelContext);
@@ -568,14 +568,14 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
                 file.mkdirs();
                 file = new File(dir, name);
 
-                log.info("Dumping route coverage to file: {}", file);
+                LOG.info("Dumping route coverage to file: {}", file);
                 InputStream is = new ByteArrayInputStream(combined.getBytes());
                 OutputStream os = new FileOutputStream(file, false);
                 IOHelper.copyAndCloseInput(is, os);
                 IOHelper.close(os);
             }
         }
-        log.info("********************************************************************************");
+        LOG.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
             // will tear down test specially in CamelTearDownRule
@@ -677,7 +677,7 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
         }
 
         builder.append(routesSummary);
-        log.info(builder.toString());
+        LOG.info(builder.toString());
     }
 
     /**
@@ -953,7 +953,7 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
         // jndi.properties is optional
         InputStream in = getClass().getClassLoader().getResourceAsStream("jndi.properties");
         if (in != null) {
-            log.debug("Using jndi.properties from classpath root");
+            LOG.debug("Using jndi.properties from classpath root");
             properties.load(in);
         } else {
             properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
@@ -1013,7 +1013,7 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
      * @return the endpoint
      */
     protected Endpoint resolveMandatoryEndpoint(String uri) {
-        return resolveMandatoryEndpoint(context, uri);
+        return TestSupport.resolveMandatoryEndpoint(context, uri);
     }
 
     /**
@@ -1025,7 +1025,7 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
      * @return the endpoint
      */
     protected <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
-        return resolveMandatoryEndpoint(context, uri, endpointType);
+        return TestSupport.resolveMandatoryEndpoint(context, uri, endpointType);
     }
 
     /**
@@ -1055,7 +1055,8 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
      * @throws NoSuchEndpointException is the mock endpoint does not exists
      */
     protected MockEndpoint getMockEndpoint(String uri, boolean create) throws NoSuchEndpointException {
-        // look for existing mock endpoints that have the same queue name, and to
+        // look for existing mock endpoints that have the same queue name, and
+        // to
         // do that we need to normalize uri and strip out query parameters and
         // whatnot
         String n;
@@ -1144,7 +1145,7 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
      * Creates an exchange with the given body
      */
     protected Exchange createExchangeWithBody(Object body) {
-        return createExchangeWithBody(context, body);
+        return TestSupport.createExchangeWithBody(context, body);
     }
 
     /**
@@ -1157,7 +1158,7 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
         Expression expression = language.createExpression(expressionText);
         assertNotNull(expression, "No Expression could be created for text: " + expressionText + " language: " + language);
 
-        assertExpression(expression, exchange, expectedValue);
+        TestSupport.assertExpression(expression, exchange, expectedValue);
     }
 
     /**
@@ -1170,7 +1171,7 @@ public abstract class CamelTestSupport extends TestSupport implements BeforeEach
         Predicate predicate = language.createPredicate(expressionText);
         assertNotNull(predicate, "No Predicate could be created for text: " + expressionText + " language: " + language);
 
-        assertPredicate(predicate, exchange, expected);
+        TestSupport.assertPredicate(predicate, exchange, expected);
     }
 
     /**

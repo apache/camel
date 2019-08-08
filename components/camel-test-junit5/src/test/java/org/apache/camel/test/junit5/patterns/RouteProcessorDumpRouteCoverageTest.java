@@ -22,6 +22,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
