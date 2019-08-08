@@ -55,7 +55,6 @@ a single RouteBuilder
 [[ErrorHandler-ShortSummaryoftheprovidedErrorHandlers]]
 == Short Summary of the provided Error Handlers
 
-[[ErrorHandler-DefaultErrorHandlerhttps://cwiki.apache.org/confluence/pages/viewpage.action?pageId=113880]]
 === DefaultErrorHandler
 
 The DefaultErrorHandler is the default
@@ -63,7 +62,6 @@ error handler in Camel. Unlike xref:dead-letter-channel.adoc[Dead Letter
 Channel] it does not have any dead letter queue, and do *not* handle
 exceptions by default.
 
-[[ErrorHandler-DeadLetterChannelhttps://cwiki.apache.org/confluence/pages/viewpage.action?pageId=49482]]
 === Dead Letter Channel
 
 The Dead Letter Channel will redeliver at

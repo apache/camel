@@ -280,8 +280,7 @@ value in the incoming message body.
 
 Any of the endpoint options can be provided in either the endpoint URI,
 or dynamically in a message header. The message header name must be of
-the format
-*CamelFacebook.https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=option&linkCreation=true&fromPageId=34020899[option]*.
+the format `CamelFacebook.option`.
 For example, the *userId* option value in the previous route could
 alternately be provided in the message header *CamelFacebook.userId*.
 Note that the inBody option overrides message header, e.g. the endpoint
@@ -296,8 +295,7 @@ with a facebook4j.FacebookException cause.
 == Consumer Endpoints:
 
 Any of the producer endpoints that take a
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=reading&linkCreation=true&fromPageId=34020899[reading#reading]
-parameter can be used as a consumer endpoint. The polling consumer uses
+reading parameter can be used as a consumer endpoint. The polling consumer uses
 the *since* and *until* fields to get responses within the polling
 interval. In addition to other reading fields, an initial *since* value
 can be provided in the endpoint for the first poll.
@@ -313,10 +311,7 @@ executed five times (once for each Post).
 The *reading* option of type *facebook4j.Reading* adds support for
 reading parameters, which allow selecting specific fields, limits the
 number of results, etc. For more information see
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=Graph+API&linkCreation=true&fromPageId=34020899[Graph
-API#reading] -
-https://developers.facebook.com/docs/reference/api/#reading[Facebook
-Developers].
+https://developers.facebook.com/docs/reference/api/#reading[Graph API documentation].
 
 It is also used by consumer endpoints to poll Facebook data to avoid
 sending duplicate messages across polls.
@@ -328,10 +323,8 @@ options in either the endpoint URI or exchange header with
 
 == Message header
 
-Any of the
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=URI+options&linkCreation=true&fromPageId=34020899[URI
-options#urioptions] can be provided in a message header for producer
-endpoints with *CamelFacebook.* prefix.
+Any of the URI options can be provided in a message header for producer
+endpoints with `CamelFacebook.` prefix.
 
 == Message body
 

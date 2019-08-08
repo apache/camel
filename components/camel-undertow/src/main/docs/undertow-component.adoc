@@ -229,6 +229,5 @@ xref:manual::faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty matc
 
 If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the
-https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=46339[Servlet
-Transport].
+xref:servlet-component.adoc[Servlet Transport].
 

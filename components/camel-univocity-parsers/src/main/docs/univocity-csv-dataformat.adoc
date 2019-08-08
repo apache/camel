@@ -16,9 +16,7 @@ tabulation
 Thus there are 3 data formats based on uniVocity-parsers.
 
 If you use Maven you can just add the following to your pom.xml,
-substituting the version number for the latest and greatest release
-(see https://cwiki.apache.org/confluence/display/CAMEL/Download[the
-download page for the latest versions]).
+substituting the version number for the latest and greatest release.
 
 [source,xml]
 ----------------------------------------------------
