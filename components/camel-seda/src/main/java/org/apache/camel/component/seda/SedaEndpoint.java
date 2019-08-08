@@ -195,6 +195,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     /**
      * Get's the {@link QueueReference} for the this endpoint.
+     *
      * @return the reference, or <tt>null</tt> if no queue reference exists.
      */
     public synchronized QueueReference getQueueReference() {
@@ -417,7 +418,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         this.purgeWhenStopping = purgeWhenStopping;
     }
 
-/**
+    /**
      * Returns the current pending exchanges
      */
     @Override

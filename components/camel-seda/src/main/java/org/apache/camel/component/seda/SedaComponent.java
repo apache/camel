@@ -98,7 +98,6 @@ public class SedaComponent extends DefaultComponent {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
     }
 
-
     public long getDefaultOfferTimeout() {
         return defaultOfferTimeout;
     }
