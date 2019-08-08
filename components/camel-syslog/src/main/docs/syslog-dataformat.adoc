@@ -35,7 +35,6 @@ for this component:
 == RFC3164 Syslog protocol
 
 Syslog uses the user datagram protocol (UDP)
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=1&linkCreation=true&fromPageId=24185759[1]
 as its underlying transport layer mechanism.  
 The UDP port that has been assigned to syslog is 514.
 

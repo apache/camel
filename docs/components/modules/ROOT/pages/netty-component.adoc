@@ -746,9 +746,7 @@ for Netty consumers, and a
 Netty producers.
 
 Then in the Camel routes we can refer to this worker pools by
-configuring the `workerPool` option in the
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=URI&linkCreation=true&fromPageId=45877614[URI]
-as shown below:
+configuring the `workerPool` option in the URI as shown below:
 
 [source,xml]
 ----

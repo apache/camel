@@ -155,9 +155,7 @@ using TCP
 sendConfirmEmai bean
 
 What to notice here is that the `to` is not the end of the route (the
-world
-image:https://cwiki.apache.org/confluence/s/en_GB/8100/4410012ac87e845516b70bc69b6f7a893eabaa5a/_/images/icons/emoticons/wink.svg[(wink)])
-in this example it's used in the middle of the
+world) in this example it's used in the middle of the
 xref:pipeline-eip.adoc[Pipes and filters]. In fact we can change
 the `bean` types to `to` as well:
 

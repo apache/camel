@@ -377,9 +377,7 @@ in the constructor for the bean:
 Sometimes you want to easily mock and skip sending to a certain
 endpoints. So the message is detoured and send to the mock endpoint
 only. You can now use the `mockEndpointsAndSkip`
-method using AdviceWith or the
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=Test+Kit&linkCreation=true&fromPageId=52081[Test
-Kit]. The example below will skip sending to the two endpoints
+method using AdviceWith. The example below will skip sending to the two endpoints
 `"direct:foo"`, and `"direct:bar"`.
 
 [source,java]

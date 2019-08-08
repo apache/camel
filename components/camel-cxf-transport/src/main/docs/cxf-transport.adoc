@@ -1,5 +1,7 @@
+= CXF Transport Component
+
 [[CamelTransportforCXF-WhatstheCamelTransportforCXF]]
-= What's the Camel Transport for CXF
+== What's the Camel Transport for CXF
 
 In CXF you offer or consume a webservice by defining its address. The
 first part of the address specifies the protocol to use. For example
@@ -12,7 +14,7 @@ to a camel direct endpoint.
 
 Technically speaking Camel transport for CXF is a component which
 implements the
-http://cwiki.apache.org/CXF20DOC/cxf-architecture.html#CXFArchitecture-Transports[CXF
+https://cxf.apache.org/docs/cxf-architecture.html#CXFArchitecture-Transports[CXF
 transport API] with the Camel core library. This allows you to easily
 use Camel's routing engine and integration patterns support together
 with your CXF services.

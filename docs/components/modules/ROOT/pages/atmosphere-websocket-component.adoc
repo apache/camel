@@ -13,7 +13,7 @@ support the Websocket transport in various Servlet containers (e..g.,
 Jetty, Tomcat, ...).
 
 Unlike the
-https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=39621544[Websocket]
+xref:websocket-component.adoc[Websocket]
 component that starts the embedded Jetty server, this component uses the
 servlet provider of the container.
 
@@ -217,5 +217,4 @@ And the equivalent Spring sample:
 
 * xref:servlet-component.adoc[SERVLET]
 * xref:ahc-ws-component.adoc[AHC-WS]
-*
-https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=39621544[Websocket]
+* xref:websocket-component.adoc[Websocket]

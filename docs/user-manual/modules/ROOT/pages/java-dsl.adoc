@@ -40,8 +40,7 @@ public class MyRouteBuilder extends RouteBuilder {
 -------------------------------------------------------------------------
 
 In the `configure` method we can define Camel Routes.
-In the example above we have a single route, which pickup
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=File&linkCreation=true&fromPageId=30747520[File]s,
+In the example above we have a single route, which pickup files,
 (eg the from).
 
 [source,java]
