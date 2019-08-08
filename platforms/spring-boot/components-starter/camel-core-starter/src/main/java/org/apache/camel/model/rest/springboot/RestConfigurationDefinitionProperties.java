@@ -92,7 +92,7 @@ public class RestConfigurationDefinitionProperties {
      * Sets a leading context-path the REST services will be using. This can be
      * used when using components such as camel-servlet where the deployed web
      * application is deployed using a context-path. Or for components such as
-     * camel-jetty or camel-netty4-http that includes a HTTP server.
+     * camel-jetty or camel-netty-http that includes a HTTP server.
      */
     private String contextPath;
     /**

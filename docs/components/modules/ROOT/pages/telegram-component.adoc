@@ -413,13 +413,13 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 The Telegram component supports usage in the *webhook mode* using the *camel-webhook* component.
 
 In order to enable webhook mode, users need first to add a REST implementation to their application.
-Maven users, for example, can add *netty4-http* to their `pom.xml` file:
+Maven users, for example, can add *netty-http* to their `pom.xml` file:
 
 [source,xml]
 ------------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-netty4-http</artifactId>
+    <artifactId>camel-netty-http</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>

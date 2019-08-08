@@ -123,7 +123,7 @@ The component supports 8 options, which are listed below.
 The following components support rest consumer (Rest DSL):
 
 * camel-coap
-* camel-netty4-http
+* camel-netty-http
 * camel-jetty
 * camel-restlet
 * camel-servlet
@@ -133,7 +133,7 @@ The following components support rest consumer (Rest DSL):
 The following components support rest producer:
 
 * camel-http
-* camel-netty4-http
+* camel-netty-http
 * camel-jetty
 * camel-restlet
 * camel-undertow
