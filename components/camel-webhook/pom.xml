@@ -49,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-netty4-http</artifactId>
+            <artifactId>camel-netty-http</artifactId>
             <scope>test</scope>
         </dependency>
 
