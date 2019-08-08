@@ -2245,12 +2245,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-netty4-http</artifactId>
+        <artifactId>camel-netty-http</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-netty4-http-starter</artifactId>
+        <artifactId>camel-netty-http-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
