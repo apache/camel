@@ -21,7 +21,6 @@ import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.TypeConverter;
@@ -172,12 +171,7 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     @Override
     protected Injector createInjector() {
         FactoryFinder finder = getDefaultFactoryFinder();
-        try {
-            return (Injector) finder.newInstance("Injector");
-        } catch (NoFactoryAvailableException e) {
-            // lets use the default injector
-            return new DefaultInjector(this);
-        }
+        return finder.newInstance("Injector", Injector.class).orElse(new DefaultInjector(this));
     }
 
     @Override
