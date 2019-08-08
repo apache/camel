@@ -302,11 +302,7 @@ public class RestEndpoint extends DefaultEndpoint {
             // lookup on classpath using factory finder to automatic find it (just add camel-swagger-java to classpath etc)
             try {
                 FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
-                Object instance = finder.newInstance(DEFAULT_API_COMPONENT_NAME);
-                if (instance instanceof RestProducerFactory) {
-                    // this factory from camel-swagger-java will facade the http component in use
-                    apiDocFactory = (RestProducerFactory) instance;
-                }
+                apiDocFactory = finder.newInstance(DEFAULT_API_COMPONENT_NAME, RestProducerFactory.class).orElse(null);
                 parameters.put("apiDoc", apiDoc);
             } catch (NoFactoryAvailableException e) {
                 throw new IllegalStateException("Cannot find camel-swagger-java on classpath to use with api-doc: " + apiDoc);
