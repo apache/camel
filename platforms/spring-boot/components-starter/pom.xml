@@ -283,7 +283,6 @@
     <module>camel-nats-starter</module>
     <module>camel-netty-http-starter</module>
     <module>camel-netty-starter</module>
-    <module>camel-netty4-http-starter</module>
     <module>camel-nsq-starter</module>
     <module>camel-ognl-starter</module>
     <module>camel-olingo2-starter</module>
