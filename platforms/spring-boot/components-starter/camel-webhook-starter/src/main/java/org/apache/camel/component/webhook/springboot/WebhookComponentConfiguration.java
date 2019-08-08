@@ -93,7 +93,7 @@ public class WebhookComponentConfiguration
         private RestConfiguration restConfiguration;
         /**
          * The Camel Rest component to use for the REST transport, such as
-         * netty4-http.
+         * netty-http.
          */
         private String webhookComponentName;
         /**

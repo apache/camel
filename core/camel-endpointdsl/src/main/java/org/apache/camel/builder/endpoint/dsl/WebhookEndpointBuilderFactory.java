@@ -80,7 +80,7 @@ public interface WebhookEndpointBuilderFactory {
         }
         /**
          * The Camel Rest component to use for the REST transport, such as
-         * netty4-http.
+         * netty-http.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

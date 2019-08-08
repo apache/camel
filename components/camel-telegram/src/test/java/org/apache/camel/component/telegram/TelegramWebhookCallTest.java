@@ -45,7 +45,7 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
             mock.expectedBodiesReceived("aho");
             mock.expectedMinimumMessageCount(1);
 
-            template().sendBodyAndHeader("netty4-http:" + url, content, Exchange.CONTENT_TYPE, "application/json");
+            template().sendBodyAndHeader("netty-http:" + url, content, Exchange.CONTENT_TYPE, "application/json");
             mock.assertIsSatisfied();
         }
     }
