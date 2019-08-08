@@ -20,7 +20,7 @@ The following Camel components supports the Rest DSL. See the bottom of
 this page for how to integrate a component with the Rest DSL.
 
 * xref:components::rest-component.adoc[came-rest] *required* contains the base rest component needed by Rest DSL
-* xref:components::netty4-http-component.adoc[camel-netty4-http] (also
+* xref:components::netty-http-component.adoc[camel-netty-http] (also
 supports Swagger Java)
 * xref:components::jetty-component.adoc[camel-jetty] (also
 supports Swagger Java)
@@ -499,7 +499,7 @@ bindings.
 
 |contextPath |-|Leading context-path the REST services will be using.
  This can be used when using components such as SERVLET where the deployed web application is deployed using a
- context-path.  Or for components such as `camel-jetty` or `camel-netty4-http` that includes a HTTP server.
+ context-path.  Or for components such as `camel-jetty` or `camel-netty-http` that includes a HTTP server.
 |apiContextPath | - |A leading API context-path the REST API services will be using.
 
                     This can be used when using components such as `camel-servlet` where the deployed web application

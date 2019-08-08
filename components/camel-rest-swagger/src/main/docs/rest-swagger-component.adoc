@@ -9,7 +9,7 @@ delegates to a component implementing the _RestProducerFactory_
 interface. Currently known working components are:
 
 * xref:http-component.adoc[http]
-* xref:netty4-http-component.adoc[netty4-http]
+* xref:netty-http-component.adoc[netty-http]
 * xref:restlet-component.adoc[restlet]
 * xref:jetty-component.adoc[jetty]
 * xref:undertow-component.adoc[undertow]
