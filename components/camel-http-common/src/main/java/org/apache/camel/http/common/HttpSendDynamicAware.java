@@ -77,8 +77,8 @@ public class HttpSendDynamicAware implements SendDynamicAware {
                     params.put("httpUri", host);
                 } else if (params.containsKey("httpURI")) {
                     params.put("httpURI", host);
-                } else if ("netty4-http".equals(scheme)) {
-                    // the netty4-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
+                } else if ("netty-http".equals(scheme)) {
+                    // the netty-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
                     params.remove("path");
                 }
             }
