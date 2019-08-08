@@ -223,21 +223,21 @@ public class CamelCatalogTest {
         map.put("path", "foo/bar");
         map.put("disconnect", "true");
 
-        String uri = catalog.asEndpointUri("netty4-http", map, true);
-        assertEquals("netty4-http:http:localhost:8080/foo/bar?disconnect=true", uri);
+        String uri = catalog.asEndpointUri("netty-http", map, true);
+        assertEquals("netty-http:http:localhost:8080/foo/bar?disconnect=true", uri);
 
         // lets switch protocol
         map.put("protocol", "https");
 
-        uri = catalog.asEndpointUri("netty4-http", map, true);
-        assertEquals("netty4-http:https:localhost:8080/foo/bar?disconnect=true", uri);
+        uri = catalog.asEndpointUri("netty-http", map, true);
+        assertEquals("netty-http:https:localhost:8080/foo/bar?disconnect=true", uri);
 
         // lets set a query parameter in the path
         map.put("path", "foo/bar?verbose=true");
         map.put("disconnect", "true");
 
-        uri = catalog.asEndpointUri("netty4-http", map, true);
-        assertEquals("netty4-http:https:localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
+        uri = catalog.asEndpointUri("netty-http", map, true);
+        assertEquals("netty-http:https:localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
     }
 
     @Test
@@ -322,21 +322,21 @@ public class CamelCatalogTest {
         map.put("host", "a-b-c.hostname.tld");
         map.put("port", "8080");
         map.put("path", "anything");
-        String uri = catalog.asEndpointUri("netty4-http", map, false);
-        assertEquals("netty4-http:http:a-b-c.hostname.tld:8080/anything", uri);
+        String uri = catalog.asEndpointUri("netty-http", map, false);
+        assertEquals("netty-http:http:a-b-c.hostname.tld:8080/anything", uri);
 
         map = new LinkedHashMap<>();
         map.put("protocol", "http");
         map.put("host", "a-b-c.server.net");
         map.put("port", "8888");
         map.put("path", "service/v3");
-        uri = catalog.asEndpointUri("netty4-http", map, true);
-        assertEquals("netty4-http:http:a-b-c.server.net:8888/service/v3", uri);
+        uri = catalog.asEndpointUri("netty-http", map, true);
+        assertEquals("netty-http:http:a-b-c.server.net:8888/service/v3", uri);
     }
 
     @Test
     public void testNetty4Http4DynamicToIssueHost() throws Exception {
-        String uri = "netty4-http:http://a-b-c.hostname.tld:8080/anything";
+        String uri = "netty-http:http://a-b-c.hostname.tld:8080/anything";
         Map<String, String> params = catalog.endpointProperties(uri);
         assertEquals("http", params.get("protocol"));
         assertEquals("a-b-c.hostname.tld", params.get("host"));
@@ -346,8 +346,8 @@ public class CamelCatalogTest {
         // remove path
         params.remove("path");
 
-        String resolved = catalog.asEndpointUri("netty4-http", params, false);
-        assertEquals("netty4-http:http:a-b-c.hostname.tld:8080", resolved);
+        String resolved = catalog.asEndpointUri("netty-http", params, false);
+        assertEquals("netty-http:http:a-b-c.hostname.tld:8080", resolved);
     }
 
     @Test
@@ -400,7 +400,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointPropertiesNetty4Http() throws Exception {
-        Map<String, String> map = catalog.endpointProperties("netty4-http:http:localhost:8080/foo/bar?disconnect=true&keepAlive=false");
+        Map<String, String> map = catalog.endpointProperties("netty-http:http:localhost:8080/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
 
@@ -414,7 +414,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointPropertiesNetty4HttpDefaultPort() throws Exception {
-        Map<String, String> map = catalog.endpointProperties("netty4-http:http:localhost/foo/bar?disconnect=true&keepAlive=false");
+        Map<String, String> map = catalog.endpointProperties("netty-http:http:localhost/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(5, map.size());
 
@@ -427,7 +427,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointPropertiesNetty4HttpPlaceholder() throws Exception {
-        Map<String, String> map = catalog.endpointProperties("netty4-http:http:{{myhost}}:{{myport}}/foo/bar?disconnect=true&keepAlive=false");
+        Map<String, String> map = catalog.endpointProperties("netty-http:http:{{myhost}}:{{myport}}/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
 
@@ -441,7 +441,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointPropertiesNetty4HttpWithDoubleSlash() throws Exception {
-        Map<String, String> map = catalog.endpointProperties("netty4-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false");
+        Map<String, String> map = catalog.endpointProperties("netty-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
 
@@ -734,26 +734,26 @@ public class CamelCatalogTest {
         assertTrue(result.getUnknown().contains("foo"));
 
         // lenient off consumer only
-        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", false, true, false);
+        result = catalog.validateEndpointProperties("netty-http:http://myserver?foo=bar", false, true, false);
         assertFalse(result.isSuccess());
         // consumer should still fail because we cannot use lenient option in consumer mode
         assertEquals("foo", result.getUnknown().iterator().next());
         assertNull(result.getLenient());
         // lenient off producer only
-        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", false, false, true);
+        result = catalog.validateEndpointProperties("netty-http:http://myserver?foo=bar", false, false, true);
         assertTrue(result.isSuccess());
         // foo is the lenient option
         assertEquals(1, result.getLenient().size());
         assertEquals("foo", result.getLenient().iterator().next());
 
         // lenient on consumer only
-        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", true, true, false);
+        result = catalog.validateEndpointProperties("netty-http:http://myserver?foo=bar", true, true, false);
         assertFalse(result.isSuccess());
         // consumer should still fail because we cannot use lenient option in consumer mode
         assertEquals("foo", result.getUnknown().iterator().next());
         assertNull(result.getLenient());
         // lenient on producer only
-        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", true, false, true);
+        result = catalog.validateEndpointProperties("netty-http:http://myserver?foo=bar", true, false, true);
         assertFalse(result.isSuccess());
         assertEquals("foo", result.getUnknown().iterator().next());
         assertNull(result.getLenient());
@@ -1220,19 +1220,19 @@ public class CamelCatalogTest {
 
     @Test
     public void testNetty4Http4DynamicToIssue() throws Exception {
-        String uri = "netty4-http:http://10.192.1.10:8080/client/alerts/summary?throwExceptionOnFailure=false";
+        String uri = "netty-http:http://10.192.1.10:8080/client/alerts/summary?throwExceptionOnFailure=false";
         Map<String, String> params = catalog.endpointProperties(uri);
         params.remove("path");
         params.remove("throwExceptionOnFailure");
 
-        String resolved = catalog.asEndpointUri("netty4-http", params, false);
-        assertEquals("netty4-http:http:10.192.1.10:8080", resolved);
+        String resolved = catalog.asEndpointUri("netty-http", params, false);
+        assertEquals("netty-http:http:10.192.1.10:8080", resolved);
 
         // another example with dash in hostname
-        uri = "netty4-http:http://a-b-c.hostname.tld:8080/anything";
+        uri = "netty-http:http://a-b-c.hostname.tld:8080/anything";
         params = catalog.endpointProperties(uri);
-        resolved = catalog.asEndpointUri("netty4-http", params, false);
-        assertEquals("netty4-http:http:a-b-c.hostname.tld:8080/anything", resolved);
+        resolved = catalog.asEndpointUri("netty-http", params, false);
+        assertEquals("netty-http:http:a-b-c.hostname.tld:8080/anything", resolved);
     }
 
     @Test
