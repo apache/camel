@@ -96,14 +96,14 @@ public class DefaultLanguageResolver implements LanguageResolver {
         if (languageFactory == null) {
             languageFactory = context.adapt(ExtendedCamelContext.class).getFactoryFinder(LANGUAGE_RESOURCE_PATH);
         }
-        return languageFactory.findClass(name);
+        return languageFactory.findClass(name).orElse(null);
     }
 
     protected Class<?> findLanguageResolver(String name, CamelContext context) throws Exception {
         if (languageResolver == null) {
             languageResolver = context.adapt(ExtendedCamelContext.class).getFactoryFinder(LANGUAGE_RESOLVER_RESOURCE_PATH);
         }
-        return languageResolver.findClass(name);
+        return languageResolver.findClass(name).orElse(null);
     }
 
     protected Logger getLog() {

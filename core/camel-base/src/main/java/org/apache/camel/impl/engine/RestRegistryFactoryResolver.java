@@ -64,11 +64,11 @@ public class RestRegistryFactoryResolver {
         return null;
     }
 
-    private Class<?> findFactory(String name, CamelContext context) throws ClassNotFoundException, IOException {
+    private Class<?> findFactory(String name, CamelContext context) throws IOException {
         if (factoryFinder == null) {
             factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
         }
-        return factoryFinder.findClass(name);
+        return factoryFinder.findClass(name).orElse(null);
     }
 
 }

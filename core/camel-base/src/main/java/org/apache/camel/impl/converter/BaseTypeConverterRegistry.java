@@ -68,6 +68,7 @@ import org.apache.camel.util.ObjectHelper;
 public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
 
     public static final String META_INF_SERVICES_TYPE_CONVERTER_LOADER = "META-INF/services/org/apache/camel/TypeConverterLoader";
+    public static final String META_INF_SERVICES_FALLBACK_TYPE_CONVERTER = "META-INF/services/org/apache/camel/FallbackTypeConverter";
 
     protected static final TypeConverter MISS_CONVERTER = new TypeConverterSupport() {
         @Override
@@ -587,11 +588,54 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
     }
 
+    /**
+     * Finds the fallback type converter classes from the classpath looking
+     * for text files on the classpath at the {@link #META_INF_SERVICES_FALLBACK_TYPE_CONVERTER} location.
+     */
+    protected Collection<String> findFallbackTypeConverterClasses() throws IOException {
+        Set<String> loaders = new LinkedHashSet<>();
+        Collection<URL> loaderResources = getFallbackUrls();
+        for (URL url : loaderResources) {
+            log.debug("Loading file {} to retrieve list of fallback type converters, from url: {}", META_INF_SERVICES_FALLBACK_TYPE_CONVERTER, url);
+            BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
+            try {
+                reader.lines()
+                        .map(String::trim)
+                        .filter(l -> !l.isEmpty())
+                        .filter(l -> !l.startsWith("#"))
+                        .forEach(loaders::add);
+            } finally {
+                IOHelper.close(reader, url.toString(), log);
+            }
+        }
+        return loaders;
+    }
+
+    protected Collection<URL> getFallbackUrls() throws IOException {
+        List<URL> loaderResources = new ArrayList<>();
+        for (ClassLoader classLoader : resolver.getClassLoaders()) {
+            Enumeration<URL> resources = classLoader.getResources(META_INF_SERVICES_FALLBACK_TYPE_CONVERTER);
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                loaderResources.add(url);
+            }
+        }
+        return loaderResources;
+    }
+
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
-        if (factoryFinder != null) {
-            List<TypeConverter> converters = factoryFinder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
-            for (TypeConverter converter : converters) {
-                addFallbackTypeConverter(converter, false);
+        Collection<String> names = findFallbackTypeConverterClasses();
+        for (String name : names) {
+            log.debug("Resolving FallbackTypeConverter: {}", name);
+            Class clazz = getResolver().getClassLoaders().stream()
+                    .map(cl -> ObjectHelper.loadClass(name, cl))
+                    .filter(Objects::nonNull)
+                    .findAny().orElseThrow(() -> new ClassNotFoundException(name));
+            Object obj = getInjector().newInstance(clazz, false);
+            if (obj instanceof TypeConverter) {
+                TypeConverter fb = (TypeConverter) obj;
+                log.debug("Adding loaded FallbackTypeConverter: {}", name);
+                addFallbackTypeConverter(fb, false);
             }
         }
     }
