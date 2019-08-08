@@ -54,7 +54,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 abstract class AbstractGenerateMojo extends AbstractMojo {
 
     // this list should be in priority order
-    public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[]{"servlet", "undertow", "jetty", "restlet", "netty-http", "netty4-http", "spark-java", "coap"};
+    public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[]{"servlet", "undertow", "jetty", "restlet", "netty-http", "spark-java", "coap"};
 
     @Parameter
     String destinationGenerator;
