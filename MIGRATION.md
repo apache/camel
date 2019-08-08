@@ -130,6 +130,8 @@ The `netty4` component has been renamed to `netty`. The supported scheme is now 
 
 The `quartz2` component has been renamed to `quartz`. The supported scheme is now `quartz`.
 
+The `netty4-http` component has been renamed to `netty-http`. The supported scheme is now `netty-http`.
+
 The `rxjava2` component has been renamed to `rxjava`.
 
 We have also renamed `camel-jetty9` to `camel-jetty`.
