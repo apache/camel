@@ -23,7 +23,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.SedaConstants;
 import org.junit.Test;
 
 /**
