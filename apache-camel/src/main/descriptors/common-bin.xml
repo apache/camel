@@ -38,6 +38,7 @@
         <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-core-xml</include>
         <include>org.apache.camel:camel-cloud</include>
+        <include>org.apache.camel:camel-jaxp</include>
         <include>org.apache.camel:camel-main</include>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
