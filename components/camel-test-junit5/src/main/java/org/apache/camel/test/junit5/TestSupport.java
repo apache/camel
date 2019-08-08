@@ -44,33 +44,37 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * A bunch of useful testing methods
+ * Provides utility methods for camel test purpose (builders, assertions,
+ * endpoint resolutions, file helpers).
  */
-public abstract class TestSupport {
+public final class TestSupport {
 
-    protected static final String LS = System.lineSeparator();
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
-    protected Logger log = LoggerFactory.getLogger(getClass());
 
+    private TestSupport() {
+    }
+
+    // -------------------------------------------------------------------------
     // Builder methods for expressions used when testing
     // -------------------------------------------------------------------------
 
     /**
-     * Returns a value builder for the given header
+     * Returns a value builder for the given header.
      */
     public static ValueBuilder header(String name) {
         return Builder.header(name);
     }
 
     /**
-     * Returns a value builder for the given exchange property
+     * Returns a value builder for the given exchange property.
      */
     public static ValueBuilder exchangeProperty(String name) {
         return Builder.exchangeProperty(name);
     }
 
     /**
-     * Returns a predicate and value builder for the inbound body on an exchange
+     * Returns a predicate and value builder for the inbound body on an
+     * exchange.
      */
     public static ValueBuilder body() {
         return Builder.body();
@@ -78,134 +82,139 @@ public abstract class TestSupport {
 
     /**
      * Returns a predicate and value builder for the inbound message body as a
-     * specific type
+     * specific type.
      */
     public static <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
     }
 
     /**
-     * Returns a value builder for the given system property
+     * Returns a value builder for the given system property.
      */
     public static ValueBuilder systemProperty(String name) {
         return Builder.systemProperty(name);
     }
 
     /**
-     * Returns a value builder for the given system property
+     * Returns a value builder for the given system property.
      */
     public static ValueBuilder systemProperty(String name, String defaultValue) {
         return Builder.systemProperty(name, defaultValue);
     }
 
+    // -----------------------------------------------------------------------
     // Assertions
     // -----------------------------------------------------------------------
 
+    /**
+     * Asserts that a given value is of an expected type.
+     */
     public static <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
         assertNotNull(value, "Expected an instance of type: " + expectedType.getName() + " but was null");
         assertTrue(expectedType.isInstance(value), "Object should be of type " + expectedType.getName() + " but was: " + value + " with the type: " + value.getClass().getName());
         return expectedType.cast(value);
     }
 
-    public static void assertEndpointUri(Endpoint endpoint, String uri) {
-        assertNotNull(endpoint, "Endpoint is null when expecting endpoint for: " + uri);
-        assertEquals(endpoint.getEndpointUri(), "Endpoint uri for: " + endpoint, uri);
+    /**
+     * Asserts that a given endpoint has an expected uri.
+     */
+    public static void assertEndpointUri(Endpoint endpoint, String expectedUri) {
+        assertNotNull(endpoint, "Endpoint is null when expecting endpoint for: " + expectedUri);
+        assertEquals(expectedUri, endpoint.getEndpointUri(), "Endpoint uri for: " + endpoint);
     }
 
     /**
-     * Asserts the In message on the exchange contains the expected value
+     * Asserts that the In message on the exchange contains an header with a
+     * given name and expected value.
      */
-    public static Object assertInMessageHeader(Exchange exchange, String name, Object expected) {
-        return assertMessageHeader(exchange.getIn(), name, expected);
+    public static Object assertInMessageHeader(Exchange exchange, String headerName, Object expectedValue) {
+        return assertMessageHeader(exchange.getIn(), headerName, expectedValue);
     }
 
     /**
-     * Asserts the Out message on the exchange contains the expected value
+     * Asserts that the message on the exchange contains an header with a given
+     * name and expected value.
      */
-    public static Object assertOutMessageHeader(Exchange exchange, String name, Object expected) {
-        return assertMessageHeader(exchange.getOut(), name, expected);
+    public static Object assertOutMessageHeader(Exchange exchange, String headerName, Object expectedValue) {
+        return assertMessageHeader(exchange.getMessage(), headerName, expectedValue);
     }
 
     /**
-     * Asserts that the given exchange has an OUT message of the given body
-     * value
-     *
-     * @param exchange the exchange which should have an OUT message
-     * @param expected the expected value of the OUT message
-     * @throws InvalidPayloadException is thrown if the payload is not the
-     *             expected class type
+     * Asserts that the given exchange has a given expectedBody on the IN
+     * message.
      */
-    public static void assertInMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
-        assertNotNull(exchange, "Should have a response exchange!");
+    public static void assertInMessageBodyEquals(Exchange exchange, Object expectedBody) throws InvalidPayloadException {
+        assertNotNull(exchange, "Should have a response exchange");
 
-        Object actual;
-        if (expected == null) {
-            actual = exchange.getIn().getMandatoryBody();
-            assertEquals(expected, actual, "in body of: " + exchange);
+        Object actualBody;
+        if (expectedBody == null) {
+            actualBody = exchange.getIn().getMandatoryBody();
+            assertEquals(expectedBody, actualBody, "in body of: " + exchange);
         } else {
-            actual = exchange.getIn().getMandatoryBody(expected.getClass());
+            actualBody = exchange.getIn().getMandatoryBody(expectedBody.getClass());
         }
-        assertEquals(expected, actual, "in body of: " + exchange);
+        assertEquals(expectedBody, actualBody, "in body of: " + exchange);
 
         LOG.debug("Received response: " + exchange + " with in: " + exchange.getIn());
     }
 
     /**
-     * Asserts that the given exchange has an OUT message of the given body
-     * value
-     *
-     * @param exchange the exchange which should have an OUT message
-     * @param expected the expected value of the OUT message
-     * @throws InvalidPayloadException is thrown if the payload is not the
-     *             expected class type
+     * Asserts that the given exchange has a given expectedBody on the message.
      */
-    public static void assertOutMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
+    public static void assertMessageBodyEquals(Exchange exchange, Object expectedBody) throws InvalidPayloadException {
         assertNotNull(exchange, "Should have a response exchange!");
 
-        Object actual;
-        if (expected == null) {
-            actual = exchange.getOut().getMandatoryBody();
-            assertEquals(expected, actual, "output body of: " + exchange);
+        Object actualBody;
+        if (expectedBody == null) {
+            actualBody = exchange.getMessage().getMandatoryBody();
+            assertEquals(expectedBody, actualBody, "output body of: " + exchange);
         } else {
-            actual = exchange.getOut().getMandatoryBody(expected.getClass());
+            actualBody = exchange.getMessage().getMandatoryBody(expectedBody.getClass());
         }
-        assertEquals(expected, actual, "output body of: " + exchange);
+        assertEquals(expectedBody, actualBody, "output body of: " + exchange);
 
-        LOG.debug("Received response: " + exchange + " with out: " + exchange.getOut());
-    }
-
-    public static Object assertMessageHeader(Message message, String name, Object expected) {
-        Object value = message.getHeader(name);
-        assertEquals(expected, value, "Header: " + name + " on Message: " + message);
-        return value;
+        LOG.debug("Received response: " + exchange + " with out: " + exchange.getMessage());
     }
 
     /**
-     * Asserts that the given expression when evaluated returns the given answer
+     * Asserts that a given message contains an header with a given name and
+     * expected value.
      */
-    public static Object assertExpression(Expression expression, Exchange exchange, Object expected) {
-        Object value;
-        if (expected != null) {
-            value = expression.evaluate(exchange, expected.getClass());
-        } else {
-            value = expression.evaluate(exchange, Object.class);
-        }
-
-        LOG.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);
-
-        assertEquals(expected, value, "Expression: " + expression + " on Exchange: " + exchange);
-        return value;
+    public static Object assertMessageHeader(Message message, String headerName, Object expectedValue) {
+        Object actualValue = message.getHeader(headerName);
+        assertEquals(expectedValue, actualValue, "Header: " + headerName + " on Message: " + message);
+        return actualValue;
     }
 
     /**
-     * Asserts that the predicate returns the expected value on the exchange
+     * Asserts that the given expression when evaluated returns the given
+     * answer.
+     */
+    public static Object assertExpression(Expression expression, Exchange exchange, Object expectedAnswer) {
+        Object actualAnswer;
+        if (expectedAnswer != null) {
+            actualAnswer = expression.evaluate(exchange, expectedAnswer.getClass());
+        } else {
+            actualAnswer = expression.evaluate(exchange, Object.class);
+        }
+
+        LOG.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + actualAnswer);
+
+        assertEquals(expectedAnswer, actualAnswer, "Expression: " + expression + " on Exchange: " + exchange);
+        return actualAnswer;
+    }
+
+    /**
+     * Asserts that a given predicate returns <code>true</code> on a given
+     * exchange.
      */
     public static void assertPredicateMatches(Predicate predicate, Exchange exchange) {
         assertPredicate(predicate, exchange, true);
     }
 
     /**
-     * Asserts that the predicate returns the expected value on the exchange
+     * Asserts that a given predicate returns <code>false</code> on a given
+     * exchange.
      */
     public static void assertPredicateDoesNotMatch(Predicate predicate, Exchange exchange) {
         try {
@@ -217,103 +226,62 @@ public abstract class TestSupport {
     }
 
     /**
-     * Asserts that the predicate returns the expected value on the exchange
+     * Asserts that the predicate returns the expected value on the exchange.
      */
-    public static boolean assertPredicate(final Predicate predicate, Exchange exchange, boolean expected) {
-        if (expected) {
+    public static boolean assertPredicate(final Predicate predicate, Exchange exchange, boolean expectedValue) {
+        if (expectedValue) {
             PredicateAssertHelper.assertMatches(predicate, "Predicate failed: ", exchange);
         }
-        boolean value = predicate.matches(exchange);
+        boolean actualValue = predicate.matches(exchange);
 
-        LOG.debug("Evaluated predicate: " + predicate + " on exchange: " + exchange + " result: " + value);
+        LOG.debug("Evaluated predicate: " + predicate + " on exchange: " + exchange + " result: " + actualValue);
 
-        assertEquals(expected, value, "Predicate: " + predicate + " on Exchange: " + exchange);
-        return value;
+        assertEquals(expectedValue, actualValue, "Predicate: " + predicate + " on Exchange: " + exchange);
+        return actualValue;
     }
 
     /**
-     * Resolves an endpoint and asserts that it is found
+     * Asserts that a given list has a single element.
      */
-    public static Endpoint resolveMandatoryEndpoint(CamelContext context, String uri) {
-        Endpoint endpoint = context.getEndpoint(uri);
-
-        assertNotNull(endpoint, "No endpoint found for URI: " + uri);
-
-        return endpoint;
-    }
-
-    /**
-     * Resolves an endpoint and asserts that it is found
-     */
-    public static <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String uri, Class<T> endpointType) {
-        T endpoint = context.getEndpoint(uri, endpointType);
-
-        assertNotNull(endpoint, "No endpoint found for URI: " + uri);
-
-        return endpoint;
-    }
-
-    /**
-     * Creates an exchange with the given body
-     */
-    protected Exchange createExchangeWithBody(CamelContext camelContext, Object body) {
-        Exchange exchange = new DefaultExchange(camelContext);
-        Message message = exchange.getIn();
-        message.setHeader("testClass", getClass().getName());
-        message.setBody(body);
-        return exchange;
-    }
-
     public static <T> T assertOneElement(List<T> list) {
         assertEquals(1, list.size(), "Size of list should be 1: " + list);
         return list.get(0);
     }
 
     /**
-     * Asserts that a list is of the given size
+     * Asserts that a given list has a given expected size.
      */
-    public static <T> List<T> assertListSize(List<T> list, int size) {
-        return assertListSize("List", list, size);
+    public static <T> List<T> assertListSize(List<T> list, int expectedSize) {
+        return assertListSize("List", list, expectedSize);
     }
 
     /**
-     * Asserts that a list is of the given size
+     * Asserts that a list is of the given size. When the assertion is broken,
+     * the error message starts with a given prefix.
      */
-    public static <T> List<T> assertListSize(String message, List<T> list, int size) {
-        assertEquals(size, list.size(), message + " should be of size: " + size + " but is: " + list);
+    public static <T> List<T> assertListSize(String brokenAssertionMessagePrefix, List<T> list, int expectedSize) {
+        assertEquals(expectedSize, list.size(), brokenAssertionMessagePrefix + " should be of size: " + expectedSize + " but is: " + list);
         return list;
     }
 
     /**
-     * Asserts that a list is of the given size
+     * Asserts that a given collection has a given size.
      */
-    public static <T> Collection<T> assertCollectionSize(Collection<T> list, int size) {
-        return assertCollectionSize("List", list, size);
+    public static <T> Collection<T> assertCollectionSize(Collection<T> list, int expectedSize) {
+        return assertCollectionSize("List", list, expectedSize);
     }
 
     /**
-     * Asserts that a list is of the given size
+     * Asserts that a given collection has a given size. When the assertion is
+     * broken, the error message starts with a given prefix.
      */
-    public static <T> Collection<T> assertCollectionSize(String message, Collection<T> list, int size) {
-        assertEquals(size, list.size(), message + " should be of size: " + size + " but is: " + list);
+    public static <T> Collection<T> assertCollectionSize(String brokenAssertionMessagePrefix, Collection<T> list, int expectedSize) {
+        assertEquals(expectedSize, list.size(), brokenAssertionMessagePrefix + " should be of size: " + expectedSize + " but is: " + list);
         return list;
     }
 
     /**
-     * A helper method to create a list of Route objects for a given route
-     * builder
-     */
-    public static List<Route> getRouteList(RouteBuilder builder) throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(builder);
-        context.start();
-        List<Route> answer = context.getRoutes();
-        context.stop();
-        return answer;
-    }
-
-    /**
-     * Asserts that the text contains the given string
+     * Asserts that the text contains the given string.
      *
      * @param text the text to compare
      * @param containedText the text which must be contained inside the other
@@ -325,20 +293,123 @@ public abstract class TestSupport {
     }
 
     /**
-     * Recursively delete a directory, useful to zapping test data
+     * Asserts that two given directories are equal. To be used for
+     * folder/directory comparison that works across different platforms such as
+     * Window, Mac and Linux.
+     */
+    public static void assertDirectoryEquals(String expected, String actual) {
+        assertDirectoryEquals(null, expected, actual);
+    }
+
+    /**
+     * Asserts that two given directories are equal. To be used for
+     * folder/directory comparison that works across different platforms such as
+     * Window, Mac and Linux.
+     */
+    public static void assertDirectoryEquals(String message, String expected, String actual) {
+        // must use single / as path separators
+        String expectedPath = expected.replace('\\', '/');
+        String actualPath = actual.replace('\\', '/');
+
+        if (message != null) {
+            assertEquals(message, expectedPath, actualPath);
+        } else {
+            assertEquals(expectedPath, actualPath);
+        }
+    }
+
+    /**
+     * Asserts that a given directory is found in the file system.
+     */
+    public static void assertDirectoryExists(String filename) {
+        File file = new File(filename);
+        assertTrue(file.exists(), "Directory " + filename + " should exist");
+        assertTrue(file.isDirectory(), "Directory " + filename + " should be a directory");
+    }
+
+    /**
+     * Asserts that a given file is found in the file system.
+     */
+    public static void assertFileExists(String filename) {
+        File file = new File(filename);
+        assertTrue(file.exists(), "File " + filename + " should exist");
+        assertTrue(file.isFile(), "File " + filename + " should be a file");
+    }
+
+    /**
+     * Asserts that a given file is <b>not</b> found in the file system.
+     */
+    public static void assertFileNotExists(String filename) {
+        File file = new File(filename);
+        assertFalse(file.exists(), "File " + filename + " should not exist");
+    }
+
+    // -----------------------------------------------------------------------
+    // Other helpers, resolution, file, getRouteList
+    // -----------------------------------------------------------------------
+
+    /**
+     * Resolves an endpoint and asserts that it is found.
+     */
+    public static Endpoint resolveMandatoryEndpoint(CamelContext context, String endpointUri) {
+        Endpoint endpoint = context.getEndpoint(endpointUri);
+
+        assertNotNull(endpoint, "No endpoint found for URI: " + endpointUri);
+
+        return endpoint;
+    }
+
+    /**
+     * Resolves an endpoint and asserts that it is found.
+     */
+    public static <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String endpointUri, Class<T> endpointType) {
+        T endpoint = context.getEndpoint(endpointUri, endpointType);
+
+        assertNotNull(endpoint, "No endpoint found for URI: " + endpointUri);
+
+        return endpoint;
+    }
+
+    /**
+     * Creates an exchange with the given body.
+     */
+    public static Exchange createExchangeWithBody(CamelContext camelContext, Object body) {
+        Exchange exchange = new DefaultExchange(camelContext);
+        Message message = exchange.getIn();
+        message.setBody(body);
+        return exchange;
+    }
+
+    /**
+     * A helper method to create a list of Route objects for a given route
+     * builder.
+     */
+    public static List<Route> getRouteList(RouteBuilder builder) throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(builder);
+        context.start();
+        List<Route> answer = context.getRoutes();
+        context.stop();
+        return answer;
+    }
+
+    /**
+     * Recursively delete a directory, useful to zapping test data. Deletion
+     * will be attempted up to five time before giving up.
      *
      * @param file the directory to be deleted
-     * @return <tt>false</tt> if error deleting directory
+     * @return <tt>false</tt> when an error occur while deleting directory
      */
     public static boolean deleteDirectory(String file) {
         return deleteDirectory(new File(file));
     }
 
     /**
-     * Recursively delete a directory, useful to zapping test data
+     * Recursively delete a directory, useful to zapping test data. Deletion
+     * will be attempted up to five time before giving up.
      *
      * @param file the directory to be deleted
-     * @return <tt>false</tt> if error deleting directory
+     * @return <tt>false</tt> when an error occur while deleting directory
      */
     public static boolean deleteDirectory(File file) {
         int tries = 0;
@@ -359,7 +430,13 @@ public abstract class TestSupport {
         return !exists;
     }
 
-    private static void recursivelyDeleteDirectory(File file) {
+    /**
+     * Recursively delete a directory. Deletion will be attempted a single time
+     * before giving up.
+     *
+     * @param file the directory to be deleted
+     */
+    public static void recursivelyDeleteDirectory(File file) {
         if (!file.exists()) {
             return;
         }
@@ -377,7 +454,7 @@ public abstract class TestSupport {
     }
 
     /**
-     * create the directory
+     * Creates a given directory.
      *
      * @param file the directory to be created
      */
@@ -387,122 +464,39 @@ public abstract class TestSupport {
     }
 
     /**
-     * To be used for folder/directory comparison that works across different
-     * platforms such as Window, Mac and Linux.
-     */
-    public static void assertDirectoryEquals(String expected, String actual) {
-        assertDirectoryEquals(null, expected, actual);
-    }
-
-    /**
-     * To be used for folder/directory comparison that works across different
-     * platforms such as Window, Mac and Linux.
-     */
-    public static void assertDirectoryEquals(String message, String expected, String actual) {
-        // must use single / as path separators
-        String expectedPath = expected.replace('\\', '/');
-        String actualPath = actual.replace('\\', '/');
-
-        if (message != null) {
-            assertEquals(message, expectedPath, actualPath);
-        } else {
-            assertEquals(expectedPath, actualPath);
-        }
-    }
-
-    /**
-     * To be used to check is a directory is found in the file system
-     */
-    public static void assertDirectoryExists(String filename) {
-        File file = new File(filename);
-        assertTrue(file.exists(), "Directory " + filename + " should exist");
-        assertTrue(file.isDirectory(), "Directory " + filename + " should be a directory");
-    }
-
-    /**
-     * To be used to check is a file is found in the file system
-     */
-    public static void assertFileExists(String filename) {
-        File file = new File(filename);
-        assertTrue(file.exists(), "File " + filename + " should exist");
-        assertTrue(file.isFile(), "File " + filename + " should be a file");
-    }
-
-    /**
-     * To be used to check is a file is <b>not</b> found in the file system
-     */
-    public static void assertFileNotExists(String filename) {
-        File file = new File(filename);
-        assertFalse(file.exists(), "File " + filename + " should not exist");
-    }
-
-    /**
-     * Is this OS the given platform.
+     * Tells whether the current Operating System is the given expected
+     * platform.
      * <p/>
-     * Uses <tt>os.name</tt> from the system properties to determine the OS.
+     * Uses <tt>os.name</tt> from the system properties to determine the
+     * Operating System.
      *
-     * @param platform such as Windows
-     * @return <tt>true</tt> if its that platform.
+     * @param expectedPlatform such as Windows
+     * @return <tt>true</tt> when the current Operating System is the expected
+     *         platform, <tt>false</tt> otherwise.
      */
-    public static boolean isPlatform(String platform) {
+    public static boolean isPlatform(String expectedPlatform) {
         String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-        return osName.contains(platform.toLowerCase(Locale.US));
+        return osName.contains(expectedPlatform.toLowerCase(Locale.US));
     }
 
     /**
-     * Is this Java by the given vendor.
+     * Tells whether the current Java Virtual Machine has been issued by a given
+     * expected vendor.
      * <p/>
      * Uses <tt>java.vendor</tt> from the system properties to determine the
      * vendor.
      *
-     * @param vendor such as IBM
-     * @return <tt>true</tt> if its that vendor.
+     * @param expectedVendor such as IBM
+     * @return <tt>true</tt> when the current Java Virtual Machine has been
+     *         issued by the expected vendor, <tt>false</tt> otherwise.
      */
-    public static boolean isJavaVendor(String vendor) {
+    public static boolean isJavaVendor(String expectedVendor) {
         String javaVendor = System.getProperty("java.vendor").toLowerCase(Locale.US);
-        return javaVendor.contains(vendor.toLowerCase(Locale.US));
+        return javaVendor.contains(expectedVendor.toLowerCase(Locale.US));
     }
 
     /**
-     * Is this Java 1.5
-     *
-     * @return <tt>true</tt> if its Java 1.5, <tt>false</tt> if its not (for
-     *         example Java 1.6 or better)
-     * @deprecated will be removed in the future as Camel requires JDK1.8+
-     */
-    @Deprecated
-    public static boolean isJava15() {
-        return getJavaMajorVersion() == 5;
-    }
-
-    /**
-     * Is this Java 1.6
-     *
-     * @return <tt>true</tt> if its Java 1.6, <tt>false</tt> if its not (for
-     *         example Java 1.7 or better)
-     * @deprecated will be removed in the future as Camel requires JDK1.8+
-     */
-    @Deprecated
-    public static boolean isJava16() {
-        return getJavaMajorVersion() == 6;
-
-    }
-
-    /**
-     * Is this Java 1.7
-     *
-     * @return <tt>true</tt> if its Java 1.7, <tt>false</tt> if its not (for
-     *         example Java 1.6 or older)
-     * @deprecated will be removed in the future as Camel requires JDK1.8+
-     */
-    @Deprecated
-    public static boolean isJava17() {
-        return getJavaMajorVersion() == 7;
-
-    }
-
-    /**
-     * Is this Java 1.8
+     * Tells whether the current Java version is 1.8.
      *
      * @return <tt>true</tt> if its Java 1.8, <tt>false</tt> if its not (for
      *         example Java 1.7 or older)
@@ -513,7 +507,7 @@ public abstract class TestSupport {
     }
 
     /**
-     * Is this Java 1.9
+     * Tells whether the current Java version is 1.9.
      *
      * @return <tt>true</tt> if its Java 1.9, <tt>false</tt> if its not (for
      *         example Java 1.8 or older)
