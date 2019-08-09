@@ -440,10 +440,13 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         if (!ObjectHelper.isEmpty(uriTemplate)) {
             url += "/" + uriTemplate;
         }
-        
-        RestConfiguration config = configuration;
+
+        RestConfiguration config = getCamelContext().getRestConfiguration("netty-http", false);
         if (config == null) {
-            config = camelContext.getRestConfiguration("netty-http", true);
+            config = getCamelContext().getRestConfiguration();
+        }
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration("netty-http", true);
         }
 
         Map<String, Object> map = new HashMap<>();

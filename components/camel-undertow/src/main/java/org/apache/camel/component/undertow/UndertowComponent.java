@@ -275,10 +275,13 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         if (!ObjectHelper.isEmpty(uriTemplate)) {
             url += "/" + uriTemplate;
         }
-        
-        RestConfiguration config = configuration;
+
+        RestConfiguration config = getCamelContext().getRestConfiguration(getComponentName(), false);
         if (config == null) {
-            config = camelContext.getRestConfiguration(getComponentName(), true);
+            config = getCamelContext().getRestConfiguration();
+        }
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration(getComponentName(), true);
         }
 
         Map<String, Object> map = new HashMap<>();
