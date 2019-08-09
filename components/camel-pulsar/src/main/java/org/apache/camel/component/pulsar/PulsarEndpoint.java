@@ -137,4 +137,9 @@ public class PulsarEndpoint extends DefaultEndpoint {
 
         uri = persistence + "://" + tenant + "/" + namespace + "/" + topic;
     }
+
+    @Override
+    public PulsarComponent getComponent() {
+        return (PulsarComponent) super.getComponent();
+    }
 }

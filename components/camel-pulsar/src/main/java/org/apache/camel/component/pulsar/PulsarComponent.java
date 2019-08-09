@@ -35,6 +35,10 @@ public class PulsarComponent extends DefaultComponent {
     private AutoConfiguration autoConfiguration;
     @Metadata(label = "advanced")
     private PulsarClient pulsarClient;
+    @Metadata(label = "consumer", defaultValue = "false")
+    private boolean allowManualAcknowledgement;
+    @Metadata(label = "consumer,advanced")
+    private PulsarMessageReceiptFactory pulsarMessageReceiptFactory = new DefaultPulsarMessageReceiptFactory();
 
     public PulsarComponent() {
     }
@@ -46,6 +50,9 @@ public class PulsarComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
         final PulsarConfiguration configuration = new PulsarConfiguration();
+
+        configuration.setAllowManualAcknowledgement(isAllowManualAcknowledgement());
+
         setProperties(configuration, parameters);
         if (autoConfiguration != null) {
             setProperties(autoConfiguration, parameters);
@@ -92,5 +99,31 @@ public class PulsarComponent extends DefaultComponent {
      */
     public void setPulsarClient(PulsarClient pulsarClient) {
         this.pulsarClient = pulsarClient;
+    }
+
+    public boolean isAllowManualAcknowledgement() {
+        return allowManualAcknowledgement;
+    }
+
+    /**
+     * Whether to allow manual message acknowledgements.
+     * <p/>
+     * If this option is enabled, then messages are not immediately acknowledged after being consumed.
+     * Instead, an instance of {@link PulsarMessageReceipt} is stored as a header on the {@link org.apache.camel.Exchange}.
+     * Messages can then be acknowledged using {@link PulsarMessageReceipt} at any time before the ackTimeout occurs.
+     */
+    public void setAllowManualAcknowledgement(boolean allowManualAcknowledgement) {
+        this.allowManualAcknowledgement = allowManualAcknowledgement;
+    }
+
+    public PulsarMessageReceiptFactory getPulsarMessageReceiptFactory() {
+        return pulsarMessageReceiptFactory;
+    }
+
+    /**
+     * Provide a factory to create an alternate implementation of {@link PulsarMessageReceipt}.
+     */
+    public void setPulsarMessageReceiptFactory(PulsarMessageReceiptFactory pulsarMessageReceiptFactory) {
+        this.pulsarMessageReceiptFactory = pulsarMessageReceiptFactory;
     }
 }

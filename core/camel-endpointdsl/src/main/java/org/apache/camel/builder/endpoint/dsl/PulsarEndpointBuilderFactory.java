@@ -42,6 +42,92 @@ public interface PulsarEndpointBuilderFactory {
             return (AdvancedPulsarEndpointConsumerBuilder) this;
         }
         /**
+         * Group the consumer acknowledgments for the specified time in
+         * milliseconds - defaults to 100.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder ackGroupTimeMillis(
+                long ackGroupTimeMillis) {
+            setProperty("ackGroupTimeMillis", ackGroupTimeMillis);
+            return this;
+        }
+        /**
+         * Group the consumer acknowledgments for the specified time in
+         * milliseconds - defaults to 100.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder ackGroupTimeMillis(
+                String ackGroupTimeMillis) {
+            setProperty("ackGroupTimeMillis", ackGroupTimeMillis);
+            return this;
+        }
+        /**
+         * Timeout for unacknowledged messages in milliseconds - defaults to
+         * 10000.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder ackTimeoutMillis(
+                long ackTimeoutMillis) {
+            setProperty("ackTimeoutMillis", ackTimeoutMillis);
+            return this;
+        }
+        /**
+         * Timeout for unacknowledged messages in milliseconds - defaults to
+         * 10000.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder ackTimeoutMillis(
+                String ackTimeoutMillis) {
+            setProperty("ackTimeoutMillis", ackTimeoutMillis);
+            return this;
+        }
+        /**
+         * Whether to allow manual message acknowledgements. If this option is
+         * enabled, then messages are not immediately acknowledged after being
+         * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
+         * header on the org.apache.camel.Exchange. Messages can then be
+         * acknowledged using PulsarMessageReceipt at any time before the
+         * ackTimeout occurs.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder allowManualAcknowledgement(
+                boolean allowManualAcknowledgement) {
+            setProperty("allowManualAcknowledgement", allowManualAcknowledgement);
+            return this;
+        }
+        /**
+         * Whether to allow manual message acknowledgements. If this option is
+         * enabled, then messages are not immediately acknowledged after being
+         * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
+         * header on the org.apache.camel.Exchange. Messages can then be
+         * acknowledged using PulsarMessageReceipt at any time before the
+         * ackTimeout occurs.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder allowManualAcknowledgement(
+                String allowManualAcknowledgement) {
+            setProperty("allowManualAcknowledgement", allowManualAcknowledgement);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
