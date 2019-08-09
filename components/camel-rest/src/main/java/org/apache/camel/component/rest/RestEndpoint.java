@@ -377,12 +377,8 @@ public class RestEndpoint extends DefaultEndpoint {
 
         if (factory != null) {
             log.debug("Using RestProducerFactory: {}", factory);
-            
-            RestConfiguration config = getCamelContext().getRestConfiguration(pname, false);
-            if (config == null) {
-                // fallback to default
-                config = getCamelContext().getRestConfiguration();
-            }
+
+            RestConfiguration config = getCamelContext().getRestConfiguration(pname, true);
 
             Producer producer;
             if (apiDocFactory != null) {
@@ -392,7 +388,7 @@ public class RestEndpoint extends DefaultEndpoint {
             } else {
                 producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, config, parameters);
             }
-            
+
             RestProducer answer = new RestProducer(this, producer, config);
             answer.setOutType(outType);
             answer.setType(inType);

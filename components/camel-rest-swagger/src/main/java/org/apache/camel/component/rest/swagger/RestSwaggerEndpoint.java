@@ -61,7 +61,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.LazyStartProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -284,6 +283,12 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         boolean hasHost = params.containsKey("host");
         setProperties(endpoint, params);
 
+        // ensure rest configuration is available
+//        final String componentName = determineComponentName();
+//        if (componentName != null) {
+//            RestConfiguration config = camelContext.getRestConfiguration(componentName, true);
+//        }
+
         // if there is a host then we should use this hardcoded host instead of any Header that may have an existing
         // Host header from some other HTTP input, and if so then lets remove it
         return new RestSwaggerProducer(endpoint.createAsyncProducer(), hasHost);
@@ -328,7 +333,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
         final String componentName = determineComponentName();
         if (componentName != null) {
-            parameters.put("componentName", componentName);
+            parameters.put("producerComponentName", componentName);
         }
 
         final String host = determineHost(swagger);
