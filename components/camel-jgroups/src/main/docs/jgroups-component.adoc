@@ -16,7 +16,7 @@ for this component.
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jgroups</artifactId>
     <!-- use the same version as your Camel core version -->
-    <version>x.y.z</version>
+    <version>x.y.z</version>
 </dependency>
 ------------------------------------------------------------
 
@@ -150,7 +150,7 @@ consumed message has been extracted.
 |`JGROUPS_CHANNEL_ADDRESS` |`JGroupsEndpoint.`HEADER_JGROUPS_CHANNEL_ADDRESS |Address (`org.jgroups.Address`) of the channel associated with the
 endpoint.
 |=======================================================================
- 
+ 
 == Usage
 
 Using `jgroups` component on the consumer side of the route will capture
@@ -230,9 +230,9 @@ import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinat
 from("jgroups:clusterName?enableViewMessages=true").
   filter(dropNonCoordinatorViews()).
   threads().delay(delayIfContextNotStarted(SECONDS.toMillis(5))). // run in separated and delayed thread. Delay only if the context hasn't been started already. 
-  to("controlbus:route?routeId=masterRoute&action=start&async=true");
+  to("controlbus:route?routeId=masterRoute&action=start&async=true");
 
-from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).to(masterMockUri); 
+from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).to(masterMockUri); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 == Examples
@@ -266,7 +266,7 @@ mockEndpoint.assertIsSatisfied();
 === Receive cluster view change notifications
 
 The snippet below demonstrates how to create the consumer endpoint
-listening to the notifications regarding cluster membership changes. By
+listening to the notifications regarding cluster membership changes. By
 default only regular messages are consumed by the endpoint.
 
 [source,java]
@@ -295,5 +295,5 @@ service.setId("uniqueNodeId");
 ...
 context.addService(service);
 
-from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
+from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------

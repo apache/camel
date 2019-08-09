@@ -6,7 +6,7 @@ you can see the route path of each message as they happens. Details of the messa
 == Formatting
 
 The tracer formats the execution of exchanges to log lines. They are
-logged at *`INFO`* level in the log category:
+logged at *`INFO`* level in the log category:
 *`org.apache.camel.Tracing`*. 
 
 The message information from the Exchange is formatted using `ExchangeFormatter` and the default implementation has many options you can configure. See the source code/javadoc of the `org.apache.camel.support.processor.DefaultExchangeFormatter` class.

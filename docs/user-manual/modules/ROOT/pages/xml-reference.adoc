@@ -104,7 +104,7 @@ available.
 
 |2.12.4 |http://camel.apache.org/schema/spring/camel-spring-2.12.4.xsd
 
-|2.12.3  |http://camel.apache.org/schema/spring/camel-spring-2.12.3.xsd
+|2.12.3  |http://camel.apache.org/schema/spring/camel-spring-2.12.3.xsd
 
 |2.12.2 |http://camel.apache.org/schema/spring/camel-spring-2.12.2.xsd
 

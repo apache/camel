@@ -165,7 +165,7 @@ The component supports 3 options, which are listed below.
 
 The Camel Cassandra endpoint expects a bunch of simple objects (`Object`
 or `Object[]` or `Collection<Object>`) which will be bound to the CQL
-statement as query parameters. If message body is null or empty, then 
+statement as query parameters. If message body is null or empty, then 
 CQL query will be executed without binding parameters.
 
 Headers:
@@ -176,9 +176,9 @@ either as a plain String or built using the `QueryBuilder`.
 === Outgoing Message
 
 The Camel Cassandra endpoint produces one or many a Cassandra Row
-objects depending on the `resultSetConversionStrategy`:
+objects depending on the `resultSetConversionStrategy`:
 
- 
+ 
 
 * `List<Row>` if `resultSetConversionStrategy` is `ALL` or
 `LIMIT_[0-9]+`

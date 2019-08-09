@@ -167,7 +167,7 @@ from("direct:start").
    transform().xquery("/people/person/text()", String.class);
 -------------------------------------------------------------
 
- 
+ 
 
 == Using XQuery as an endpoint
 

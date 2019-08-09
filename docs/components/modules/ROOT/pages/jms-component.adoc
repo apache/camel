@@ -46,7 +46,7 @@ number of options to configure for performance, and clustered
 environments.
 ====
 
-This component allows messages to be sent to (or consumed from) a
+This component allows messages to be sent to (or consumed from) a
 http://java.sun.com/products/jms/[JMS] Queue or Topic. It uses Spring's
 JMS support for declarative transactions, including Spring's
 `JmsTemplate` for sending and a `MessageListenerContainer` for
@@ -757,24 +757,24 @@ following JMS message types:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Body Type |JMS Message |Comment
-|`String` |`javax.jms.TextMessage` | 
+|`String` |`javax.jms.TextMessage` | 
 
 |`org.w3c.dom.Node` |`javax.jms.TextMessage` |The DOM will be converted
 to `String`.
 
-|`Map` |`javax.jms.MapMessage` | 
+|`Map` |`javax.jms.MapMessage` | 
 
-|`java.io.Serializable` |`javax.jms.ObjectMessage` | 
+|`java.io.Serializable` |`javax.jms.ObjectMessage` | 
 
-|`byte[]` |`javax.jms.BytesMessage` | 
+|`byte[]` |`javax.jms.BytesMessage` | 
 
-|`java.io.File` |`javax.jms.BytesMessage` | 
+|`java.io.File` |`javax.jms.BytesMessage` | 
 
-|`java.io.Reader` |`javax.jms.BytesMessage` | 
+|`java.io.Reader` |`javax.jms.BytesMessage` | 
 
-|`java.io.InputStream` |`javax.jms.BytesMessage` | 
+|`java.io.InputStream` |`javax.jms.BytesMessage` | 
 
-|`java.nio.ByteBuffer` |`javax.jms.BytesMessage` | 
+|`java.nio.ByteBuffer` |`javax.jms.BytesMessage` | 
 |=======================================================================
 
 When receiving a JMS message, Camel converts the JMS message to the
@@ -1048,7 +1048,7 @@ If both the `CamelJmsDestination` and the `CamelJmsDestinationName`
 headers are set, `CamelJmsDestination` takes priority. Keep in mind that
 the JMS producer removes both `CamelJmsDestination` and
 `CamelJmsDestinationName` headers from the exchange and do not propagate
-them to the created JMS message in order to avoid the accidental loops
+them to the created JMS message in order to avoid the accidental loops
 in the routes (in scenarios when the message will be forwarded to the
 another JMS endpoint).
 

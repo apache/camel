@@ -4,19 +4,19 @@
 *Available as of Camel version 2.22*
 
 The Google Mail component provides access
-to http://gmail.com/[Gmail] via
-the https://developers.google.com/gmail/api/v1/reference/[Google Mail
+to http://gmail.com/[Gmail] via
+the https://developers.google.com/gmail/api/v1/reference/[Google Mail
 Web APIs].
 
 Google Mail uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need
-to https://developers.google.com/gmail/api/auth/web-server[create an
+to https://developers.google.com/gmail/api/auth/web-server[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is
-the https://developers.google.com/oauthplayground[OAuth playground].
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -169,4 +169,4 @@ from("google-mail-stream://test?markAsRead=true&delay=5000&maxResults=5&labels=G
 
 This route will consume unread messages with labels Github and Apache and it will mark the messages as read.
 
-   
+   

@@ -9,7 +9,7 @@ behaves as a simple Web server.
 
 *Stream*
 
-The `assert` call appears in this example, because the code is part of
+The `assert` call appears in this example, because the code is part of
 an unit test.Jetty is stream based, which means the input it receives is
 submitted to Camel as a stream. That means you will only be able to read
 the content of the stream *once*. +
@@ -282,7 +282,7 @@ Jetty component will copy the HTTP request parameter, `one` to the
 exchange's `in.header`. We can then use the `simple` language to route
 exchanges that contain this header to a specific endpoint and all others
 to another. If we used a language more powerful than
-xref:manual::simple-language.adoc[Simple] (such as xref:ognl-language.adoc[OGNL])
+xref:manual::simple-language.adoc[Simple] (such as xref:ognl-language.adoc[OGNL])
 we could also test for the parameter value and do routing based on the
 header value as well.
 
@@ -326,9 +326,9 @@ Using the JSSE Configuration Utility
 
 The Jetty component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
-Configuration Utility].  This utility greatly decreases the amount of
+Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
-endpoint and component levels.  The following examples demonstrate how
+endpoint and component levels.  The following examples demonstrate how
 to use the utility with the Jetty component.
 
 [[Jetty-Programmaticconfigurationofthecomponent]]
@@ -490,7 +490,7 @@ return the address of the Apache proxy.
 
 Jetty has a forwarded property which takes the value from
 X-Forwarded-For and places it in the HttpServletRequest remoteAddr
-property.  This property is not available directly through the endpoint
+property.  This property is not available directly through the endpoint
 configuration but it can be easily added using the socketConnectors
 property:
 

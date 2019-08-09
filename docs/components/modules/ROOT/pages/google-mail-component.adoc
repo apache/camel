@@ -4,19 +4,19 @@
 *Available as of Camel version 2.15*
 
 The Google Mail component provides access
-to http://gmail.com/[Gmail] via
-the https://developers.google.com/gmail/api/v1/reference/[Google Mail
+to http://gmail.com/[Gmail] via
+the https://developers.google.com/gmail/api/v1/reference/[Google Mail
 Web APIs].
 
 Google Mail uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need
-to https://developers.google.com/gmail/api/auth/web-server[create an
+to https://developers.google.com/gmail/api/auth/web-server[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is
-the https://developers.google.com/oauthplayground[OAuth playground].
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -175,7 +175,7 @@ overrides message header, i.e. the endpoint option `inBody=option` would
 override a `CamelGoogleMail.option` header.
 
 For more information on the endpoints and options see API documentation
-at: https://developers.google.com/gmail/api/v1/reference/[https://developers.google.com/gmail/api/v1/reference/]
+at: https://developers.google.com/gmail/api/v1/reference/[https://developers.google.com/gmail/api/v1/reference/]
 
 == Consumer Endpoints
 
@@ -198,4 +198,4 @@ All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleMailComponent. Producer endpoints can specify the
 option name for incoming message body in the `inBody` endpoint URI
 parameter. For endpoints that return an array or collection, a consumer
-endpoint will map every element to distinct messages.     
+endpoint will map every element to distinct messages.     

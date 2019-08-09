@@ -3,10 +3,10 @@
 
 *Available as of Camel version 2.17*
 
-http://nats.io/[NATS] is a fast and reliable messaging platform.
+http://nats.io/[NATS] is a fast and reliable messaging platform.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component.
+their `pom.xml` for this component.
 
 [source,xml]
 ------------------------------------------------------------
@@ -25,7 +25,7 @@ their `pom.xml` for this component.
 nats:servers[?options]
 ----------------------
 
-Where *servers* represents the list of NATS servers.
+Where *servers* represents the list of NATS servers.
 
 == Options
 
@@ -144,7 +144,7 @@ The component supports 4 options, which are listed below.
 
 |CamelNatsMessageTimestamp |long |The timestamp of a consumed message.
 |=======================================================================
- 
+ 
 *Producer example:*
 
 [source,java]

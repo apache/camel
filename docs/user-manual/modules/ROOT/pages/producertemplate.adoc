@@ -99,5 +99,5 @@ Object result = FluentProducerTemplate.on(context)
     .withBody("the body")
     .to("direct:start")
     .request();
- 
+ 
 ----

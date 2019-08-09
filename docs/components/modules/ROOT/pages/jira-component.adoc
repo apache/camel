@@ -3,10 +3,10 @@
 
 *Available as of Camel version 3.0*
 
-The JIRA component interacts with the JIRA API by encapsulating
-Atlassian's https://bitbucket.org/atlassian/jira-rest-java-client/src/master/[REST
+The JIRA component interacts with the JIRA API by encapsulating
+Atlassian's https://bitbucket.org/atlassian/jira-rest-java-client/src/master/[REST
 Java Client for JIRA]. It currently provides polling for new issues and
-new comments.  It is also able to create new issues, add comments, change issues, add/remove watchers, add attachment
+new comments.  It is also able to create new issues, add comments, change issues, add/remove watchers, add attachment
 and transition the state of an issue.
 
 Rather than webhooks, this endpoint relies on simple polling. Reasons
@@ -16,7 +16,7 @@ include:
 * The types of payloads we're polling aren't typically large (plus, paging is available in the API)
 * The need to support apps running somewhere not publicly accessible where a webhook would fail
 
-Note that the JIRA API is fairly expansive.  Therefore, this component could be easily expanded to provide additional
+Note that the JIRA API is fairly expansive.  Therefore, this component could be easily expanded to provide additional
 interactions.
 
 Maven users will need to add the following dependency to their pom.xml
@@ -182,9 +182,9 @@ to generate the client private key, consumer key, verification code and access t
 
 == JQL:
 
-The JQL URI option is used by both consumer endpoints.  Theoretically,
+The JQL URI option is used by both consumer endpoints.  Theoretically,
 items like "project key", etc. could be URI options themselves.
- However, by requiring the use of JQL, the consumers become much more
+ However, by requiring the use of JQL, the consumers become much more
 flexible and powerful.
 
 At the bare minimum, the consumers will require the following:

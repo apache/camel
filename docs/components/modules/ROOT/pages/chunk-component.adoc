@@ -3,13 +3,13 @@
 
 *Available as of Camel version 2.15*
 
-The Chunk component allows for processing a message using a
-http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.
-This can be ideal when using Templating to
+The Chunk component allows for processing a message using a
+http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.
+This can be ideal when using Templating to
 generate responses for requests.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 
 [source,xml]
 ---------------------------------------------------------------------------------
@@ -27,11 +27,11 @@ their `pom.xml` for this component:
 chunk:templateName[?options]
 ----------------------------
 
-Where *templateName* is the classpath-local URI of the template to
+Where *templateName* is the classpath-local URI of the template to
 invoke.
 
 You can append query options to the URI in the following
-format, `?option=value&option=value&...`
+format, `?option=value&option=value&...`
 
 == Options
 
@@ -119,16 +119,16 @@ The component supports 3 options, which are listed below.
 
 
 Chunk component will look for a specific template in _themes_ folder
-with extensions _.chtml_ or _.cxml. _If you need to specify a different
+with extensions _.chtml_ or _.cxml. _If you need to specify a different
 folder or extensions, you will need to use the specific options listed
 above.
 
 == Chunk Context
 
 Camel will provide exchange information in the Chunk context (just
-a `Map`). The `Exchange` is transferred as:
+a `Map`). The `Exchange` is transferred as:
 
- 
+ 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
 |key |value
@@ -176,7 +176,7 @@ to("chunk:template");
 --------------------------
 
 To use a Chunk template to formulate a response for a message for InOut
-message exchanges (where there is a `JMSReplyTo` header).
+message exchanges (where there is a `JMSReplyTo` header).
 
 If you want to use InOnly and consume the message and send it to another
 destination you could use:
@@ -216,7 +216,7 @@ email. The email template is laid out in Chunk as:
 
 [source,java]
 ----------------------------------------------
- 
+ 
 Dear {$headers.lastName}, {$headers.firstName}
 
 Thanks for the order of {$headers.item}.

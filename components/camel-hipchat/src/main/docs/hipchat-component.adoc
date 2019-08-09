@@ -4,7 +4,7 @@
 *Available as of Camel version 2.15*
 
 The Hipchat component supports producing and consuming messages from/to
-https://www.hipchat.com[Hipchat] service.
+https://www.hipchat.com[Hipchat] service.
 
 *Prerequisites*
 
@@ -140,7 +140,7 @@ from the provided 'consumeUsers' are retrieved and sent as Exchange
 body. If you do not want the same message to be retrieved again when
 there are no new messages on next poll then you can add the
 idempotent consumer as shown below. All
-the options on the ScheduledPollConsumer can
+the options on the ScheduledPollConsumer can
 also be used for more control on the consumer.
 
 [source,java]
@@ -170,7 +170,7 @@ authToken
 |HipchatMessageDate |HipchatConstants.MESSAGE_DATE |_String_ |The date message was sent. The format is ISO-8601 as present in the
 Hipchat https://www.hipchat.com/docs/apiv2/method/view_recent_privatechat_history[response].
 
-|HipchatFromUserResponseStatus |HipchatConstants.FROM_USER_RESPONSE_STATUS  |_http://hc.apache.org/httpcomponents-core-4.2.x/httpcore/apidocs/org/apache/http/StatusLine.html[StatusLine]_
+|HipchatFromUserResponseStatus |HipchatConstants.FROM_USER_RESPONSE_STATUS  |_http://hc.apache.org/httpcomponents-core-4.2.x/httpcore/apidocs/org/apache/http/StatusLine.html[StatusLine]_
 The status of the API response received.
 |=======================================================================
 
@@ -205,7 +205,7 @@ Appropriate headers needs to be set.
 |HipchatMessageFormat |HipchatConstants.MESSAGE_FORMAT |String |Valid formats are 'text' or 'html'. *Default: 'text'*
 
 |HipchatMessageBackgroundColor |HipchatConstants.MESSAGE_BACKGROUND_COLOR |_String_ |Valid color values are 'yellow', 'green', 'red', 'purple', 'gray',
-'random'. *Default: 'yellow' (Room Only)* 
+'random'. *Default: 'yellow' (Room Only)* 
 
 |HipchatTriggerNotification |HipchatConstants.TRIGGER_NOTIFY |_String_ |Valid values are 'true' or 'false'. Whether this message should trigger
 a user notification (change the tab color, play a sound, notify mobile
@@ -258,4 +258,4 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ------------------------------------------
 
-where `$\{camel-version\}` must be replaced by the actual version of Camel.
+where `$\{camel-version\}` must be replaced by the actual version of Camel.

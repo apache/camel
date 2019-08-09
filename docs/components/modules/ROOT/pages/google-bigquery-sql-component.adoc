@@ -4,7 +4,7 @@
 *Available as of Camel version 2.23*
 
 The Google BigQuery SQL component provides access
-to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
+to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
 the https://developers.google.com/apis-explorer/#p/bigquery/v2/bigquery.jobs.query[Google Client Services API].
 
 The current implementation supports only standard SQL

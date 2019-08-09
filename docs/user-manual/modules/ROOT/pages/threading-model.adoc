@@ -35,7 +35,7 @@ then it would create a thread pool based on the profile above. The
 `rejectedPolicy` has four options:
 `Abort, CallerRuns, Discard, DiscardOldest` which corresponds to the
 same four options provided out of the box in the JDK.
-*Notice:* option allowCoreThreadTimeOut is a new option from *Camel
+*Notice:* option allowCoreThreadTimeOut is a new option from *Camel
 2.15* onwards.
 
 You can define as many thread pool profiles as you like. But there must

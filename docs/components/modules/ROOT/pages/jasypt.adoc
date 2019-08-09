@@ -213,10 +213,10 @@ Jasypt.
 == Example with Blueprint XML
 
 In Blueprint XML you need to configure
-the `JasyptPropertiesParser` which is shown below. Then the
-Camel xref:properties-component.adoc[Properties] component is told to
-use `jasypt` as the properties parser, which
-means Jasypt has its chance to decrypt values looked
+the `JasyptPropertiesParser` which is shown below. Then the
+Camel xref:properties-component.adoc[Properties] component is told to
+use `jasypt` as the properties parser, which
+means Jasypt has its chance to decrypt values looked
 up in the properties.
 
 [source,xml]
@@ -254,10 +254,10 @@ up in the properties.
 </blueprint>
 ----------------------------------------------------------------------------------------------------------------
 
-The xref:properties-component.adoc[Properties] component can also be inlined
-inside the `<camelContext>` tag which is shown below. Notice how we use
-the `propertiesParserRef` attribute to refer
-to Jasypt.
+The xref:properties-component.adoc[Properties] component can also be inlined
+inside the `<camelContext>` tag which is shown below. Notice how we use
+the `propertiesParserRef` attribute to refer
+to Jasypt.
 
 [source,xml]
 ----------------------------------------------------------------------------------------------------------------

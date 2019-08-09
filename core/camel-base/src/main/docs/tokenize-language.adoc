@@ -10,9 +10,9 @@ The tokenizer language is intended to tokenize text documents using a
 specified delimiter pattern. It can also be used to tokenize XML
 documents with some limited capability. For a truly XML-aware
 tokenization, the use of the XMLTokenizer
-language is recommended as it offers a faster, more efficient
-tokenization specifically for XML documents. For more details
-see Splitter.
+language is recommended as it offers a faster, more efficient
+tokenization specifically for XML documents. For more details
+see Splitter.
 
 == Tokenize Options
 

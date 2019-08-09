@@ -223,19 +223,19 @@ the URI can become long. In Java DSL you can break the URIs into new
 lines as its just Java code, e.g. just concat the `String`. When using XML
 DSL then the URI is an attribute, e.g. `<from uri="bla bla"/>`. From Camel
 2.15 onwards you can configure the endpoint separately, and from the
-routes refer to the endpoints using their shorthand ids. 
+routes refer to the endpoints using their shorthand ids. 
 
 [source,xml]
 ----
 <camelContext ...>
- 
+ 
   <endpoint id="foo" uri="ftp://foo@myserver">
     <property key="password" value="secret"/>
     <property key="recursive" value="true"/>
     <property key="ftpClient.dataTimeout" value="30000"/>
-    <property key="ftpClient.serverLanguageCode" value="fr"/> 
+    <property key="ftpClient.serverLanguageCode" value="fr"/> 
   </endpoint>
- 
+ 
   <route>
     <from uri="ref:foo"/>
     ...
@@ -243,7 +243,7 @@ routes refer to the endpoints using their shorthand ids. 
 </camelContext>
 ----
 
- 
+ 
 
 In the example above, the endpoint with id `foo`, is defined using
 `<endpoint>` which under the covers assembles this as an URI, with all the
@@ -261,7 +261,7 @@ as:
 </endpoint>
 ----
 
- 
+ 
 
 [[HowdoIconfigureendpoints-Configuringlongurisusingnewlines]]
 == Configuring long URIs using new lines

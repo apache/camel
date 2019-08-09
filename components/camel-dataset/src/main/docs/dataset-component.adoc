@@ -37,8 +37,8 @@ Camel ships with a support implementation of
 `org.apache.camel.component.dataset.DataSetSupport` class, that can be
 used as a base for implementing your own DataSet. Camel also ships with
 some implementations that can be used for testing:
- `org.apache.camel.component.dataset.SimpleDataSet`, `org.apache.camel.component.dataset.ListDataSet`
-and `org.apache.camel.component.dataset.FileDataSet`, all of which
+ `org.apache.camel.component.dataset.SimpleDataSet`, `org.apache.camel.component.dataset.ListDataSet`
+and `org.apache.camel.component.dataset.FileDataSet`, all of which
 extend `DataSetSupport`.
 
 == Options
@@ -169,10 +169,10 @@ The above would look in the Registry to find the
 
 Then you create a DataSet implementation, such as using the
 `SimpleDataSet` as described below, configuring things like how big the
-data set is and what the messages look like etc.  
- 
+data set is and what the messages look like etc.  
+ 
 
-== DataSetSupport (abstract class)
+== DataSetSupport (abstract class)
 
 The DataSetSupport abstract class is a nice starting point for new
 DataSets, and provides some useful features to derived classes.
@@ -217,7 +217,7 @@ configure the `SimpleDataSet` to use it by setting the
 
 *Available since Camel 2.17*
 
-The List`DataSet` extends `DataSetSupport`, and adds a list of default
+The List`DataSet` extends `DataSetSupport`, and adds a list of default
 bodies.
 
 === Additional Properties on ListDataSet
@@ -245,7 +245,7 @@ the payload for the exchange will be selected using the modulus of the
 
 *Available since Camel 2.17*
 
-The `FileDataSet` extends `ListDataSet`, and adds support for loading
+The `FileDataSet` extends `ListDataSet`, and adds support for loading
 the bodies from a file.
 
 === Additional Properties on FileDataSet

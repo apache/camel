@@ -21,10 +21,10 @@ when a xref:message.adoc[Message] is available for processing.
 
 The following demonstrates a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
-defined in the Camel xref:registry.adoc[Registry] which is
-invoked when an event occurs from a xref:components::jms-component.adoc[JMS] queue.
+defined in the Camel xref:registry.adoc[Registry] which is
+invoked when an event occurs from a xref:components::jms-component.adoc[JMS] queue.
 
-*Using the xref:fluent-builders.adoc[Fluent Builders]*
+*Using the xref:fluent-builders.adoc[Fluent Builders]*
 
 [source,java]
 ----
@@ -32,7 +32,7 @@ from("jms:queue:foo")
     .processRef("processor");
 ----
 
-**Using the xref:spring-xml-extensions.adoc[Spring XML Extensions]**
+**Using the xref:spring-xml-extensions.adoc[Spring XML Extensions]**
 
 [source,xml]
 ----

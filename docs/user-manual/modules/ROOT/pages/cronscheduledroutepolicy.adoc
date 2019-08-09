@@ -59,7 +59,7 @@ information must be provided.
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default Value |Description
-|routeStartTime |String |  |the initial scheduled Date and time as a
+|routeStartTime |String |  |the initial scheduled Date and time as a
 Cron Expression for route start
 |=======================================================================
 
@@ -68,7 +68,7 @@ Cron Expression for route start
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default Value |Description
-|routeStopTime |String |  |the initial scheduled Date and time as a Cron
+|routeStopTime |String |  |the initial scheduled Date and time as a Cron
 Expression for route stop
 
 |routeStopGracePeriod |int |10 seconds |the time period to wait before
@@ -83,7 +83,7 @@ grace period expressed as java.util.concurrent.TimeUnit
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default Value |Description
-|routeSuspendTime |String |  |the initial scheduled Date and time as a
+|routeSuspendTime |String |  |the initial scheduled Date and time as a
 Cron Expression for route suspension
 |=======================================================================
 
@@ -92,7 +92,7 @@ Cron Expression for route suspension
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default Value |Description
-|routeResumeTime |String |  |the initial scheduled Date and time as a
+|routeResumeTime |String |  |the initial scheduled Date and time as a
 Cron Expression for route resumption
 |=======================================================================
 

@@ -55,7 +55,7 @@ setting useBlueprint to true as shown below
 This allows you to boot up any Blueprint services you wish - whether
 they are Camel-related, or any other Blueprint.
 
-From *Camel 2.17* onwards the camel:run goal is able to auto detect if
+From *Camel 2.17* onwards the camel:run goal is able to auto detect if
 camel-blueprint is on the classpath or there is blueprint XML files in
 the project, and therefore you no longer have to configure the
 useBlueprint option.
@@ -130,7 +130,7 @@ OpenWebBeans) to the dependencies of the camel-maven-plugin such as
 https://github.com/apache/camel/tree/master/examples/camel-example-cdi/[in
 this example].
 
-From *Camel 2.17* onwards the camel:run goal is able to auto detect if
+From *Camel 2.17* onwards the camel:run goal is able to auto detect if
 camel-cdi in on the classpath, and therefore you no longer have to
 configure the useCDI option.
 
@@ -183,6 +183,6 @@ source code from your editor and save the file, and have the running
 Camel application pickup those changes.
 
 Notice its only changes of Camel routes, eg `<routes>`, or
-`<route>` which is supported. You cannot change Spring or OSGi Blueprint
-`<bean>` elements.
+`<route>` which is supported. You cannot change Spring or OSGi Blueprint
+`<bean>` elements.
 

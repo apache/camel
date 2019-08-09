@@ -5,7 +5,7 @@ This page lists the known books about Apache Camel. If you happen to
 know a book which is not listed then please contact us, for example
 using the xref:mailing-lists.adoc[Mailing Lists].
 
-* http://manning.com/ibsen2/[Camel in Action 2nd edition]
+* http://manning.com/ibsen2/[Camel in Action 2nd edition]
 * http://www.manning.com/ibsen[Camel in Action]
 * http://www.packtpub.com/apache-camel-developers-cookbook/book[Apache
 Camel Developer's Cookbook]
@@ -26,10 +26,10 @@ Patterns]
 [[Books-CamelinAction2ndedition]]
 == Camel in Action 2nd edition
 
-http://manning.com/ibsen2/[Camel in Action 2nd edition]
-by http://davsclaus.blogspot.com/[Claus
-Ibsen] and http://janstey.blogspot.com/[Jonathan Anstey]. To be
-published by http://www.manning.com/[Manning] in 2017 (writing started
+http://manning.com/ibsen2/[Camel in Action 2nd edition]
+by http://davsclaus.blogspot.com/[Claus
+Ibsen] and http://janstey.blogspot.com/[Jonathan Anstey]. To be
+published by http://www.manning.com/[Manning] in 2017 (writing started
 in 2015).
 
 http://manning.com/ibsen2/[image:books/cia2-cover-small.jpg[image]]
@@ -102,7 +102,7 @@ https://leanpub.com/[LeanPub] in start of 2016.
 image:books/large.jpg[image]
 
 Patterns, Principles, and Practices for designing Apache Camel
-applications. A developer friendly guide with real world use cases and
+applications. A developer friendly guide with real world use cases and
 practical tips for designing and architecting Apache Camel applications.
 
 There are great books about Apache Camel already, but this book is a
@@ -128,8 +128,8 @@ and high availability purposes.
 == Mastering Apache Camel
 
 https://www.packtpub.com/application-development/mastering-apache-camel[Mastering
-Apache Camel] by https://twitter.com/jbonofre[Jean-Baptiste Onofré].
-Published by http://www.packtpub.com/[Packt publishing] in June 2015.
+Apache Camel] by https://twitter.com/jbonofre[Jean-Baptiste Onofré].
+Published by http://www.packtpub.com/[Packt publishing] in June 2015.
 
 image:books/3151EN_Mastering_Apache_Camel.jpg[image]
 
@@ -153,8 +153,8 @@ successfully.
 == Apache Camel Essentials
 
 https://www.packtpub.com/application-development/apache-camel-essentials[Apache
-Camel Essentials] by Prajod Surendran V, Gnanaguru Sattanathan, Naveen
-Raj. Published by http://www.packtpub.com/[Packt publishing] in August
+Camel Essentials] by Prajod Surendran V, Gnanaguru Sattanathan, Naveen
+Raj. Published by http://www.packtpub.com/[Packt publishing] in August
 2016.
 
 https://www.packtpub.com/application-development/apache-camel-essentials[image:books/B03507_MockupCover_Normal.jpg[image]]

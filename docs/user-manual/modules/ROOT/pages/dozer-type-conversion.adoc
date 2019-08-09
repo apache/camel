@@ -175,7 +175,7 @@ Or in Spring:
     </list>
   </property>
 </bean>
- 
+ 
 <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
   ...
 </camelContext>
@@ -197,7 +197,7 @@ Or in OSGi Blueprints:
     </list>
   </property>
 </bean>
- 
+ 
 <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/blueprint">
   ...
 </camelContext>

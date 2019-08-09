@@ -158,7 +158,7 @@ You can use property placeholders in parts of the endpoint URI's which
 for example you can use placeholders for parameters in the URIs.
 
 You can specify a default value to use if
-a property with the key does not exists, eg `file.url:/some/path` where
+a property with the key does not exists, eg `file.url:/some/path` where
 the default value is the text after the colon (eg /some/path).
 
 NOTE: Do not use colon in the property key. The colon is used as a separator
@@ -738,7 +738,7 @@ private int timeout;
 
 == Using out of the box functions
 
-The xref:properties-component.adoc[Properties] component includes the following
+The xref:properties-component.adoc[Properties] component includes the following
 functions out of the box
 
 * `env` - A function to lookup the property from OS environment variables
@@ -747,10 +747,10 @@ properties
 * `service` - A function to lookup the property from OS environment
 variables using the service naming idiom
 * `service.name` - A function to lookup the
-property from OS environment variables using the service naming idiom
+property from OS environment variables using the service naming idiom
 returning the hostname part only
-* `service.port` - A function to lookup the
-property from OS environment variables using the service naming idiom
+* `service.port` - A function to lookup the
+property from OS environment variables using the service naming idiom
 returning the port part only
 
 As you can see these functions is intended to make it easy to lookup
@@ -785,7 +785,7 @@ is a `log:foo` and `log:bar` value.
   </camelContext>
 ----
 
- 
+ 
 
 The service function is for looking up a service which is defined using
 OS environment variables using the service naming idiom, to refer to a
@@ -806,7 +806,7 @@ export $FOO_SERVICE_PORT=8888
 
 For example if the FOO service a remote HTTP service, then we can refer
 to the service in the Camel endpoint uri, and use
-the xref:http-component.adoc[HTTP] component to make the HTTP call:
+the xref:http-component.adoc[HTTP] component to make the HTTP call:
 
 [source,xml]
 ----
@@ -834,7 +834,7 @@ example to call a service on localhost, maybe for unit testing etc
 == Using custom functions
 
 The xref:properties-component.adoc[Properties] component allow to plugin 3rd party
-functions which can be used during parsing of the property placeholders.
+functions which can be used during parsing of the property placeholders.
 These functions are then able to do custom logic to resolve the
 placeholders, such as looking up in databases, do custom computations,
 or whatnot. The name of the function becomes the prefix used in the
@@ -884,9 +884,9 @@ public static final class MyBeerFunction implements PropertiesFunction {
 ----
 
 The function must implement
-the `org.apache.camel.component.properties.PropertiesFunction`
-interface. The method `getName` is  the name of the function, eg beer.
-And the `apply` method is where we implement the custom logic to do. As
+the `org.apache.camel.component.properties.PropertiesFunction`
+interface. The method `getName` is  the name of the function, eg beer.
+And the `apply` method is where we implement the custom logic to do. As
 the sample code is from an unit test, it just returns a value to refer
 to a mock endpoint.
 
@@ -897,7 +897,7 @@ To register a custom function from Java code is as shown below:
 PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
 pc.addFunction(new MyBeerFunction());
 ----
- 
+ 
 
 == Using 3rd-party properties sources
 

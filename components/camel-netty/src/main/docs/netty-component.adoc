@@ -407,9 +407,9 @@ Using the JSSE Configuration Utility
 
 The Netty component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
-Configuration Utility].  This utility greatly decreases the amount of
+Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
-endpoint and component levels.  The following examples demonstrate how
+endpoint and component levels.  The following examples demonstrate how
 to use the utility with the Netty component.
 
 [[Netty-Programmaticconfigurationofthecomponent]]
@@ -661,7 +661,7 @@ A custom pipeline factory must be constructed as follows
 * A Producer linked channel pipeline factory must extend the abstract
 class `ClientPipelineFactory`.
 * A Consumer linked channel pipeline factory must extend the abstract
-class `ServerInitializerFactory`.
+class `ServerInitializerFactory`.
 * The classes should override the initChannel() method in order to
 insert custom handler(s), encoder(s) and decoder(s). Not overriding the
 `initChannel()` method creates a pipeline with no handlers, encoders or

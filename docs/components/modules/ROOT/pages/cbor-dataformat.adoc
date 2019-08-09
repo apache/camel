@@ -4,7 +4,7 @@
 *Available as of Camel version 3.0*
 
 CBOR is a Data Format which uses the
-http://wiki.fasterxml.com/JacksonHome/[Jackson library] with the
+http://wiki.fasterxml.com/JacksonHome/[Jackson library] with the
 https://github.com/FasterXML/jackson-dataformats-binary/tree/master/cbor[CBOR extension]
 to unmarshal a CBOR payload into Java objects or to marshal Java objects
 into a CBOR payload.
@@ -79,8 +79,8 @@ The component supports 12 options, which are listed below.
 
 === Using CBOR in Spring DSL
 
-When using Data Format in Spring DSL you need to
-declare the data formats first. This is done in the *DataFormats* XML
+When using Data Format in Spring DSL you need to
+declare the data formats first. This is done in the *DataFormats* XML
 tag.
 
 [source,xml]

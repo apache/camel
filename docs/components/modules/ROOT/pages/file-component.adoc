@@ -237,7 +237,7 @@ point in time the file is still located in the `inbox` folder. After the
 bean completes, and thus the route is completed, the file consumer will
 perform the move operation and move the file to the `.done` sub-folder.
 
-The *move* and the *preMove* options are considered as a directory name
+The *move* and the *preMove* options are considered as a directory name
 (though if you use an expression such as xref:manual::file-language.adoc[File Language], or xref:manual::simple-language.adoc[Simple] then the result of the expression
 evaluation is the file name to be used - eg if you set
 
@@ -283,7 +283,7 @@ processed and after it's processed, it's moved to the `.done` folder.
 == Fine grained control over Move and PreMove option
 
 The *move* and *preMove* options
-are Expression-based, so we have the full power of
+are Expression-based, so we have the full power of
 the xref:manual::file-language.adoc[File Language] to do advanced configuration
 of the directory and name pattern. +
  Camel will, in fact, internally convert the directory name you enter
@@ -378,7 +378,7 @@ This component implements the Batch Consumer.
 
 == Exchange Properties, file consumer only
 
-As the file consumer implements the `BatchConsumer` it supports batching
+As the file consumer implements the `BatchConsumer` it supports batching
 the files it polls. By batching we mean that Camel will add the
 following additional properties to the Exchange, so
 you know the number of files polled, the current index, and whether the
@@ -795,9 +795,9 @@ Sometime you need to temporarily write the files to some directory
 relative to the destination directory. Such situation usually happens
 when some external process with limited filtering capabilities is
 reading from the directory you are writing to. In the example below
-files will be written to the  `/var/myapp/filesInProgress` directory and
+files will be written to the  `/var/myapp/filesInProgress` directory and
 after data transfer is done, they will be atomically moved to
-the` /var/myapp/finalDirectory `directory.
+the` /var/myapp/finalDirectory `directory.
 
 [source,java]
 ----
@@ -1080,7 +1080,7 @@ sortBy=file:modified;file:name
 Now there is an issue here, can you spot it? Well the modified timestamp
 of the file is too fine as it will be in milliseconds, but what if we
 want to sort by date only and then subgroup by name? +
- Well as we have the true power of xref:manual::file-language.adoc[File Language] we can use its date command that supports patterns. So this
+ Well as we have the true power of xref:manual::file-language.adoc[File Language] we can use its date command that supports patterns. So this
 can be solved as:
 
 [source]

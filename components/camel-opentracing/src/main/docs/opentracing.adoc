@@ -61,8 +61,8 @@ OpenTracing tracer beans. Camel will automatically discover and use them.
 
 == Spring Boot
 
-If you are using Spring Boot then you can add
-the `camel-opentracing-starter` dependency, and turn on OpenTracing by annotating
+If you are using Spring Boot then you can add
+the `camel-opentracing-starter` dependency, and turn on OpenTracing by annotating
 the main class with `@CamelOpenTracing`.
 
 The `Tracer` will be implicitly obtained from the camel context's `Registry`, or the `ServiceLoader`, unless

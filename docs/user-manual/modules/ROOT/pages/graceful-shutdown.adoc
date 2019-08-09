@@ -102,7 +102,7 @@ long at the current node (eg delay1) and duration is total time in
 mills.
 
 If you enable DEBUG logging level
-on `org.apache.camel.impl.DefaultShutdownStrategy` then it logs the same
+on `org.apache.camel.impl.DefaultShutdownStrategy` then it logs the same
 inflight exchange information during graceful shutdown
 
 [source,bash]
@@ -115,7 +115,7 @@ duration=2017]
 ---------------------------------
 
 If you do not want to see these logs, you can turn this off by setting
-the option logInflightExchangesOnTimeout to false.
+the option logInflightExchangesOnTimeout to false.
 
 [source,java]
 ---------------------------------

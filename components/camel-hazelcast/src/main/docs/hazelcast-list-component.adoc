@@ -149,7 +149,7 @@ from("direct:removevalue")
 .toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX);
 --------------------------------------------------------------------------------------------
 
-Note that *CamelHazelcastObjectIndex* header is used for indexing
+Note that *CamelHazelcastObjectIndex* header is used for indexing
 purpose.
 
 

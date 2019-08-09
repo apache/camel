@@ -13,11 +13,11 @@ you can simply import when needed.
 In *Camel 2.3* it is now possible to define routes outside
 `<camelContext/>` which you do in a new `<routeContext/>` tag.
 
-NOTE: When you use `<routeContext>` then they are separated, and
+NOTE: When you use `<routeContext>` then they are separated, and
 cannot reuse existing `<onException>`,
-`<intercept>`, `<dataFormats>` and similar cross cutting
+`<intercept>`, `<dataFormats>` and similar cross cutting
 functionality defined in the `<camelContext>`. In other words
-the `<routeContext>` is currently isolated. This may change in Camel
+the `<routeContext>` is currently isolated. This may change in Camel
 3.x.
 
 For example we could have a file named `myCoolRoutes.xml` which
@@ -27,11 +27,11 @@ https://github.com/apache/camel/tree/master/components/camel-spring/src/test/res
 
 Then in your XML file which contains the CamelContext you can use Spring to
 import the `myCoolRoute.xml` file. And then inside `<camelContext/>`
-you can refer to the `<routeContext/>` by its `id` as shown below:
+you can refer to the `<routeContext/>` by its `id` as shown below:
 
 https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/config/RouteRefIncludeXmlFileTest.xml
 
-Also notice that you can mix and match, having routes inside `CamelContext`
+Also notice that you can mix and match, having routes inside `CamelContext`
 and also externalized in `RouteContext`.
 
 You can have as many `<routeContextRef/>` as you like.
@@ -40,5 +40,5 @@ You can have as many `<routeContextRef/>` as you like.
 
 The routes defined in `<routeContext/>` can be reused by multiple
 `<camelContext/>`. However its only the definition which is reused. At
-runtime each `CamelContext` will create its own instance of the route
+runtime each `CamelContext` will create its own instance of the route
 based on the definition.

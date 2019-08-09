@@ -176,7 +176,7 @@ fields when CSV is generated
 fields when CSV is generated. This annotation is associated to the root class of the model and must be
 declared one time.
 
-|quoting |boolean |optional - default value = false - Indicate if the values (and headers)
+|quoting |boolean |optional - default value = false - Indicate if the values (and headers)
 must be quoted when marshaling when CSV is generated.
 
 |endWithLineBreak |boolean |optional - default value = true - Indicate if the CSV generated file
@@ -484,7 +484,7 @@ default value when the respective CSV field is empty/not available
 |impliedDecimalSeparator |boolean |optional - default value = "false" - Indicates if there is
 a decimal point implied at a specified location
 
-|lengthPos |int |optional - can be used to identify a data field in a
+|lengthPos |int |optional - can be used to identify a data field in a
 fixed-length record that defines the fixed length for this field
 
 |align |string |optional - default value = "R" - Align the text to the right or left within a fixed-length field.
@@ -789,7 +789,7 @@ record
 record
 
 |ignoreTrailingChars |boolean |optional - Indicates that characters beyond the last
-mapped filed can be ignored when unmarshalling / parsing. This annotation is associated to the root class of the model and must be
+mapped filed can be ignored when unmarshalling / parsing. This annotation is associated to the root class of the model and must be
 declared one time.
 |===
 
@@ -1688,7 +1688,7 @@ DataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 
 === Setting locale
 
-Bindy supports configuring the locale on the dataformat, such as 
+Bindy supports configuring the locale on the dataformat, such as 
 
 [source,java]
 ----

@@ -36,7 +36,7 @@ weather://<unused name>[?options]
 
 Since the 9th of October, an Api Key is required to access the
 openweather service. This key is passed as parameter to the URI
-definition of the weather endpoint using the appid param !
+definition of the weather endpoint using the appid param !
 
 == Geolocation provider
 

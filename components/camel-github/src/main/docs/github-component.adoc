@@ -4,9 +4,9 @@
 *Available as of Camel version 2.15*
 
 The GitHub component interacts with the GitHub API by
-encapsulating http://org.eclipse.egit.github.core[egit-github]. It
+encapsulating http://org.eclipse.egit.github.core[egit-github]. It
 currently provides polling for new pull requests, pull request comments,
-tags, and commits.  It is also able to produce comments on pull
+tags, and commits.  It is also able to produce comments on pull
 requests, as well as close the pull request entirely.
 
 Rather than webhooks, this endpoint relies on simple polling. Reasons
@@ -18,7 +18,7 @@ paging is available in the API)
 * The need to support apps running somewhere not publicly accessible
 where a webhook would fail
 
-Note that the GitHub API is fairly expansive.  Therefore, this component
+Note that the GitHub API is fairly expansive.  Therefore, this component
 could be easily expanded to provide additional interactions.
 
 Maven users will need to add the following dependency to their pom.xml

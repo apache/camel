@@ -95,7 +95,7 @@ order by
 ----
 
 In the file you can use multilines and format the SQL as you wish. And
-also use comments such as the – dash line.
+also use comments such as the – dash line.
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
@@ -248,10 +248,10 @@ message body changes slightly – instead of an iterator of parameters,
 the component expects an iterator that contains the parameter iterators;
 the size of the outer iterator determines the batch size.
 
-You can use the option useMessageBodyForSql that
+You can use the option useMessageBodyForSql that
 allows to use the message body as the SQL statement, and then the SQL
 parameters must be provided in a header with the
-key SqlConstants.SQL_PARAMETERS. This allows the SQL component to work
+key SqlConstants.SQL_PARAMETERS. This allows the SQL component to work
 more dynamic as the SQL query is from the message body.
 
 == Result of the query
@@ -262,11 +262,11 @@ http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/jdbc
 method. For `update` operations, the result is the number of updated
 rows, returned as an `Integer`.
 
-By default, the result is placed in the message body.  If the
-outputHeader parameter is set, the result is placed in the header.  This
+By default, the result is placed in the message body.  If the
+outputHeader parameter is set, the result is placed in the header.  This
 is an alternative to using a full message enrichment pattern to add
 headers, it provides a concise syntax for querying a sequence or some
-other small value into a header.  It is convenient to use outputHeader
+other small value into a header.  It is convenient to use outputHeader
 and outputType together:
 
 [source,java]
@@ -281,7 +281,7 @@ from("jms:order.inbox")
 The producer supports outputType=StreamList
 that uses an iterator to stream the output of the query. This allows to
 process the data in a streaming fashion which for example can be used by
-the Splitter EIP to process each row one at a time,
+the Splitter EIP to process each row one at a time,
 and load data from the database as needed.
 
 [source,java]
@@ -294,7 +294,7 @@ from("direct:withSplitModel")
             .to("mock:result")
         .end();
 ----
- 
+ 
 
 == Header values
 
@@ -306,11 +306,11 @@ count in the following message headers:
 |Header |Description
 
 |`CamelSqlUpdateCount` |The number of rows updated for `update` operations, returned as an
-`Integer` object. This header is not provided when using
+`Integer` object. This header is not provided when using
 outputType=StreamList.
 
 |`CamelSqlRowCount` |The number of rows returned for `select` operations, returned as an
-`Integer` object. This header is not provided when using
+`Integer` object. This header is not provided when using
 outputType=StreamList.
 
 |`CamelSqlQuery` |Query to execute. This query takes precedence over the
@@ -318,7 +318,7 @@ query specified in the endpoint URI. Note that query parameters in the
 header _are_ represented by a `?` instead of a `pass:[#]` symbol
 |===
 
-When performing `insert` operations, the SQL Component stores the rows
+When performing `insert` operations, the SQL Component stores the rows
 with the generated keys and number of these rown in the following
 message headers:
 
@@ -441,8 +441,8 @@ the message body or a header etc.
 
 To use IN you need to:
 
-* prefix the parameter name with `in:`
-* add `( )` around the parameter
+* prefix the parameter name with `in:`
+* add `( )` around the parameter
 
 An example explains this better. The following query is used:
 
@@ -495,7 +495,7 @@ from("direct:query")
     .to("log:query")
     .to("mock:query");
 ----
- 
+ 
 
 == Using the JDBC based idempotent repository
 
@@ -521,7 +521,7 @@ idempotent repository. We use the following schema:
 CREATE TABLE CAMEL_MESSAGEPROCESSED ( processorName VARCHAR(255),
 messageId VARCHAR(100) )
 ----
- 
+ 
 
 We added the createdAt column:
 
@@ -531,7 +531,7 @@ CREATE TABLE CAMEL_MESSAGEPROCESSED ( processorName VARCHAR(255),
 messageId VARCHAR(100), createdAt TIMESTAMP )
 ----
 
-WARNING: The SQL Server *TIMESTAMP* type is a fixed-length binary-string type. It
+WARNING: The SQL Server *TIMESTAMP* type is a fixed-length binary-string type. It
 does not map to any of the JDBC time types: *DATE*, *TIME*, or
 *TIMESTAMP*.
 
@@ -664,7 +664,7 @@ CREATE TABLE aggregationRepo3_completed (
  constraint aggregationRepo3_completed_pk PRIMARY KEY (id)
 );
 ----
- 
+ 
 And then configure the repository to enable this behavior as shown
 below:
 

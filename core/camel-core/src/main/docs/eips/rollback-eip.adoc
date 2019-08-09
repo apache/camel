@@ -148,15 +148,15 @@ test].
 
 First of all we setup the usual spring stuff in its configuration file.
 Here we have defined a DataSource to the HSQLDB and a most
-importantly the Spring DataSource TransactionManager that is doing the
+importantly the Spring DataSource TransactionManager that is doing the
 heavy lifting of ensuring our transactional policies. You are of course
-free to use any of the Spring based TransactionManager, eg. if you are
+free to use any of the Spring based TransactionManager, eg. if you are
 in a full blown J2EE container you could use JTA or the WebLogic or
 WebSphere specific managers.
 
 As we use the new convention over configuration we do *not* need to
 configure a transaction policy bean, so we do not have any
-`PROPAGATION_REQUIRED` beans. All the beans needed to be configured is
+`PROPAGATION_REQUIRED` beans. All the beans needed to be configured is
 *standard* Spring beans only, eg. there are no Camel specific
 configuration at
 all.https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml[springTransactionalClientDataSourceMinimalConfiguration]Then
@@ -199,17 +199,17 @@ An Integration Test here means a test runner class annotated
 `@RunWith(SpringJUnit4ClassRunner.class).`
 
 When following the Spring Transactions documentation it is tempting to
-annotate your integration test with `@Transactional` then seed your
+annotate your integration test with `@Transactional` then seed your
 database before firing up the route to be tested and sending a message
 in. This is incorrect as Spring will have an in-progress transaction,
 and Camel will wait on this before proceeding, leading to the route
 timing out.
 
 Instead, remove the `@Transactional` annotation from the test method and
-seed the test data within a `TransactionTemplate` execution which will
+seed the test data within a `TransactionTemplate` execution which will
 ensure the data is committed to the database before Camel attempts to
 pick up and use the transaction manager. A simple
-example https://github.com/rajivj2/example2/blob/master/src/test/java/com/example/NotificationRouterIT.java[can
+example https://github.com/rajivj2/example2/blob/master/src/test/java/com/example/NotificationRouterIT.java[can
 be found on GitHub].
 
 Spring's transactional model ensures each transaction is bound to one

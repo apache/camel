@@ -6,7 +6,7 @@
 The CW component allows messages to be sent to an
 https://aws.amazon.com/cloudwatch/[Amazon CloudWatch] metrics. The
 implementation of the Amazon API is provided by
-the https://aws.amazon.com/sdkforjava/[AWS SDK].
+the https://aws.amazon.com/sdkforjava/[AWS SDK].
 
 Prerequisites
 

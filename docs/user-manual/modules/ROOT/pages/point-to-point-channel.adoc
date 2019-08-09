@@ -17,7 +17,7 @@ clustering and load balancing
 image:http://www.enterpriseintegrationpatterns.com/img/PointToPointSolution.gif[image]
 
 The following example demonstrates point to point messaging using
-the xref:components::jms-component.adoc[JMS] component 
+the xref:components::jms-component.adoc[JMS] component 
 
 [[PointtoPointChannel-Samples]]
 == Samples

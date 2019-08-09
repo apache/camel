@@ -3,11 +3,11 @@
 
 *Available as of Camel version 2.20*
 
-The Caffeine Cache component enables you to perform caching operations using
+The Caffeine Cache component enables you to perform caching operations using
 the simple cache from Caffeine.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 
 [source,xml]
 ------------------------------------------------------------
@@ -27,7 +27,7 @@ caffeine-cache://cacheName[?options]
 -----------------------------
 
 You can append query options to the URI in the following
-format, `?option=value&option=#beanRef&...`
+format, `?option=value&option=#beanRef&...`
 
 == Options
 

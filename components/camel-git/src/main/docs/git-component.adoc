@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.16*
 
-The Git component allows you to work with a generic Git repository. 
+The Git component allows you to work with a generic Git repository. 
 
 [source,xml]
 ------------------------------------------------------------

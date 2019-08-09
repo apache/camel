@@ -3,13 +3,13 @@
 
 *Available as of Camel version 2.17*
 
-YAML is a Data Format to marshal and unmarshal
-Java objects to and from http://www.yaml.org/[YAML].
+YAML is a Data Format to marshal and unmarshal
+Java objects to and from http://www.yaml.org/[YAML].
 
 For YAML to object marshalling, Camel provides integration with three
 popular YAML libraries:
 
-* The http://www.snakeyaml.org/[SnakeYAML] library
+* The http://www.snakeyaml.org/[SnakeYAML] library
 
 Every library requires adding the special camel component (see
 "Dependency..." paragraphs further down). By default Camel uses the
@@ -111,8 +111,8 @@ from("activemq:My.Queue")
 
 == Using YAML in Spring DSL
 
-When using Data Format in Spring DSL you need to
-declare the data formats first. This is done in the *DataFormats* XML
+When using Data Format in Spring DSL you need to
+declare the data formats first. This is done in the *DataFormats* XML
 tag.
 
 [source,xml]
@@ -164,11 +164,11 @@ And then you can refer to those ids in the route:
 == Dependencies for SnakeYAML
 
 To use YAML in your camel routes you need to add the a dependency
-on *camel-snakeyaml* which implements this data format.
+on *camel-snakeyaml* which implements this data format.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release
-(see the download page for the latest versions).
+(see the download page for the latest versions).
 
 [source,xml]
 ------------------------------------------
@@ -179,6 +179,6 @@ substituting the version number for the latest & greatest release
 </dependency>
 ------------------------------------------
 
- 
+ 
 
- 
+ 

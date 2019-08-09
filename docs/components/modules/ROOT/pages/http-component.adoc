@@ -252,7 +252,7 @@ body. All headers from the IN message will be copied to the OUT message,
 so headers are preserved during routing. Additionally Camel will add the
 HTTP response headers as well to the OUT message headers.
 
- 
+ 
 
 
 == Using System Properties
@@ -559,9 +559,9 @@ Using the JSSE Configuration Utility
 
 The HTTP component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
-Configuration Utility].  This utility greatly decreases the amount of
+Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
-endpoint and component levels.  The following examples demonstrate how
+endpoint and component levels.  The following examples demonstrate how
 to use the utility with the HTTP component.
 
 [[HTTP-Programmaticconfigurationofthecomponent]]

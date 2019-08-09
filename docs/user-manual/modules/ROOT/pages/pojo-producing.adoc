@@ -42,12 +42,12 @@ attribute on *`@Produce`*, *`@EndpointInject`*.
 ====
 
 [[POJOProducing-HidingtheCamelAPIsFromYourCodeUsing@Produce]]
-== Hiding the Camel APIs From Your Code Using `@Produce`
+== Hiding the Camel APIs From Your Code Using `@Produce`
 
 We recommend xref:hiding-middleware.adoc[Hiding Middleware] APIs from
 your application code so the next option might be more suitable. You can
-add the *`@Produce`* annotation to an injection point (a field or
-property setter) using a *`ProducerTemplate`* *or* using some interface
+add the *`@Produce`* annotation to an injection point (a field or
+property setter) using a *`ProducerTemplate`* *or* using some interface
 you use in your business logic. Example:
 
 [source,syntaxhighlighter-pre]
@@ -68,7 +68,7 @@ public class MyBean {
 ----
 
 Here Camel will automatically inject a smart client side proxy at
-the *`@Produce`* annotation - an instance of the *`MyListener`*
+the *`@Produce`* annotation - an instance of the *`MyListener`*
 instance. When we invoke methods on this interface the method call is
 turned into an object and using the Camel
 xref:spring-remoting.adoc[Spring Remoting] mechanism it is sent to the

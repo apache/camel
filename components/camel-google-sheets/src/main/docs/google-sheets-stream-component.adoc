@@ -4,19 +4,19 @@
 *Available as of Camel version 2.23*
 
 The Google Sheets component provides access
-to https://sheets.google.com/[Sheets] via
-the https://developers.google.com/sheets/api/reference/rest/[Google Sheets
+to https://sheets.google.com/[Sheets] via
+the https://developers.google.com/sheets/api/reference/rest/[Google Sheets
 Web APIs].
 
 Google Sheets uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need
-to https://developers.google.com/google-apps/sheets/auth[create an
+to https://developers.google.com/google-apps/sheets/auth[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is
-the https://developers.google.com/oauthplayground[OAuth playground].
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -179,4 +179,4 @@ from("google-sheets-stream://data?range=A:B&delay=5000&maxResults=5").to("mock:r
 
 This route will consume the next ten events starting from the date of polling.
 
-   
+   

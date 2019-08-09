@@ -8,10 +8,10 @@ http://x-stream.github.io/[XStream library] to marshal and unmarshal
 Java objects to and from XML.
 
 To use XStream in your camel routes you need to add the a dependency
-on *camel-xstream* which implements this data format.
+on *camel-xstream* which implements this data format.
 
 Maven users will need to add the following dependency to their
-`pom.xml` for this component:
+`pom.xml` for this component:
 
 [source,xml]
 ----------------------------------------------------------
@@ -166,8 +166,8 @@ from("activemq:My.Queue").
 In Camel, one can always use its own processing step in the route to
 filter and block certain XML documents to be routed to the XStream's
 unmarhall step. You can
-set http://x-stream.github.io/security.html[XStream's type
-permissions] to automatically allow or deny the instantiation of certain
+set http://x-stream.github.io/security.html[XStream's type
+permissions] to automatically allow or deny the instantiation of certain
 types.
 
 The default type permissions setting used by Camel denies all types

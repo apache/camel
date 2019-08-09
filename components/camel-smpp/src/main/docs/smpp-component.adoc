@@ -30,25 +30,25 @@ for this component:
 
 == SMS limitations
 
-SMS is neither reliable or secure.  Users who require reliable and
+SMS is neither reliable or secure.  Users who require reliable and
 secure delivery may want to consider using the XMPP or SIP components
 instead, combined with a smartphone app supporting the chosen protocol.
 
 * Reliability: although the SMPP standard offers a range of feedback
 mechanisms to indicate errors, non-delivery and confirmation of delivery
 it is not uncommon for mobile networks to hide or simulate these
-responses.  For example, some networks automatically send a delivery
+responses.  For example, some networks automatically send a delivery
 confirmation for every message even if the destination number is invalid
-or not switched on.  Some networks silently drop messages if they think
-they are spam.  Spam detection rules in the network may be very crude,
+or not switched on.  Some networks silently drop messages if they think
+they are spam.  Spam detection rules in the network may be very crude,
 sometimes more than 100 messages per day from a single sender may be
 considered spam.
 * Security: there is basic encryption for the last hop from the radio
-tower down to the recipient handset.  SMS messages are not encrypted or
-authenticated in any other part of the network.  Some operators allow
+tower down to the recipient handset.  SMS messages are not encrypted or
+authenticated in any other part of the network.  Some operators allow
 staff in retail outlets or call centres to browse through the SMS
-message histories of their customers.  Message sender identity can be
-easily forged.  Regulators and even the mobile telephone industry itself
+message histories of their customers.  Message sender identity can be
+easily forged.  Regulators and even the mobile telephone industry itself
 has cautioned against the use of SMS in two-factor authentication
 schemes and other purposes where security is important.
 
@@ -57,20 +57,20 @@ to the SMS network, it can not offer an easy solution to these problems.
 
 == Data coding, alphabet and international character sets
 
-Data coding and alphabet can be specified on a per-message basis. 
-Default values can be specified for the endpoint.  It is important to
+Data coding and alphabet can be specified on a per-message basis. 
+Default values can be specified for the endpoint.  It is important to
 understand the relationship between these options and the way the
 component acts when more than one value is set.
 
 Data coding is an 8 bit field in the SMPP wire format.
 
-Alphabet corresponds to bits 0-3 of the data coding field.  For some
+Alphabet corresponds to bits 0-3 of the data coding field.  For some
 types of message, where a message class is used (by setting bit 5 of the
 data coding field), the lower two bits of the data coding field are not
 interpreted as alphabet and only bits 2 and 3 impact the alphabet.
 
 Furthermore, current version of the JSMPP library only seems to support
-bits 2 and 3, assuming that bits 0 and 1 are used for message class. 
+bits 2 and 3, assuming that bits 0 and 1 are used for message class. 
 This is why the Alphabet class in JSMPP doesn't support the value 3
 (binary 0011) which indicates ISO-8859-1.
 
@@ -88,10 +88,10 @@ find:
 parameter)
 
 Older versions of Camel had bugs in support for international character
-sets.  This feature only worked when a single encoding was used for all
+sets.  This feature only worked when a single encoding was used for all
 messages and was troublesome when users wanted to change it on a
-per-message basis.  Users who require this to work should ensure their
-version of Camel includes the fix for 
+per-message basis.  Users who require this to work should ensure their
+version of Camel includes the fix for 
 
 JIRA Issues Macro: com.atlassian.sal.api.net.ResponseStatusException:
 Unexpected response received. Status code: 404
@@ -101,25 +101,25 @@ Unexpected response received. Status code: 404
 In addition to trying to send the data coding value to the SMSC, the
 Camel component also tries to analyze the message body, convert it to a
 Java String (Unicode) and convert that to a byte array in the
-corresponding alphabet  When deciding which alphabet to use in the byte
+corresponding alphabet  When deciding which alphabet to use in the byte
 array, the Camel SMPP component does not consider the data coding value
 (header or configuration), it only considers the specified alphabet
 (from either the header or endpoint parameter).
 
 If some characters in the String can't be represented in the chosen
-alphabet, they may be replaced by the question mark ( ? ) symbol.  Users
+alphabet, they may be replaced by the question mark ( ? ) symbol.  Users
 of the API may want to consider checking if their message body can be
 converted to ISO-8859-1 before passing it to the component and if not,
-setting the alphabet header to request UCS-2 encoding.  If the alphabet
+setting the alphabet header to request UCS-2 encoding.  If the alphabet
 and data coding options are not specified at all then the component may
 try to detect the required encoding and set the data coding for you.
 
 The list of alphabet codes are specified in the SMPP specification v3.4,
-section 5.2.19.  One notable limitation of the SMPP specification is
+section 5.2.19.  One notable limitation of the SMPP specification is
 that there is no alphabet code for explicitly requesting use of the GSM
-3.38 (7 bit) character set.  Choosing the value 0 for the alphabet
+3.38 (7 bit) character set.  Choosing the value 0 for the alphabet
 selects the SMSC _default_ alphabet, this usually means GSM 3.38 but it
-is not guaranteed.  The SMPP gateway Nexmo
+is not guaranteed.  The SMPP gateway Nexmo
 https://help.nexmo.com/hc/en-us/articles/204015813-How-to-change-the-character-encoding-in-SMPP-[actually
 allows the default to be mapped to any other character set with a
 control panel option]. It is suggested that users check with their SMSC
@@ -130,18 +130,18 @@ default.
 
 After transforming a message body from a String to a byte array, the
 Camel component is also responsible for splitting the message into parts
-(within the 140 byte SMS size limit) before passing it to JSMPP.  This
+(within the 140 byte SMS size limit) before passing it to JSMPP.  This
 is completed automatically.
 
 If the GSM 3.38 alphabet is used, the component will pack up to 160
-characters into the 140 byte message body.  If an 8 bit character set is
+characters into the 140 byte message body.  If an 8 bit character set is
 used (e.g. ISO-8859-1 for western Europe) then 140 characters will be
-allowed within the 140 byte message body.  If 16 bit UCS-2 encoding is
+allowed within the 140 byte message body.  If 16 bit UCS-2 encoding is
 used then just 70 characters fit into each 140 byte message.
 
-Some SMSC providers implement throttling rules.  Each part of a message
+Some SMSC providers implement throttling rules.  Each part of a message
 that has been split may be counted separately by the provider's
-throttling mechanism.  The Camel Throttler component can be useful for
+throttling mechanism.  The Camel Throttler component can be useful for
 throttling messages in the SMPP route before handing them to the SMSC.
 
 == URI format
@@ -410,16 +410,16 @@ converted in the following way: `String` -> `org.jsmpp.bean.OptionalParameter.CO
 `null` -> `org.jsmpp.bean.OptionalParameter.Null`
 
 |CamelSmppEncoding |String |*only for SubmitSm,
-SubmitMulti and DataSm*.  Specifies the encoding (character set name) of
-the bytes in the message body.  If the message body is a string then
-this is not relevant because Java Strings are always Unicode.  If the
+SubmitMulti and DataSm*.  Specifies the encoding (character set name) of
+the bytes in the message body.  If the message body is a string then
+this is not relevant because Java Strings are always Unicode.  If the
 body is a byte array then this header can be used to indicate that it is
-ISO-8859-1 or some other value.  Default value is specified by the
+ISO-8859-1 or some other value.  Default value is specified by the
 endpoint configuration parameter _encoding_
 
 |CamelSmppSplittingPolicy |String |*only for SubmitSm,
-SubmitMulti and DataSm*.  Specifies the policy for message splitting for
-this exchange.  Possible values are described in the endpoint
+SubmitMulti and DataSm*.  Specifies the policy for message splitting for
+this exchange.  Possible values are described in the endpoint
 configuration parameter _splittingPolicy_
 |=======================================================================
 
@@ -592,7 +592,7 @@ capabilities
 
 When an error occurs sending a message with SubmitSm (the default
 action), the org.apache.camel.component.smpp.SmppException is thrown
-with a nested exception, org.jsmpp.extra.NegativeResponseException. 
+with a nested exception, org.jsmpp.extra.NegativeResponseException. 
 Call NegativeResponseException.getCommandStatus() to obtain the exact
 SMPP negative response code, the values are explained in the SMPP
 specification 3.4, section 5.1.3. +

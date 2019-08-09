@@ -648,7 +648,7 @@ camel-cxf endpont or add a message header for it like
 
 == How to override the CXF producer address from message header
 
-The `camel-cxf` producer supports to override the services address by
+The `camel-cxf` producer supports to override the services address by
 setting the message with the key of "CamelDestinationOverrideUrl".
 
 [source,java]
@@ -736,8 +736,8 @@ headers).
 You can also use the same way as described in
 sub-chapter "How to get and set SOAP headers in POJO mode" to set or get
 the SOAP headers. So, you can use now the
-header "org.apache.cxf.headers.Header.list" to get and set a list of
-SOAP headers.This does also mean that if you have a route that forwards
+header "org.apache.cxf.headers.Header.list" to get and set a list of
+SOAP headers.This does also mean that if you have a route that forwards
 from one Camel-cxf endpoint to another (SOAP Client -> Camel -> CXF
 service), now also the SOAP headers sent by the SOAP client are
 forwarded to the CXF service. If you do not want that these headers are
@@ -803,11 +803,11 @@ response context with the following code:
 == Attachment Support
 
 *POJO Mode:* Both SOAP with Attachment and MTOM are supported (see
-example in Payload Mode for enabling MTOM).  However, SOAP with
-Attachment is not tested.  Since attachments are marshalled and
+example in Payload Mode for enabling MTOM).  However, SOAP with
+Attachment is not tested.  Since attachments are marshalled and
 unmarshalled into POJOs, users typically do not need to deal with the
-attachment themself.  Attachments are propagated to Camel message's
-attachments if the MTOM is not enabled.  So, it is
+attachment themself.  Attachments are propagated to Camel message's
+attachments if the MTOM is not enabled.  So, it is
 possible to retrieve attachments by Camel Message API
 
 [source,java]
@@ -819,7 +819,7 @@ DataHandler Message.getAttachment(String id)
 retrieved by Camel Message APIs mentioned above. SOAP with Attachment
 (SwA) is supported and attachments can be retrieved. SwA is
 the default (same as setting the CXF endpoint property "mtom-enabled" to
-false). 
+false). 
 
 To enable MTOM, set the CXF endpoint property "mtom-enabled" to _true_.
 (I believe you can only do it with Spring.)
@@ -876,7 +876,7 @@ will override this value for that endpoint.
 
 The camel-cxf component supports the generic
 https://cxf.apache.org/docs/jax-ws-dispatch-api.html[CXF dispatch
-mode] that can transport messages of arbitrary structures (i.e., not
+mode] that can transport messages of arbitrary structures (i.e., not
 bound to a specific XML schema). To use this mode, you simply omit
 specifying the wsdlURL and serviceClass attributes of the CXF endpoint.
 
@@ -894,7 +894,7 @@ specific SOAPAction header. Therefore, when the target service requires
 a specific SOAPAction value, it is supplied in the Camel header using
 the key SOAPAction (case-insensitive).
 
- 
+ 
 
 == See Also
 

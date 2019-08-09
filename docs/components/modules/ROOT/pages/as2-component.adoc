@@ -184,23 +184,23 @@ as2://client/method?[options]
 Endpoint options that are not mandatory are denoted by *[]*. When there
 are no mandatory options for an endpoint, one of the set of *[]* options
 MUST be provided. Producer endpoints can also use a special
-option *`inBody`* that in turn should contain the name of the endpoint
+option *`inBody`* that in turn should contain the name of the endpoint
 option whose value will be contained in the Camel Exchange In message.
 
 Any of the endpoint options can be provided in either the endpoint URI,
 or dynamically in a message header. The message header name must be of
-the format *`CamelAS2.<option>`*. Note that the *`inBody`* option
+the format *`CamelAS2.<option>`*. Note that the *`inBody`* option
 overrides message header, i.e. the endpoint
-option *`inBody=option`* would override a *`CamelAS2.option`* header.
+option *`inBody=option`* would override a *`CamelAS2.option`* header.
 
 If a value is not provided for the option *defaultRequest* either in the
-endpoint URI or in a message header, it will be assumed to be `null`.
-Note that the `null` value will only be used if other options do not
+endpoint URI or in a message header, it will be assumed to be `null`.
+Note that the `null` value will only be used if other options do not
 satisfy matching endpoints.
 
 In case of AS2 API errors the endpoint will throw a
 RuntimeCamelException with a
-*org.apache.http.HttpException* derived exception
+*org.apache.http.HttpException* derived exception
 cause.
 
 [width="100%",cols="10%,10%,70%",options="header"]
@@ -210,7 +210,7 @@ cause.
 |send |ediMessage, requestUri, subject, from, as2From, as2To, as2MessageStructure, ediMessageContentType, ediMessageTransferEncoding, dispositionNotificationTo, signedReceiptMicAlgorithms |org.apache.http.protocol.HttpCoreContext
 |===
 
-URI Options for _client_
+URI Options for _client_
 
 
 [width="100%",cols="10%,90%",options="header"]
@@ -254,23 +254,23 @@ as2://server/method?[options]
 Endpoint options that are not mandatory are denoted by *[]*. When there
 are no mandatory options for an endpoint, one of the set of *[]* options
 MUST be provided. Producer endpoints can also use a special
-option *`inBody`* that in turn should contain the name of the endpoint
+option *`inBody`* that in turn should contain the name of the endpoint
 option whose value will be contained in the Camel Exchange In message.
 
 Any of the endpoint options can be provided in either the endpoint URI,
 or dynamically in a message header. The message header name must be of
-the format *`CamelAS2.<option>`*. Note that the *`inBody`* option
+the format *`CamelAS2.<option>`*. Note that the *`inBody`* option
 overrides message header, i.e. the endpoint
-option *`inBody=option`* would override a *`CamelAS2.option`* header.
+option *`inBody=option`* would override a *`CamelAS2.option`* header.
 
 If a value is not provided for the option *defaultRequest* either in the
-endpoint URI or in a message header, it will be assumed to be `null`.
-Note that the `null` value will only be used if other options do not
+endpoint URI or in a message header, it will be assumed to be `null`.
+Note that the `null` value will only be used if other options do not
 satisfy matching endpoints.
 
 In case of AS2 API errors the endpoint will throw a
 RuntimeCamelException with a
-*org.apache.http.HttpException* derived exception
+*org.apache.http.HttpException* derived exception
 cause.
 
 [width="100%",cols="10%,10%,70%",options="header"]
@@ -280,7 +280,7 @@ cause.
 |listen |requestUriPattern |org.apache.http.protocol.HttpCoreContext
 |===
 
-URI Options for _server_
+URI Options for _server_
 
 
 [width="100%",cols="10%,90%",options="header"]

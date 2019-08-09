@@ -4,7 +4,7 @@
 *Available as of Camel version 2.6*
 
 The Syslog dataformat is used for working with
-http://www.ietf.org/rfc/rfc3164.txt[RFC3164] and RFC5424 messages.
+http://www.ietf.org/rfc/rfc3164.txt[RFC3164] and RFC5424 messages.
 
 This component supports the following:
 
@@ -16,7 +16,7 @@ String
 * Integration with the xref:mina-component.adoc[camel-mina] component.
 * Integration with the xref:netty-component.adoc[camel-netty] component.
 * Encoder and decoder for
-the xref:netty-component.adoc[Netty Component] component.
+the xref:netty-component.adoc[Netty Component] component.
 * Support for RFC5424 also.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -41,7 +41,7 @@ The UDP port that has been assigned to syslog is 514.
 To expose a Syslog listener service we reuse the existing
 xref:mina-component.adoc[Mina Component] component or xref:netty-component.adoc[Netty Component]
 where we just use the `Rfc3164SyslogDataFormat` to marshal and unmarshal
-messages. Notice that from *Camel 2.14* onwards the syslog dataformat is
+messages. Notice that from *Camel 2.14* onwards the syslog dataformat is
 renamed to `SyslogDataFormat`.
 
 == Options
@@ -91,9 +91,9 @@ ND
 *Available as of Camel 2.14*
 
 To expose a Syslog listener service we reuse the
-existing xref:mina-component.adoc[Mina Component] component
-or xref:netty-component.adoc[Netty Component] where we just use
-the `SyslogDataFormat` to marshal and unmarshal messages
+existing xref:mina-component.adoc[Mina Component] component
+or xref:netty-component.adoc[Netty Component] where we just use
+the `SyslogDataFormat` to marshal and unmarshal messages
 
 === Exposing a Syslog listener
 

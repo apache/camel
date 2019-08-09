@@ -6,7 +6,7 @@
 Camel component for communicating with Docker.
 
 The Docker Camel component leverages the
-https://github.com/docker-java/docker-java[docker-java] via the
+https://github.com/docker-java/docker-java[docker-java] via the
 https://docs.docker.com/reference/api/docker_remote_api[Docker Remote
 API].
 

@@ -5,7 +5,7 @@
 
 The LinkedIn component provides access to all of LinkedIn REST APIs
 documented
-at https://developer.linkedin.com/rest[https://developer.linkedin.com/rest]. 
+at https://developer.linkedin.com/rest[https://developer.linkedin.com/rest]. 
 
 LinkedIn uses OAuth2.0 for all client application authentication. In
 order to use camel-linkedin with your account, you'll need to create a
@@ -15,8 +15,8 @@ The LinkedIn application's client id and secret will allow access to
 LinkedIn REST APIs which require a current user. A user access token is
 generated and managed by component for an end user. Alternatively the
 Camel application can register an implementation
-of org.apache.camel.component.linkedin.api.OAuthSecureStorage to provide
-an org.apache.camel.component.linkedin.apiOAuthToken OAuth token.
+of org.apache.camel.component.linkedin.api.OAuthSecureStorage to provide
+an org.apache.camel.component.linkedin.apiOAuthToken OAuth token.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -167,22 +167,22 @@ some endpoints. The endpoint URI MUST contain a prefix.
 Endpoint options that are not mandatory are denoted by []. When there
 are no mandatory options for an endpoint, one of the set of [] options
 MUST be provided. Producer endpoints can also use a special
-option *inBody* that in turn should contain the name of the endpoint
+option *inBody* that in turn should contain the name of the endpoint
 option whose value will be contained in the Camel Exchange In message.
 
 Any of the endpoint options can be provided in either the endpoint URI,
 or dynamically in a message header. The message header name must be of
-the format *CamelLinkedIn.<option>*. Note that the *inBody* option
-overrides message header, i.e. the endpoint option *inBody=option* would
-override a *CamelLinkedIn.option* header.
+the format *CamelLinkedIn.<option>*. Note that the *inBody* option
+overrides message header, i.e. the endpoint option *inBody=option* would
+override a *CamelLinkedIn.option* header.
 
 For more information on the endpoints and options see LinkedIn REST API
 documentation
-at https://developer.linkedin.com/rest[https://developer.linkedin.com/rest]. 
+at https://developer.linkedin.com/rest[https://developer.linkedin.com/rest]. 
 
-=== Endpoint prefix _comments_
+=== Endpoint prefix _comments_
 
-The following endpoints can be invoked with the prefix *comments* as
+The following endpoints can be invoked with the prefix *comments* as
 follows:
 
 [source,java]
@@ -200,7 +200,7 @@ follows:
 |=======================================================================
 
 [[LinkedIn-URIOptionsforcomments]]
-URI Options for _comments_
+URI Options for _comments_
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -211,9 +211,9 @@ URI Options for _comments_
 |fields |String
 |=======================================================================
 
-=== Endpoint prefix _companies_
+=== Endpoint prefix _companies_
 
-The following endpoints can be invoked with the prefix *companies* as
+The following endpoints can be invoked with the prefix *companies* as
 follows:
 
 [source,java]
@@ -259,14 +259,14 @@ follows:
 |=======================================================================
 
 [[LinkedIn-URIOptionsforcompanies]]
-URI Options for _companies_
+URI Options for _companies_
 
 If a value is not provided for one of the option(s) *[companySizes,
 count, email_domain, end_timestamp, event_type, geos, industries,
 is_company_admin, jobFunc, secure_urls, seniorities, start,
 start_timestamp, time_granularity]* either in the endpoint URI or in a
-message header, it will be assumed to be *null*. Note that
-the *null* value(s) will only be used if other options do not satisfy
+message header, it will be assumed to be *null*. Note that
+the *null* value(s) will only be used if other options do not satisfy
 matching endpoints.
 
 [width="100%",cols="50%,50%",options="header",]
@@ -316,9 +316,9 @@ matching endpoints.
 |updatecomment |org.apache.camel.component.linkedin.api.model.UpdateComment
 |=======================================================================
 
-=== Endpoint prefix _groups_
+=== Endpoint prefix _groups_
 
-The following endpoints can be invoked with the prefix *groups* as
+The following endpoints can be invoked with the prefix *groups* as
 follows:
 
 [source,java]
@@ -336,7 +336,7 @@ follows:
 |=======================================================================
 
 [[LinkedIn-URIOptionsforgroups]]
-URI Options for _groups_
+URI Options for _groups_
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -347,9 +347,9 @@ URI Options for _groups_
 |post |org.apache.camel.component.linkedin.api.model.Post
 |=======================================================================
 
-=== Endpoint prefix _jobs_
+=== Endpoint prefix _jobs_
 
-The following endpoints can be invoked with the prefix *jobs* as
+The following endpoints can be invoked with the prefix *jobs* as
 follows:
 
 [source,java]
@@ -371,7 +371,7 @@ follows:
 |=======================================================================
 
 [[LinkedIn-URIOptionsforjobs]]
-URI Options for _jobs_
+URI Options for _jobs_
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -386,9 +386,9 @@ URI Options for _jobs_
 |partner_job_id |Long
 |=======================================================================
 
-=== Endpoint prefix _people_
+=== Endpoint prefix _people_
 
-The following endpoints can be invoked with the prefix *people* as
+The following endpoints can be invoked with the prefix *people* as
 follows:
 
 [source,java]
@@ -470,13 +470,13 @@ show_hidden_members, start, type |org.apache.camel.component.linkedin.api.model.
 |=======================================================================
 
 [[LinkedIn-URIOptionsforpeople]]
-URI Options for _people_
+URI Options for _people_
 
 If a value is not provided for one of the option(s) *[after, before,
 category, count, membership_state, modified_since, order,
 public_profile_url, role, scope, secure_urls, show_hidden_members,
 start, type]* either in the endpoint URI or in a message header, it will
-be assumed to be *null*. Note that the *null* value(s) will only be used
+be assumed to be *null*. Note that the *null* value(s) will only be used
 if other options do not satisfy matching endpoints.
 
 [width="100%",cols="50%,50%",options="header",]
@@ -540,9 +540,9 @@ if other options do not satisfy matching endpoints.
 |updatecomment |org.apache.camel.component.linkedin.api.model.UpdateComment
 |=======================================================================
 
-=== Endpoint prefix _posts_
+=== Endpoint prefix _posts_
 
-The following endpoints can be invoked with the prefix *posts* as
+The following endpoints can be invoked with the prefix *posts* as
 follows:
 
 [source,java]
@@ -568,13 +568,13 @@ follows:
 
 |removePost |post |post_id |
 |=======================================================================
- 
+ 
 [[LinkedIn-URIOptionsforposts]]
-URI Options for _posts_
+URI Options for _posts_
 
 If a value is not provided for one of the option(s) *[count, start]*
 either in the endpoint URI or in a message header, it will be assumed to
-be *null*. Note that the *null* value(s) will only be used if other
+be *null*. Note that the *null* value(s) will only be used if other
 options do not satisfy matching endpoints.
 
 [width="100%",cols="50%,50%",options="header",]
@@ -598,9 +598,9 @@ options do not satisfy matching endpoints.
 |start |Long
 |=======================================================================
 
-=== Endpoint prefix _search_
+=== Endpoint prefix _search_
 
-The following endpoints can be invoked with the prefix *search* as
+The following endpoints can be invoked with the prefix *search* as
 follows:
 
 [source,java]
@@ -623,14 +623,14 @@ last_name, postal_code, school_name, sort, start, title |org.apache.camel.compon
 |=======================================================================
 
 [[LinkedIn-URIOptionsforsearch]]
-URI Options for _search_
+URI Options for _search_
 
 If a value is not provided for one of the option(s) *[company_name,
 count, country_code, current_company, current_school, current_title,
 distance, facet, facets, first_name, hq_only, job_title, keywords,
 last_name, postal_code, school_name, sort, start, title]* either in the
-endpoint URI or in a message header, it will be assumed to be *null*.
-Note that the *null* value(s) will only be used if other options do not
+endpoint URI or in a message header, it will be assumed to be *null*.
+Note that the *null* value(s) will only be used if other options do not
 satisfy matching endpoints.
 
 [width="100%",cols="50%,50%",options="header",]
@@ -682,18 +682,18 @@ satisfy matching endpoints.
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can
-use http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
-Poll Consumer Options] with a *consumer.* prefix to schedule endpoint
+use http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
+Poll Consumer Options] with a *consumer.* prefix to schedule endpoint
 invocation. By default Consumer endpoints that return an array or
 collection will generate one exchange per element, and their routes will
 be executed once for each exchange. To change this behavior use the
 property *consumer.splitResults=true* to return a single exchange for
-the entire list or array. 
+the entire list or array. 
 
 == Message Headers
 
 Any URI option can be provided in a message header for producer
-endpoints with a *CamelLinkedIn.* prefix.
+endpoints with a *CamelLinkedIn.* prefix.
 
 == Message body
 
@@ -720,7 +720,7 @@ The following route polls user's connections every 30 seconds:
         .to("bean:foo");
 -------------------------------------------------------------------------------------
 
-The following route uses a producer with dynamic header options. The
+The following route uses a producer with dynamic header options. The
 *personId* header has the LinkedIn person ID, so its assigned to the
 *CamelLinkedIn.person_id* header as follows:
 

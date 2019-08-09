@@ -171,7 +171,7 @@ marshaling or unmarshaling the message. You can also do it by setting
 the Exchange property
 `Exchange.FILTER_NON_XML_CHARS`.
 
- 
+ 
 [width="100%",cols="30%,10%,60%",options="header",]
 |=======================================================================
 |   | JDK 1.5 | JDK 1.6+
@@ -310,8 +310,8 @@ jaxbDataFormat.setSchemaFactory(thradSafeSchemaFactory);
 
 *Available as of Camel 2.14*
 
-The JAXB Data Format supports to specify the
-SchemaLocation when marshaling the XML. 
+The JAXB Data Format supports to specify the
+SchemaLocation when marshaling the XML. 
 
 Using the Java DSL, you can configure it in the following way:
 
@@ -339,7 +339,7 @@ The JAXB marshaller requires that the message body is JAXB compatible,
 eg its a JAXBElement, eg a java instance that has JAXB annotations, or
 extend JAXBElement. There can be situations where the message body is
 already in XML, eg from a String type. There is a new
-option `mustBeJAXBElement` you can set to false, to relax this check, so
+option `mustBeJAXBElement` you can set to false, to relax this check, so
 the JAXB marshaller only attempts to marshal JAXBElements
 (javax.xml.bind.JAXBIntrospector#isElement returns true). And in those
 situations the marshaller fallbacks to marshal the message body as-is.

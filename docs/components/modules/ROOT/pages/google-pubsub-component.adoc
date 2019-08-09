@@ -4,7 +4,7 @@
 *Available as of Camel version 2.19*
 
 The Google Pubsub component provides access
-to https://cloud.google.com/pubsub/[Cloud Pub/Sub Infrastructure] via
+to https://cloud.google.com/pubsub/[Cloud Pub/Sub Infrastructure] via
 the https://cloud.google.com/apis/docs/client-libraries-explained[Google Client Services API].
 
 The current implementation does not use gRPC.

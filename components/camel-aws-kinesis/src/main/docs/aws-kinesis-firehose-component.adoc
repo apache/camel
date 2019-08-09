@@ -9,7 +9,7 @@ Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon Kinesis Firehose. More information are available
-at https://aws.amazon.com/kinesis/firehose/[AWS Kinesis Firehose]
+at https://aws.amazon.com/kinesis/firehose/[AWS Kinesis Firehose]
 
 == URI Format
 
@@ -131,7 +131,7 @@ The component supports 13 options, which are listed below.
 
 Required Kinesis Firehose component options
 
-You have to provide the amazonKinesisClient in the
+You have to provide the amazonKinesisClient in the
 Registry with proxies and relevant credentials
 configured.
 
@@ -170,7 +170,7 @@ It is recommended that the credentials are obtained by using the
 http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html[DefaultAWSCredentialsProviderChain]
 that is the default when creating a new ClientConfiguration instance,
 however, a
-different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
+different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
 can be specified when calling createClient(...).
 
 === Message headers set by the Kinesis producer on successful storage of a Record

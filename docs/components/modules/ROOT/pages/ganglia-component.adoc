@@ -4,25 +4,25 @@
 *Available as of Camel version 2.15*
 
 Provides a mechanism to send a value (the message body) as a metric to
-the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j
-library.  Can be used in conjunction with standard
+the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j
+library.  Can be used in conjunction with standard
 http://ganglia.info[Ganglia] and
 https://github.com/ganglia/jmxetric[JMXetric] for monitoring metrics
 from the OS, JVM and business processes through a single platform.
 
 You should have a Ganglia gmond agent running on the machine where your
-JVM runs.  The gmond sends a heartbeat to the Ganglia infrastructure,
+JVM runs.  The gmond sends a heartbeat to the Ganglia infrastructure,
 camel-ganglia can't send the heartbeat itself currently.
 
 On most Linux systems (Debian, Ubuntu, Fedora and RHEL/CentOS with EPEL)
 you can just install the Ganglia agent package and it runs automatically
-using multicast configuration.  You can configure it to use regular UDP
+using multicast configuration.  You can configure it to use regular UDP
 unicast if you prefer.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
- 
+ 
 
 [source,xml]
 ----
@@ -165,7 +165,7 @@ Ganglia system.
 
 == Return value / response
 
-Ganglia sends metrics using unidirectional UDP or multicast.  There is
+Ganglia sends metrics using unidirectional UDP or multicast.  There is
 no response or change to the message body.
 
 == Examples
@@ -173,8 +173,8 @@ no response or change to the message body.
 === Sending a String metric
 
 The message body will be converted to a String and sent as a metric
-value.  Unlike numeric metrics, String values can't be charted but
-Ganglia makes them available for reporting.  The os_version string at
+value.  Unlike numeric metrics, String values can't be charted but
+Ganglia makes them available for reporting.  The os_version string at
 the top of every Ganglia host page is an example of a String metric.
 
 [source,java]

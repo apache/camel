@@ -17,7 +17,7 @@ in order to use this component:
 </dependency>
 ------------------------------------------------------------------------------------------------
 
-`camel-spring-cloud` jar comes with the `spring.factories` file, so as
+`camel-spring-cloud` jar comes with the `spring.factories` file, so as
 soon as you add that dependency into your classpath, Spring Boot will
 automatically auto-configure Camel for you.
 

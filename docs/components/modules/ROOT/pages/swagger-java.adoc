@@ -2,12 +2,12 @@
 
 *Available as of Camel 2.16*
 
-The  Rest DSL can be integrated with
-the `camel-swagger-java` module which is used for exposing the REST
+The  Rest DSL can be integrated with
+the `camel-swagger-java` module which is used for exposing the REST
 services and their APIs using http://swagger.io/[Swagger].
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 
 [source,xml]
 ----
@@ -25,7 +25,7 @@ the REST components (without the need for servlet)
 == Using Swagger in rest-dsl
 
 You can enable the swagger api from the rest-dsl by configuring the
-`apiContextPath` dsl as shown below:
+`apiContextPath` dsl as shown below:
 
 [source,java]
 ----
@@ -59,15 +59,15 @@ public class UserRouteBuilder extends RouteBuilder {
     }
 }
 ----
- 
+ 
 
 == Options
 
 The swagger module can be configured using the following options. To
 configure using a servlet you use the init-param as shown above. When
 configuring directly in the rest-dsl, you use the appropriate method,
-such as `enableCORS`, `host,contextPath`, dsl. The options
-with `api.xxx` is configured using `apiProperty` dsl.
+such as `enableCORS`, `host,contextPath`, dsl. The options
+with `api.xxx` is configured using `apiProperty` dsl.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
@@ -174,7 +174,7 @@ CamelContexts in the same JVM. These contexts are listed in the root
 path, eg `/api-docs` as a simple list of names in json format. To access
 the swagger documentation then the context-path must be appended with
 the Camel context id, such as `api-docs/myCamel`. The
-option apiContextIdPattern can be used to filter the names in this list.
+option apiContextIdPattern can be used to filter the names in this list.
 
 == JSon or Yaml
 
@@ -190,5 +190,5 @@ json is returned as the default format.
 == Examples
 
 In the Apache Camel distribution we ship
-the `camel-example-swagger-cdi` and `camel-example-swagger-java` which
+the `camel-example-swagger-cdi` and `camel-example-swagger-java` which
 demonstrates using this Swagger component.

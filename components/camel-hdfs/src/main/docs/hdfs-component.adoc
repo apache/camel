@@ -270,9 +270,9 @@ related to the mechanism Hadoop 2.x uses to discover different
 available filesystem types and implementations. These resources are not
 available when running inside OSGi.
 
-As with `camel-hdfs` component, the default configuration files need to
+As with `camel-hdfs` component, the default configuration files need to
 be visible from the bundle class loader. A typical way to deal with it
-is to keep a copy of `core-default.xml` (and e.g., `hdfs-default.xml`)
+is to keep a copy of `core-default.xml` (and e.g., `hdfs-default.xml`)
 in your bundle root.
 
 === Using this component with manually defined routes

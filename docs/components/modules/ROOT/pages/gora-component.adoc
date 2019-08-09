@@ -13,10 +13,10 @@ for this component:
 [source,xml]
 ---------------------------------------------------------
 <dependency>
- <groupId>org.apache.camel</groupId>
- <artifactId>camel-gora</artifactId>
+ <groupId>org.apache.camel</groupId>
+ <artifactId>camel-gora</artifactId>
  <!-- use the same version as your Camel core version -->
- <version>x.x.x</version>
+ <version>x.x.x</version>
 </dependency>
 ---------------------------------------------------------
 
@@ -231,7 +231,7 @@ datastore._
 [source,xml]
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 <setHeader name="GoraOperation">
- <constant>CreateSchema</constant>
+ <constant>CreateSchema</constant>
 </setHeader>
 <to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -241,9 +241,9 @@ datastore._
 [source,xml]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 <setHeader name="GoraOperation">
- <constant>SchemaExists</constant>
+ <constant>SchemaExists</constant>
 </setHeader>
- <to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
+ <to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Put* _(XML DSL)_:
@@ -251,10 +251,10 @@ datastore._
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 <setHeader name="GoraOperation">
- <constant>put</constant>
+ <constant>put</constant>
 </setHeader>
 <setHeader name="GoraKey">
- <constant>22222</constant>
+ <constant>22222</constant>
 </setHeader>
 <to uri="gora:foo?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -264,10 +264,10 @@ datastore._
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 <setHeader name="GoraOperation">
- <constant>GET</constant>
+ <constant>GET</constant>
 </setHeader>
 <setHeader name="GoraKey">
- <constant>10101</constant>
+ <constant>10101</constant>
 </setHeader>
 <to uri="gora:bar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -277,10 +277,10 @@ datastore._
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 <setHeader name="GoraOperation">
- <constant>DELETE</constant>
+ <constant>DELETE</constant>
 </setHeader>
 <setHeader name="GoraKey">
- <constant>22222</constant>
+ <constant>22222</constant>
 </setHeader>
 <to uri="gora:bar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -168,7 +168,7 @@ The component supports 33 options, which are listed below.
 
 Required SWF component options
 
-You have to provide the amazonSWClient in the
+You have to provide the amazonSWClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/swf[Amazon's Simple Workflow Service].
 
@@ -264,11 +264,11 @@ completed tasks.
 
 === Advanced amazonSWClient configuration
 
-If you need more control over the AmazonSimpleWorkflowClient instance
+If you need more control over the AmazonSimpleWorkflowClient instance
 configuration you can create your own instance and refer to it from the
 URI:
 
-The `#client` refers to a AmazonSimpleWorkflowClient in the
+The `#client` refers to a AmazonSimpleWorkflowClient in the
 Registry.
 
 For example if your Camel Application is running behind a firewall:

@@ -144,7 +144,7 @@ from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node"))
     .to("jcr://user:pass@repository/home/test");
 ------------------------------------------------------------------------
 
- 
+ 
 
 The following code will register an EventListener under the path
 import-application/inbox for Event.NODE_ADDED and Event.NODE_REMOVED

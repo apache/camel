@@ -75,7 +75,7 @@ The following languages are supported out of the box
 * xref:components::mvel-component.adoc[Mvel]
 * xref:components::ognl-language.adoc[OGNL]
 * xref:ref-language.adoc[Ref Language]
-* ExchangeProperty / Property
+* ExchangeProperty / Property
 * Scripting Languages such as
 ** BeanShell
 ** JavaScript

@@ -31,8 +31,8 @@ This snippet is not valid code. Read on.
 
 In this case, you must use an EIP (Enterprise Integration Pattern) that
 is capable of computing a dynamic URI using
-an xref:expression.adoc[Expression], such as
-the xref:recipientList-eip.adoc[Recipient List] EIP pattern.
+an xref:expression.adoc[Expression], such as
+the xref:recipientList-eip.adoc[Recipient List] EIP pattern.
 
 For example, rewriting the snippet above to use the
 xref:simple-language.adoc[Simple] expression language:

@@ -136,6 +136,6 @@ supplied on the classpath).
 
 You can force that the cached schema in the
 validator endpoint is cleared and reread with the next process call with
-the JMX operation `clearCachedSchema`. You can also use this method to
+the JMX operation `clearCachedSchema`. You can also use this method to
 programmatically clear the cache. This method is available on the
 `ValidatorEndpoint` class.

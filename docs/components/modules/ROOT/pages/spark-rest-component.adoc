@@ -128,7 +128,7 @@ from("spark-rest:get:hello/:me")
 == Mapping to Camel Message
 
 The Spark Request object is mapped to a Camel Message as
-a `org.apache.camel.component.sparkrest.SparkMessage` which has access
+a `org.apache.camel.component.sparkrest.SparkMessage` which has access
 to the raw Spark request using the getRequest method. By default the
 Spark body is mapped to Camel message body, and any HTTP headers / Spark
 parameters is mapped to Camel Message headers. There is special support
@@ -136,7 +136,7 @@ for the Spark splat syntax, which is mapped to the Camel message header
 with key splat.
 
 For example the given route below uses Spark splat (the asterisk
-sign) in the context path which we can access as a header form the
+sign) in the context path which we can access as a header form the
 Simple language to construct a response message.
 
 [source,java]
@@ -177,7 +177,7 @@ return new RouteBuilder() {
 </camelContext>
 --------------------------------------------------------------
 
-See more details at the Rest DSL.
+See more details at the Rest DSL.
 
 == More examples
 

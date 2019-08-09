@@ -22,14 +22,14 @@ from("seda:inputB")
     .to("rnc:mySchema.rnc", "activemq:anotherQueue");
 ----
 
-Here if the processing of *`seda:inputA`* or *`seda:inputB`* cause
-a *`ValidationException`* to be thrown (such as due to the XSD
+Here if the processing of *`seda:inputA`* or *`seda:inputB`* cause
+a *`ValidationException`* to be thrown (such as due to the XSD
 validation of the xref:components::validator-component.adoc[Validation] component or the
 Relax NG Compact syntax validation of the xref:components::jing-component.adoc[Jing]
 component), then the message will be sent to the
 *`activemq:validationFailed`* queue.
 
-You can define multiple *`onException`* clauses for different behavior:
+You can define multiple *`onException`* clauses for different behavior:
 
 [source,java]
 ----
@@ -48,7 +48,7 @@ from("seda:order")
 
 Exception clauses is scoped as either:
 
-* global (for Java DSL that is per *`RouteBuilder`* instances, to reuse,
+* global (for Java DSL that is per *`RouteBuilder`* instances, to reuse,
 see note below)
 * or route specific
 
@@ -93,8 +93,8 @@ onException(OrderFailedException.class)
 ----
 
 In the sample above we have defined two exceptions in
-which *`IOException`* is first, so Camel will pickup this exception if
-there is a match. *`IOException`* that is more general is selected then.
+which *`IOException`* is first, so Camel will pickup this exception if
+there is a match. *`IOException`* that is more general is selected then.
 
 So if an exception is thrown with this hierarchy:
 
@@ -106,12 +106,12 @@ So if an exception is thrown with this hierarchy:
 ....
 
 Then Camel will try testing the exception in this order:
-*`FileNotFoundException`*, *`IOException`*, *`OrderFailedException`* and
+*`FileNotFoundException`*, *`IOException`*, *`OrderFailedException`* and
 *`RuntimeCamelException`*.
-As we have defined a *`onException(IOException.class)`* Camel will
+As we have defined a *`onException(IOException.class)`* Camel will
 select this as it's the *closest* match.
 
-If we add a third *`onException`* clause with the
+If we add a third *`onException`* clause with the
 *`FileNotFoundException`*
 
 [source,java]
@@ -130,7 +130,7 @@ onException(FileNotFoundException.class)
 Then with the previous example Camel will now use the last
 *`onException(FileNotFoundException.class)`* as its an *exact* match.
 Since this is an exact match it will override the
-general *`IOException`* that was used before to handle the same
+general *`IOException`* that was used before to handle the same
 exception thrown.
 
 Now a new situation if this exception was thrown instead:
@@ -153,7 +153,7 @@ exception in the *`onException`* clause. Illustrated as:
     + SocketException
 ....
 
-Since *`SocketException`* is an *`instanceof IOException`*, Camel will
+Since *`SocketException`* is an *`instanceof IOException`*, Camel will
 select the *`onException(IOException.class)`* clause.
 
 [[ExceptionClause-ConfiguringRedeliveryPolicyredeliveroptions]]
@@ -182,7 +182,7 @@ settings from the xref:dead-letter-channel.adoc[Dead Letter Channel].
 However if you want to customize any methods on the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html[RedeliveryPolicy]
 object, you can do this via the fluent API. So lets retry in case
-of *`org.apache.camel.ValidationException`* up till two times.
+of *`org.apache.camel.ValidationException`* up till two times.
 
 *Java DSL*:
 
@@ -204,7 +204,7 @@ onException(ValidationException.class)
 
 You can customize any of the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html[RedeliveryPolicy]
-so we can for instance set a different delay of *`5000`* millis:
+so we can for instance set a different delay of *`5000`* millis:
 
 [source,xml]
 ----
@@ -228,7 +228,7 @@ onException(ConnectException.class)
     .to("mock:theEnd")
 ----
 
-Will retry from *`processor2`* - not the complete route.
+Will retry from *`processor2`* - not the complete route.
 
 [[ExceptionClause-ReusingRedeliveryPolicy]]
 == Reusing RedeliveryPolicy
@@ -304,13 +304,13 @@ And in Spring DSL you just add another exception element:
 == Using a Processor as a Failure Handler
 
 We want to handle certain exceptions specially so we add
-a *`onException`* clause for that exception.
+a *`onException`* clause for that exception.
 
 /camel-core/src/test/java/org/apache/camel/processor/onexception/OnExceptionProcessorInspectCausedExceptionTest.java
 
 So what happens is that whenever a *`MyFunctionalException`* is thrown it
 is being routed to our processor *`MyFunctionFailureHandler`*. So you
-can say that the exchange is diverted when a *`MyFunctionalException`*
+can say that the exchange is diverted when a *`MyFunctionalException`*
 is thrown during processing. It's important to distinct this as perfect
 valid. The default redelivery policy from the
 xref:dead-letter-channel.adoc[Dead Letter Channel] will not kick in, so
@@ -336,7 +336,7 @@ using a producer template from Exchange.
 
 See also the section xref:exception-clause.adoc[Handle and continue exceptions] below.
 
-Using *`onException`* to handle known exceptions is a very powerful
+Using *`onException`* to handle known exceptions is a very powerful
 feature in Camel. However prior to Camel 1.5 you could not mark the
 exception as being handled, so the caller would still receive the caused
 exception as a response. In Camel 1.5 you can now change this behavior
@@ -364,7 +364,7 @@ onException(ValidationException)
 == Example Using Handled
 
 In this route below we want to do special handling of
-all *`OrderFailedException`* as we want to return a customized response
+all *`OrderFailedException`* as we want to return a customized response
 to the caller. First we setup our routing as:
 
 /camel-core/src/test/java/org/apache/camel/processor/DeadLetterChannelHandledExampleTest.java
@@ -386,7 +386,7 @@ receive an Exchange as reply containing *`Order OK`* as the payload and
 *`orderid=123`* in a header.
 
 If the order could *not* be processed and thus
-an *`OrderFailedException`* was thrown the caller will *not* receive
+an *`OrderFailedException`* was thrown the caller will *not* receive
 this exception (as opposed to in Camel 1.4, where the caller received
 the *`OrderFailedException`*) but our customized response that we have
 fabricated in the *`orderFailed`* method in our *`OrderService`*. So the
@@ -428,7 +428,7 @@ message with the caused exception message:
 *Available as of Camel 2.3*
 
 In Camel 2.3 we introduced a new option `continued` which allows you to
-both *`handle`* and *`continue`* routing in the original route as if the
+both *`handle`* and *`continue`* routing in the original route as if the
 exception did not occur.
 
 For example: to ignore and continue when the *`IDontCareException`* was
@@ -450,7 +450,7 @@ use case.
 == Example Using continued
 
 In this route below we want to do special handling of
-all *`IllegalArgumentException`* as we just want to continue routing.
+all *`IllegalArgumentException`* as we just want to continue routing.
 
 /camel-core/src/test/java/org/apache/camel/processor/onexception/OnExceptionContinueTest.java
 
@@ -474,9 +474,9 @@ you have a route configured in the *`onException`* it will route that
 route first, before it will continue routing in the original route.
 
 [[ExceptionClause-UsinguseOriginalMessage]]
-== Using `useOriginalMessage`
+== Using `useOriginalMessage`
 
-The option *`useOriginalMessage`* is used for routing the original input
+The option *`useOriginalMessage`* is used for routing the original input
 message instead of the current message that potential is modified during routing.
 
 For example: if you have this route:
@@ -495,7 +495,7 @@ transformed/modified. So in case something goes wrong and we want to
 move the message to another JMS destination, then we can add an
 *`onException`*. But when we move the xref:exchange.adoc[Exchange] to
 this destination we do not know in which state the message is in. Did
-the error happen in before the *`transformOrder`* or after? So to be
+the error happen in before the *`transformOrder`* or after? So to be
 sure we want to move the original input message we received from
 `jms:queue:order:input`. So we can do this by enabling the
 *`useOriginalMessage`* option as shown below:
@@ -517,8 +517,8 @@ the same as the original we received.
 [[ExceptionClause-useOriginalMessagewithSpringDSL]]
 == `useOriginalMessage` with Spring DSL
 
-The *`useOriginalMessage`* option is defined as a boolean attribute on
-the *`<onException>`* XML tag in Spring DSL. So the definition above
+The *`useOriginalMessage`* option is defined as a boolean attribute on
+the *`<onException>`* XML tag in Spring DSL. So the definition above
 would be:
 
 [source,xml]
@@ -541,7 +541,7 @@ multicast, will create a new unit of work boundary for the messages in their sub
 allows to combine with the parent unit of work in regard to error handling and therefore use
 the parent original message.
 
-== Using `useOriginalBody`
+== Using `useOriginalBody`
 
 The useOriginalBody is similar to useOriginalMessage as documented above. You may want to use useOriginalBody when you want to be able to enrich the message with custom headers and preserve the original message body before sending to an error handler or dead letter channel.
 
@@ -588,7 +588,7 @@ specific.
 
 === Must use `.end()` for route specific exception policies
 
-[IMPORTANT] This requires to end the *`onException`* route with
+[IMPORTANT] This requires to end the *`onException`* route with
 *`.end()`* to indicate where it stops and when the regular route
 continues.
 
@@ -599,10 +599,10 @@ policies as we introduce a second route in the sample:
 
 /camel-core/src/test/java/org/apache/camel/processor/onexception/OnExceptionComplexRouteTest.java
 
-Notice that we can define the same exception *`MyFunctionalException`* in both
+Notice that we can define the same exception *`MyFunctionalException`* in both
 routes, but they are configured differently and thus is handled
 different depending on the route. You can of course also add a
-new *`onException`* to one of the routes so it has an additional
+new *`onException`* to one of the routes so it has an additional
 exception policy.
 
 And finally we top this by throwing in a nested error handler as well,
@@ -620,7 +620,7 @@ they also applies for nested error handlers. So if a
 that is selected.
 
 [[ExceptionClause-UsingFineGrainedSelectionUsingonWhenPredicate]]
-== Using Fine Grained Selection Using `onWhen` Predicate
+== Using Fine Grained Selection Using `onWhen` Predicate
 
 *Available as of Camel 1.5.1 or later*
 
@@ -632,7 +632,7 @@ code to perform the test. Here is a sample:
 /camel-core/src/test/java/org/apache/camel/processor/exceptionpolicy/DefaultExceptionPolicyStrategyUsingWhenTest.java
 
 In the sample above we have two *`onException`*'s defined. The first has
-an *`onWhen`* expression attached to only trigger if the message has a
+an *`onWhen`* expression attached to only trigger if the message has a
 header with the key user that is not null. If so this clause is selected
 and is handling the thrown exception. The second clause is a for coarse
 gained selection to select the same exception being thrown but when the
@@ -642,12 +642,12 @@ NOTE: this is not required, if the second clause is omitted, then the
 default error handler will kick in.
 
 [[ExceptionClause-UsingonRedeliveryProcessor]]
-== Using `onRedelivery` Processor
+== Using `onRedelivery` Processor
 
 *Available as of Camel 2.0*
 
 xref:dead-letter-channel.adoc[Dead Letter Channel] has support
-for *`onRedelivery`* to allow custom processing of a Message before its
+for *`onRedelivery`* to allow custom processing of a Message before its
 being redelivered. It can be used to add some customer header or
 whatnot. In Camel 2.0 we have added this feature to
 xref:exception-clause.adoc[Exception Clause] as well, so you can use per
@@ -658,8 +658,8 @@ xref:dead-letter-channel.adoc[Dead Letter Channel] for more details on
 *`onRedelivery`*.
 
 In the code below we want to do some custom code before redelivering any
-*`IOException`*. So we configure an *`onException`* for
-the *`IOException`* and set the *`onRedelivery`* to use our custom
+*`IOException`*. So we configure an *`onException`* for
+the *`IOException`* and set the *`onRedelivery`* to use our custom
 processor:
 
 /camel-core/src/test/java/org/apache/camel/processor/DeadLetterChannelOnExceptionOnRedeliveryTest.java
@@ -670,42 +670,42 @@ You can of course do anything what you like in your code.
 /camel-core/src/test/java/org/apache/camel/processor/DeadLetterChannelOnExceptionOnRedeliveryTest.java
 
 [[ExceptionClause-UsingonRedeliveryinSpringDSL]]
-== Using `onRedelivery` in Spring DSL
+== Using `onRedelivery` in Spring DSL
 
 In Spring DSL you need to use the *`onRedeliveryRef`* attribute to refer
 to a spring bean id that is your custom processor:
 
 /components/camel-spring/src/test/resources/org/apache/camel/spring/processor/onexception/DeadLetterChannelOnExceptionOnRedeliveryTest.xml
 
-And our processor is just a regular spring bean (we use *`$`* for the inner
+And our processor is just a regular spring bean (we use *`$`* for the inner
 class as this code is based on unit testing):
 
 /components/camel-spring/src/test/resources/org/apache/camel/spring/processor/onexception/DeadLetterChannelOnExceptionOnRedeliveryTest.xml
 
 [[ExceptionClause-UsingonExceptionOccurredProcessor]]
-== Using `onExceptionOccurred` Processor
+== Using `onExceptionOccurred` Processor
 
 *Available as of Camel 2.17*
 
-xref:dead-letter-channel.adoc[Dead Letter Channel] has support
-for *`onExceptionOccurred`* to allow custom processing of a Message just
+xref:dead-letter-channel.adoc[Dead Letter Channel] has support
+for *`onExceptionOccurred`* to allow custom processing of a Message just
 after the exception was thrown. It can be used to do some custom logging
-or whatnot. The difference between *`onRedelivery`* processor
-and *`onExceptionOccurred`* processor, is that the former is processed
+or whatnot. The difference between *`onRedelivery`* processor
+and *`onExceptionOccurred`* processor, is that the former is processed
 just before a redelivery attempt is being performed, that means it will
 not happen right after an exception was thrown. For example if the error
 handler has been configured to perform 5 seconds delay between
 redelivery attempts, then the redelivery processor is invoked 5 seconds
 later sine the exception was thrown. On the other hand
-the *`onExceptionOccurred`* processor is always invoked right after the
+the *`onExceptionOccurred`* processor is always invoked right after the
 exception was thrown, and also if redelivery has been disabled.
 
-NOTE: Any new exceptions thrown from the *`onExceptionOccurred`*
-processor is logged as *`WARN`* and ignored, to not override the
-existing exception. 
+NOTE: Any new exceptions thrown from the *`onExceptionOccurred`*
+processor is logged as *`WARN`* and ignored, to not override the
+existing exception. 
 
 In the code below we want to do some custom logging when an exception
-happened. Therefore we configure an *`onExceptionOccurred`* to use our
+happened. Therefore we configure an *`onExceptionOccurred`* to use our
 custom processor:
 
 [source.java]
@@ -717,9 +717,9 @@ errorHandler(defaultErrorHandler()
 ----
 
 [[ExceptionClause-UsingonRedeliveryinSpringDSL.1]]
-=== Using `onRedelivery` in Spring DSL
+=== Using `onRedelivery` in Spring DSL
 
-In Spring DSL you need to use the *`onExceptionOccurredRef`* attribute
+In Spring DSL you need to use the *`onExceptionOccurredRef`* attribute
 to refer to a spring bean id that is your custom processor:
 
 [source,xml]
@@ -735,30 +735,30 @@ to refer to a spring bean id that is your custom processor:
 ----
 
 [[ExceptionClause-UsingFineGrainedRetryUsingretryWhilePredicate]]
-== Using Fine Grained Retry Using `retryWhile` Predicate
+== Using Fine Grained Retry Using `retryWhile` Predicate
 
 *Available as of Camel 2.0*
 
 === RetryUntil
 
 In Camel 2.0 to 2.3 its called *`retryUntil`*. From *Camel 2.4*: its
-named *`retryWhile`* because Camel will continue doing retries _while_
+named *`retryWhile`* because Camel will continue doing retries _while_
 the predicate returns true.
 
 When you need fine grained control for determining if an exchange should
-be retried or not you can use the *`retryWhile`* predicate. Camel will
+be retried or not you can use the *`retryWhile`* predicate. Camel will
 redeliver until the predicate returns false.
 
 Example:
 
 /camel-core/src/test/java/org/apache/camel/processor/onexception/OnExceptionRetryUntilTest.java
 
-Where the bean *`myRetryHandler`* is computing if we should retry or not:
+Where the bean *`myRetryHandler`* is computing if we should retry or not:
 
 /camel-core/src/test/java/org/apache/camel/processor/onexception/OnExceptionRetryUntilTest.java
 
 [[ExceptionClause-UsingCustomExceptionPolicyStrategy]]
-== Using Custom `ExceptionPolicyStrategy`
+== Using Custom `ExceptionPolicyStrategy`
 
 *Available in Camel 1.4*
 

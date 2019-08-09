@@ -9,7 +9,7 @@ conventional Tokenizer to efficiently and
 effectively tokenize XML documents. XMLTokenizer is capable of not only
 recognizing XML namespaces and hierarchical structures of the document
 but also more efficiently tokenizing XML documents than the conventional
-Tokenizer. 
+Tokenizer. 
 
 For more details see Splitter.
 

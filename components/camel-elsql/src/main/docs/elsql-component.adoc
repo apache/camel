@@ -5,7 +5,7 @@
 
 The ELSQL component is an extension to the existing
 xref:sql-component.adoc[SQL Component] that uses
-https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
+https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
 handling.
@@ -34,13 +34,13 @@ sql:elSqlName:resourceUri[?options]
 ----
 
 You can append query options to the URI in the following
-format, `?option=value&option=value&...`
+format, `?option=value&option=value&...`
 
 The parameters to the SQL queries are named parameters in the elsql
-mapping files, and maps to corresponding keys from the Camel message, in
+mapping files, and maps to corresponding keys from the Camel message, in
 the given precedence:
 
-1. from message body if xref:manual::simple-language.adoc[Simple]
+1. from message body if xref:manual::simple-language.adoc[Simple]
 expression.
 
 2. from message body if its a `java.util.Map`
@@ -186,11 +186,11 @@ For `select` operations, the result is an instance of
 JdbcTemplate.queryForList() method. For `update` operations, the result
 is the number of updated rows, returned as an `Integer`.
 
-By default, the result is placed in the message body.  If the
-outputHeader parameter is set, the result is placed in the header.  This
+By default, the result is placed in the message body.  If the
+outputHeader parameter is set, the result is placed in the header.  This
 is an alternative to using a full message enrichment pattern to add
 headers, it provides a concise syntax for querying a sequence or some
-other small value into a header.  It is convenient to use outputHeader
+other small value into a header.  It is convenient to use outputHeader
 and outputType together:
 
 == Header values
@@ -252,7 +252,7 @@ parameters will be taken from the body.
 
 In from Camel 2.16.1 onwards you can use Simple expressions as well,
 which allows to use an OGNL like notation on the message body, where it
-assumes to have `getLicense` and `getMinimum` methods:
+assumes to have `getLicense` and `getMinimum` methods:
 
 [source,sql]
 ----

@@ -9,7 +9,7 @@ https://pdfbox.apache.org/[Apache PDFBox] as underlying library to work
 with PDF documents.
 
 In order to use the PDF component, Maven users will need to add the
-following dependency to their `pom.xml`:
+following dependency to their `pom.xml`:
 
 *pom.xml*
 
@@ -145,5 +145,5 @@ https://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encrypt
 * Getting Started
 
 -
- 
+ 
 -

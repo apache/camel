@@ -751,7 +751,7 @@ from("direct:order")
 ----
 
 You can also convert the body to a given
-type, for example to ensure that it is a String you can do:
+type, for example to ensure that it is a String you can do:
 
 [source,xml]
 ----
@@ -765,7 +765,7 @@ There are a few types which have a shorthand notation, so we can use
 `byte[], String, Integer, Long`. All other types must use their FQN
 name, e.g. `org.w3c.dom.Document`.
 
-It is also possible to lookup a value from a header `Map`:
+It is also possible to lookup a value from a header `Map`:
 
 [source,xml]
 ----

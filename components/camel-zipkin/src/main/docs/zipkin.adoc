@@ -18,15 +18,15 @@ The mapping can be configured using:
 * endpoint url - A Camel endpoint url
 
 For both kinds you can match using wildcards and regular expressions,
-using the rules from Intercept.
+using the rules from Intercept.
 
 To match all Camel messages you can use * in the pattern and configure
 that to the same service name.
 
 If no mapping has been configured, Camel will fallback and use
-endpoint uri's as service names.  +
+endpoint uri's as service names.  +
 However, it's recommended to configure service mappings so you can use
-human-readable names instead of Camel endpoint uris in the names.
+human-readable names instead of Camel endpoint uris in the names.
 
 Camel will auto-configure a span reporter one hasn't been explicitly configured,
 and if the hostname and port to a zipkin collector has been configured as environment variables
@@ -75,14 +75,14 @@ uses the rules from Intercept.
 This is not recommended for production usage, or when having big
 payloads. You can limit the size by configuring the
 xref:manual::faq/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.adoc[max
-debug log size]. 
+debug log size]. 
 
 |includeMessageBodyStreams |false |Whether to include message bodies that are stream based in the zipkin
 traces. This requires enabling streamcaching on the
 routes or globally on the CamelContext. This is not recommended for production usage, or when having big
 payloads. You can limit the size by configuring the
 xref:manual::faq/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.adoc[max
-debug log size].  
+debug log size].  
 |===
 
 // spring-boot-auto-configure options: START
@@ -138,7 +138,7 @@ zipkin.init(camelContext);
 ----
 
 The configuration above will trace all incoming and outgoing
-messages in Camel routes. 
+messages in Camel routes. 
 
 To use ZipkinTracer in XML, all you need to do is to define scribe and
 zipkin tracer beans. Camel will automatically discover and use them.
@@ -283,12 +283,12 @@ uris.
 [[camel-zipkin-camel-zipin-starter]]
 == camel-zipin-starter
 
-If you are using Spring Boot then you can add
-the `camel-zipkin-starter` dependency, and turn on zipkin by annotating
+If you are using Spring Boot then you can add
+the `camel-zipkin-starter` dependency, and turn on zipkin by annotating
 the main class with `@CamelZipkin`. You can then configure camel-zipkin
-in the `application.properties` file where you can configure the
+in the `application.properties` file where you can configure the
 hostname and port number for the Zipkin Server, and all the other
 options as listed in the options table above.
 
 You can find an example of this in
-the https://github.com/apache/camel/tree/master/examples/camel-example-zipkin[camel-example-zipkin]
+the https://github.com/apache/camel/tree/master/examples/camel-example-zipkin[camel-example-zipkin]

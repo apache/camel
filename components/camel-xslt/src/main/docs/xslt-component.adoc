@@ -246,8 +246,8 @@ You can explicitly specify `file:` or `classpath:` loading. The two loading type
 
 Since Saxon 9.2, writing extension functions has been supplemented by a
 new mechanism, referred to
-as http://www.saxonica.com/html/documentation/extensibility/integratedfunctions[integrated
-extension functions] you can now easily use camel as shown in the below example:
+as http://www.saxonica.com/html/documentation/extensibility/integratedfunctions[integrated
+extension functions] you can now easily use camel as shown in the below example:
 
 [source,java]
 ----
@@ -285,7 +285,7 @@ With Spring XML:
 == Dynamic stylesheets
 
 To provide a dynamic stylesheet at runtime you can define a dynamic URI.
-See xref:manual::faq/how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in
+See xref:manual::faq/how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in
 to()] for more information.
 
 == Accessing warnings, errors and fatalErrors from XSLT ErrorListener
@@ -294,8 +294,8 @@ to()] for more information.
 
 Any warning/error or fatalError is stored on
 the current Exchange as a property with the
-keys `Exchange.XSLT_ERROR`, `Exchange.XSLT_FATAL_ERROR`,
-or `Exchange.XSLT_WARNING` which allows end users to get hold of any
+keys `Exchange.XSLT_ERROR`, `Exchange.XSLT_FATAL_ERROR`,
+or `Exchange.XSLT_WARNING` which allows end users to get hold of any
 errors happening during transformation.
 
 For example in the stylesheet below, we want to terminate if a staff has
@@ -320,7 +320,7 @@ xsl:message.
 ----
 
 The exception is stored on the Exchange as a warning with the
-key `Exchange.XSLT_WARNING.`
+key `Exchange.XSLT_WARNING.`
 
 == See Also
 

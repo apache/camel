@@ -149,7 +149,7 @@ loaded from file system.
 
 fopFactory
 
- 
+ 
 
 Allows to use a custom configured or implementation of
 `org.apache.fop.apps.FopFactory`.

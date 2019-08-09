@@ -158,6 +158,6 @@ the barcode data format as header variable:
 
 |BarcodeFormat |String |Value of com.google.zxing.BarcodeFormat.
 |=======================================================================
- 
+ 
 
- 
+ 

@@ -44,12 +44,12 @@ information must be provided.
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default |Description
-|routeStartDate |java.util.Date |  |the initial scheduled Date and time
+|routeStartDate |java.util.Date |  |the initial scheduled Date and time
 for route start
 
-|routeStartRepeatCount |int |  |no of times to repeat the job
+|routeStartRepeatCount |int |  |no of times to repeat the job
 
-|routeStartRepeatInterval |long |  |the time interval in milliseconds to
+|routeStartRepeatInterval |long |  |the time interval in milliseconds to
 trigger the next attempt to start the route
 |=======================================================================
 
@@ -58,12 +58,12 @@ trigger the next attempt to start the route
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default |Description
-|routeStopDate |java.util.Date |  |the initial scheduled Date and time
+|routeStopDate |java.util.Date |  |the initial scheduled Date and time
 for route stop
 
-|routeStopRepeatCount |int |  |no of times to repeat the job
+|routeStopRepeatCount |int |  |no of times to repeat the job
 
-|routeStopRepeatInterval |long |  |the time interval in milliseconds to
+|routeStopRepeatInterval |long |  |the time interval in milliseconds to
 trigger the next attempt to stop the route
 
 |routeStopGracePeriod |int |10 seconds |the time period to wait before
@@ -78,12 +78,12 @@ grace period expressed as java.util.concurrent.TimeUnit
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default |Description
-|routeSuspendDate |java.util.Date |  |the initial scheduled Date and
+|routeSuspendDate |java.util.Date |  |the initial scheduled Date and
 time for route suspension
 
-|routeSuspendRepeatCount |int |  |no of times to repeat the job
+|routeSuspendRepeatCount |int |  |no of times to repeat the job
 
-|routeSuspendRepeatInterval |long |  |the time interval in milliseconds
+|routeSuspendRepeatInterval |long |  |the time interval in milliseconds
 to trigger the next attempt to suspend the route
 |=======================================================================
 
@@ -92,12 +92,12 @@ to trigger the next attempt to suspend the route
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default |Description
-|routeResumeDate |java.util.Date |  |the initial scheduled Date and time
+|routeResumeDate |java.util.Date |  |the initial scheduled Date and time
 for route start
 
-|routeResumeRepeatCount |int |  |no of times to repeat the job
+|routeResumeRepeatCount |int |  |no of times to repeat the job
 
-|routeResumeRepeatInterval |long |  |the time interval in milliseconds
+|routeResumeRepeatInterval |long |  |the time interval in milliseconds
 to trigger the next attempt to resume the route
 |=======================================================================
 

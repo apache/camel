@@ -391,7 +391,7 @@ Camel directly, you'll have to pass these parameters yourself.)
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Spring property |System property |Default Value |Description
-|`id` |  |  |The JMX agent name, and it is not optional
+|`id` |  |  |The JMX agent name, and it is not optional
 
 |`usePlatformMBeanServer` |`org.apache.camel.jmx.usePlatformMBeanServer`
 |`false`, `true` - Release 1.5 or later |If `true`, it will use the
@@ -423,14 +423,14 @@ we should create a JMX connector (to allow remote management) for the
 custom id set will be registered. This allows you to filer out unwanted
 processors in the JMX console.
 
-|`statisticsLevel` |  |`All / Default` |*Camel 2.1:* Configures the
+|`statisticsLevel` |  |`All / Default` |*Camel 2.1:* Configures the
 level for whether performance statistics is enabled for the MBean. See
 section _Configuring level of granularity for performance statistics_
 for more details. From *Camel 2.16* onwards the All option is renamed to
 Default, and a new Extended option has been introduced which allows
 gathered additional runtime JMX metrics.
 
-|`includeHostName` |`org.apache.camel.jmx.includeHostName` |  |*Camel
+|`includeHostName` |`org.apache.camel.jmx.includeHostName` |  |*Camel
 2.13:* Whether to include the hostname in the MBean naming. From Camel
 2.13 onwards this is default `false`, where as in older releases its
 default `true`. You can use this option to restore old behavior if
@@ -776,7 +776,7 @@ This allows us to have full control, very easily, of the naming for both
 the `CamelContext` id in the Registry as well the
 JMX MBeans in the `JMXMBeanRegistry`.
 
-From *Camel 2.15* onwards you can configure the default management
+From *Camel 2.15* onwards you can configure the default management
 name pattern using a JVM system property, to configure this globally for
 the JVM. Notice that you can override this pattern by configure it
 explicit, as shown in the examples further below.
@@ -856,11 +856,11 @@ details and features that are provided out of the box at Apache.
 You can now set a pre set level whether performance statistics is
 enabled or not when Camel start ups. The levels are
 
-* `Extended` - As default but with additional statistics gathered during
+* `Extended` - As default but with additional statistics gathered during
 runtime such as fine grained level of usage of endpoints and more. This
-options requires Camel 2.16
-* `All` / `Default` - Camel will enable statistics for both routes and
-processors (fine grained). From *Camel 2.16* onwards the All option
+options requires Camel 2.16
+* `All` / `Default` - Camel will enable statistics for both routes and
+processors (fine grained). From *Camel 2.16* onwards the All option
 was renamed to Default.
 * `RoutesOnly` - Camel will only enable statistics for routes (coarse
 grained)
@@ -875,7 +875,7 @@ statistics by setting `loadStatisticsEnabled=false` on the `<jmxAgent>`.
 Note that it will be off if the statics level is configured to off as
 well. From *Camel 2.13* onwards the load performance statistics is by
 default disabled. You can enable this by
-setting `loadStatisticsEnabled=true` on the `<jmxAgent>`.
+setting `loadStatisticsEnabled=true` on the `<jmxAgent>`.
 
 At runtime you can always use the management console (such as JConsole)
 to change on a given route or processor whether its statistics are

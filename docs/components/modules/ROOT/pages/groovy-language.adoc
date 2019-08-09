@@ -70,14 +70,14 @@ The component supports 2 options, which are listed below.
 
 Sometimes you may need to use custom `GroovyShell` instance in your
 Groovy expressions. To provide custom `GroovyShell`, add implementation
-of the `org.apache.camel.language.groovy.GroovyShellFactory` SPI
+of the `org.apache.camel.language.groovy.GroovyShellFactory` SPI
 interface to your Camel registry. For example after adding the following
 bean to your Spring context...
 
 [source,java]
 ----------------------------------------------------------------------
 public class CustomGroovyShellFactory implements GroovyShellFactory {
- 
+ 
   public GroovyShell createGroovyShell(Exchange exchange) {
     ImportCustomizer importCustomizer = new ImportCustomizer();
     importCustomizer.addStaticStars("com.example.Utils");
