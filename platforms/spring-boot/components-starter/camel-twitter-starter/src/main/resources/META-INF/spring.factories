@@ -17,8 +17,7 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.apache.camel.component.twitter.timeline.springboot.TwitterTimelineComponentAutoConfiguration,\
 org.apache.camel.component.twitter.search.springboot.TwitterSearchComponentAutoConfiguration,\
-org.apache.camel.component.twitter.directmessage.springboot.TwitterDirectMessageComponentAutoConfiguration,\
-org.apache.camel.component.twitter.streaming.springboot.TwitterStreamingComponentAutoConfiguration
+org.apache.camel.component.twitter.directmessage.springboot.TwitterDirectMessageComponentAutoConfiguration
 
 
 
