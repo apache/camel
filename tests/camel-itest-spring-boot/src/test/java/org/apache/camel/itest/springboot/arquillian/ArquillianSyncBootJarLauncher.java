@@ -21,6 +21,7 @@ import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,7 +60,7 @@ public class ArquillianSyncBootJarLauncher extends JarLauncher {
         List<URL> parentUrls = Arrays.asList(urlsFromClassLoader(this.getClassLoader()));
         List<URL> additionalURLs = parentUrls.stream().filter(u -> u.toString().startsWith("file") && !u.toString().endsWith(".jar")).collect(Collectors.toList());
 
-        List<URL> newURLs = Arrays.asList(urls);
+        ArrayList<URL> newURLs = new ArrayList(Arrays.asList(urls));
         newURLs.addAll(additionalURLs);
 
         ClassLoader appClassLoader = null;
