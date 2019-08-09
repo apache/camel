@@ -24,7 +24,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -134,7 +133,13 @@ public class RestApiEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         RestApiProcessorFactory factory = null;
 
-        RestConfiguration config = getCamelContext().getRestConfiguration(consumerComponentName, true);
+        RestConfiguration config = getCamelContext().getRestConfiguration(consumerComponentName, false);
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration();
+        }
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration(consumerComponentName, true);
+        }
 
         // lookup in registry
         Set<RestApiProcessorFactory> factories = getCamelContext().getRegistry().findByType(RestApiProcessorFactory.class);
