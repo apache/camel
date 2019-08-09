@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 @Component("telegram")
 public class TelegramComponent extends DefaultComponent {
 
-    @Metadata(label = "security")
+    @Metadata(label = "security", secret = true)
     private String authorizationToken;
 
     public TelegramComponent() {

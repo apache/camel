@@ -697,8 +697,8 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                         fieldTypeName = path.javaType();
                     }
 
+                    boolean isSecret = secret != null && secret || path.secret();
                     String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
-                    boolean isSecret = secret != null ? secret : false;
                     EndpointPath ep = new EndpointPath(name, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote,
                         isSecret, group, label, isEnum, enums);
                     endpointPaths.add(ep);
@@ -792,7 +792,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                             fieldTypeName = param.javaType();
                         }
 
-                        boolean isSecret = secret != null ? secret : param.secret();
+                        boolean isSecret = secret != null && secret || param.secret();
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                         EndpointOption option = new EndpointOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
                                 docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, deprecationNote, isSecret, group, label, isEnum, enums);
