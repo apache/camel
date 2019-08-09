@@ -66,6 +66,7 @@ public final class PropertyBindingSupport {
         private boolean fluentBuilder = true;
         private boolean allowPrivateSetter = true;
         private boolean ignoreCase;
+        private boolean remove = true;
         private String optionPrefix;
 
         /**
@@ -127,6 +128,14 @@ public final class PropertyBindingSupport {
         }
 
         /**
+         * Whether the bounded property should be removed from the given properties.
+         */
+        public Builder withRemove(boolean remove) {
+            this.remove = remove;
+            return this;
+        }
+
+        /**
          * Whether properties should be filtered by prefix.         *
          * Note that the prefix is removed from the key before the property is bound.
          */
@@ -140,7 +149,7 @@ public final class PropertyBindingSupport {
          *
          * @param camelContext  the camel context
          * @param target        the target object
-         * @param properties    the properties where the bound properties will be removed from
+         * @param properties    the properties
          * @return              true if one or more properties was bound
          */
         public boolean bind(CamelContext camelContext, Object target, Map<String, Object> properties) {
@@ -149,7 +158,7 @@ public final class PropertyBindingSupport {
             org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
 
             return bindProperties(camelContext, target, properties, optionPrefix, ignoreCase, nesting, deepNesting,
-                    fluentBuilder, allowPrivateSetter, reference, placeholder);
+                    fluentBuilder, allowPrivateSetter, reference, placeholder, remove);
         }
 
     }
@@ -361,6 +370,35 @@ public final class PropertyBindingSupport {
                                          String optionPrefix, boolean ignoreCase,
                                          boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
                                          boolean reference, boolean placeholder) {
+        return bindProperties(camelContext, target, properties, optionPrefix, ignoreCase, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, true);
+    }
+
+
+
+    /**
+     * Binds the properties with the given prefix to the target object, and removes the property that was bound from properties.
+     * Note that the prefix is removed from the key before the property is bound.
+     *
+     * @param camelContext        the camel context
+     * @param target              the target object
+     * @param properties          the properties
+     * @param optionPrefix        the prefix used to filter properties
+     * @param ignoreCase          whether to ignore case for property keys
+     * @param nesting             whether nesting is in use
+     * @param deepNesting         whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
+     *                            a property has a setter and the object can be created from a default no-arg constructor.
+     * @param fluentBuilder       whether fluent builder is allowed as a valid getter/setter
+     * @param allowPrivateSetter  whether autowiring components allows to use private setter method when setting the value
+     * @param reference           whether reference parameter (syntax starts with #) is in use
+     * @param placeholder         whether to use Camels property placeholder to resolve placeholders on keys and values
+     * @param remove              whether the bounded property should be removed from the given properties
+     * @return                    true if one or more properties was bound
+     */
+    public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties,
+                                         String optionPrefix, boolean ignoreCase,
+                                         boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
+                                         boolean reference, boolean placeholder,
+                                         boolean remove) {
         org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
         org.apache.camel.util.ObjectHelper.notNull(target, "target");
         org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
@@ -388,7 +426,10 @@ public final class PropertyBindingSupport {
             }
 
             if (bindProperty(camelContext, target, key, value, ignoreCase, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder)) {
-                iter.remove();
+                if (remove) {
+                    iter.remove();
+                }
+
                 rc = true;
             }
         }

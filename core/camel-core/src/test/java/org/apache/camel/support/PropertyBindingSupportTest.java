@@ -147,6 +147,32 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
+    public void testDoNotRemove() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("bar.age", "33");
+        prop.put("bar.{{committer}}", "true");
+        prop.put("bar.gold-customer", "true");
+        prop.put("bar.work.id", "123");
+        prop.put("bar.work.name", "{{companyName}}");
+
+        int size = prop.size();
+
+        PropertyBindingSupport.build().withRemove(false).bind(context, foo, prop);
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        assertEquals(size, prop.size());
+    }
+
+    @Test
     public void testNested() throws Exception {
         Foo foo = new Foo();
 
