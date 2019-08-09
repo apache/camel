@@ -26,7 +26,6 @@ org.apache.camel.component.aws.xray.decorators.TimerSegmentDecorator
 org.apache.camel.component.aws.xray.decorators.http.AhcSegmentDecorator
 org.apache.camel.component.aws.xray.decorators.http.HttpSegmentDecorator
 org.apache.camel.component.aws.xray.decorators.http.JettySegmentDecorator
-org.apache.camel.component.aws.xray.decorators.http.NettyHttp4SegmentDecorator
 org.apache.camel.component.aws.xray.decorators.http.NettyHttpSegmentDecorator
 org.apache.camel.component.aws.xray.decorators.http.RestletSegmentDecorator
 org.apache.camel.component.aws.xray.decorators.http.RestSegmentDecorator
