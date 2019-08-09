@@ -94,7 +94,8 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
             //
             // Allow consumer idle properties to properly handle an empty polling response
             //
-            if (result[0] instanceof ODataFeed && (((ODataFeed) result[0]).getEntries().isEmpty())) {
+            if ((result[0] == null)
+                || (result[0] instanceof ODataFeed && (((ODataFeed) result[0]).getEntries().isEmpty()))) {
                 return 0;
             } else {
                 int processed = ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
