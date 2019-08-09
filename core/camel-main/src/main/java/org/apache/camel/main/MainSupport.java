@@ -804,7 +804,7 @@ public abstract class MainSupport extends ServiceSupport {
         if (envEnabled == null) {
             envEnabled = prop.remove("camel.main.auto-configuration-environment-variables-enabled");
             if (envEnabled != null) {
-                PropertyBindingSupport.bindMandatoryProperty(camelContext, mainConfigurationProperties, "autoConfigurationEnvironmentVariablesEnabled", envEnabled, true);
+                PropertyBindingSupport.build().withMandatory(true).withIgnoreCase(true).bind(camelContext, mainConfigurationProperties, "autoConfigurationEnvironmentVariablesEnabled", envEnabled);
                 autoConfiguredProperties.put("camel.main.auto-configuration-environment-variables-enabled", envEnabled.toString());
             }
         }
@@ -825,14 +825,14 @@ public abstract class MainSupport extends ServiceSupport {
         // special for fail-fast as we need to know this early before we set all the other options
         Object failFast = propENV != null ? propENV.remove("camel.main.autoconfigurationfailfast") : null;
         if (failFast != null) {
-            PropertyBindingSupport.bindMandatoryProperty(camelContext, mainConfigurationProperties, "autoConfigurationFailFast", failFast, true);
+            PropertyBindingSupport.build().withMandatory(true).withIgnoreCase(true).bind(camelContext, mainConfigurationProperties, "autoConfigurationFailFast", failFast);
         } else {
             failFast = prop.remove("camel.main.autoConfigurationFailFast");
             if (failFast == null) {
                 failFast = prop.remove("camel.main.auto-configuration-fail-fast");
             }
             if (failFast != null) {
-                PropertyBindingSupport.bindMandatoryProperty(camelContext, mainConfigurationProperties, "autoConfigurationFailFast", failFast, true);
+                PropertyBindingSupport.build().withMandatory(true).withIgnoreCase(true).bind(camelContext, mainConfigurationProperties, "autoConfigurationFailFast", failFast);
                 autoConfiguredProperties.put("camel.main.auto-configuration-fail-fast", failFast.toString());
             }
         }
@@ -1262,10 +1262,10 @@ public abstract class MainSupport extends ServiceSupport {
             try {
                 boolean hit;
                 if (failIfNotSet) {
-                    PropertyBindingSupport.bindMandatoryProperty(context, target, name, stringValue, ignoreCase);
+                    PropertyBindingSupport.build().withMandatory(true).withIgnoreCase(ignoreCase).bind(context, target, name, stringValue);
                     hit = true;
                 } else {
-                    hit = PropertyBindingSupport.bindProperty(context, target, name, stringValue, ignoreCase);
+                    hit = PropertyBindingSupport.build().withIgnoreCase(true).bind(context, target, name, stringValue);
                 }
                 if (hit) {
                     it.remove();

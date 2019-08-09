@@ -42,7 +42,7 @@ public class PropertyBindingSupportAutowireTest extends ContextTestSupport {
     public void testAutowireProperties() throws Exception {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
         PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(context, foo);
 
         assertEquals("James", foo.getName());

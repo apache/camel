@@ -187,7 +187,7 @@ public class DefaultComponentVerifierExtension implements ComponentVerifierExten
         }
 
         if (!properties.isEmpty()) {
-            PropertyBindingSupport.bindProperties(camelContext, instance, properties);
+            PropertyBindingSupport.build().bind(camelContext, instance, properties);
         }
 
         return instance;

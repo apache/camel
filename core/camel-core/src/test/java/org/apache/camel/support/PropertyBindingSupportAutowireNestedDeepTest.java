@@ -41,7 +41,7 @@ public class PropertyBindingSupportAutowireNestedDeepTest extends ContextTestSup
     public void testAutowirePropertiesDeep() throws Exception {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
         // use deep nesting
         PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(context, foo, false, true, null);
 

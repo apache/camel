@@ -420,11 +420,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         // configure scheduler with options from this consumer
         Map<String, Object> properties = new LinkedHashMap<>();
         IntrospectionSupport.getProperties(this, properties, null);
-        PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), scheduler, properties);
+        PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, properties);
         if (schedulerProperties != null && !schedulerProperties.isEmpty()) {
             // need to use a copy in case the consumer is restarted so we keep the properties
             Map<String, Object> copy = new LinkedHashMap<>(schedulerProperties);
-            PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), scheduler, copy);
+            PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, copy);
             if (copy.size() > 0) {
                 throw new FailedToCreateConsumerException(getEndpoint(), "There are " + copy.size()
                         + " scheduler parameters that couldn't be set on the endpoint."

@@ -199,7 +199,7 @@ public class RestBindingReifier {
                 }
             }
 
-            PropertyBindingSupport.bindProperties(context, dataFormat, copy);
+            PropertyBindingSupport.build().bind(context, dataFormat, copy);
         }
     }
 

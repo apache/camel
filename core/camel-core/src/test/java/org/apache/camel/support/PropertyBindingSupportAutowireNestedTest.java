@@ -41,11 +41,11 @@ public class PropertyBindingSupportAutowireNestedTest extends ContextTestSupport
     public void testAutowireProperties() throws Exception {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.rider", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
-        PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(context, foo);
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "bar.age", "33");
+        PropertyBindingSupport.build().bind(context, foo, "bar.rider", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.gold-customer", "true");
+        PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(context, foo, false, false, null);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());

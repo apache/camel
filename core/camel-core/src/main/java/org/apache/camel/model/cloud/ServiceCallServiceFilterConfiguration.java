@@ -186,7 +186,7 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
 
                 postProcessFactoryParameters(camelContext, parameters);
 
-                PropertyBindingSupport.bindProperties(camelContext, factory, parameters);
+                PropertyBindingSupport.build().bind(camelContext, factory, parameters);
 
                 answer = factory.newInstance(camelContext);
             } catch (Exception e) {
