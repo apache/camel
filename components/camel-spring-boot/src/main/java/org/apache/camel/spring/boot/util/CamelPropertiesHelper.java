@@ -52,6 +52,7 @@ public final class CamelPropertiesHelper {
      *     <li>value as lookup - The value is used as-is (eg like #value) to lookup in the Registry if there is a bean then its set on the target</li>
      * </ul>
      * When an option has been set on the target bean, then its removed from the given properties map. If all the options has been set, then the map will be empty.
+     * The implementation ignores case for the property keys.
      *
      * @param context        the CamelContext
      * @param target         the target bean
@@ -75,7 +76,7 @@ public final class CamelPropertiesHelper {
             String stringValue = value != null ? value.toString() : null;
             boolean hit = false;
             try {
-                hit = PropertyBindingSupport.build().bind(context, target, name, value);
+                hit = PropertyBindingSupport.build().withIgnoreCase(true).bind(context, target, name, value);
             } catch (PropertyBindingException e) {
                 // no we could not and this would be thrown if we attempted to set a value on a property which we cannot do type conversion as
                 // then maybe the value refers to a spring bean in the registry so try this
@@ -85,7 +86,7 @@ public final class CamelPropertiesHelper {
                     }
                     // use #bean: to lookup
                     stringValue = "#bean:" + stringValue;
-                    hit = PropertyBindingSupport.build().bind(context, target, name, stringValue);
+                    hit = PropertyBindingSupport.build().withIgnoreCase(true).bind(context, target, name, stringValue);
                 }
             }
 
