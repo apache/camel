@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar.utils.message;
+package org.apache.camel.component.pulsar;
 
-public interface PulsarMessageHeaders {
+import static org.mockito.Mockito.mock;
 
-    String PROPERTIES = "properties";
-    String PRODUCER_NAME = "producer_name";
-    String SEQUENCE_ID = "sequence_id";
-    String PUBLISH_TIME = "publish_time";
-    String MESSAGE_ID = "message_id";
-    String EVENT_TIME = "event_time";
-    String KEY = "key";
-    String KEY_BYTES = "key_bytes";
-    String TOPIC_NAME = "topic_name";
-    String MESSAGE_RECEIPT = "message_receipt";
+import org.apache.pulsar.client.api.Consumer;
+import org.apache.pulsar.client.api.MessageId;
+import org.junit.Test;
+
+public class PulsarNegativeAcknowledgementTest {
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testNegativeAcknowledgement() {
+        PulsarMessageReceipt receipt = new DefaultPulsarMessageReceipt(mock(Consumer.class), mock(MessageId.class));
+        receipt.negativeAcknowledge();
+    }
+
 }
