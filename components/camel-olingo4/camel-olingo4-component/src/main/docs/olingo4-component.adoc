@@ -3,8 +3,8 @@
 
 *Available as of Camel version 2.19*
 
-The Olingo4 component utilizes http://olingo.apache.org/[Apache Olingo]
-version 4.0 APIs to interact with OData 4.0 compliant service.
+The Olingo4 component utilizes http://olingo.apache.org/[Apache Olingo]
+version 4.0 APIs to interact with OData 4.0 compliant service.
 Since version 4.0 OData is OASIS standard and number of popular open source 
 and commercial vendors and products support this protocol.
 A sample list of supporting products can be found on the OData 
@@ -13,11 +13,11 @@ http://www.odata.org/ecosystem/[website].
 The Olingo4 component supports reading entity sets, entities,
 simple and complex properties, counts, using custom and OData
 system query parameters. It supports updating entities and properties.
-It also supports submitting queries and change requests as a single OData batch operation. 
+It also supports submitting queries and change requests as a single OData batch operation. 
 
 The component supports configuring HTTP connection parameters and
-headers for OData service connection. This allows configuring use of
-SSL, OAuth2.0, etc. as required by the target OData service. 
+headers for OData service connection. This allows configuring use of
+SSL, OAuth2.0, etc. as required by the target OData service. 
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -154,26 +154,26 @@ The component supports 16 options, which are listed below.
 == Producer Endpoints
 
 Producer endpoints can use endpoint names and options listed
-next. Producer endpoints can also use a special option *`inBody`* that
+next. Producer endpoints can also use a special option *`inBody`* that
 in turn should contain the name of the endpoint option whose value will
-be contained in the Camel Exchange In message. The *inBody* option
-defaults to *data* for endpoints that take that option. 
+be contained in the Camel Exchange In message. The *inBody* option
+defaults to *data* for endpoints that take that option. 
 
 Any of the endpoint options can be provided in either the endpoint URI,
 or dynamically in a message header. The message header name must be of
-the format *`CamelOlingo4.<option>`*. Note that the *`inBody`* option
+the format *`CamelOlingo4.<option>`*. Note that the *`inBody`* option
 overrides message header, i.e. the endpoint
-option *`inBody=option`* would override
-a *`CamelOlingo4.option`* header. In addition, query parameters can be
-specified 
+option *`inBody=option`* would override
+a *`CamelOlingo4.option`* header. In addition, query parameters can be
+specified 
 
 Note that the resourcePath option can either in specified in the URI as
 a part of the URI path, as an endpoint option
 ?resourcePath=<resource-path> or as a header value
 CamelOlingo4.resourcePath. The OData entity key predicate can either be
-a part of the resource path, e.g. _Manufacturers('1')_, where _'__1'_ is
+a part of the resource path, e.g. _Manufacturers('1')_, where _'__1'_ is
 the key predicate, or be specified separately with resource path
-_Manufacturers_ and keyPredicate option _'1'_. 
+_Manufacturers_ and keyPredicate option _'1'_. 
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -207,7 +207,7 @@ Both properties are of the type *`java.util.Map<String, String>`*.
 == OData Resource Type Mapping
 
 The result of *read* endpoint and data type of *data* option depends on
-the OData resource being queried, created or modified. 
+the OData resource being queried, created or modified. 
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -235,24 +235,24 @@ java.util.Map<String, Object> for In body (request)
 
 Only the *read* endpoint can be used as a consumer endpoint. Consumer
 endpoints can
-use http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
-Poll Consumer Options] with a *`consumer.`* prefix to schedule endpoint
+use http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
+Poll Consumer Options] with a *`consumer.`* prefix to schedule endpoint
 invocation. By default consumer endpoints that return an array or
 collection will generate one exchange per element, and their routes will
 be executed once for each exchange. This behavior can be disabled by
-setting the endpoint property *consumer.splitResult=false*. 
+setting the endpoint property *consumer.splitResult=false*. 
 
 == Message Headers
 
 Any URI option can be provided in a message header for producer
-endpoints with a *`CamelOlingo4.`* prefix.
+endpoints with a *`CamelOlingo4.`* prefix.
 
 == Message Body
 
 All result message bodies utilize objects provided by the underlying
 http://olingo.apache.org/javadoc/odata4/index.html[Apache Olingo 4.0
 API] used by the Olingo4Component. Producer endpoints can specify the
-option name for incoming message body in the *`inBody`* endpoint URI
+option name for incoming message body in the *`inBody`* endpoint URI
 parameter. For endpoints that return an array or collection, a consumer
 endpoint will map every element to distinct messages, unless
 *consumer.splitResult* is set to *false*.
@@ -260,9 +260,9 @@ endpoint will map every element to distinct messages, unless
 == Use cases
 
 The following route reads top 5 entries from the People entity
-ordered by ascending FirstName property. 
+ordered by ascending FirstName property. 
 
- 
+ 
 
 [source,java]
 ------------------------------------------------------------
@@ -271,12 +271,12 @@ from("direct:...")
     .to("olingo4://read/People?orderBy=FirstName%20asc");
 ------------------------------------------------------------
 
- 
+ 
 
 The following route reads Airports entity using the key property
-value in incoming *id* header. 
+value in incoming *id* header. 
 
- 
+ 
 
 [source,java]
 ------------------------------------------------------------
@@ -285,12 +285,12 @@ from("direct:...")
     .to("olingo4://read/Airports");
 ------------------------------------------------------------
 
- 
+ 
 
 The following route creates People entity using the
-*ClientEntity* in body message. 
+*ClientEntity* in body message. 
 
- 
+ 
 
 [source,java]
 ------------------------------------------------------------

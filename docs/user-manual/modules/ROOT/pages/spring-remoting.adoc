@@ -169,12 +169,12 @@ class methods on such beans
 In cases where Camel cannot choose a method to invoke, an
 `AmbiguousMethodCallException` is thrown.
 
-By default the return value is set on the outbound message body. 
+By default the return value is set on the outbound message body. 
 
 [[SpringRemoting-Asynchronousprocessing]]
 == Asynchronous processing
 
-From *Camel 2.18* onwards you can return a CompletionStage
+From *Camel 2.18* onwards you can return a CompletionStage
 implementation (e.g. a CompletableFuture) to implement asynchronous
 processing.
 
@@ -182,7 +182,7 @@ Please be sure to properly complete the CompletionStage with the result
 or exception, including any timeout handling. Exchange processing would
 wait for completion and would not impose any timeouts automatically.
 It's extremely useful to
-monitor `org.apache.camel.spi.InflightRepository` for any hanging messages.
+monitor `org.apache.camel.spi.InflightRepository` for any hanging messages.
 
 Note that completing with "null" won't set outbody message body to null,
 but would keep message intact. This is useful to support methods that
@@ -203,7 +203,7 @@ Composite processor that do not modify exchange
 
 [source,syntaxhighlighter-pre]
 ----
- public CompletableFuture<Void> doSomethingAsync(String body) {
+ public CompletableFuture<Void> doSomethingAsync(String body) {
      return CompletableFuture.allOf(doA(body), doB(body), doC()); 
  }
 ----
@@ -250,21 +250,21 @@ well - for instance, a `Registry` that we can use to lookup beans.
 
 [source,syntaxhighlighter-pre]
 ----
-public String doSomething(String body, Registry registry) 
+public String doSomething(String body, Registry registry) 
 ----
 
 We can use xref:exchange.adoc[Exchange] as well:
 
 [source,syntaxhighlighter-pre]
 ----
-public String doSomething(String body, Exchange exchange) 
+public String doSomething(String body, Exchange exchange) 
 ----
 
 You can also have multiple types:
 
 [source,syntaxhighlighter-pre]
 ----
-public String doSomething(String body, Exchange exchange, TypeConverter converter) 
+public String doSomething(String body, Exchange exchange, TypeConverter converter) 
 ----
 
 And imagine you use a xref:components::bean-component.adoc[Pojo] to handle a given custom
@@ -272,7 +272,7 @@ exception `InvalidOrderException` - we can then bind that as well:
 
 [source,syntaxhighlighter-pre]
 ----
-public String badOrder(String body, InvalidOrderException invalid) 
+public String badOrder(String body, InvalidOrderException invalid) 
 ----
 
 Notice that we can bind to it even if we use a sub type of
@@ -302,7 +302,7 @@ public class Bar {
     public String doSomething(String body) {
     // process the in body and return whatever you want 
     return "Bye World"; 
-} 
+} 
 ----
 
 Or the Exchange example. Notice that the return type must be *void* when
@@ -311,7 +311,7 @@ there is only a single parameter of the type
 
 [source,syntaxhighlighter-pre]
 ----
- public class Bar {
+ public class Bar {
      public void doSomething(Exchange exchange) {
          // process the exchange 
          exchange.getIn().setBody("Bye World"); 
@@ -336,7 +336,7 @@ public class Bar {
         // process the in body and return whatever you want 
         return "Bye World"; 
     }
-} 
+} 
 ----
 
 [[SpringRemoting-Parameterbindingusingmethodoption]]
@@ -378,13 +378,13 @@ public void doSomething(String payload, boolean highPriority) {
 }
 ----
 
- 
+ 
 
 This is now possible in *Camel 2.9* onwards:
 
 [source,syntaxhighlighter-pre]
 ----
-.bean(OrderService.class, "doSomething(*, true)") 
+.bean(OrderService.class, "doSomething(*, true)") 
 ----
 
 In the example above, we defined the first parameter using the wild card
@@ -395,7 +395,7 @@ body as shown:
 
 [source,syntaxhighlighter-pre]
 ----
-.bean(OrderService.class, "doSomething(${body}, true)") 
+.bean(OrderService.class, "doSomething(${body}, true)") 
 ----
 
 The syntax of the parameters is using the xref:simple-language.adoc[Simple]
@@ -418,7 +418,7 @@ Besides the message body, you can pass in the message headers as a
 
 [source,syntaxhighlighter-pre]
 ----
-.bean(OrderService.class, "doSomethingWithHeaders(${body}, ${headers})") 
+.bean(OrderService.class, "doSomethingWithHeaders(${body}, ${headers})") 
 ----
 
 You can also pass in other fixed values besides booleans. For example,
@@ -426,7 +426,7 @@ you can pass in a String and an integer:
 
 [source,syntaxhighlighter-pre]
 ----
-.bean(MyBean.class, "echo('World', 5)") 
+.bean(MyBean.class, "echo('World', 5)") 
 ----
 
 In the example above, we invoke the echo method with two parameters. The
@@ -439,7 +439,7 @@ bind to message headers and other values such as:
 
 [source,syntaxhighlighter-pre]
 ----
-.bean(OrderService.class, "doSomething(${body}, ${header.high})") 
+.bean(OrderService.class, "doSomething(${body}, ${header.high})") 
 ----
 
 You can also use the OGNL support of the xref:simple-language.adoc[Simple]
@@ -449,7 +449,7 @@ follows:
 
 [source,syntaxhighlighter-pre]
 ----
-.bean(OrderService.class, "doSomething(${body.asXml}, ${header.high})") 
+.bean(OrderService.class, "doSomething(${body.asXml}, ${header.high})") 
 ----
 
 Instead of using `.bean` as shown in the examples above, you may want to
@@ -457,7 +457,7 @@ use `.to` instead as shown:
 
 [source,syntaxhighlighter-pre]
 ----
-.to("bean:orderService?method=doSomething(${body.asXml}, ${header.high})") 
+.to("bean:orderService?method=doSomething(${body.asXml}, ${header.high})") 
 ----
 
 [[SpringRemoting-Usingtypequalifierstoselectamongoverloadedmethods]]
@@ -473,7 +473,7 @@ Given the following bean:
 
 [source,syntaxhighlighter-pre]
 ----
- from("direct:start")
+ from("direct:start")
     .bean(MyBean.class, "hello(String)")
     .to("mock:result");
 ----
@@ -486,7 +486,7 @@ do as follows in the Camel route:
 ----
 from("direct:start")
     .bean(MyBean.class, "hello(String,String)")
-    .to("mock:result"); 
+    .to("mock:result"); 
 ----
 
 We can also use a `*` as wildcard so we can just say we want to execute
@@ -494,7 +494,7 @@ the method with 2 parameters we do
 
 [source,syntaxhighlighter-pre]
 ----
- from("direct:start")
+ from("direct:start")
     .bean(MyBean.class, "hello(*,*)")
     .to("mock:result");
 ----
@@ -516,7 +516,7 @@ at the same time, such as
 
 [source,syntaxhighlighter-pre]
 ----
- doSomething(com.foo.MyOrder ${body}, boolean ${header.high})
+ doSomething(com.foo.MyOrder ${body}, boolean ${header.high})
 ----
 
 This may change in the future.

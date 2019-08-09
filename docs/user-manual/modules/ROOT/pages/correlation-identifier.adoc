@@ -31,7 +31,7 @@ Tap] EIP does this.
 
 The following example demonstrates using the Camel JMSMessageID as the
 Correlation Identifier within a request/reply pattern in
-the xref:components::jms-component.adoc[JMS] component
+the xref:components::jms-component.adoc[JMS] component
 
 == Samples
 

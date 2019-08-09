@@ -224,7 +224,7 @@ semantically equivalent, but arrive in a different format?
 |image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
 |xref:sort-eip.adoc[Sort] |How can I sort the body of a message?
 
-|  |Script |How do I execute a script which may not change the message?
+|  |Script |How do I execute a script which may not change the message?
 
 |image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
 |xref:validate-eip.adoc[Validate] |How can I validate a message?

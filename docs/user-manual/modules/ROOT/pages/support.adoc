@@ -44,7 +44,7 @@ Also on the mailing lists there are more people active to help you better.
 
 There are a number of sites outside Apache that offer discussion forums on
 Camel. For example, http://stackoverflow.com/[Stack Overflow] is a
-popular Q & A site with a
+popular Q & A site with a
 http://stackoverflow.com/questions/tagged/apache-camel[dedicated Apache
 Camel forum]. You are also likely to find helpful discussions on
 technical blogs, on
@@ -54,7 +54,7 @@ https://twitter.com/search?q=apache%20camel[Twitter].
 [[Support-Usingdeprecatedcomponents]]
 == Using deprecated components
 
-Deprecated components are *not* supported and issues such as bugs may
+Deprecated components are *not* supported and issues such as bugs may
 not be fixed. We encourage users to migrate away from using any
 deprecated component. A list of deprecated components is on the
 github page at:
@@ -99,7 +99,7 @@ tracker] to see if the issue has already been reported
 * do *not* send private emails to Camel xref:team.adoc[Team] members to
 ask them to help you faster, or in the private only. Help on Apache
 Camel is volunteer based and *must* happen in the *open* on the public
-xref:mailing-lists.adoc[Mailing Lists]. If you want to get help faster
+xref:mailing-lists.adoc[Mailing Lists]. If you want to get help faster
 or in private, then see further below.
 
 [[Support-Howtogethelpfaster]]

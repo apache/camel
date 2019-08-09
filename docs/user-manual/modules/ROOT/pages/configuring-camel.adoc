@@ -39,10 +39,10 @@ class=org.acme.FooComponent
 Then if you refer to an endpoint as `foo://somethingOrOther` Camel
 will auto-discover your component and register it.
 
-The `FooComponent` can then be auto-injected with resources using the
+The `FooComponent` can then be auto-injected with resources using the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/Injector.html[Injector],
 such as to support xref:components::spring.adoc[Spring] based auto-wiring, or to
-support `@Resource` (EJB3 style) injection or Guice style `@Inject`
+support `@Resource` (EJB3 style) injection or Guice style `@Inject`
 injection.
 
 
@@ -58,11 +58,11 @@ above example), then you can refer to the component using
 `activemq:[queue:|topic:]destinationName`.
 
 If you want to add explicit Spring 2.x XML objects to your XML then you
-could use the `xbean-spring` which tries to automate most of the XML
+could use the `xbean-spring` which tries to automate most of the XML
 binding work for you; or you could look in camel-spring
-at `CamelNamespaceHandler` you'll see how we handle the Spring XML
+at `CamelNamespaceHandler` you'll see how we handle the Spring XML
 stuff (warning it's kinda hairy code to look at :smile:).
-If you wanted `<fooComponent>` to be a standard part of the core Camel
+If you wanted `<fooComponent>` to be a standard part of the core Camel
 schema then you'd hack that file to add your component &
 xref:contributing.adoc[contribute a patch] to the camel XSD. Otherwise
 you could write your own namespace & schema if you prefer.

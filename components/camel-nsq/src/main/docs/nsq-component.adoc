@@ -3,10 +3,10 @@
 
 *Available as of Camel version 2.23*
 
-http://nsq.io/[NSQ] is a realtime distributed messaging platform.
+http://nsq.io/[NSQ] is a realtime distributed messaging platform.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component.
+their `pom.xml` for this component.
 
 [source,xml]
 ------------------------------------------------------------
@@ -25,7 +25,7 @@ their `pom.xml` for this component.
 nsq:servers[?options]
 ----------------------
 
-Where *servers* represents the list of NSQ servers - nsqlookupd servers in the case of a consumer and nsqd servers in the case of a producer.
+Where *servers* represents the list of NSQ servers - nsqlookupd servers in the case of a consumer and nsqd servers in the case of a producer.
 
 == Options
 

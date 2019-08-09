@@ -4,7 +4,7 @@
 *Available as of Camel version 2.13*
 
 The Kafka component is used for communicating with
-http://kafka.apache.org/[Apache Kafka] message broker.
+http://kafka.apache.org/[Apache Kafka] message broker.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component.
@@ -405,7 +405,7 @@ camelContext.addRoutes(new RouteBuilder() {
     }
 });
 ----
- 
+ 
 
 === Producing messages to Kafka
 

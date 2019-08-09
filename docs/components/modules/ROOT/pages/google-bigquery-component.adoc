@@ -4,7 +4,7 @@
 *Available as of Camel version 2.20*
 
 The Google Bigquery component provides access
-to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
+to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
 the https://developers.google.com/api-client-library/java/apis/bigquery/v2[Google Client Services API].
 
 The current implementation does not use gRPC.

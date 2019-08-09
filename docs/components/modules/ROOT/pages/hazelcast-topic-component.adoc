@@ -109,7 +109,7 @@ The component supports 9 options, which are listed below.
 
 The topic producer provides only one operation (publish).
 
-=== Sample for *publish*:
+=== Sample for *publish*:
 
 [source,java]
 ----------------------------------------------------------------------------------------

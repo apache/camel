@@ -198,7 +198,7 @@ If you verify a signature you not only want to verify the correctness of
 the signature but you also want check that the signature comes from a
 certain identity or a specific set of identities. Therefore it is
 possible to restrict the number of public keys from the public keyring
-which can be used for the verification of a signature.  
+which can be used for the verification of a signature.  
 
 *Signature User IDs*
 
@@ -208,13 +208,13 @@ which can be used for the verification of a signature.  
  List<String> expectedSigUserIds = new ArrayList<String>();
  expectedSigUserIds.add("Trusted company1");
  expectedSigUserIds.add("Trusted company2");
- 
+ 
  PGPDataFormat pgpVerifyWithSpecificKeysAndDecrypt = new PGPDataFormat();
  pgpVerifyWithSpecificKeysAndDecrypt.setPassword("my password"); // for decrypting with private key
  pgpVerifyWithSpecificKeysAndDecrypt.setKeyFileName(keyfileName);
  pgpVerifyWithSpecificKeysAndDecrypt.setSignatureKeyFileName(signatgureKeyfileName);
  pgpVerifyWithSpecificKeysAndDecrypt.setSignatureKeyUserids(expectedSigUserIds); // if you have only one signer identity then you can also use setSignatureKeyUserid("expected Signer")
- 
+ 
 from("direct:start")
          ...     
         .unmarshal(pgpVerifyWithSpecificKeysAndDecrypt)
@@ -248,7 +248,7 @@ User IDs which relate to several private keys in the secret keyring.
  signerUserIds.add("company old key");
  signerUserIds.add("company new key");
  pgpSignAndEncryptSeveralSignerKeys.setSignatureKeyUserids(signerUserIds);
- 
+ 
 from("direct:start")
          ...     
         .marshal(pgpSignAndEncryptSeveralSignerKeys)
@@ -262,7 +262,7 @@ have a primary key and sub-keys. The usage of the keys is indicated by
 the so called https://tools.ietf.org/html/rfc4880#section-5.2.3.21[Key
 Flags]. For example, you can have a primary key with two sub-keys; the
 primary key shall only be used for certifying other keys (Key Flag
-0x01), the first sub-key  shall only be used for signing (Key Flag
+0x01), the first sub-key  shall only be used for signing (Key Flag
 0x02), and the second sub-key shall only be used for encryption (Key
 Flag 0x04 or 0x08). The PGP Data Format marshaler takes into account
 these Key Flags of the primary key and sub-keys in order to determine

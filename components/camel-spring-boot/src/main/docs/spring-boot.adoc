@@ -3,9 +3,9 @@
 
 *Available as of Camel 2.15*
 
-Spring Boot component provides auto-configuration for Apache Camel. Our
+Spring Boot component provides auto-configuration for Apache Camel. Our
 opinionated auto-configuration of the Camel context auto-detects Camel
-routes available in the Spring context and registers the key Camel
+routes available in the Spring context and registers the key Camel
 utilities (like producer template, consumer template and the type
 converter) as beans.
 
@@ -21,7 +21,7 @@ in order to use this component:
 </dependency>
 ----
 
-`camel-spring-boot` jar comes with the `spring.factories` file, so as
+`camel-spring-boot` jar comes with the `spring.factories` file, so as
 soon as you add that dependency into your classpath, Spring Boot will
 automatically auto-configure Camel for you.
 
@@ -31,11 +31,11 @@ automatically auto-configure Camel for you.
 *Available as of Camel 2.17*
 
 Apache Camel ships
-a https://github.com/spring-projects/spring-boot/tree/master/spring-boot-project/spring-boot-starters[Spring
+a https://github.com/spring-projects/spring-boot/tree/master/spring-boot-project/spring-boot-starters[Spring
 Boot Starter] module that allows you to develop Spring Boot applications
 using starters. There is a
 https://github.com/apache/camel/tree/master/examples/camel-example-spring-boot[sample
-application] in the source code also.
+application] in the source code also.
 
 To use the starter, add the following to your spring boot pom.xml file:
 
@@ -69,8 +69,8 @@ public class MyRoute extends RouteBuilder {
 
 Then these routes will be started automatically.
 
-You can customize the Camel application in the `application.properties`
-or `application.yml` file. 
+You can customize the Camel application in the `application.properties`
+or `application.yml` file. 
 
 
 // spring-boot-auto-configure options: START
@@ -231,11 +231,11 @@ The component supports 127 options, which are listed below.
 
 The most important piece of functionality provided by the Camel
 auto-configuration is `CamelContext` instance.
-Camel auto-configuration creates a `SpringCamelContext` for you and
+Camel auto-configuration creates a `SpringCamelContext` for you and
 takes care of the proper initialization and shutdown of that context.
-The created Camel context is also registered in the Spring application
-context (under `camelContext` bean name), so you can access it just as
- any other Spring bean.
+The created Camel context is also registered in the Spring application
+context (under `camelContext` bean name), so you can access it just as
+ any other Spring bean.
 
 [source,java]
 ----
@@ -257,9 +257,9 @@ public class MyAppConfig {
 == Auto-detecting Camel routes
 
 Camel auto-configuration collects all the `RouteBuilder` instances from
-the Spring context and automatically injects them into the provided
+the Spring context and automatically injects them into the provided
 `CamelContext`. That means that creating new Camel route with the Spring
-Boot starter is as simple as adding the `@Component` annotated class to
+Boot starter is as simple as adding the `@Component` annotated class to
 your classpath:
 
 [source,java]
@@ -275,7 +275,7 @@ public class MyRouter extends RouteBuilder {
 }
 ----
 
-Or creating a new route `RouteBuilder` bean in your `@Configuration` class:
+Or creating a new route `RouteBuilder` bean in your `@Configuration` class:
 
 [source,java]
 ----
@@ -301,11 +301,11 @@ public class MyRouterConfiguration {
 == Camel properties
 
 Spring Boot auto-configuration automatically connects
-to http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config[Spring
-Boot external configuration] (like properties placeholders, OS
+to http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config[Spring
+Boot external configuration] (like properties placeholders, OS
 environment variables or system properties) with
-the Camel properties support. It basically means
-that any property defined in `application.properties` file:  
+the Camel properties support. It basically means
+that any property defined in `application.properties` file:  
 
 [source,text]
 ----
@@ -337,9 +337,9 @@ public class MyRouter extends RouteBuilder {
 [[SpringBoot-CustomCamelcontextconfiguration]]
 == Custom Camel context configuration
 
-If you would like to perform some operations on `CamelContext` bean
+If you would like to perform some operations on `CamelContext` bean
 created by Camel auto-configuration,
-register `CamelContextConfiguration` instance in your Spring context:
+register `CamelContextConfiguration` instance in your Spring context:
 
 [source,java]
 ----
@@ -359,17 +359,17 @@ public class MyAppConfig {
 }
 ----
 
-Method beforeApplicationStart` will
+Method beforeApplicationStart` will
 be called just before the Spring context is started, so the
 `CamelContext` instance passed to this callback is
-fully auto-configured. You can add many instances of
-`CamelContextConfiguration` into your Spring context - all of them will
+fully auto-configured. You can add many instances of
+`CamelContextConfiguration` into your Spring context - all of them will
 be executed.
 
 [[SpringBoot-DisablingJMX]]
 == Disabling JMX
 
-To disable JMX of the auto-configured `CamelContext` use
+To disable JMX of the auto-configured `CamelContext` use
 `camel.springboot.jmxEnabled` property (JMX is enabled by default). For
 example you could add the following property to your
 `application.properties` file:
@@ -417,10 +417,10 @@ camel.springboot.producer-template-cache-size = 200
 ----
 
 [[SpringBoot-Auto-configuredTypeConverter]]
-== Auto-configured TypeConverter
+== Auto-configured TypeConverter
 
-Camel auto-configuration registers a `TypeConverter` instance named
-`typeConverter` in the Spring context.
+Camel auto-configuration registers a `TypeConverter` instance named
+`typeConverter` in the Spring context.
 
 [source,java]
 ----
@@ -442,14 +442,14 @@ public class InvoiceProcessor {
 === Spring type conversion API bridge
 
 Spring comes with
-the powerful http://docs.spring.io/spring/docs/current/spring-framework-reference/html/validation.html#core-convert[type
+the powerful http://docs.spring.io/spring/docs/current/spring-framework-reference/html/validation.html#core-convert[type
 conversion API]. Spring API happens to be very similar to the Camel
 type converter API. As those APIs are so
 similar, Camel Spring Boot automatically registers a bridge converter
 (`SpringTypeConverter`) that delegates to the Spring conversion API.That
 means that out-of-the-box Camel will treat Spring Converters like Camel
 ones. With this approach you can enjoy both Camel and Spring converters
-accessed via Camel `TypeConverter` API:
+accessed via Camel `TypeConverter` API:
 
 [source,java]
 ----
@@ -468,7 +468,7 @@ public class InvoiceProcessor {
 ----
 
 Under the hood Camel Spring Boot delegates conversion to the Spring's
-`ConversionService` instances available in the application context. If
+`ConversionService` instances available in the application context. If
 no `ConversionService` instance is available, Camel Spring Boot
 auto-configuration will create one for you.
 
@@ -477,7 +477,7 @@ auto-configuration will create one for you.
 
 If you don't want Camel Spring Boot to register type-conversions related
 features (like `TypeConverter` instance or Spring bridge) set the
-`camel.springboot.type-conversion` property to `false`.
+`camel.springboot.type-conversion` property to `false`.
 
 [source,text]
 ----
@@ -488,7 +488,7 @@ camel.springboot.type-conversion = false
 [[SpringBoot-Keepingapplicationalive]]
 == Keeping the application alive
 
-Camel applications having this feature enabled launch a new thread on startup for the sole purpose of
+Camel applications having this feature enabled launch a new thread on startup for the sole purpose of
 keeping the application alive by preventing JVM termination.
 It means that after you start a Camel application with Spring Boot, your
 application waits for a Ctrl+C signal and does not exit immediately.

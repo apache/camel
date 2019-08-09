@@ -161,11 +161,11 @@ body
 |DeleteIndex |*String* or *DeleteRequest* index name of the index to delete |Deletes the specified indexName and returns a status code the
 body
 
-|BulkIndex | a *List*, *BulkRequest*, or *Collection* of any type that is already accepted
-(XContentBuilder, Map, byte[], String) |Adds content to an index and return a List of the id of the
+|BulkIndex | a *List*, *BulkRequest*, or *Collection* of any type that is already accepted
+(XContentBuilder, Map, byte[], String) |Adds content to an index and return a List of the id of the
 successfully indexed documents in the body
 
-|Bulk |a *List*, *BulkRequest*, or *Collection* of any type that is already accepted
+|Bulk |a *List*, *BulkRequest*, or *Collection* of any type that is already accepted
        (XContentBuilder, Map, byte[], String) |Adds content to an index and returns the BulkItemResponse[]
 object in the body
 

@@ -359,8 +359,8 @@ You can provide a query
 *The query object is extracted `CamelMongoDbCriteria` header*.
 if the CamelMongoDbCriteria header is null the query object is extracted 
 message body, i.e. it should be of type `Bson` or convertible to
-`Bson`., and
-operation will return the amount of documents matching this criteria.  
+`Bson`., and
+operation will return the amount of documents matching this criteria.  
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------
@@ -474,8 +474,8 @@ expected to ensure at the application level that is unique (and this is
 a good practice too).
 
 OID(s) of the inserted record(s) is stored in the
-message header under `CamelMongoOid` key (`MongoDbConstants.OID`
-constant). The value stored is `org.bson.types.ObjectId` for single
+message header under `CamelMongoOid` key (`MongoDbConstants.OID`
+constant). The value stored is `org.bson.types.ObjectId` for single
 insert or `java.util.List<org.bson.types.ObjectId>` if multiple records
 have been inserted.
 
@@ -997,7 +997,7 @@ camel-mongodb component provides the following conversions:
 constructor.
 |fromDocumentToMap |`Document` |`Map` |`Document` already implements `Map`.
 |fromStringToDocument |`String` |`Document` |uses `com.mongodb.Document.parse(String s)`.
-|fromAnyObjectToDocument |`Object`  |`Document` |uses the http://jackson.codehaus.org/[Jackson library] to convert the
+|fromAnyObjectToDocument |`Object`  |`Document` |uses the http://jackson.codehaus.org/[Jackson library] to convert the
 object to a `Map`, which is in turn used to initialise a new
 `Document`.
 |fromStringToList |`String` |`List<Bson>` |uses `org.bson.codecs.configuration.CodecRegistries` to convert to BsonArray then to List<Bson>.

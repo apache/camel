@@ -124,7 +124,7 @@ exchange is aggregated to determine if we are complete or not.
 The configured aggregationStrategy can implement the
 Predicate interface and will be used as the completionPredicate if no
 completionPredicate is configured. The configured aggregationStrategy can
-implement `PreCompletionAwareAggregationStrategy` and will be used as
+implement `PreCompletionAwareAggregationStrategy` and will be used as
 the completionPredicate in pre-complete check mode. See further below
 for more details.
 * completionFromBatchConsumer - Special option for
@@ -132,7 +132,7 @@ xref:batch-consumer.adoc[Batch Consumer] which allows you to complete
 when all the messages from the batch has been aggregated.
 * forceCompletionOnStop - Indicates to complete all current
 aggregated exchanges when the context is stopped
-* Using a `AggregateController` - which allows to use an
+* Using a `AggregateController` - which allows to use an
 external source to complete groups or all groups. This can be done using
 Java or JMX API.
 
@@ -150,12 +150,12 @@ aggregator. If not provided Camel will thrown an Exception on startup.
 *available as of Camel 2.16*
 
 There can be use-cases where you want the incoming
-xref:exchange.adoc[Exchange] to determine if the correlation group
+xref:exchange.adoc[Exchange] to determine if the correlation group
 should pre-complete, and then the incoming
-xref:exchange.adoc[Exchange] is starting a new group from scratch. To
-determine this the `AggregationStrategy` can
-implement `PreCompletionAwareAggregationStrategy` which has
-a `preComplete` method:
+xref:exchange.adoc[Exchange] is starting a new group from scratch. To
+determine this the `AggregationStrategy` can
+implement `PreCompletionAwareAggregationStrategy` which has
+a `preComplete` method:
 
 [source,java]
 ----
@@ -178,7 +178,7 @@ known as pre-completion mode. And when the aggregation is in
 pre-completion mode, then only the following completions are in use
 
 * aggregationStrategy must
-implement `PreCompletionAwareAggregationStrategy` xxx
+implement `PreCompletionAwareAggregationStrategy` xxx
 * completionTimeout or completionInterval can also be used as fallback
 completions
 * any other completion are not used (such as by size, from batch
@@ -218,14 +218,14 @@ resources, or additional work on the exchange as it's now completed. +
 
 *Available as of Camel 2.15*
 
-The `AggregationStrategy` can now included a property on the
-returned `Exchange` that contains a boolean to indicate if the current
+The `AggregationStrategy` can now included a property on the
+returned `Exchange` that contains a boolean to indicate if the current
 group should be completed. This allows to overrule any existing
 completion predicates / sizes / timeouts etc, and complete the group.
 
 For example the following logic (from an unit test) will complete the
 group if the message body size is larger than 5. This is done by setting
-the property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
+the property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
 
 [source,java]
 ----
@@ -251,8 +251,8 @@ the property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
 
 *Available as of Camel 2.21*
 
-The `AggregationStrategy` can now included a property on the
-returned `Exchange` that contains a boolean to indicate if all previous
+The `AggregationStrategy` can now included a property on the
+returned `Exchange` that contains a boolean to indicate if all previous
 groups should be completed. This allows to overrule any existing
 completion predicates / sizes / timeouts etc, and complete all the existing
 previous group.
@@ -281,7 +281,7 @@ setting the property `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` to `true`.
     }
 ----
 
- 
+ 
 
 == Manually Force the Completion of All Aggregated Exchanges Immediately
 
@@ -317,13 +317,13 @@ shown below, and implement the `getValue` method:
 
 *Available as of Camel 2.16*
 
-The `org.apache.camel.processor.aggregate.AggregateController` allows
+The `org.apache.camel.processor.aggregate.AggregateController` allows
 you to control the aggregate at runtime using Java or JMX API. This can
 be used to force completing groups of exchanges, or query its current
 runtime statistics.
 
 The aggregator provides a default implementation if no custom have been
-configured, which can be accessed using `getAggregateController()` method.
+configured, which can be accessed using `getAggregateController()` method.
 Though it may be easier to configure a controller in the route using
 `aggregateController` as shown below:
 
@@ -362,7 +362,7 @@ To configure this from XML DSL
 [source,xml]
 ----
 <bean id="myController" class="org.apache.camel.processor.aggregate.DefaultAggregateController"/>
- 
+ 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>

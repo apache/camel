@@ -156,7 +156,7 @@ The component supports 16 options, which are listed below.
 
 
 
- 
+ 
 
 == Message Headers
 
@@ -207,9 +207,9 @@ from("activemq:topic:newsTopic")
 
 The WebSocket component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
-Configuration Utility].  This utility greatly decreases the amount of
+Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
-endpoint and component levels.  The following examples demonstrate how
+endpoint and component levels.  The following examples demonstrate how
 to use the utility with the Cometd component.
 
 [[Websocket-Programmaticconfigurationofthecomponent]]

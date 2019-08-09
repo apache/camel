@@ -132,12 +132,12 @@ By default Camel Grape component operates on the String payloads:
 producerTemplate.sendBody("grape:defaultMavenCoordinates", "org.apache.camel/camel-ftp/2.15.2");
 ------------------------------------------------------------------------------------------------
 
-But of course Camel build-in xref:manual::type-converter.adoc[type conversion
+But of course Camel build-in xref:manual::type-converter.adoc[type conversion
 API] can perform the automatic data type transformations for you. In the
 example below Camel automatically converts binary payload into the
 String:
 
- 
+ 
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------
@@ -167,9 +167,9 @@ template.sendBody("grape:grape", "org.apache.camel/camel-stream/2.15.2");
 template.sendBody("stream:out", "msg");
 -------------------------------------------------------------------------
 
-== Loading processors bean at runtime
+== Loading processors bean at runtime
 
-In order to load the new processor bean  with your custom business login
+In order to load the new processor bean  with your custom business login
 at the router runtime, just grab the jar containing the required bean:
 
 [source,java]
@@ -180,7 +180,7 @@ int productId = 1;
 int price = template.requestBody("bean:com.example.PricingBean?method=currentProductPrice", productId, int.class)
 -----------------------------------------------------------------------------------------------------------------
 
- 
+ 
 
 == Loading deployed jars after Camel context restart
 
@@ -188,40 +188,40 @@ After you download new jar, you usually would like to have it loaded by
 the Camel again after the restart of the `CamelContext`. It is certainly
 possible, as Grape component keeps track of the jar files you have
 installed. In order to load again the installed jars on the context
-startup, use the `GrapeEndpoint.loadPatches()` method in your route: 
+startup, use the `GrapeEndpoint.loadPatches()` method in your route: 
 
- 
+ 
 
 [source,java]
 -------------------------------------------------------------------------
 import static org.apache.camel.component.grape.GrapeEndpoint.loadPatches;
 
-... 
+... 
 camelContext.addRoutes(
-  new RouteBuilder() { 
-    @Override 
-    public void configure() throws Exception { 
+  new RouteBuilder() { 
+    @Override 
+    public void configure() throws Exception { 
       loadPatches(camelContext);
- 
+ 
       from("direct:loadCamelFTP").
-        to("grape:org.apache.camel/camel-ftp/2.15.2"); 
+        to("grape:org.apache.camel/camel-ftp/2.15.2"); 
     }
   });
 -------------------------------------------------------------------------
 
- 
+ 
 
 == Managing the installed jars
 
 If you would like to check what jars have been installed into the given
 `CamelContext`, send message to the grape endpoint with
-the `CamelGrapeCommand` header set to `GrapeCommand.listPatches`:
+the `CamelGrapeCommand` header set to `GrapeCommand.listPatches`:
 
 [source,java]
 ----------------------------------------------------------------------------------------
       from("netty-http:http://0.0.0.0:80/patches").
         setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.listPatches)).
-        to("grape:list"); 
+        to("grape:list"); 
 ----------------------------------------------------------------------------------------
 
 Connecting the to the route defined above using the HTTP client returns
@@ -235,14 +235,14 @@ grape:org.apache.camel/camel-jms/2.15.2
 ---------------------------------------
 
 If you would like to remove the installed jars, so these won't be loaded
-again after the context restart, use the `GrapeCommand.``clearPatches`
+again after the context restart, use the `GrapeCommand.``clearPatches`
 command:
 
 [source,java]
 -----------------------------------------------------------------------------------------
       from("netty-http:http://0.0.0.0:80/patches").
         setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.clearPatches)).
-        setBody().constant("Installed patches have been deleted."); 
+        setBody().constant("Installed patches have been deleted."); 
 -----------------------------------------------------------------------------------------
 
 == See Also

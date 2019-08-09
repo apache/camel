@@ -308,7 +308,7 @@ dynamic queries] capabilities.
 === Scheduled polling example
 
 This component supports scheduled polling and can therefore be used as
-a Polling Consumer. For example to poll the
+a Polling Consumer. For example to poll the
 database every minute:
 
 [source,java]
@@ -318,11 +318,11 @@ from("mybatis:selectAllAccounts?delay=60000")
 ----
 
 See "ScheduledPollConsumer Options"
-on Polling Consumer for more options.
+on Polling Consumer for more options.
 
 Alternatively you can use another mechanism for triggering the scheduled
 polls, such as the xref:timer-component.adoc[Timer] or xref:timer-component.adoc[Quartz]
-components. In the sample below we poll the database, every 30 seconds
+components. In the sample below we poll the database, every 30 seconds
 using the xref:timer-component.adoc[Timer] component and send the data to the JMS
 queue:
 

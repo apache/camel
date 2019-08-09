@@ -123,7 +123,7 @@ Header Variables for the request message:
 |`CamelHazelcastObjectId` |`String` | the object id to store / find your object inside the cache
 |=======================================================================
 
-=== Sample for *put*:
+=== Sample for *put*:
 
 Java DSL:
 
@@ -148,7 +148,7 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-=== Sample for *get*:
+=== Sample for *get*:
 
 Java DSL:
 
@@ -175,7 +175,7 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-=== Sample for *delete*:
+=== Sample for *delete*:
 
 Java DSL:
 
@@ -211,7 +211,7 @@ template.sendBodyAndHeader("direct:[put|get|delete|clear]", "my-foo", HazelcastC
 
 For the multimap cache this component provides the same listeners /
 variables as for the map cache consumer (except the update and enviction
-listener). The only difference is the *multimap* prefix inside the URI.
+listener). The only difference is the *multimap* prefix inside the URI.
 Here is a sample:
 
 [source,java]

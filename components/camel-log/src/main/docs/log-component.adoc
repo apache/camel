@@ -29,11 +29,11 @@ can append query options to the URI in the following format,
 *Using Logger instance from the Registry*
 
 If there's single instance
-of `org.slf4j.Logger` found in the Registry, the *loggingCategory* is no
+of `org.slf4j.Logger` found in the Registry, the *loggingCategory* is no
 longer used to create logger instance. The registered instance is used
-instead. Also it is possible to reference particular `Logger` instance
-using `?logger=#myLogger` URI parameter. Eventually, if there's no
-registered and URI `logger` parameter, the logger instance is created
+instead. Also it is possible to reference particular `Logger` instance
+using `?logger=#myLogger` URI parameter. Eventually, if there's no
+registered and URI `logger` parameter, the logger instance is created
 using *loggingCategory*.
 ====
 
@@ -347,17 +347,17 @@ options:
 
 *Improvement as of Camel 2.12.4/2.13.1*
 
-When using Log component inside OSGi (e.g., in Karaf), the underlying
+When using Log component inside OSGi (e.g., in Karaf), the underlying
 logging mechanisms are provided by PAX logging. It searches for a bundle
-which invokes `org.slf4j.LoggerFactory.getLogger()` method and
+which invokes `org.slf4j.LoggerFactory.getLogger()` method and
 associates the bundle with the logger instance. Without specifying
-custom `org.sfl4j.Logger` instance, the logger created by Log component
+custom `org.sfl4j.Logger` instance, the logger created by Log component
 is associated with `camel-core` bundle.
 
 In some scenarios it is required that the bundle associated with logger
 should be the bundle which contains route definition. To do this, either
-register single instance of `org.slf4j.Logger` in the Registry or
-reference it using `logger` URI parameter.
+register single instance of `org.slf4j.Logger` in the Registry or
+reference it using `logger` URI parameter.
 
 == See Also
 

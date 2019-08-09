@@ -31,10 +31,10 @@ for this component:
 [source,xml]
 ---------------------------------------------------------
 <dependency>
- <groupId>org.apache.camel</groupId>
- <artifactId>camel-coap</artifactId>
- <version>x.x.x</version>
- <!-- use the same version as your Camel core version -->
+ <groupId>org.apache.camel</groupId>
+ <artifactId>camel-coap</artifactId>
+ <version>x.x.x</version>
+ <!-- use the same version as your Camel core version -->
 </dependency>
 ---------------------------------------------------------
 

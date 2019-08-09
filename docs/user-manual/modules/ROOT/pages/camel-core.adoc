@@ -44,7 +44,7 @@ camel-core. Relaxed means that a layer may reference any layer below
 it.image:camel-core.data/architecture.png[image]
 
 [[Camel-Core-ArchitectureDiagramincludingcurrentviolations]]
-Architecture Diagram including current violations 
+Architecture Diagram including current violations 
 --------------------------------------------------
 
 Each arrow upwards shows a violation in the layering. That means some

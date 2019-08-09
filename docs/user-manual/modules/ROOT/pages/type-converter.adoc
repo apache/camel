@@ -88,9 +88,9 @@ Or in the XML DSL with:
 === Add type converter classes at runtime
 
 You can add new type converters at runtime, by having your classes
-implement `org.apache.camel.TypeConverters` which is an marker
+implement `org.apache.camel.TypeConverters` which is an marker
 interface. Then for each type converter you want use
-the `@Converter` annotation.
+the `@Converter` annotation.
 
 [source,java]
 ----

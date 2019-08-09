@@ -3,12 +3,12 @@
 
 *Available as of Camel version 2.16*
 
-The Jolt component allows you to process a JSON messages using an
+The Jolt component allows you to process a JSON messages using an
 https://github.com/bazaarvoice/jolt[JOLT] specification. This can be
 ideal when doing JSON to JSON transformation.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 
 [source,xml]
 ------------------------------------------------------------
@@ -20,7 +20,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
- 
+ 
 
 == URI format
 
@@ -29,12 +29,12 @@ their `pom.xml` for this component:
 jolt:specName[?options]
 -----------------------
 
-Where *specName* is the classpath-local URI of the specification to
+Where *specName* is the classpath-local URI of the specification to
 invoke; or the complete URL of the remote specification
-(eg: \file://folder/myfile.vm).
+(eg: \file://folder/myfile.vm).
 
 You can append query options to the URI in the following
-format, `?option=value&option=value&...`
+format, `?option=value&option=value&...`
 
 == Options
 
@@ -156,7 +156,7 @@ from("direct:in").
   to("jolt:dummy");
 ---------------------------------------------------------------------
 
- 
+ 
 
 == See Also
 

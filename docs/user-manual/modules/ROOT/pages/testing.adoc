@@ -38,7 +38,7 @@ The following mechanisms are supported
 library letting you easily create Camel test cases using a single Java
 class for all your configuration and routing without using CDI,
 Spring or Guice for
-Dependency Injection which does not
+Dependency Injection which does not
 require an in-depth knowledge of CDI, Spring + Spring Test or Guice.
 Supports JUnit 3.x (deprecated) and JUnit 4.x based tests.
 
@@ -54,7 +54,7 @@ test in a very fine-grained way or target specific CDI containers.
 |Spring Testing |camel-test-spring |Supports
 JUnit 3.x (deprecated) or JUnit 4.x based tests that bootstrap a test
 environment using Spring without needing to be familiar with Spring
-Test. The  plain JUnit 3.x/4.x based tests work very similar to the
+Test. The  plain JUnit 3.x/4.x based tests work very similar to the
 test support classes in `camel-test`. Also supports Spring Test based
 tests that use the declarative style of test configuration and injection
 common in Spring Test. The Spring Test based tests provide feature
@@ -70,11 +70,11 @@ configurations
 |Guice |camel-guice |Uses Guice to
 dependency inject your test classes
 
-|Camel TestNG |camel-testng |Supports plain TestNG based tests with or
-without CDI, Spring or Guice
-for Dependency Injection which does not
+|Camel TestNG |camel-testng |Supports plain TestNG based tests with or
+without CDI, Spring or Guice
+for Dependency Injection which does not
 require an in-depth knowledge of CDI, Spring + Spring Test or Guice.
-Also from *Camel 2.10* onwards, this component supports Spring Test based tests
+Also from *Camel 2.10* onwards, this component supports Spring Test based tests
 that use the declarative style of test configuration and injection common
 in Spring Test and described in more detail under
 Spring Testing.
@@ -184,7 +184,7 @@ include::{examplesdir}/components/camel-spring-javaconfig/src/test/java/org/apac
 [[Testing-SpringTestwithXMLConfigandDeclarativeConfigurationExample]]
 === Spring Test with XML Config and Declarative Configuration Example
 
-Here is a Camel test support enhanced xref:spring-testing.adoc[Spring
+Here is a Camel test support enhanced xref:spring-testing.adoc[Spring
 Testing] https://github.com/apache/camel/blob/master/components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
 using XML Config and pure Spring Test based configuration of the Camel
 Context]:
@@ -194,9 +194,9 @@ Context]:
 include::{examplesdir}/components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[tags=example]
 ----
 
-Notice how a custom test runner is used with the `@RunWith` annotation
-to support the features of `CamelTestSupport` through annotations on
-the test class.  See Spring Testing for a list
+Notice how a custom test runner is used with the `@RunWith` annotation
+to support the features of `CamelTestSupport` through annotations on
+the test class.  See Spring Testing for a list
 of annotations you can use in your tests.
 
 [[Testing-BlueprintTest]]

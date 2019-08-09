@@ -145,9 +145,9 @@ from("direct:test").
 <bean id="myValidationProviderResolver" class="org.apache.camel.component.bean.validator.HibernateValidationProviderResolver"/> 
 --------------------------------------------------------------------------------------------------------------------------------
 
-If no custom `ValidationProviderResolver` is defined and the validator
+If no custom `ValidationProviderResolver` is defined and the validator
 component has been deployed into the OSGi environment,
-the `HibernateValidationProviderResolver` will be automatically used.
+the `HibernateValidationProviderResolver` will be automatically used.
 
 == Example
 

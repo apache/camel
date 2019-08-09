@@ -21,13 +21,13 @@ core from Java 1.6
 JDK core from Java 1.6
 
 [[CamelJARDependencies-camel-coredependenciesforCamel2.7-2.8]]
-== `camel-core` dependencies for Camel 2.7 - 2.8
+== `camel-core` dependencies for Camel 2.7 - 2.8
 
 * `slf4j-api-1.5.11.jar` - API for slf4j logging
 * `commons-management-1.0.jar` - API for JMX
 
 [[CamelJARDependencies-camel-coredependenciesforCamel2.9]]
-== `camel-core` dependencies for Camel 2.9
+== `camel-core` dependencies for Camel 2.9
 
 * `slf4j-api-1.6.1.jar` - API for slf4j logging
 
@@ -35,7 +35,7 @@ JDK core from Java 1.6
 == Optional dependencies for JMX for Camel 1.x - 2.8
 
 * `spring-core.jar`, `spring-beans.jar`,
-`spring-context.jar`, `spring-aop.jar` - All 4 jars needed to use JMX
+`spring-context.jar`, `spring-aop.jar` - All 4 jars needed to use JMX
 with Camel (subject to change in the future).
 
 From *Camel 2.9*: the Spring JARs are no longer required for using JMX.

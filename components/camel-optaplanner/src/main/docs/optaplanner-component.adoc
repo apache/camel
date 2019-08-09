@@ -165,7 +165,7 @@ The solving will take as long as specified in the `solverConfig`.
 <solver>
 -----------------------------------------------------------------------------
 
- 
+ 
 
 === Samples
 

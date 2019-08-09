@@ -4,19 +4,19 @@
 *Available as of Camel version 2.15*
 
 The Google Calendar component provides access
-to http://google.com/calendar[Google Calendar] via
-the https://developers.google.com/google-apps/calendar/v3/reference/[Google
+to http://google.com/calendar[Google Calendar] via
+the https://developers.google.com/google-apps/calendar/v3/reference/[Google
 Calendar Web APIs].
 
 Google Calendar uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need
-to https://developers.google.com/google-apps/calendar/auth[create an
+to https://developers.google.com/google-apps/calendar/auth[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is
-the https://developers.google.com/oauthplayground[OAuth playground].
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -205,4 +205,4 @@ All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleCalendarComponent. Producer endpoints can specify
 the option name for incoming message body in the `inBody` endpoint URI
 parameter. For endpoints that return an array or collection, a consumer
-endpoint will map every element to distinct messages.     
+endpoint will map every element to distinct messages.     

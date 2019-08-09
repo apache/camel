@@ -8,13 +8,13 @@ http://drive.google.com[Google Drive file storage service] via the
 https://developers.google.com/drive/v2/reference[Google Drive Web APIs].
 
 Google Drive uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need to
 https://developers.google.com/drive/web/auth/web-server[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is the
+generating a long-lived refreshToken is the
 https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
@@ -187,7 +187,7 @@ overrides message header, i.e. the endpoint option `inBody=option` would
 override a `CamelGoogleDrive.option` header.
 
 For more information on the endpoints and options see API documentation
-at: https://developers.google.com/drive/v2/reference/[https://developers.google.com/drive/v2/reference/]
+at: https://developers.google.com/drive/v2/reference/[https://developers.google.com/drive/v2/reference/]
 
 == Consumer Endpoints
 
@@ -210,4 +210,4 @@ All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleDriveComponent. Producer endpoints can specify
 the option name for incoming message body in the `inBody` endpoint URI
 parameter. For endpoints that return an array or collection, a consumer
-endpoint will map every element to distinct messages.     
+endpoint will map every element to distinct messages.     

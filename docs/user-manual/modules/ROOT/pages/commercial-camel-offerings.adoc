@@ -23,7 +23,7 @@ also offer dedicated management tool.
 [[CommercialCamelOfferings-CyberlogicConsulting]]
 == http://www.cyberlogic.ch[Cyberlogic Consulting]
 
-http://www.cyberlogic.ch[Cyberlogic Consulting] is a Swiss based
+http://www.cyberlogic.ch[Cyberlogic Consulting] is a Swiss based
 consultancy. We pride ourselves in providing Swiss quality services
 including enterprise consulting, coding, systems integration, training
 and support for Apache Camel and the related Apache Open Source
@@ -37,7 +37,7 @@ http://evosent.com/?utm_source=apache&utm_medium=web&utm_campaign=commercial_sup
 a boutique consultancy based in Europe. It specialises in open source
 integration middleware, messaging and big data: Apache Camel,
 ServiceMix, Karaf, ActiveMQ, Elasticsearch (+ Kibana + Logstash), Docker
-and Kubernetes.  Evosent is managed by a committer and PMC member at the
+and Kubernetes.  Evosent is managed by a committer and PMC member at the
 Apache Camel and Apache Ignite projects. Amongst it services are: ninja
 consulting and support; workshops, mentoring and training; proof of
 concept development; and sophisticated engineering services.
@@ -47,7 +47,7 @@ concept development; and sophisticated engineering services.
 
 https://www.goappo.com[GOAPPO] embeds Apache Camel at design, testing
 and runtime. You start by composing ETLs using the application builder.
-You test ETLs instantly on your machine. You bundle ETLs with your
+You test ETLs instantly on your machine. You bundle ETLs with your
 application.
 
 [[CommercialCamelOfferings-MediaDriver]]

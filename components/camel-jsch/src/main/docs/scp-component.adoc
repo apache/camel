@@ -154,7 +154,7 @@ The component supports 4 options, which are listed below.
 
 Currently camel-jsch only supports a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
-(i.e. copy files to another host). 
+(i.e. copy files to another host). 
 
 == See Also
 

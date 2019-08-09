@@ -186,7 +186,7 @@ negative delay to stop firing messages after a fixed number has been
 reached.
 
 If you don't specify a repeatCount then the timer will continue firing
-messages until the route will be stopped. 
+messages until the route will be stopped. 
 
 == Firing only once
 

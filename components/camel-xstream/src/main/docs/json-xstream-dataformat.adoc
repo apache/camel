@@ -10,10 +10,10 @@ with XML and therefore using JSon with XStream is not as popular as for example
 Jackson is for JSon.
 
 To use XStream in your camel routes you need to add the a dependency
-on *camel-xstream* which implements this data format.
+on *camel-xstream* which implements this data format.
 
 Maven users will need to add the following dependency to their
-`pom.xml` for this component:
+`pom.xml` for this component:
 
 [source,xml]
 ----------------------------------------------------------

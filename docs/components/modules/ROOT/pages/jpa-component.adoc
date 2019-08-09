@@ -269,8 +269,8 @@ log a WARN.
 The `JpaComponent` looks up automatically the
 `TransactionManager` from the Registry. If Camel
 won't find any `TransactionManager` instance registered, it will also
-look up for the `TransactionTemplate` and try to
-extract `TransactionManager` from it.
+look up for the `TransactionTemplate` and try to
+extract `TransactionManager` from it.
 
 If none `TransactionTemplate` is available in the registry,
 `JpaEndpoint` will auto create their own instance of

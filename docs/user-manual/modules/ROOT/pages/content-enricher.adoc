@@ -132,7 +132,7 @@ confluenceTableSmall
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Name |Default Value |Description
-|`uri` |  |The endpoint uri for the external service to enrich from. You
+|`uri` |  |The endpoint uri for the external service to enrich from. You
 must use either `uri` or `ref`. *Important:* From Camel 2.16 onwards,
 this option is removed, and you use an xref:expression.adoc[Expression]
 to configure the uri, such as xref:simple-language.adoc[Simple] or
@@ -140,21 +140,21 @@ xref:constant-language.adoc[Constant] or any other dynamic language that can
 compute the uri dynamically using values from the current
 xref:exchange.adoc[Exchange].
 
-|`ref` |  |Refers to the endpoint for the external service to enrich
-from. You must use either `uri` or `ref`.  **Important:** From Camel
+|`ref` |  |Refers to the endpoint for the external service to enrich
+from. You must use either `uri` or `ref`.  **Important:** From Camel
 2.16 onwards, this option is removed, and you use an
 xref:expression.adoc[Expression] to configure the uri, such as
 xref:simple-language.adoc[Simple] or xref:constant-language.adoc[Constant] or any other
 dynamic language that can compute the uri dynamically using values from
-the current  xref:exchange.adoc[Exchange].
+the current  xref:exchange.adoc[Exchange].
 
-|expression |  |*Camel 2.16:* Mandatory.
-The xref:expression.adoc[Expression] to configure the uri, such as
+|expression |  |*Camel 2.16:* Mandatory.
+The xref:expression.adoc[Expression] to configure the uri, such as
 xref:simple-language.adoc[Simple] or xref:constant-language.adoc[Constant] or any other
 dynamic language that can compute the uri dynamically using values from
-the current  xref:exchange.adoc[Exchange].
+the current  xref:exchange.adoc[Exchange].
 
-|`strategyRef` |  |Refers to an
+|`strategyRef` |  |Refers to an
 https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/AggregationStrategy.java[AggregationStrategy]
 to be used to merge the reply from the external service, into a single
 outgoing message. By default Camel will use the reply from the external
@@ -162,7 +162,7 @@ service as outgoing message. From *Camel 2.12* onwards you can also use
 a POJO as the `AggregationStrategy`, see the
 xref:aggregate-eip.adoc[Aggregate] page for more details.
 
-|`strategyMethodName` |  |*Camel 2.12:* This option can be used to
+|`strategyMethodName` |  |*Camel 2.12:* This option can be used to
 explicit declare the method name to use, when using POJOs as the
 `AggregationStrategy`. See the xref:aggregate-eip.adoc[Aggregate] page for
 more details.
@@ -181,18 +181,18 @@ resource. Setting this option to `true` allows end users to control what
 to do if there was an exception in the `aggregate` method. For example
 to suppress the exception or set a custom message body etc.
 
-|`shareUnitOfWork` |`false` |*Camel 2.16:*  Shares the unit of work with
+|`shareUnitOfWork` |`false` |*Camel 2.16:*  Shares the unit of work with
 the parent and the resource exchange. Enrich will by default not share
 unit of work between the parent exchange and the resource exchange. This
 means the resource exchange has its own individual unit of work. See
 xref:split-eip.adoc[Splitter] for more information and example.
 
-|`cacheSize` |  |*Camel 2.16:* Allows to configure the cache size for
-the `ProducerCache` which caches producers for reuse in the enrich. Will
+|`cacheSize` |  |*Camel 2.16:* Allows to configure the cache size for
+the `ProducerCache` which caches producers for reuse in the enrich. Will
 by default use the default cache size which is 1000. Setting the value
 to -1 allows to turn off the cache all together.
 
-|`ignoreInvalidEndpoint` |`false` |**Camel 2.16:** Whether to ignore an
+|`ignoreInvalidEndpoint` |`false` |**Camel 2.16:** Whether to ignore an
 endpoint URI that could not be resolved. If disabled, Camel will throw
 an exception identifying the invalid endpoint URI.
 |=======================================================================
@@ -304,8 +304,8 @@ And for Spring DSL:
 
 From Camel 2.16 onwards enrich and pollEnrich supports using dynamic
 uris computed based on information from the
-current xref:exchange.adoc[Exchange]. For example to enrich from
-a xref:components::http-component.adoc[HTTP] endpoint where the header with key orderId is
+current xref:exchange.adoc[Exchange]. For example to enrich from
+a xref:components::http-component.adoc[HTTP] endpoint where the header with key orderId is
 used as part of the content-path of the HTTP url:
 
 [source,java]
@@ -345,29 +345,29 @@ polling
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Name |Default Value |Description
-|`uri` |  |The endpoint uri for the external service to enrich from. You
+|`uri` |  |The endpoint uri for the external service to enrich from. You
 must use either `uri` or `ref`. **Important:** From Camel 2.16 onwards,
 this option is removed, and you use an xref:expression.adoc[Expression]
 to configure the uri, such as xref:simple-language.adoc[Simple] or
 xref:constant-language.adoc[Constant] or any other dynamic language that can
 compute the uri dynamically using values from the current
- xref:exchange.adoc[Exchange].
+ xref:exchange.adoc[Exchange].
 
-|`ref` |  |Refers to the endpoint for the external service to enrich
+|`ref` |  |Refers to the endpoint for the external service to enrich
 from. You must use either `uri` or `ref`. **Important:** From Camel 2.16
 onwards, this option is removed, and you use an
 xref:expression.adoc[Expression] to configure the uri, such as
 xref:simple-language.adoc[Simple] or xref:constant-language.adoc[Constant] or any other
 dynamic language that can compute the uri dynamically using values from
-the current  xref:exchange.adoc[Exchange].
+the current  xref:exchange.adoc[Exchange].
 
-|`expression` |  |**Camel 2.16:** Mandatory.
-The xref:expression.adoc[Expression] to configure the uri, such as
+|`expression` |  |**Camel 2.16:** Mandatory.
+The xref:expression.adoc[Expression] to configure the uri, such as
 xref:simple-language.adoc[Simple] or xref:constant-language.adoc[Constant] or any other
 dynamic language that can compute the uri dynamically using values from
-the current xref:exchange.adoc[Exchange].
+the current xref:exchange.adoc[Exchange].
 
-|`strategyRef` |  |Refers to an
+|`strategyRef` |  |Refers to an
 https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/AggregationStrategy.java[AggregationStrategy]
 to be used to merge the reply from the external service, into a single
 outgoing message. By default Camel will use the reply from the external
@@ -375,7 +375,7 @@ service as outgoing message. From *Camel 2.12* onwards you can also use
 a POJO as the `AggregationStrategy`, see the
 xref:aggregate-eip.adoc[Aggregate] page for more details.
 
-|`strategyMethodName` |  |*Camel 2.12:* This option can be used to
+|`strategyMethodName` |  |*Camel 2.12:* This option can be used to
 explicit declare the method name to use, when using POJOs as the
 `AggregationStrategy`. See the xref:aggregate-eip.adoc[Aggregate] page for
 more details.
@@ -397,12 +397,12 @@ resource. Setting this option to `true` allows end users to control what
 to do if there was an exception in the `aggregate` method. For example
 to suppress the exception or set a custom message body etc.
 
-|`cacheSize` |  |*Camel 2.16:* Allows to configure the cache size for
-the `ConsumerCache` which caches consumers for reuse in the pollEnrich.
+|`cacheSize` |  |*Camel 2.16:* Allows to configure the cache size for
+the `ConsumerCache` which caches consumers for reuse in the pollEnrich.
 Will by default use the default cache size which is 1000. Setting the
 value to -1 allows to turn off the cache all together.
 
-|`ignoreInvalidEndpoint` |`false` |**Camel 2.16:** Whether to ignore an
+|`ignoreInvalidEndpoint` |`false` |**Camel 2.16:** Whether to ignore an
 endpoint URI that could not be resolved. If disabled, Camel will throw
 an exception identifying the invalid endpoint URI.
 |=======================================================================
@@ -491,8 +491,8 @@ For example to wait up to 5 seconds you can do:
 
 From Camel 2.16 onwards enrich and pollEnrich supports using dynamic
 uris computed based on information from the
-current xref:exchange.adoc[Exchange]. For example to pollEnrich from an
-endpoint that uses a header to indicate a xref:components::seda-component.adoc[SEDA] queue
+current xref:exchange.adoc[Exchange]. For example to pollEnrich from an
+endpoint that uses a header to indicate a xref:components::seda-component.adoc[SEDA] queue
 name:
 
 [source,java]

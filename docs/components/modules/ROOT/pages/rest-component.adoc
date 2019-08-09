@@ -141,7 +141,7 @@ The following components support rest producer:
 == Path and uriTemplate syntax
 
 The path and uriTemplate option is defined using a REST syntax where you
-define the REST context path using support for parameters. 
+define the REST context path using support for parameters. 
 
 TIP:If no uriTemplate is configured then path option works the same way. It
 does not matter if you configure only path or if you configure both
@@ -274,13 +274,13 @@ IMPORTANT: You must configure `outType` option if you want POJO binding to happe
 
 == More examples
 
-See Rest DSL which offers more examples and how you
+See Rest DSL which offers more examples and how you
 can use the Rest DSL to define those in a nicer RESTful way.
 
 There is a *camel-example-servlet-rest-tomcat* example in the Apache
 Camel distribution, that demonstrates how to use the
-Rest DSL with SERVLET as
-transport that can be deployed on Apache Tomcat, or similar web
+Rest DSL with SERVLET as
+transport that can be deployed on Apache Tomcat, or similar web
 containers.
 
 == See Also

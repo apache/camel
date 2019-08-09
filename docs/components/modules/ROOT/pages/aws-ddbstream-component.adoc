@@ -4,13 +4,13 @@
 *Available as of Camel version 2.17*
 
 The DynamoDB Stream component supports receiving messages from
-Amazon DynamoDB Stream service.
+Amazon DynamoDB Stream service.
 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon DynamoDB Streams. More information are available
-at https://aws.amazon.com/dynamodb/[AWS DynamoDB]
+at https://aws.amazon.com/dynamodb/[AWS DynamoDB]
 
 == URI Format
 
@@ -153,7 +153,7 @@ The component supports 16 options, which are listed below.
 
 Required DynampDBStream component options
 
-You have to provide the amazonDynamoDbStreamsClient in the
+You have to provide the amazonDynamoDbStreamsClient in the
 Registry with proxies and relevant credentials
 configured.
 
@@ -177,7 +177,7 @@ aggregate this number of messages.
 
 == Usage
 
-=== AmazonDynamoDBStreamsClient configuration
+=== AmazonDynamoDBStreamsClient configuration
 
 You will need to create an instance of AmazonDynamoDBStreamsClient and
 bind it to the registry
@@ -201,7 +201,7 @@ It is recommended that the credentials are obtained by using the
 http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html[DefaultAWSCredentialsProviderChain]
 that is the default when creating a new ClientConfiguration instance,
 however, a
-different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
+different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
 can be specified when calling createClient(...).
 
 == Coping with Downtime
@@ -210,7 +210,7 @@ can be specified when calling createClient(...).
 
 The consumer will resume from the last seen sequence number (as
 implemented
-for https://issues.apache.org/jira/browse/CAMEL-9515[CAMEL-9515]), so
+for https://issues.apache.org/jira/browse/CAMEL-9515[CAMEL-9515]), so
 you should receive a flood of events in quick succession, as long as the
 outage did not also include DynamoDB itself.
 

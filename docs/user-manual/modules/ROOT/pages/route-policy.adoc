@@ -56,7 +56,7 @@ operations as it support fallback for regular
 
 == `ThrottlingInflightRoutePolicy`
 
-The *`ThrottlingInflightRoutePolicy`* is triggered when an
+The *`ThrottlingInflightRoutePolicy`* is triggered when an
 xref:exchange.adoc[Exchange] is complete, which means that it requires
 at least one xref:exchange.adoc[Exchange] to be complete before it
 _works_.
@@ -76,7 +76,7 @@ route.
 route if the current number of inflight exchanges is higher than this
 value.
 
-|`resumePercentOfMax` |`70` |A percentage *`0..100`* which defines when the throttling should resume
+|`resumePercentOfMax` |`70` |A percentage *`0..100`* which defines when the throttling should resume
 again in case it has been suspended.
 
 |`loggingLevel` |`INFO` |The logging level used for logging the throttling activity.
@@ -131,8 +131,8 @@ In Spring XML its a bit different as follows using the
 sets or a collection of policies that are concurrently applied on a
 route. The addition of policies is done as follows.
 
-In the example below, the route *`testRoute`* has a *`startPolicy`*
-and *`throttlePolicy`* applied concurrently. Both policies are applied
+In the example below, the route *`testRoute`* has a *`startPolicy`*
+and *`throttlePolicy`* applied concurrently. Both policies are applied
 as necessary on the route.
 
 [source,xml]
@@ -157,11 +157,11 @@ as necessary on the route.
 </camelContext>
 ----------------------------------------------------------------------------------------------
 
-== Using `RoutePolicyFactory`
+== Using `RoutePolicyFactory`
 
 If you want to use a route policy for every route, you can use
-a *`org.apache.camel.spi.RoutePolicyFactory`* as a factory for creating
-a *`RoutePolicy`* instance for each route. This can be used when you
+a *`org.apache.camel.spi.RoutePolicyFactory`* as a factory for creating
+a *`RoutePolicy`* instance for each route. This can be used when you
 want to use the same kind of route policy for every routes. Then you
 need to only configure the factory once, and every route created will
 have the policy assigned.
@@ -173,7 +173,7 @@ There is API on CamelContext to add a factory, as shown below
 context.addRoutePolicyFactory(new MyRoutePolicyFactory());
 ----------------------------------------------------------
 
-And from XML DSL you just define a *`<bean>`* with the factory
+And from XML DSL you just define a *`<bean>`* with the factory
 
 [source,xml]
 ----------------------------------------------------------------------
@@ -196,8 +196,8 @@ RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDe
 ------------------------------------------------------------------------------------------------------------------------
 
 Note you can have as many route policy factories as you want. Just call
-the *`addRoutePolicyFactory`* again, or declare the other factories
-as *`<bean>`* in XML.
+the *`addRoutePolicyFactory`* again, or declare the other factories
+as *`<bean>`* in XML.
 
 == See Also
 

@@ -12,16 +12,16 @@ endif::[]
 
 == Micrometer Component
 
-The Micrometer component allows to collect various metrics directly
+The Micrometer component allows to collect various metrics directly
 from Camel routes. Supported metric types
-are xref:#MicrometerComponent-counter[counter], xref:#MicrometerComponent-summary[summary],
-and xref:#MicrometerComponent-timer[timer]. http://micrometer.io/[Micrometer] provides
+are xref:#MicrometerComponent-counter[counter], xref:#MicrometerComponent-summary[summary],
+and xref:#MicrometerComponent-timer[timer]. http://micrometer.io/[Micrometer] provides
 simple way to measure the behaviour of an application. Configurable
-reporting backends (via Micrometer registries) enable different integration options for
+reporting backends (via Micrometer registries) enable different integration options for
 collecting and visualizing statistics.
 
 The component also provides
-a `MicrometerRoutePolicyFactory` which allows to expose route statistics
+a `MicrometerRoutePolicyFactory` which allows to expose route statistics
 using Micrometer as well as `EventNotifier` implementations for counting
 routes and timing exchanges from their creation to their completion.
 
@@ -241,7 +241,7 @@ micrometer:counter:name[?options]
 [width="100%",options="header"]
 |=====================================================
 |Name |Default |Description
-|increment  |- |Double value to add to the counter
+|increment  |- |Double value to add to the counter
 |decrement |- |Double value to subtract from the counter
 |=====================================================
 
@@ -284,8 +284,8 @@ Like in `camel-metrics`, specific Message headers can be used to override
 [width="100%",cols="10%,80%,10%",options="header",]
 |====================================================================
 |Name |Description |Expected type
-|CamelMetricsCounterIncrement  |Override increment value in URI |Double
-|CamelMetricsCounterDecrement  |Override decrement value in URI |Double
+|CamelMetricsCounterIncrement  |Override increment value in URI |Double
+|CamelMetricsCounterDecrement  |Override decrement value in URI |Double
 |====================================================================
 
 [source,java]
@@ -433,16 +433,16 @@ from("direct:in")
 
 == MicrometerRoutePolicyFactory
 
-This factory allows to add a RoutePolicy for each
+This factory allows to add a RoutePolicy for each
 route in order to exposes route utilization statistics using Micrometer.
 This factory can be used in Java and XML as the examples below
-demonstrates. 
+demonstrates. 
 
 NOTE: Instead of using the `MicrometerRoutePolicyFactory` you can define a
 dedicated `MicrometerRoutePolicy` per route you want to instrument, in case you only
 want to instrument a few selected routes.
 
-From Java you just add the factory to the `CamelContext` as shown below:
+From Java you just add the factory to the `CamelContext` as shown below:
 
 [source,java]
 ----
@@ -457,29 +457,29 @@ And from XML DSL you define a <bean> as follows:
   <bean id="metricsRoutePolicyFactory" class="org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyFactory"/>
 ----
 
-The `MicrometerRoutePolicyFactory` and `MicrometerRoutePolicy` supports the
+The `MicrometerRoutePolicyFactory` and `MicrometerRoutePolicy` supports the
 following options:
 
 [width="100%",options="header"]
 |=======================================================================
 |Name |Default |Description
 |prettyPrint |false |Whether to use pretty print when outputting statistics in json format
-|meterRegistry |  |Allow to use a shared `MeterRegistry`. If none is provided then Camel will create a shared instance used by the this CamelContext.
+|meterRegistry |  |Allow to use a shared `MeterRegistry`. If none is provided then Camel will create a shared instance used by the this CamelContext.
 |durationUnit |TimeUnit.MILLISECONDS |The unit to use for duration in when dumping the statistics as json.
 |=======================================================================
 
-If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
-with `name=MicrometerRoutePolicy`.
+If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
+with `name=MicrometerRoutePolicy`.
 
 
 == MicrometerMessageHistoryFactory
 
-This factory allows to use metrics to capture Message History performance
+This factory allows to use metrics to capture Message History performance
 statistics while routing messages. It works by using a Micrometer Timer for
-each node in all the routes. This factory can be used in Java and XML as
-the examples below demonstrates. 
+each node in all the routes. This factory can be used in Java and XML as
+the examples below demonstrates. 
 
-From Java you just set the factory to the `CamelContext` as shown below:
+From Java you just set the factory to the `CamelContext` as shown below:
 
 [source,java]
 ----
@@ -500,7 +500,7 @@ The following options is supported on the factory:
 |=======================================================================
 |Name |Default |Description
 |prettyPrint |false |Whether to use pretty print when outputting statistics in json format
-|meterRegistry |  |Allow to use a shared `MeterRegistry`. If none is provided then Camel will create a shared instance used by the this CamelContext.
+|meterRegistry |  |Allow to use a shared `MeterRegistry`. If none is provided then Camel will create a shared instance used by the this CamelContext.
 |durationUnit |TimeUnit.MILLISECONDS |The unit to use for duration when dumping the statistics as json.
 |=======================================================================
 
@@ -516,8 +516,8 @@ MicrometerMessageHistoryService service = context.hasService(MicrometerMessageHi
 String json = service.dumpStatisticsAsJson();
 ----
 
-If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
-with `name=MicrometerMessageHistory`.
+If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
+with `name=MicrometerMessageHistory`.
 
 
 == MicrometerEventNotifiers
@@ -544,8 +544,8 @@ MicrometerEventNotifierService service = context.hasService(MicrometerEventNotif
 String json = service.dumpStatisticsAsJson();
 ----
 
-If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
-with `name=MicrometerEventNotifier`.
+If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
+with `name=MicrometerEventNotifier`.
 
 
 == InstrumentedThreadPoolFactory

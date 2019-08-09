@@ -5,9 +5,9 @@
 
 The Scheduler component is used to generate message exchanges when a
 scheduler fires. This component is similar to the
- xref:timer-component.adoc[Timer] component, but it offers more functionality in
+ xref:timer-component.adoc[Timer] component, but it offers more functionality in
 terms of scheduling. Also this component uses
-JDK `ScheduledExecutorService`. Where as the timer uses a JDK `Timer`.
+JDK `ScheduledExecutorService`. Where as the timer uses a JDK `Timer`.
 
 You can only consume events from this endpoint.
 
@@ -20,7 +20,7 @@ scheduler:name[?options]
 
 Where `name` is the name of the scheduler, which is created and shared
 across endpoints. So if you use the same name for all your scheduler
-endpoints, only one scheduler thread pool and thread will be used - but
+endpoints, only one scheduler thread pool and thread will be used - but
 you can configure the thread pool to allow more concurrent threads.
 
 You can append query options to the URI in the following format,
@@ -128,10 +128,10 @@ The component supports 4 options, which are listed below.
 == More information
 
 This component is a scheduler
-http://camel.apache.org/polling-consumer.html[Polling Consumer] where
+http://camel.apache.org/polling-consumer.html[Polling Consumer] where
 you can find more information about the options above, and examples at
 the http://camel.apache.org/polling-consumer.html[Polling
-Consumer] page.
+Consumer] page.
 
 == Exchange Properties
 
@@ -182,9 +182,9 @@ There can be use cases where you want the scheduler to trigger and be
 greedy. But sometimes you want "tell the scheduler" that there was no
 task to poll, so the scheduler can change into idle mode using the
 backoff options. To do this you would need to set a property on the
-exchange with the key `Exchange.SCHEDULER_POLLED_MESSAGES` to a boolean
+exchange with the key `Exchange.SCHEDULER_POLLED_MESSAGES` to a boolean
 value of false. This will cause the consumer to indicate that there was
-no messages polled. 
+no messages polled. 
 
 The consumer will otherwise as by default return 1 message polled to the
 scheduler, every time the consumer has completed processing the

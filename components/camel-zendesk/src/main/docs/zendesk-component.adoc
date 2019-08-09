@@ -138,7 +138,7 @@ once for each exchange.
 
 == Message header
 
-Any of the options can be provided in a message header for producer
+Any of the options can be provided in a message header for producer
 endpoints with *CamelZendesk.* prefix. In principal, parameter names are same as
 the arugument name of each API methods on the original `org.zendesk.client.v2.Zendesk`
  class. However some of them are renamed to the other name to avoid confliction in the

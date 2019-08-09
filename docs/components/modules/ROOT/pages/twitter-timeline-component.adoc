@@ -50,7 +50,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (45 parameters):
+=== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -59,17 +59,16 @@ with the following path and query parameters:
 | *user* (common) | The username when using timelineType=user |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
-| *type* (consumer) | Endpoint type to use. Only streaming supports event type. | polling | EndpointType
-| *distanceMetric* (consumer) | Used by the non-stream geography search, to search by radius using the configured metrics. The unit can either be mi for miles, or km for kilometers. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. | km | String
+| *type* (consumer) | Endpoint type to use. | polling | EndpointType
+| *distanceMetric* (consumer) | Used by the geography search, to search by radius using the configured metrics. The unit can either be mi for miles, or km for kilometers. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. | km | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *extendedMode* (consumer) | Used for enabling full text from twitter (eg receive tweets that contains more than 140 characters). | true | boolean
-| *latitude* (consumer) | Used by the non-stream geography search to search by latitude. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. |  | Double
-| *locations* (consumer) | Bounding boxes, created by pairs of lat/lons. Can be used for streaming/filter. A pair is defined as lat,lon. And multiple paris can be separated by semi colon. |  | String
-| *longitude* (consumer) | Used by the non-stream geography search to search by longitude. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. |  | Double
+| *latitude* (consumer) | Used by the geography search to search by latitude. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. |  | Double
+| *locations* (consumer) | Bounding boxes, created by pairs of lat/lons. Can be used for filter. A pair is defined as lat,lon. And multiple paris can be separated by semi colon. |  | String
+| *longitude* (consumer) | Used by the geography search to search by longitude. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. |  | Double
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
-| *radius* (consumer) | Used by the non-stream geography search to search by radius. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. |  | Double
-| *twitterStream* (consumer) | To use a custom instance of TwitterStream |  | TwitterStream
+| *radius* (consumer) | Used by the geography search to search by radius. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. |  | Double
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -78,7 +77,7 @@ with the following path and query parameters:
 | *lang* (filter) | The lang string ISO_639-1 which will be used for searching |  | String
 | *numberOfPages* (filter) | The number of pages result which you want camel-twitter to consume. | 1 | Integer
 | *sinceId* (filter) | The last tweet id which will be used for pulling the tweets. It is useful when the camel route is restarted after a long running. | 1 | long
-| *userIds* (filter) | To filter by user ids for streaming/filter. Multiple values can be separated by comma. |  | String
+| *userIds* (filter) | To filter by user ids for filter. Multiple values can be separated by comma. |  | String
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int

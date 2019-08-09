@@ -370,7 +370,7 @@ NOTE: http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji RE
 NOTE: https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/inbound-rest/reference/r_RESTResources.html[Helsinki REST API Documentation]
 
 == Usage examples:
- 
+ 
 [source,java]
 .Retrieve 10 Incidents
 -------------------------------------------------------------------------------------------------------------------
@@ -384,7 +384,7 @@ context.addRoutes(new RouteBuilder() {
                + "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}"
            .to("mock:servicenow");
     }
-}); 
+}); 
 
 FluentProducerTemplate.on(context)
     .withHeader(ServiceNowConstants.RESOURCE, "table")

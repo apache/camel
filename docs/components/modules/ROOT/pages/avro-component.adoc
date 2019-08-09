@@ -304,11 +304,11 @@ In the example above you need to fill `CamelAvroMessageName` header.
 
 [source,xml]
 -------------------------------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:start"/>
-            <to uri="avro:http:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
-            <to uri="log:avro"/>
-        </route>
+        <route>
+            <from uri="direct:start"/>
+            <to uri="avro:http:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <to uri="log:avro"/>
+        </route>
 -------------------------------------------------------------------------------------------------------------------------------
 
 An example of consuming messages using camel avro consumers via netty:

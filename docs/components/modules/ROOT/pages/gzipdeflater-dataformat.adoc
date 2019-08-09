@@ -43,8 +43,8 @@ from("direct:start").marshal().gzipDeflater().to("activemq:queue:MY_QUEUE");
 
 == Unmarshal
 
-In this example we unmarshal a gzipped payload from an ActiveMQ queue
-called MY_QUEUE to its original format, and forward it for processing to
+In this example we unmarshal a gzipped payload from an ActiveMQ queue
+called MY_QUEUE to its original format, and forward it for processing to
 the `UnGZippedMessageProcessor`.
 
 [source,java]

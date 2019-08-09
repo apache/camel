@@ -4,7 +4,7 @@
 *Available as of Camel version 2.14*
 
 The Dropbox component allows you to treat
-https://www.dropbox.com[Dropbox] remote folders as a producer or
+https://www.dropbox.com[Dropbox] remote folders as a producer or
 consumer of messages. Using the
 http://dropbox.github.io/dropbox-sdk-java/api-docs/v1.7.x/[Dropbox Java
 Core API] (reference version for this component is 1.7.x), this camel
@@ -12,7 +12,7 @@ component has the following features:
 
 * As a consumer, download files and search files by queries
 * As a producer, download files, move files between remote directories,
-delete files/dir, upload files and search files by queries
+delete files/dir, upload files and search files by queries
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -59,11 +59,11 @@ the specific operation.
 
 == Options
 
-In order to work with Dropbox API you need to obtain an *accessToken*
+In order to work with Dropbox API you need to obtain an *accessToken*
 and a *clientIdentifier.* +
 You can refer to the
 https://www.dropbox.com/developers/core/start/java[Dropbox
-documentation] that explains how to get them.  
+documentation] that explains how to get them.  
 
 // component options: START
 The Dropbox component supports 2 options, which are listed below.
@@ -448,4 +448,4 @@ Dropbox documentation,
 
 
 
- 
+ 

@@ -818,7 +818,7 @@ Number of Components: 296 in 234 JAR artifacts (0 deprecated)
 `stub:name` | 2.10 | The stub component provides a simple way to stub out any physical endpoints while in development or testing.
 
 | link:camel-telegram/src/main/docs/telegram-component.adoc[Telegram] (camel-telegram) +
-`telegram:type/authorizationToken` | 2.18 | The telegram component provides access to the Telegram Bot API.
+`telegram:type` | 2.18 | The telegram component provides access to the Telegram Bot API.
 
 | link:camel-thrift/src/main/docs/thrift-component.adoc[Thrift] (camel-thrift) +
 `thrift:host:port/service` | 2.20 | The Thrift component allows to call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism

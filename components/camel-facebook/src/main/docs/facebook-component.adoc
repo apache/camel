@@ -347,8 +347,8 @@ facebook4j.PostUpdate body.
         .to("facebook://postFeed/inBody=postUpdate);
 ----------------------------------------------------
 
-To poll, every 5 sec (You can set the xref:manual::polling-consumer.adoc[polling
-consumer] options by adding a prefix of "consumer"), all statuses on
+To poll, every 5 sec (You can set the xref:manual::polling-consumer.adoc[polling
+consumer] options by adding a prefix of "consumer"), all statuses on
 your home feed:
 
 [source,java]

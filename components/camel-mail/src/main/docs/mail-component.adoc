@@ -333,7 +333,7 @@ determines the port number to use based on the protocol.
 == SSL support
 
 The underlying mail framework is responsible for providing SSL support.
- You may either configure SSL/TLS support by completely specifying the
+ You may either configure SSL/TLS support by completely specifying the
 necessary Java Mail API configuration options, or you may provide a
 configured SSLContextParameters through the component or endpoint
 configuration.
@@ -342,9 +342,9 @@ configuration.
 
 The mail component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
-Configuration Utility].  This utility greatly decreases the amount of
+Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
-endpoint and component levels.  The following examples demonstrate how
+endpoint and component levels.  The following examples demonstrate how
 to use the utility with the mail component.
 
 [[Mail-Programmaticconfigurationoftheendpoint]]
@@ -634,7 +634,7 @@ the Splitter as shown below
 </split>
 ---------------------------------------------------------------------------------
 
- 
+ 
 
 From Camel 2.16 onwards you can also split the attachments as byte[] to
 be stored as the message body. This is done by creating the expression

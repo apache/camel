@@ -46,7 +46,7 @@ in Splunk.
 |=======================================================================
 
 When publishing events the message body should contain a
-SplunkEvent.  See comment under message body.
+SplunkEvent.  See comment under message body.
 
 *Example*
 
@@ -215,7 +215,7 @@ result for the consumer.
 
 You can send raw data to Splunk by setting the raw
 option on the producer endpoint. This is useful for eg. json/xml and
-other payloads where Splunk has build in support. 
+other payloads where Splunk has build in support. 
 
 == Use Cases
 

@@ -15,7 +15,7 @@ for this component.
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jgroups-raft</artifactId>
     <!-- use the same version as your Camel core version -->
-    <version>x.y.z</version>
+    <version>x.y.z</version>
 </dependency>
 ------------------------------------------------------------
 
@@ -153,7 +153,7 @@ The component supports 12 options, which are listed below.
 
 |`JGROUPSRAFT_SET_TIMEUNIT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEUNIT` | *Producer*: Timeunit to be used in set() operation.
 |=======================================================================
- 
+ 
 == Usage
 
 Using `jgroups-raft` component with `enableRoleChangeEvents=true` on the consumer side of the route will capture
@@ -182,7 +182,7 @@ from("direct:start").to("jgroups-raft:clusterName");
 === Receive cluster view change notifications
 
 The snippet below demonstrates how to create the consumer endpoint
-listening to the change role events. By default this option is off.
+listening to the change role events. By default this option is off.
 
 [source,java]
 ---------------------------------------------------------------------
@@ -209,5 +209,5 @@ service.setJgroupsClusterName("clusterName");
 ...
 context.addService(service);
 
-from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
+from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------

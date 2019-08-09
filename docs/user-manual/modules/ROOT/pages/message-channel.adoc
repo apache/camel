@@ -23,7 +23,7 @@ jms:queue:foo
 -------------
 
 This message channel can be then used within the
-xref:components::jms-component.adoc[JMS] component
+xref:components::jms-component.adoc[JMS] component
 
 And the following shows a little Java route snippet:
 

@@ -40,10 +40,10 @@ Where *directoryname* represents the underlying directory. The directory
 name is a relative path. Absolute path's is *not* supported. The
 relative path can contain nested folders, such as /inbox/us.
 
-The `autoCreate` option is supported. When consumer
+The `autoCreate` option is supported. When consumer
 starts, before polling is scheduled, there's additional FTP operation
 performed to create the directory configured for endpoint. The default
-value for `autoCreate` is `true`.
+value for `autoCreate` is `true`.
 
 If no *username* is provided, then `anonymous` login is attempted using
 no password. +
@@ -286,7 +286,7 @@ from("ftp://foo@myserver?password=secret&ftpClient.dataTimeout=30000&ftpClientCo
 You can have as many of these options as you like.
 
 See the documentation of the Apache Commons FTP FTPClientConfig for
-possible options and more details. And as well for Apache Commons FTP
+possible options and more details. And as well for Apache Commons FTP
 FTPClient.
 
 If you do not like having many and long configuration in the url you can

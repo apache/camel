@@ -228,10 +228,10 @@ components, add/edit existing endpoints in a UI that allows to edit each
 options individually in a more type safe manner. You can also setup your
 Maven project for Docker and Kubernetes platforms.
 
-|http://islandora.ca/[Islandora] |Islandora** **is an open-source
+|http://islandora.ca/[Islandora] |Islandora** **is an open-source
 software framework designed to help institutions and organizations and
 their audiences collaboratively manage, and discover digital assets
-using a best-practices framework.  They use Camel and JMS queues in the
+using a best-practices framework.  They use Camel and JMS queues in the
 platform.
 
 |SAP HANA |The
@@ -341,4 +341,4 @@ traces for Apache Camel routes, processors
 |A component to integrate with Spring Cloud Stream
 |=======================================================================
 
- 
+ 

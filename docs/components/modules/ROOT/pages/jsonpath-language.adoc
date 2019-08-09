@@ -206,7 +206,7 @@ And in XML DSL:
 </route>
 ----
 
-This option is also available on the `@JsonPath` annotation.
+This option is also available on the `@JsonPath` annotation.
 
 == Inline Simple exceptions
 
@@ -285,11 +285,11 @@ public class Foo {
 == Encoding Detection
 
 The encoding of the JSON document is
-detected automatically, if the document is encoded in unicode  (UTF-8,
-UTF-16LE, UTF-16BE, UTF-32LE, UTF-32BE ) as specified in  RFC-4627. If
+detected automatically, if the document is encoded in unicode  (UTF-8,
+UTF-16LE, UTF-16BE, UTF-32LE, UTF-32BE ) as specified in  RFC-4627. If
 the encoding is a non-unicode encoding, you can either make sure that
 you enter the document in String format to the JSONPath component or you
-can specify the encoding in the header "*CamelJsonPathJsonEncoding*"
+can specify the encoding in the header "*CamelJsonPathJsonEncoding*"
 (JsonpathConstants.HEADER_JSON_ENCODING).
 
 == Split JSon data into sub rows as JSon

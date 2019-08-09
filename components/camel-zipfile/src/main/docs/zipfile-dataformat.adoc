@@ -151,7 +151,7 @@ from("file:src/test/resources/org/apache/camel/dataformat/zipfile?consumer.delay
 Please note that this aggregation strategy requires eager completion check to work properly.
 
 In this example we aggregate all text files found in the input directory
-into a single Zip file that is stored in the output directory. 
+into a single Zip file that is stored in the output directory. 
 
 [source,java]
 ----
@@ -161,10 +161,10 @@ from("file:input/directory?antInclude=*/.txt")
         .to("file:output/directory");
 ----
 
-The outgoing `CamelFileName` message header is created using
-java.io.File.createTempFile, with the ".zip" suffix. If you want to
+The outgoing `CamelFileName` message header is created using
+java.io.File.createTempFile, with the ".zip" suffix. If you want to
 override this behavior, then you can set the value of
-the `CamelFileName` header explicitly in your route:
+the `CamelFileName` header explicitly in your route:
 
 [source,java]
 ----

@@ -57,7 +57,7 @@ invocations.
 
 If you are a Camel user, you see that several Camel components support
 the cookieHandler parameter on endpoint level. All you need to do is to
-instantiate a cookie handler  appropriate for your use case and
+instantiate a cookie handler  appropriate for your use case and
 reference it in the cookieHandler parameter for all endpoints that are
 supposed to participate in the HTTP session.
 
@@ -65,7 +65,7 @@ There are two pre-implemented cookie handlers:
 `org.apache.camel.http.common.cookie.InstanceCookieHandler` and
 `org.apache.camel.http.common.cookie.ExchangeCookieHandler.`
 
-The `InstanceCookieHandler` stores  cookies in an instance of itself.
+The `InstanceCookieHandler` stores  cookies in an instance of itself.
 You can compare that with a browser instance that is shared between all
 the endpoints that use it (and will be used for all invocations of these
 endpoints). If you want to maintain separate sessions for different
@@ -132,7 +132,7 @@ there)
 2.  Add a cookieHandler parameter to the endpoint class (together with
 getter and setter)
 3.  Before your code does the HTTP call, if a cookie handler is set on
-the endpoint perform a `cookieHandler.loadCookies(exchange, uri)` call.
+the endpoint perform a `cookieHandler.loadCookies(exchange, uri)` call.
 It will return a `Map<String, List<String>>` containing the headers that
 need to be sent to the server. The details how you need to send these
 headers to the server depend on the underlying HTTP API you are using.

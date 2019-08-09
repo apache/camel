@@ -2,10 +2,10 @@
 = To D EIP
 
 There is a new `.toD` / `<toD>` that allows to send a message to a dynamic
-computed xref:endpoint.adoc[Endpoint] using one or
-more xref:expression.adoc[Expression] that are concat together. By
-default the xref:simple-language.adoc[Simple] language is used to compute
-the endpoint.
+computed xref:endpoint.adoc[Endpoint] using one or
+more xref:expression.adoc[Expression] that are concat together. By
+default the xref:simple-language.adoc[Simple] language is used to compute
+the endpoint.
 
 == Options
 
@@ -45,7 +45,7 @@ And in XML:
 ----
 
 You can also prefix the uri with a value because by default the uri is
-evaluated using the xref:simple-language.adoc[Simple] language
+evaluated using the xref:simple-language.adoc[Simple] language
 
 [source,java]
 ----
@@ -67,8 +67,8 @@ In the example above we compute an endpoint that has prefix "mock:" and
 then the header foo is appended. So for example if the header foo has
 value order, then the endpoint is computed as "mock:order".
 
-You can also use other languages than xref:simple-language.adoc[Simple] such
-as xref:components::xpath-language.adoc[XPath] - this requires to prefix with language: as
+You can also use other languages than xref:simple-language.adoc[Simple] such
+as xref:components::xpath-language.adoc[XPath] - this requires to prefix with language: as
 shown below (simple language is the default language). If you do not
 specify language: then the endpoint is a component name. And in some
 cases there is both a component and language with the same name such as
@@ -90,8 +90,8 @@ from("direct:start")
   .toD("language:xpath:/order/@uri");
 ----
 
-You can also concat multiple xref:components::language-component.adoc[Language](s) together
-using the plus sign `+` such as shown below:
+You can also concat multiple xref:components::language-component.adoc[Language](s) together
+using the plus sign `+` such as shown below:
 
 [source,xml]
 ----
@@ -102,7 +102,7 @@ using the plus sign `+` such as shown below:
 ----
 
 In the example above the uri is a combination
-of xref:simple-language.adoc[Simple] language and xref:simple-language.adoc[XPath] where
+of xref:simple-language.adoc[Simple] language and xref:simple-language.adoc[XPath] where
 the first part is simple (simple is default language). And then the plus
 sign separate to another language, where we specify the language name
 followed by a colon

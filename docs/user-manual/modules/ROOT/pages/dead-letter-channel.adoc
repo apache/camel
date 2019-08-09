@@ -198,7 +198,7 @@ The default redeliver policy will use the following values:
 false for dead letter channel.
 * logExhaustedMessageBody is disabled by default to avoid
 logging sensitive message body/header details. If this option is true,
-then logExhaustedMessageHistory must also be true.
+then logExhaustedMessageHistory must also be true.
 
 The maximum redeliver delay ensures that a delay is never longer than
 the value, default 1 minute. This can happen if you turn on the
@@ -354,7 +354,7 @@ still contain the value of `\http://someserver/somepath`.
 *Available as of Camel 2.16*
 
 Before the exchange is sent to the dead letter queue, you can use
-onPrepare to allow a custom `Processor` to prepare the exchange, such as
+onPrepare to allow a custom `Processor` to prepare the exchange, such as
 adding information why the Exchange failed. For example the following
 processor adds a header with the exception message
 
@@ -474,10 +474,10 @@ message.
 You often need to know what went wrong that caused the Dead Letter
 Channel to be used and it does not offer logging for this purpose. So
 the Dead Letter Channel's endpoint can be set to a endpoint of our own
-(such as `direct:deadLetterChannel`). We write a route to accept this
+(such as `direct:deadLetterChannel`). We write a route to accept this
 Exchange and log the Exception, then forward on to where we want the
 failed Exchange moved to (which might be a DLQ queue for instance). See
-also http://stackoverflow.com/questions/13711462/logging-camel-exceptions-and-sending-to-the-dead-letter-channel[http://stackoverflow.com/questions/13711462/logging-camel-exceptions-and-sending-to-the-dead-letter-channel]
+also http://stackoverflow.com/questions/13711462/logging-camel-exceptions-and-sending-to-the-dead-letter-channel[http://stackoverflow.com/questions/13711462/logging-camel-exceptions-and-sending-to-the-dead-letter-channel]
 
 [[deadLetterChannel-UsingThisPattern]]
 === Using This Pattern

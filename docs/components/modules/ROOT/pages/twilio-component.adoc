@@ -186,9 +186,9 @@ all of the endpoints. The endpoint URI MUST contain a prefix.
 
 Any of the endpoint options can be provided in either the endpoint URI,
 or dynamically in a message header. The message header name must be of
-the format *`CamelTwilio.<option>`*. Note that the *`inBody`* option
-overrides message header, i.e. the endpoint option *`inBody=option`*
-would override a *`CamelTwilio.option`* header.
+the format *`CamelTwilio.<option>`*. Note that the *`inBody`* option
+overrides message header, i.e. the endpoint option *`inBody=option`*
+would override a *`CamelTwilio.option`* header.
 
 Endpoint can be one of:
 
@@ -226,7 +226,7 @@ to respond with https://www.twilio.com/docs/api/twiml[TwiML].
 
 == Message header
 
-Any of the options can be provided in a message header for producer
+Any of the options can be provided in a message header for producer
 endpoints with *CamelTwilio.* prefix.
 
 

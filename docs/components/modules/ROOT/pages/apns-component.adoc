@@ -183,7 +183,7 @@ Camel Apns uses these headers.
 |=======================================================================
 |Property |Default |Description
 |`CamelApnsTokens` | |Empty by default.
-|`CamelApnsMessageType` |`STRING, PAYLOAD, APNS_NOTIFICATION`  |In case you choose PAYLOAD for the message type, then the message will
+|`CamelApnsMessageType` |`STRING, PAYLOAD, APNS_NOTIFICATION`  |In case you choose PAYLOAD for the message type, then the message will
 be considered as a APNS payload and sent as is. In case you choose
 STRING, message will be converted as a APNS payload. From *Camel 2.16*
 onwards APNS_NOTIFICATION is used for sending message body as
@@ -206,7 +206,7 @@ And could be used like as follows:
 [source,java]
 -------------------------------------------------------------------------------------------
 ApnsServiceFactory proxiedApnsServiceFactory = new ApnsServiceFactory(){
-  
+  
   @Override
   protected ApnsServiceBuilder configureServiceBuilder(ApnsServiceBuilder serviceBuilder) {
     return serviceBuilder.withSocksProxy("my.proxy.com", 6666);

@@ -60,7 +60,7 @@ the tapped xref:exchange.adoc[Exchange] to be sent in a fire and forget
 style. The tapped xref:exchange.adoc[Exchange] is then sent in a
 separate thread so it can run in parallel with the original. Beware that
 only the Exchange is copied - Wire Tap won't do a deep clone (unless you
-specify a custom processor via *`onPrepareRef`* which does that). So all
+specify a custom processor via *`onPrepareRef`* which does that). So all
 copies could share objects from the original Exchange.
 - Camel also provides an option of sending a new
 xref:exchange.adoc[Exchange] allowing you to populate it with new
@@ -102,7 +102,7 @@ xref:expression.adoc[Expression] to populate the new
 xref:exchange.adoc[Exchange]. Using a processor gives you full power
 over how the xref:exchange.adoc[Exchange] is populated as you can set
 properties, headers, etc. An xref:expression.adoc[Expression] can only
-be used to set the *`IN`* body.
+be used to set the *`IN`* body.
 
 The xref:expression.adoc[Expression] or
 xref:processor.adoc[Processor] is pre-populated with a copy of the
@@ -144,7 +144,7 @@ xref:exchange.adoc[Exchange]
 *Available as of Camel 2.16:*
 
 For example to wire tap to a dynamic URI, then it supports the same
-dynamic URIs as documented in xref:message-endpoint.adoc[Message
+dynamic URIs as documented in xref:message-endpoint.adoc[Message
 Endpoint]. For example to wire tap to a JMS queue where the header ID is
 part of the queue name:
 
@@ -167,8 +167,8 @@ It's possible to set headers as well using the DSL.
 The following example sends a new message which has
 
 * *`Bye World`* as message body.
-* A header with key *`id`* with the value *`123`*.
-* A header with key *`date`* which has current date as value.
+* A header with key *`id`* with the value *`123`*.
+* A header with key *`date`* which has current date as value.
 
 == Java DSL
 
@@ -202,7 +202,7 @@ The following example sends a new message which has
 
 ----
 
-== Using `onPrepare` to Execute Custom Logic when Preparing Messages
+== Using `onPrepare` to Execute Custom Logic when Preparing Messages
 
 *Available as of Camel 2.8*
 

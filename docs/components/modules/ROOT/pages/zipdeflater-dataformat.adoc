@@ -51,13 +51,13 @@ from("direct:start").marshal().zipDeflater().to("activemq:queue:MY_QUEUE");
 
 == Unmarshal
 
-In this example we unmarshal a zipped payload from an ActiveMQ queue
-called MY_QUEUE to its original format, and forward it for processing to
+In this example we unmarshal a zipped payload from an ActiveMQ queue
+called MY_QUEUE to its original format, and forward it for processing to
 the UnZippedMessageProcessor. Note that the compression Level employed
 during the marshalling should be identical to the one employed during
 unmarshalling to avoid errors.
 
 [source,java]
 ----
-from("activemq:queue:MY_QUEUE").unmarshal().zipDeflater().process(new UnZippedMessageProcessor()); 
+from("activemq:queue:MY_QUEUE").unmarshal().zipDeflater().process(new UnZippedMessageProcessor()); 
 ----

@@ -23,7 +23,7 @@ framework to simplify your unit and integration testing using
 xref:manual::enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's powerful xref:mock-component.adoc[Mock] and
 xref:test.adoc[Test] endpoints
-Camel supports Spring Boot using the `camel-spring-boot` component.
+Camel supports Spring Boot using the `camel-spring-boot` component.
 
 == Using Spring to configure the CamelContext
 
@@ -352,7 +352,7 @@ Integration] for further injections.
 
 To avoid a hung route when testing using Spring Transactions see the
 note about Spring Integration Testing
-under Transactional Client.
+under Transactional Client.
 
 == See also
 

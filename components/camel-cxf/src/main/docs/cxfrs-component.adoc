@@ -176,7 +176,7 @@ schema file], there are two elements for the REST endpoint definition.
 
 == How to override the CXF producer address from message header
 
-The `camel-cxfrs` producer supports to override the services address by
+The `camel-cxfrs` producer supports to override the services address by
 setting the message with the key of "CamelDestinationOverrideUrl".
 
 [source,java]
@@ -317,13 +317,13 @@ https://svn.apache.org/repos/asf/camel/trunk/components/camel-cxf/src/test/java/
 
 == Consuming a REST Request - Default Binding Style
 
-The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end]
+The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end]
 implements the https://javaee.github.io/jsr311/[JAX-RS (JSR-311) API], so we can
 export the resources classes as a REST service. And we leverage the
 http://cxf.apache.org/docs/invokers.html[CXF Invoker
 API] to turn a REST request into a normal Java object method
 invocation.
- Unlike the xref:restlet-component.adoc[Camel Restlet] component, you don't need
+ Unlike the xref:restlet-component.adoc[Camel Restlet] component, you don't need
 to specify the URI template within your endpoint, CXF takes care of the
 REST request URI to resource class method mapping according to the
 JSR-311 specification. All you need to do in Camel is delegate this
@@ -412,15 +412,15 @@ public interface CustomerServiceResource {
 
 == How to invoke the REST service through camel-cxfrs producer
 
-The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end]
+The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end]
 implements
 http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-Proxy-basedAPI[a
 proxy-based client API], with this API you can invoke the remote REST
-service through a proxy. The `camel-cxfrs` producer is based on this
+service through a proxy. The `camel-cxfrs` producer is based on this
 http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-Proxy-basedAPI[proxy
 API].
  You just need to specify the operation name in the message header and
-prepare the parameter in the message body, the camel-cxfrs producer will
+prepare the parameter in the message body, the camel-cxfrs producer will
 generate right REST request for you.
 
 Here is an example:
@@ -454,20 +454,20 @@ assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Excha
 assertEquals("Get a wrong header value", "value", exchange.getOut().getHeader("key"));
 ----
 
-The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end] also
+The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end] also
 provides
 http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-CXFWebClientAPI[a
-http centric client API]. You can also invoke this API from
+http centric client API]. You can also invoke this API from
 `camel-cxfrs` producer. You need to specify the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchange.html#HTTP_PATH[HTTP_PATH]
 and
-the http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchange.html#HTTP_METHOD[HTTP_METHOD] and
-let the producer use the http centric client API by using the URI option
+the http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchange.html#HTTP_METHOD[HTTP_METHOD] and
+let the producer use the http centric client API by using the URI option
 *httpClientAPI* or by setting the message header
 http://camel.apache.org/maven/current/camel-cxf/apidocs/org/apache/camel/component/cxf/CxfConstants.html#CAMEL_CXF_RS_USING_HTTP_API[CxfConstants.CAMEL_CXF_RS_USING_HTTP_API].
 You can turn the response object to the type class specified with the
 message
-header http://camel.apache.org/maven/current/camel-cxf/apidocs/org/apache/camel/component/cxf/CxfConstants.html#CAMEL_CXF_RS_RESPONSE_CLASS[CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS].
+header http://camel.apache.org/maven/current/camel-cxf/apidocs/org/apache/camel/component/cxf/CxfConstants.html#CAMEL_CXF_RS_RESPONSE_CLASS[CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS].
 [source,java]
 ----
 Exchange exchange = template.send("direct://http", new Processor() {

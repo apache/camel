@@ -36,7 +36,7 @@ The HL7 Terser language supports 1 options, which are listed below.
       .setHeader("PATIENT_ID", hl7terser("QRD-8(0)-1"))
       .to("mock:test1");
 
-   // continue processing if extracted field equals a message header
+   // continue processing if extracted field equals a message header
    from("direct:test2")
       .filter(hl7terser("QRD-8(0)-1").isEqualTo(header("PATIENT_ID"))
       .to("mock:test2");

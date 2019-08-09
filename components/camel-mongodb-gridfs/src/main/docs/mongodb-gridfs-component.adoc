@@ -153,7 +153,7 @@ xref:mongodb-gridfs-component.adoc[*findOne*] on a collection.
 </route>
 ----------------------------------------------------------------------------------
 
- 
+ 
 
 == GridFS operations - producer endpoint
 
@@ -192,12 +192,12 @@ filename1.txt   1252314321
 filename2.txt   2897651254
 ----------------------------------------------------------------------------------
 
- 
+ 
 
 === *findOne*
 
 Finds a file in the GridFS system and sets the body to an InputStream of
-the content.   Also provides the metadata has headers.  It uses
+the content.   Also provides the metadata has headers.  It uses
 Exchange.FILE_NAME from the incoming headers to determine the file to
 find.
 
@@ -209,7 +209,7 @@ headers.put(Exchange.FILE_NAME, "filename.txt");
 InputStream result = template.requestBodyAndHeaders("direct:findOne", "irrelevantBody", headers);
 -------------------------------------------------------------------------------------------------
 
- 
+ 
 
 === create
 

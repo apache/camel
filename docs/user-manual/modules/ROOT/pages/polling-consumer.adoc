@@ -43,7 +43,7 @@ returning null if a message exchange is not available yet
 [[PollingConsumer-EventDrivenPollingConsumerOptions]]
 == EventDrivenPollingConsumer Options
 
-The *`EventDrivePollingConsumer`* (the default implementation) supports
+The *`EventDrivePollingConsumer`* (the default implementation) supports
 the following options:
 
 [width="100%",cols="34%,33%,33%",options="header",]
@@ -58,15 +58,15 @@ Whether to block any producer if the internal queue is full.
 
 |`pollingConsumerBlockTimeout` |0 |*Camel 2.16:* To use a timeout (in
 milliseconds) when the producer is blocked if the internal queue is
-full. If the value is *`0`* or negative then no timeout is in use. If a
-timeout is triggered then a *`ExchangeTimedOutException`* is thrown.
+full. If the value is *`0`* or negative then no timeout is in use. If a
+timeout is triggered then a *`ExchangeTimedOutException`* is thrown.
 |=======================================================================
 
-Notice that some Camel xref:components::index.adoc[Components] has their own
-implementation of *`PollingConsumer`* and therefore do not support the
+Notice that some Camel xref:components::index.adoc[Components] has their own
+implementation of *`PollingConsumer`* and therefore do not support the
 options above.
 
-You can configure these options in endpoints xref:uris.adoc[URIs], such
+You can configure these options in endpoints xref:uris.adoc[URIs], such
 as shown below:
 
 [source,java]
@@ -81,7 +81,7 @@ Exchange exchange = consumer.receive(5000);
 == ConsumerTemplate
 
 The *`ConsumerTemplate`* is a template much like
-Spring's *`JmsTemplate`* or *`JdbcTemplate`* supporting the
+Spring's *`JmsTemplate`* or *`JdbcTemplate`* supporting the
 xref:polling-consumer.adoc[Polling Consumer] EIP. With the template you
 can consume xref:exchange.adoc[Exchange]s from an
 xref:endpoint.adoc[Endpoint]. The template supports the three operations
@@ -121,7 +121,7 @@ ConsumerTemplate consumer = context.createConsumerTemplate();
 [[PollingConsumer-UsingConsumerTemplatewithSpringDSL]]
 == Using ConsumerTemplate with Spring DSL
 
-With the Spring DSL we can declare the consumer in the *`CamelContext`*
+With the Spring DSL we can declare the consumer in the *`CamelContext`*
 with the *`consumerTemplate`* tag, just like the *`ProducerTemplate`*.
 The example below illustrates
 
@@ -144,7 +144,7 @@ include::{examplesdir}/components/camel-spring/src/test/java/org/apache/camel/sp
 == Timer Based Polling Consumer
 
 In this sample we use a xref:components::timer-component.adoc[Timer] to schedule a route to be
-started every 5th second and invoke our bean *`MyCoolBean`* where we
+started every 5th second and invoke our bean *`MyCoolBean`* where we
 implement the business logic for the xref:polling-consumer.adoc[Polling
 Consumer]. Here we want to consume all messages from a JMS queue,
 process the message and send them to the next queue.
@@ -187,7 +187,7 @@ For more details see:
 [[PollingConsumer-ScheduledPollConsumerOptions]]
 === ScheduledPollConsumer Options
 
-The *`ScheduledPollConsumer`* supports the following options:
+The *`ScheduledPollConsumer`* supports the following options:
 
 confluenceTableSmall
 
@@ -212,12 +212,12 @@ option is in use then *`backoffIdleThreshold`* and/or
 |`delay` |`500` |Milliseconds before the next poll.
 
 |`greedy` |`false` |*Camel 2.10.6/2.11.1:* If greedy is enabled, then
-the *`ScheduledPollConsumer`* will run immediately again, if the
+the *`ScheduledPollConsumer`* will run immediately again, if the
 previous run polled 1 or more messages.
 
 |`initialDelay` |`1000` |Milliseconds before the first poll starts.
 
-|`pollStrategy` |  a|
+|`pollStrategy` |  a|
 A pluggable *`org.apache.camel.PollingConsumerPollingStrategy`* allowing
 you to provide your custom implementation to control error handling
 usually occurred during the *`poll`* operation _*before*_ an
@@ -267,7 +267,7 @@ empty message (no body) instead.
 |`timeUnit` |`TimeUnit.MILLISECONDS` |Time unit for *`initialDelay`* and
 *`delay`* options.
 
-|`useFixedDelay` |  a|
+|`useFixedDelay` |  a|
 Controls if fixed delay or fixed rate is used. See
 http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/ScheduledExecutorService.html[ScheduledExecutorService]
 in JDK for details. In *Camel 2.7.x* or older the default value is
@@ -278,7 +278,7 @@ From *Camel 2.8*: the default value is *`true`*.
 |=======================================================================
 
 [[PollingConsumer-UsingbackofftoLettheSchedulerbeLessAggressive]]
-=== Using `backoff` to Let the Scheduler be Less Aggressive
+=== Using `backoff` to Let the Scheduler be Less Aggressive
 
 *Available as of Camel 2.12*
 
@@ -348,7 +348,7 @@ test *`org.apache.camel.component.file.FileConsumerCustomSchedulerTest`*
 from the source code in *`camel-core`*.
 
 [[PollingConsumer-ErrorHandlingWhenUsingPollingConsumerPollStrategy]]
-=== Error Handling When Using `PollingConsumerPollStrategy`
+=== Error Handling When Using `PollingConsumerPollStrategy`
 
 *`org.apache.camel.PollingConsumerPollStrategy`* is a pluggable strategy
 that you can configure on the *`ScheduledPollConsumer`*. The default
@@ -360,16 +360,16 @@ The strategy interface provides the following three methods:
 
 * *`begin`*
 ** `void begin(Consumer consumer, Endpoint endpoint)`
-* *`begin`* (*Camel 2.3*)
+* *`begin`* (*Camel 2.3*)
 ** `boolean begin(Consumer consumer, Endpoint endpoint)`
 * *`commit`*
 ** `void commit(Consumer consumer, Endpoint endpoint)`
-* *`commit`* (*Camel 2.6*)
+* *`commit`* (*Camel 2.6*)
 ** `void commit(Consumer consumer, Endpoint endpoint, int polledMessages)`
 * *`rollback`*
 ** `boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception`
 
-In *Camel 2.3*: the begin method returns a *`boolean`* which indicates
+In *Camel 2.3*: the begin method returns a *`boolean`* which indicates
 whether or not to skipping polling. So you can implement your custom
 logic and return *`false`* if you do not want to poll this time.
 

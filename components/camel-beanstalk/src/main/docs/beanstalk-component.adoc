@@ -7,7 +7,7 @@ Camel Beanstalk project provides a Camel component for job retrieval and
 post-processing of Beanstalk jobs.
 
 You can find the detailed explanation of Beanstalk job lifecycle
-at http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
+at http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
 protocol].
 
 == Dependencies
@@ -32,8 +32,8 @@ where `${camel-version`} must be replaced by the actual version of Camel.
 beanstalk://[host[:port]][/tube][?options]
 ------------------------------------------
 
-You may omit either `port` or both `host` and `port`: for the Beanstalk
-defaults to be used (“localhost” and 11300). If you omit `tube`,
+You may omit either `port` or both `host` and `port`: for the Beanstalk
+defaults to be used (“localhost” and 11300). If you omit `tube`,
 Beanstalk component will use the tube with name “default”.
 
 When listening, you may probably want to watch for jobs from several
@@ -160,33 +160,33 @@ The component supports 4 options, which are listed below.
 
 
 
-Producer behavior is affected by the `command` parameter which tells
+Producer behavior is affected by the `command` parameter which tells
 what to do with the job, it can be
 
 The consumer may delete the job immediately after reserving it or wait
 until Camel routes process it. While the first scenario is more like a
 “message queue”, the second is similar to “job queue”. This behavior is
-controlled by `consumer.awaitJob` parameter, which equals `true` by
+controlled by `consumer.awaitJob` parameter, which equals `true` by
 default (following Beanstalkd nature).
 
-When synchronous, the consumer calls `delete` on successful job
-completion and calls `bury` on failure. You can choose which command to
+When synchronous, the consumer calls `delete` on successful job
+completion and calls `bury` on failure. You can choose which command to
 execute in the case of failure by
-specifying `consumer.onFailure` parameter in the URI. It can take values
-of `bury`, `delete` or `release`.
+specifying `consumer.onFailure` parameter in the URI. It can take values
+of `bury`, `delete` or `release`.
 
-There is a boolean parameter `consumer.useBlockIO` which corresponds to
+There is a boolean parameter `consumer.useBlockIO` which corresponds to
 the same parameter in JavaBeanstalkClient library. By default it
-is `true`.
+is `true`.
 
-Be careful when specifying `release`, as the failed job will immediately
+Be careful when specifying `release`, as the failed job will immediately
 become available in the same tube and your consumer will try to acquire
-it again. You can `release` and specify _jobDelay_ though.
+it again. You can `release` and specify _jobDelay_ though.
 
-The beanstalk consumer is a Scheduled xref:manual::polling-consumer.adoc[Polling
+The beanstalk consumer is a Scheduled xref:manual::polling-consumer.adoc[Polling
 Consumer] which means there is more options you can configure, such as
 how frequent the consumer should poll. For more details
-see Polling Consumer.
+see Polling Consumer.
 
 == Consumer Headers
 
@@ -247,16 +247,16 @@ from("timer:dig?period=30seconds").
 In the first route we are listening for new jobs in tube “testTube”.
 When they are arriving, we are trying to parse integer value from the
 message body. If done successful, we log it and this successful exchange
-completion makes Camel component to _delete_ this job from Beanstalk
+completion makes Camel component to _delete_ this job from Beanstalk
 automatically. Contrary, when we cannot parse the job data, the exchange
-failed and the Camel component _buries_ it by default, so that it can be
+failed and the Camel component _buries_ it by default, so that it can be
 processed later or probably we are going to inspect failed jobs
 manually.
 
-So the second route periodically requests Beanstalk to _kick_ 10 jobs
+So the second route periodically requests Beanstalk to _kick_ 10 jobs
 out of buried and/or delayed state to the normal queue.
 
- 
+ 
 
 == See Also
 

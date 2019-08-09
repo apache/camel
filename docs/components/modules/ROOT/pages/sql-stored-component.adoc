@@ -5,7 +5,7 @@
 
 The SQL Stored component allows you to work with databases using JDBC
 Stored Procedure queries. This component is an extension to
-the xref:sql-component.adoc[SQL Component] but specialized for calling
+the xref:sql-component.adoc[SQL Component] but specialized for calling
 stored procedures.
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
@@ -34,7 +34,7 @@ sql-stored:template[?options]
 ----
 
 Where template is the stored procedure template, where you declare the
-name of the stored procedure and the IN, INOUT, and OUT arguments. 
+name of the stored procedure and the IN, INOUT, and OUT arguments. 
 
 You can also refer to the template in a external file on the file system
 or classpath such as:

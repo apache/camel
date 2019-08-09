@@ -40,8 +40,8 @@ See followings for each component usage:
 * xref:hazelcast-set-component.adoc[set]
 * xref:hazelcast-atomicvalue-component.adoc[atomic number]
 * xref:hazelcast-instance-component.adoc[cluster support (instance)]
-* xref:hazelcast-replicatedmap-component.adoc[replicatedmap] 
-* xref:hazelcast-ringbuffer-component.adoc[ringbuffer] 
+* xref:hazelcast-replicatedmap-component.adoc[replicatedmap] 
+* xref:hazelcast-ringbuffer-component.adoc[ringbuffer] 
 
 
 
@@ -121,7 +121,7 @@ to reference the service in the hazelcast endpoint.
 
 === Bundle A create an instance and publishes it as an OSGI service
 
- 
+ 
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------

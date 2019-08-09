@@ -8,10 +8,10 @@ REST style with verbs such as get, post, delete etc.
 
 == How it works
 
-The Rest DSL is a facade that builds xref:components::rest-component.adoc[Rest] endpoints as
+The Rest DSL is a facade that builds xref:components::rest-component.adoc[Rest] endpoints as
 consumers for Camel routes. The actual REST transport is leveraged by
 using Camel REST components such
-as xref:components::restlet-component.adoc[Restlet], xref:components::restlet-component.adoc[Spark-rest], and
+as xref:components::restlet-component.adoc[Restlet], xref:components::restlet-component.adoc[Spark-rest], and
 others that has native REST integration.
 
 == Components supporting Rest DSL
@@ -20,23 +20,23 @@ The following Camel components supports the Rest DSL. See the bottom of
 this page for how to integrate a component with the Rest DSL.
 
 * xref:components::rest-component.adoc[came-rest] *required* contains the base rest component needed by Rest DSL
-* xref:components::netty-http-component.adoc[camel-netty-http] (also
-supports Swagger Java)
-* xref:components::jetty-component.adoc[camel-jetty] (also
-supports Swagger Java)
-* xref:components::restlet-component.adoc[camel-restlet] (also
-supports Swagger Java)
-* xref:components::servlet-component.adoc[camel-servlet] (also
-supports Swagger Java)
-* xref:components::spark-rest-component.adoc[camel-spark-rest] (also
-supports Swagger Java from Camel 2.17 onwards)
-* xref:components::undertow-component.adoc[camel-undertow] (also
-supports Swagger Java from Camel 2.17 onwards)
+* xref:components::netty-http-component.adoc[camel-netty-http] (also
+supports Swagger Java)
+* xref:components::jetty-component.adoc[camel-jetty] (also
+supports Swagger Java)
+* xref:components::restlet-component.adoc[camel-restlet] (also
+supports Swagger Java)
+* xref:components::servlet-component.adoc[camel-servlet] (also
+supports Swagger Java)
+* xref:components::spark-rest-component.adoc[camel-spark-rest] (also
+supports Swagger Java from Camel 2.17 onwards)
+* xref:components::undertow-component.adoc[camel-undertow] (also
+supports Swagger Java from Camel 2.17 onwards)
 
 == Rest DSL with Java
 
 To use the Rest DSL in Java then just do as with regular Camel routes by
-extending the `RouteBuilder` and define the routes in the `configure`
+extending the `RouteBuilder` and define the routes in the `configure`
 method.
 
 A simple REST service can be define as follows, where we use rest() to
@@ -62,7 +62,7 @@ protected RouteBuilder createRouteBuilder() throws Exception {
 }
 ----
 
- 
+ 
 
 This defines a REST service with the following url mappings:
 
@@ -177,9 +177,9 @@ only. The example above can be defined as:
 
 *Available as of Camel 2.16*
 
-The Rest DSL supports the new .toD <toD> as dynamic
+The Rest DSL supports the new .toD <toD> as dynamic
 to in the rest-dsl. For example to do a request/reply
-over xref:components::jms-component.adoc[JMS] where the queue name is dynamic defined
+over xref:components::jms-component.adoc[JMS] where the queue name is dynamic defined
 
 [source,java]
 ----
@@ -200,21 +200,21 @@ over xref:components::jms-component.adoc[JMS] where the queue name is dynamic d
 <rest>
 ----
 
-See more details at Message Endpoint about
+See more details at Message Endpoint about
 the dynamic to, and what syntax it supports. By default it uses
-the xref:simple-language.adoc[Simple] language, but it has more power than so.
+the xref:simple-language.adoc[Simple] language, but it has more power than so.
 
 == Embedding Camel routes
 
-Each of the rest services becomes a Camel route, so in the first example
+Each of the rest services becomes a Camel route, so in the first example
 we have 2 x get and 1 x post REST service, which each become a Camel
 route. And we have 2 regular Camel routes, meaning we have 3 + 2 = 5
-routes in total. 
+routes in total. 
 
 There are two route modes with the Rest DSL
 
 * mini using a singular to
-* embedding a Camel route using route 
+* embedding a Camel route using route 
 
 The first example is using the former with a singular to. And that is
 why we end up with 3 + 2 = 5 total routes.
@@ -238,7 +238,7 @@ protected RouteBuilder createRouteBuilder() throws Exception {
 
 In the example above, we are embedding routes directly in the rest
 service using .route(). Notice we need to use .endRest() to tell Camel
-where the route ends, so we can _go back_ to the Rest DSL and continue
+where the route ends, so we can _go back_ to the Rest DSL and continue
 defining REST services.
 
 == Configuring route options
@@ -259,7 +259,7 @@ today.
 
 Each of the rest services becomes a Camel route, so in the first example
 we have 2 x get and 1 x post REST service, which each become a Camel
-route. This makes it _the same_ from Camel to manage and run these
+route. This makes it _the same_ from Camel to manage and run these
 services - as they are just Camel routes. This means any tooling and API
 today that deals with Camel routes, also work with the REST services.
 
@@ -268,12 +268,12 @@ metrics about the routes, such as number of message processed, and their
 performance statistics.
 
 There is also a Rest Registry JMX MBean that contains a registry of all
-REST services which has been defined. 
+REST services which has been defined. 
 
 == Binding to POJOs using
 
 The Rest DSL supports automatic binding json/xml contents to/from POJOs
-using Camels Data Format. By default the binding
+using Camels Data Format. By default the binding
 mode is off, meaning there is no automatic binding happening for
 incoming and outgoing messages.
 
@@ -313,15 +313,15 @@ to use the message body as-is as the output type. If that is the case,
 then set the dataFormatProperty option `mustBeJAXBElement` to `false`
 value.
 
-NOTE: From *Camel 2.16.3* onwards the binding from POJO to JSon/JAXB will only
-happen if the `content-type` header includes the
-word `json` or `xml` representatively. This allows you to specify a
+NOTE: From *Camel 2.16.3* onwards the binding from POJO to JSon/JAXB will only
+happen if the `content-type` header includes the
+word `json` or `xml` representatively. This allows you to specify a
 custom content-type if the message body should not attempt to be
 marshalled using the binding. For example if the message body is a
 custom binary payload etc.
 
 To use binding you must include the necessary data formats on the
-classpath, such as `camel-jaxb` and/or `camel-jackson`. And then enable
+classpath, such as `camel-jaxb` and/or `camel-jackson`. And then enable
 the binding mode. You can configure the binding mode globally on the
 rest configuration, and then override per rest service as well.
 
@@ -344,7 +344,7 @@ messages automatic, accordingly to the content type of the message. If
 the message is json, then json binding happens; and so if the message is
 xml then xml binding happens. The binding happens for incoming and reply
 messages. The table below summaries what binding occurs for incoming and
-reply messages. 
+reply messages. 
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |===
@@ -352,24 +352,24 @@ reply messages. 
 
 |XML |Incoming |auto,
 xml,
-json_xml |POJO
+json_xml |POJO
 
 |POJO |Outgoing |auto,
-xml, json_xml |XML
+xml, json_xml |XML
 
 |JSON |Incoming |auto,
 json,
-json_xml |POJO
+json_xml |POJO
 
 |POJO |Outgoing |auto,
 json,
-json_xml |JSON
+json_xml |JSON
 |===
- 
+ 
 When using binding you must also configure what POJO type to map to.
-This is mandatory for incoming messages, and optional for outgoing. 
+This is mandatory for incoming messages, and optional for outgoing. 
 
-For example to map from xml/json to a pojo class `UserPojo` you do this
+For example to map from xml/json to a pojo class `UserPojo` you do this
 in Java DSL as shown below:
 
 [source,java]
@@ -384,11 +384,11 @@ rest("/users/")
         .to("direct:newUser");
 ----
 
-Notice we use `type` to define the incoming type. We can optionally
+Notice we use `type` to define the incoming type. We can optionally
 define an outgoing type (which can be a good idea, to make it known from
 the DSL and also for tooling and JMX APIs to know both the incoming and
 outgoing types of the REST services.). To define the outgoing type, we
-use `outType` as shown below:
+use `outType` as shown below:
 
 [source,java]
 ----
@@ -417,7 +417,7 @@ rest("/users/")
         .to("direct:newUser");
 ----
 
-The `UserPojo` is just a plain pojo with getter/setter as shown:
+The `UserPojo` is just a plain pojo with getter/setter as shown:
 
 [source,java]
 ----
@@ -439,7 +439,7 @@ public class UserPojo {
 }
 ----
 
-The `UserPojo` only supports json, as XML requires to use JAXB
+The `UserPojo` only supports json, as XML requires to use JAXB
 annotations, so we can add those annotations if we want to support XML
 also
 
@@ -617,7 +617,7 @@ also configure these directly on the component.
 Camel components has many options you can set on endpoint level.
 * consumer - Is used to set any option on the consumer level. Some
 components has consumer options, which you can also configure from
-endpoint level by prefixing the option with "consumer." 
+endpoint level by prefixing the option with "consumer." 
 * data format - Is used to set any option on the data formats. For
 example to enable pretty print in the json data format.
 * cors headers - If cors is enabled, then custom CORS headers can be
@@ -627,7 +627,7 @@ header is set then that value takes precedence over the default value.
 You can set multiple options of the same level, so you can can for
 example configure 2 component options, and 3 endpoint options etc.
 
- 
+ 
 
 == Enabling or disabling Jackson JSON features
 
@@ -700,13 +700,13 @@ Access-Control-Request-Method, Access-Control-Request-Headers
 
 |Access-Control-Max-Age |3600
 |===
- 
+ 
 == Defining a custom error message as-is
 
 If you want to define custom error messages to be sent back to the
 client with a HTTP error code (eg such as 400, 404 etc.) then
-from *Camel 2.14.1* onwards you just set a header with the
-key `Exchange.HTTP_RESPONSE_CODE` to the error code (must be 300+) such
+from *Camel 2.14.1* onwards you just set a header with the
+key `Exchange.HTTP_RESPONSE_CODE` to the error code (must be 300+) such
 as 404. And then the message body with any reply message, and optionally
 set the content-type header as well. There is a little example shown
 below:
@@ -747,7 +747,7 @@ output pojo binding (eg would otherwise bind to CountryPojo).
 
 == Catching JsonParserException and returning a custom error message
 
-From *Camel 2.14.1* onwards you return a custom message as-is (see
+From *Camel 2.14.1* onwards you return a custom message as-is (see
 previous section). So we can leverage this with Camel error handler to
 catch JsonParserException, handle that exception and build our custom
 response message. For example to return a HTTP error code 400 with a
@@ -777,11 +777,11 @@ the verbose parameter below:
       .post("/neworder").to("direct:customerNewOrder");
 ----
 
-From *Camel 2.17* onwards then the default value is automatic set as
-header on the incoming Camel `Message`. So if the call
-the `/customers/id/orders` do not include a query parameter with
-key `verbose` then Camel will now include a header with key `verbose`
-and the value `false` because it was declared as the default value. This
+From *Camel 2.17* onwards then the default value is automatic set as
+header on the incoming Camel `Message`. So if the call
+the `/customers/id/orders` do not include a query parameter with
+key `verbose` then Camel will now include a header with key `verbose`
+and the value `false` because it was declared as the default value. This
 functionality is only applicable for query parameters.
 
 
@@ -812,8 +812,8 @@ restConfiguration().component("jetty").host("localhost")
 Any Apache Camel component can integrate with the Rest DSL if they can
 be used as a REST service (eg as a REST consumer in Camel lingo). To
 integrate with the Rest DSL, then the component should implement
-the `org.apache.camel.spi.RestConsumerFactory`. The Rest DSL will then
-invoke the `createConsumer` method when it setup the Camel routes from
+the `org.apache.camel.spi.RestConsumerFactory`. The Rest DSL will then
+invoke the `createConsumer` method when it setup the Camel routes from
 the defined DSL. The component should then implement logic to create a
 Camel consumer that exposes the REST services based on the given
 parameters, such as path, verb, and other options. For example see the
@@ -821,12 +821,12 @@ source code for camel-restlet, camel-spark-rest.
 
 == Swagger API
 
-The Rest DSL supports Swagger Java by
-the `camel-swagger-java` module. See more details at
- Swagger and the `camel-swagger-java` example
+The Rest DSL supports Swagger Java by
+the `camel-swagger-java` module. See more details at
+ Swagger and the `camel-swagger-java` example
 from the Apache Camel distribution.
 
-From *Camel 2.16* onwards you can define each parameter fine grained
+From *Camel 2.16* onwards you can define each parameter fine grained
 with details such as name, description, data type, parameter type and so
 on, using the <param>. For example to define the id path parameter you
 can do as shown below:

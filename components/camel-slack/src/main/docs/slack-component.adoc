@@ -3,10 +3,10 @@
 
 *Available as of Camel version 2.16*
 
-The Slack component allows you to connect to an instance
-of http://www.slack.com/[Slack] and delivers a message contained in the
+The Slack component allows you to connect to an instance
+of http://www.slack.com/[Slack] and delivers a message contained in the
 message body via a pre
-established https://api.slack.com/incoming-webhooks[Slack incoming
+established https://api.slack.com/incoming-webhooks[Slack incoming
 webhook].
 
 Maven users will need to add the following dependency to their `pom.xml`

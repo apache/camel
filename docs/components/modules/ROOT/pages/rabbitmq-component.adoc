@@ -338,7 +338,7 @@ the exchange failed, then the consumer is going to reject the message
 from the RabbitMQ broker. The value of this header controls this
 behavior. If the value is false (by default) then the message is
 discarded/dead-lettered. If the value is true, then the message is
-re-queued. 
+re-queued. 
 |===
 
 The following headers are used by the producer. If these are set on the

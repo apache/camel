@@ -119,7 +119,7 @@ follows:
 TIP: For a better experience some users set 8 GB when all projects are loaded and opened.
 
 [[Building-CloningtheGitRepository]]
-Cloning the Git Repository 
+Cloning the Git Repository 
 
 Either follow instructions about getting the latest
 source, or clone the Git repository with Eclipse by
@@ -253,7 +253,7 @@ tests. Ekstazi is a regression testing tool that can keep track of the
 test results and the changed classes so that unaffected tests can be
 skipped during the subsequent testing. For more details of Ekstazi,
 please refer to the Ekstazi page
-at http://www.ekstazi.org[http://www.ekstazi.org].
+at http://www.ekstazi.org[http://www.ekstazi.org].
 
 To use Ekstazi, you can run the tests with the maven profile ekstazi.
 

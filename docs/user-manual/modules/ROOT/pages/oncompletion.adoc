@@ -7,7 +7,7 @@ synchronization callbacks that are invoked when the
 Exchange is complete. The callback API is defined in
 `org.apache.camel.spi.Synchronization`. From *Camel 2.14* onwards we
 have an extended synchronization
-`org.apache.camel.spi.SynchronizationRouteAware` that have callbacks for
+`org.apache.camel.spi.SynchronizationRouteAware` that have callbacks for
 route events.
 
 *Getting the UnitOfWork*
@@ -29,7 +29,7 @@ failed
 route consumer writes response back to callee (if its InOut)
 * *Camel 2.14:*whether to run async or sync (use a thread pool or not)
 
-From *Camel 2.14* onwards the onCompletion has been modified to support
+From *Camel 2.14* onwards the onCompletion has been modified to support
 running the completion task in either synchronous or asynchronous mode
 (using a thread pool) and also whether to run before or after the route
 consumer is done. The reason is to give more flexibility. For example to
@@ -234,7 +234,7 @@ from("direct:start")
 *Available as of Camel 2.14*
 
 OnCompletion will from Camel 2.14 onwards not use thread pool by
-default. To use thread pool then either set a `executorService` or set
+default. To use thread pool then either set a `executorService` or set
 `parallelProcessing` to true.
 
 For example in Java DSL do
@@ -270,7 +270,7 @@ to be used, using the executorServiceRef option
       </onCompletion>
 --------------------------------------------------------------
 
- 
+ 
 
 [[OnCompletion-UsingonCompletiontorunbeforerouteconsumersendsbackresponsetocallee]]
 == Using onCompletion to run before route consumer sends back response to callee
@@ -292,7 +292,7 @@ allows the onCompletion to modify the Exchange, such as adding special
 headers, or to log the Exchange as a response logger etc.
 
 For example to always add a "created by" header you
-use `modeBeforeConsumer()` as shown below:
+use `modeBeforeConsumer()` as shown below:
 
 [source,java]
 ----------------------------------------------------
@@ -301,7 +301,7 @@ use `modeBeforeConsumer()` as shown below:
     .end()
 ----------------------------------------------------
 
- 
+ 
 
 And in XML DSL you set the mode attribute to BeforeConsumer:
 
@@ -314,7 +314,7 @@ And in XML DSL you set the mode attribute to BeforeConsumer:
       </onCompletion>
 ------------------------------------------
 
- 
+ 
 
 [[OnCompletion-SeeAlso]]
 == See Also

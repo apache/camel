@@ -3,16 +3,16 @@
 
 *Available as of Camel version 2.18*
 
-The Ehcache component enables you to perform caching operations using
+The Ehcache component enables you to perform caching operations using
 Ehcache 3 as the Cache Implementation.
 
 This component supports producer and event based consumer endpoints.
 
 The Cache consumer is an event based consumer and can be used to listen
-and respond to specific cache activities. 
+and respond to specific cache activities. 
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 
 [source,xml]
 ------------------------------------------------------------
@@ -32,7 +32,7 @@ ehcache://cacheName[?options]
 -----------------------------
 
 You can append query options to the URI in the following
-format, `?option=value&option=#beanRef&...`
+format, `?option=value&option=#beanRef&...`
 
 == Options
 
@@ -158,9 +158,9 @@ The component supports 26 options, which are listed below.
 
 
 
-=== Message Headers Camel 
+=== Message Headers Camel 
 
- 
+ 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
@@ -209,7 +209,7 @@ from("direct:in")
     .to("mock:out");
 ------------------------------------------------------------------------------------------------
 
- 
+ 
 
 == Ehcache based aggregation repository example:
 

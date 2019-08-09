@@ -12,14 +12,14 @@ endif::[]
 
 == Metrics Component
 
-The Metrics component allows to collect various metrics directly
+The Metrics component allows to collect various metrics directly
 from Camel routes. Supported metric types
-are xref:#MetricsComponent-counter[counter], xref:#MetricsComponent-histogram[histogram],
-xref:#MetricsComponent-meter[meter], xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge]. http://metrics.dropwizard.io[Metrics] provides
+are xref:#MetricsComponent-counter[counter], xref:#MetricsComponent-histogram[histogram],
+xref:#MetricsComponent-meter[meter], xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge]. http://metrics.dropwizard.io[Metrics] provides
 simple way to measure behaviour of application. Configurable
-reporting backend is enabling different integration options for
+reporting backend is enabling different integration options for
 collecting and visualizing statistics. The component also provides
-a `MetricsRoutePolicyFactory` which allows to expose route statistics
+a `MetricsRoutePolicyFactory` which allows to expose route statistics
 using Dropwizard Metrics, see bottom of page for details.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -190,7 +190,7 @@ class MyBean extends RouteBuilder {
 
 Each metric has type and name. Supported types are
 xref:#MetricsComponent-counter[counter],
-xref:#MetricsComponent-histogram[histogram], xref:#MetricsComponent-meter[meter],
+xref:#MetricsComponent-histogram[histogram], xref:#MetricsComponent-meter[meter],
 xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge].
 Metric name is simple string. If metric type is not provided then type meter is used by default.
 
@@ -228,13 +228,13 @@ metrics:counter:metricname[?options]
 [width="100%",options="header"]
 |=====================================================
 |Name |Default |Description
-|increment  |- |Long value to add to the counter
+|increment  |- |Long value to add to the counter
 |decrement |- |Long value to subtract from the counter
 |=====================================================
 
 If neither `increment` or `decrement` is defined then counter value will
 be incremented by one. If `increment` and `decrement` are both defined
-only increment operation is called. 
+only increment operation is called. 
 
 [source,java]
 ----
@@ -268,8 +268,8 @@ values specified in Metrics component URI.
 [width="100%",cols="10%,80%,10%",options="header",]
 |====================================================================
 |Name |Description |Expected type
-|CamelMetricsCounterIncrement  |Override increment value in URI |Long
-|CamelMetricsCounterDecrement  |Override decrement value in URI |Long
+|CamelMetricsCounterIncrement  |Override increment value in URI |Long
+|CamelMetricsCounterDecrement  |Override decrement value in URI |Long
 |====================================================================
 
 [source,java]
@@ -359,10 +359,10 @@ metrics:meter:metricname[?options]
 [width="100%",options="header"]
 |===================================
 |Name |Default |Description
-|mark  |- |Long value to use as mark
+|mark  |- |Long value to use as mark
 |===================================
 
-If `mark` is not set then `meter.mark()` is called without argument.
+If `mark` is not set then `meter.mark()` is called without argument.
 
 [source,java]
 ----
@@ -465,7 +465,7 @@ metrics:gauge:metricname[?options]
 [width="100%",options="header"]
 |=====================================================
 |Name |Default |Description
-|subject  |- |Any object to be observed by the gauge
+|subject  |- |Any object to be observed by the gauge
 |=====================================================
 
 If `subject` is not defined it's simply ignored, i.e. the gauge is not registered.
@@ -487,7 +487,7 @@ default one specified in a URI.
 [width="100%",cols="10%,80%,10%",options="header",]
 |====================================================================
 |Name |Description |Expected type
-|CamelMetricsGaugeSubject  |Override subject value in URI |Object
+|CamelMetricsGaugeSubject  |Override subject value in URI |Object
 |====================================================================
 
 [source,java]
@@ -501,16 +501,16 @@ from("direct:in")
 
 == MetricsRoutePolicyFactory
 
-This factory allows to add a RoutePolicy for each
+This factory allows to add a RoutePolicy for each
 route which exposes route utilization statistics using Dropwizard metrics.
 This factory can be used in Java and XML as the examples below
-demonstrates. 
+demonstrates. 
 
 NOTE: Instead of using the MetricsRoutePolicyFactory you can define a
 MetricsRoutePolicy per route you want to instrument, in case you only
 want to instrument a few selected routes.
 
-From Java you just add the factory to the `CamelContext` as shown below:
+From Java you just add the factory to the `CamelContext` as shown below:
 
 [source,java]
 ----
@@ -525,7 +525,7 @@ And from XML DSL you define a <bean> as follows:
   <bean id="metricsRoutePolicyFactory" class="org.apache.camel.component.metrics.routepolicy.MetricsRoutePolicyFactory"/>
 ----
 
-The `MetricsRoutePolicyFactory` and `MetricsRoutePolicy` supports the
+The `MetricsRoutePolicyFactory` and `MetricsRoutePolicy` supports the
 following options:
 
 [width="100%",options="header"]
@@ -544,7 +544,7 @@ want fine grained mbeans per statistics type.
 |prettyPrint |false |Whether to use pretty print when outputting
 statistics in json format
 
-|metricsRegistry |  |Allow to use a shared
+|metricsRegistry |  |Allow to use a shared
 `com.codahale.metrics.MetricRegistry`. If none is provided then Camel
 will create a shared instance used by the this CamelContext.
 
@@ -561,10 +561,10 @@ value. Where `###name###` is the name of the CamelContext. `###routeId###`
 is the name of the route. And `###type###` is the value of responses.
 |=======================================================================
 
- 
+ 
 
 From Java code you can get hold of
-the `com.codahale.metrics.MetricRegistry` from the
+the `com.codahale.metrics.MetricRegistry` from the
 `org.apache.camel.component.metrics.routepolicy.MetricsRegistryService`
 as shown below:
 
@@ -582,12 +582,12 @@ if (registryService != null) {
 *Available as of Camel 2.17*
 
 This factory allows to use metrics to
-capture Message History performance
+capture Message History performance
 statistics while routing messages. It works by using a metrics Timer for
-each node in all the routes. This factory can be used in Java and XML as
-the examples below demonstrates. 
+each node in all the routes. This factory can be used in Java and XML as
+the examples below demonstrates. 
 
-From Java you just set the factory to the `CamelContext` as shown below:
+From Java you just set the factory to the `CamelContext` as shown below:
 
 [source,java]
 ----
@@ -620,7 +620,7 @@ want fine grained mbeans per statistics type.
 |prettyPrint |false |Whether to use pretty print when outputting
 statistics in json format
 
-|metricsRegistry |  |Allow to use a shared
+|metricsRegistry |  |Allow to use a shared
 `com.codahale.metrics.MetricRegistry`. If none is provided then Camel
 will create a shared instance used by the this CamelContext.
 
@@ -650,8 +650,8 @@ MetricsMessageHistoryService service = context.hasService(MetricsMessageHistoryS
 String json = service.dumpStatisticsAsJson();
 ----
 
-And the JMX API the MBean is registered in the `type=services` tree
-with `name=MetricsMessageHistoryService`.
+And the JMX API the MBean is registered in the `type=services` tree
+with `name=MetricsMessageHistoryService`.
 
 == InstrumentedThreadPoolFactory
 

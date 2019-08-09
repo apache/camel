@@ -10,7 +10,7 @@ v2 messages] using the http://hl7api.sourceforge.net[HAPI library].
 This component supports the following:
 
 * HL7 MLLP codec for xref:mina-component.adoc[Mina]
-* HL7 MLLP codec for xref:netty-component.adoc[Netty]
+* HL7 MLLP codec for xref:netty-component.adoc[Netty]
 * Type Converter from/to HAPI and String
 * HL7 DataFormat using the HAPI library
 * Even more ease-of-use as it's integrated well with the
@@ -35,9 +35,9 @@ HL7 is often used with the HL7 MLLP protocol, which is a text based TCP
 socket based protocol. This component ships with a Mina and Netty4 Codec
 that conforms to the MLLP protocol so you can easily expose an HL7
 listener accepting HL7 requests over the TCP transport layer. To expose
-a HL7 listener service, the xref:mina-component.adoc[camel-mina] or
+a HL7 listener service, the xref:mina-component.adoc[camel-mina] or
 xref:netty-component.adoc[camel-netty] component is used with the
-`HL7MLLPCodec` (mina) or `HL7MLLPNettyDecoder/HL7MLLPNettyEncoder`
+`HL7MLLPCodec` (mina) or `HL7MLLPNettyDecoder/HL7MLLPNettyEncoder`
 (Netty).
 
 HL7 MLLP codec can be configured as follows:
@@ -167,9 +167,9 @@ the HAPI HL7 model objects, but you can use the plain String objects if
 you prefer, for instance if you wish to parse the data yourself.
 
 You can also let both the Mina and Netty codecs use a
-plain `byte[]` as its data format by setting the `produceString`
+plain `byte[]` as its data format by setting the `produceString`
 property to false. The Type Converter is also capable of converting
-the `byte[]` to/from HAPI HL7 model objects.
+the `byte[]` to/from HAPI HL7 model objects.
 
 == HL7v2 Model using HAPI
 
@@ -306,13 +306,13 @@ separators anymore by converting `\n` to `\r`. If you  +
 === Charset
 
 Both `marshal and unmarshal` evaluate the charset
-provided in the field `MSH-18`. If this field is empty, by default the
+provided in the field `MSH-18`. If this field is empty, by default the
 charset contained in the corresponding Camel charset property/header is
 assumed. You can even change this default behavior by overriding the
 `guessCharsetName` method when inheriting from the `HL7DataFormat`
 class.
 
- 
+ 
 
 There is a shorthand syntax in Camel for well-known data formats that
 are commonly used. Then you don't need to create an instance of the `HL7DataFormat`
@@ -367,7 +367,7 @@ that was used to parse the message`
 |`CamelHL7Charset` |`MSH-18` |`UNICODE UTF-8`
 |===
 
-All headers except `CamelHL7Context `are `String` types. If a header
+All headers except `CamelHL7Context `are `String` types. If a header
 value is missing, its value is `null`.
 
 == Dependencies

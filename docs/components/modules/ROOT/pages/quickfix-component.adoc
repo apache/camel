@@ -42,7 +42,7 @@ the sessionID is:
 The optional *lazyCreateEngine* parameter allows to
 create QuickFIX/J engine on demand. Value *true* means the engine is
 started when first message is send or there's consumer configured in
-route definition. When **false** value is used, the engine is started at
+route definition. When **false** value is used, the engine is started at
 the endpoint creation. When this parameter is missing, the value of
 component's property *lazyCreateEngines* is being used.
 

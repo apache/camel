@@ -6,7 +6,7 @@
 The purpose of the Bean Language is to be able to implement an
 xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] using
 a simple method on a bean. The bean name is resolved using a xref:manual::registry.adoc[Registry], such as the
-xref:manual::spring.adoc[Spring] *`ApplicationContext`*, then a method is
+xref:manual::spring.adoc[Spring] *`ApplicationContext`*, then a method is
 invoked to evaluate the xref:manual::expression.adoc[Expression] or
 xref:manual::predicate.adoc[Predicate]. If no method name is provided then one
 is chosen using the rules for xref:manual::bean-binding.adoc[Bean Binding];
@@ -73,7 +73,7 @@ deprecated. Use the *`ref`* attribute instead.
 == Writing the Expression Bean
 
 The bean in the above examples is just any old Java Bean with a method
-called *`isGoldCustomer()`* that returns some object that is easily
+called *`isGoldCustomer()`* that returns some object that is easily
 converted to a *`boolean`* value in this case, as its used as a
 predicate.
 

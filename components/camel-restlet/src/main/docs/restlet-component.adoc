@@ -208,7 +208,7 @@ application/processor. The value is the `content-type` of the response
 message. If this header is not set, the content type is based on the
 object type of the OUT message body. If the
 Content-Type header is specified in the Camel IN message, the value of
-the header determine the content type for the Restlet request message.  
+the header determine the content type for the Restlet request message.  
 Otherwise, it is defaulted to "application/x-www-form-urlencoded'.
 
 |`CamelAcceptContentType` |`String` |The HTTP Accept request header.

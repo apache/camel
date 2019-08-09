@@ -55,7 +55,7 @@ mvn archetype:generate
 This runs Maven interactively - just type `camel` and press <Enter> to
 filter for Camel-related archetypes. +
  From the list, pick the number for `camel-archetype-scala`, then fill
-in the remaining details (such as the Camel version, _et cetera_).
+in the remaining details (such as the Camel version, _et cetera_).
 
 The generated project has a "readme" file with more instructions, and is
 ready to compile and run from Maven using:
