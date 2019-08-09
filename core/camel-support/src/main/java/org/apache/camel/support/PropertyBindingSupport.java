@@ -445,7 +445,9 @@ public final class PropertyBindingSupport {
         boolean rc = false;
 
         // must set reference parameters first before the other bindings
+        int size = properties.size();
         setReferenceProperties(camelContext, target, properties);
+        rc = properties.size() != size;
 
         String uOptionPrefix = "";
         if (ignoreCase && isNotEmpty(optionPrefix)) {
