@@ -39,7 +39,7 @@ import static org.apache.camel.component.telegram.util.TelegramMessageHelper.pop
 /**
  * The telegram component provides access to the <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type/authorizationToken", label = "chat")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type", label = "chat")
 public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramEndpoint.class);
 

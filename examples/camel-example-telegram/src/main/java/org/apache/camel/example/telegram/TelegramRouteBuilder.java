@@ -19,8 +19,10 @@ package org.apache.camel.example.telegram;
 import org.apache.camel.builder.RouteBuilder;
 
 public class TelegramRouteBuilder extends RouteBuilder {
+
     @Override
     public void configure() {
-        from("direct:start").to("telegram:bots/" + Application.AUTHORIZATION_TOKEN + "?chatId=" + Application.CHAT_ID);
+        from("direct:start")
+                .toF("telegram:bots/?authorizationToken=%s&chatId=%s", Application.AUTHORIZATION_TOKEN, Application.CHAT_ID);
     }
 }

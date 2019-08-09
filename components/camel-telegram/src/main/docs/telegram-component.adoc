@@ -63,23 +63,22 @@ The Telegram component supports 3 options, which are listed below.
 The Telegram endpoint is configured using URI syntax:
 
 ----
-telegram:type/authorizationToken
+telegram:type
 ----
 
 with the following path and query parameters:
 
-=== Path Parameters (2 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *type* | *Required* The endpoint type. Currently, only the 'bots' type is supported. |  | String
-| *authorizationToken* | *Required* The authorization token for using the bot (ask the BotFather) |  | String
 |===
 
 
-=== Query Parameters (26 parameters):
+=== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -111,6 +110,7 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 | *proxyHost* (proxy) | HTTP proxy host which could be used when sending out the message. |  | String
 | *proxyPort* (proxy) | HTTP proxy port which could be used when sending out the message. |  | Integer
+| *authorizationToken* (security) | *Required* The authorization token for using the bot (ask the BotFather) |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START

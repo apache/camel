@@ -66,7 +66,7 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:message")
-                        .to("telegram:bots/mock-token?chatId=1234");
+                        .to("telegram:bots?authorizationToken=mock-token&chatId=1234");
             }
         };
     }

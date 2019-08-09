@@ -24,6 +24,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * A Camel meta-component for exposing other components through webhooks.
@@ -51,8 +52,8 @@ public class WebhookComponent extends DefaultComponent {
         configuration.setRestConfiguration(restConfig);
 
         // we need to apply the params here
-        if (parameters != null && parameters.size() > 0) {
-            delegateUri = delegateUri + "?" + uri.substring(uri.indexOf('?') + 1);
+        if (parameters != null && !parameters.isEmpty()) {
+            delegateUri = delegateUri + "?" + URISupport.createQueryString(parameters);
         }
         configuration.setEndpointUri(delegateUri);
 

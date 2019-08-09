@@ -77,7 +77,7 @@ public class TelegramProducerChatIdResolutionTest extends TelegramTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:telegram").to("telegram:bots/mock-token?chatId=my-id");
+                from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
             }
         };
     }
