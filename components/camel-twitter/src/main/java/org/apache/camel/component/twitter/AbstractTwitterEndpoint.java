@@ -45,9 +45,6 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (properties.getType() == EndpointType.EVENT && properties.getTwitterStream() != null) {
-            properties.getTwitterStream().shutdown();
-        }
     }
 
     @Override
@@ -57,7 +54,7 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
 
     @Override
     @ManagedAttribute
-public TwitterConfiguration getProperties() {
+    public TwitterConfiguration getProperties() {
         return properties;
     }
 

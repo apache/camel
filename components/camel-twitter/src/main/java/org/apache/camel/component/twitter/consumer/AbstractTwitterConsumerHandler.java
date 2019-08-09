@@ -48,8 +48,8 @@ public abstract class AbstractTwitterConsumerHandler {
 
     /**
      * Called by polling consumers during each poll.  It needs to be separate
-     * from directConsume() since, as an example, streaming API polling allows
-     * tweets to build up between polls.
+     * from directConsume() since, as an example, to allow tweets to build
+     * up between polls.
      */
     public abstract List<Exchange> pollConsume() throws TwitterException;
 
