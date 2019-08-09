@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -59,8 +60,6 @@ public final class PropertyBindingSupport {
      * To use a fluent builder style to configure this property binding support.
      */
     public static class Builder {
-
-        // TODO: add fluent for camel context, target, properties map, property key/value
 
         private CamelContext camelContext;
         private Object target;
@@ -253,10 +252,10 @@ public final class PropertyBindingSupport {
             org.apache.camel.util.ObjectHelper.notNull(key, "key");
             org.apache.camel.util.ObjectHelper.notNull(value, "value");
 
-            Map<String, Object> properties = Collections.singletonMap(key, value);
+            Map<String, Object> properties = new HashMap<>(1);
+            properties.put(key, value);
 
-            // do not remove parameters as this is a single property
-            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, false, mandatory,
+            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, removeParameters, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
         }
 
