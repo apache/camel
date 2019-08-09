@@ -219,7 +219,7 @@ the `CamelGrapeCommand` header set to `GrapeCommand.listPatches`:
 
 [source,java]
 ----------------------------------------------------------------------------------------
-      from("netty-http4:http://0.0.0.0:80/patches").
+      from("netty-http:http://0.0.0.0:80/patches").
         setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.listPatches)).
         to("grape:list"); 
 ----------------------------------------------------------------------------------------
@@ -240,7 +240,7 @@ command:
 
 [source,java]
 -----------------------------------------------------------------------------------------
-      from("netty-http4:http://0.0.0.0:80/patches").
+      from("netty-http:http://0.0.0.0:80/patches").
         setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.clearPatches)).
         setBody().constant("Installed patches have been deleted."); 
 -----------------------------------------------------------------------------------------
