@@ -138,7 +138,7 @@ public class URISupportTest {
     }
 
     @Test
-    public void testParseParametersURLEncodeddValue() throws Exception {
+    public void testParseParametersURLEncodedValue() throws Exception {
         String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren+Hansen");
         URI uri = new URI(out);
 
@@ -149,13 +149,13 @@ public class URISupportTest {
     }
 
     @Test
-    public void testNormalizeUriWhereParamererIsFaulty() throws Exception {
+    public void testNormalizeUriWhereParameterIsFaulty() throws Exception {
         String out = URISupport.normalizeUri("stream:uri?file:///d:/temp/data/log/quickfix.log&scanStream=true");
         assertNotNull(out);
     }
 
     @Test
-    public void testCreateRemaingURI() throws Exception {
+    public void testCreateRemainingURI() throws Exception {
         URI original = new URI("http://camel.apache.org");
         Map<String, Object> param = new HashMap<>();
         param.put("foo", "123");
@@ -243,6 +243,12 @@ public class URISupportTest {
     public void testSanitizeAccessToken() throws Exception {
         String out1 = URISupport.sanitizeUri("google-sheets-stream://spreadsheets?accessToken=MY_TOKEN&clientId=foo&clientSecret=MY_SECRET");
         assertEquals("google-sheets-stream://spreadsheets?accessToken=xxxxxx&clientId=foo&clientSecret=xxxxxx", out1);
+    }
+
+    @Test
+    public void testSanitizeAuthorizationToken() throws Exception {
+        String out1 = URISupport.sanitizeUri("telegram:bots?authorizationToken=1234567890:AABBCOhEaqprrk6qqQtsSPFYS3Njgv2ljW2");
+        assertEquals("telegram:bots?authorizationToken=xxxxxx", out1);
     }
 
     @Test

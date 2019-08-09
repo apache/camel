@@ -64,7 +64,7 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
                         .host("localhost")
                         .port(port);
 
-                from("webhook:telegram:bots/mock-token?webhookAutoRegister=false")
+                from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false")
                         .id("webhook")
                         .convertBodyTo(String.class)
                         .to("mock:endpoint");

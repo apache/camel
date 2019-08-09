@@ -24,9 +24,6 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * The Camel component for Telegram.
- */
 @Component("telegram")
 public class TelegramComponent extends DefaultComponent {
 
@@ -39,9 +36,21 @@ public class TelegramComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         TelegramConfiguration configuration = new TelegramConfiguration();
+
+        // ignore trailing slash
+        if (remaining.endsWith("/")) {
+            remaining = remaining.substring(0, remaining.length() - 1);
+        }
+
+        configuration.setType(remaining);
+
         setProperties(configuration, parameters);
-        if (ObjectHelper.isNotEmpty(remaining)) {
-            configuration.updatePathConfig(remaining, this.getAuthorizationToken());
+        if (configuration.getAuthorizationToken() == null) {
+            configuration.setAuthorizationToken(authorizationToken);
+        }
+
+        if (configuration.getAuthorizationToken() == null) {
+            throw new IllegalArgumentException("AuthorizationToken must be configured on either component or endpoint for telegram: " + uri);
         }
 
         if (TelegramConfiguration.ENDPOINT_TYPE_BOTS.equals(configuration.getType())) {

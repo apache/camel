@@ -65,7 +65,7 @@ public class TelegramConsumerMultipleTest extends TelegramTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("telegram:bots/mock-token")
+                from("telegram:bots?authorizationToken=mock-token")
                         .convertBodyTo(String.class)
                         .to("mock:telegram");
             }

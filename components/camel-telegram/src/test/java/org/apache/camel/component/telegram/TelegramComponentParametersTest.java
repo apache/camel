@@ -31,10 +31,10 @@ public class TelegramComponentParametersTest extends TelegramTestSupport {
         TelegramEndpoint ep1 = (TelegramEndpoint) component.createEndpoint("telegram:bots");
         assertEquals("DEFAULT", ep1.getConfiguration().getAuthorizationToken());
 
-        TelegramEndpoint ep2 = (TelegramEndpoint) component.createEndpoint("telegram:bots/CUSTOM");
+        TelegramEndpoint ep2 = (TelegramEndpoint) component.createEndpoint("telegram:bots?authorizationToken=CUSTOM");
         assertEquals("CUSTOM", ep2.getConfiguration().getAuthorizationToken());
 
-        TelegramEndpoint ep3 = (TelegramEndpoint) component.createEndpoint("telegram:bots/ANOTHER?chatId=123");
+        TelegramEndpoint ep3 = (TelegramEndpoint) component.createEndpoint("telegram:bots?authorizationToken=ANOTHER&chatId=123");
         assertEquals("ANOTHER", ep3.getConfiguration().getAuthorizationToken());
     }
 

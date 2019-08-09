@@ -105,10 +105,10 @@ public class TelegramChatBotTest extends TelegramTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("telegram:bots/mock-token")
+                from("telegram:bots?authorizationToken=mock-token")
                         .bean(TelegramChatBotTest.this, "chatBotProcess1")
                         .bean(TelegramChatBotTest.this, "chatBotProcess2")
-                        .to("telegram:bots/mock-token");
+                        .to("telegram:bots?authorizationToken=mock-token");
             }
         };
     }

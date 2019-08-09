@@ -26,7 +26,6 @@ import org.junit.Test;
  */
 public class TelegramConfigurationTest extends TelegramTestSupport {
 
-
     @Test
     public void testChatBotResult() throws Exception {
         TelegramEndpoint endpoint = (TelegramEndpoint) context().getEndpoints().stream().filter(e -> e instanceof TelegramEndpoint).findAny().get();
@@ -50,7 +49,7 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
             public void configure() throws Exception {
 
                 from("direct:telegram")
-                        .to("telegram:bots/mock-token?chatId=12345&delay=2000&timeout=10&limit=60&proxyHost=127.0.0.1&proxyPort=1234");
+                        .to("telegram:bots/?authorizationToken=mock-token&chatId=12345&delay=2000&timeout=10&limit=60&proxyHost=127.0.0.1&proxyPort=1234");
             }
         };
     }

@@ -545,6 +545,19 @@ public interface TelegramEndpointBuilderFactory {
             setProperty("proxyPort", proxyPort);
             return this;
         }
+        /**
+         * The authorization token for using the bot (ask the BotFather).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
+         */
+        default TelegramEndpointConsumerBuilder authorizationToken(
+                String authorizationToken) {
+            setProperty("authorizationToken", authorizationToken);
+            return this;
+        }
     }
 
     /**
@@ -798,6 +811,19 @@ public interface TelegramEndpointBuilderFactory {
             setProperty("proxyPort", proxyPort);
             return this;
         }
+        /**
+         * The authorization token for using the bot (ask the BotFather).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
+         */
+        default TelegramEndpointProducerBuilder authorizationToken(
+                String authorizationToken) {
+            setProperty("authorizationToken", authorizationToken);
+            return this;
+        }
     }
 
     /**
@@ -906,6 +932,19 @@ public interface TelegramEndpointBuilderFactory {
             setProperty("proxyPort", proxyPort);
             return this;
         }
+        /**
+         * The authorization token for using the bot (ask the BotFather).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
+         */
+        default TelegramEndpointBuilder authorizationToken(
+                String authorizationToken) {
+            setProperty("authorizationToken", authorizationToken);
+            return this;
+        }
     }
 
     /**
@@ -976,14 +1015,11 @@ public interface TelegramEndpointBuilderFactory {
      * Available as of version: 2.18
      * Maven coordinates: org.apache.camel:camel-telegram
      * 
-     * Syntax: <code>telegram:type/authorizationToken</code>
+     * Syntax: <code>telegram:type</code>
      * 
      * Path parameter: type (required)
      * The endpoint type. Currently, only the 'bots' type is supported.
      * The value can be one of: bots
-     * 
-     * Path parameter: authorizationToken (required)
-     * The authorization token for using the bot (ask the BotFather)
      */
     default TelegramEndpointBuilder telegram(String path) {
         class TelegramEndpointBuilderImpl extends AbstractEndpointBuilder implements TelegramEndpointBuilder, AdvancedTelegramEndpointBuilder {
