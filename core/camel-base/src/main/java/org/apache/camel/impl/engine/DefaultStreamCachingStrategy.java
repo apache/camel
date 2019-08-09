@@ -22,6 +22,7 @@ import java.lang.management.MemoryMXBean;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -222,15 +223,32 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     }
 
     protected String resolveSpoolDirectory(String path) {
-        String name = camelContext.getManagementNameStrategy().resolveManagementName(path, camelContext.getName(), false);
-        if (name != null) {
-            name = customResolveManagementName(name);
+        if (camelContext.getManagementNameStrategy() != null) {
+            String name = camelContext.getManagementNameStrategy().resolveManagementName(path, camelContext.getName(), false);
+            if (name != null) {
+                name = customResolveManagementName(name);
+            }
+            // and then check again with invalid check to ensure all ## is resolved
+            if (name != null) {
+                name = camelContext.getManagementNameStrategy().resolveManagementName(name, camelContext.getName(), true);
+            }
+            return name;
+        } else {
+            return defaultManagementName(path);
         }
-        // and then check again with invalid check to ensure all ## is resolved
-        if (name != null) {
-            name = camelContext.getManagementNameStrategy().resolveManagementName(name, camelContext.getName(), true);
-        }
-        return name;
+    }
+
+    protected String defaultManagementName(String path) {
+        // must quote the names to have it work as literal replacement
+        String name = Matcher.quoteReplacement(camelContext.getName());
+
+        // replace tokens
+        String answer = path;
+        answer = answer.replaceFirst("#camelId#", name);
+        answer = answer.replaceFirst("#name#", name);
+        // replace custom
+        answer = customResolveManagementName(answer);
+        return answer;
     }
 
     protected String customResolveManagementName(String pattern) {
