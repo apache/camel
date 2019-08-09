@@ -429,10 +429,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (!ObjectHelper.isEmpty(uriTemplate)) {
             url += "/" + uriTemplate;
         }
-        
+
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration("http", false);
+            config = camelContext.getRestConfiguration("http", true);
         }
 
         Map<String, Object> map = new HashMap<>();

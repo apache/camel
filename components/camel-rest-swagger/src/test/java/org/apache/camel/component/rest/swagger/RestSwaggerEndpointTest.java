@@ -137,39 +137,39 @@ public class RestSwaggerEndpointTest {
 
         component.setComponentName("xyz");
         assertThat(endpoint.determineEndpointParameters(swagger, operation))
-            .containsOnly(entry("host", "http://petstore.swagger.io"), entry("componentName", "xyz"));
+            .containsOnly(entry("host", "http://petstore.swagger.io"), entry("producerComponentName", "xyz"));
 
         swagger.consumes("application/json").produces("application/xml");
         assertThat(endpoint.determineEndpointParameters(swagger, operation)).containsOnly(
-            entry("host", "http://petstore.swagger.io"), entry("componentName", "xyz"),
+            entry("host", "http://petstore.swagger.io"), entry("producerComponentName", "xyz"),
             entry("consumes", "application/xml"), entry("produces", "application/json"));
 
         component.setProduces("application/json");
         component.setConsumes("application/atom+xml");
         assertThat(endpoint.determineEndpointParameters(swagger, operation)).containsOnly(
-            entry("host", "http://petstore.swagger.io"), entry("componentName", "xyz"),
+            entry("host", "http://petstore.swagger.io"), entry("producerComponentName", "xyz"),
             entry("consumes", "application/atom+xml"), entry("produces", "application/json"));
 
         endpoint.setProduces("application/atom+xml");
         endpoint.setConsumes("application/json");
         assertThat(endpoint.determineEndpointParameters(swagger, operation)).containsOnly(
-            entry("host", "http://petstore.swagger.io"), entry("componentName", "xyz"),
+            entry("host", "http://petstore.swagger.io"), entry("producerComponentName", "xyz"),
             entry("consumes", "application/json"), entry("produces", "application/atom+xml"));
 
         endpoint.setComponentName("zyx");
         assertThat(endpoint.determineEndpointParameters(swagger, operation)).containsOnly(
-            entry("host", "http://petstore.swagger.io"), entry("componentName", "zyx"),
+            entry("host", "http://petstore.swagger.io"), entry("producerComponentName", "zyx"),
             entry("consumes", "application/json"), entry("produces", "application/atom+xml"));
 
         operation.addParameter(new QueryParameter().name("q").required(true));
         assertThat(endpoint.determineEndpointParameters(swagger, operation)).containsOnly(
-            entry("host", "http://petstore.swagger.io"), entry("componentName", "zyx"),
+            entry("host", "http://petstore.swagger.io"), entry("producerComponentName", "zyx"),
             entry("consumes", "application/json"), entry("produces", "application/atom+xml"),
             entry("queryParameters", "q={q}"));
 
         operation.addParameter(new QueryParameter().name("o"));
         assertThat(endpoint.determineEndpointParameters(swagger, operation)).containsOnly(
-            entry("host", "http://petstore.swagger.io"), entry("componentName", "zyx"),
+            entry("host", "http://petstore.swagger.io"), entry("producerComponentName", "zyx"),
             entry("consumes", "application/json"), entry("produces", "application/atom+xml"),
             entry("queryParameters", "q={q}&o={o?}"));
     }
