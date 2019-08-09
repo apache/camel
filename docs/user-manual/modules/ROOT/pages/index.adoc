@@ -410,7 +410,6 @@ camel routes without them knowing
 ** xref:components::twilio-component.adoc[Twilio]
 ** xref:components::twitter-directmessage-component.adoc[Twitter Direct Message]
 ** xref:components::twitter-search-component.adoc[Twitter Search]
-** xref:components::twitter-streaming-component.adoc[Twitter Streaming]
 ** xref:components::twitter-timeline-component.adoc[Twitter Timeline]
 ** xref:components::undertow-component.adoc[Undertow]
 ** xref:components::velocity-component.adoc[Velocity]
