@@ -33,7 +33,7 @@ public class TelegramConfiguration {
     @Metadata(required = true)
     private String type;
 
-    @UriPath(description = "The authorization token for using the bot (ask the BotFather)", label = "security")
+    @UriPath(description = "The authorization token for using the bot (ask the BotFather)", label = "security", secret = true)
     @Metadata(required = true)
     private String authorizationToken;
 
