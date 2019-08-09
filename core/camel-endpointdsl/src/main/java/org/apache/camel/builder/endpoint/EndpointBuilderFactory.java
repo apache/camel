@@ -301,7 +301,6 @@ public interface EndpointBuilderFactory extends
         TwilioEndpointBuilderFactory,
         TwitterDirectMessageEndpointBuilderFactory,
         TwitterSearchEndpointBuilderFactory,
-        TwitterStreamingEndpointBuilderFactory,
         TwitterTimelineEndpointBuilderFactory,
         UndertowEndpointBuilderFactory,
         ValidatorEndpointBuilderFactory,

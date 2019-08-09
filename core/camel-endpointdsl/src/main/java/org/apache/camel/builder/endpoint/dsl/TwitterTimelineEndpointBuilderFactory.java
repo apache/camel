@@ -122,7 +122,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return this;
         }
         /**
-         * Endpoint type to use. Only streaming supports event type.
+         * Endpoint type to use.
          * 
          * The option is a:
          * <code>org.apache.camel.component.twitter.data.EndpointType</code>
@@ -135,7 +135,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return this;
         }
         /**
-         * Endpoint type to use. Only streaming supports event type.
+         * Endpoint type to use.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.twitter.data.EndpointType</code>
@@ -257,8 +257,8 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return this;
         }
         /**
-         * To filter by user ids for streaming/filter. Multiple values can be
-         * separated by comma.
+         * To filter by user ids for filter. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -771,9 +771,9 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return (TwitterTimelineEndpointConsumerBuilder) this;
         }
         /**
-         * Used by the non-stream geography search, to search by radius using
-         * the configured metrics. The unit can either be mi for miles, or km
-         * for kilometers. You need to configure all the following options:
+         * Used by the geography search, to search by radius using the
+         * configured metrics. The unit can either be mi for miles, or km for
+         * kilometers. You need to configure all the following options:
          * longitude, latitude, radius, and distanceMetric.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -869,9 +869,9 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by latitude. You
-         * need to configure all the following options: longitude, latitude,
-         * radius, and distanceMetric.
+         * Used by the geography search to search by latitude. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
@@ -883,9 +883,9 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by latitude. You
-         * need to configure all the following options: longitude, latitude,
-         * radius, and distanceMetric.
+         * Used by the geography search to search by latitude. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
@@ -897,9 +897,9 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return this;
         }
         /**
-         * Bounding boxes, created by pairs of lat/lons. Can be used for
-         * streaming/filter. A pair is defined as lat,lon. And multiple paris
-         * can be separated by semi colon.
+         * Bounding boxes, created by pairs of lat/lons. Can be used for filter.
+         * A pair is defined as lat,lon. And multiple paris can be separated by
+         * semi colon.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -911,9 +911,9 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by longitude. You
-         * need to configure all the following options: longitude, latitude,
-         * radius, and distanceMetric.
+         * Used by the geography search to search by longitude. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
@@ -925,9 +925,9 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by longitude. You
-         * need to configure all the following options: longitude, latitude,
-         * radius, and distanceMetric.
+         * Used by the geography search to search by longitude. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
@@ -971,9 +971,9 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by radius. You need
-         * to configure all the following options: longitude, latitude, radius,
-         * and distanceMetric.
+         * Used by the geography search to search by radius. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
@@ -985,9 +985,9 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by radius. You need
-         * to configure all the following options: longitude, latitude, radius,
-         * and distanceMetric.
+         * Used by the geography search to search by radius. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
@@ -996,31 +996,6 @@ public interface TwitterTimelineEndpointBuilderFactory {
         default AdvancedTwitterTimelineEndpointConsumerBuilder radius(
                 String radius) {
             setProperty("radius", radius);
-            return this;
-        }
-        /**
-         * To use a custom instance of TwitterStream.
-         * 
-         * The option is a: <code>twitter4j.TwitterStream</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedTwitterTimelineEndpointConsumerBuilder twitterStream(
-                Object twitterStream) {
-            setProperty("twitterStream", twitterStream);
-            return this;
-        }
-        /**
-         * To use a custom instance of TwitterStream.
-         * 
-         * The option will be converted to a
-         * <code>twitter4j.TwitterStream</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedTwitterTimelineEndpointConsumerBuilder twitterStream(
-                String twitterStream) {
-            setProperty("twitterStream", twitterStream);
             return this;
         }
         /**
@@ -1528,8 +1503,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
      */
     enum EndpointType {
         POLLING,
-        DIRECT,
-        EVENT;
+        DIRECT;
     }
     /**
      * Twitter Timeline (camel-twitter)

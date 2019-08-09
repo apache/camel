@@ -114,6 +114,8 @@ The `camel-zookeeper` has its route policy functionality removed, instead use `Z
 
 The `camel-jetty` component no longer supports producer (eg to) which has been removed, instead use `camel-http4` component instead.
 
+The `twitter-streaming` component has been removed as it relied on the deprecated Twitter Streaming API and is no longer functional.
+
 ### Renamed components
 
 The `test` component has been renamed to `dataset-test` and moved out of `camel-core` into `camel-dataset` JAR.
