@@ -47,6 +47,39 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         startCamelContext();
     }
 
+    @Test
+    public void testConsumerQueryWithExpand() throws Exception {
+        int expectedMsgCount = 1;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-query");
+        mockEndpoint.expectedMinimumMessageCount(expectedMsgCount);
+
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                from("olingo4://read/" + PEOPLE + "?"
+                        + "$filter=LastName eq 'Whyte'&$expand=Trips")
+                    .to("mock:consumer-query");
+            };
+        };
+        addRouteAndStartContext(builder);
+
+        mockEndpoint.assertIsSatisfied();
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+
+            if (i == 0) {
+                //
+                // First polled messages contained all the entities
+                //
+                assertTrue(body instanceof ClientEntity);
+                ClientEntity e = (ClientEntity) body;
+                ClientProperty nameProp = e.getProperty("UserName");
+                assertNotNull(nameProp);
+                assertEquals("russellwhyte", nameProp.getValue().toString());
+            }
+        }
+    }
+
     /**
      * Read entity set of the People object
      * and filter already seen items on subsequent exchanges
@@ -96,8 +129,66 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         }
     }
 
+    /**
+     * Read entity set of the People object
+     * and filter already seen items on subsequent exchanges
+     * Use a delay since the mock endpoint does not always get
+     * the correct number of exchanges before being satisfied.
+     *
+     * Note:
+     * - consumer.splitResults is set to false since this ensures the first returned message
+     *   contains all the results.
+     * - consumer.sendEmptyMessageWhenIdle is set to false so only 1 message should
+     *   even be returned.
+     */
     @Test
-    public void testConsumerReadFilterAlreadySeenWithPredicateAndSplitResults() throws Exception {
+    public void testConsumerReadFilterAlreadySeenNoEmptyMsgs() throws Exception {
+        int expectedEntities = 20;
+        int expectedMsgCount = 1;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-alreadyseen");
+        //
+        // Add 1 to count since we want to wait for full result time
+        // before asserting that only 1 message has been delivered
+        //
+        mockEndpoint.expectedMinimumMessageCount(expectedMsgCount + 1);
+        mockEndpoint.setResultWaitTime(6000L);
+
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                from("olingo4://read/" + PEOPLE + "?consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&consumer.splitResult=false&filterAlreadySeen=true")
+                    .to("mock:consumer-alreadyseen");
+            };
+        };
+        addRouteAndStartContext(builder);
+
+        //
+        // Want to wait for entire result time & there should
+        // be exactly 1 exchange transmitted to the endpoint
+        //
+        mockEndpoint.assertIsNotSatisfied();
+
+        // Only 1 exchange so this is good!
+        assertEquals(1, mockEndpoint.getExchanges().size());
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+
+        //
+        // Only polled message contains all the entities
+        //
+        assertTrue(body instanceof ClientEntitySet);
+        ClientEntitySet set = (ClientEntitySet) body;
+        assertEquals(expectedEntities, set.getEntities().size());
+    }
+
+    /**
+     * WithPredicate in address
+     * FilterAlreadySeen: true
+     * SplitResults: true
+     * consumer.sendEmptyMessageWhenIdle: true
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testConsumerReadFilterAlreadySeenWithPredicate1() throws Exception {
         int expectedMsgCount = 3;
         MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult-kp-airport");
         mockEndpoint.expectedMinimumMessageCount(expectedMsgCount);
@@ -135,6 +226,57 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
                 assertNull(body);
             }
         }
+    }
+
+    /**
+     * WithPredicate in address
+     * FilterAlreadySeen: true
+     * SplitResults: true
+     * consumer.sendEmptyMessageWhenIdle: false
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testConsumerReadFilterAlreadySeenWithPredicate2() throws Exception {
+        int expectedMsgCount = 1;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult-kp-airport");
+
+        //
+        // Add 1 to count since we want to wait for full result time
+        // before asserting that only 1 message has been delivered
+        //
+        mockEndpoint.expectedMinimumMessageCount(expectedMsgCount + 1);
+        mockEndpoint.setResultWaitTime(6000L);
+
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                from("olingo4://read/" + AIRPORTS + "('KSFO')"
+                        + "?filterAlreadySeen=true&"
+                        + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&"
+                        + "consumer.splitResult=true")
+                    .to("mock:consumer-splitresult-kp-airport");
+            };
+        };
+        addRouteAndStartContext(builder);
+
+        //
+        // Want to wait for entire result time & there should
+        // be exactly 1 exchange transmitted to the endpoint
+        //
+        mockEndpoint.assertIsNotSatisfied();
+
+        // Only 1 exchange so this is good!
+        assertEquals(1, mockEndpoint.getExchanges().size());
+
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+        //
+        // Only polled message contains the entity
+        //
+        assertTrue(body instanceof ClientEntity);
+        ClientEntity ksfoEntity = (ClientEntity) body;
+        ClientProperty nameProp = ksfoEntity.getProperty("Name");
+        assertNotNull(nameProp);
+        assertEquals("San Francisco International Airport", nameProp.getValue().toString());
     }
 
     /**
