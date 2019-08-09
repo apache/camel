@@ -239,6 +239,17 @@ The component `camel-aws` has been split into multiple components:
 
 So you'll have to add explicitly the dependencies for these components. From the OSGi perspective, there is still a `camel-aws` Karaf feature, which includes all the components features.
 
+### Telegram
+
+The `camel-telegram` component has moved the authorization token from uri-path to a query parameter instead, eg migrate
+
+    telegram:bots/myTokenHere 
+
+to
+
+    telegram:bots?authorizationToken=myTokenHere
+        
+
 ### JMX
 
 If you run Camel standalone with just `camel-core` as a dependency, and you want JMX enabled out of the box, then you need to add `camel-management-impl` as a dependency.
