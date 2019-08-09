@@ -268,7 +268,7 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
 
                     postProcessFactoryParameters(camelContext, parameters);
 
-                    PropertyBindingSupport.bindProperties(camelContext, factory, parameters);
+                    PropertyBindingSupport.build().bind(camelContext, factory, parameters);
 
                     answer = factory.newInstance(camelContext);
                 } catch (Exception e) {

@@ -157,7 +157,7 @@ public final class EndpointHelper {
     @Deprecated
     public static void setProperties(CamelContext context, Object bean, Map<String, Object> parameters) throws Exception {
         // use the property binding which can do more advanced configuration
-        PropertyBindingSupport.bindProperties(context, bean, parameters);
+        PropertyBindingSupport.build().bind(context, bean, parameters);
     }
 
     /**

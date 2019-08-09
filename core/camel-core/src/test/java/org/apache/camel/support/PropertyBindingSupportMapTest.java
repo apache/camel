@@ -63,7 +63,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         prop.put("bar.works[acme]", "#bean:company1");
         prop.put("bar.works[burger]", "#bean:company2");
 
-        PropertyBindingSupport.bindProperties(context, foo, prop);
+        PropertyBindingSupport.build().bind(context, foo, prop);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -90,7 +90,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         prop.put("bar.works[burger]", "#bean:company2");
         prop.put("bar.works[burger].name", "I changed this");
 
-        PropertyBindingSupport.bindProperties(context, foo, prop);
+        PropertyBindingSupport.build().bind(context, foo, prop);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -113,7 +113,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         prop.put("works[burger]", "#bean:company2");
         prop.put("works[burger].name", "I changed this");
 
-        PropertyBindingSupport.bindProperties(context, bar, prop);
+        PropertyBindingSupport.build().bind(context, bar, prop);
 
         assertEquals(2, bar.getWorks().size());
         assertEquals(666, bar.getWorks().get("acme").getId());
@@ -132,7 +132,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         prop.put("bar.gold-customer[foo]", "true");
 
         try {
-            PropertyBindingSupport.bindProperties(context, foo, prop);
+            PropertyBindingSupport.build().bind(context, foo, prop);
             fail("Should have thrown exception");
         } catch (PropertyBindingException e) {
             assertEquals("bar.gold-customer[foo]", e.getPropertyName());

@@ -113,7 +113,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
 
         // create endpoint configuration with component properties
         final T endpointConfiguration = collection.getEndpointConfiguration(name);
-        PropertyBindingSupport.bindProperties(getCamelContext(), endpointConfiguration, componentProperties);
+        PropertyBindingSupport.build().bind(getCamelContext(), endpointConfiguration, componentProperties);
         return endpointConfiguration;
     }
 

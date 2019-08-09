@@ -75,11 +75,7 @@ public final class RestProducerFactoryHelper {
 
         // component was not added to the context we can configure it
         final Component newlyCreated = camelContext.getComponent(componentName, true, false);
-        // need to make a copy of the component properties as
-        // IntrospectionSupport::setProperties will remove any that are set and
-        // we might be called multiple times
-        final Map<String, Object> copyOfComponentProperties = new LinkedHashMap<>(componentProperties);
-        PropertyBindingSupport.bindProperties(camelContext, newlyCreated, copyOfComponentProperties);
+        PropertyBindingSupport.build().withRemoteParameters(false).bind(camelContext, newlyCreated, componentProperties);
         ServiceHelper.startService(newlyCreated);
 
         return newlyCreated;

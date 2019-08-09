@@ -416,7 +416,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                     .bind(camelContext, bean, parameters);
         } else {
             // use advanced binding
-            PropertyBindingSupport.bindProperties(camelContext, bean, parameters);
+            PropertyBindingSupport.build().bind(camelContext, bean, parameters);
         }
     }
 

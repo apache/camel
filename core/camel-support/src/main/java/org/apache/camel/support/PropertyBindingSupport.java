@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -59,6 +60,13 @@ public final class PropertyBindingSupport {
      */
     public static class Builder {
 
+        // TODO: add fluent for camel context, target, properties map, property key/value
+
+        private CamelContext camelContext;
+        private Object target;
+        private Map<String, Object> properties;
+        private boolean removeParameters = true;
+        private boolean mandatory;
         private boolean nesting = true;
         private boolean deepNesting = true;
         private boolean reference = true;
@@ -67,6 +75,64 @@ public final class PropertyBindingSupport {
         private boolean allowPrivateSetter = true;
         private boolean ignoreCase;
         private String optionPrefix;
+
+        /**
+         * CamelContext to be used
+         */
+        public Builder withCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+            return this;
+        }
+
+        /**
+         * Target object that should have parameters bound
+         */
+        public Builder withTarget(Object target) {
+            this.target = target;
+            return this;
+        }
+
+        /**
+         * The properties to use for binding
+         */
+        public Builder withProperties(Map<String, Object> properties) {
+            if (this.properties == null) {
+                this.properties = properties;
+            } else {
+                // there may be existing options so add those if missing
+                // we need to mutate existing as we are may be removing bound properties
+                this.properties.forEach(properties::putIfAbsent);
+                this.properties = properties;
+            }
+            return this;
+        }
+
+        /**
+         * Adds property to use for binding
+         */
+        public Builder withProperty(String key, Object value) {
+            if (this.properties == null) {
+                this.properties = new LinkedHashMap<>();
+            }
+            this.properties.put(key, value);
+            return this;
+        }
+
+        /**
+         * Whether parameters should be removed when its bound
+         */
+        public Builder withRemoteParameters(boolean removeParameters) {
+            this.removeParameters = removeParameters;
+            return this;
+        }
+
+        /**
+         * Whether all parameters should be mandatory and successfully bound
+         */
+        public Builder withMandatory(boolean mandatory) {
+            this.mandatory = mandatory;
+            return this;
+        }
 
         /**
          * Whether nesting is in use
@@ -138,18 +204,60 @@ public final class PropertyBindingSupport {
         /**
          * Binds the properties to the target object, and removes the property that was bound from properties.
          *
+         * @return  true if one or more properties was bound
+         */
+        public boolean bind() {
+            // mandatory parameters
+            org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
+            org.apache.camel.util.ObjectHelper.notNull(target, "target");
+            org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
+
+            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, removeParameters, mandatory,
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
+        }
+
+        /**
+         * Binds the properties to the target object, and removes the property that was bound from properties.
+         *
          * @param camelContext  the camel context
          * @param target        the target object
          * @param properties    the properties where the bound properties will be removed from
          * @return              true if one or more properties was bound
          */
         public boolean bind(CamelContext camelContext, Object target, Map<String, Object> properties) {
+            CamelContext context = camelContext != null ? camelContext : this.camelContext;
+            Object obj = target != null ? target : this.target;
+            Map<String, Object> prop = properties != null ? properties : this.properties;
+
+            // mandatory parameters
+            org.apache.camel.util.ObjectHelper.notNull(context, "camelContext");
+            org.apache.camel.util.ObjectHelper.notNull(obj, "target");
+            org.apache.camel.util.ObjectHelper.notNull(prop, "properties");
+
+            return doBindProperties(context, obj, prop, optionPrefix, ignoreCase, removeParameters, mandatory,
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
+        }
+
+        /**
+         * Binds the property to the target object.
+         *
+         * @param camelContext  the camel context
+         * @param target        the target object
+         * @param key           the property key
+         * @param value         the property value
+         * @return              true if the property was bound
+         */
+        public boolean bind(CamelContext camelContext, Object target, String key, Object value) {
             org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
             org.apache.camel.util.ObjectHelper.notNull(target, "target");
-            org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
+            org.apache.camel.util.ObjectHelper.notNull(key, "key");
+            org.apache.camel.util.ObjectHelper.notNull(value, "value");
 
-            return bindProperties(camelContext, target, properties, optionPrefix, ignoreCase, nesting, deepNesting,
-                    fluentBuilder, allowPrivateSetter, reference, placeholder);
+            Map<String, Object> properties = Collections.singletonMap(key, value);
+
+            // do not remove parameters as this is a single property
+            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, false, mandatory,
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
         }
 
     }
@@ -287,56 +395,25 @@ public final class PropertyBindingSupport {
 
     /**
      * Binds the properties to the target object, and removes the property that was bound from properties.
+     * <p/>
+     * This method uses the default settings, and if you need to configure any setting then use
+     * the fluent builder {@link #build()} where each option can be customized, such as whether parameter
+     * should be removed, or whether options are mandatory etc.
      *
      * @param camelContext  the camel context
      * @param target        the target object
      * @param properties    the properties where the bound properties will be removed from
      * @return              true if one or more properties was bound
+     *
+     * @see #build()
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties) {
-        return bindProperties(camelContext, target, properties, null);
-    }
+        // mandatory parameters
+        org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
+        org.apache.camel.util.ObjectHelper.notNull(target, "target");
+        org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
 
-    /**
-     * Binds the properties to the target object, and removes the property that was bound from properties.
-     *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param properties    the properties where the bound properties will be removed from
-     * @param ignoreCase    whether to ignore case for property keys
-     * @return              true if one or more properties was bound
-     */
-    public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties, boolean ignoreCase) {
-        return bindProperties(camelContext, target, properties, null, ignoreCase, true, true, true, true, true, true);
-    }
-
-    /**
-     * Binds the properties with the given prefix to the target object, and removes the property that was bound from properties.
-     * Note that the prefix is removed from the key before the property is bound.
-     *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param properties    the properties where the bound properties will be removed from
-     * @param optionPrefix  the prefix used to filter properties
-     * @return              true if one or more properties was bound
-     */
-    public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties, String optionPrefix) {
-        return bindProperties(camelContext, target, properties, optionPrefix, false);
-    }
-
-    /**
-     * Binds the properties with the given prefix to the target object, and removes the property that was bound from properties.
-     * Note that the prefix is removed from the key before the property is bound.
-     *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param properties    the properties where the bound properties will be removed from
-     * @param optionPrefix  the prefix used to filter properties
-     * @param ignoreCase    whether to ignore case for property keys
-     * @return              true if one or more properties was bound
-     */
-    public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties, String optionPrefix, boolean ignoreCase) {
-        return bindProperties(camelContext, target, properties, optionPrefix, ignoreCase, true, true, true, true, true, true);
+        return PropertyBindingSupport.build().bind(camelContext, target, properties);
     }
 
     /**
@@ -348,6 +425,8 @@ public final class PropertyBindingSupport {
      * @param properties          the properties where the bound properties will be removed from
      * @param optionPrefix        the prefix used to filter properties
      * @param ignoreCase          whether to ignore case for property keys
+     * @param removeParameter     whether to remove bound parameters
+     * @param madatory            whether all parameters must be bound
      * @param nesting             whether nesting is in use
      * @param deepNesting         whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
      *                            a property has a setter and the object can be created from a default no-arg constructor.
@@ -357,10 +436,10 @@ public final class PropertyBindingSupport {
      * @param placeholder         whether to use Camels property placeholder to resolve placeholders on keys and values
      * @return                    true if one or more properties was bound
      */
-    public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties,
-                                         String optionPrefix, boolean ignoreCase,
-                                         boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
-                                         boolean reference, boolean placeholder) {
+    private static boolean doBindProperties(CamelContext camelContext, Object target, Map<String, Object> properties,
+                                            String optionPrefix, boolean ignoreCase, boolean removeParameter, boolean madatory,
+                                            boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
+                                            boolean reference, boolean placeholder) {
         org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
         org.apache.camel.util.ObjectHelper.notNull(target, "target");
         org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
@@ -387,50 +466,17 @@ public final class PropertyBindingSupport {
                 key = key.substring(optionPrefix.length());
             }
 
-            if (bindProperty(camelContext, target, key, value, ignoreCase, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder)) {
+            boolean bound = bindProperty(camelContext, target, key, value, ignoreCase, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
+            if (bound && removeParameter) {
                 iter.remove();
                 rc = true;
+            }
+            if (madatory && !bound) {
+                throw new PropertyBindingException(target, key, value);
             }
         }
 
         return rc;
-    }
-
-    /**
-     * Binds the property to the target object.
-     *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param name          name of property
-     * @param value         value of property
-     * @return              true if property was bound, false otherwise
-     * @throws PropertyBindingException is thrown if error binding property
-     */
-    public static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value) throws PropertyBindingException {
-        return bindProperty(camelContext, target, name, value, false);
-    }
-
-    /**
-     * Binds the property to the target object.
-     *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param name          name of property
-     * @param value         value of property
-     * @param ignoreCase    whether to ignore case for property keys
-     * @return              true if property was bound, false otherwise
-     * @throws PropertyBindingException is thrown if error binding property
-     */
-    public static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) throws PropertyBindingException {
-        try {
-            if (target != null && name != null) {
-                return setProperty(camelContext, target, name, value, false, ignoreCase, true, true, true, true, true, true);
-            }
-        } catch (Exception e) {
-            throw new PropertyBindingException(target, name, value, e);
-        }
-
-        return false;
     }
 
     private static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value,
@@ -445,43 +491,6 @@ public final class PropertyBindingSupport {
         }
 
         return false;
-    }
-
-    /**
-     * Binds the mandatory property to the target object (will fail if not set/bound).
-     *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param name          name of property
-     * @param value         value of property
-     * @throws PropertyBindingException is thrown if error binding property, or the property was not bound
-     */
-    public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value) throws PropertyBindingException {
-        bindMandatoryProperty(camelContext, target, name, value, false);
-    }
-
-    /**
-     * Binds the mandatory property to the target object (will fail if not set/bound).
-     *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param name          name of property
-     * @param value         value of property
-     * @param ignoreCase    whether to ignore case for property keys
-     * @throws PropertyBindingException is thrown if error binding property, or the property was not bound
-     */
-    public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) throws PropertyBindingException {
-        boolean bound;
-        if (target != null && name != null) {
-            try {
-                bound = setProperty(camelContext, target, name, value, true, ignoreCase, true, true, true, true, true, true);
-            } catch (Exception e) {
-                throw new PropertyBindingException(target, name, value, e);
-            }
-            if (!bound) {
-                throw new PropertyBindingException(target, name, value);
-            }
-        }
     }
 
     private static boolean setProperty(CamelContext context, Object target, String name, Object value, boolean mandatory,

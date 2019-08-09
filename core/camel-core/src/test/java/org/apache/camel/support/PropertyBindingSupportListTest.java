@@ -64,7 +64,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
         prop.put("bar.works[0]", "#bean:company1");
         prop.put("bar.works[1]", "#bean:company2");
 
-        PropertyBindingSupport.bindProperties(context, foo, prop);
+        PropertyBindingSupport.build().bind(context, foo, prop);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -91,7 +91,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
         prop.put("bar.works[1]", "#bean:company2");
         prop.put("bar.works[1].name", "I changed this");
 
-        PropertyBindingSupport.bindProperties(context, foo, prop);
+        PropertyBindingSupport.build().bind(context, foo, prop);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -114,7 +114,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
         prop.put("works[1]", "#bean:company2");
         prop.put("works[1].name", "I changed this");
 
-        PropertyBindingSupport.bindProperties(context, bar, prop);
+        PropertyBindingSupport.build().bind(context, bar, prop);
 
         assertEquals(2, bar.getWorks().size());
         assertEquals(666, bar.getWorks().get(0).getId());
@@ -133,7 +133,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
         prop.put("bar.gold-customer[]", "true");
 
         try {
-            PropertyBindingSupport.bindProperties(context, foo, prop);
+            PropertyBindingSupport.build().bind(context, foo, prop);
             fail("Should have thrown exception");
         } catch (PropertyBindingException e) {
             assertEquals("bar.gold-customer[]", e.getPropertyName());

@@ -33,7 +33,7 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
     public ManagementStrategy create(CamelContext context, Map<String, Object> options) throws Exception {
         DefaultManagementAgent agent = new DefaultManagementAgent(context);
         if (options != null) {
-            PropertyBindingSupport.bindProperties(context, agent, options);
+            PropertyBindingSupport.build().bind(context, agent, options);
         }
 
         return new JmxManagementStrategy(context, agent);
