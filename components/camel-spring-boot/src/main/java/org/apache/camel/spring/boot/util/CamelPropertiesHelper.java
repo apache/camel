@@ -75,7 +75,7 @@ public final class CamelPropertiesHelper {
             String stringValue = value != null ? value.toString() : null;
             boolean hit = false;
             try {
-                hit = PropertyBindingSupport.bindProperty(context, target, name, value);
+                hit = PropertyBindingSupport.build().bind(context, target, name, value);
             } catch (PropertyBindingException e) {
                 // no we could not and this would be thrown if we attempted to set a value on a property which we cannot do type conversion as
                 // then maybe the value refers to a spring bean in the registry so try this
@@ -85,7 +85,7 @@ public final class CamelPropertiesHelper {
                     }
                     // use #bean: to lookup
                     stringValue = "#bean:" + stringValue;
-                    hit = PropertyBindingSupport.bindProperty(context, target, name, stringValue);
+                    hit = PropertyBindingSupport.build().bind(context, target, name, stringValue);
                 }
             }
 
