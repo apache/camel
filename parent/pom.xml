@@ -49,6 +49,7 @@
         <ant-bundle-version>1.7.0_6</ant-bundle-version>
         <antlr-bundle-version>3.5.2_1</antlr-bundle-version>
         <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
+        <any23-bundle-version>2.3_1-SNAPSHOT</any23-bundle-version>
         <apacheds-version>2.0.0-M24</apacheds-version>
         <apache-any23-version>2.3</apache-any23-version>
         <apache-drill-version>1.16.0</apache-drill-version>
@@ -529,7 +530,8 @@
         <quartz2-version>2.3.1</quartz2-version>
         <quickfixj-version>2.1.1</quickfixj-version>
         <rabbitmq-amqp-client-version>5.7.3</rabbitmq-amqp-client-version>
-        <rdf4j-version>3.0.0-M1</rdf4j-version>
+        <rdf4j-rio-version>2.4.4</rdf4j-rio-version>
+        <rdf4j-model-version>2.4.4</rdf4j-model-version>
         <reactive-streams-version>1.0.2</reactive-streams-version>
         <reactor-version>3.2.10.RELEASE</reactor-version>
         <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
@@ -4905,8 +4907,14 @@
             <!-- optional RDF4J -->
             <dependency>
                 <groupId>org.eclipse.rdf4j</groupId>
-                <artifactId>rdf4j-runtime</artifactId>
-                <version>${rdf4j-version}</version>
+                <artifactId>rdf4j-model</artifactId>
+                <version>${rdf4j-model-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.rdf4j</groupId>
+                <artifactId>rdf4j-rio-api</artifactId>
+                <version>${rdf4j-rio-version}</version>
             </dependency>
 
             <!-- optional Axiom -->
