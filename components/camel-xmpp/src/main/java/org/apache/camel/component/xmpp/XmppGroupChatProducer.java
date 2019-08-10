@@ -48,7 +48,6 @@ public class XmppGroupChatProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) {
-
         if (connection == null) {
             try {
                 connection = endpoint.createConnection();
@@ -122,12 +121,15 @@ public class XmppGroupChatProducer extends DefaultProducer {
     protected synchronized void initializeChat() throws InterruptedException, SmackException, XMPPException, XmppStringprepException {
         if (chat == null) {
             room = endpoint.resolveRoom(connection);
+            String roomPassword = endpoint.getRoomPassword();
             MultiUserChatManager chatManager = MultiUserChatManager.getInstanceFor(connection);
             chat = chatManager.getMultiUserChat(JidCreate.entityBareFrom(room));
-            MucEnterConfiguration mucc = chat.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
-                    .requestNoHistory()
-                    .build();
-            chat.join(mucc);
+            MucEnterConfiguration.Builder mucc = chat.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
+                    .requestNoHistory();
+            if (roomPassword != null) {
+                mucc.withPassword(roomPassword);
+            }
+            chat.join(mucc.build());
             LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
         }
     }

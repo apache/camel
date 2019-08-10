@@ -80,6 +80,8 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private boolean createAccount;
     @UriParam(label = "common")
     private String room;
+    @UriParam(label = "security", secret = true)
+    private String roomPassword;
     @UriParam(label = "common")
     private String nickname;
     @UriParam(label = "common")
@@ -368,6 +370,17 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
      */
     public void setRoom(String room) {
         this.room = room;
+    }
+
+    /**
+     * Password for room
+     */
+    public void setRoomPassword(String roomPassword) {
+        this.roomPassword = roomPassword;
+    }
+
+    protected String getRoomPassword() {
+        return roomPassword;
     }
 
     public String getParticipant() {

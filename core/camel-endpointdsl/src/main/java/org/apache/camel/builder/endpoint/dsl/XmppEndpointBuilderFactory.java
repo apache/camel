@@ -296,6 +296,17 @@ public interface XmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Password for room.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default XmppEndpointConsumerBuilder roomPassword(String roomPassword) {
+            setProperty("roomPassword", roomPassword);
+            return this;
+        }
+        /**
          * User name (without server name). If not specified, anonymous login
          * will be attempted.
          * 
@@ -707,6 +718,17 @@ public interface XmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Password for room.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default XmppEndpointProducerBuilder roomPassword(String roomPassword) {
+            setProperty("roomPassword", roomPassword);
+            return this;
+        }
+        /**
          * User name (without server name). If not specified, anonymous login
          * will be attempted.
          * 
@@ -1018,6 +1040,17 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointBuilder password(String password) {
             setProperty("password", password);
+            return this;
+        }
+        /**
+         * Password for room.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default XmppEndpointBuilder roomPassword(String roomPassword) {
+            setProperty("roomPassword", roomPassword);
             return this;
         }
         /**
