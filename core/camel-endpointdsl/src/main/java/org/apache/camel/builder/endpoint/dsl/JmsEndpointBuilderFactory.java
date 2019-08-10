@@ -2185,7 +2185,8 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets delivery delay to use for send calls for JMS.
+         * Sets delivery delay to use for send calls for JMS. This option
+         * requires JMS 2.0 compliant broker.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -2196,7 +2197,8 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets delivery delay to use for send calls for JMS.
+         * Sets delivery delay to use for send calls for JMS. This option
+         * requires JMS 2.0 compliant broker.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
