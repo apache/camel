@@ -152,7 +152,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (92 parameters):
+=== Query Parameters (93 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -243,6 +243,7 @@ with the following path and query parameters:
 | *waitForProvisionCorrelation ToBeUpdatedThreadSleeping Time* (advanced) | Interval in millis to sleep each time while waiting for provisional correlation id to be updated. | 100 | long
 | *errorHandlerLoggingLevel* (logging) | Allows to configure the default errorHandler logging level for logging uncaught exceptions. | WARN | LoggingLevel
 | *errorHandlerLogStackTrace* (logging) | Allows to control whether stacktraces should be logged or not, by the default errorHandler. | true | boolean
+| *deliveryDelay* (deliveryDelay) | Sets delivery delay to use for send calls for JMS. | -1 | long
 | *password* (security) | Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *username* (security) | Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *transacted* (transaction) | Specifies whether to use transacted mode | false | boolean

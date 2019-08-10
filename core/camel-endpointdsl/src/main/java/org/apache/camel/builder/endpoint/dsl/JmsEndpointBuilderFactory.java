@@ -623,6 +623,28 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default JmsEndpointConsumerBuilder deliveryDelay(long deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default JmsEndpointConsumerBuilder deliveryDelay(String deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
@@ -2580,6 +2602,28 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default JmsEndpointProducerBuilder deliveryDelay(long deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default JmsEndpointProducerBuilder deliveryDelay(String deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
@@ -4050,6 +4094,28 @@ public interface JmsEndpointBuilderFactory {
         default JmsEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default JmsEndpointBuilder deliveryDelay(long deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default JmsEndpointBuilder deliveryDelay(String deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
             return this;
         }
         /**

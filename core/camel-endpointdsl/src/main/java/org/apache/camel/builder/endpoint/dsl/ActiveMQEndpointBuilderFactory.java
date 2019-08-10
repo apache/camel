@@ -629,6 +629,29 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default ActiveMQEndpointConsumerBuilder deliveryDelay(long deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default ActiveMQEndpointConsumerBuilder deliveryDelay(
+                String deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
@@ -2593,6 +2616,29 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default ActiveMQEndpointProducerBuilder deliveryDelay(long deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default ActiveMQEndpointProducerBuilder deliveryDelay(
+                String deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
@@ -4066,6 +4112,28 @@ public interface ActiveMQEndpointBuilderFactory {
         default ActiveMQEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default ActiveMQEndpointBuilder deliveryDelay(long deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default ActiveMQEndpointBuilder deliveryDelay(String deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
             return this;
         }
         /**

@@ -1933,6 +1933,10 @@ public class JmsComponentConfiguration
          * 8601 standard.
          */
         private Boolean formatDateHeadersToIso8601 = false;
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         */
+        private Long deliveryDelay = -1L;
 
         public ConsumerType getConsumerType() {
             return consumerType;
@@ -2668,6 +2672,14 @@ public class JmsComponentConfiguration
         public void setFormatDateHeadersToIso8601(
                 Boolean formatDateHeadersToIso8601) {
             this.formatDateHeadersToIso8601 = formatDateHeadersToIso8601;
+        }
+
+        public Long getDeliveryDelay() {
+            return deliveryDelay;
+        }
+
+        public void setDeliveryDelay(Long deliveryDelay) {
+            this.deliveryDelay = deliveryDelay;
         }
     }
 }

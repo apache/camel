@@ -623,6 +623,28 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default AMQPEndpointConsumerBuilder deliveryDelay(long deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default AMQPEndpointConsumerBuilder deliveryDelay(String deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
@@ -2581,6 +2603,28 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default AMQPEndpointProducerBuilder deliveryDelay(long deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default AMQPEndpointProducerBuilder deliveryDelay(String deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
@@ -4051,6 +4095,28 @@ public interface AMQPEndpointBuilderFactory {
         default AMQPEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default AMQPEndpointBuilder deliveryDelay(long deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: deliveryDelay
+         */
+        default AMQPEndpointBuilder deliveryDelay(String deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
             return this;
         }
         /**
