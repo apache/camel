@@ -85,8 +85,8 @@ public class TwitterConfiguration {
      * Ensures required fields are available.
      */
     public void checkComplete() {
-        if (twitter == null &&
-                (ObjectHelper.isEmpty(consumerKey) || ObjectHelper.isEmpty(consumerSecret) || ObjectHelper.isEmpty(accessToken) ||  ObjectHelper.isEmpty(accessTokenSecret))) {
+        if (twitter == null 
+            && (ObjectHelper.isEmpty(consumerKey) || ObjectHelper.isEmpty(consumerSecret) || ObjectHelper.isEmpty(accessToken) ||  ObjectHelper.isEmpty(accessTokenSecret))) {
             throw new IllegalArgumentException("twitter or all of consumerKey, consumerSecret, accessToken, and accessTokenSecret must be set!");
         }
     }
