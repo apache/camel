@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object xmlns:xj="http://camel.apache.org/component/xj" xj:type="object">
+   <object xj:name="a" xj:type="object">
+      <object xj:name="id" xj:type="string">1</object>
+      <object xj:name="type" xj:type="string">2</object>
+      <object xj:name="displayName" xj:type="string">3</object>
+      <object xj:name="firstname" xj:type="string">4</object>
+      <object xj:name="lastname" xj:type="string">5</object>
+      <object xj:name="role" xj:type="string">6</object>
+      <object xj:name="email" xj:type="string">7</object>
+      <object xj:name="company" xj:type="string">8</object>
+      <object xj:name="department" xj:type="string">9</object>
+      <object xj:name="division" xj:type="string">10</object>
+   </object>
+   <object xj:name="b" xj:type="object">
+      <object xj:name="id" xj:type="string">11</object>
+      <object xj:name="type" xj:type="string">12</object>
+      <object xj:name="displayName" xj:type="string">13</object>
+      <object xj:name="firstname" xj:type="string">14</object>
+      <object xj:name="lastname" xj:type="string">15</object>
+      <object xj:name="role" xj:type="string">16</object>
+      <object xj:name="email" xj:type="string">17</object>
+      <object xj:name="company" xj:type="string">18</object>
+      <object xj:name="department" xj:type="string">19</object>
+      <object xj:name="division" xj:type="string">20</object>
+   </object>
+</object>
