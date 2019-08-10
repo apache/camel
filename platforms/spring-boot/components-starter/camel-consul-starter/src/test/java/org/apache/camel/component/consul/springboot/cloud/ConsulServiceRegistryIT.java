@@ -46,7 +46,7 @@ public class ConsulServiceRegistryIT {
     private static final int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
 
     @Rule
-    public GenericContainer container = new GenericContainer("consul:1.5.1")
+    public GenericContainer container = new GenericContainer("consul:1.5.3")
         .withExposedPorts(Consul.DEFAULT_HTTP_PORT)
         .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
         .withLogConsumer(new Slf4jLogConsumer(LOGGER).withPrefix("consul"))
