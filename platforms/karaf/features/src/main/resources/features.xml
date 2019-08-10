@@ -2670,6 +2670,12 @@
     <bundle dependency='true'>wrap:mvn:com.github.mmazi/rescu/${rescu-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xchange/${project.version}</bundle>
   </feature>
+  <feature name='camel-xj' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-xj/${project.version}</bundle>
+  </feature>
   <feature name='camel-xmlsecurity' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>

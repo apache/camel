@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object xmlns:xj="http://camel.apache.org/component/xj">
+   text1
+   <object id="b"/>
+   <object xj:name="type" xj:type="null" b="c"></object>
+   <object xj:name="displayName"></object>
+   <object xj:type="boolean"/>
+   <object xj:name="lastname" xj:type="float"></object>
+   <object xj:name="role" xj:type="float"/>
+   <object xj:name="base64" xj:type="string"/>
+   <object xj:name="company" xj:type="string" company="test" id="company">
+      <object xj:name="#text">whoo</object>
+   </object>
+   text2
+</object>

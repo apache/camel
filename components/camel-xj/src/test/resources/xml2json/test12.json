@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "type": null,
+    "displayName": true,
+    "firstname": false,
+    "lastname": 1.2,
+    "role": 2.1e10,
+    "base64": "SGFsbG8K",
+    "company": "8"
+  }
+]

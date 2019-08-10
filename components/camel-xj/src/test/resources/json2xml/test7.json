@@ -1,0 +1,26 @@
+{
+  "a": {
+    "id": "1",
+    "type": "2",
+    "displayName": "3",
+    "firstname": "4",
+    "lastname": "5",
+    "role": "6",
+    "email": "7",
+    "company": "8",
+    "department": "9",
+    "division": "10"
+  },
+  "b": {
+    "id": "11",
+    "type": "12",
+    "displayName": "13",
+    "firstname": "14",
+    "lastname": "15",
+    "role": "16",
+    "email": "17",
+    "company": "18",
+    "department": "19",
+    "division": "20"
+  }
+}
