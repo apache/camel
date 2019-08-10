@@ -2178,7 +2178,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets delivery delay to use for send calls for JMS.
+     * Sets delivery delay to use for send calls for JMS. This option requires JMS 2.0 compliant broker.
      */
     public void setDeliveryDelay(long deliveryDelay) {
         this.deliveryDelay = deliveryDelay;

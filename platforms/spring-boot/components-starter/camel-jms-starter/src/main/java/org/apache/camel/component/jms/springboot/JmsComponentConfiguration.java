@@ -1945,7 +1945,8 @@ public class JmsComponentConfiguration
          */
         private Boolean formatDateHeadersToIso8601 = false;
         /**
-         * Sets delivery delay to use for send calls for JMS.
+         * Sets delivery delay to use for send calls for JMS. This option
+         * requires JMS 2.0 compliant broker.
          */
         private Long deliveryDelay = -1L;
 
