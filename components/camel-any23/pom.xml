@@ -75,7 +75,11 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.rdf4j</groupId>
-      <artifactId>rdf4j-runtime</artifactId>
+      <artifactId>rdf4j-model</artifactId>
+    </dependency>
+     <dependency>
+      <groupId>org.eclipse.rdf4j</groupId>
+      <artifactId>rdf4j-rio-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
