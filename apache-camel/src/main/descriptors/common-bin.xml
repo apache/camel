@@ -339,6 +339,7 @@
         <include>org.apache.camel:camel-websocket-jsr356</include>
         <include>org.apache.camel:camel-wordpress</include>
         <include>org.apache.camel:camel-xchange</include>
+        <include>org.apache.camel:camel-xj</include>
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xpath</include>
@@ -668,6 +669,7 @@
         <include>org.apache.camel:camel-websocket-starter</include>
         <include>org.apache.camel:camel-wordpress-starter</include>
         <include>org.apache.camel:camel-xchange-starter</include>
+        <include>org.apache.camel:camel-xj-starter</include>
         <include>org.apache.camel:camel-xmlsecurity-starter</include>
         <include>org.apache.camel:camel-xmpp-starter</include>
         <include>org.apache.camel:camel-xpath-starter</include>

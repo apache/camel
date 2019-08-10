@@ -334,6 +334,7 @@
         <module>camel-websocket-jsr356</module>
         <module>camel-wordpress</module>
         <module>camel-xchange</module>
+        <module>camel-xj</module>
         <module>camel-xmlsecurity</module>
         <module>camel-xmpp</module>
         <module>camel-xstream</module>

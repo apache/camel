@@ -378,6 +378,7 @@
     <module>camel-websocket-starter</module>
     <module>camel-wordpress-starter</module>
     <module>camel-xchange-starter</module>
+    <module>camel-xj-starter</module>
     <module>camel-xmlsecurity-starter</module>
     <module>camel-xmpp-starter</module>
     <module>camel-xpath-starter</module>

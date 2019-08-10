@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object xmlns:xj="http://camel.apache.org/component/xj" xj:type="object">
+   <object xj:name="query" xj:type="object">
+      <object xj:name="fi&amp;lter" xj:type="object">
+         <object xj:name="ä&lt;type" xj:type="string">&amp;</object>
+         <object xj:name="conditions" xj:type="array">
+            <object xj:type="object">
+               <object xj:name="filter" xj:type="object">
+                  <object xj:name="type" xj:type="string">and</object>
+                  <object xj:name="conditions" xj:type="array">
+                     <object xj:type="object">
+                        <object xj:name="&#10;op" xj:type="string">contains</object>
+                        <object xj:name="field" xj:type="string">id</object>
+                        <object xj:name="value" xj:type="string">	rtg1</object>
+                     </object>
+                     <object xj:type="object">
+                        <object xj:name="filter" xj:type="object">
+                           <object xj:name="type" xj:type="string">not</object>
+                           <object xj:name="conditions" xj:type="array">
+                              <object xj:type="object">
+                                 <object xj:name="op" xj:type="string">eq</object>
+                                 <object xj:name="field" xj:type="string">id</object>
+                                 <object xj:name="value" xj:type="string">ext-rtg1</object>
+                              </object>
+                           </object>
+                        </object>
+                     </object>
+                  </object>
+               </object>
+            </object>
+         </object>
+      </object>
+   </object>
+</object>
