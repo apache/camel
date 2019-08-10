@@ -38,7 +38,7 @@ public class AtmosConfiguration {
     private String name;
     @UriPath @Metadata(required = true)
     private AtmosOperation operation;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
     private String localPath;
@@ -48,12 +48,12 @@ public class AtmosConfiguration {
     private String newRemotePath;
     @UriParam
     private String query;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String fullTokenId;
-    @UriParam
+    @UriParam(label = "advanced")
     private String uri;
-    @UriParam
-    private boolean enableSslValidation;
+    @UriParam(label = "security")
+    private boolean sslValidation;
 
     public void setClient(AtmosApi client) {
         this.client = client;
@@ -76,7 +76,7 @@ public class AtmosConfiguration {
             throw new AtmosException("wrong syntax for Atmos URI!", use);
         }
         
-        if (!enableSslValidation) {
+        if (!sslValidation) {
             config.setDisableSslValidation(true);
         }
         AtmosApi atmosclient = new AtmosApiClient(config);
@@ -100,7 +100,7 @@ public class AtmosConfiguration {
     }
 
     /**
-     * Atmos shared secret
+     * The secret key to pass to the Atmos client (should be base64 encoded)
      */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
@@ -183,15 +183,15 @@ public class AtmosConfiguration {
         return uri;
     }
     
-    public boolean isEnableSslValidation() {
-        return enableSslValidation;
+    public boolean isSslValidation() {
+        return sslValidation;
     }
 
     /**
      * Atmos SSL validation
      */
-    public void setEnableSslValidation(boolean enableSslValidation) {
-        this.enableSslValidation = enableSslValidation;
+    public void setSslValidation(boolean sslValidation) {
+        this.sslValidation = sslValidation;
     }
     
 }

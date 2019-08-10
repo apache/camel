@@ -41,7 +41,7 @@ public class AtmosComponentConfiguration
      */
     private String fullTokenId;
     /**
-     * The secret key to pass to the Atmos client
+     * The secret key to pass to the Atmos client (should be base64 encoded)
      */
     private String secretKey;
     /**

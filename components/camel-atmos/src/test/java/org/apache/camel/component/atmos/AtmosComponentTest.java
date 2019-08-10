@@ -59,7 +59,7 @@ public class AtmosComponentTest {
 
         assertEquals(FAKE_TOKEN, configuration.getFullTokenId());
         assertEquals(FAKE_SECRET, configuration.getSecretKey());
-        assertEquals(false, configuration.isEnableSslValidation());
+        assertEquals(false, configuration.isSslValidation());
         assertEquals(FAKE_URI, configuration.getUri());
     }
 
@@ -77,7 +77,7 @@ public class AtmosComponentTest {
         parameters.put("remotePath", FAKE_REMOTE_PATH);
         parameters.put("fullTokenId", FAKE_TOKEN);
         parameters.put("secretKey", FAKE_SECRET);
-        parameters.put("enableSslValidation", false);
+        parameters.put("sslValidation", false);
         parameters.put("uri", FAKE_URI);
 
         String uri = URISupport.appendParametersToURI("atmos://foo", parameters);
@@ -86,7 +86,7 @@ public class AtmosComponentTest {
 
         assertEquals(FAKE_TOKEN, configuration.getFullTokenId());
         assertEquals(FAKE_SECRET, configuration.getSecretKey());
-        assertEquals(false, configuration.isEnableSslValidation());
+        assertEquals(false, configuration.isSslValidation());
         assertEquals(FAKE_URI, configuration.getUri());
     }
 }

@@ -62,7 +62,6 @@ public class AtmosEndpoint extends DefaultEndpoint {
      * Create one of the camel producer available based on the configuration
      *
      * @return the camel producer
-     * @throws Exception
      */
     @Override
     public Producer createProducer() throws Exception {
@@ -86,7 +85,6 @@ public class AtmosEndpoint extends DefaultEndpoint {
      *
      * @param processor the given processor
      * @return the camel consumer
-     * @throws Exception
      */
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
