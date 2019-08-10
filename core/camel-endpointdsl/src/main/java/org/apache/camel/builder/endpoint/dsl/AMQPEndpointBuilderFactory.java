@@ -623,28 +623,6 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets delivery delay to use for send calls for JMS.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: deliveryDelay
-         */
-        default AMQPEndpointConsumerBuilder deliveryDelay(long deliveryDelay) {
-            setProperty("deliveryDelay", deliveryDelay);
-            return this;
-        }
-        /**
-         * Sets delivery delay to use for send calls for JMS.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: deliveryDelay
-         */
-        default AMQPEndpointConsumerBuilder deliveryDelay(String deliveryDelay) {
-            setProperty("deliveryDelay", deliveryDelay);
-            return this;
-        }
-        /**
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
@@ -2192,6 +2170,28 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default AMQPEndpointProducerBuilder deliveryDelay(long deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default AMQPEndpointProducerBuilder deliveryDelay(String deliveryDelay) {
+            setProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
          * Specifies the delivery mode to be used. Possibles values are those
          * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
          * = 2.
@@ -2600,28 +2600,6 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder timeToLive(String timeToLive) {
             setProperty("timeToLive", timeToLive);
-            return this;
-        }
-        /**
-         * Sets delivery delay to use for send calls for JMS.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: deliveryDelay
-         */
-        default AMQPEndpointProducerBuilder deliveryDelay(long deliveryDelay) {
-            setProperty("deliveryDelay", deliveryDelay);
-            return this;
-        }
-        /**
-         * Sets delivery delay to use for send calls for JMS.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: deliveryDelay
-         */
-        default AMQPEndpointProducerBuilder deliveryDelay(String deliveryDelay) {
-            setProperty("deliveryDelay", deliveryDelay);
             return this;
         }
         /**
@@ -4095,28 +4073,6 @@ public interface AMQPEndpointBuilderFactory {
         default AMQPEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
-            return this;
-        }
-        /**
-         * Sets delivery delay to use for send calls for JMS.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: deliveryDelay
-         */
-        default AMQPEndpointBuilder deliveryDelay(long deliveryDelay) {
-            setProperty("deliveryDelay", deliveryDelay);
-            return this;
-        }
-        /**
-         * Sets delivery delay to use for send calls for JMS.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: deliveryDelay
-         */
-        default AMQPEndpointBuilder deliveryDelay(String deliveryDelay) {
-            setProperty("deliveryDelay", deliveryDelay);
             return this;
         }
         /**
