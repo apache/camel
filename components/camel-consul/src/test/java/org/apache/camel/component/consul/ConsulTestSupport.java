@@ -31,7 +31,7 @@ import org.junit.rules.TestName;
 import org.testcontainers.containers.GenericContainer;
 
 public class ConsulTestSupport extends ContainerAwareTestSupport {
-    public static final String CONTAINER_IMAGE = "consul:1.5.1";
+    public static final String CONTAINER_IMAGE = "consul:1.5.3";
     public static final String CONTAINER_NAME = "consul";
     public static final String KV_PREFIX = "/camel";
 

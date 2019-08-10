@@ -24,7 +24,7 @@ Using multiple shells:
  - start consul:
 
   docker run --rm -ti --publish 8500:8500 \
-    consul:1.5.1 \
+    consul:1.5.3 \
         agent \
             -dev \
             -server \
