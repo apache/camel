@@ -461,6 +461,11 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
         // discover any 3rd party properties sources
         try {
+            for (PropertiesSource source: getCamelContext().getRegistry().findByType(PropertiesSource.class)) {
+                addPropertiesSource(source);
+                LOG.info("PropertiesComponent added custom PropertiesSource (registry): {}", source);
+            }
+
             FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/");
             Class<?> type = factoryFinder.findClass("properties-source-factory").orElse(null);
             if (type != null) {
@@ -468,7 +473,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
                 if (obj instanceof PropertiesSource) {
                     PropertiesSource ps = (PropertiesSource) obj;
                     addPropertiesSource(ps);
-                    LOG.info("PropertiesComponent added custom PropertiesSource: {}", ps);
+                    LOG.info("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
                 } else if (obj != null) {
                     LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
                 }
