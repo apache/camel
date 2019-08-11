@@ -149,6 +149,7 @@
                                         <nullableOption>endpointHttpHeaders</nullableOption>
                                         <nullableOption>edm</nullableOption>
                                         <nullableOption>responseHandler</nullableOption>
+                                        <nullableOption>data</nullableOption>
                                     </nullableOptions>
                                 </api>
                             </apis>

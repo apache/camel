@@ -40,14 +40,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Consts;
-import org.apache.http.Header;
-import org.apache.http.HttpException;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseFactory;
-import org.apache.http.HttpVersion;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.entity.DecompressingEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -60,6 +53,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.config.MessageConstraints;
 import org.apache.http.entity.AbstractHttpEntity;
+import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.DefaultHttpResponseFactory;
@@ -311,6 +305,13 @@ public final class Olingo4AppImpl implements Olingo4App {
         writeContent(edm, new HttpPost(createUri(SegmentType.BATCH.getValue(), null)), uriInfo, data, endpointHttpHeaders, responseHandler);
     }
 
+    @Override
+    public <T> void action(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
+        final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
+
+        writeContent(edm, new HttpPost(createUri(resourcePath, null)), uriInfo, data, endpointHttpHeaders, responseHandler);
+    }
+
     private ContentType getResourceContentType(UriInfo uriInfo) {
         ContentType resourceContentType;
         switch (uriInfo.getKind()) {
@@ -478,6 +479,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                             List<UriResource> listResource = uriInfo.getUriResourceParts();
                             UriResourceKind lastResourceKind = listResource.get(listResource.size() - 1).getKind();
                             switch (lastResourceKind) {
+                            case action:
                             case entitySet:
                                 ClientEntity entity = odataReader.readEntity(result.getEntity().getContent(),
                                                                              ContentType.parse(result.getEntity().getContentType().getValue()));
@@ -511,6 +513,19 @@ public final class Olingo4AppImpl implements Olingo4App {
             List<UriResource> listResource = uriInfo.getUriResourceParts();
             UriResourceKind lastResourceKind = listResource.get(listResource.size() - 1).getKind();
             switch (lastResourceKind) {
+            case action:
+                if (content == null) {
+                    requestStream = new ByteArrayInputStream(new byte[0]);
+                } else if (content instanceof ClientEntity) {
+                    requestStream = odataWriter.writeEntity((ClientEntity)content, getResourceContentType(uriInfo));
+                } else if (content instanceof String) {
+                    httpEntity = new StringEntity((String) content, org.apache.http.entity.ContentType.APPLICATION_JSON);
+                    httpEntity.setChunked(false);
+                    return httpEntity;
+                } else {
+                    throw new ODataException("Unsupported content type: " + content);
+                }
+                break;
             case entitySet:
                 if (content instanceof ClientEntity) {
                     requestStream = odataWriter.writeEntity((ClientEntity)content, getResourceContentType(uriInfo));
