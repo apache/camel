@@ -106,7 +106,7 @@ public class Olingo4AppAPITest {
     private static final String TEST_AIRPORTS_SIMPLE_PROPERTY_VALUE = TEST_AIRPORTS_SIMPLE_PROPERTY + "/$value";
     private static final String COUNT_OPTION = "/$count";
     private static final String TEST_UNBOUND_ACTION_RESETDATASOURCE = "ResetDataSource";
-    private static final String TEST_BOUND_ACTION_PEOPLE_SHARETRIP = TEST_PEOPLE +"/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip";
+    private static final String TEST_BOUND_ACTION_PEOPLE_SHARETRIP = TEST_PEOPLE + "/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip";
 
     private static final String TEST_SERVICE_BASE_URL = "http://services.odata.org/TripPinRESTierService";
     private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON;
