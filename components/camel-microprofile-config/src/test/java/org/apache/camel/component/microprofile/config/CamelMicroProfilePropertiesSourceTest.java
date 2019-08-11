@@ -23,7 +23,6 @@ import io.smallrye.config.SmallRyeConfigBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
@@ -40,16 +39,12 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
         prop.put("my-mock", "result");
 
         // create PMC config source and register it so we can use it for testing
-        PropertiesConfigSource pcs = new PropertiesConfigSource(prop, "my-smallrye-config");
+        final PropertiesConfigSource pcs = new PropertiesConfigSource(prop, "my-smallrye-config");
         final Config config = new SmallRyeConfigBuilder().withSources(pcs).build();
+
         ConfigProviderResolver.instance().registerConfig(config, CamelMicroProfilePropertiesSourceTest.class.getClassLoader());
 
-        // should auto-detect this JAR on the classpath and use it (but this can only be tested outside this component)
-        CamelContext context = super.createCamelContext();
-        // ... so we add the source manually
-        PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
-        pc.addPropertiesSource(new CamelMicroProfilePropertiesSource());
-        return context;
+        return super.createCamelContext();
     }
 
     @Test
