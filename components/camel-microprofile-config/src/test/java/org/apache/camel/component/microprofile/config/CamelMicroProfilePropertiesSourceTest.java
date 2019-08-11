@@ -23,6 +23,8 @@ import io.smallrye.config.SmallRyeConfigBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
@@ -47,11 +49,29 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
         return super.createCamelContext();
     }
 
+    @Override
+    protected void bindToRegistry(Registry registry) throws Exception {
+        Properties prop = new Properties();
+        prop.put("who", "Camel");
+
+        registry.bind("ps", new PropertiesSource() {
+            @Override
+            public String getName() {
+                return "ps";
+            }
+
+            @Override
+            public String getProperty(String name) {
+                return prop.getProperty(name);
+            }
+        });
+    }
+
     @Test
     public void testMicroProfileConfig() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World from Camel");
 
-        template.sendBody("direct:start", context.resolvePropertyPlaceholders("Hello {{hi}}"));
+        template.sendBody("direct:start", context.resolvePropertyPlaceholders("Hello {{hi}} from {{who}}"));
 
         assertMockEndpointsSatisfied();
     }
