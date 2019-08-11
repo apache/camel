@@ -419,7 +419,7 @@ public class Olingo4AppAPITest {
         final TestOlingo4ResponseHandler<HttpStatusCode> responseHandler = new TestOlingo4ResponseHandler<>();
         olingoApp.action(edm, TEST_UNBOUND_ACTION_RESETDATASOURCE, null, null, responseHandler);
 
-        final HttpStatusCode statusCode = responseHandler.await(15, TimeUnit.MINUTES);
+        final HttpStatusCode statusCode = responseHandler.await();
         assertEquals(204, statusCode.getStatusCode());
     }
 
@@ -432,7 +432,7 @@ public class Olingo4AppAPITest {
         final TestOlingo4ResponseHandler<HttpStatusCode> responseHandler = new TestOlingo4ResponseHandler<>();
         olingoApp.action(edm, TEST_BOUND_ACTION_PEOPLE_SHARETRIP, null, clientEntity, responseHandler);
 
-        final HttpStatusCode statusCode = responseHandler.await(15, TimeUnit.MINUTES);
+        final HttpStatusCode statusCode = responseHandler.await();
         assertEquals(204, statusCode.getStatusCode());
     }
 
@@ -474,7 +474,7 @@ public class Olingo4AppAPITest {
         final TestOlingo4ResponseHandler<ClientEntity> actionResponseHandler = new TestOlingo4ResponseHandler<>();
         olingoApp.action(edm, TEST_BOUND_ACTION_PEOPLE_SHARETRIP, null, clientEntity, actionResponseHandler);
 
-        final ClientEntity result = actionResponseHandler.await(15, TimeUnit.MINUTES);
+        final ClientEntity result = actionResponseHandler.await();
         assertEquals("lewisblack", result.getProperty("UserName").getValue().toString());
     }
 
