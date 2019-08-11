@@ -273,6 +273,22 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         LOG.info("Read deleted entity error: {}", error.getMessage());
     }
 
+    @Test
+    public void testUnboundActionRequest() throws Exception {
+        final HttpStatusCode status = requestBody("direct:unbound-action-ResetDataSource", null);
+        assertEquals(204, status.getStatusCode());
+    }
+
+    @Test
+    public void testBoundActionRequest() throws Exception {
+        final ClientEntity clientEntity = objFactory.newEntity(null);
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
+
+        final HttpStatusCode status = requestBody("direct:bound-action-people", clientEntity);
+        assertEquals(204, status.getStatusCode());
+    }
+
     @SuppressWarnings("unchecked")
     @Test
     public void testEndpointHttpHeaders() throws Exception {
@@ -425,6 +441,11 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
                 from("direct:read-people-nofilterseen").to("olingo4://read/" + PEOPLE).to("mock:producer-noalreadyseen");
 
                 from("direct:read-people-filterseen").to("olingo4://read/" + PEOPLE + "?filterAlreadySeen=true").to("mock:producer-alreadyseen");
+
+                // test routes action's
+                from("direct:unbound-action-ResetDataSource").to("olingo4://action/ResetDataSource");
+
+                from("direct:bound-action-people").to("olingo4://action/" + TEST_PEOPLE + "/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip");
             }
         };
     }
