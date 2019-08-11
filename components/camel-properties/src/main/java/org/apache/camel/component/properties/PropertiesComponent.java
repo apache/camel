@@ -461,7 +461,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
         // discover any 3rd party properties sources
         try {
-            FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel");
+            FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/");
             Class<?> type = factoryFinder.findClass("properties-source-factory").orElse(null);
             if (type != null) {
                 Object obj = getCamelContext().getInjector().newInstance(type, false);
