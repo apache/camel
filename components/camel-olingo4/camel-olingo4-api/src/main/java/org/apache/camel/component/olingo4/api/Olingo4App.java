@@ -149,4 +149,14 @@ public interface Olingo4App {
      * @param responseHandler callback handler
      */
     void batch(Edm edm, Map<String, String> endpointHttpHeaders, Object data, Olingo4ResponseHandler<List<Olingo4BatchResponse>> responseHandler);
+
+    /**
+     * Calls a OData action
+     * @param edm service Edm
+     * @param resourcePath resource path to action
+     * @param endpointHttpHeaders HTTP Headers to add/override the component versions
+     * @param data action data
+     * @param responseHandler {@link org.apache.olingo.client.api.domain.ClientEntity} callback handler
+     */
+    <T> void action(Edm edm, String resourcePath, Map<String, String> endpointHttpHeaders, Object data, Olingo4ResponseHandler<T> responseHandler);
 }

@@ -39,11 +39,16 @@ import org.apache.camel.component.olingo4.api.batch.Olingo4BatchRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchResponse;
 import org.apache.camel.component.olingo4.api.batch.Operation;
 import org.apache.camel.component.olingo4.api.impl.Olingo4AppImpl;
+import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.ExecutionContext;
@@ -60,6 +65,8 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.serialization.ODataReader;
+import org.apache.olingo.client.api.serialization.ODataSerializerException;
+import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -98,6 +105,8 @@ public class Olingo4AppAPITest {
     private static final String TEST_AIRPORTS_COMPLEX_PROPERTY = TEST_AIRPORT + "/Location";
     private static final String TEST_AIRPORTS_SIMPLE_PROPERTY_VALUE = TEST_AIRPORTS_SIMPLE_PROPERTY + "/$value";
     private static final String COUNT_OPTION = "/$count";
+    private static final String TEST_UNBOUND_ACTION_RESETDATASOURCE = "ResetDataSource";
+    private static final String TEST_BOUND_ACTION_PEOPLE_SHARETRIP = TEST_PEOPLE +"/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip";
 
     private static final String TEST_SERVICE_BASE_URL = "http://services.odata.org/TripPinRESTierService";
     private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON;
@@ -403,6 +412,70 @@ public class Olingo4AppAPITest {
         assertEquals(TEST_UPDATE_RESOURCE_CONTENT_ID, responseParts.get(5).getContentId());
         assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), responseParts.get(6).getStatusCode());
         assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), responseParts.get(7).getStatusCode());
+    }
+
+    @Test
+    public void testUnboundActionRequest() throws Exception {
+        final TestOlingo4ResponseHandler<HttpStatusCode> responseHandler = new TestOlingo4ResponseHandler<>();
+        olingoApp.action(edm, TEST_UNBOUND_ACTION_RESETDATASOURCE, null, null, responseHandler);
+
+        final HttpStatusCode statusCode = responseHandler.await(15, TimeUnit.MINUTES);
+        assertEquals(204, statusCode.getStatusCode());
+    }
+
+    @Test
+    public void testBoundActionRequest() throws Exception {
+        final ClientEntity clientEntity = objFactory.newEntity(null);
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
+
+        final TestOlingo4ResponseHandler<HttpStatusCode> responseHandler = new TestOlingo4ResponseHandler<>();
+        olingoApp.action(edm, TEST_BOUND_ACTION_PEOPLE_SHARETRIP, null, clientEntity, responseHandler);
+
+        final HttpStatusCode statusCode = responseHandler.await(15, TimeUnit.MINUTES);
+        assertEquals(204, statusCode.getStatusCode());
+    }
+
+
+    // Unfortunately there is no action that returns a client entity. So we fake one
+    @Test
+    public void testBoundActionRequestWithClientEntityResponse() throws Exception {
+        final ODataClient odataClient = ODataClientFactory.getClient();
+        final ODataWriter odataWriter = odataClient.getWriter();
+
+        final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        httpClientBuilder.addInterceptorFirst(new HttpResponseInterceptor() {
+            @Override
+            public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
+                if (response.getStatusLine().getStatusCode() == 204) {
+                    try {
+                        response.setEntity(
+                                new InputStreamEntity(
+                                        odataWriter.writeEntity(createEntity(), ContentType.JSON),
+                                        org.apache.http.entity.ContentType.parse(ContentType.JSON.toContentTypeString())));
+                        response.setStatusCode(200);
+                    } catch (ODataSerializerException e) {
+                        throw new IOException(e);
+                    }
+                }
+            }
+        });
+        final Olingo4App olingoApp = new Olingo4AppImpl(getRealServiceUrl(TEST_SERVICE_BASE_URL), httpClientBuilder);
+        olingoApp.setContentType(TEST_FORMAT_STRING);
+
+        final TestOlingo4ResponseHandler<Edm> responseHandler = new TestOlingo4ResponseHandler<>();
+        olingoApp.read(null, Constants.METADATA, null, null, responseHandler);
+        final Edm edm = responseHandler.await();
+
+        final ClientEntity clientEntity = objFactory.newEntity(null);
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
+
+        final TestOlingo4ResponseHandler<ClientEntity> actionResponseHandler = new TestOlingo4ResponseHandler<>();
+        olingoApp.action(edm, TEST_BOUND_ACTION_PEOPLE_SHARETRIP, null, clientEntity, actionResponseHandler);
+
+        final ClientEntity result = actionResponseHandler.await(15, TimeUnit.MINUTES);
+        assertEquals("lewisblack", result.getProperty("UserName").getValue().toString());
     }
 
     private ClientEntity createEntity() {
