@@ -98,6 +98,11 @@ public class PropertiesComponentConfiguration
      */
     private Integer environmentVariableMode = 2;
     /**
+     * Whether to automatically discovery instances of PropertiesSource from
+     * registry and service factory.
+     */
+    private Boolean autoDiscoverPropertiesSources = true;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -187,6 +192,15 @@ public class PropertiesComponentConfiguration
 
     public void setEnvironmentVariableMode(Integer environmentVariableMode) {
         this.environmentVariableMode = environmentVariableMode;
+    }
+
+    public Boolean getAutoDiscoverPropertiesSources() {
+        return autoDiscoverPropertiesSources;
+    }
+
+    public void setAutoDiscoverPropertiesSources(
+            Boolean autoDiscoverPropertiesSources) {
+        this.autoDiscoverPropertiesSources = autoDiscoverPropertiesSources;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
