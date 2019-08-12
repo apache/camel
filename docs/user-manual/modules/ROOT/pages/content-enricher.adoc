@@ -340,7 +340,7 @@ polling
 * receive(timeout)
 
 [[ContentEnricher-PollEnrichOptions]]
-===PollEnrich Options
+=== PollEnrich Options
 
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
