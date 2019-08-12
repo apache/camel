@@ -431,9 +431,9 @@ from("direct:in")
 ----
 
 
-== MicrometerRoutePolicyFactory
+== Using Micrometer route policy factory
 
-This factory allows to add a RoutePolicy for each
+`MicrometerRoutePolicyFactory` allows to add a RoutePolicy for each
 route in order to exposes route utilization statistics using Micrometer.
 This factory can be used in Java and XML as the examples below
 demonstrates. 
@@ -472,9 +472,9 @@ If JMX is enabled in the CamelContext, the MBean is registered in the `type=serv
 with `name=MicrometerRoutePolicy`.
 
 
-== MicrometerMessageHistoryFactory
+== Using Micrometer message history factory
 
-This factory allows to use metrics to capture Message History performance
+`MicrometerMessageHistoryFactory` allows to use metrics to capture Message History performance
 statistics while routing messages. It works by using a Micrometer Timer for
 each node in all the routes. This factory can be used in Java and XML as
 the examples below demonstrates. 
@@ -520,7 +520,7 @@ If JMX is enabled in the CamelContext, the MBean is registered in the `type=serv
 with `name=MicrometerMessageHistory`.
 
 
-== MicrometerEventNotifiers
+== Micrometer event notification
 
 There is a `MicrometerRouteEventNotifier` (counting added and running routes) and a
 `MicrometerExchangeEventNotifier` (timing exchanges from their creation to their completion).
@@ -548,9 +548,9 @@ If JMX is enabled in the CamelContext, the MBean is registered in the `type=serv
 with `name=MicrometerEventNotifier`.
 
 
-== InstrumentedThreadPoolFactory
+== Instrumenting Camel thread pools
 
-This factory allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
+`InstrumentedThreadPoolFactory` allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
 which collects information from inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring.
 

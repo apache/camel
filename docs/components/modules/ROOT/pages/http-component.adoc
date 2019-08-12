@@ -295,9 +295,9 @@ the `HttpOperationFailedException` from being thrown for failed response
 codes. This allows you to get any response from the remote server. +
 There is a sample below demonstrating this.
 
-== HttpOperationFailedException
+== Exceptions
 
-This exception contains the following information:
+`HttpOperationFailedException` exception contains the following information:
 
 * The HTTP status code
 * The HTTP status line (text of the status code)
