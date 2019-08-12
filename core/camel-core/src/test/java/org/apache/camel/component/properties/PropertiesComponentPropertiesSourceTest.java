@@ -18,19 +18,42 @@ package org.apache.camel.component.properties;
 
 import java.util.Properties;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.PropertiesSource;
 import org.junit.Test;
 
-public class PropertiesComponentPropertiesSourceTest extends ContextTestSupport {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+public class PropertiesComponentPropertiesSourceTest {
     @Test
     public void testPropertiesSourceFromRegistry() {
+        CamelContext context = new DefaultCamelContext();
         context.getRegistry().bind("my-ps-1", new PropertiesPropertiesSource("ps1", "my-key-1", "my-val-1"));
         context.getRegistry().bind("my-ps-2", new PropertiesPropertiesSource("ps2", "my-key-2", "my-val-2"));
-        context.start();
 
-        assertEquals("my-val-1", context.resolvePropertyPlaceholders("{{my-key-1}}"));
-        assertEquals("my-val-2", context.resolvePropertyPlaceholders("{{my-key-2}}"));
+        assertThat(context.resolvePropertyPlaceholders("{{my-key-1}}")).isEqualTo("my-val-1");
+        assertThat(context.resolvePropertyPlaceholders("{{my-key-2}}")).isEqualTo("my-val-2");
+    }
+
+    @Test
+    public void testDisablePropertiesSourceDiscovery() {
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setAutoDiscoverPropertiesSources(false);
+
+        CamelContext context = new DefaultCamelContext();
+        context.addComponent("properties", pc);
+        context.getRegistry().bind("my-ps-1", new PropertiesPropertiesSource("ps1", "my-key-1", "my-val-1"));
+        context.getRegistry().bind("my-ps-2", new PropertiesPropertiesSource("ps2", "my-key-2", "my-val-2"));
+
+        assertThatThrownBy(() -> context.resolvePropertyPlaceholders("{{my-key-1}}"))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Property with key [my-key-1] not found in properties from text: {{my-key-1}}");
+
+        assertThatThrownBy(() -> context.resolvePropertyPlaceholders("{{my-key-2}}"))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Property with key [my-key-2] not found in properties from text: {{my-key-2}}");
     }
 
     private static final class PropertiesPropertiesSource extends Properties implements PropertiesSource {

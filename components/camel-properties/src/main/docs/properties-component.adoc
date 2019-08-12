@@ -15,7 +15,7 @@ Where *key* is the key for the property to lookup
 == Options
 
 // component options: START
-The Properties component supports 12 options, which are listed below.
+The Properties component supports 13 options, which are listed below.
 
 
 
@@ -32,6 +32,7 @@ The Properties component supports 12 options, which are listed below.
 | *overrideProperties* (advanced) | Sets a special list of override properties that take precedence and will use first, if a property exist. |  | Properties
 | *systemPropertiesMode* (common) | Sets the JVM system property mode (0 = never, 1 = fallback, 2 = override). The default mode (override) is to use system properties if present, and override any existing properties. OS environment variable mode is checked before JVM system property mode | 2 | int
 | *environmentVariableMode* (common) | Sets the OS environment variables mode (0 = never, 1 = fallback, 2 = override). The default mode (override) is to use OS environment variables if present, and override any existing properties. OS environment variable mode is checked before JVM system property mode | 2 | int
+| *autoDiscoverProperties Sources* (common) | Whether to automatically discovery instances of PropertiesSource from registry and service factory. | true | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
