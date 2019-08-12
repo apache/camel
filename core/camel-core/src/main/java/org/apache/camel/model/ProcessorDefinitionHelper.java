@@ -626,7 +626,7 @@ public final class ProcessorDefinitionHelper {
     }
 
     private static void addRestoreAction(Map<String, Consumer<String>> writeProperties, final Map<String, String> properties) {
-        if (properties.isEmpty()) {
+        if (properties == null || properties.isEmpty()) {
             return;
         }
 
@@ -685,7 +685,7 @@ public final class ProcessorDefinitionHelper {
         Map<String, Supplier<String>> readProperties = ppa.getReadPropertyPlaceholderOptions(camelContext);
         Map<String, Consumer<String>> writeProperties = ppa.getWritePropertyPlaceholderOptions(camelContext);
 
-        if (!readProperties.isEmpty()) {
+        if (readProperties != null && !readProperties.isEmpty()) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("There are {} properties on: {}", readProperties.size(), definition);
             }
@@ -718,6 +718,8 @@ public final class ProcessorDefinitionHelper {
      */
     public static void resolveKnownConstantFields(CamelContext camelContext, Object definition) throws Exception {
         LOG.trace("Resolving known fields for: {}", definition);
+
+        // TODO: implement this
 /*
         // find all String getter/setter
         Map<String, Object> properties = new HashMap<>();
