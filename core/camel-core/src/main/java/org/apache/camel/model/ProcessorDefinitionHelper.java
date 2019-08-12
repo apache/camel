@@ -721,6 +721,7 @@ public final class ProcessorDefinitionHelper {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("There are {} properties on: {}", readProperties.size(), definition);
             }
+
             // lookup and resolve properties for String based properties
             for (Map.Entry<String, Supplier<String>> entry : readProperties.entrySet()) {
                 String name = entry.getKey();
