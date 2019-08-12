@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -39,7 +38,7 @@ import org.apache.camel.spi.PropertiesComponent;
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToDefinition extends SendDefinition<ToDefinition> implements PropertyPlaceholderAware {
+public class ToDefinition extends SendDefinition<ToDefinition> implements DefinitionPropertyPlaceholderConfigurable {
     @XmlAttribute
     private ExchangePattern pattern;
 
