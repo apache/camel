@@ -18,13 +18,13 @@ package org.apache.camel.tools.apt;
 
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -92,7 +92,8 @@ public class CoreEipAnnotationProcessorHelper {
 
     private boolean skipUnwanted = true;
 
-    protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv, final TypeElement classElement) {
+    protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv,
+                                     final TypeElement classElement, Set<String> propertyPlaceholderDefinitions, final boolean last) {
         final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf("."));
 
@@ -128,13 +129,20 @@ public class CoreEipAnnotationProcessorHelper {
             fileName = name + ".json";
         }
 
-        // write json schema
-        processFile(processingEnv, packageName, fileName, writer -> writeJSonSchemeDocumentation(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName, name));
+        // write json schema and property placeholder provider
+        processFile(processingEnv, packageName, fileName, writer -> writeJSonSchemeDocumentation(processingEnv, writer,
+                roundEnv, classElement, rootElement, javaTypeName, name, propertyPlaceholderDefinitions));
+
+        // if last then generate
+        if (last) {
+            // lets sort themfirst
+            writePropertyPlaceholderDefinitionsHelper(processingEnv, roundEnv, propertyPlaceholderDefinitions);
+        }
     }
 
-
+    // TODO: rename this 
     protected void writeJSonSchemeDocumentation(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
-                                                XmlRootElement rootElement, String javaTypeName, String modelName) {
+                                                XmlRootElement rootElement, String javaTypeName, String modelName, Set<String> propertyPlaceholderDefinitions) {
         // gather eip information
         EipModel eipModel = findEipModelProperties(processingEnv, roundEnv, classElement, javaTypeName, modelName);
 
@@ -152,11 +160,11 @@ public class CoreEipAnnotationProcessorHelper {
         writer.println(json);
 
         // write property placeholder source code
-        writePropertyPlaceholderProviderSource(processingEnv, writer, roundEnv, classElement, eipModel, eipOptions);
+        writePropertyPlaceholderProviderSource(processingEnv, writer, roundEnv, classElement, eipModel, eipOptions, propertyPlaceholderDefinitions);
     }
 
     protected void writePropertyPlaceholderProviderSource(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
-                                                          EipModel eipModel, Set<EipOption> options) {
+                                                          EipModel eipModel, Set<EipOption> options, Set<String> propertyPlaceholderDefinitions) {
 
         // the following are valid class elements which we want to generate
         boolean rest = classElement.getQualifiedName().toString().startsWith("org.apache.camel.model.rest");
@@ -175,6 +183,7 @@ public class CoreEipAnnotationProcessorHelper {
         String fqn = "org.apache.camel.model.placeholder." + cn;
 
         doWritePropertyPlaceholderProviderSource(processingEnv, parent, def, fqnDef, cn, fqn, options);
+        propertyPlaceholderDefinitions.add(fqnDef);
 
         // we also need to generate from when we generate route as from can also configure property placeholders
         if ("RouteDefinition".equals(def)) {
@@ -188,6 +197,7 @@ public class CoreEipAnnotationProcessorHelper {
             options.add(new EipOption("uri", null, null, "java.lang.String", false, null, null, false, null, false, null, false, null, false));
 
             doWritePropertyPlaceholderProviderSource(processingEnv, parent, def, fqnDef, cn, fqn, options);
+            propertyPlaceholderDefinitions.add(fqnDef);
         }
     }
 
@@ -299,6 +309,57 @@ public class CoreEipAnnotationProcessorHelper {
         }
 
         return option.getName();
+    }
+
+    private void writePropertyPlaceholderDefinitionsHelper(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv,
+                                                           Set<String> propertyPlaceholderDefinitions) {
+        Writer w = null;
+        try {
+            JavaFileObject src = processingEnv.getFiler().createSourceFile("org.apache.camel.model.placeholder.DefinitionPropertiesPlaceholderProviderHelper");
+            w = src.openWriter();
+
+            w.write("/* Generated by camel-apt */\n");
+            w.write("package org.apache.camel.model.placeholder;\n");
+            w.write("\n");
+            w.write("import java.util.HashMap;\n");
+            w.write("import java.util.Map;\n");
+            w.write("import java.util.Optional;\n");
+            w.write("import java.util.function.Function;\n");
+            w.write("import java.util.function.Supplier;\n");
+            w.write("\n");
+            w.write("import org.apache.camel.model.DefinitionPropertyPlaceholderConfigurable;\n");
+            for (String def : propertyPlaceholderDefinitions) {
+                w.write("import " + def + ";\n");
+            }
+            w.write("\n");
+            w.write("public class DefinitionPropertiesPlaceholderProviderHelper {\n");
+            w.write("\n");
+            w.write("    private static final Map<Class, Function<Object, DefinitionPropertyPlaceholderConfigurable>> MAP;\n");
+            w.write("    static {\n");
+            w.write("        Map<Class, Function<Object, DefinitionPropertyPlaceholderConfigurable>> map = new HashMap<>();\n");
+            for (String def : propertyPlaceholderDefinitions) {
+                String cn = def.substring(def.lastIndexOf('.') + 1);
+                w.write("        map.put(" + cn + ".class, " + cn + "PropertyPlaceholderProvider::new);\n");
+            }
+            w.write("        MAP = map;\n");
+            w.write("    }\n");
+            w.write("\n");
+            w.write("    public static Optional<DefinitionPropertyPlaceholderConfigurable> provider(Object definition) {\n");
+            w.write("        Function<Object, DefinitionPropertyPlaceholderConfigurable> func = MAP.get(definition.getClass());\n");
+            w.write("        if (func != null) {\n");
+            w.write("            return Optional.of(func.apply(definition));\n");
+            w.write("        }\n");
+            w.write("        return Optional.empty();\n");
+            w.write("    }\n");
+            w.write("\n");
+            w.write("}\n");
+            w.write("\n");
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Unable to process annotated elements in " + getClass().getSimpleName() + ": " + e.getMessage());
+            dumpExceptionToErrorFile("camel-apt-error.log", "Error processing annotation in " + getClass().getSimpleName(), e);
+        } finally {
+            IOHelper.close(w);
+        }
     }
 
     public String createParameterJsonSchema(EipModel eipModel, Set<EipOption> options) {
