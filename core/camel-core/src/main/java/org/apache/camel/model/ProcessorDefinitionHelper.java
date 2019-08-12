@@ -22,9 +22,12 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
@@ -628,10 +631,31 @@ public final class ProcessorDefinitionHelper {
         return rc;
     }
 
-    private static void addRestoreAction(final Object target, final Map<String, Object> properties) {
-        addRestoreAction(null, target, properties);
+    private static void addRestoreAction(Map<String, Consumer<String>> writeProperties, final Map<String, String> properties) {
+        if (properties.isEmpty()) {
+            return;
+        }
+
+        RestoreAction restoreAction = CURRENT_RESTORE_ACTION.get();
+        if (restoreAction == null) {
+            return;
+        }
+
+        restoreAction.actions.add(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    properties.forEach((k, v) -> {
+                        writeProperties.get(k).accept(v);
+                    });
+                } catch (Exception e) {
+                    LOG.warn("Cannot restore definition properties. This exception is ignored.", e);
+                }
+            }
+        });
     }
-    
+
+    @Deprecated
     private static void addRestoreAction(final CamelContext context, final Object target, final Map<String, Object> properties) {
         if (properties.isEmpty()) {
             return;
@@ -681,70 +705,37 @@ public final class ProcessorDefinitionHelper {
     public static void resolvePropertyPlaceholders(CamelContext camelContext, Object definition) throws Exception {
         LOG.trace("Resolving property placeholders for: {}", definition);
 
+        // only do this for models that supports property placeholders
+        if (!(definition instanceof PropertyPlaceholderAware)) {
+            return;
+        }
+
+        PropertyPlaceholderAware ppa = (PropertyPlaceholderAware) definition;
+
         // find all getter/setter which we can use for property placeholders
-        Map<String, Object> properties = new HashMap<>();
-        IntrospectionSupport.getProperties(definition, properties, null);
+        Map<String, String> changedProperties = new HashMap<>();
+        Map<String, Supplier<String>> readProperties = ppa.getReadPropertyPlaceholderOptions(camelContext);
+        Map<String, Consumer<String>> writeProperties = ppa.getWritePropertyPlaceholderOptions(camelContext);
 
-        OtherAttributesAware other = null;
-        if (definition instanceof OtherAttributesAware) {
-            other = (OtherAttributesAware) definition;
-        }
-        // include additional properties which have the Camel placeholder QName
-        // and when the definition parameter is this (otherAttributes belong to this)
-        if (other != null && other.getOtherAttributes() != null) {
-            for (QName key : other.getOtherAttributes().keySet()) {
-                if (Constants.PLACEHOLDER_QNAME.equals(key.getNamespaceURI())) {
-                    String local = key.getLocalPart();
-                    Object value = other.getOtherAttributes().get(key);
-                    if (value instanceof String) {
-                        // enforce a properties component to be created if none existed
-                        camelContext.getPropertiesComponent(true);
-
-                        // value must be enclosed with placeholder tokens
-                        String s = (String) value;
-                        String prefixToken = PropertiesComponent.PREFIX_TOKEN;
-                        String suffixToken = PropertiesComponent.SUFFIX_TOKEN;
-
-                        if (!s.startsWith(prefixToken)) {
-                            s = prefixToken + s;
-                        }
-                        if (!s.endsWith(suffixToken)) {
-                            s = s + suffixToken;
-                        }
-                        value = s;
-                    }
-                    properties.put(local, value);
-                }
+        if (!readProperties.isEmpty()) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("There are {} properties on: {}", readProperties.size(), definition);
             }
-        }
-
-        Map<String, Object> changedProperties = new HashMap<>();
-        if (!properties.isEmpty()) {
-            LOG.trace("There are {} properties on: {}", properties.size(), definition);
             // lookup and resolve properties for String based properties
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                // the name is always a String
+            for (Map.Entry<String, Supplier<String>> entry : readProperties.entrySet()) {
                 String name = entry.getKey();
-                Object value = entry.getValue();
-                if (value instanceof String) {
-                    // value must be a String, as a String is the key for a property placeholder
-                    String text = (String) value;
-                    text = camelContext.resolvePropertyPlaceholders(text);
-                    if (text != value) {
-                        // invoke setter as the text has changed
-                        boolean changed = IntrospectionSupport.setProperty(camelContext.getTypeConverter(), definition, name, text);
-                        if (!changed) {
-                            throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + definition);
-                        }
-                        changedProperties.put(name, value);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Changed property [{}] from: {} to: {}", name, value, text);
-                        }
+                String value = entry.getValue().get();
+                String text = camelContext.resolvePropertyPlaceholders(value);
+                if (!Objects.equals(text, value)) {
+                    writeProperties.get(name).accept(text);
+                    changedProperties.put(name, value);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Changed property [{}] from: {} to: {}", name, value, text);
                     }
                 }
             }
         }
-        addRestoreAction(camelContext, definition, changedProperties);
+        addRestoreAction(writeProperties, changedProperties);
     }
 
     /**
@@ -758,7 +749,7 @@ public final class ProcessorDefinitionHelper {
      */
     public static void resolveKnownConstantFields(CamelContext camelContext, Object definition) throws Exception {
         LOG.trace("Resolving known fields for: {}", definition);
-
+/*
         // find all String getter/setter
         Map<String, Object> properties = new HashMap<>();
         IntrospectionSupport.getProperties(definition, properties, null);
@@ -793,7 +784,7 @@ public final class ProcessorDefinitionHelper {
                 }
             }
         }
-        addRestoreAction(definition, changedProperties);
+        addRestoreAction(camelContext, definition, changedProperties);*/
     }
 
 }
