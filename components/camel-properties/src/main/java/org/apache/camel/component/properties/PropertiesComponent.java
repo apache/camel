@@ -401,7 +401,14 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.ignoreMissingLocation = ignoreMissingLocation;
     }
 
+    /**
+     * @return a list of properties which will be used before any locations are resolved (can't be null).
+     */
     public Properties getInitialProperties() {
+        if (initialProperties == null) {
+            initialProperties = new Properties();
+        }
+
         return initialProperties;
     }
 
@@ -413,7 +420,14 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.initialProperties = initialProperties;
     }
 
+    /**
+     * @return a list of properties that take precedence and will use first, if a property exist (can't be null).
+     */
     public Properties getOverrideProperties() {
+        if (overrideProperties == null) {
+            overrideProperties = new Properties();
+        }
+
         return overrideProperties;
     }
 
@@ -488,6 +502,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     public void setEnvironmentVariableMode(int environmentVariableMode) {
         this.environmentVariableMode = environmentVariableMode;
     }
+
     public boolean isAutoDiscoverPropertiesSources() {
         return autoDiscoverPropertiesSources;
     }
