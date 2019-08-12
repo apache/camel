@@ -16,8 +16,13 @@
  */
 package org.apache.camel.tools.apt;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
-
+import java.util.TreeSet;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
@@ -38,19 +43,48 @@ public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
     @Override
     protected void doProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) throws Exception {
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(XmlRootElement.class);
-        for (Element element : elements) {
-            if (element instanceof TypeElement) {
-                TypeElement classElement = (TypeElement) element;
 
-                final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
-                boolean core = javaTypeName.startsWith("org.apache.camel.model");
-                boolean spring = javaTypeName.startsWith("org.apache.camel.spring") || javaTypeName.startsWith("org.apache.camel.core.xml");
-                if (core) {
-                    coreProcessor.processModelClass(processingEnv, roundEnv, classElement);
-                } else if (spring) {
-                    springProcessor.processModelClass(processingEnv, roundEnv, classElement);
-                }
-            }
+        Set<? extends Element> coreElements = elements.stream()
+                .filter(new Predicate<Element>() {
+                    @Override
+                    public boolean test(Element element) {
+                        if (element instanceof TypeElement) {
+                            TypeElement classElement = (TypeElement) element;
+
+                            final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
+                            return javaTypeName.startsWith("org.apache.camel.model");
+                        }
+                        return false;
+                    }
+                }).collect(Collectors.toSet());
+
+        Set<? extends Element> springElements = elements.stream()
+                .filter(new Predicate<Element>() {
+                    @Override
+                    public boolean test(Element element) {
+                        if (element instanceof TypeElement) {
+                            TypeElement classElement = (TypeElement) element;
+
+                            final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
+                            return javaTypeName.startsWith("org.apache.camel.spring") || javaTypeName.startsWith("org.apache.camel.core.xml");
+                        }
+                        return false;
+                    }
+                }).collect(Collectors.toSet());
+
+        // we want them to be sorted
+        Set<String> propertyPlaceholderDefinitions = new TreeSet<>(String::compareToIgnoreCase);
+
+        Iterator it = coreElements.iterator();
+        while (it.hasNext()) {
+            TypeElement classElement = (TypeElement) it.next();
+            coreProcessor.processModelClass(processingEnv, roundEnv, classElement, propertyPlaceholderDefinitions, !it.hasNext());
+        }
+
+        it = springElements.iterator();
+        while (it.hasNext()) {
+            TypeElement classElement = (TypeElement) it.next();
+            springProcessor.processModelClass(processingEnv, roundEnv, classElement, !it.hasNext());
         }
     }
 

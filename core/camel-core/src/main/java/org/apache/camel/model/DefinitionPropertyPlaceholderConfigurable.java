@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.placeholder.DefinitionPropertiesPlaceholderProviderHelper;
 
 /**
  * To be used for configuring property placeholder options on the EIP models.
@@ -34,7 +35,7 @@ public interface DefinitionPropertyPlaceholderConfigurable {
      * @return key/values of options
      */
     default Map<String, Supplier<String>> getReadPropertyPlaceholderOptions(CamelContext camelContext) {
-        DefinitionPropertyPlaceholderConfigurable aware = DefinitionPropertiesProviderHelper.provider(this).orElse(null);
+        DefinitionPropertyPlaceholderConfigurable aware = DefinitionPropertiesPlaceholderProviderHelper.provider(this).orElse(null);
         return aware != null ? aware.getReadPropertyPlaceholderOptions(camelContext) : null;
     }
 
@@ -43,7 +44,7 @@ public interface DefinitionPropertyPlaceholderConfigurable {
      * This will be all the string based options.
      */
     default Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext) {
-        DefinitionPropertyPlaceholderConfigurable aware = DefinitionPropertiesProviderHelper.provider(this).orElse(null);
+        DefinitionPropertyPlaceholderConfigurable aware = DefinitionPropertiesPlaceholderProviderHelper.provider(this).orElse(null);
         return aware != null ? aware.getWritePropertyPlaceholderOptions(camelContext) : null;
     }
 

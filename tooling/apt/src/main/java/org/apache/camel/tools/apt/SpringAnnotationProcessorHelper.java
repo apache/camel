@@ -56,7 +56,8 @@ import static org.apache.camel.tools.apt.helper.Strings.safeNull;
  */
 public class SpringAnnotationProcessorHelper {
 
-    protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv, final TypeElement classElement) {
+    protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv,
+                                     final TypeElement classElement, final boolean last) {
         final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf("."));
 
