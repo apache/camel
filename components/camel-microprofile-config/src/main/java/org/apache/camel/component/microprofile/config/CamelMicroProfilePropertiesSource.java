@@ -17,6 +17,7 @@
 package org.apache.camel.component.microprofile.config;
 
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.support.service.ServiceSupport;
@@ -54,6 +55,23 @@ public class CamelMicroProfilePropertiesSource extends ServiceSupport implements
 
         for (String key: config.getPropertyNames()) {
             answer.put(key, config.getValue(key, String.class));
+        }
+
+        return answer;
+    }
+
+    @Override
+    public Properties loadProperties(Predicate<String> filter) {
+        if (config == null) {
+            config = ConfigProvider.getConfig();
+        }
+
+        Properties answer = new Properties();
+
+        for (String name: answer.stringPropertyNames()) {
+            if (filter.test(name)) {
+                config.getOptionalValue(name, String.class).ifPresent(v -> answer.put(name, v));
+            }
         }
 
         return answer;

@@ -18,6 +18,7 @@ package org.apache.camel.component.properties;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.support.service.ServiceSupport;
@@ -47,6 +48,19 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport im
     @Override
     public Properties loadProperties() {
         return properties;
+    }
+
+    @Override
+    public Properties loadProperties(Predicate<String> filter) {
+        Properties answer = new Properties();
+
+        for (String name: answer.stringPropertyNames()) {
+            if (filter.test(name)) {
+                answer.put(name, properties.get(name));
+            }
+        }
+
+        return answer;
     }
 
     @Override

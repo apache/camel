@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import org.apache.camel.Component;
 import org.apache.camel.StaticService;
@@ -62,11 +63,24 @@ public interface PropertiesComponent extends Component, StaticService {
     Optional<String> resolveProperty(String key);
 
     /**
-     * Loads the properties from the default locations.
+     * Loads the properties from the default locations and sources.
      *
      * @return the properties loaded.
      */
     Properties loadProperties();
+
+    /**
+     * Loads the properties from the default locations and sources filtering them out according to a predicate.
+     * </p>
+     * <pre>{@code
+     *     PropertiesComponent pc = getPropertiesComponent();
+     *     Properties props = pc.loadProperties(key -> key.startsWith("camel.component.seda"));
+     * }</pre>
+     *
+     * @param filter the predicate used to filter out properties based on the key.
+     * @return the properties loaded.
+     */
+    Properties loadProperties(Predicate<String> filter);
 
     /**
      * Gets the configured properties locations.
