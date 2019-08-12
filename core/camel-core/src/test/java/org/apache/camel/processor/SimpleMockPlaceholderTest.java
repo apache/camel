@@ -16,12 +16,31 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Properties;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.junit.Test;
 
-public class SimpleMockTest extends ContextTestSupport {
+public class SimpleMockPlaceholderTest extends ContextTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        Properties myProp = new Properties();
+        myProp.put("foo", "log:foo");
+        myProp.put("end", "result");
+
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setInitialProperties(myProp);
+        context.addComponent("properties", pc);
+
+        return context;
+    }
 
     @Test
     public void testSimple() throws Exception {
@@ -49,7 +68,7 @@ public class SimpleMockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").to("log:bar").to("mock:result");
+                from("direct:start").to("{{foo}}").to("log:bar").to("mock:{{end}}");
             }
         };
     }

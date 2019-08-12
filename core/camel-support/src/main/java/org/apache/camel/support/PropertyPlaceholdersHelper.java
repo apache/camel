@@ -45,6 +45,8 @@ public final class PropertyPlaceholdersHelper {
     public static void resolvePropertyPlaceholders(CamelContext camelContext, Object object) throws Exception {
         LOG.trace("Resolving property placeholders for: {}", object);
 
+        // TODO: Like ProcessorDefinitionHelper we want to avoid reflection
+
         // find all getter/setter which we can use for property placeholders
         Map<String, Object> properties = new HashMap<>();
         IntrospectionSupport.getProperties(object, properties, null);
