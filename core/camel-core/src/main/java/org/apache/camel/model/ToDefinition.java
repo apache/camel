@@ -16,21 +16,15 @@
  */
 package org.apache.camel.model;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.PropertiesComponent;
 
 /**
  * Sends the message to a static endpoint
@@ -38,18 +32,11 @@ import org.apache.camel.spi.PropertiesComponent;
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToDefinition extends SendDefinition<ToDefinition> implements DefinitionPropertyPlaceholderConfigurable {
+public class ToDefinition extends SendDefinition<ToDefinition> {
     @XmlAttribute
     private ExchangePattern pattern;
 
-    private final Map<String, Supplier<String>> readPlaceholders = new HashMap<>();
-    private final Map<String, Consumer<String>> writePlaceholders = new HashMap<>();
-
     public ToDefinition() {
-        readPlaceholders.put("id", this::getId);
-        readPlaceholders.put("uri", this::getUri);
-        writePlaceholders.put("id", this::setId);
-        writePlaceholders.put("uri", this::setUri);
     }
 
     public ToDefinition(String uri) {
@@ -104,41 +91,5 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Defini
         this.pattern = pattern;
     }
 
-    @Override
-    public Map<String, Supplier<String>> getReadPropertyPlaceholderOptions(final CamelContext camelContext) {
-        if (getOtherAttributes() != null && !getOtherAttributes().isEmpty()) {
-            final Map<String, Supplier<String>> answer = new HashMap<>(readPlaceholders);
-            getOtherAttributes().forEach((k, v) -> {
-                if (Constants.PLACEHOLDER_QNAME.equals(k.getNamespaceURI())) {
-                    if (v instanceof String) {
-                        // enforce a properties component to be created if none existed
-                        camelContext.getPropertiesComponent(true);
-
-                        // value must be enclosed with placeholder tokens
-                        String s = (String) v;
-                        String prefixToken = PropertiesComponent.PREFIX_TOKEN;
-                        String suffixToken = PropertiesComponent.SUFFIX_TOKEN;
-
-                        if (!s.startsWith(prefixToken)) {
-                            s = prefixToken + s;
-                        }
-                        if (!s.endsWith(suffixToken)) {
-                            s = s + suffixToken;
-                        }
-                        final String value = s;
-                        answer.put(k.getLocalPart(), () -> value);
-                    }
-                }
-            });
-            return answer;
-        } else {
-            return readPlaceholders;
-        }
-    }
-
-    @Override
-    public Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext) {
-        return writePlaceholders;
-    }
 }
 
