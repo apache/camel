@@ -17,12 +17,14 @@
 package org.apache.camel.tools.apt;
 
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -34,6 +36,8 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -42,11 +46,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
+import jdk.nashorn.internal.ir.debug.ClassHistogramElement;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.tools.apt.helper.IOHelper;
 import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
 import org.apache.camel.tools.apt.helper.Strings;
 
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.error;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElementChildren;
@@ -124,6 +132,7 @@ public class CoreEipAnnotationProcessorHelper {
         processFile(processingEnv, packageName, fileName, writer -> writeJSonSchemeDocumentation(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName, name));
     }
 
+
     protected void writeJSonSchemeDocumentation(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
                                                 XmlRootElement rootElement, String javaTypeName, String modelName) {
         // gather eip information
@@ -141,6 +150,155 @@ public class CoreEipAnnotationProcessorHelper {
 
         String json = createParameterJsonSchema(eipModel, eipOptions);
         writer.println(json);
+
+        // write property placeholder source code
+        writePropertyPlaceholderProviderSource(processingEnv, writer, roundEnv, classElement, eipModel, eipOptions);
+    }
+
+    protected void writePropertyPlaceholderProviderSource(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
+                                                          EipModel eipModel, Set<EipOption> options) {
+
+        // the following are valid class elements which we want to generate
+        boolean rest = classElement.getQualifiedName().toString().startsWith("org.apache.camel.model.rest");
+        boolean processor = hasSuperClass(processingEnv, roundEnv, classElement, "org.apache.camel.model.ProcessorDefinition");
+        boolean language = hasSuperClass(processingEnv, roundEnv, classElement, "org.apache.camel.model.language.ExpressionDefinition");
+        boolean dataformat = hasSuperClass(processingEnv, roundEnv, classElement, "org.apache.camel.model.DataFormatDefinition");
+
+        if (!rest && !processor && !language && !dataformat) {
+            return;
+        }
+
+        TypeElement parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.model.DefinitionPropertyPlaceholderConfigurable");
+        String def = classElement.getSimpleName().toString();
+        String fqnDef = classElement.getQualifiedName().toString();
+        String cn = def + "PropertyPlaceholderProvider";
+        String fqn = "org.apache.camel.model.placeholder." + cn;
+
+        doWritePropertyPlaceholderProviderSource(processingEnv, parent, def, fqnDef, cn, fqn, options);
+
+        // we also need to generate from when we generate route as from can also configure property placeholders
+        if ("RouteDefinition".equals(def)) {
+            def = "FromDefinition";
+            fqnDef = "org.apache.camel.model.FromDefinition";
+            cn = "FromDefinitionPropertyPlaceholderProvider";
+            fqn = "org.apache.camel.model.placeholder.FromDefinitionPropertyPlaceholderProvider";
+
+            options.clear();
+            options.add(new EipOption("id", null, null, "java.lang.String", false, null, null, false, null, false, null, false, null, false));
+            options.add(new EipOption("uri", null, null, "java.lang.String", false, null, null, false, null, false, null, false, null, false));
+
+            doWritePropertyPlaceholderProviderSource(processingEnv, parent, def, fqnDef, cn, fqn, options);
+        }
+    }
+
+    private void doWritePropertyPlaceholderProviderSource(ProcessingEnvironment processingEnv, TypeElement parent,
+                                                          String def, String fqnDef, String cn, String fqn,
+                                                          Set<EipOption> options) {
+
+        Writer w = null;
+        try {
+            JavaFileObject src = processingEnv.getFiler().createSourceFile(fqn, parent);
+            w = src.openWriter();
+
+            w.write("/* Generated by camel-apt */\n");
+            w.write("package org.apache.camel.model.placeholder;\n");
+            w.write("\n");
+            w.write("import java.util.HashMap;\n");
+            w.write("import java.util.Map;\n");
+            w.write("import java.util.function.Consumer;\n");
+            w.write("import java.util.function.Supplier;\n");
+            w.write("\n");
+            w.write("import org.apache.camel.CamelContext;\n");
+            w.write("import " + fqnDef + ";\n");
+            w.write("import org.apache.camel.model.DefinitionPropertyPlaceholderConfigurable;\n");
+            w.write("\n");
+            w.write("public class " + cn + " implements DefinitionPropertyPlaceholderConfigurable {\n");
+            w.write("\n");
+            w.write("    private final Map<String, Supplier<String>> readPlaceholders = new HashMap<>();\n");
+            w.write("    private final Map<String, Consumer<String>> writePlaceholders = new HashMap<>();\n");
+            w.write("\n");
+
+            // add constructor
+            w.write("    public " + cn + "(Object obj) {\n");
+            w.write("        " + def + " definition = (" + def + ") obj;\n");
+            w.write("\n");
+
+            // only include string types as they are the only ones we can use for property placeholders
+            boolean found = false;
+            for (EipOption option : options) {
+                if ("java.lang.String".equals(option.getType())) {
+                    found = true;
+                    String getOrSet = sanitizeOptionName(def, option);
+                    getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
+                    w.write("        readPlaceholders.put(\"" + option.getName() + "\", definition::get" + getOrSet + ");\n");
+                    w.write("        writePlaceholders.put(\"" + option.getName() + "\", definition::set" + getOrSet + ");\n");
+                }
+            }
+            if (!found) {
+                w.write("\n");
+            }
+
+            w.write("    }\n");
+            w.write("\n");
+            w.write("    @Override\n");
+            w.write("    public Map<String, Supplier<String>> getReadPropertyPlaceholderOptions(CamelContext camelContext) {\n");
+            w.write("        return readPlaceholders;\n");
+            w.write("    }\n");
+            w.write("\n");
+            w.write("    @Override\n");
+            w.write("    public Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext) {\n");
+            w.write("        return writePlaceholders;\n");
+            w.write("    }\n");
+            w.write("\n");
+            w.write("}\n");
+            w.write("\n");
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Unable to process annotated elements in " + getClass().getSimpleName() + ": " + e.getMessage());
+            dumpExceptionToErrorFile("camel-apt-error.log", "Error processing annotation in " + getClass().getSimpleName(), e);
+        } finally {
+            IOHelper.close(w);
+        }
+    }
+
+    public String sanitizeOptionName(String def, EipOption option) {
+        // some elements have different setter/getter names vs the xml dsl
+        if ("SimpleExpression".equals(def) || "JsonPathExpression".equals(def)) {
+            if ("resultType".equals(option.getName())) {
+                return "resultTypeName";
+            }
+        } else if ("EnrichDefinition".equals(def) || "PollEnrichDefinition".equals(def) || "ClaimCheckDefinition".equals(def)) {
+            if ("strategyRef".equals(option.getName())) {
+                return "aggregationStrategyRef";
+            } else if ("strategyMethodName".equals(option.getName())) {
+                return "aggregationStrategyMethodName";
+            } else if ("strategyMethodAllowNull".equals(option.getName())) {
+                return "aggregationStrategyMethodAllowNull";
+            }
+        } else if ("MethodCallExpression".equals(def)) {
+            if ("beanType".equals(option.getName())) {
+                return "beanTypeName";
+            }
+        } else if ("XPathExpression".equals(def)) {
+            if ("documentType".equals(option.getName())) {
+                return "documentTypeName";
+            } else if ("resultType".equals(option.getName())) {
+                return "resultTypeName";
+            }
+        } else if ("WireTapDefinition".equals(def)) {
+            if ("processorRef".equals(option.getName())) {
+                return "newExchangeProcessorRef";
+            }
+        } else if ("TidyMarkupDataFormat".equals(def)) {
+            if ("dataObjectType".equals(option.getName())) {
+                return "dataObjectTypeName";
+            }
+        } else if ("BindyDataFormat".equals(def)) {
+            if ("classType".equals(option.getName())) {
+                return "classTypeAsString";
+            }
+        }
+
+        return option.getName();
     }
 
     public String createParameterJsonSchema(EipModel eipModel, Set<EipOption> options) {

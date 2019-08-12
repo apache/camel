@@ -22,24 +22,28 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 
-// TODO: Rename interface
-public interface PropertyPlaceholderAware {
+/**
+ * To be used for configuring property placeholder options on the EIP models.
+ */
+public interface DefinitionPropertyPlaceholderConfigurable {
 
     /**
      * Gets the options on the model definition which supports property placeholders and can be resolved.
+     * This will be all the string based options.
      *
      * @return key/values of options
      */
     default Map<String, Supplier<String>> getReadPropertyPlaceholderOptions(CamelContext camelContext) {
-        PropertyPlaceholderAware aware = DefinitionPropertiesProviderHelper.provider(this).orElse(null);
+        DefinitionPropertyPlaceholderConfigurable aware = DefinitionPropertiesProviderHelper.provider(this).orElse(null);
         return aware != null ? aware.getReadPropertyPlaceholderOptions(camelContext) : null;
     }
 
     /**
-     * To update an existing property using the function with the ket/value and returning the changed value
+     * To update an existing property using the function with the key/value and returning the changed value
+     * This will be all the string based options.
      */
     default Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext) {
-        PropertyPlaceholderAware aware = DefinitionPropertiesProviderHelper.provider(this).orElse(null);
+        DefinitionPropertyPlaceholderConfigurable aware = DefinitionPropertiesProviderHelper.provider(this).orElse(null);
         return aware != null ? aware.getWritePropertyPlaceholderOptions(camelContext) : null;
     }
 

@@ -28,18 +28,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -655,32 +649,6 @@ public final class ProcessorDefinitionHelper {
         });
     }
 
-    @Deprecated
-    private static void addRestoreAction(final CamelContext context, final Object target, final Map<String, Object> properties) {
-        if (properties.isEmpty()) {
-            return;
-        }
-
-        RestoreAction restoreAction = CURRENT_RESTORE_ACTION.get();
-        if (restoreAction == null) {
-            return;
-        }
-
-        restoreAction.actions.add(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    // do not use property placeholders as we want to preserve the text as-is when we restore
-                    PropertyBindingSupport.build()
-                            .withPlaceholder(false).withNesting(false).withReference(false)
-                            .bind(context, target, properties);
-                } catch (Exception e) {
-                    LOG.warn("Cannot restore definition properties. This exception is ignored.", e);
-                }
-            }
-        });
-    }
-
     public static void addPropertyPlaceholdersChangeRevertAction(Runnable action) {
         RestoreAction restoreAction = CURRENT_RESTORE_ACTION.get();
         if (restoreAction == null) {
@@ -706,11 +674,11 @@ public final class ProcessorDefinitionHelper {
         LOG.trace("Resolving property placeholders for: {}", definition);
 
         // only do this for models that supports property placeholders
-        if (!(definition instanceof PropertyPlaceholderAware)) {
+        if (!(definition instanceof DefinitionPropertyPlaceholderConfigurable)) {
             return;
         }
 
-        PropertyPlaceholderAware ppa = (PropertyPlaceholderAware) definition;
+        DefinitionPropertyPlaceholderConfigurable ppa = (DefinitionPropertyPlaceholderConfigurable) definition;
 
         // find all getter/setter which we can use for property placeholders
         Map<String, String> changedProperties = new HashMap<>();
