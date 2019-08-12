@@ -23,7 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http4.HttpEndpoint;
+import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -49,23 +49,23 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
             setOutFilterPattern("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
         }
     }
-    
+
     @Test
     public void testHttpClient() throws Exception {
         File jpg = new File("src/test/resources/java.jpg");
         String body = "TEST";
         Part[] parts = new Part[] {new StringPart("body", body), new FilePart(jpg.getName(), jpg)};
-        
+
         PostMethod method = new PostMethod("http://localhost:" + port2 + "/test/hello");
         MultipartRequestEntity requestEntity = new MultipartRequestEntity(parts, method.getParams());
         method.setRequestEntity(requestEntity);
-        
+
         HttpClient client = new HttpClient();
         client.executeMethod(method);
-        
+
         String responseBody = method.getResponseBodyAsString();
         assertEquals(body, responseBody);
-        
+
         String numAttachments = method.getResponseHeader("numAttachments").getValue();
         assertEquals(numAttachments, "2");
     }
@@ -87,16 +87,16 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
                         exchange.getOut().setBody(in.getHeader("body"));
                     }
                 };
-                
+
                 HttpEndpoint epOut = getContext().getEndpoint("http://localhost:" + port1 + "?bridgeEndpoint=true&throwExceptionOnFailure=false", HttpEndpoint.class);
                 epOut.setHeaderFilterStrategy(new MultipartHeaderFilterStrategy());
-                
+
                 from("jetty:http://localhost:" + port2 + "/test/hello?enableMultipartFilter=false")
                     .to(epOut);
-                
+
                 from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
             }
         };
-    }    
+    }
 
 }

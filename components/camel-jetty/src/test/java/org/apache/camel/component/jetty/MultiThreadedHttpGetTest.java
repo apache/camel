@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http4.HttpComponent;
+import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
@@ -47,11 +47,11 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
         // This is needed as by default there are 2 parallel
         // connections to some host and there is nothing that
         // closes the http connection here.
-        // Need to set the httpConnectionManager 
+        // Need to set the httpConnectionManager
         PoolingHttpClientConnectionManager httpConnectionManager = new PoolingHttpClientConnectionManager();
         httpConnectionManager.setDefaultMaxPerRoute(5);
         context.getComponent("http", HttpComponent.class).setClientConnectionManager(httpConnectionManager);
-       
+
 
         String endpointName = "seda:withoutConversion?concurrentConsumers=5";
         sendMessagesTo(endpointName, 5);

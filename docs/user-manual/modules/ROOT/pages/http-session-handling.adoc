@@ -33,7 +33,7 @@ It is also possible to have a session on an xref:endpoint.adoc[Endpoint]
 entity. This would mean that all invocations of an HTTP call issued by a
 single Endpoint share a session, whereas different Endpoints never share
 sessions, even if the call is sent to the same server. 
-Some components like camel-http, and camel-http4 support endpoint scoped
+Some components like camel-http, and camel-http support endpoint scoped
 sessions even prior to version 2.19.
 
 [[HTTP-SessionHandling-ExchangeScope]]

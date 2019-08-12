@@ -83,7 +83,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
         } catch (FailedToCreateProducerException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause());
             // JAXB 2.2 uses a slightly different message
-            boolean b = cause.getMessage().contains("No enum const") && cause.getMessage().contains("org.apache.camel.component.http4.AuthMethod.foo");
+            boolean b = cause.getMessage().contains("No enum const") && cause.getMessage().contains("org.apache.camel.component.http.AuthMethod.foo");
             assertTrue("Bad fault message: " + cause.getMessage(), b);
         }
     }

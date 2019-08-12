@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http4.HttpClientConfigurer;
+import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.spi.Registry;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Ignore;
