@@ -23,9 +23,11 @@ import io.smallrye.config.SmallRyeConfigBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.junit.Test;
@@ -65,6 +67,16 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
                 return prop.getProperty(name);
             }
         });
+    }
+
+    @Test
+    public void testLoadAll() throws Exception {
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        Properties properties = pc.loadProperties();
+
+        Assertions.assertThat(properties.get("start")).isEqualTo("direct:start");
+        Assertions.assertThat(properties.get("hi")).isEqualTo("World");
+        Assertions.assertThat(properties.get("my-mock")).isEqualTo("result");
     }
 
     @Test
