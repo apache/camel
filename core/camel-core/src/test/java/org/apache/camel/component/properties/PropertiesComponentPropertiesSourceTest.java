@@ -19,8 +19,9 @@ package org.apache.camel.component.properties;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Ordered;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.spi.LoadablePropertiesSource;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,6 +36,20 @@ public class PropertiesComponentPropertiesSourceTest {
 
         assertThat(context.resolvePropertyPlaceholders("{{my-key-1}}")).isEqualTo("my-val-1");
         assertThat(context.resolvePropertyPlaceholders("{{my-key-2}}")).isEqualTo("my-val-2");
+    }
+
+    @Test
+    public void testOrderedPropertiesSources() {
+        CamelContext context = new DefaultCamelContext();
+        context.getRegistry().bind("my-ps-1", new PropertiesPropertiesSource(Ordered.HIGHEST, "ps1", "shared", "v1", "my-key-1", "my-val-1"));
+        context.getRegistry().bind("my-ps-2", new PropertiesPropertiesSource(Ordered.LOWEST,"ps2", "shared", "v2", "my-key-2", "my-val-2"));
+
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        Properties properties = pc.loadProperties();
+
+        assertThat(properties.get("my-key-1")).isEqualTo("my-val-1");
+        assertThat(properties.get("my-key-2")).isEqualTo("my-val-2");
+        assertThat(properties.get("shared")).isEqualTo("v1");
     }
 
     @Test
@@ -56,13 +71,19 @@ public class PropertiesComponentPropertiesSourceTest {
             .hasMessage("Property with key [my-key-2] not found in properties from text: {{my-key-2}}");
     }
 
-    private static final class PropertiesPropertiesSource extends Properties implements PropertiesSource {
+    private static final class PropertiesPropertiesSource extends Properties implements LoadablePropertiesSource, Ordered {
         private final String name;
+        private final int order;
 
         public PropertiesPropertiesSource(String name, String... kv) {
+            this(Ordered.LOWEST, name, kv);
+        }
+
+        public PropertiesPropertiesSource(int order, String name, String... kv) {
             assert kv.length % 2 == 0;
 
             this.name = name;
+            this.order = order;
 
             for (int i = 0; i < kv.length; i += 2) {
                 super.setProperty(kv[i], kv[i + 1]);
@@ -73,5 +94,16 @@ public class PropertiesComponentPropertiesSourceTest {
         public String getName() {
             return name;
         }
+
+        @Override
+        public int getOrder() {
+            return order;
+        }
+
+        @Override
+        public Properties loadProperties() {
+            return this;
+        }
     }
 }
+
