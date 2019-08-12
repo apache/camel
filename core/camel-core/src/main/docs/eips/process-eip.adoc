@@ -16,7 +16,8 @@ The Process EIP supports 1 options which are listed below:
 // eip options: END
 
 == Samples
-==Using a processor in a route
+
+=== Using a processor in a route
 
 Once you have written a class which implements processor like this...
 

@@ -211,7 +211,7 @@ Registry; for example, by creating a bean in the
 Spring XML file. Then use the `codec` option to specify the bean ID of
 your codec. See xref:hl7-dataformat.adoc[HL7] that has a custom codec.
 
-===Sample with sync=false
+=== Sample with sync=false
 
 In this sample, Camel exposes a service that listens for TCP connections
 on port 6200. We use the *textline* codec. In our route, we create a
@@ -235,7 +235,7 @@ template.sendBody("mina:tcp://localhost:" + port1 + "?textline=true&sync=false",
 assertMockEndpointsSatisfied();
 -------------------------------------------------------------------------------------------------
 
-===Sample with sync=true
+=== Sample with sync=true
 
 In the next sample, we have a more common use case where we expose a TCP
 service on port 6201 also use the textline codec. However, this time we

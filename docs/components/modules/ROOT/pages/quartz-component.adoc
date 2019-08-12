@@ -321,7 +321,7 @@ quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?trigger.misfireInstruction=2
 
 The simple and cron triggers has the following misfire instructions representative:
 
-====SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW = 1 (default)
+=== SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW = 1 (default)
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be fired now by Scheduler.
@@ -330,7 +330,7 @@ This instruction should typically only be used for
 'one-shot' (non-repeating) Triggers. If it is used on a trigger with a
 repeat count > 0 then it is equivalent to the instruction MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT.
 
-====SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT = 2
+=== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT = 2
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -344,7 +344,7 @@ the start-time and repeat-count that it was originally setup with (this
 is only an issue if you for some reason wanted to be able to tell what
 the original values were at some later time).
 
-====SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT = 3
+=== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT = 3
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -365,7 +365,7 @@ This instruction could cause the Trigger
 to go to the 'COMPLETE' state after firing 'now', if all the
 repeat-fire-times where missed.
 
-====SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT = 4
+=== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT = 4
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -376,7 +376,7 @@ repeat count set to what it would be, if it had not missed any firings.
 WARNING: This instruction could cause the Trigger
 to go directly to the 'COMPLETE' state if all fire-times where missed.
 
-====SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT = 5
+=== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT = 5
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -387,12 +387,12 @@ WARNING: This instruction could cause the Trigger
 to go directly to the 'COMPLETE' state if the end-time of the trigger
 has arrived.
 
-====CronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW = 1 (default)
+=== CronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW = 1 (default)
 
 Instructs the Scheduler that upon a mis-fire
 situation, the CronTrigger wants to be fired now by Scheduler.
 
-====CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING = 2
+=== CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING = 2
 
 Instructs the Scheduler that upon a mis-fire
 situation, the CronTrigger wants to have it's
