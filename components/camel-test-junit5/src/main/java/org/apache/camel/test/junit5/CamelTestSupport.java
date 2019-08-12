@@ -16,31 +16,12 @@
  */
 package org.apache.camel.test.junit5;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -55,7 +36,6 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
@@ -63,8 +43,6 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
-import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
-import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -81,7 +59,7 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.test.CamelRouteCoverageDumper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -134,6 +112,7 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
     private static final ThreadLocal<AtomicInteger> TESTS = new ThreadLocal<>();
     private static final ThreadLocal<CamelTestSupport> INSTANCE = new ThreadLocal<>();
     private String currentTestName;
+    private CamelRouteCoverageDumper routeCoverageDumper = new CamelRouteCoverageDumper();
     // CHECKSTYLE:ON
 
     @Override
@@ -554,21 +533,7 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
                 LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "
                          + "Add camel-management-impl JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
             } else {
-                logCoverageSummary(managedCamelContext);
-
-                String xml = managedCamelContext.dumpRoutesCoverageAsXml();
-                String combined = "<camelRouteCoverage>\n" + gatherTestDetailsAsXml() + xml + "\n</camelRouteCoverage>";
-
-                File file = new File(dir);
-                // ensure dir exists
-                file.mkdirs();
-                file = new File(dir, name);
-
-                LOG.info("Dumping route coverage to file: {}", file);
-                InputStream is = new ByteArrayInputStream(combined.getBytes());
-                OutputStream os = new FileOutputStream(file, false);
-                IOHelper.copyAndCloseInput(is, os);
-                IOHelper.close(os);
+                routeCoverageDumper.dump(managedCamelContext, context, dir, name, getClass().getName(), currentTestName, timeTaken());
             }
         }
         LOG.info("********************************************************************************");
@@ -615,117 +580,6 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
      */
     protected void cleanupResources() throws Exception {
         // noop
-    }
-
-    /**
-     * Logs route coverage summary: - which routes are uncovered - what is the
-     * coverage of each processor in each route
-     */
-    private void logCoverageSummary(ManagedCamelContextMBean managedCamelContext) throws Exception {
-        StringBuilder builder = new StringBuilder("\nCoverage summary\n");
-
-        int routes = managedCamelContext.getTotalRoutes();
-
-        long contextExchangesTotal = managedCamelContext.getExchangesTotal();
-
-        List<String> uncoveredRoutes = new ArrayList<>();
-
-        StringBuilder routesSummary = new StringBuilder();
-        routesSummary.append("\tProcessor coverage\n");
-
-        MBeanServer server = context.getManagementStrategy().getManagementAgent().getMBeanServer();
-
-        Map<String, List<ManagedProcessorMBean>> processorsForRoute = findProcessorsForEachRoute(server);
-
-        // log processor coverage for each route
-        for (Route route : context.getRoutes()) {
-            ManagedRouteMBean managedRoute = context.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId());
-            if (managedRoute.getExchangesTotal() == 0) {
-                uncoveredRoutes.add(route.getId());
-            }
-
-            long routeCoveragePercentage = Math.round((double)managedRoute.getExchangesTotal() / contextExchangesTotal * 100);
-            routesSummary.append("\t\tRoute ").append(route.getId()).append(" total: ").append(managedRoute.getExchangesTotal()).append(" (").append(routeCoveragePercentage)
-                .append("%)\n");
-
-            if (server != null) {
-                List<ManagedProcessorMBean> processors = processorsForRoute.get(route.getId());
-                if (processors != null) {
-                    for (ManagedProcessorMBean managedProcessor : processors) {
-                        String processorId = managedProcessor.getProcessorId();
-                        long processorExchangesTotal = managedProcessor.getExchangesTotal();
-                        long processorCoveragePercentage = Math.round((double)processorExchangesTotal / contextExchangesTotal * 100);
-                        routesSummary.append("\t\t\tProcessor ").append(processorId).append(" total: ").append(processorExchangesTotal).append(" (")
-                            .append(processorCoveragePercentage).append("%)\n");
-                    }
-                }
-            }
-        }
-
-        int used = routes - uncoveredRoutes.size();
-
-        long contextPercentage = Math.round((double)used / routes * 100);
-        builder.append("\tRoute coverage: ").append(used).append(" out of ").append(routes).append(" routes used (").append(contextPercentage).append("%)\n");
-        builder.append("\t\tCamelContext (").append(managedCamelContext.getCamelId()).append(") total: ").append(contextExchangesTotal).append("\n");
-
-        if (uncoveredRoutes.size() > 0) {
-            builder.append("\t\tUncovered routes: ").append(uncoveredRoutes.stream().collect(Collectors.joining(", "))).append("\n");
-        }
-
-        builder.append(routesSummary);
-        LOG.info(builder.toString());
-    }
-
-    /**
-     * Groups all processors from Camel context by route id
-     */
-    private Map<String, List<ManagedProcessorMBean>> findProcessorsForEachRoute(MBeanServer server)
-        throws MalformedObjectNameException, MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
-        String domain = context.getManagementStrategy().getManagementAgent().getMBeanServerDefaultDomain();
-
-        Map<String, List<ManagedProcessorMBean>> processorsForRoute = new HashMap<>();
-
-        ObjectName processorsObjectName = new ObjectName(domain + ":context=" + context.getManagementName() + ",type=processors,name=*");
-        Set<ObjectName> objectNames = server.queryNames(processorsObjectName, null);
-
-        for (ObjectName objectName : objectNames) {
-            String routeId = server.getAttribute(objectName, "RouteId").toString();
-            String name = objectName.getKeyProperty("name");
-            name = ObjectName.unquote(name);
-
-            ManagedProcessorMBean managedProcessor = context.getExtension(ManagedCamelContext.class).getManagedProcessor(name);
-
-            if (managedProcessor != null) {
-                if (processorsForRoute.get(routeId) == null) {
-                    List<ManagedProcessorMBean> processorsList = new ArrayList<>();
-                    processorsList.add(managedProcessor);
-
-                    processorsForRoute.put(routeId, processorsList);
-                } else {
-                    processorsForRoute.get(routeId).add(managedProcessor);
-                }
-            }
-        }
-
-        // sort processors by position in route definition
-        for (Map.Entry<String, List<ManagedProcessorMBean>> entry : processorsForRoute.entrySet()) {
-            Collections.sort(entry.getValue(), Comparator.comparing(ManagedProcessorMBean::getIndex));
-        }
-
-        return processorsForRoute;
-    }
-
-    /**
-     * Gathers test details as xml
-     */
-    private String gatherTestDetailsAsXml() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<test>\n");
-        sb.append("  <class>").append(getClass().getName()).append("</class>\n");
-        sb.append("  <method>").append(currentTestName).append("</method>\n");
-        sb.append("  <time>").append(timeTaken()).append("</time>\n");
-        sb.append("</test>\n");
-        return sb.toString();
     }
 
     /**

@@ -19,11 +19,14 @@ package org.apache.camel.test.junit5.patterns;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestReporter;
 
 import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
 
@@ -38,12 +41,19 @@ public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
         assertEquals("Bye World", out);
     }
 
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    @Test
+    public void testProcessorJunit5WithTestParameterInjection(TestInfo info, TestReporter testReporter) throws Exception {
+        assertNotNull(info);
+        assertNotNull(testReporter);
+        String out = template.requestBody("direct:start", "Hello World", String.class);
+        assertEquals("Bye World", out);
+    }
+
+    @AfterAll
+    public static void checkDumpFilesCreatedAfterTests() {
         // should create that file when test is done
         assertFileExists("target/camel-route-coverage/RouteProcessorDumpRouteCoverageTest-testProcessorJunit5.xml");
+        assertFileExists("target/camel-route-coverage/RouteProcessorDumpRouteCoverageTest-testProcessorJunit5WithTestParameterInjection.xml");
     }
 
     @Override
