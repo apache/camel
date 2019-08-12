@@ -16,31 +16,35 @@
  */
 package org.apache.camel.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 
-// TODO: Rename interface
-public interface PropertyPlaceholderAware {
+public class ToDefinitionPropertiesProvider implements PropertyPlaceholderAware {
 
-    /**
-     * Gets the options on the model definition which supports property placeholders and can be resolved.
-     *
-     * @return key/values of options
-     */
-    default Map<String, Supplier<String>> getReadPropertyPlaceholderOptions(CamelContext camelContext) {
-        PropertyPlaceholderAware aware = DefinitionPropertiesProviderHelper.provider(this).orElse(null);
-        return aware != null ? aware.getReadPropertyPlaceholderOptions(camelContext) : null;
+    private final ToDefinition definition;
+    private final Map<String, Supplier<String>> readPlaceholders = new HashMap<>();
+    private final Map<String, Consumer<String>> writePlaceholders = new HashMap<>();
+
+    public ToDefinitionPropertiesProvider(Object obj) {
+        this.definition = (ToDefinition) obj;
+
+        readPlaceholders.put("id", definition::getId);
+        readPlaceholders.put("uri", definition::getUri);
+        writePlaceholders.put("id", definition::setId);
+        writePlaceholders.put("uri", definition::setUri);
     }
 
-    /**
-     * To update an existing property using the function with the ket/value and returning the changed value
-     */
-    default Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext) {
-        PropertyPlaceholderAware aware = DefinitionPropertiesProviderHelper.provider(this).orElse(null);
-        return aware != null ? aware.getWritePropertyPlaceholderOptions(camelContext) : null;
+    @Override
+    public Map<String, Supplier<String>> getReadPropertyPlaceholderOptions(CamelContext camelContext) {
+        return readPlaceholders;
     }
 
+    @Override
+    public Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext) {
+        return writePlaceholders;
+    }
 }
