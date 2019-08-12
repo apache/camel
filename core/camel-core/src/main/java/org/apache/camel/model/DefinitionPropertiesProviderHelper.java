@@ -21,19 +21,23 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.apache.camel.model.placeholder.FromDefinitionPropertyPlaceholderProvider;
+import org.apache.camel.model.placeholder.LogDefinitionPropertyPlaceholderProvider;
+import org.apache.camel.model.placeholder.ToDefinitionPropertyPlaceholderProvider;
+
 public class DefinitionPropertiesProviderHelper {
 
-    private static final Map<Class, Function<Object, PropertyPlaceholderAware>> MAP;
+    private static final Map<Class, Function<Object, DefinitionPropertyPlaceholderConfigurable>> MAP;
     static {
-        Map<Class, Function<Object, PropertyPlaceholderAware>> map = new HashMap<>();
-        map.put(FromDefinition.class, FromDefinitionPropertiesProvider::new);
-        map.put(LogDefinition.class, LogDefinitionPropertiesProvider::new);
-        map.put(ToDefinition.class, ToDefinitionPropertiesProvider::new);
+        Map<Class, Function<Object, DefinitionPropertyPlaceholderConfigurable>> map = new HashMap<>();
+        map.put(FromDefinition.class, FromDefinitionPropertyPlaceholderProvider::new);
+        map.put(LogDefinition.class, LogDefinitionPropertyPlaceholderProvider::new);
+        map.put(ToDefinition.class, ToDefinitionPropertyPlaceholderProvider::new);
         MAP = map;
     }
 
-    public static Optional<PropertyPlaceholderAware> provider(Object definition) {
-        Function<Object, PropertyPlaceholderAware> func = MAP.get(definition.getClass());
+    public static Optional<DefinitionPropertyPlaceholderConfigurable> provider(Object definition) {
+        Function<Object, DefinitionPropertyPlaceholderConfigurable> func = MAP.get(definition.getClass());
         if (func != null) {
             return Optional.of(func.apply(definition));
         }
