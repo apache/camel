@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -42,8 +41,6 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -73,7 +70,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
@@ -753,17 +749,6 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
     }
 
     /**
-     * Whether or not type converters should be lazy loaded (notice core
-     * converters is always loaded)
-     *
-     * @return <tt>false</tt> by default.
-     */
-    @Deprecated
-    protected boolean isLazyLoadingTypeConverter() {
-        return false;
-    }
-
-    /**
      * Override this method to include and override properties with the Camel
      * {@link PropertiesComponent}.
      *
@@ -884,22 +869,7 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        // for backwards compatibility
-        Registry registry = createRegistry();
-        if (registry instanceof FakeJndiRegistry) {
-            boolean inUse = ((FakeJndiRegistry)registry).isInUse();
-            if (!inUse) {
-                registry = null;
-            }
-        }
-        if (registry != null) {
-            String msg = "createRegistry() from camel-test is deprecated. Use createCamelRegistry if you want to control which registry to use, however"
-                         + " if you need to bind beans to the registry then this is possible already with the bind method on registry,"
-                         + " and there is no need to override this method.";
-            LOG.warn(msg);
-        } else {
-            registry = createCamelRegistry();
-        }
+        Registry registry = createCamelRegistry();
 
         CamelContext context;
         if (registry != null) {
@@ -926,59 +896,6 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
      */
     protected Registry createCamelRegistry() throws Exception {
         return null;
-    }
-
-    /**
-     * @deprecated use createCamelRegistry if you want to control which registry
-     *             to use, however if you need to bind beans to the registry
-     *             then this is possible already with the bind method on
-     *             registry, and there is no need to override this method.
-     */
-    @Deprecated
-    protected JndiRegistry createRegistry() throws Exception {
-        return new FakeJndiRegistry(createJndiContext());
-    }
-
-    /**
-     * @deprecated use createCamelRegistry if you want to control which registry
-     *             to use, however if you need to bind beans to the registry
-     *             then this is possible already with the bind method on
-     *             registry, and there is no need to use JndiRegistry and
-     *             override this method.
-     */
-    @Deprecated
-    protected Context createJndiContext() throws Exception {
-        Properties properties = new Properties();
-
-        // jndi.properties is optional
-        InputStream in = getClass().getClassLoader().getResourceAsStream("jndi.properties");
-        if (in != null) {
-            LOG.debug("Using jndi.properties from classpath root");
-            properties.load(in);
-        } else {
-            properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
-        }
-        return new InitialContext(new Hashtable<>(properties));
-    }
-
-    private class FakeJndiRegistry extends JndiRegistry {
-
-        private boolean inUse;
-
-        public FakeJndiRegistry(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void bind(String name, Object object) {
-            super.bind(name, object);
-            inUse = true;
-        }
-
-        public boolean isInUse() {
-            // only if the end user bind beans then its in use
-            return inUse;
-        }
     }
 
     /**

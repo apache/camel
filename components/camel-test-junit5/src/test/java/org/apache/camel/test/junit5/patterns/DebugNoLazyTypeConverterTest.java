@@ -29,11 +29,6 @@ public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DebugNoLazyTypeConverterTest.class);
 
-    @Override
-    protected boolean isLazyLoadingTypeConverter() {
-        return false;
-    }
-
     // START SNIPPET: e1
     @Override
     public boolean isUseDebugger() {
