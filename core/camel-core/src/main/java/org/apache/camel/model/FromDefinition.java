@@ -37,7 +37,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements PropertyPlaceholderAware, EndpointRequiredDefinition {
+public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements EndpointRequiredDefinition {
     @XmlAttribute @Metadata(required = true)
     private String uri;
     @XmlTransient
@@ -45,14 +45,7 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     @XmlTransient
     private EndpointConsumerBuilder endpointConsumerBuilder;
 
-    private final Map<String, Supplier<String>> readPlaceholders = new HashMap<>();
-    private final Map<String, Consumer<String>> writePlaceholders = new HashMap<>();
-
     public FromDefinition() {
-        readPlaceholders.put("id", this::getId);
-        readPlaceholders.put("uri", this::getUri);
-        writePlaceholders.put("id", this::setId);
-        writePlaceholders.put("uri", this::setUri);
     }
 
     public FromDefinition(String uri) {
@@ -150,13 +143,4 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         this.uri = null;
     }
 
-    @Override
-    public Map<String, Supplier<String>> getReadPropertyPlaceholderOptions(CamelContext camelContext) {
-        return readPlaceholders;
-    }
-
-    @Override
-    public Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext) {
-        return writePlaceholders;
-    }
 }
