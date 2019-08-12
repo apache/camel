@@ -16,12 +16,17 @@
  */
 package org.apache.camel.model;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
@@ -32,7 +37,7 @@ import org.slf4j.Logger;
 @Metadata(label = "eip,configuration")
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LogDefinition extends NoOutputDefinition<LogDefinition> {
+public class LogDefinition extends NoOutputDefinition<LogDefinition> implements PropertyPlaceholderAware {
 
     @XmlAttribute(required = true)
     private String message;
@@ -47,10 +52,24 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     @XmlTransient
     private Logger logger;
 
+    private final Map<String, Supplier<String>> readPlaceholders = new HashMap<>();
+    private final Map<String, Consumer<String>> writePlaceholders = new HashMap<>();
+
     public LogDefinition() {
+        readPlaceholders.put("id", this::getId);
+        readPlaceholders.put("message", this::getMessage);
+        readPlaceholders.put("logName", this::getLogName);
+        readPlaceholders.put("marker", this::getMarker);
+        readPlaceholders.put("loggerRef", this::getLoggerRef);
+        writePlaceholders.put("id", this::setId);
+        writePlaceholders.put("message", this::setMessage);
+        writePlaceholders.put("logName", this::setLogName);
+        writePlaceholders.put("marker", this::setMarker);
+        writePlaceholders.put("loggerRef", this::setLoggerRef);
     }
 
     public LogDefinition(String message) {
+        this();
         this.message = message;
     }
 
@@ -135,5 +154,15 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
      */
     public void setLogger(Logger logger) {
         this.logger = logger;
+    }
+
+    @Override
+    public Map<String, Supplier<String>> getReadPropertyPlaceholderOptions(CamelContext camelContext) {
+        return readPlaceholders;
+    }
+
+    @Override
+    public Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext) {
+        return writePlaceholders;
     }
 }

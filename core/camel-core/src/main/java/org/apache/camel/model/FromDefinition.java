@@ -16,12 +16,17 @@
  */
 package org.apache.camel.model;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.Metadata;
@@ -32,7 +37,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements EndpointRequiredDefinition {
+public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements PropertyPlaceholderAware, EndpointRequiredDefinition {
     @XmlAttribute @Metadata(required = true)
     private String uri;
     @XmlTransient
@@ -40,18 +45,28 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     @XmlTransient
     private EndpointConsumerBuilder endpointConsumerBuilder;
 
+    private final Map<String, Supplier<String>> readPlaceholders = new HashMap<>();
+    private final Map<String, Consumer<String>> writePlaceholders = new HashMap<>();
+
     public FromDefinition() {
+        readPlaceholders.put("id", this::getId);
+        readPlaceholders.put("uri", this::getUri);
+        writePlaceholders.put("id", this::setId);
+        writePlaceholders.put("uri", this::setUri);
     }
 
     public FromDefinition(String uri) {
+        this();
         setUri(uri);
     }
 
     public FromDefinition(Endpoint endpoint) {
+        this();
         setEndpoint(endpoint);
     }
 
     public FromDefinition(EndpointConsumerBuilder endpointConsumerBuilder) {
+        this();
         setEndpointConsumerBuilder(endpointConsumerBuilder);
     }
 
@@ -135,4 +150,13 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         this.uri = null;
     }
 
+    @Override
+    public Map<String, Supplier<String>> getReadPropertyPlaceholderOptions(CamelContext camelContext) {
+        return readPlaceholders;
+    }
+
+    @Override
+    public Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext) {
+        return writePlaceholders;
+    }
 }
