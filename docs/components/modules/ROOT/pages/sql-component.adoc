@@ -538,7 +538,7 @@ does not map to any of the JDBC time types: *DATE*, *TIME*, or
 When working with concurrent consumers it is crucial to create a unique constraint on the columns processorName and messageId.
 Because the syntax for this constraint differs from database to database, we do not show it here.
 
-=== Customize the JdbcMessageIdRepository
+=== Customize the JDBC idempotency repository
 
 You have a few options to tune the
 `org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository` for

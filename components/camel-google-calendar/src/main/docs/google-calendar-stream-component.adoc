@@ -40,7 +40,7 @@ The Google Calendar Component uses the following URI format:
 
 --------------------------------------------------------
 
-== GoogleCalendarStreamComponent
+== Google Calendar stream component options
 
 
 // component options: START

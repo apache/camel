@@ -485,7 +485,7 @@ FTP server we need to traverse and download files:
 And that we have a file in each of sub-a (a.txt) and sub-b (b.txt)
 folder.
 
-==== Using stepwise=true (default mode)
+== Using stepwise=true (default mode)
 
 [source,java]
 ----
@@ -575,7 +575,7 @@ disconnected.
 As you can see when stepwise is enabled, it will traverse the directory
 structure using CD xxx.
 
-==== Using stepwise=false
+== Using stepwise=false
 
 [source,java]
 ----
@@ -656,7 +656,7 @@ from("ftps://admin@localhost:2222/public/camel?password=admin&ftpClient.trustSto
   .to("bean:foo");
 ----
 
-== Filter using `org.apache.camel.component.file.GenericFileFilter`
+== Custom filtering
 
 Camel supports pluggable filtering strategies. This strategy it to use
 the build in `org.apache.camel.component.file.GenericFileFilter` in
