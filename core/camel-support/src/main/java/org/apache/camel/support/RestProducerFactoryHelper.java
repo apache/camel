@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Helper for creating configured {@link Component}s used by the
  * {@link RestProducerFactory} contract.
- * 
+ *
  * When {@link RestProducerFactory} contract is used it could instantiate, start
  * and register the underlying component. During this process we have no way of
  * configuring component properties, most notably the SSL properties.
@@ -75,7 +74,7 @@ public final class RestProducerFactoryHelper {
 
         // component was not added to the context we can configure it
         final Component newlyCreated = camelContext.getComponent(componentName, true, false);
-        PropertyBindingSupport.build().withRemoteParameters(false).bind(camelContext, newlyCreated, componentProperties);
+        PropertyBindingSupport.build().withRemoveParameters(false).bind(camelContext, newlyCreated, componentProperties);
         ServiceHelper.startService(newlyCreated);
 
         return newlyCreated;
