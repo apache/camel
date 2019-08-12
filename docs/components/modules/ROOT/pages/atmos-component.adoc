@@ -24,7 +24,7 @@ The Atmos component supports 6 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *fullTokenId* (security) | The token id to pass to the Atmos client |  | String
-| *secretKey* (security) | The secret key to pass to the Atmos client |  | String
+| *secretKey* (security) | The secret key to pass to the Atmos client (should be base64 encoded) |  | String
 | *uri* (advanced) | The URI of the server for the Atmos client to connect to |  | String
 | *sslValidation* (security) | Whether the Atmos client should perform SSL validation | false | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
@@ -60,20 +60,20 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *enableSslValidation* (common) | Atmos SSL validation | false | boolean
-| *fullTokenId* (common) | Atmos client fullTokenId |  | String
 | *localPath* (common) | Local path to put files |  | String
 | *newRemotePath* (common) | New path on Atmos when moving files |  | String
 | *query* (common) | Search query on Atmos |  | String
 | *remotePath* (common) | Where to put files on Atmos |  | String
-| *secretKey* (common) | Atmos shared secret |  | String
-| *uri* (common) | Atomos server uri |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *uri* (advanced) | Atomos server uri |  | String
+| *fullTokenId* (security) | Atmos client fullTokenId |  | String
+| *secretKey* (security) | The secret key to pass to the Atmos client (should be base64 encoded) |  | String
+| *sslValidation* (security) | Atmos SSL validation | false | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
@@ -103,7 +103,7 @@ The component supports 7 options, which are listed below.
 | *camel.component.atmos.enabled* | Enable atmos component | true | Boolean
 | *camel.component.atmos.full-token-id* | The token id to pass to the Atmos client |  | String
 | *camel.component.atmos.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.atmos.secret-key* | The secret key to pass to the Atmos client |  | String
+| *camel.component.atmos.secret-key* | The secret key to pass to the Atmos client (should be base64 encoded) |  | String
 | *camel.component.atmos.ssl-validation* | Whether the Atmos client should perform SSL validation | false | Boolean
 | *camel.component.atmos.uri* | The URI of the server for the Atmos client to connect to |  | String
 |===

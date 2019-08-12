@@ -73,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (20 parameters):
+=== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -98,6 +98,7 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *password* (security) | Password for login |  | String
+| *roomPassword* (security) | Password for room |  | String
 | *user* (security) | User name (without server name). If not specified, anonymous login will be attempted. |  | String
 |===
 // endpoint options: END
