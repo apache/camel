@@ -413,7 +413,7 @@ public interface HttpEndpointBuilderFactory {
          * mechanisms etc.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.http4.HttpClientConfigurer</code>
+         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
          * type.
          * 
          * Group: advanced
@@ -429,7 +429,7 @@ public interface HttpEndpointBuilderFactory {
          * mechanisms etc.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.http4.HttpClientConfigurer</code>
+         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
          * type.
          * 
          * Group: advanced

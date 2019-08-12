@@ -116,7 +116,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
     protected String[] parseUri(DynamicAwareEntry entry) {
         String u = entry.getUri();
 
-        // remove scheme prefix (unless its camel-http or camel-http4)
+        // remove scheme prefix (unless its camel-http or camel-http)
         boolean httpComponent = "http".equals(scheme) || "https".equals(scheme);
         if (!httpComponent) {
             String prefix = scheme + "://";

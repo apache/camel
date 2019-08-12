@@ -28,7 +28,7 @@
     <!-- START SNIPPET: e1 -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
     
-    <bean id="httpEndpoint" class="org.apache.camel.component.http4.HttpEndpoint">
+    <bean id="httpEndpoint" class="org.apache.camel.component.http.HttpEndpoint">
         <property name="httpUri" value="http://localhost:${HttpTestServer.Port}/"/>
         <property name="clientBuilder" ref="clientBuilder"/>
         <property name="clientConnectionManager" ref="myManager"/>

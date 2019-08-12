@@ -98,7 +98,6 @@ karaf@root> features:list|grep -i camel
 [uninstalled] [2.8.0          ] camel-castor                  repo-0
 [uninstalled] [2.8.0          ] camel-crypto                  repo-0
 [uninstalled] [2.8.0          ] camel-http                    repo-0
-[uninstalled] [2.8.0          ] camel-http4                   repo-0
 [uninstalled] [2.8.0          ] camel-mina                    repo-0
 [uninstalled] [2.8.0          ] camel-jetty                   repo-0
 [uninstalled] [2.8.0          ] camel-servlet                 repo-0

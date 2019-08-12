@@ -38,7 +38,7 @@ public class JettyBridgeHostHeaderIssueTest extends CamelTestSupport {
     @Test
     public void testHostHeader() throws Exception {
 
-        //The first two calls will test http4 producers
+        //The first two calls will test http producers
 
         //The first call to our service will hit the first destination in the round robin load balancer
         //this destination has the preserveProxyHeader parameter set to true, so we verify the Host header

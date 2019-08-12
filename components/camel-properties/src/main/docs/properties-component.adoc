@@ -89,13 +89,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 13 options, which are listed below.
+The component supports 14 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.properties.auto-discover-properties-sources* | Whether to automatically discovery instances of PropertiesSource from registry and service factory. | true | Boolean
 | *camel.component.properties.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.properties.default-fallback-enabled* | If false, the component does not attempt to find a default for the key by looking after the colon separator. | true | Boolean
 | *camel.component.properties.enabled* | Whether to enable auto configuration of the properties component. This is enabled by default. |  | Boolean

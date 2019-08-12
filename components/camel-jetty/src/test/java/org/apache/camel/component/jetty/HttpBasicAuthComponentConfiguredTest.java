@@ -26,7 +26,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http4.HttpComponent;
+import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.http.common.HttpConfiguration;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
