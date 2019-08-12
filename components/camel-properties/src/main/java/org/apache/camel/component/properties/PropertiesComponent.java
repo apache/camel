@@ -122,6 +122,9 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     @Metadata(defaultValue = "" + ENVIRONMENT_VARIABLES_MODE_OVERRIDE, enums = "0,1,2")
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
+    @Metadata(defaultValue = "true")
+    private boolean autoDiscoverPropertiesSources = true;
+
 
     public PropertiesComponent() {
         super();
@@ -438,6 +441,16 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     public void setEnvironmentVariableMode(int environmentVariableMode) {
         this.environmentVariableMode = environmentVariableMode;
     }
+    public boolean isAutoDiscoverPropertiesSources() {
+        return autoDiscoverPropertiesSources;
+    }
+
+    /**
+     * Whether to automatically discovery instances of {@link PropertiesSource} from registry and service factory.
+     */
+    public void setAutoDiscoverPropertiesSources(boolean autoDiscoverPropertiesSources) {
+        this.autoDiscoverPropertiesSources = autoDiscoverPropertiesSources;
+    }
 
     @Override
     public void addPropertiesSource(PropertiesSource propertiesSource) {
@@ -459,29 +472,31 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     protected void doInit() throws Exception {
         super.doInit();
 
-        // discover any 3rd party properties sources
-        try {
-            for (PropertiesSource source: getCamelContext().getRegistry().findByType(PropertiesSource.class)) {
-                addPropertiesSource(source);
-                LOG.info("PropertiesComponent added custom PropertiesSource (registry): {}", source);
-            }
-
-            FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/");
-            Class<?> type = factoryFinder.findClass("properties-source-factory").orElse(null);
-            if (type != null) {
-                Object obj = getCamelContext().getInjector().newInstance(type, false);
-                if (obj instanceof PropertiesSource) {
-                    PropertiesSource ps = (PropertiesSource) obj;
-                    addPropertiesSource(ps);
-                    LOG.info("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
-                } else if (obj != null) {
-                    LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
+        if (isAutoDiscoverPropertiesSources()) {
+            // discover any 3rd party properties sources
+            try {
+                for (PropertiesSource source : getCamelContext().getRegistry().findByType(PropertiesSource.class)) {
+                    addPropertiesSource(source);
+                    LOG.info("PropertiesComponent added custom PropertiesSource (registry): {}", source);
                 }
+
+                FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/");
+                Class<?> type = factoryFinder.findClass("properties-source-factory").orElse(null);
+                if (type != null) {
+                    Object obj = getCamelContext().getInjector().newInstance(type, false);
+                    if (obj instanceof PropertiesSource) {
+                        PropertiesSource ps = (PropertiesSource) obj;
+                        addPropertiesSource(ps);
+                        LOG.info("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
+                    } else if (obj != null) {
+                        LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
+                    }
+                }
+            } catch (NoFactoryAvailableException e) {
+                // ignore
+            } catch (Exception e) {
+                LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage() + ". This exception is ignored", e);
             }
-        } catch (NoFactoryAvailableException e) {
-            // ignore
-        } catch (Exception e) {
-            LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage() + ". This exception is ignored", e);
         }
 
         ServiceHelper.initService(sources);
