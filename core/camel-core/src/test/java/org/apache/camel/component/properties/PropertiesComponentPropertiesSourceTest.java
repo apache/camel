@@ -17,6 +17,7 @@
 package org.apache.camel.component.properties;
 
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Ordered;
@@ -53,6 +54,27 @@ public class PropertiesComponentPropertiesSourceTest {
     }
 
     @Test
+    public void testFilteredPropertiesSources() {
+        Properties initial = new Properties();
+        initial.put("initial-1", "initial-val-1");
+        initial.put("initial-2", "initial-val-2");
+        initial.put("my-key-2", "initial-val-2");
+
+        CamelContext context = new DefaultCamelContext();
+        context.getRegistry().bind("my-ps-1", new PropertiesPropertiesSource("ps1", "my-key-1", "my-val-1"));
+        context.getRegistry().bind("my-ps-2", new PropertiesPropertiesSource("ps2", "my-key-2", "my-val-2"));
+
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setInitialProperties(initial);
+
+        Properties properties = pc.loadProperties(k -> k.endsWith("-2"));
+
+        assertThat(properties).hasSize(2);
+        assertThat(properties.get("initial-2")).isEqualTo("initial-val-2");
+        assertThat(properties.get("my-key-2")).isEqualTo("my-val-2");
+    }
+
+    @Test
     public void testDisablePropertiesSourceDiscovery() {
         PropertiesComponent pc = new PropertiesComponent();
         pc.setAutoDiscoverPropertiesSources(false);
@@ -70,6 +92,7 @@ public class PropertiesComponentPropertiesSourceTest {
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Property with key [my-key-2] not found in properties from text: {{my-key-2}}");
     }
+
 
     private static final class PropertiesPropertiesSource extends Properties implements LoadablePropertiesSource, Ordered {
         private final String name;
@@ -103,6 +126,19 @@ public class PropertiesComponentPropertiesSourceTest {
         @Override
         public Properties loadProperties() {
             return this;
+        }
+
+        @Override
+        public Properties loadProperties(Predicate<String> filter) {
+            Properties props = new Properties();
+
+            for (String name: stringPropertyNames()) {
+                if (filter.test(name)) {
+                    props.put(name, get(name));
+                }
+            }
+
+            return props;
         }
     }
 }

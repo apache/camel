@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContextAware;
@@ -179,6 +180,9 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     @Override
     public Properties loadProperties() {
+        // this method may be replaced by loadProperties(k -> true) but the underlying sources
+        // may have some optimization for bulk load so let's keep it
+
         Properties prop = new OrderedProperties();
 
         // use initial properties
@@ -207,6 +211,45 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             override.putAll(prop);
             override.putAll(overrideProperties);
             prop = override;
+        }
+
+        return prop;
+    }
+
+    @Override
+    public Properties loadProperties(Predicate<String> filter) {
+        Properties prop = new OrderedProperties();
+
+        // use initial properties
+        if (initialProperties != null) {
+            for (String name: initialProperties.stringPropertyNames()) {
+                if (filter.test(name)) {
+                    prop.put(name, initialProperties.get(name));
+                }
+            }
+        }
+
+        if (!sources.isEmpty()) {
+            // sources are ordered according to {@link org.apache.camel.support.OrderComparator} so
+            // it is needed to iterate them in reverse order otherwise lower priority sources may
+            // override properties from higher priority ones
+            for (int i = sources.size(); i-- > 0; ) {
+                PropertiesSource ps = sources.get(i);
+                if (ps instanceof LoadablePropertiesSource) {
+                    LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
+                    Properties p = lps.loadProperties(filter);
+                    prop.putAll(p);
+                }
+            }
+        }
+
+        // use override properties
+        if (overrideProperties != null) {
+            for (String name: overrideProperties.stringPropertyNames()) {
+                if (filter.test(name)) {
+                    prop.put(name, overrideProperties.get(name));
+                }
+            }
         }
 
         return prop;
