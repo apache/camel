@@ -407,6 +407,180 @@ public interface PulsarEndpointBuilderFactory {
             return (AdvancedPulsarEndpointProducerBuilder) this;
         }
         /**
+         * Control whether automatic batching of messages is enabled for the
+         * producer. Default is true.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingEnabled(
+                boolean batchingEnabled) {
+            setProperty("batchingEnabled", batchingEnabled);
+            return this;
+        }
+        /**
+         * Control whether automatic batching of messages is enabled for the
+         * producer. Default is true.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingEnabled(
+                String batchingEnabled) {
+            setProperty("batchingEnabled", batchingEnabled);
+            return this;
+        }
+        /**
+         * Set the maximum number of messages permitted in a batch. Default
+         * 1,000.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingMaxMessages(
+                int batchingMaxMessages) {
+            setProperty("batchingMaxMessages", batchingMaxMessages);
+            return this;
+        }
+        /**
+         * Set the maximum number of messages permitted in a batch. Default
+         * 1,000.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingMaxMessages(
+                String batchingMaxMessages) {
+            setProperty("batchingMaxMessages", batchingMaxMessages);
+            return this;
+        }
+        /**
+         * Set the time period within which the messages sent will be batched if
+         * batch messages are enabled. If set to a non zero value, messages will
+         * be queued until either: this time interval expires the max number of
+         * messages in a batch is reached Default is 1ms.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingMaxPublishDelayMicros(
+                long batchingMaxPublishDelayMicros) {
+            setProperty("batchingMaxPublishDelayMicros", batchingMaxPublishDelayMicros);
+            return this;
+        }
+        /**
+         * Set the time period within which the messages sent will be batched if
+         * batch messages are enabled. If set to a non zero value, messages will
+         * be queued until either: this time interval expires the max number of
+         * messages in a batch is reached Default is 1ms.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingMaxPublishDelayMicros(
+                String batchingMaxPublishDelayMicros) {
+            setProperty("batchingMaxPublishDelayMicros", batchingMaxPublishDelayMicros);
+            return this;
+        }
+        /**
+         * Set whether the send and asyncSend operations should block when the
+         * outgoing message queue is full. If set to false, send operations will
+         * immediately fail with ProducerQueueIsFullError when there is no space
+         * left in the pending queue. Default is false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder blockIfQueueFull(
+                boolean blockIfQueueFull) {
+            setProperty("blockIfQueueFull", blockIfQueueFull);
+            return this;
+        }
+        /**
+         * Set whether the send and asyncSend operations should block when the
+         * outgoing message queue is full. If set to false, send operations will
+         * immediately fail with ProducerQueueIsFullError when there is no space
+         * left in the pending queue. Default is false.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder blockIfQueueFull(
+                String blockIfQueueFull) {
+            setProperty("blockIfQueueFull", blockIfQueueFull);
+            return this;
+        }
+        /**
+         * Set the compression type for the producer. Supported compression
+         * types are: NONE: No compression LZ4: Compress with LZ4 algorithm.
+         * Faster but lower compression than ZLib ZLI: Standard ZLib compression
+         * Default is NONE.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.CompressionType</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder compressionType(
+                CompressionType compressionType) {
+            setProperty("compressionType", compressionType);
+            return this;
+        }
+        /**
+         * Set the compression type for the producer. Supported compression
+         * types are: NONE: No compression LZ4: Compress with LZ4 algorithm.
+         * Faster but lower compression than ZLib ZLI: Standard ZLib compression
+         * Default is NONE.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.pulsar.client.api.CompressionType</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder compressionType(
+                String compressionType) {
+            setProperty("compressionType", compressionType);
+            return this;
+        }
+        /**
+         * Set the baseline for the sequence ids for messages published by the
+         * producer. First message will be using (initialSequenceId 1) as its
+         * sequence id and subsequent messages will be assigned incremental
+         * sequence ids, if not otherwise specified.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder initialSequenceId(
+                long initialSequenceId) {
+            setProperty("initialSequenceId", initialSequenceId);
+            return this;
+        }
+        /**
+         * Set the baseline for the sequence ids for messages published by the
+         * producer. First message will be using (initialSequenceId 1) as its
+         * sequence id and subsequent messages will be assigned incremental
+         * sequence ids, if not otherwise specified.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder initialSequenceId(
+                String initialSequenceId) {
+            setProperty("initialSequenceId", initialSequenceId);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -447,6 +621,58 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the max size of the queue holding the messages pending to receive
+         * an acknowledgment from the broker. Default is 1000.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder maxPendingMessages(
+                int maxPendingMessages) {
+            setProperty("maxPendingMessages", maxPendingMessages);
+            return this;
+        }
+        /**
+         * Set the max size of the queue holding the messages pending to receive
+         * an acknowledgment from the broker. Default is 1000.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder maxPendingMessages(
+                String maxPendingMessages) {
+            setProperty("maxPendingMessages", maxPendingMessages);
+            return this;
+        }
+        /**
+         * Set the number of max pending messages across all the partitions.
+         * Default is 50000.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder maxPendingMessagesAcrossPartitions(
+                int maxPendingMessagesAcrossPartitions) {
+            setProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
+            return this;
+        }
+        /**
+         * Set the number of max pending messages across all the partitions.
+         * Default is 50000.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder maxPendingMessagesAcrossPartitions(
+                String maxPendingMessagesAcrossPartitions) {
+            setProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
+            return this;
+        }
+        /**
          * Name of the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -455,6 +681,28 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder producerName(String producerName) {
             setProperty("producerName", producerName);
+            return this;
+        }
+        /**
+         * Send timeout in milliseconds. Defaults to 30,000ms (30 seconds).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder sendTimeoutMs(int sendTimeoutMs) {
+            setProperty("sendTimeoutMs", sendTimeoutMs);
+            return this;
+        }
+        /**
+         * Send timeout in milliseconds. Defaults to 30,000ms (30 seconds).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder sendTimeoutMs(String sendTimeoutMs) {
+            setProperty("sendTimeoutMs", sendTimeoutMs);
             return this;
         }
     }
@@ -602,6 +850,18 @@ public interface PulsarEndpointBuilderFactory {
         EXCLUSIVE,
         SHARED,
         FAILOVER;
+    }
+
+    /**
+     * Proxy enum for <code>org.apache.pulsar.client.api.CompressionType</code>
+     * enum.
+     */
+    enum CompressionType {
+        NONE,
+        LZ4,
+        ZLIB,
+        ZSTD,
+        SNAPPY;
     }
     /**
      * Apache Pulsar (camel-pulsar)
