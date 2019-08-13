@@ -22,7 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AhcBridgeEndpointTest extends BaseAhcTest {
 
@@ -33,16 +37,16 @@ public class AhcBridgeEndpointTest extends BaseAhcTest {
     public void testBridgeEndpoint() throws Exception {
         String response = template.requestBodyAndHeader("http://localhost:" + port1 + "/test/hello",
                 new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
-        assertEquals("Get a wrong response", "/", response);
+        assertEquals("/", response, "Get a wrong response");
 
         response = template.requestBody("http://localhost:" + port2 + "/hello/world", "hello", String.class);
-        assertEquals("Get a wrong response", "/hello/world", response);
+        assertEquals("/hello/world", response, "Get a wrong response");
 
         try {
             template.requestBody("http://localhost:" + port1 + "/hello/world", "hello", String.class);
             fail("Expect exception here!");
         } catch (Exception ex) {
-            assertTrue("We should get a RuntimeCamelException", ex instanceof RuntimeCamelException);
+            assertTrue(ex instanceof RuntimeCamelException, "We should get a RuntimeCamelException");
         }
     }
 

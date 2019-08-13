@@ -28,7 +28,7 @@ import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.common.cookie.InstanceCookieHandler;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AhcProducerSessionTest extends BaseAhcTest {
 
