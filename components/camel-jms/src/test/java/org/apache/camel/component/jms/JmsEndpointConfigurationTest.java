@@ -70,6 +70,44 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     }
 
     @Test
+    public void testDurableSharedSubscriber() throws Exception {
+        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:topic:Foo.Bar?subscriptionDurable=true&subscriptionShared=true&subscriptionName=James", JmsEndpoint.class);
+        JmsConfiguration configuration = endpoint.getConfiguration();
+        assertEquals("isSubscriptionDurable()", true, configuration.isSubscriptionDurable());
+        assertEquals("isSubscriptionShared()", true, configuration.isSubscriptionShared());
+        assertEquals("getSubscriptionName()", "James", configuration.getSubscriptionName());
+
+        JmsConsumer consumer = endpoint.createConsumer(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                log.info("Received: " + exchange);
+            }
+        });
+        AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
+        assertEquals("isSubscriptionDurable()", true, listenerContainer.isSubscriptionDurable());
+        assertEquals("isSubscriptionShared()", true, listenerContainer.isSubscriptionShared());
+        assertEquals("getSubscriptionName()", "James", listenerContainer.getSubscriptionName());
+    }
+
+    @Test
+    public void testNonDurableSharedSubscriber() throws Exception {
+        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:topic:Foo.Bar?subscriptionShared=true&subscriptionName=James", JmsEndpoint.class);
+        JmsConfiguration configuration = endpoint.getConfiguration();
+        assertEquals("isSubscriptionDurable()", false, configuration.isSubscriptionDurable());
+        assertEquals("isSubscriptionShared()", true, configuration.isSubscriptionShared());
+        assertEquals("getSubscriptionName()", "James", configuration.getSubscriptionName());
+
+        JmsConsumer consumer = endpoint.createConsumer(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                log.info("Received: " + exchange);
+            }
+        });
+        AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
+        assertEquals("isSubscriptionDurable()", false, listenerContainer.isSubscriptionDurable());
+        assertEquals("isSubscriptionShared()", true, listenerContainer.isSubscriptionShared());
+        assertEquals("getSubscriptionName()", "James", listenerContainer.getSubscriptionName());
+    }
+
+    @Test
     public void testSetUsernameAndPassword() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James&password=ABC", JmsEndpoint.class);
         ConnectionFactory cf = endpoint.getConfiguration().getConnectionFactory();
