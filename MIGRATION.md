@@ -382,6 +382,9 @@ The `Component` and `DataFormat` interfaces now extend `Service` as components a
 
 The class `FactoryFinder` has changed its API to use `Optional` as return types instead of throwing checked `FactoryNotFoundException` or `ClassNotFoundException` etc.
 
+The option `resolvePropertyPlaceholders` on all the components has been removed,
+as property placeholders is already supported via Camel Main, Camel Spring Boot and other means.
+
 #### camel-test
 
 If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead
