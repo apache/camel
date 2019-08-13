@@ -18,7 +18,6 @@ package org.apache.camel.tools.apt;
 
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -46,7 +45,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-import jdk.nashorn.internal.ir.debug.ClassHistogramElement;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tools.apt.helper.IOHelper;
@@ -54,7 +52,6 @@ import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
 import org.apache.camel.tools.apt.helper.Strings;
 
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.error;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElementChildren;
@@ -68,7 +65,9 @@ import static org.apache.camel.tools.apt.helper.Strings.safeNull;
 
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json
- * schema documentation
+ * schema documentation and for some models java source code is generated
+ * which allows for faster property placeholder resolution at runtime; without the
+ * overhead of using reflections.
  */
 public class CoreEipAnnotationProcessorHelper {
 
@@ -130,19 +129,18 @@ public class CoreEipAnnotationProcessorHelper {
         }
 
         // write json schema and property placeholder provider
-        processFile(processingEnv, packageName, fileName, writer -> writeJSonSchemeDocumentation(processingEnv, writer,
+        processFile(processingEnv, packageName, fileName, writer -> writeJSonSchemeAndPropertyPlaceholderProvider(processingEnv, writer,
                 roundEnv, classElement, rootElement, javaTypeName, name, propertyPlaceholderDefinitions));
 
-        // if last then generate
+        // if last then generate source code for helper that contains all the generated property placeholder providers
+        // (this allows fast property placeholders at runtime without reflection overhead)
         if (last) {
-            // lets sort themfirst
             writePropertyPlaceholderDefinitionsHelper(processingEnv, roundEnv, propertyPlaceholderDefinitions);
         }
     }
 
-    // TODO: rename this 
-    protected void writeJSonSchemeDocumentation(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
-                                                XmlRootElement rootElement, String javaTypeName, String modelName, Set<String> propertyPlaceholderDefinitions) {
+    protected void writeJSonSchemeAndPropertyPlaceholderProvider(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
+                                                                 XmlRootElement rootElement, String javaTypeName, String modelName, Set<String> propertyPlaceholderDefinitions) {
         // gather eip information
         EipModel eipModel = findEipModelProperties(processingEnv, roundEnv, classElement, javaTypeName, modelName);
 
@@ -156,17 +154,19 @@ public class CoreEipAnnotationProcessorHelper {
         eipModel.setInput(hasInput(processingEnv, roundEnv, classElement));
         eipModel.setOutput(hasOutput(eipModel, eipOptions));
 
+        // write json schema file
         String json = createParameterJsonSchema(eipModel, eipOptions);
         writer.println(json);
 
-        // write property placeholder source code
-        writePropertyPlaceholderProviderSource(processingEnv, writer, roundEnv, classElement, eipModel, eipOptions, propertyPlaceholderDefinitions);
+        // generate property placeholder provider java source code
+        generatePropertyPlaceholderProviderSource(processingEnv, writer, roundEnv, classElement, eipModel, eipOptions, propertyPlaceholderDefinitions);
     }
 
-    protected void writePropertyPlaceholderProviderSource(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
-                                                          EipModel eipModel, Set<EipOption> options, Set<String> propertyPlaceholderDefinitions) {
+    protected void generatePropertyPlaceholderProviderSource(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
+                                                             EipModel eipModel, Set<EipOption> options, Set<String> propertyPlaceholderDefinitions) {
 
-        // the following are valid class elements which we want to generate
+        // not ever model classes support property placeholders as this has been limited to mainly Camel routes
+        // so filter out unwanted models
         boolean rest = classElement.getQualifiedName().toString().startsWith("org.apache.camel.model.rest");
         boolean processor = hasSuperClass(processingEnv, roundEnv, classElement, "org.apache.camel.model.ProcessorDefinition");
         boolean language = hasSuperClass(processingEnv, roundEnv, classElement, "org.apache.camel.model.language.ExpressionDefinition");
@@ -238,7 +238,7 @@ public class CoreEipAnnotationProcessorHelper {
             for (EipOption option : options) {
                 if ("java.lang.String".equals(option.getType())) {
                     found = true;
-                    String getOrSet = sanitizeOptionName(def, option);
+                    String getOrSet = sanitizePropertyPlaceholderOptionName(def, option);
                     getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
                     w.write("        readPlaceholders.put(\"" + option.getName() + "\", definition::get" + getOrSet + ");\n");
                     w.write("        writePlaceholders.put(\"" + option.getName() + "\", definition::set" + getOrSet + ");\n");
@@ -270,8 +270,11 @@ public class CoreEipAnnotationProcessorHelper {
         }
     }
 
-    public String sanitizeOptionName(String def, EipOption option) {
-        // some elements have different setter/getter names vs the xml dsl
+    /**
+     * Some models have different setter/getter names vs the xml name (eg as defined in @XmlAttribute).
+     * So we need to correct this using this method.
+     */
+    public String sanitizePropertyPlaceholderOptionName(String def, EipOption option) {
         if ("SimpleExpression".equals(def) || "JsonPathExpression".equals(def)) {
             if ("resultType".equals(option.getName())) {
                 return "resultTypeName";
@@ -336,7 +339,7 @@ public class CoreEipAnnotationProcessorHelper {
             w.write("\n");
             w.write("    private static final Map<Class, Function<Object, DefinitionPropertyPlaceholderConfigurable>> MAP;\n");
             w.write("    static {\n");
-            w.write("        Map<Class, Function<Object, DefinitionPropertyPlaceholderConfigurable>> map = new HashMap<>();\n");
+            w.write("        Map<Class, Function<Object, DefinitionPropertyPlaceholderConfigurable>> map = new HashMap<>(" + propertyPlaceholderDefinitions.size() + ");\n");
             for (String def : propertyPlaceholderDefinitions) {
                 String cn = def.substring(def.lastIndexOf('.') + 1);
                 w.write("        map.put(" + cn + ".class, " + cn + "PropertyPlaceholderProvider::new);\n");
@@ -1501,19 +1504,19 @@ public class CoreEipAnnotationProcessorHelper {
 
         @Override
         public int compare(EipOption o1, EipOption o2) {
-            int weigth = weigth(o1);
-            int weigth2 = weigth(o2);
+            int weight = weight(o1);
+            int weight2 = weight(o2);
 
-            if (weigth == weigth2) {
+            if (weight == weight2) {
                 // keep the current order
                 return 1;
             } else {
                 // sort according to weight
-                return weigth2 - weigth;
+                return weight2 - weight;
             }
         }
 
-        private int weigth(EipOption o) {
+        private int weight(EipOption o) {
             String name = o.getName();
 
             // these should be first
