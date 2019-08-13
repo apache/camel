@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.annotations.ConstantProvider;
 
 /**
  * An Exchange is the message container holding the information during the entire routing of
@@ -68,6 +69,7 @@ import org.apache.camel.spi.UnitOfWork;
  * See this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a> 
  * for more details.
  */
+@ConstantProvider("org.apache.camel.ExchangeConstantProvider")
 public interface Exchange {
 
     String AUTHENTICATION                   = "CamelAuthentication";
