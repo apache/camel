@@ -29,6 +29,7 @@ import org.apache.camel.TypeConverter;
  */
 public class SimpleTypeConverter implements TypeConverter {
 
+    @FunctionalInterface
     public interface ConversionMethod {
         Object doConvert(Class<?> type, Exchange exchange, Object value) throws Exception;
     }
