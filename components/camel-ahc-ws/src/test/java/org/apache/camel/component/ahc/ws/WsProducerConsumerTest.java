@@ -20,21 +20,29 @@ import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
 public class WsProducerConsumerTest extends CamelTestSupport {
+    
     protected static final String TEST_MESSAGE = "Hello World!";
     protected static final int PORT = AvailablePortFinder.getNextAvailable();
+    
+    private static final Logger LOG = LoggerFactory.getLogger(WsProducerConsumerTest.class);
+    
     protected Server server;
    
     protected List<Object> messages;
@@ -52,23 +60,23 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         server.setHandler(ctx);
         
         server.start();
-        assertTrue(server.isStarted());      
+        assertTrue(server.isStarted());
     }
-    
+
     public void stopTestServer() throws Exception {
         server.stop();
         server.destroy();
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         startTestServer();
         super.setUp();
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         stopTestServer();
@@ -95,7 +103,7 @@ public class WsProducerConsumerTest extends CamelTestSupport {
 
         resetMocks();
 
-        log.info("Restarting bar route");
+        LOG.info("Restarting bar route");
         context.getRouteController().stopRoute("bar");
         Thread.sleep(500);
         context.getRouteController().startRoute("bar");
@@ -118,7 +126,7 @@ public class WsProducerConsumerTest extends CamelTestSupport {
 
         resetMocks();
 
-        log.info("Restarting foo route");
+        LOG.info("Restarting foo route");
         context.getRouteController().stopRoute("foo");
         Thread.sleep(500);
         context.getRouteController().startRoute("foo");
