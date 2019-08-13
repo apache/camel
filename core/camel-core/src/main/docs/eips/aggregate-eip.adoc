@@ -6,7 +6,7 @@ http://www.enterpriseintegrationpatterns.com/Aggregator.html[Aggregator]
 from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows
 you to combine a number of messages together into a single message.
 
-image:http://www.enterpriseintegrationpatterns.com/img/Aggregator.gif[image]
+image::eip/Aggregator.gif[image]
 
 A correlation xref:expression.adoc[Expression] is used to determine the
 messages which should be aggregated together. If you want to aggregate

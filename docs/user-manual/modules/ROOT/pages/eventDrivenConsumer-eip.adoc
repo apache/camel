@@ -9,7 +9,7 @@ The default consumer model is event based (i.e. asynchronous)
 as this means that the Camel container can then manage pooling,
 threading and concurrency for you in a declarative manner.
 
-image:http://www.enterpriseintegrationpatterns.com/img/EventDrivenConsumerSolution.gif[image]
+image::eip/EventDrivenConsumerSolution.gif[image]
 
 The Event Driven Consumer is implemented by consumers implementing the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]

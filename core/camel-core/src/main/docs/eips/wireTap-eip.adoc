@@ -6,7 +6,7 @@ http://www.enterpriseintegrationpatterns.com/WireTap.html[Wire Tap]
 allows you to route messages to a separate location while they are being
 forwarded to the ultimate destination.
 
-image:http://www.enterpriseintegrationpatterns.com/img/WireTap.gif[image]
+image::eip/WireTap.gif[image]
 
 == Streams
 

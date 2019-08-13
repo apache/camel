@@ -14,7 +14,7 @@ clustering and load balancing
 (Jabber)
 * and others
 
-image:http://www.enterpriseintegrationpatterns.com/img/PointToPointSolution.gif[image]
+image::eip/PointToPointSolution.gif[image]
 
 The following example demonstrates point to point messaging using
 the xref:components::jms-component.adoc[JMS] component 

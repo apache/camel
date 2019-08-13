@@ -9,7 +9,7 @@ on a xref:message.adoc[Message] which can be set to *InOnly* to indicate
 a oneway event message. Camel xref:xref:components::index.adoc[Components] then
 implement this pattern using the underlying transport or protocols.
 
-image:http://www.enterpriseintegrationpatterns.com/img/EventMessageSolution.gif[image]
+image::eip/EventMessageSolution.gif[image]
 
 The default behaviour of many xref:xref:components::index.adoc[Components] is InOnly
 such as for xref:components::jms-component.adoc[JMS], xref:components::jms-component.adoc[File] or

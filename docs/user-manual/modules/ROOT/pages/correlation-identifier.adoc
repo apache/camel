@@ -13,7 +13,7 @@ components the correlation identifier header is called
 message exchange to help correlate messages together to a single
 conversation (or business process).
 
-image:http://www.enterpriseintegrationpatterns.com/img/CorrelationIdentifierSolution.gif[image]
+image::eip/CorrelationIdentifierSolution.gif[image]
 
 The use of a Correlation Identifier is key to working with the
 xref:bam.adoc[Camel Business Activity Monitoring Framework] and can also

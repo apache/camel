@@ -12,7 +12,7 @@ content from the inbound message.
 * invoking a xref:bean-integration.adoc[Java bean]
 * xref:processor.adoc[Processor] object
 
-image:http://www.enterpriseintegrationpatterns.com/img/ContentFilter.gif[image]
+image::eip/ContentFilter.gif[image]
 
 A common way to filter messages is to use an
 xref:expression.adoc[Expression] in the xref:dsl.adoc[DSL] like

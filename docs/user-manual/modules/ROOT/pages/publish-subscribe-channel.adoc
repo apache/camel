@@ -15,7 +15,7 @@ xref:camelcontext.adoc[CamelContext] which can work in pub-sub, but
 allowing multiple consumers.
 * xref:components::vm-component.adoc[VM] as SEDA but for intra-JVM.
 
-image:http://www.enterpriseintegrationpatterns.com/img/PublishSubscribeSolution.gif[image]
+image::eip/PublishSubscribeSolution.gif[image]
 
 [[PublishSubscribeChannel-Samples]]
 == Samples

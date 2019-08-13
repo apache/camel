@@ -10,7 +10,7 @@ interface which can be created via the
 https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/Endpoint.java[Endpoint.createPollingConsumer()]
 method.
 
-image:http://www.enterpriseintegrationpatterns.com/img/PollingConsumerSolution.gif[image]
+image::eip/PollingConsumerSolution.gif[image]
 
 In Java:
 

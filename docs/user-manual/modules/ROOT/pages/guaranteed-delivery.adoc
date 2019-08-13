@@ -16,7 +16,7 @@ any of the many other database component such as xref:components::sql-component.
 xref:components::jdbc-component.adoc[JDBC],
 xref:components::mybatis-component.adoc[MyBatis]
 
-image:http://www.enterpriseintegrationpatterns.com/img/GuaranteedMessagingSolution.gif[image]
+image::eip/GuaranteedMessagingSolution.gif[image]
 
 [[GuaranteedDelivery-Example]]
 == Example

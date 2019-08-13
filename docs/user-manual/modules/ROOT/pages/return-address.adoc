@@ -5,7 +5,7 @@ http://www.enterpriseintegrationpatterns.com/ReturnAddress.html[Return
 Address] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] by using the `JMSReplyTo` header.
 
-image:http://www.enterpriseintegrationpatterns.com/img/ReturnAddressSolution.gif[image]
+image::eip/ReturnAddressSolution.gif[image]
 
 For example when using xref:components::jms-component.adoc[JMS] with InOut the component will
 by default return to the address given in `JMSReplyTo`.
