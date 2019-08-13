@@ -29,10 +29,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import javax.xml.namespace.QName;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -670,6 +676,7 @@ public final class ProcessorDefinitionHelper {
      * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
      * @see org.apache.camel.component.properties.PropertiesComponent
      */
+    @SuppressWarnings("unchecked")
     public static void resolvePropertyPlaceholders(CamelContext camelContext, Object definition) throws Exception {
         LOG.trace("Resolving property placeholders for: {}", definition);
 
@@ -684,6 +691,61 @@ public final class ProcessorDefinitionHelper {
         Map<String, String> changedProperties = new HashMap<>();
         Map<String, Supplier<String>> readProperties = ppa.getReadPropertyPlaceholderOptions(camelContext);
         Map<String, Consumer<String>> writeProperties = ppa.getWritePropertyPlaceholderOptions(camelContext);
+
+        // processor's may have additional placeholder properties (can typically be used by the XML DSL to
+        // allow to configure using placeholders for properties that are not xs:string types)
+        if (definition instanceof ProcessorDefinition) {
+            ProcessorDefinition pd = (ProcessorDefinition) definition;
+
+            if (pd.getOtherAttributes() != null && !pd.getOtherAttributes().isEmpty()) {
+                Map<String, Supplier<String>> extraRead = new HashMap<>();
+                if (readProperties != null && !readProperties.isEmpty()) {
+                    extraRead.putAll(readProperties);
+                }
+                Map<String, Consumer<String>> extraWrite = new HashMap<>();
+                if (writeProperties != null && !writeProperties.isEmpty()) {
+                    extraWrite.putAll(writeProperties);
+                }
+
+                Map<QName, Object> other = pd.getOtherAttributes();
+                other.forEach((k, v) -> {
+                    if (Constants.PLACEHOLDER_QNAME.equals(k.getNamespaceURI())) {
+                        if (v instanceof String) {
+                            // enforce a properties component to be created if none existed
+                            camelContext.getPropertiesComponent(true);
+
+                            // value must be enclosed with placeholder tokens
+                            String s = (String) v;
+                            String prefixToken = PropertiesComponent.PREFIX_TOKEN;
+                            String suffixToken = PropertiesComponent.SUFFIX_TOKEN;
+
+                            if (!s.startsWith(prefixToken)) {
+                                s = prefixToken + s;
+                            }
+                            if (!s.endsWith(suffixToken)) {
+                                s = s + suffixToken;
+                            }
+                            final String value = s;
+                            extraRead.put(k.getLocalPart(), () -> value);
+                            extraWrite.put(k.getLocalPart(), text -> {
+                                try {
+                                    PropertyBindingSupport.build()
+                                            .withCamelContext(camelContext)
+                                            .withTarget(definition)
+                                            .withMandatory(true)
+                                            .withProperty(k.getLocalPart(), text)
+                                            .bind();
+                                } catch (Exception e) {
+                                    throw RuntimeCamelException.wrapRuntimeException(e);
+                                }
+                            });
+                        }
+                    }
+                });
+                readProperties = extraRead;
+                writeProperties = extraWrite;
+            }
+        }
 
         if (readProperties != null && !readProperties.isEmpty()) {
             if (LOG.isTraceEnabled()) {

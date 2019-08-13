@@ -16,12 +16,14 @@
  */
 package org.apache.camel.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.placeholder.DefinitionPropertiesPlaceholderProviderHelper;
+import org.apache.camel.spi.PropertiesComponent;
 
 /**
  * To be used for configuring property placeholder options on the EIP models.
