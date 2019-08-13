@@ -446,9 +446,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
             // resolve properties before we create the processor
             ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), output);
 
-            // resolve constant fields (eg Exchange.FILE_NAME)
-            ProcessorDefinitionHelper.resolveKnownConstantFields(routeContext.getCamelContext(), output);
-
             // also resolve properties and constant fields on embedded expressions
             ProcessorDefinition<?> me = (ProcessorDefinition<?>) output;
             if (me instanceof ExpressionNode) {
@@ -457,9 +454,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
                 if (expressionDefinition != null) {
                     // resolve properties before we create the processor
                     ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
-
-                    // resolve constant fields (eg Exchange.FILE_NAME)
-                    ProcessorDefinitionHelper.resolveKnownConstantFields(routeContext.getCamelContext(), expressionDefinition);
                 }
             }
 
@@ -529,9 +523,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         // resolve properties before we create the processor
         ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), definition);
 
-        // resolve constant fields (eg Exchange.FILE_NAME)
-        ProcessorDefinitionHelper.resolveKnownConstantFields(routeContext.getCamelContext(), definition);
-
         // also resolve properties and constant fields on embedded expressions
         ProcessorDefinition<?> me = definition;
         if (me instanceof ExpressionNode) {
@@ -540,9 +531,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
             if (expressionDefinition != null) {
                 // resolve properties before we create the processor
                 ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
-
-                // resolve constant fields (eg Exchange.FILE_NAME)
-                ProcessorDefinitionHelper.resolveKnownConstantFields(routeContext.getCamelContext(), expressionDefinition);
             }
         }
 

@@ -66,9 +66,6 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
             if (exp != null) {
                 // resolve properties before we create the processor
                 ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), exp);
-
-                // resolve constant fields (eg Exchange.FILE_NAME)
-                ProcessorDefinitionHelper.resolveKnownConstantFields(routeContext.getCamelContext(), exp);
             }
 
             FilterProcessor filter = (FilterProcessor) createProcessor(routeContext, whenClause);
