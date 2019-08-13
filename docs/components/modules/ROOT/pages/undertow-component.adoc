@@ -43,7 +43,7 @@ You can append query options to the URI in the following format,
 == Options
 
 // component options: START
-The Undertow component supports 6 options, which are listed below.
+The Undertow component supports 5 options, which are listed below.
 
 
 
@@ -54,7 +54,6 @@ The Undertow component supports 6 options, which are listed below.
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *hostOptions* (advanced) | To configure common options, such as thread pools |  | UndertowHostOptions
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -128,7 +127,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 11 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -142,7 +141,6 @@ The component supports 11 options, which are listed below.
 | *camel.component.undertow.host-options.http2-enabled* | Set if the Undertow host should use http2 protocol. |  | Boolean
 | *camel.component.undertow.host-options.io-threads* | Set if the Undertow host should use http2 protocol. |  | Integer
 | *camel.component.undertow.host-options.worker-threads* | Set if the Undertow host should use http2 protocol. |  | Integer
-| *camel.component.undertow.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.undertow.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.undertow.undertow-http-binding* | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. The option is a org.apache.camel.component.undertow.UndertowHttpBinding type. |  | String
 | *camel.component.undertow.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean

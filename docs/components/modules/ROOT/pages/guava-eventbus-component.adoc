@@ -46,7 +46,7 @@ registry.
 
 
 // component options: START
-The Guava EventBus component supports 4 options, which are listed below.
+The Guava EventBus component supports 3 options, which are listed below.
 
 
 
@@ -55,7 +55,6 @@ The Guava EventBus component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *eventBus* (common) | To use the given Guava EventBus instance |  | EventBus
 | *listenerInterface* (common) | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option. |  | Class
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -115,7 +114,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 5 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -126,7 +125,6 @@ The component supports 5 options, which are listed below.
 | *camel.component.guava-eventbus.enabled* | Enable guava-eventbus component | true | Boolean
 | *camel.component.guava-eventbus.event-bus* | To use the given Guava EventBus instance. The option is a com.google.common.eventbus.EventBus type. |  | String
 | *camel.component.guava-eventbus.listener-interface* | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option. |  | Class
-| *camel.component.guava-eventbus.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

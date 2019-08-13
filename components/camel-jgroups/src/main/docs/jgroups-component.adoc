@@ -36,7 +36,7 @@ component should connect to.
 
 
 // component options: START
-The JGroups component supports 5 options, which are listed below.
+The JGroups component supports 4 options, which are listed below.
 
 
 
@@ -46,7 +46,6 @@ The JGroups component supports 5 options, which are listed below.
 | *channel* (common) | Channel to use |  | JChannel
 | *channelProperties* (common) | Specifies configuration properties of the JChannel used by the endpoint. |  | String
 | *enableViewMessages* (consumer) | If set to true, the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances). By default only regular messages are consumed by the endpoint. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -107,7 +106,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
@@ -123,7 +122,6 @@ The component supports 10 options, which are listed below.
 | *camel.component.jgroups.lock.cluster.service.id* | Cluster Service ID |  | String
 | *camel.component.jgroups.lock.cluster.service.jgroups-cluster-name* | JGroups Cluster name |  | String
 | *camel.component.jgroups.lock.cluster.service.jgroups-config* | JGrups configuration File name |  | String
-| *camel.component.jgroups.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

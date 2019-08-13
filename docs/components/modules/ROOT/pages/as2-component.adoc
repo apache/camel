@@ -38,7 +38,7 @@ apiName can be one of:
 
 
 // component options: START
-The AS2 component supports 3 options, which are listed below.
+The AS2 component supports 2 options, which are listed below.
 
 
 
@@ -46,7 +46,6 @@ The AS2 component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared configuration |  | AS2Configuration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -129,7 +128,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 31 options, which are listed below.
+The component supports 30 options, which are listed below.
 
 
 
@@ -166,7 +165,6 @@ The component supports 31 options, which are listed below.
 | *camel.component.as2.configuration.target-port-number* | The port number of target host. -1 indicates the scheme default port. |  | Integer
 | *camel.component.as2.configuration.user-agent* | The value included in the User-Agent message header identifying the AS2 user agent. | Camel AS2 Client Endpoint | String
 | *camel.component.as2.enabled* | Whether to enable auto configuration of the as2 component. This is enabled by default. |  | Boolean
-| *camel.component.as2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

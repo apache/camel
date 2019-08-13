@@ -35,7 +35,7 @@ Destination Name can be either a topic or a subscription name.
 == Options
 
 // component options: START
-The Google Pubsub component supports 3 options, which are listed below.
+The Google Pubsub component supports 2 options, which are listed below.
 
 
 
@@ -43,7 +43,6 @@ The Google Pubsub component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *connectionFactory* (common) | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair |  | GooglePubsubConnection Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -103,7 +102,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 6 options, which are listed below.
 
 
 
@@ -116,7 +115,6 @@ The component supports 7 options, which are listed below.
 | *camel.component.google-pubsub.connection-factory.service-account-key* |  |  | String
 | *camel.component.google-pubsub.connection-factory.service-u-r-l* |  |  | String
 | *camel.component.google-pubsub.enabled* | Enable google-pubsub component | true | Boolean
-| *camel.component.google-pubsub.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

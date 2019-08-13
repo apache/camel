@@ -33,7 +33,7 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Caffeine LoadCache component supports 3 options, which are listed below.
+The Caffeine LoadCache component supports 2 options, which are listed below.
 
 
 
@@ -41,7 +41,6 @@ The Caffeine LoadCache component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | Sets the global component configuration |  | CaffeineConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -112,7 +111,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 18 options, which are listed below.
+The component supports 17 options, which are listed below.
 
 
 
@@ -136,7 +135,6 @@ The component supports 18 options, which are listed below.
 | *camel.component.caffeine-loadcache.configuration.stats-enabled* | To enable stats on the cache | false | Boolean
 | *camel.component.caffeine-loadcache.configuration.value-type* | The cache value type, default "java.lang.Object" |  | Class
 | *camel.component.caffeine-loadcache.enabled* | Whether to enable auto configuration of the caffeine-loadcache component. This is enabled by default. |  | Boolean
-| *camel.component.caffeine-loadcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

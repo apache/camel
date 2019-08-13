@@ -84,7 +84,7 @@ You can append query *options* to the URI in the following format,
 
 
 // component options: START
-The Spring WebService component supports 3 options, which are listed below.
+The Spring WebService component supports 2 options, which are listed below.
 
 
 
@@ -92,7 +92,6 @@ The Spring WebService component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -168,7 +167,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
@@ -177,7 +176,6 @@ The component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.spring-ws.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.spring-ws.enabled* | Enable spring-ws component | true | Boolean
-| *camel.component.spring-ws.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.spring-ws.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

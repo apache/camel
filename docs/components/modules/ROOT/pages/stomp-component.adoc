@@ -35,7 +35,7 @@ Where *destination* is the name of the queue.
 
 
 // component options: START
-The Stomp component supports 9 options, which are listed below.
+The Stomp component supports 8 options, which are listed below.
 
 
 
@@ -49,7 +49,6 @@ The Stomp component supports 9 options, which are listed below.
 | *host* (common) | The virtual host |  | String
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -113,7 +112,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 14 options, which are listed below.
+The component supports 13 options, which are listed below.
 
 
 
@@ -132,7 +131,6 @@ The component supports 14 options, which are listed below.
 | *camel.component.stomp.host* | The virtual host |  | String
 | *camel.component.stomp.login* | The username |  | String
 | *camel.component.stomp.passcode* | The password |  | String
-| *camel.component.stomp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.stomp.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

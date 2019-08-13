@@ -46,12 +46,6 @@ public class ZendeskComponentConfiguration
      */
     private String zendesk;
     /**
-     * Whether the component should resolve property placeholders on itself when
-     * starting. Only properties which are of String type can use property
-     * placeholders.
-     */
-    private Boolean resolvePropertyPlaceholders = true;
-    /**
      * Whether the component should use basic property binding (Camel 2.x) or
      * the newer property binding with additional capabilities
      */
@@ -72,15 +66,6 @@ public class ZendeskComponentConfiguration
 
     public void setZendesk(String zendesk) {
         this.zendesk = zendesk;
-    }
-
-    public Boolean getResolvePropertyPlaceholders() {
-        return resolvePropertyPlaceholders;
-    }
-
-    public void setResolvePropertyPlaceholders(
-            Boolean resolvePropertyPlaceholders) {
-        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public Boolean getBasicPropertyBinding() {

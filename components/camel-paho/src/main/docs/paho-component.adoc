@@ -51,7 +51,7 @@ Where *topic* is the name of the topic.
 == Options
 
 // component options: START
-The Paho component supports 5 options, which are listed below.
+The Paho component supports 4 options, which are listed below.
 
 
 
@@ -61,7 +61,6 @@ The Paho component supports 5 options, which are listed below.
 | *brokerUrl* (common) | The URL of the MQTT broker. |  | String
 | *clientId* (common) | MQTT client identifier. |  | String
 | *connectOptions* (advanced) | Client connection options |  | MqttConnectOptions
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -127,7 +126,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 6 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -139,7 +138,6 @@ The component supports 6 options, which are listed below.
 | *camel.component.paho.client-id* | MQTT client identifier. |  | String
 | *camel.component.paho.connect-options* | Client connection options. The option is a org.eclipse.paho.client.mqttv3.MqttConnectOptions type. |  | String
 | *camel.component.paho.enabled* | Enable paho component | true | Boolean
-| *camel.component.paho.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

@@ -41,7 +41,7 @@ for this component:
 
 
 // component options: START
-The MLLP component supports 6 options, which are listed below.
+The MLLP component supports 5 options, which are listed below.
 
 
 
@@ -52,7 +52,6 @@ The MLLP component supports 6 options, which are listed below.
 | *logPhiMaxBytes* (advanced) | Set the maximum number of bytes of PHI that will be logged in a log entry. | 5120 | Integer
 | *defaultCharset* (advanced) | Set the default character set to use for byte to/from String conversions. | ISO-8859-1 | String
 | *configuration* (common) | Sets the default configuration to use when creating MLLP endpoints. |  | MllpConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -137,7 +136,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 32 options, which are listed below.
+The component supports 31 options, which are listed below.
 
 
 
@@ -173,7 +172,6 @@ The component supports 32 options, which are listed below.
 | *camel.component.mllp.enabled* | Enable mllp component | true | Boolean
 | *camel.component.mllp.log-phi* | Set the component to log PHI data. | true | Boolean
 | *camel.component.mllp.log-phi-max-bytes* | Set the maximum number of bytes of PHI that will be logged in a log entry. | 5120 | Integer
-| *camel.component.mllp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.mllp.configuration.buffer-writes* | *Deprecated* Enable/Disable the buffering of HL7 payloads before writing to the socket. | false | Boolean
 | *camel.component.mllp.configuration.max-receive-timeouts* | *Deprecated* The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
 |===

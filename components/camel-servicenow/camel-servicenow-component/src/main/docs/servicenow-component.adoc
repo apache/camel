@@ -31,7 +31,7 @@ for this component:
 
 
 // component options: START
-The ServiceNow component supports 15 options, which are listed below.
+The ServiceNow component supports 14 options, which are listed below.
 
 
 
@@ -51,7 +51,6 @@ The ServiceNow component supports 15 options, which are listed below.
 | *proxyUserName* (security) | Username for proxy authentication |  | String
 | *proxyPassword* (security) | Password for proxy authentication |  | String
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -146,7 +145,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 58 options, which are listed below.
+The component supports 57 options, which are listed below.
 
 
 
@@ -208,7 +207,6 @@ The component supports 58 options, which are listed below.
 | *camel.component.servicenow.proxy-password* | Password for proxy authentication |  | String
 | *camel.component.servicenow.proxy-port* | The proxy port number |  | Integer
 | *camel.component.servicenow.proxy-user-name* | Username for proxy authentication |  | String
-| *camel.component.servicenow.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.servicenow.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.component.servicenow.user-name* | ServiceNow user account name |  | String
 |===

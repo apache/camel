@@ -47,7 +47,7 @@ exchange name determines which exchange the queue will bind to.
 == Options
 
 // component options: START
-The RabbitMQ component supports 51 options, which are listed below.
+The RabbitMQ component supports 50 options, which are listed below.
 
 
 
@@ -103,7 +103,6 @@ The RabbitMQ component supports 51 options, which are listed below.
 | *deadLetterRoutingKey* (common) | The routing key for the dead letter exchange |  | String
 | *deadLetterExchangeType* (common) | The type of the dead letter exchange | direct | String
 | *allowNullHeaders* (producer) | Allow pass null values to header | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -211,7 +210,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 52 options, which are listed below.
+The component supports 51 options, which are listed below.
 
 
 
@@ -259,7 +258,6 @@ The component supports 52 options, which are listed below.
 | *camel.component.rabbitmq.requested-channel-max* | Connection requested channel max (max number of channels offered) | 2047 | Integer
 | *camel.component.rabbitmq.requested-frame-max* | Connection requested frame max (max size of frame offered) | 0 | Integer
 | *camel.component.rabbitmq.requested-heartbeat* | Connection requested heartbeat (heart-beat in seconds offered) | 60 | Integer
-| *camel.component.rabbitmq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.rabbitmq.skip-exchange-declare* | This can be used if we need to declare the queue but not the exchange | false | Boolean
 | *camel.component.rabbitmq.skip-queue-bind* | If true the queue will not be bound to the exchange after declaring it | false | Boolean
 | *camel.component.rabbitmq.skip-queue-declare* | If true the producer will not declare and bind a queue. This can be used for directing messages via an existing routing key. | false | Boolean

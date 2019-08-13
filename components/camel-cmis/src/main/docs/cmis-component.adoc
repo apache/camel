@@ -22,7 +22,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The CMIS component supports 3 options, which are listed below.
+The CMIS component supports 2 options, which are listed below.
 
 
 
@@ -30,7 +30,6 @@ The CMIS component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *sessionFacadeFactory* (common) | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances |  | CMISSessionFacade Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -95,7 +94,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
@@ -104,7 +103,6 @@ The component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.cmis.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.cmis.enabled* | Enable cmis component | true | Boolean
-| *camel.component.cmis.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.cmis.session-facade-factory* | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances. The option is a org.apache.camel.component.cmis.CMISSessionFacadeFactory type. |  | String
 |===
 // spring-boot-auto-configure options: END

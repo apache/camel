@@ -10,7 +10,7 @@ Currently only the **Posts** and **Users** operations are supported.
 == Options
 
 // component options: START
-The Wordpress component supports 3 options, which are listed below.
+The Wordpress component supports 2 options, which are listed below.
 
 
 
@@ -18,7 +18,6 @@ The Wordpress component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | Wordpress component configuration |  | WordpressComponent Configuration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -81,7 +80,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
@@ -97,7 +96,6 @@ The component supports 10 options, which are listed below.
 | *camel.component.wordpress.configuration.url* | The Wordpress API URL from your site, e.g. \http://myblog.com/wp-json/ |  | String
 | *camel.component.wordpress.configuration.user* | Authorized user to perform writing operations |  | String
 | *camel.component.wordpress.enabled* | Whether to enable auto configuration of the wordpress component. This is enabled by default. |  | Boolean
-| *camel.component.wordpress.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

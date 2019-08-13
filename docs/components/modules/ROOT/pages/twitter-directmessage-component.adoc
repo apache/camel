@@ -8,7 +8,7 @@ The Twitter Direct Message Component consumes/produces a user's direct messages.
 == Component Options
 
 // component options: START
-The Twitter Direct Message component supports 10 options, which are listed below.
+The Twitter Direct Message component supports 9 options, which are listed below.
 
 
 
@@ -23,7 +23,6 @@ The Twitter Direct Message component supports 10 options, which are listed below
 | *httpProxyUser* (proxy) | The http proxy user which can be used for the camel-twitter. |  | String
 | *httpProxyPassword* (proxy) | The http proxy password which can be used for the camel-twitter. |  | String
 | *httpProxyPort* (proxy) | The http proxy port which can be used for the camel-twitter. |  | int
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -117,7 +116,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 11 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -134,7 +133,6 @@ The component supports 11 options, which are listed below.
 | *camel.component.twitter-directmessage.http-proxy-password* | The http proxy password which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-directmessage.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | Integer
 | *camel.component.twitter-directmessage.http-proxy-user* | The http proxy user which can be used for the camel-twitter. |  | String
-| *camel.component.twitter-directmessage.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

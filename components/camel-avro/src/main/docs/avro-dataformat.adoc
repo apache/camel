@@ -157,7 +157,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 16 options, which are listed below.
+The component supports 15 options, which are listed below.
 
 
 
@@ -176,7 +176,6 @@ The component supports 16 options, which are listed below.
 | *camel.component.avro.configuration.transport* | Transport to use, can be either http or netty |  | AvroTransport
 | *camel.component.avro.configuration.uri-authority* | Authority to use (username and password) |  | String
 | *camel.component.avro.enabled* | Enable avro component | true | Boolean
-| *camel.component.avro.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.dataformat.avro.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.avro.enabled* | Enable avro dataformat | true | Boolean
 | *camel.dataformat.avro.instance-class-name* | Class name to use for marshal and unmarshalling |  | String

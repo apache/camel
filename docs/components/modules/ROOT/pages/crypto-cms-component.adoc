@@ -34,7 +34,7 @@ If the Bouncy Castle security provider is not registered then the Crypto CMS com
 == Options
 
 // component options: START
-The Crypto CMS component supports 4 options, which are listed below.
+The Crypto CMS component supports 3 options, which are listed below.
 
 
 
@@ -43,7 +43,6 @@ The Crypto CMS component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *signedDataVerifier Configuration* (advanced) | To configure the shared SignedDataVerifierConfiguration, which determines the uri parameters for the verify operation. |  | SignedDataVerifier Configuration
 | *envelopedDataDecryptor Configuration* (advanced) | To configure the shared EnvelopedDataDecryptorConfiguration, which determines the uri parameters for the decrypt operation. |  | EnvelopedDataDecryptor Configuration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -109,7 +108,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 5 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -119,7 +118,6 @@ The component supports 5 options, which are listed below.
 | *camel.component.crypto-cms.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.crypto-cms.enabled* | Whether to enable auto configuration of the crypto-cms component. This is enabled by default. |  | Boolean
 | *camel.component.crypto-cms.enveloped-data-decryptor-configuration* | To configure the shared EnvelopedDataDecryptorConfiguration, which determines the uri parameters for the decrypt operation. The option is a org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration type. |  | String
-| *camel.component.crypto-cms.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.crypto-cms.signed-data-verifier-configuration* | To configure the shared SignedDataVerifierConfiguration, which determines the uri parameters for the verify operation. The option is a org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration type. |  | String
 |===
 // spring-boot-auto-configure options: END

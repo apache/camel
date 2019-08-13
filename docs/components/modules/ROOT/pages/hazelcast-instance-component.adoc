@@ -12,7 +12,7 @@ Hazelcast makes sense in one single "server node", but it's extremly powerful in
 == Options
 
 // component options: START
-The Hazelcast Instance component supports 4 options, which are listed below.
+The Hazelcast Instance component supports 3 options, which are listed below.
 
 
 
@@ -21,7 +21,6 @@ The Hazelcast Instance component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *hazelcastInstance* (advanced) | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. |  | HazelcastInstance
 | *hazelcastMode* (advanced) | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -85,7 +84,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 27 options, which are listed below.
+The component supports 26 options, which are listed below.
 
 
 
@@ -98,7 +97,6 @@ The component supports 27 options, which are listed below.
 | *camel.component.hazelcast-instance.enabled* | Enable hazelcast-instance component | true | Boolean
 | *camel.component.hazelcast-instance.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. The option is a com.hazelcast.core.HazelcastInstance type. |  | String
 | *camel.component.hazelcast-instance.hazelcast-mode* | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
-| *camel.component.hazelcast-instance.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.hazelcast-list.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
 | *camel.component.hazelcast-list.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
 | *camel.component.hazelcast-map.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean

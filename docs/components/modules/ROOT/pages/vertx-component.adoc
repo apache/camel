@@ -37,7 +37,7 @@ vertx:channelName[?options]
 
 
 // component options: START
-The Vert.x component supports 8 options, which are listed below.
+The Vert.x component supports 7 options, which are listed below.
 
 
 
@@ -50,7 +50,6 @@ The Vert.x component supports 8 options, which are listed below.
 | *vertxOptions* (common) | Options to use for creating vertx |  | VertxOptions
 | *vertx* (common) | To use the given vertx EventBus instead of creating a new embedded EventBus |  | Vertx
 | *timeout* (common) | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The default value is 60. | 60 | int
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -108,7 +107,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 9 options, which are listed below.
+The component supports 8 options, which are listed below.
 
 
 
@@ -119,7 +118,6 @@ The component supports 9 options, which are listed below.
 | *camel.component.vertx.enabled* | Enable vertx component | true | Boolean
 | *camel.component.vertx.host* | Hostname for creating an embedded clustered EventBus |  | String
 | *camel.component.vertx.port* | Port for creating an embedded clustered EventBus |  | Integer
-| *camel.component.vertx.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.vertx.timeout* | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The default value is 60. | 60 | Integer
 | *camel.component.vertx.vertx* | To use the given vertx EventBus instead of creating a new embedded EventBus. The option is a io.vertx.core.Vertx type. |  | String
 | *camel.component.vertx.vertx-factory* | To use a custom VertxFactory implementation. The option is a io.vertx.core.spi.VertxFactory type. |  | String

@@ -8,7 +8,7 @@ This component can be used to watch file modification events in folder. It is ba
 == URI Options
 
 // component options: START
-The file-watch component supports 7 options, which are listed below.
+The file-watch component supports 6 options, which are listed below.
 
 
 
@@ -20,7 +20,6 @@ The file-watch component supports 7 options, which are listed below.
 | *pollThreads* (consumer) | The number of threads polling WatchService. Increase this value, if you see OVERFLOW messages in log. | 1 | int
 | *fileHasher* (consumer) | Reference to io.methvin.watcher.hashing.FileHasher. This prevents emitting duplicate events on some platforms. For working with large files and if you dont need detect multiple modifications per second per file, use #lastModifiedTimeFileHasher. You can also provide custom implementation in registry. | #murmur3FFileHasher | FileHasher
 | *useFileHashing* (consumer) | Enables or disables file hashing to detect duplicate events. If you disable this, you can get some events multiple times on some platforms and JDKs. Check java.nio.file.WatchService limitations for your target platform. | true | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -84,7 +83,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 8 options, which are listed below.
+The component supports 7 options, which are listed below.
 
 
 
@@ -97,7 +96,6 @@ The component supports 8 options, which are listed below.
 | *camel.component.file-watch.file-hasher* | Reference to io.methvin.watcher.hashing.FileHasher. This prevents emitting duplicate events on some platforms. For working with large files and if you dont need detect multiple modifications per second per file, use #lastModifiedTimeFileHasher. You can also provide custom implementation in registry. The option is a io.methvin.watcher.hashing.FileHasher type. |  | String
 | *camel.component.file-watch.poll-threads* | The number of threads polling WatchService. Increase this value, if you see OVERFLOW messages in log. | 1 | Integer
 | *camel.component.file-watch.queue-size* | Maximum size of queue between WatchService and consumer. Unbounded by default. | 2147483647 | Integer
-| *camel.component.file-watch.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.file-watch.use-file-hashing* | Enables or disables file hashing to detect duplicate events. If you disable this, you can get some events multiple times on some platforms and JDKs. Check java.nio.file.WatchService limitations for your target platform. | true | Boolean
 |===
 // spring-boot-auto-configure options: END

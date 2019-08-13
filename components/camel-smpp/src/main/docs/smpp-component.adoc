@@ -168,7 +168,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The SMPP component supports 3 options, which are listed below.
+The SMPP component supports 2 options, which are listed below.
 
 
 
@@ -176,7 +176,6 @@ The SMPP component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared SmppConfiguration as configuration. |  | SmppConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -270,7 +269,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 39 options, which are listed below.
+The component supports 38 options, which are listed below.
 
 
 
@@ -315,7 +314,6 @@ The component supports 39 options, which are listed below.
 | *camel.component.smpp.configuration.type-of-number* | Defines the type of number (TON) to be used in the SME. The following TON values are defined: <ul> <li>0: Unknown</li> <li>1: International</li> <li>2: National</li> <li>3: Network Specific</li> <li>4: Subscriber Number</li> <li>5: Alphanumeric</li> <li>6: Abbreviated</li> </ul> |  | Byte
 | *camel.component.smpp.configuration.using-s-s-l* | Whether using SSL with the smpps protocol | false | Boolean
 | *camel.component.smpp.enabled* | Enable smpp component | true | Boolean
-| *camel.component.smpp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

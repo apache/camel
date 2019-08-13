@@ -52,7 +52,7 @@ If a named parameter cannot be resolved, then an exception is thrown.
 == Options
 
 // component options: START
-The ElSQL component supports 6 options, which are listed below.
+The ElSQL component supports 5 options, which are listed below.
 
 
 
@@ -63,7 +63,6 @@ The ElSQL component supports 6 options, which are listed below.
 | *dataSource* (common) | Sets the DataSource to use to communicate with the database. |  | DataSource
 | *elSqlConfig* (advanced) | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead. |  | ElSqlConfig
 | *resourceUri* (common) | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default, you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint. |  | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -161,7 +160,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 6 options, which are listed below.
 
 
 
@@ -173,7 +172,6 @@ The component supports 7 options, which are listed below.
 | *camel.component.elsql.database-vendor* | To use a vendor specific com.opengamma.elsql.ElSqlConfig |  | ElSqlDatabaseVendor
 | *camel.component.elsql.el-sql-config* | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead. The option is a com.opengamma.elsql.ElSqlConfig type. |  | String
 | *camel.component.elsql.enabled* | Enable elsql component | true | Boolean
-| *camel.component.elsql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.elsql.resource-uri* | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default, you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint. |  | String
 |===
 // spring-boot-auto-configure options: END

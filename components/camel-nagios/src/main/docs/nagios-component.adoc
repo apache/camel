@@ -39,7 +39,7 @@ you to send notifications to Nagios.
 
 
 // component options: START
-The Nagios component supports 3 options, which are listed below.
+The Nagios component supports 2 options, which are listed below.
 
 
 
@@ -47,7 +47,6 @@ The Nagios component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use a shared NagiosConfiguration |  | NagiosConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -111,7 +110,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 11 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -127,7 +126,6 @@ The component supports 11 options, which are listed below.
 | *camel.component.nagios.configuration.port* | The port number of the host. |  | Integer
 | *camel.component.nagios.configuration.timeout* | Sending timeout in millis. | 5000 | Integer
 | *camel.component.nagios.enabled* | Enable nagios component | true | Boolean
-| *camel.component.nagios.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.nagios.configuration.encryption-method* | *Deprecated* To specify an encryption method. |  | NagiosEncryptionMethod
 |===
 // spring-boot-auto-configure options: END

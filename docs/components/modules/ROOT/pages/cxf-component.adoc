@@ -82,7 +82,7 @@ cxf:bean:cxfEndpoint?wsdlURL=wsdl/hello_world.wsdl&dataFormat=PAYLOAD
 
 
 // component options: START
-The CXF component supports 5 options, which are listed below.
+The CXF component supports 4 options, which are listed below.
 
 
 
@@ -92,7 +92,6 @@ The CXF component supports 5 options, which are listed below.
 | *allowStreaming* (advanced) | This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases. |  | Boolean
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -181,7 +180,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 6 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -192,7 +191,6 @@ The component supports 6 options, which are listed below.
 | *camel.component.cxf.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.cxf.enabled* | Enable cxf component | true | Boolean
 | *camel.component.cxf.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
-| *camel.component.cxf.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.cxf.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

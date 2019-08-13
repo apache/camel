@@ -29,7 +29,7 @@ Where *`someUri`* can be any URI with any query parameters.
 == Options
 
 // component options: START
-The Stub component supports 7 options, which are listed below.
+The Stub component supports 6 options, which are listed below.
 
 
 
@@ -41,7 +41,6 @@ The Stub component supports 7 options, which are listed below.
 | *defaultQueueFactory* (advanced) | Sets the default queue factory. |  | BlockingQueueFactory
 | *defaultBlockWhenFull* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | boolean
 | *defaultOfferTimeout* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue |  | long
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -110,7 +109,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 8 options, which are listed below.
+The component supports 7 options, which are listed below.
 
 
 
@@ -124,7 +123,6 @@ The component supports 8 options, which are listed below.
 | *camel.component.stub.default-queue-factory* | Sets the default queue factory. The option is a org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> type. |  | String
 | *camel.component.stub.enabled* | Whether to enable auto configuration of the stub component. This is enabled by default. |  | Boolean
 | *camel.component.stub.queue-size* | Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold). | 1000 | Integer
-| *camel.component.stub.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
