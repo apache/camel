@@ -20,8 +20,17 @@ import org.apache.camel.Exchange;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
 
+/**
+ * Factory to create a new {@link PulsarMessageReceipt} to store on the {@link Exchange}.
+ * <p>
+ * Implement this interface if an alternate implementation of {@link PulsarMessageReceipt} is required
+ * as newer Pulsar clients may have acknowledgement functionality not yet supported by {@link DefaultPulsarMessageReceipt}.
+ */
 public interface PulsarMessageReceiptFactory {
 
+    /**
+     * Creates a new instance of {@link PulsarMessageReceipt}.
+     */
     PulsarMessageReceipt newInstance(Exchange exchange, Message message, Consumer consumer);
 
 }

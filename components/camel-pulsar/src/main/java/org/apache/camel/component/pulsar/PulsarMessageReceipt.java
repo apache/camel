@@ -17,18 +17,53 @@
 package org.apache.camel.component.pulsar;
 
 import java.util.concurrent.CompletableFuture;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
+import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.PulsarClientException;
 
+/**
+ * Acknowledge the receipt of a message using the Pulsar consumer.
+ * <p>
+ * Available on the {@link Exchange} if {@link PulsarConfiguration#isAllowManualAcknowledgement()} is true.
+ * An alternative to the default may be provided by implementing {@link PulsarMessageReceiptFactory}.
+ */
 public interface PulsarMessageReceipt {
 
+    /**
+     * Acknowledge receipt of this message synchronously.
+     *
+     * @see org.apache.pulsar.client.api.Consumer#acknowledge(MessageId)
+     */
     void acknowledge() throws PulsarClientException;
 
+    /**
+     * Acknowledge receipt of all of the messages in the stream up to and including this message synchronously.
+     *
+     * @see org.apache.pulsar.client.api.Consumer#acknowledgeCumulative(MessageId)
+     */
     void acknowledgeCumulative() throws PulsarClientException;
 
+    /**
+     * Acknowledge receipt of this message asynchronously.
+     *
+     * @see org.apache.pulsar.client.api.Consumer#acknowledgeAsync(MessageId)
+     */
     CompletableFuture<Void> acknowledgeAsync();
 
+    /**
+     * Acknowledge receipt of all of the messages in the stream up to and including this message asynchronously.
+     *
+     * @see org.apache.pulsar.client.api.Consumer#acknowledgeCumulativeAsync(MessageId)
+     */
     CompletableFuture<Void> acknowledgeCumulativeAsync();
 
+    /**
+     * Acknowledge the failure to process this message.
+     *
+     * @see org.apache.pulsar.client.api.Consumer#negativeAcknowledge(MessageId)
+     * Note: Available in Puslar 2.4.0. Implementations with earlier versions should return an {@link java.lang.UnsupportedOperationException}.
+     */
     void negativeAcknowledge();
 
 }
