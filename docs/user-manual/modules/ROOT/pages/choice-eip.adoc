@@ -7,7 +7,7 @@ Based Router] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] allows you to route messages to the correct destination based
 on the contents of the message exchanges.
 
-image:http://www.enterpriseintegrationpatterns.com/img/ContentBasedRouter.gif[image]
+image::eip/ContentBasedRouter.gif[image]
 
 == Choice options
 

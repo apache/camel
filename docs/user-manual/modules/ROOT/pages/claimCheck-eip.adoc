@@ -6,7 +6,7 @@
 The http://www.enterpriseintegrationpatterns.com/patterns/messaging/StoreInLibrary.html[Claim Check] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
 allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.
 
-image:http://www.enterpriseintegrationpatterns.com/img/StoreInLibrary.gif[image]
+image::eip/StoreInLibrary.gif[image]
 
 It can also be useful in situations where you cannot trust the information with an outside party; in this case, you can use the Claim Check to hide the sensitive portions of data.
 

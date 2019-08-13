@@ -7,7 +7,7 @@ Based Router] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] allows you to route messages to the correct destination based
 on the contents of the message exchanges.
 
-image:http://www.enterpriseintegrationpatterns.com/img/ContentBasedRouter.gif[image]
+image::eip/ContentBasedRouter.gif[image]
 
 The following example shows how to route a request from an input
 *seda:a* endpoint to either *seda:b*, *seda:c* or *seda:d* depending on

@@ -10,7 +10,7 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoi
 interface and all interactions with the Message Channel are via the
 Endpoint interfaces.
 
-image:http://www.enterpriseintegrationpatterns.com/img/MessageChannelSolution.gif[image]
+image::eip/MessageChannelSolution.gif[image]
 
 == Samples
 

@@ -8,7 +8,7 @@ patterns] using the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/DeadLetterChannel.html[DeadLetterChannel]
 processor which is an xref:error-handler.adoc[Error Handler].
 
-image:http://www.enterpriseintegrationpatterns.com/img/DeadLetterChannelSolution.gif[image]
+image::eip/DeadLetterChannelSolution.gif[image]
 
 The Dead Letter Channel lets you control behaviors including redelivery,
 whether to propagate the thrown Exception to the caller (the *handled*

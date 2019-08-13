@@ -5,7 +5,7 @@ The When EIP is related to http://www.enterpriseintegrationpatterns.com/ContentB
 Based Router] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns]
 
-image:http://www.enterpriseintegrationpatterns.com/img/ContentBasedRouter.gif[image]
+image::eip/ContentBasedRouter.gif[image]
 
 == Options
 

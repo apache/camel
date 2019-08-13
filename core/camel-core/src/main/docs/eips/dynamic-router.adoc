@@ -7,7 +7,7 @@ Router] from the EIP patterns
 allows you to route messages while avoiding the dependency of the router
 on all possible destinations while maintaining its efficiency.
 
-image:http://www.enterpriseintegrationpatterns.com/img/DynamicRouter.gif[image]
+image::eip/DynamicRouter.gif[image]
 
 The `dynamicRouter` in the DSL is similar to
 a dynamic Routing Slip which evaluates the slip

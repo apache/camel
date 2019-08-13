@@ -10,7 +10,7 @@ the transformation, or by using transform() in the DSL. You can also use
 a xref:data-format.adoc[Data Format] to marshal and unmarshal messages
 in different encodings.
 
-image:http://www.enterpriseintegrationpatterns.com/img/MessageTranslator.gif[image]
+image::eip/MessageTranslator.gif[image]
 
 == Samples
 

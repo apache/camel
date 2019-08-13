@@ -7,7 +7,7 @@ http://www.enterpriseintegrationpatterns.com/TransactionalClient.html[Transactio
 Client] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
 using spring transactions.
 
-image:http://www.enterpriseintegrationpatterns.com/img/TransactionalClientSolution.gif[image]
+image::eip/TransactionalClientSolution.gif[image]
 
 Transaction Oriented Endpoints like https://github.com/apache/camel/blob/master/components/camel-jms/src/main/docs/jms-component.adoc[JMS] support using a
 transaction for both inbound and outbound message exchanges. Endpoints

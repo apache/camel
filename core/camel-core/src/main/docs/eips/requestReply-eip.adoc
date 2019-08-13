@@ -9,7 +9,7 @@ Message which can be set to *InOut* to indicate a
 request/reply. Camel Components then implement
 this pattern using the underlying transport or protocols.
 
-image:http://www.enterpriseintegrationpatterns.com/img/RequestReply.gif[image]
+image::eip/RequestReply.gif[image]
 
 For example when using xref:components::jms-component.adoc[JMS] with InOut the component will
 by default perform these actions

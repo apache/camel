@@ -5,7 +5,7 @@ The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
 Filter] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
 allows you to filter messages
 
-image:http://www.enterpriseintegrationpatterns.com/img/MessageFilter.gif[image]
+image::eip/MessageFilter.gif[image]
 
 The following example shows how to create a Message Filter route
 consuming messages from an endpoint called *queue:a*, which if the

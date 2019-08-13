@@ -3,7 +3,7 @@
 
 The http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html[Splitter] from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows you split a message into a number of pieces and process them individually.
 
-image:http://www.enterpriseintegrationpatterns.com/img/Sequencer.gif[image]
+image::eip/Sequencer.gif[image]
 
 You need to specify a Splitter as `split()`. In earlier versions of Camel, you need to use `splitter()`.
 
