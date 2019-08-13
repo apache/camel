@@ -18,6 +18,7 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.PropertyBindingException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -59,8 +60,10 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("No setter to set property: xxx to: true on: Multicast[[To[mock:a], ThrowException[java.lang.IllegalAccessException], To[mock:b]]]", cause.getMessage());
+            PropertyBindingException cause = assertIsInstanceOf(PropertyBindingException.class, e.getCause());
+            assertEquals("xxx", cause.getPropertyName());
+            assertEquals("true", cause.getValue());
+            assertTrue(cause.getMessage().startsWith("Error binding property (xxx=true) with name: xxx on bean: Multicast"));
         }
     }
 
