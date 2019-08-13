@@ -38,7 +38,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
-import org.apache.camel.model.DefinitionPropertyPlaceholderConfigurable;
+import org.apache.camel.model.DefinitionPropertyPlaceholderConfigurer;
 import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
@@ -56,7 +56,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionDefinition implements Expression, Predicate, OtherAttributesAware, ExpressionFactory, DefinitionPropertyPlaceholderConfigurable {
+public class ExpressionDefinition implements Expression, Predicate, OtherAttributesAware, ExpressionFactory, DefinitionPropertyPlaceholderConfigurer {
     @XmlAttribute
     @XmlID
     private String id;

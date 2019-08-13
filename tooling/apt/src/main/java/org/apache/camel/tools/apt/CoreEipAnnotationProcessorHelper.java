@@ -176,7 +176,7 @@ public class CoreEipAnnotationProcessorHelper {
             return;
         }
 
-        TypeElement parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.model.DefinitionPropertyPlaceholderConfigurable");
+        TypeElement parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.PropertyPlaceholderConfigurer");
         String def = classElement.getSimpleName().toString();
         String fqnDef = classElement.getQualifiedName().toString();
         String cn = def + "PropertyPlaceholderProvider";
@@ -220,9 +220,9 @@ public class CoreEipAnnotationProcessorHelper {
             w.write("\n");
             w.write("import org.apache.camel.CamelContext;\n");
             w.write("import " + fqnDef + ";\n");
-            w.write("import org.apache.camel.model.DefinitionPropertyPlaceholderConfigurable;\n");
+            w.write("import org.apache.camel.spi.PropertyPlaceholderConfigurer;\n");
             w.write("\n");
-            w.write("public class " + cn + " implements DefinitionPropertyPlaceholderConfigurable {\n");
+            w.write("public class " + cn + " implements PropertyPlaceholderConfigurer {\n");
             w.write("\n");
             w.write("    private final Map<String, Supplier<String>> readPlaceholders = new HashMap<>();\n");
             w.write("    private final Map<String, Consumer<String>> writePlaceholders = new HashMap<>();\n");
@@ -330,16 +330,16 @@ public class CoreEipAnnotationProcessorHelper {
             w.write("import java.util.function.Function;\n");
             w.write("import java.util.function.Supplier;\n");
             w.write("\n");
-            w.write("import org.apache.camel.model.DefinitionPropertyPlaceholderConfigurable;\n");
+            w.write("import org.apache.camel.spi.PropertyPlaceholderConfigurer;\n");
             for (String def : propertyPlaceholderDefinitions) {
                 w.write("import " + def + ";\n");
             }
             w.write("\n");
             w.write("public class DefinitionPropertiesPlaceholderProviderHelper {\n");
             w.write("\n");
-            w.write("    private static final Map<Class, Function<Object, DefinitionPropertyPlaceholderConfigurable>> MAP;\n");
+            w.write("    private static final Map<Class, Function<Object, PropertyPlaceholderConfigurer>> MAP;\n");
             w.write("    static {\n");
-            w.write("        Map<Class, Function<Object, DefinitionPropertyPlaceholderConfigurable>> map = new HashMap<>(" + propertyPlaceholderDefinitions.size() + ");\n");
+            w.write("        Map<Class, Function<Object, PropertyPlaceholderConfigurer>> map = new HashMap<>(" + propertyPlaceholderDefinitions.size() + ");\n");
             for (String def : propertyPlaceholderDefinitions) {
                 String cn = def.substring(def.lastIndexOf('.') + 1);
                 w.write("        map.put(" + cn + ".class, " + cn + "PropertyPlaceholderProvider::new);\n");
@@ -347,8 +347,8 @@ public class CoreEipAnnotationProcessorHelper {
             w.write("        MAP = map;\n");
             w.write("    }\n");
             w.write("\n");
-            w.write("    public static Optional<DefinitionPropertyPlaceholderConfigurable> provider(Object definition) {\n");
-            w.write("        Function<Object, DefinitionPropertyPlaceholderConfigurable> func = MAP.get(definition.getClass());\n");
+            w.write("    public static Optional<PropertyPlaceholderConfigurer> provider(Object definition) {\n");
+            w.write("        Function<Object, PropertyPlaceholderConfigurer> func = MAP.get(definition.getClass());\n");
             w.write("        if (func != null) {\n");
             w.write("            return Optional.of(func.apply(definition));\n");
             w.write("        }\n");
