@@ -34,7 +34,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.extension.ComponentExtension;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -55,9 +54,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     private CamelContext camelContext;
 
-    @Metadata(label = "advanced", defaultValue = "true",
-        description = "Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.")
-    private boolean resolvePropertyPlaceholders = true;
     @Metadata(label = "advanced",
         description = "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities")
     private boolean basicPropertyBinding;
@@ -230,22 +226,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Whether the component should resolve property placeholders on itself when starting.
-     * Only properties which are of String type can use property placeholders.
-     */
-    public void setResolvePropertyPlaceholders(boolean resolvePropertyPlaceholders) {
-        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
-    }
-
-    /**
-     * Whether the component should resolve property placeholders on itself when starting.
-     * Only properties which are of String type can use property placeholders.
-     */
-    public boolean isResolvePropertyPlaceholders() {
-        return resolvePropertyPlaceholders;
-    }
-
-    /**
      * Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities.
      */
     public boolean isBasicPropertyBinding() {
@@ -340,17 +320,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-
-        if (isResolvePropertyPlaceholders()) {
-            // only resolve property placeholders if its in use
-            PropertiesComponent existing = camelContext.getPropertiesComponent(false);
-            if (existing != null) {
-                log.debug("Resolving property placeholders on component: {}", this);
-                PropertyPlaceholdersHelper.resolvePropertyPlaceholders(camelContext, this);
-            } else {
-                log.debug("Cannot resolve property placeholders on component: {} as PropertiesComponent is not in use", this);
-            }
-        }
     }
 
     @Override
