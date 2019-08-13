@@ -296,11 +296,7 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
                 writer.append("    private volatile ").append(f).append(" ").append(v).append(";\n");
                 writer.append("    private ").append(f).append(" get").append(s).append("() {\n");
                 writer.append("        if (").append(v).append(" == null) {\n");
-                writer.append("            synchronized (this) {\n");
-                writer.append("                if (").append(v).append(" == null) {\n");
-                writer.append("                    ").append(v).append(" = new ").append(f).append("();\n");
-                writer.append("                }\n");
-                writer.append("            }\n");
+                writer.append("            ").append(v).append(" = new ").append(f).append("();\n");
                 writer.append("        }\n");
                 writer.append("        return ").append(v).append(";\n");
                 writer.append("    }\n");
