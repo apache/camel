@@ -28,7 +28,10 @@ import org.apache.camel.tools.apt.helper.IOHelper;
 
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
 
-public class PropertyPlaceholderGenerator {
+public final class PropertyPlaceholderGenerator {
+
+    private PropertyPlaceholderGenerator() {
+    }
 
     public static void generatePropertyPlaceholderProviderSource(ProcessingEnvironment processingEnv, TypeElement parent,
                                                                  String def, String fqnDef, String cn, String fqn,
