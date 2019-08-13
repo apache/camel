@@ -219,6 +219,24 @@
             </build>
         </profile>
 
+        <profile>
+            <id>apt</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <dependencies>
+
+                <!-- enable the APT processor -->
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>apt</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+
+            </dependencies>
+        </profile>
+
         <!-- skip management tests on AIX as it hangs CI servers -->
         <profile>
             <id>aix</id>
