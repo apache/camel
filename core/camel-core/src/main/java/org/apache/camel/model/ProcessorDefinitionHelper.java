@@ -32,6 +32,7 @@ import java.util.function.Supplier;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -40,6 +41,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -668,7 +670,10 @@ public final class ProcessorDefinitionHelper {
      * Inspects the given definition and resolves any property placeholders from its properties.
      * <p/>
      * This implementation will check all the getter/setter pairs on this instance and for all the values
-     * (which is a String type) will be property placeholder resolved. The definition should implement {@link OtherAttributesAware}
+     * (which is a String type) will be property placeholder resolved.
+     * Additional properties are also resolved if the definition implements {@link OtherAttributesAware}.
+     * Also known constant fields on {@link Exchange} is replaced with their actual constant value, eg
+     * <tt>Exchange.FILE_NAME</tt> is replaced with <tt>CamelFileName</tt>.
      *
      * @param camelContext the Camel context
      * @param definition   the definition which should implement {@link OtherAttributesAware}
@@ -692,12 +697,12 @@ public final class ProcessorDefinitionHelper {
         Map<String, Supplier<String>> readProperties = ppa.getReadPropertyPlaceholderOptions(camelContext);
         Map<String, Consumer<String>> writeProperties = ppa.getWritePropertyPlaceholderOptions(camelContext);
 
-        // processor's may have additional placeholder properties (can typically be used by the XML DSL to
+        // definitions may have additional placeholder properties (can typically be used by the XML DSL to
         // allow to configure using placeholders for properties that are not xs:string types)
-        if (definition instanceof ProcessorDefinition) {
-            ProcessorDefinition pd = (ProcessorDefinition) definition;
+        if (definition instanceof OtherAttributesAware) {
+            OtherAttributesAware ooa = (OtherAttributesAware) definition;
 
-            if (pd.getOtherAttributes() != null && !pd.getOtherAttributes().isEmpty()) {
+            if (ooa.getOtherAttributes() != null && !ooa.getOtherAttributes().isEmpty()) {
                 Map<String, Supplier<String>> extraRead = new HashMap<>();
                 if (readProperties != null && !readProperties.isEmpty()) {
                     extraRead.putAll(readProperties);
@@ -707,7 +712,7 @@ public final class ProcessorDefinitionHelper {
                     extraWrite.putAll(writeProperties);
                 }
 
-                Map<QName, Object> other = pd.getOtherAttributes();
+                Map<QName, Object> other = ooa.getOtherAttributes();
                 other.forEach((k, v) -> {
                     if (Constants.PLACEHOLDER_QNAME.equals(k.getNamespaceURI())) {
                         if (v instanceof String) {
@@ -757,6 +762,19 @@ public final class ProcessorDefinitionHelper {
                 String name = entry.getKey();
                 String value = entry.getValue().get();
                 String text = camelContext.resolvePropertyPlaceholders(value);
+
+                // is the value a known field (currently we only support constants from Exchange.class)
+                if (text != null && text.startsWith("Exchange.")) {
+                    String field = StringHelper.after(text, "Exchange.");
+                    // TODO: Avoid reflection via fields
+                    String constant = ObjectHelper.lookupConstantFieldValue(Exchange.class, field);
+                    if (constant != null) {
+                        text = constant;
+                    } else {
+                        throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");
+                    }
+                }
+
                 if (!Objects.equals(text, value)) {
                     writeProperties.get(name).accept(text);
                     changedProperties.put(name, value);
@@ -767,57 +785,6 @@ public final class ProcessorDefinitionHelper {
             }
         }
         addRestoreAction(writeProperties, changedProperties);
-    }
-
-    /**
-     * Inspects the given definition and resolves known fields
-     * <p/>
-     * This implementation will check all the getter/setter pairs on this instance and for all the values
-     * (which is a String type) will check if it refers to a known field (such as on Exchange).
-     *
-     * @param camelContext the camel context
-     * @param definition   the definition
-     */
-    public static void resolveKnownConstantFields(CamelContext camelContext, Object definition) throws Exception {
-        LOG.trace("Resolving known fields for: {}", definition);
-
-        // TODO: implement this
-/*
-        // find all String getter/setter
-        Map<String, Object> properties = new HashMap<>();
-        IntrospectionSupport.getProperties(definition, properties, null);
-
-        Map<String, Object> changedProperties = new HashMap<>();
-        if (!properties.isEmpty()) {
-            LOG.trace("There are {} properties on: {}", properties.size(), definition);
-
-            // lookup and resolve known constant fields for String based properties
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                if (value instanceof String) {
-                    // we can only resolve String typed values
-                    String text = (String) value;
-
-                    // is the value a known field (currently we only support constants from Exchange.class)
-                    if (text.startsWith("Exchange.")) {
-                        String field = StringHelper.after(text, "Exchange.");
-                        String constant = ObjectHelper.lookupConstantFieldValue(Exchange.class, field);
-                        if (constant != null) {
-                            // invoke setter as the text has changed
-                            IntrospectionSupport.setProperty(camelContext, definition, name, constant);
-                            changedProperties.put(name, value);
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Changed property [{}] from: {} to: {}", name, value, constant);
-                            }
-                        } else {
-                            throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");
-                        }
-                    }
-                }
-            }
-        }
-        addRestoreAction(camelContext, definition, changedProperties);*/
     }
 
 }
