@@ -30,7 +30,7 @@ Where *someName* can be any string to uniquely identify the endpoint
 
 
 // component options: START
-The Direct component supports 4 options, which are listed below.
+The Direct component supports 3 options, which are listed below.
 
 
 
@@ -39,7 +39,6 @@ The Direct component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *block* (producer) | If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active. | true | boolean
 | *timeout* (producer) | The timeout value to use if block is enabled. | 30000 | long
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -100,7 +99,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 5 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -110,7 +109,6 @@ The component supports 5 options, which are listed below.
 | *camel.component.direct.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.direct.block* | If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active. | true | Boolean
 | *camel.component.direct.enabled* | Whether to enable auto configuration of the direct component. This is enabled by default. |  | Boolean
-| *camel.component.direct.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.direct.timeout* | The timeout value to use if block is enabled. | 30000 | Long
 |===
 // spring-boot-auto-configure options: END

@@ -26,7 +26,7 @@ Value write requests from OPC UA Client will trigger messages which are sent int
 
 
 // component options: START
-The OPC UA Server component supports 21 options, which are listed below.
+The OPC UA Server component supports 20 options, which are listed below.
 
 
 
@@ -52,7 +52,6 @@ The OPC UA Server component supports 21 options, which are listed below.
 | *certificateManager* (common) | Server certificate manager |  | CertificateManager
 | *certificateValidator* (common) | Validator for client certificates |  | Supplier
 | *defaultCertificate Validator* (common) | Validator for client certificates using default file based approach |  | File
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -125,7 +124,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 22 options, which are listed below.
+The component supports 21 options, which are listed below.
 
 
 
@@ -146,7 +145,6 @@ The component supports 22 options, which are listed below.
 | *camel.component.milo-server.hostname* | Server hostname |  | String
 | *camel.component.milo-server.namespace-uri* | The URI of the namespace, defaults to urn:org:apache:camel |  | String
 | *camel.component.milo-server.product-uri* | The product URI |  | String
-| *camel.component.milo-server.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.milo-server.security-policies* | Security policies |  | Set
 | *camel.component.milo-server.security-policies-by-id* | Security policies by URI or name |  | Collection
 | *camel.component.milo-server.server-certificate* | Server certificate. The option is a org.apache.camel.component.milo.KeyStoreLoader.Result type. |  | String

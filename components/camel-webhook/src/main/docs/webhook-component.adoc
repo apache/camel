@@ -36,7 +36,7 @@ webhook:endpoint[?options]
 
 
 // component options: START
-The Webhook component supports 3 options, which are listed below.
+The Webhook component supports 2 options, which are listed below.
 
 
 
@@ -44,7 +44,6 @@ The Webhook component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | Set the default configuration for the webhook meta-component. |  | WebhookConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -110,7 +109,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
@@ -126,7 +125,6 @@ The component supports 10 options, which are listed below.
 | *camel.component.webhook.configuration.webhook-external-url* | The URL of the current service as seen by the webhook provider |  | String
 | *camel.component.webhook.configuration.webhook-path* | The path where the webhook endpoint will be exposed (relative to basePath, if any) |  | String
 | *camel.component.webhook.enabled* | Whether to enable auto configuration of the webhook component. This is enabled by default. |  | Boolean
-| *camel.component.webhook.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

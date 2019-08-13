@@ -619,7 +619,7 @@ for details on how to generate the DTO.
 
 
 // component options: START
-The Salesforce component supports 32 options, which are listed below.
+The Salesforce component supports 31 options, which are listed below.
 
 
 
@@ -656,7 +656,6 @@ The Salesforce component supports 32 options, which are listed below.
 | *httpProxyRealm* (security) | Realm of the proxy server, used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
 | *httpProxyUseDigest Auth* (security) | If set to true Digest authentication will be used when authenticating to the HTTP proxy,otherwise Basic authorization method will be used | false | boolean
 | *packages* (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. |  | String[]
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -760,7 +759,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 88 options, which are listed below.
+The component supports 87 options, which are listed below.
 
 
 
@@ -851,7 +850,6 @@ The component supports 88 options, which are listed below.
 | *camel.component.salesforce.packages* | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. |  | String[]
 | *camel.component.salesforce.password* | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
 | *camel.component.salesforce.refresh-token* | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token, or configure using the builtin callback at \https://login.salesforce.com/services/oauth2/success or \https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
-| *camel.component.salesforce.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.salesforce.ssl-context-parameters* | SSL parameters to use, see SSLContextParameters class for all available options. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.salesforce.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters | false | Boolean
 | *camel.component.salesforce.user-name* | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. |  | String

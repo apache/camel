@@ -39,7 +39,7 @@ The Validation component is provided directly in the camel-core.
 == Options
 
 // component options: START
-The Validator component supports 3 options, which are listed below.
+The Validator component supports 2 options, which are listed below.
 
 
 
@@ -47,7 +47,6 @@ The Validator component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *resourceResolverFactory* (advanced) | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI |  | ValidatorResource ResolverFactory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -109,7 +108,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
@@ -118,7 +117,6 @@ The component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.validator.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.validator.enabled* | Whether to enable auto configuration of the validator component. This is enabled by default. |  | Boolean
-| *camel.component.validator.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.validator.resource-resolver-factory* | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. The option is a org.apache.camel.component.validator.ValidatorResourceResolverFactory type. |  | String
 |===
 // spring-boot-auto-configure options: END

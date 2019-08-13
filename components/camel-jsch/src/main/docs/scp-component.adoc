@@ -42,7 +42,7 @@ in code).
 
 
 // component options: START
-The SCP component supports 3 options, which are listed below.
+The SCP component supports 2 options, which are listed below.
 
 
 
@@ -50,7 +50,6 @@ The SCP component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *verboseLogging* (producer) | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -132,7 +131,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
@@ -141,7 +140,6 @@ The component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.scp.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.scp.enabled* | Enable scp component | true | Boolean
-| *camel.component.scp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.scp.verbose-logging* | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

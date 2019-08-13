@@ -45,7 +45,7 @@ route, use the xref:jetty-component.adoc[Jetty Component] instead.
 
 
 // component options: START
-The HTTP component supports 19 options, which are listed below.
+The HTTP component supports 18 options, which are listed below.
 
 
 
@@ -69,7 +69,6 @@ The HTTP component supports 19 options, which are listed below.
 | *httpConfiguration* (advanced) | To use the shared HttpConfiguration as base configuration. |  | HttpConfiguration
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -177,7 +176,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 20 options, which are listed below.
+The component supports 19 options, which are listed below.
 
 
 
@@ -199,7 +198,6 @@ The component supports 20 options, which are listed below.
 | *camel.component.http.http-configuration* | To use the shared HttpConfiguration as base configuration. The option is a org.apache.camel.http.common.HttpConfiguration type. |  | String
 | *camel.component.http.http-context* | To use a custom org.apache.http.protocol.HttpContext when executing requests. The option is a org.apache.http.protocol.HttpContext type. |  | String
 | *camel.component.http.max-total-connections* | The maximum number of connections. | 200 | Integer
-| *camel.component.http.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.http.socket-timeout* | Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets). A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: -1 | -1 | Integer
 | *camel.component.http.ssl-context-parameters* | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.http.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean

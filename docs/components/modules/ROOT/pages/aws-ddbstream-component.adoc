@@ -27,7 +27,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS DynamoDB Streams component supports 6 options, which are listed below.
+The AWS DynamoDB Streams component supports 5 options, which are listed below.
 
 
 
@@ -38,7 +38,6 @@ The AWS DynamoDB Streams component supports 6 options, which are listed below.
 | *accessKey* (consumer) | Amazon AWS Access Key |  | String
 | *secretKey* (consumer) | Amazon AWS Secret Key |  | String
 | *region* (consumer) | Amazon AWS Region |  | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -120,7 +119,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 16 options, which are listed below.
+The component supports 15 options, which are listed below.
 
 
 
@@ -141,7 +140,6 @@ The component supports 16 options, which are listed below.
 | *camel.component.aws-ddbstream.configuration.table-name* | Name of the dynamodb table |  | String
 | *camel.component.aws-ddbstream.enabled* | Whether to enable auto configuration of the aws-ddbstream component. This is enabled by default. |  | Boolean
 | *camel.component.aws-ddbstream.region* | Amazon AWS Region |  | String
-| *camel.component.aws-ddbstream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-ddbstream.secret-key* | Amazon AWS Secret Key |  | String
 |===
 // spring-boot-auto-configure options: END

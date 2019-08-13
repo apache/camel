@@ -94,7 +94,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The JPA component supports 6 options, which are listed below.
+The JPA component supports 5 options, which are listed below.
 
 
 
@@ -105,7 +105,6 @@ The JPA component supports 6 options, which are listed below.
 | *transactionManager* (common) | To use the PlatformTransactionManager for managing transactions. |  | PlatformTransaction Manager
 | *joinTransaction* (common) | The camel-jpa component will join transaction by default. You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent, instead of having to set it on all endpoints. | true | boolean
 | *sharedEntityManager* (common) | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -205,7 +204,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 6 options, which are listed below.
 
 
 
@@ -216,7 +215,6 @@ The component supports 7 options, which are listed below.
 | *camel.component.jpa.enabled* | Enable jpa component | true | Boolean
 | *camel.component.jpa.entity-manager-factory* | To use the EntityManagerFactory. This is strongly recommended to configure. The option is a javax.persistence.EntityManagerFactory type. |  | String
 | *camel.component.jpa.join-transaction* | The camel-jpa component will join transaction by default. You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent, instead of having to set it on all endpoints. | true | Boolean
-| *camel.component.jpa.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.jpa.shared-entity-manager* | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager. | false | Boolean
 | *camel.component.jpa.transaction-manager* | To use the PlatformTransactionManager for managing transactions. The option is a org.springframework.transaction.PlatformTransactionManager type. |  | String
 |===

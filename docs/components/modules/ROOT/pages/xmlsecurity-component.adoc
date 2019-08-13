@@ -225,7 +225,7 @@ Signatures as Siblings of the Signed Elements".
 
 
 // component options: START
-The XML Security component supports 4 options, which are listed below.
+The XML Security component supports 3 options, which are listed below.
 
 
 
@@ -234,7 +234,6 @@ The XML Security component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *signerConfiguration* (advanced) | To use a shared XmlSignerConfiguration configuration to use as base for configuring endpoints. |  | XmlSignerConfiguration
 | *verifierConfiguration* (advanced) | To use a shared XmlVerifierConfiguration configuration to use as base for configuring endpoints. |  | XmlVerifier Configuration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -328,7 +327,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 64 options, which are listed below.
+The component supports 63 options, which are listed below.
 
 
 
@@ -337,7 +336,6 @@ The component supports 64 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.xmlsecurity.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.xmlsecurity.enabled* | Enable xmlsecurity component | true | Boolean
-| *camel.component.xmlsecurity.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.xmlsecurity.signer-configuration.add-key-info-reference* | In order to protect the KeyInfo element from tampering you can add a reference to the signed info element so that it is protected via the signature value. The default value is <tt>true</tt>. <p> Only relevant when a KeyInfo is returned by {@link KeyAccessor}. and {@link KeyInfo#getId()} is not <code>null</code>. | true | Boolean
 | *camel.component.xmlsecurity.signer-configuration.base-uri* | You can set a base URI which is used in the URI dereferencing. Relative URIs are then concatenated with the base URI. |  | String
 | *camel.component.xmlsecurity.signer-configuration.canonicalization-method* | Canonicalization method used to canonicalize the SignedInfo element before the digest is calculated. You can use the helper methods XmlSignatureHelper.getCanonicalizationMethod(String algorithm) or getCanonicalizationMethod(String algorithm, List<String> inclusiveNamespacePrefixes) to create a canonicalization method. |  | AlgorithmMethod

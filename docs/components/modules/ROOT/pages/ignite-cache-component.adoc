@@ -13,7 +13,7 @@ Even if you configure a fixed operation in the endpoint URI, you can vary it per
 == Options
 
 // component options: START
-The Ignite Cache component supports 5 options, which are listed below.
+The Ignite Cache component supports 4 options, which are listed below.
 
 
 
@@ -23,7 +23,6 @@ The Ignite Cache component supports 5 options, which are listed below.
 | *ignite* (common) | Sets the Ignite instance. |  | Ignite
 | *configurationResource* (common) | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. |  | Object
 | *igniteConfiguration* (common) | Allows the user to set a programmatic IgniteConfiguration. |  | IgniteConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -89,7 +88,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 6 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -101,7 +100,6 @@ The component supports 6 options, which are listed below.
 | *camel.component.ignite-cache.enabled* | Enable ignite-cache component | true | Boolean
 | *camel.component.ignite-cache.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
 | *camel.component.ignite-cache.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
-| *camel.component.ignite-cache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

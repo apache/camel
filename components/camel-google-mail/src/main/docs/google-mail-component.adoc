@@ -56,7 +56,7 @@ Endpoint prefix can be one of:
 
 
 // component options: START
-The Google Mail component supports 4 options, which are listed below.
+The Google Mail component supports 3 options, which are listed below.
 
 
 
@@ -65,7 +65,6 @@ The Google Mail component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared configuration |  | GoogleMailConfiguration
 | *clientFactory* (advanced) | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleMailClientFactory |  | GoogleMailClient Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -132,7 +131,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 11 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -149,7 +148,6 @@ The component supports 11 options, which are listed below.
 | *camel.component.google-mail.configuration.method-name* | What sub operation to use for the selected operation |  | String
 | *camel.component.google-mail.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *camel.component.google-mail.enabled* | Enable google-mail component | true | Boolean
-| *camel.component.google-mail.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

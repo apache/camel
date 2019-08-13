@@ -105,7 +105,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The SQL component supports 4 options, which are listed below.
+The SQL component supports 3 options, which are listed below.
 
 
 
@@ -114,7 +114,6 @@ The SQL component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *dataSource* (common) | Sets the DataSource to use to communicate with the database. |  | DataSource
 | *usePlaceholder* (advanced) | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. This option is default true | true | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -212,7 +211,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 5 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -222,7 +221,6 @@ The component supports 5 options, which are listed below.
 | *camel.component.sql.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.sql.data-source* | Sets the DataSource to use to communicate with the database. The option is a javax.sql.DataSource type. |  | String
 | *camel.component.sql.enabled* | Enable sql component | true | Boolean
-| *camel.component.sql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.sql.use-placeholder* | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. This option is default true | true | Boolean
 |===
 // spring-boot-auto-configure options: END

@@ -84,7 +84,7 @@ You append query options to the URI using the following format,
 
 
 // component options: START
-The Simple JMS component supports 16 options, which are listed below.
+The Simple JMS component supports 15 options, which are listed below.
 
 
 
@@ -105,7 +105,6 @@ The Simple JMS component supports 16 options, which are listed below.
 | *connectionClientId* (advanced) | The client ID to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
 | *connectionMaxWait* (advanced) | The max wait time in millis to block and wait on free connection when the pool is exhausted when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. | 5000 | long
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -197,7 +196,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 17 options, which are listed below.
+The component supports 16 options, which are listed below.
 
 
 
@@ -218,7 +217,6 @@ The component supports 17 options, which are listed below.
 | *camel.component.sjms.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
 | *camel.component.sjms.jms-key-format-strategy* | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -). Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation. The option is a org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy type. |  | String
 | *camel.component.sjms.message-created-strategy* | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message. The option is a org.apache.camel.component.sjms.jms.MessageCreatedStrategy type. |  | String
-| *camel.component.sjms.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.sjms.timed-task-manager* | To use a custom TimedTaskManager. The option is a org.apache.camel.component.sjms.taskmanager.TimedTaskManager type. |  | String
 | *camel.component.sjms.transaction-commit-strategy* | To configure which kind of commit strategy to use. Camel provides two implementations out of the box, default and batch. The option is a org.apache.camel.component.sjms.TransactionCommitStrategy type. |  | String
 |===

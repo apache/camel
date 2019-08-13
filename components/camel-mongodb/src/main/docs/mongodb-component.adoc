@@ -54,7 +54,7 @@ mongodb:connectionBean?database=databaseName&collection=collectionName&operation
 
 
 // component options: START
-The MongoDB component supports 3 options, which are listed below.
+The MongoDB component supports 2 options, which are listed below.
 
 
 
@@ -62,7 +62,6 @@ The MongoDB component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *mongoConnection* (common) | Set a client used for connection: all endpoints generated from the component will share this connection bean. |  | MongoClient
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -139,7 +138,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
@@ -149,7 +148,6 @@ The component supports 4 options, which are listed below.
 | *camel.component.mongodb.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.mongodb.enabled* | Whether to enable auto configuration of the mongodb component. This is enabled by default. |  | Boolean
 | *camel.component.mongodb.mongo-connection* | Set a client used for connection: all endpoints generated from the component will share this connection bean. The option is a com.mongodb.MongoClient type. |  | String
-| *camel.component.mongodb.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

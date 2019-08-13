@@ -90,7 +90,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 6 options, which are listed below.
 
 
 
@@ -103,7 +103,6 @@ The component supports 7 options, which are listed below.
 | *camel.component.flink.data-stream* | DataStream to compute against. The option is a org.apache.flink.streaming.api.datastream.DataStream type. |  | String
 | *camel.component.flink.data-stream-callback* | Function performing action against a DataStream. The option is a org.apache.camel.component.flink.DataStreamCallback type. |  | String
 | *camel.component.flink.enabled* | Enable flink component | true | Boolean
-| *camel.component.flink.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -116,7 +115,7 @@ The component supports 7 options, which are listed below.
 
 
 // component options: START
-The Apache Flink component supports 6 options, which are listed below.
+The Apache Flink component supports 5 options, which are listed below.
 
 
 
@@ -127,7 +126,6 @@ The Apache Flink component supports 6 options, which are listed below.
 | *dataStream* (producer) | DataStream to compute against. |  | DataStream
 | *dataSetCallback* (producer) | Function performing action against a DataSet. |  | DataSetCallback
 | *dataStreamCallback* (producer) | Function performing action against a DataStream. |  | DataStreamCallback
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END

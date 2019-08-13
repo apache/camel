@@ -52,7 +52,7 @@ accessible from the registry.
 
 
 // component options: START
-The Infinispan component supports 4 options, which are listed below.
+The Infinispan component supports 3 options, which are listed below.
 
 
 
@@ -61,7 +61,6 @@ The Infinispan component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | The default configuration shared among endpoints. |  | InfinispanConfiguration
 | *cacheContainer* (common) | The default cache container. |  | BasicCacheContainer
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -133,7 +132,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 23 options, which are listed below.
+The component supports 22 options, which are listed below.
 
 
 
@@ -161,7 +160,6 @@ The component supports 23 options, which are listed below.
 | *camel.component.infinispan.customizer.remote-cache-manager.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
 | *camel.component.infinispan.customizer.remote-cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
 | *camel.component.infinispan.enabled* | Enable infinispan component | true | Boolean
-| *camel.component.infinispan.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.infinispan.configuration.command* | *Deprecated* The operation to perform. | PUT | String
 |===
 // spring-boot-auto-configure options: END

@@ -42,7 +42,7 @@ which are mandatory to configure before using.
 
 
 // component options: START
-The Yammer component supports 6 options, which are listed below.
+The Yammer component supports 5 options, which are listed below.
 
 
 
@@ -53,7 +53,6 @@ The Yammer component supports 6 options, which are listed below.
 | *consumerSecret* (security) | The consumer secret |  | String
 | *accessToken* (security) | The access token |  | String
 | *config* (advanced) | To use a shared yammer configuration |  | YammerConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -140,7 +139,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 19 options, which are listed below.
+The component supports 18 options, which are listed below.
 
 
 
@@ -165,7 +164,6 @@ The component supports 19 options, which are listed below.
 | *camel.component.yammer.consumer-key* | The consumer key |  | String
 | *camel.component.yammer.consumer-secret* | The consumer secret |  | String
 | *camel.component.yammer.enabled* | Enable yammer component | true | Boolean
-| *camel.component.yammer.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

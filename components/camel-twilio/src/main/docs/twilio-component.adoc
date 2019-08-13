@@ -22,7 +22,7 @@ for this component:
 == Twilio Options
 
 // component options: START
-The Twilio component supports 7 options, which are listed below.
+The Twilio component supports 6 options, which are listed below.
 
 
 
@@ -34,7 +34,6 @@ The Twilio component supports 7 options, which are listed below.
 | *username* (security) | The account to use. |  | String
 | *password* (security) | Auth token for the account. |  | String
 | *accountSid* (security) | The account SID to use. |  | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -90,7 +89,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 9 options, which are listed below.
+The component supports 8 options, which are listed below.
 
 
 
@@ -103,7 +102,6 @@ The component supports 9 options, which are listed below.
 | *camel.component.twilio.configuration.method-name* | What sub operation to use for the selected operation |  | String
 | *camel.component.twilio.enabled* | Enable twilio component | true | Boolean
 | *camel.component.twilio.password* | Auth token for the account. |  | String
-| *camel.component.twilio.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.twilio.rest-client* | To use the shared REST client. The option is a com.twilio.http.TwilioRestClient type. |  | String
 | *camel.component.twilio.username* | The account to use. |  | String
 |===

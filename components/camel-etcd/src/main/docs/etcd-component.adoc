@@ -15,7 +15,7 @@ etcd:namespace/path[?options]
 == URI Options
 
 // component options: START
-The etcd component supports 8 options, which are listed below.
+The etcd component supports 7 options, which are listed below.
 
 
 
@@ -28,7 +28,6 @@ The etcd component supports 8 options, which are listed below.
 | *password* (common) | The password to use for basic authentication. |  | String
 | *configuration* (advanced) | Sets the common configuration shared among endpoints |  | EtcdConfiguration
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -108,7 +107,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 18 options, which are listed below.
+The component supports 17 options, which are listed below.
 
 
 
@@ -128,7 +127,6 @@ The component supports 18 options, which are listed below.
 | *camel.component.etcd.configuration.user-name* | The user name to use for basic authentication. |  | String
 | *camel.component.etcd.enabled* | Enable etcd component | true | Boolean
 | *camel.component.etcd.password* | The password to use for basic authentication. |  | String
-| *camel.component.etcd.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.etcd.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.etcd.uris* | To set the URIs the client connects. |  | String
 | *camel.component.etcd.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean

@@ -49,7 +49,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty component supports 34 options, which are listed below.
+The Jetty component supports 33 options, which are listed below.
 
 
 
@@ -88,7 +88,6 @@ The Jetty component supports 34 options, which are listed below.
 | *sendServerVersion* (consumer) | If the option is true, jetty will send the server header with the jetty version information to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected. | true | boolean
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -177,7 +176,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 35 options, which are listed below.
+The component supports 34 options, which are listed below.
 
 
 
@@ -204,7 +203,6 @@ The component supports 35 options, which are listed below.
 | *camel.component.jetty.proxy-port* | To use a http proxy to configure the port number. |  | Integer
 | *camel.component.jetty.request-buffer-size* | Allows to configure a custom value of the request buffer size on the Jetty connectors. |  | Integer
 | *camel.component.jetty.request-header-size* | Allows to configure a custom value of the request header size on the Jetty connectors. |  | Integer
-| *camel.component.jetty.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.jetty.response-buffer-size* | Allows to configure a custom value of the response buffer size on the Jetty connectors. |  | Integer
 | *camel.component.jetty.response-header-size* | Allows to configure a custom value of the response header size on the Jetty connectors. |  | Integer
 | *camel.component.jetty.send-server-version* | If the option is true, jetty will send the server header with the jetty version information to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected. | true | Boolean

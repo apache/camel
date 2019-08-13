@@ -33,7 +33,7 @@ spark-rest://verb:path?[options]
 
 
 // component options: START
-The Spark Rest component supports 13 options, which are listed below.
+The Spark Rest component supports 12 options, which are listed below.
 
 
 
@@ -51,7 +51,6 @@ The Spark Rest component supports 13 options, which are listed below.
 | *truststorePassword* (security) | Configures connection to be secure to use the truststore password |  | String
 | *sparkConfiguration* (advanced) | To use the shared SparkConfiguration |  | SparkConfiguration
 | *sparkBinding* (advanced) | To use a custom SparkBinding to map to/from Camel message. |  | SparkBinding
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END

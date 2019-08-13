@@ -19,7 +19,7 @@ the Registry
 
 
 // component options: START
-The Bean component supports 3 options, which are listed below.
+The Bean component supports 2 options, which are listed below.
 
 
 
@@ -27,7 +27,6 @@ The Bean component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END

@@ -58,7 +58,7 @@ option.
 
 
 // component options: START
-The Restlet component supports 24 options, which are listed below.
+The Restlet component supports 23 options, which are listed below.
 
 
 
@@ -87,7 +87,6 @@ The Restlet component supports 24 options, which are listed below.
 | *enabledConverters* (advanced) | A list of converters to enable as full class name or simple class name. All the converters automatically registered are enabled if empty or null |  | List
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -160,7 +159,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 25 options, which are listed below.
+The component supports 24 options, which are listed below.
 
 
 
@@ -185,7 +184,6 @@ The component supports 25 options, which are listed below.
 | *camel.component.restlet.persisting-connections* | Indicates if connections should be kept alive after a call. |  | Boolean
 | *camel.component.restlet.pipelining-connections* | Indicates if pipelining connections are supported. |  | Boolean
 | *camel.component.restlet.port* | To configure the port number for the restlet consumer routes. This allows to configure this once to reuse the same port for these consumers. |  | Integer
-| *camel.component.restlet.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.restlet.reuse-address* | Enable/disable the SO_REUSEADDR socket option. See java.io.ServerSocket#reuseAddress property for additional details. |  | Boolean
 | *camel.component.restlet.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.restlet.synchronous* | Whether to use synchronous Restlet Client for the producer. Setting this option to true can yield faster performance as it seems the Restlet synchronous Client works better. |  | Boolean
