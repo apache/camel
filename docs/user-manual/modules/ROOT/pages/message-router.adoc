@@ -7,7 +7,7 @@ Router] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
 allows you to consume from an input destination, evaluate some predicate
 then choose the right output destination.
 
-image:http://www.enterpriseintegrationpatterns.com/img/MessageRouter.gif[image]
+image::eip/MessageRouter.gif[image]
 
 The following example shows how to route a request from an input
 *queue:a* endpoint to either *queue:b*, *queue:c* or *queue:d* depending

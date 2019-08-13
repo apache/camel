@@ -60,7 +60,12 @@ public class PulsarConfiguration {
     private long initialSequenceId = -1;
     @UriParam(label = "producer", description = "Compression type to use, defaults to NONE from [NONE, LZ4, ZLIB]", defaultValue = "NONE")
     private CompressionType compressionType = CompressionType.NONE;
-
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean allowManualAcknowledgement;
+    @UriParam(label = "consumer", defaultValue = "10000")
+    private long ackTimeoutMillis = 10000;
+    @UriParam(label = "consumer", defaultValue = "100")
+    private long ackGroupTimeMillis = 100;
 
     public String getSubscriptionName() {
         return subscriptionName;
@@ -260,5 +265,42 @@ public class PulsarConfiguration {
 
     public CompressionType getCompressionType() {
         return compressionType;
+    }
+
+    public boolean isAllowManualAcknowledgement() {
+        return allowManualAcknowledgement;
+    }
+
+    /**
+     * Whether to allow manual message acknowledgements.
+     * <p/>
+     * If this option is enabled, then messages are not immediately acknowledged after being consumed.
+     * Instead, an instance of {@link PulsarMessageReceipt} is stored as a header on the {@link org.apache.camel.Exchange}.
+     * Messages can then be acknowledged using {@link PulsarMessageReceipt} at any time before the ackTimeout occurs.
+     */
+    public void setAllowManualAcknowledgement(boolean allowManualAcknowledgement) {
+        this.allowManualAcknowledgement = allowManualAcknowledgement;
+    }
+
+    public long getAckTimeoutMillis() {
+        return ackTimeoutMillis;
+    }
+
+    /**
+     * Timeout for unacknowledged messages in milliseconds - defaults to 10000
+     */
+    public void setAckTimeoutMillis(long ackTimeoutMillis) {
+        this.ackTimeoutMillis = ackTimeoutMillis;
+    }
+
+    public long getAckGroupTimeMillis() {
+        return ackGroupTimeMillis;
+    }
+
+    /**
+     * Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100
+     */
+    public void setAckGroupTimeMillis(long ackGroupTimeMillis) {
+        this.ackGroupTimeMillis = ackGroupTimeMillis;
     }
 }

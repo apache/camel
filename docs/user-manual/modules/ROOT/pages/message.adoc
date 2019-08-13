@@ -7,7 +7,7 @@ the xref:enterprise-integration-patterns.adoc[EIP patterns] using the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Message.html[Message]
 interface.
 
-image:http://www.enterpriseintegrationpatterns.com/img/MessageSolution.gif[image]
+image::eip/MessageSolution.gif[image]
 
 To support various message xref:exchange-pattern.adoc[exchange patterns]
 like one way xref:event-message.adoc[Event Message] and

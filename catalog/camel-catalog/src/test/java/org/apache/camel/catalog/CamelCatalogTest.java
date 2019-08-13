@@ -335,7 +335,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testNetty4Http4DynamicToIssueHost() throws Exception {
+    public void testNettyHttpDynamicToIssueHost() throws Exception {
         String uri = "netty-http:http://a-b-c.hostname.tld:8080/anything";
         Map<String, String> params = catalog.endpointProperties(uri);
         assertEquals("http", params.get("protocol"));
@@ -1219,7 +1219,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testNetty4Http4DynamicToIssue() throws Exception {
+    public void testNettyHttpDynamicToIssue() throws Exception {
         String uri = "netty-http:http://10.192.1.10:8080/client/alerts/summary?throwExceptionOnFailure=false";
         Map<String, String> params = catalog.endpointProperties(uri);
         params.remove("path");

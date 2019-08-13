@@ -8,7 +8,7 @@ patterns] using the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html[Endpoint]
 interface.
 
-image:http://www.enterpriseintegrationpatterns.com/img/MessageEndpointSolution.gif[image]
+image::eip/MessageEndpointSolution.gif[image]
 
 When using the xref:dsl.adoc[DSL] to create xref:routes.adoc[Routes] you
 typically refer to Message Endpoints by their xref:uris.adoc[URIs]

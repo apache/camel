@@ -3,7 +3,7 @@
 
 Camel supports the Content Enricher from the EIP patterns using a Message Translator, an arbitrary Processor in the routing logic, or using the enrich DSL element to enrich the message.
 
-image:http://www.enterpriseintegrationpatterns.com/img/DataEnricher.gif[image]
+image::eip/DataEnricher.gif[image]
 
 // eip options: START
 The Enrich EIP supports 7 options which are listed below:

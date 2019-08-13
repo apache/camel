@@ -17,7 +17,6 @@
 package org.apache.camel.support;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -120,7 +119,7 @@ public final class PropertyBindingSupport {
         /**
          * Whether parameters should be removed when its bound
          */
-        public Builder withRemoteParameters(boolean removeParameters) {
+        public Builder withRemoveParameters(boolean removeParameters) {
             this.removeParameters = removeParameters;
             return this;
         }

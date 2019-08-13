@@ -119,8 +119,67 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
         }
     }
 
+    /**
+     * Read entity set of the People object
+     * and filter already seen items on subsequent exchanges
+     * Use a delay since the mock endpoint does not always get
+     * the correct number of exchanges before being satisfied.
+     *
+     * Note:
+     * - consumer.splitResults is set to false since this ensures the first returned message
+     *   contains all the results.
+     * - consumer.sendEmptyMessageWhenIdle is set to false so only 1 message should
+     *   even be returned.
+     */
     @Test
-    public void testConsumerReadFilterAlreadySeenWithPredicateAndSplitResults() throws Exception {
+    public void testConsumerReadFilterAlreadySeenNoEmptyMsgs() throws Exception {
+        int expectedMsgCount = 1;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-alreadyseen");
+        //
+        // Add 1 to count since we want to wait for full result time
+        // before asserting that only 1 message has been delivered
+        //
+        mockEndpoint.expectedMinimumMessageCount(expectedMsgCount + 1);
+        mockEndpoint.setResultWaitTime(6000L);
+
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&"
+                + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&"
+                + "consumer.splitResult=false")
+                    .to("mock:consumer-alreadyseen");
+            };
+        };
+        addRouteAndStartContext(builder);
+
+        //
+        // Want to wait for entire result time & there should
+        // be exactly 1 exchange transmitted to the endpoint
+        //
+        mockEndpoint.assertIsNotSatisfied();
+
+        // Only 1 exchange so this is good!
+        assertEquals(1, mockEndpoint.getExchanges().size());
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+
+        //
+        // Only polled message contains all the entities
+        //
+        assertTrue(body instanceof ODataFeed);
+        ODataFeed set = (ODataFeed) body;
+        assertTrue(set.getEntries().size() > 0);
+    }
+
+    /**
+     * WithPredicate in address
+     * FilterAlreadySeen: true
+     * SplitResults: true
+     * consumer.sendEmptyMessageWhenIdle: true
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testConsumerReadFilterAlreadySeenWithPredicate1() throws Exception {
         int expectedMsgCount = 3;
         MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult-kp-manufacturer");
         mockEndpoint.expectedMinimumMessageCount(expectedMsgCount);
@@ -157,6 +216,56 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
                 assertNull(body);
             }
         }
+    }
+
+    /**
+     * WithPredicate in address
+     * FilterAlreadySeen: true
+     * SplitResults: true
+     * consumer.sendEmptyMessageWhenIdle: false
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testConsumerReadFilterAlreadySeenWithPredicate2() throws Exception {
+        int expectedMsgCount = 1;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult-kp-manufacturer");
+
+        //
+        // Add 1 to count since we want to wait for full result time
+        // before asserting that only 1 message has been delivered
+        //
+        mockEndpoint.expectedMinimumMessageCount(expectedMsgCount + 1);
+        mockEndpoint.setResultWaitTime(6000L);
+
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&"
+                    + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&"
+                    + "consumer.splitResult=true")
+                    .to("mock:consumer-splitresult-kp-manufacturer");
+            };
+        };
+        addRouteAndStartContext(builder);
+
+        //
+        // Want to wait for entire result time & there should
+        // be exactly 1 exchange transmitted to the endpoint
+        //
+        mockEndpoint.assertIsNotSatisfied();
+
+        // Only 1 exchange so this is good!
+        assertEquals(1, mockEndpoint.getExchanges().size());
+
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+        //
+        // Only polled message contains the entity
+        //
+        assertTrue(body instanceof ODataEntry);
+        ODataEntry entry = (ODataEntry) body;
+        Object nameValue = entry.getProperties().get("Name");
+        assertNotNull(nameValue);
+        assertEquals("Star Powered Racing", nameValue.toString());
     }
 
     /**

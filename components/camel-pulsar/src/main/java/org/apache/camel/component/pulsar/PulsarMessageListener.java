@@ -18,6 +18,7 @@ package org.apache.camel.component.pulsar;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageUtils;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.pulsar.client.api.Consumer;
@@ -45,8 +46,14 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
         final Exchange exchange = PulsarMessageUtils.updateExchange(message, endpoint.createExchange());
 
         try {
-            processor.process(exchange);
-            consumer.acknowledge(message.getMessageId());
+            if (endpoint.getPulsarConfiguration().isAllowManualAcknowledgement()) {
+                exchange.getIn().setHeader(PulsarMessageHeaders.MESSAGE_RECEIPT,
+                        endpoint.getComponent().getPulsarMessageReceiptFactory().newInstance(exchange, message, consumer));
+                processor.process(exchange);
+            } else {
+                processor.process(exchange);
+                consumer.acknowledge(message.getMessageId());
+            }
         } catch (Exception exception) {
             handleProcessorException(exchange, exception);
         }

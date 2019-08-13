@@ -2,7 +2,7 @@
 = Recipient List EIP
 The http://www.enterpriseintegrationpatterns.com/RecipientList.html[Recipient List] from the EIP patterns allows you to route messages to a number of dynamically specified recipients.
 
-image:http://www.enterpriseintegrationpatterns.com/img/RecipientList.gif[image]
+image::eip/RecipientList.gif[image]
 
 The recipients will receive a copy of the *same* Exchange, and Camel will execute them sequentially.
 

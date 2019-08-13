@@ -195,7 +195,7 @@ The component supports 20 options, which are listed below.
 | *camel.component.http.enabled* | Whether to enable auto configuration of the http component. This is enabled by default. |  | Boolean
 | *camel.component.http.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
 | *camel.component.http.http-binding* | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. The option is a org.apache.camel.http.common.HttpBinding type. |  | String
-| *camel.component.http.http-client-configurer* | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used. The option is a org.apache.camel.component.http4.HttpClientConfigurer type. |  | String
+| *camel.component.http.http-client-configurer* | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used. The option is a org.apache.camel.component.http.HttpClientConfigurer type. |  | String
 | *camel.component.http.http-configuration* | To use the shared HttpConfiguration as base configuration. The option is a org.apache.camel.http.common.HttpConfiguration type. |  | String
 | *camel.component.http.http-context* | To use a custom org.apache.http.protocol.HttpContext when executing requests. The option is a org.apache.http.protocol.HttpContext type. |  | String
 | *camel.component.http.max-total-connections* | The maximum number of connections. | 200 | Integer
@@ -252,7 +252,7 @@ body. All headers from the IN message will be copied to the OUT message,
 so headers are preserved during routing. Additionally Camel will add the
 HTTP response headers as well to the OUT message headers.
 
- 
+
 
 
 == Using System Properties
@@ -396,7 +396,7 @@ setting the message header. Here is an example:
 [source,java]
 -----------------------------------------------------------------------------------------------
 from("direct:start")
-  .setHeader(Exchange.HTTP_METHOD, constant(org.apache.camel.component.http4.HttpMethods.POST))
+  .setHeader(Exchange.HTTP_METHOD, constant(org.apache.camel.component.http.HttpMethods.POST))
   .to("http://www.google.com")
   .to("mock:results");
 -----------------------------------------------------------------------------------------------
@@ -427,7 +427,7 @@ And the equivalent Spring sample:
 == Using client timeout - SO_TIMEOUT
 
 See the
-https://github.com/apache/camel/blob/master/components/camel-http/src/test/java/org/apache/camel/component/http4/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
+https://github.com/apache/camel/blob/master/components/camel-http/src/test/java/org/apache/camel/component/http/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
 unit test.
 
 == Configuring a Proxy
@@ -611,10 +611,10 @@ http://hc.apache.org/httpcomponents-client-ga/[Apache HttpClient].
 Please refer to
 http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d4e537[SSL/TLS
 customization] for details or have a look into the
-`org.apache.camel.component.http4.HttpsServerTestSupport` unit test base
+`org.apache.camel.component.http.HttpsServerTestSupport` unit test base
 class. +
  You can also implement a custom
-`org.apache.camel.component.http4.HttpClientConfigurer` to do some
+`org.apache.camel.component.http.HttpClientConfigurer` to do some
 configuration on the http client if you need full control of it.
 
 However if you _just_ want to specify the keystore and truststore you
@@ -713,12 +713,12 @@ property.
 
 [source,xml]
 ----------------------------------------------------------------------------
-<bean id="http-foo" class="org.apache.camel.component.http4.HttpComponent">
+<bean id="http-foo" class="org.apache.camel.component.http.HttpComponent">
    <property name="sslContextParameters" ref="sslContextParams1"/>
    <property name="x509HostnameVerifier" ref="hostnameVerifier"/>
 </bean>
 
-<bean id="http-bar" class="org.apache.camel.component.http4.HttpComponent">
+<bean id="http-bar" class="org.apache.camel.component.http.HttpComponent">
    <property name="sslContextParameters" ref="sslContextParams2"/>
    <property name="x509HostnameVerifier" ref="hostnameVerifier"/>
 </bean>

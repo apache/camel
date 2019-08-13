@@ -9,7 +9,7 @@ arbitrary xref:processor.adoc[Processor] in the routing logic, or using
 the xref:content-enricher.adoc[enrich] DSL element to enrich the
 message.
 
-image:http://www.enterpriseintegrationpatterns.com/img/DataEnricher.gif[image]
+image::eip/DataEnricher.gif[image]
 
 [[ContentEnricher-ContentenrichmentusingaMessageTranslatororaProcessor]]
 == Content enrichment using a Message Translator or a Processor
