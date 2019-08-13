@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeConstantProvider;
 import org.apache.camel.NamedNode;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -765,8 +766,7 @@ public final class ProcessorDefinitionHelper {
                 // is the value a known field (currently we only support constants from Exchange.class)
                 if (text != null && text.startsWith("Exchange.")) {
                     String field = StringHelper.after(text, "Exchange.");
-                    // TODO: Avoid reflection via fields
-                    String constant = ObjectHelper.lookupConstantFieldValue(Exchange.class, field);
+                    String constant = ExchangeConstantProvider.lookup(field);
                     if (constant != null) {
                         text = constant;
                     } else {
