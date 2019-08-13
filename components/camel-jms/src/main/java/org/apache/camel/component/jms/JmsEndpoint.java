@@ -244,9 +244,9 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             listenerContainer.setDurableSubscriptionName(configuration.getDurableSubscriptionName());
         } else if (configuration.isSubscriptionDurable()) {
             listenerContainer.setSubscriptionDurable(true);
-            if (configuration.getSubscriptionName() != null) {
-                listenerContainer.setSubscriptionName(configuration.getSubscriptionName());
-            }
+        }
+        if (configuration.getSubscriptionName() != null) {
+            listenerContainer.setSubscriptionName(configuration.getSubscriptionName());
         }
         listenerContainer.setSubscriptionShared(configuration.isSubscriptionShared());
     }
