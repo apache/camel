@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
@@ -37,8 +36,8 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertyPlaceholderConfigurer;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -686,11 +685,11 @@ public final class ProcessorDefinitionHelper {
         LOG.trace("Resolving property placeholders for: {}", definition);
 
         // only do this for models that supports property placeholders
-        if (!(definition instanceof DefinitionPropertyPlaceholderConfigurable)) {
+        if (!(definition instanceof PropertyPlaceholderConfigurer)) {
             return;
         }
 
-        DefinitionPropertyPlaceholderConfigurable ppa = (DefinitionPropertyPlaceholderConfigurable) definition;
+        PropertyPlaceholderConfigurer ppa = (PropertyPlaceholderConfigurer) definition;
 
         // find all getter/setter which we can use for property placeholders
         Map<String, String> changedProperties = new HashMap<>();

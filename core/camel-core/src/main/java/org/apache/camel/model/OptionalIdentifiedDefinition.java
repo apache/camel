@@ -31,7 +31,7 @@ import org.apache.camel.spi.NodeIdFactory;
 @XmlType(name = "optionalIdentifiedDefinition")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY which is required by camel-spring / camel-blueprint for their namespace parsers
-public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode, DefinitionPropertyPlaceholderConfigurable {
+public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode, DefinitionPropertyPlaceholderConfigurer {
 
     private String id;
     private Boolean customId;
