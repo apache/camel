@@ -26,17 +26,10 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <bean id="http" class="org.apache.camel.component.http.HttpComponent">
+    <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
+    <bean id="httpComponent" class="org.apache.camel.component.http.HttpComponent">
         <property name="camelContext" ref="camel"/>
-        <property name="httpConnectionManager" ref="myHttpConnectionManager"/>
-    </bean>
-
-    <bean id="myHttpConnectionManager" class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager">
-        <property name="params" ref="myHttpConnectionManagerParams"/>
-    </bean>
-
-    <bean id="myHttpConnectionManagerParams" class="org.apache.commons.httpclient.params.HttpConnectionManagerParams">
-        <property name="defaultMaxConnectionsPerHost" value="5"/>
+        <property name="connectionsPerRoute" value="5" />
     </bean>
 
     <!-- END SNIPPET: e1 -->
@@ -45,10 +38,9 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" trace="true">
         <route>
             <from uri="direct:start"/>
-            <to uri="http://www.google.com"/>
+            <to uri="http://localhost:{{HttpTestServer.Port}}/"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>
     <!-- END SNIPPET: e2 -->
-
 </beans>

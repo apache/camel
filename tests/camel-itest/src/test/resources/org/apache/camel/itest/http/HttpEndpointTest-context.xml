@@ -26,22 +26,27 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <bean id="google" class="org.apache.camel.component.http.HttpEndpoint">
-        <property name="httpUri" value="http://www.google.com"/>
-        <property name="clientParams" ref="myParams"/>
-        <property name="httpConnectionManager" ref="myManager"/>
-    </bean>
-
-    <bean id="myParams" class="org.apache.commons.httpclient.params.HttpClientParams"/>
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
     
-    <bean id="myManager" class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager"/>
+    <bean id="httpEndpoint" class="org.apache.camel.component.http.HttpEndpoint">
+        <property name="httpUri" value="http://localhost:${HttpTestServer.Port}/"/>
+        <property name="clientBuilder" ref="clientBuilder"/>
+        <property name="clientConnectionManager" ref="myManager"/>
+    </bean>
+    
+    <bean id="myManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager"/>
+
+    <!-- You can set the client configuration by setting up the builder class -->
+    <bean id="clientBuilder" class="org.apache.http.impl.client.HttpClientBuilder" />
+    
+    
     <!-- END SNIPPET: e1 -->
 
     <!-- START SNIPPET: e2 -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" trace="true">
         <route>
             <from uri="direct:start"/>
-            <to uri="google"/>
+            <to uri="httpEndpoint"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>
