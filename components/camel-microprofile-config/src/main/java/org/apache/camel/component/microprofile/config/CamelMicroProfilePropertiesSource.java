@@ -32,6 +32,13 @@ public class CamelMicroProfilePropertiesSource extends ServiceSupport implements
 
     private Config config;
 
+    public CamelMicroProfilePropertiesSource() {
+    }
+
+    public CamelMicroProfilePropertiesSource(Config config) {
+        this.config = config;
+    }
+
     @Override
     public String getName() {
         return "CamelMicroProfilePropertiesSource";
@@ -68,7 +75,7 @@ public class CamelMicroProfilePropertiesSource extends ServiceSupport implements
 
         Properties answer = new Properties();
 
-        for (String name: answer.stringPropertyNames()) {
+        for (String name: config.getPropertyNames()) {
             if (filter.test(name)) {
                 config.getOptionalValue(name, String.class).ifPresent(v -> answer.put(name, v));
             }
@@ -79,7 +86,9 @@ public class CamelMicroProfilePropertiesSource extends ServiceSupport implements
 
     @Override
     protected void doInit() throws Exception {
-        config = ConfigProvider.getConfig();
+        if (config == null) {
+            config = ConfigProvider.getConfig();
+        }
     }
 
     @Override
