@@ -19,9 +19,12 @@ package org.apache.camel.component.ahc;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
 
@@ -29,7 +32,7 @@ public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
     private Exchange exchange;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() {
         filter = new HttpHeaderFilterStrategy();
         exchange = new DefaultExchange(new DefaultCamelContext());

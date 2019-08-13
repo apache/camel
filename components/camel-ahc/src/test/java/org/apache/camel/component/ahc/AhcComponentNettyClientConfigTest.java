@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AhcComponentNettyClientConfigTest extends BaseAhcTest {
 

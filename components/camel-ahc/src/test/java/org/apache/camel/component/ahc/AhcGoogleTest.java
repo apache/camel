@@ -17,14 +17,14 @@
 package org.apache.camel.component.ahc;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Requires online internet connection for testing.
  */
-@Ignore("Run this test manual as it requires online internet")
+@Disabled("Run this test manual as it requires online internet")
 public class AhcGoogleTest extends CamelTestSupport {
 
     @Test

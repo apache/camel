@@ -27,8 +27,8 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
 
 public abstract class BaseAhcTest extends CamelTestSupport {
 
@@ -36,7 +36,7 @@ public abstract class BaseAhcTest extends CamelTestSupport {
 
     private static volatile int port;
 
-    @BeforeClass
+    @BeforeAll
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
     }
