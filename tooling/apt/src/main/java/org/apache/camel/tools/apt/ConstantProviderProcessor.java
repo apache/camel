@@ -114,7 +114,7 @@ public class ConstantProviderProcessor extends AbstractCamelAnnotationProcessor 
             w.write("        MAP = map;\n");
             w.write("    }\n");
             w.write("\n");
-            w.write("    public static String provider(String key) {\n");
+            w.write("    public static String lookup(String key) {\n");
             w.write("        return MAP.get(key);\n");
             w.write("    }\n");
             w.write("}\n");
