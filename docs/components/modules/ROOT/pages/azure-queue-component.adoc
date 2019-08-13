@@ -35,7 +35,7 @@ to("file://queuedirectory");
 
 
 // component options: START
-The Azure Storage Queue Service component supports 3 options, which are listed below.
+The Azure Storage Queue Service component supports 2 options, which are listed below.
 
 
 
@@ -43,7 +43,6 @@ The Azure Storage Queue Service component supports 3 options, which are listed b
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | The Queue Service configuration |  | QueueService Configuration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -113,7 +112,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 11 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -130,7 +129,6 @@ The component supports 11 options, which are listed below.
 | *camel.component.azure-queue.configuration.queue-name* | The queue resource name |  | String
 | *camel.component.azure-queue.configuration.queue-prefix* | Set a prefix which can be used for listing the queues |  | String
 | *camel.component.azure-queue.enabled* | Enable azure-queue component | true | Boolean
-| *camel.component.azure-queue.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

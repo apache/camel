@@ -81,7 +81,7 @@ both signing and verifying should be configured identically.
 == Options
 
 // component options: START
-The Crypto (JCE) component supports 3 options, which are listed below.
+The Crypto (JCE) component supports 2 options, which are listed below.
 
 
 
@@ -89,7 +89,6 @@ The Crypto (JCE) component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared DigitalSignatureConfiguration as configuration |  | DigitalSignature Configuration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -159,7 +158,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 34 options, which are listed below.
+The component supports 33 options, which are listed below.
 
 
 
@@ -188,7 +187,6 @@ The component supports 34 options, which are listed below.
 | *camel.component.crypto.configuration.secure-random-name* | Sets the reference name for a SecureRandom that can be found in the registry. |  | String
 | *camel.component.crypto.configuration.signature-header-name* | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
 | *camel.component.crypto.enabled* | Enable crypto component | true | Boolean
-| *camel.component.crypto.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.dataformat.crypto.algorithm* | The JCE algorithm name indicating the cryptographic algorithm that will be used. Is by default DES/CBC/PKCS5Padding. | DES/CBC/PKCS5Padding | String
 | *camel.dataformat.crypto.algorithm-parameter-ref* | A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type. |  | String
 | *camel.dataformat.crypto.buffersize* | The size of the buffer used in the signature process. |  | Integer

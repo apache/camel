@@ -42,7 +42,7 @@ jira://type[?options]
 
 
 // component options: START
-The Jira component supports 3 options, which are listed below.
+The Jira component supports 2 options, which are listed below.
 
 
 
@@ -50,7 +50,6 @@ The Jira component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | The JiraConfiguration parameters |  | JiraConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -134,7 +133,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 11 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -151,7 +150,6 @@ The component supports 11 options, which are listed below.
 | *camel.component.jira.configuration.username* | (Basic authentication only) The username to authenticate to the Jira server. Use only if OAuth is not enabled on the Jira server. Do not set the username and OAuth token parameter, if they are both set, the username basic authentication takes precedence. |  | String
 | *camel.component.jira.configuration.verification-code* | (OAuth only) The verification code from Jira generated in the first step of the authorization proccess. |  | String
 | *camel.component.jira.enabled* | Whether to enable auto configuration of the jira component. This is enabled by default. |  | Boolean
-| *camel.component.jira.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

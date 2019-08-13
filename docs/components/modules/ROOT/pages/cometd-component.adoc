@@ -49,7 +49,7 @@ where `cometds:` represents an SSL configured endpoint.
 
 
 // component options: START
-The CometD component supports 9 options, which are listed below.
+The CometD component supports 8 options, which are listed below.
 
 
 
@@ -63,7 +63,6 @@ The CometD component supports 9 options, which are listed below.
 | *extensions* (common) | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests. |  | List
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -136,7 +135,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
@@ -146,7 +145,6 @@ The component supports 10 options, which are listed below.
 | *camel.component.cometd.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.cometd.enabled* | Enable cometd component | true | Boolean
 | *camel.component.cometd.extensions* | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests. |  | List
-| *camel.component.cometd.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.cometd.security-policy* | To use a custom configured SecurityPolicy to control authorization. The option is a org.cometd.bayeux.server.SecurityPolicy type. |  | String
 | *camel.component.cometd.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.cometd.ssl-key-password* | The password for the keystore when using SSL. |  | String

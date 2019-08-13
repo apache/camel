@@ -88,7 +88,7 @@ related to UDP transport.
 
 
 // component options: START
-The Netty HTTP component supports 10 options, which are listed below.
+The Netty HTTP component supports 9 options, which are listed below.
 
 
 
@@ -103,7 +103,6 @@ The Netty HTTP component supports 10 options, which are listed below.
 | *maximumPoolSize* (advanced) | The thread pool size for the EventExecutorGroup if its in use. The default value is 16. | 16 | int
 | *executorService* (advanced) | To use the given EventExecutorGroup. |  | EventExecutorGroup
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -244,7 +243,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 33 options, which are listed below.
+The component supports 32 options, which are listed below.
 
 
 
@@ -274,7 +273,6 @@ The component supports 33 options, which are listed below.
 | *camel.component.netty-http.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
 | *camel.component.netty-http.maximum-pool-size* | The thread pool size for the EventExecutorGroup if its in use. The default value is 16. | 16 | Integer
 | *camel.component.netty-http.netty-http-binding* | To use a custom org.apache.camel.component.netty4.http.NettyHttpBinding for binding to/from Netty and Camel Message API. The option is a org.apache.camel.component.netty4.http.NettyHttpBinding type. |  | String
-| *camel.component.netty-http.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.netty-http.security-configuration.authenticate* | Whether to enable authentication <p/> This is by default enabled. |  | Boolean
 | *camel.component.netty-http.security-configuration.constraint* | The supported restricted. <p/> Currently only Basic is supported. |  | String
 | *camel.component.netty-http.security-configuration.login-denied-logging-level* | Sets a logging level to use for logging denied login attempts (incl stacktraces) <p/> This level is by default DEBUG. |  | LoggingLevel

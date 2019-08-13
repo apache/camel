@@ -45,7 +45,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 8 options, which are listed below.
+The component supports 7 options, which are listed below.
 
 
 
@@ -54,7 +54,6 @@ The component supports 8 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.thrift.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.thrift.enabled* | Whether to enable auto configuration of the thrift component. This is enabled by default. |  | Boolean
-| *camel.component.thrift.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.thrift.use-global-ssl-context-parameters* | Determine if the thrift component is using global SSL context parameters | false | Boolean
 | *camel.dataformat.thrift.content-type-format* | Defines a content type format in which thrift message will be serialized/deserialized from(to) the Java been. The format can either be native or json for either native binary thrift, json or simple json fields representation. The default value is binary. | binary | String
 | *camel.dataformat.thrift.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean

@@ -48,7 +48,7 @@ The Box component supports three different types of authenticated connections.
 == Box Options
 
 // component options: START
-The Box component supports 3 options, which are listed below.
+The Box component supports 2 options, which are listed below.
 
 
 
@@ -56,7 +56,6 @@ The Box component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared configuration |  | BoxConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -127,7 +126,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 20 options, which are listed below.
+The component supports 19 options, which are listed below.
 
 
 
@@ -153,7 +152,6 @@ The component supports 20 options, which are listed below.
 | *camel.component.box.configuration.user-name* | Box user name, MUST be provided |  | String
 | *camel.component.box.configuration.user-password* | Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call |  | String
 | *camel.component.box.enabled* | Enable box component | true | Boolean
-| *camel.component.box.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

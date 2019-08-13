@@ -13,7 +13,7 @@ without the restart of the router.
 == Grape options
 
 // component options: START
-The Grape component supports 3 options, which are listed below.
+The Grape component supports 2 options, which are listed below.
 
 
 
@@ -21,7 +21,6 @@ The Grape component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *patchesRepository* (advanced) | Implementation of org.apache.camel.component.grape.PatchesRepository, by default: FilePatchesRepository |  | PatchesRepository
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END

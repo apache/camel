@@ -52,7 +52,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Lucene component supports 3 options, which are listed below.
+The Lucene component supports 2 options, which are listed below.
 
 
 
@@ -60,7 +60,6 @@ The Lucene component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *config* (advanced) | To use a shared lucene configuration |  | LuceneConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -122,7 +121,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 12 options, which are listed below.
+The component supports 11 options, which are listed below.
 
 
 
@@ -140,7 +139,6 @@ The component supports 12 options, which are listed below.
 | *camel.component.lucene.config.source-directory* | An optional directory containing files to be used to be analyzed and added to the index at producer startup. |  | File
 | *camel.component.lucene.config.uri* |  |  | URI
 | *camel.component.lucene.enabled* | Enable lucene component | true | Boolean
-| *camel.component.lucene.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

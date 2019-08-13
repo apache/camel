@@ -44,7 +44,7 @@ The Google Calendar Component uses the following URI format:
 
 
 // component options: START
-The Google Calendar Stream component supports 4 options, which are listed below.
+The Google Calendar Stream component supports 3 options, which are listed below.
 
 
 
@@ -53,7 +53,6 @@ The Google Calendar Stream component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | The configuration |  | GoogleCalendarStream Configuration
 | *clientFactory* (advanced) | The client Factory |  | GoogleCalendarClient Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -135,7 +134,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 16 options, which are listed below.
+The component supports 15 options, which are listed below.
 
 
 
@@ -157,7 +156,6 @@ The component supports 16 options, which are listed below.
 | *camel.component.google-calendar-stream.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *camel.component.google-calendar-stream.configuration.scopes* | Specifies the level of permissions you want a calendar application to have to a user account. See \https://developers.google.com/calendar/auth for more info. |  | List
 | *camel.component.google-calendar-stream.enabled* | Whether to enable auto configuration of the google-calendar-stream component. This is enabled by default. |  | Boolean
-| *camel.component.google-calendar-stream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

@@ -36,7 +36,7 @@ You can append query options to the URI in the following format:
 
 
 // component options: START
-The Consul component supports 10 options, which are listed below.
+The Consul component supports 9 options, which are listed below.
 
 
 
@@ -51,7 +51,6 @@ The Consul component supports 10 options, which are listed below.
 | *userName* (common) | Sets the username to be used for basic authentication |  | String
 | *password* (common) | Sets the password to be used for basic authentication |  | String
 | *configuration* (advanced) | Sets the common configuration shared among endpoints |  | ConsulConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -110,7 +109,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 91 options, which are listed below.
+The component supports 90 options, which are listed below.
 
 
 
@@ -173,7 +172,6 @@ The component supports 91 options, which are listed below.
 | *camel.component.consul.health.check.repository.failure-threshold* |  |  | Integer
 | *camel.component.consul.health.check.repository.interval* |  |  | String
 | *camel.component.consul.password* | Sets the password to be used for basic authentication |  | String
-| *camel.component.consul.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.consul.service-registry.acl-token* |  |  | String
 | *camel.component.consul.service-registry.attributes* | Custom service attributes. |  | Map
 | *camel.component.consul.service-registry.block-seconds* |  |  | Integer

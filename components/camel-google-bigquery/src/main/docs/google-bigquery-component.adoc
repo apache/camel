@@ -57,7 +57,7 @@ Service Account Email and Service Account Key can be found in the GCP JSON crede
 == Options
 
 // component options: START
-The Google BigQuery component supports 5 options, which are listed below.
+The Google BigQuery component supports 4 options, which are listed below.
 
 
 
@@ -67,7 +67,6 @@ The Google BigQuery component supports 5 options, which are listed below.
 | *projectId* (producer) | Google Cloud Project Id |  | String
 | *datasetId* (producer) | BigQuery Dataset Id |  | String
 | *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQuery ConnectionFactory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -122,7 +121,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 9 options, which are listed below.
+The component supports 8 options, which are listed below.
 
 
 
@@ -137,7 +136,6 @@ The component supports 9 options, which are listed below.
 | *camel.component.google-bigquery.dataset-id* | BigQuery Dataset Id |  | String
 | *camel.component.google-bigquery.enabled* | Whether to enable auto configuration of the google-bigquery component. This is enabled by default. |  | Boolean
 | *camel.component.google-bigquery.project-id* | Google Cloud Project Id |  | String
-| *camel.component.google-bigquery.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

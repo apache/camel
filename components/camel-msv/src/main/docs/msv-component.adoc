@@ -52,7 +52,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The MSV component supports 4 options, which are listed below.
+The MSV component supports 3 options, which are listed below.
 
 
 
@@ -61,7 +61,6 @@ The MSV component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *schemaFactory* (advanced) | To use the javax.xml.validation.SchemaFactory. |  | SchemaFactory
 | *resourceResolverFactory* (advanced) | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI |  | ValidatorResource ResolverFactory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -126,7 +125,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 5 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -135,7 +134,6 @@ The component supports 5 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.msv.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.msv.enabled* | Enable msv component | true | Boolean
-| *camel.component.msv.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.msv.resource-resolver-factory* | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. The option is a org.apache.camel.component.validator.ValidatorResourceResolverFactory type. |  | String
 | *camel.component.msv.schema-factory* | To use the javax.xml.validation.SchemaFactory. The option is a javax.xml.validation.SchemaFactory type. |  | String
 |===

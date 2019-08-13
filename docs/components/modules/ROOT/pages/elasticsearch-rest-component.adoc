@@ -31,7 +31,7 @@ elasticsearch-rest://clusterName[?options]
 == Endpoint Options
 
 // component options: START
-The Elastichsearch Rest component supports 13 options, which are listed below.
+The Elastichsearch Rest component supports 12 options, which are listed below.
 
 
 
@@ -49,7 +49,6 @@ The Elastichsearch Rest component supports 13 options, which are listed below.
 | *enableSniffer* (advanced) | Enable automatically discover nodes from a running Elasticsearch cluster | false | Boolean
 | *snifferInterval* (advanced) | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | int
 | *sniffAfterFailureDelay* (advanced) | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | int
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -112,7 +111,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 14 options, which are listed below.
+The component supports 13 options, which are listed below.
 
 
 
@@ -128,7 +127,6 @@ The component supports 14 options, which are listed below.
 | *camel.component.elasticsearch-rest.host-addresses* | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for hostAddresses to be considered instead. |  | String
 | *camel.component.elasticsearch-rest.max-retry-timeout* | The time in ms before retry | 30000 | Integer
 | *camel.component.elasticsearch-rest.password* | Password for authenticate |  | String
-| *camel.component.elasticsearch-rest.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.elasticsearch-rest.sniff-after-failure-delay* | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | Integer
 | *camel.component.elasticsearch-rest.sniffer-interval* | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | Integer
 | *camel.component.elasticsearch-rest.socket-timeout* | The timeout in ms to wait before the socket will timeout. | 30000 | Integer

@@ -83,7 +83,7 @@ in path such as `/api/\{version\}/users/\{id\}`.
 == Options
 
 // component options: START
-The REST Swagger component supports 10 options, which are listed below.
+The REST Swagger component supports 9 options, which are listed below.
 
 
 
@@ -98,7 +98,6 @@ The REST Swagger component supports 10 options, which are listed below.
 | *specificationUri* (producer) | Path to the Swagger specification file. The scheme, host base path are taken from this specification, but these can be overridden with properties on the component or endpoint level. If not given the component tries to load swagger.json resource. Note that the host defined on the component and endpoint of this Component should contain the scheme, hostname and optionally the port in the URI syntax (i.e. \https://api.example.com:8080). Can be overridden in endpoint configuration. | swagger.json | URI
 | *sslContextParameters* (security) | Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -155,7 +154,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 11 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -169,7 +168,6 @@ The component supports 11 options, which are listed below.
 | *camel.component.rest-swagger.enabled* | Enable rest-swagger component | true | Boolean
 | *camel.component.rest-swagger.host* | Scheme hostname and port to direct the HTTP requests to in the form of \https://hostname:port. Can be configured at the endpoint, component or in the corresponding REST configuration in the Camel Context. If you give this component a name (e.g. petstore) that REST configuration is consulted first, rest-swagger next, and global configuration last. If set overrides any value found in the Swagger specification, RestConfiguration. Can be overridden in endpoint configuration. |  | String
 | *camel.component.rest-swagger.produces* | What payload type this component is producing. For example application/json according to the RFC7231. This equates to the value of Content-Type HTTP header. If set overrides any value present in the Swagger specification. Can be overridden in endpoint configuration. |  | String
-| *camel.component.rest-swagger.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.rest-swagger.specification-uri* | Path to the Swagger specification file. The scheme, host base path are taken from this specification, but these can be overridden with properties on the component or endpoint level. If not given the component tries to load swagger.json resource. Note that the host defined on the component and endpoint of this Component should contain the scheme, hostname and optionally the port in the URI syntax (i.e. \https://api.example.com:8080). Can be overridden in endpoint configuration. |  | URI
 | *camel.component.rest-swagger.ssl-context-parameters* | Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.rest-swagger.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean

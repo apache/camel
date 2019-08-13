@@ -26,14 +26,13 @@ For more information you can look at xref:ftp-component.adoc[FTP component]
 The options below are exclusive for the FTPS component.
 
 // component options: START
-The SFTP component supports 2 options, which are listed below.
+The SFTP component supports 1 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END

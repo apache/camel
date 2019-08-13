@@ -64,7 +64,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mina component supports 4 options, which are listed below.
+The Mina component supports 3 options, which are listed below.
 
 
 
@@ -73,7 +73,6 @@ The Mina component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared mina configuration. |  | Mina2Configuration
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -159,7 +158,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 30 options, which are listed below.
+The component supports 29 options, which are listed below.
 
 
 
@@ -194,7 +193,6 @@ The component supports 30 options, which are listed below.
 | *camel.component.mina.configuration.transfer-exchange* | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | Boolean
 | *camel.component.mina.configuration.write-timeout* | Maximum amount of time it should take to send data to the MINA session. Default is 10000 milliseconds. | 10000 | Long
 | *camel.component.mina.enabled* | Whether to enable auto configuration of the mina component. This is enabled by default. |  | Boolean
-| *camel.component.mina.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.mina.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

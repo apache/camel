@@ -35,7 +35,7 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service component supports 3 options, which are listed below.
+The Azure Storage Blob Service component supports 2 options, which are listed below.
 
 
 
@@ -43,7 +43,6 @@ The Azure Storage Blob Service component supports 3 options, which are listed be
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | The Blob Service configuration |  | BlobService Configuration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -122,7 +121,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 21 options, which are listed below.
+The component supports 20 options, which are listed below.
 
 
 
@@ -149,7 +148,6 @@ The component supports 21 options, which are listed below.
 | *camel.component.azure-blob.configuration.stream-write-size* | Set the size of the buffer for writing block and page blocks |  | Integer
 | *camel.component.azure-blob.configuration.use-flat-listing* | Specify if the flat or hierarchical blob listing should be used | true | Boolean
 | *camel.component.azure-blob.enabled* | Enable azure-blob component | true | Boolean
-| *camel.component.azure-blob.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

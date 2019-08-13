@@ -9,7 +9,7 @@ The http://www.hazelcast.com/[Hazelcast] Map component is one of Camel Hazelcast
 == Options
 
 // component options: START
-The Hazelcast Map component supports 4 options, which are listed below.
+The Hazelcast Map component supports 3 options, which are listed below.
 
 
 
@@ -18,7 +18,6 @@ The Hazelcast Map component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *hazelcastInstance* (advanced) | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. |  | HazelcastInstance
 | *hazelcastMode* (advanced) | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -83,7 +82,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 6 options, which are listed below.
 
 
 
@@ -96,7 +95,6 @@ The component supports 7 options, which are listed below.
 | *camel.component.hazelcast-map.enabled* | Enable hazelcast-map component | true | Boolean
 | *camel.component.hazelcast-map.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. The option is a com.hazelcast.core.HazelcastInstance type. |  | String
 | *camel.component.hazelcast-map.hazelcast-mode* | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
-| *camel.component.hazelcast-map.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

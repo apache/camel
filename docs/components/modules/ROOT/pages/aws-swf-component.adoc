@@ -26,7 +26,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Simple Workflow component supports 6 options, which are listed below.
+The AWS Simple Workflow component supports 5 options, which are listed below.
 
 
 
@@ -37,7 +37,6 @@ The AWS Simple Workflow component supports 6 options, which are listed below.
 | *accessKey* (common) | Amazon AWS Access Key. |  | String
 | *secretKey* (common) | Amazon AWS Secret Key. |  | String
 | *region* (common) | Amazon AWS Region. |  | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -120,7 +119,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 33 options, which are listed below.
+The component supports 32 options, which are listed below.
 
 
 
@@ -158,7 +157,6 @@ The component supports 33 options, which are listed below.
 | *camel.component.aws-swf.configuration.workflow-type-registration-options* | Workflow registration options |  | WorkflowType RegistrationOptions
 | *camel.component.aws-swf.enabled* | Whether to enable auto configuration of the aws-swf component. This is enabled by default. |  | Boolean
 | *camel.component.aws-swf.region* | Amazon AWS Region. |  | String
-| *camel.component.aws-swf.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-swf.secret-key* | Amazon AWS Secret Key. |  | String
 |===
 // spring-boot-auto-configure options: END

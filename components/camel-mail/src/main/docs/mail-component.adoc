@@ -89,7 +89,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mail component supports 6 options, which are listed below.
+The Mail component supports 5 options, which are listed below.
 
 
 
@@ -100,7 +100,6 @@ The Mail component supports 6 options, which are listed below.
 | *contentTypeResolver* (advanced) | Resolver to determine Content-Type for file attachments. |  | ContentTypeResolver
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -217,7 +216,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 49 options, which are listed below.
+The component supports 48 options, which are listed below.
 
 
 
@@ -264,7 +263,6 @@ The component supports 49 options, which are listed below.
 | *camel.component.mail.content-type-resolver* | Resolver to determine Content-Type for file attachments. The option is a org.apache.camel.component.mail.ContentTypeResolver type. |  | String
 | *camel.component.mail.enabled* | Enable mail component | true | Boolean
 | *camel.component.mail.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
-| *camel.component.mail.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.mail.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.dataformat.mime-multipart.binary-content* | Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false) Default is false. | false | Boolean
 | *camel.dataformat.mime-multipart.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean

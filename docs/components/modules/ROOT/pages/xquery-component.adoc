@@ -16,7 +16,7 @@ Recipient List.
 
 
 // component options: START
-The XQuery component supports 5 options, which are listed below.
+The XQuery component supports 4 options, which are listed below.
 
 
 
@@ -26,7 +26,6 @@ The XQuery component supports 5 options, which are listed below.
 | *moduleURIResolver* (advanced) | To use the custom ModuleURIResolver |  | ModuleURIResolver
 | *configuration* (advanced) | To use a custom Saxon configuration |  | Configuration
 | *configurationProperties* (advanced) | To set custom Saxon configuration properties |  | Map
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -110,7 +109,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 9 options, which are listed below.
+The component supports 8 options, which are listed below.
 
 
 
@@ -122,7 +121,6 @@ The component supports 9 options, which are listed below.
 | *camel.component.xquery.configuration-properties* | To set custom Saxon configuration properties |  | Map
 | *camel.component.xquery.enabled* | Enable xquery component | true | Boolean
 | *camel.component.xquery.module-u-r-i-resolver* | To use the custom ModuleURIResolver. The option is a net.sf.saxon.lib.ModuleURIResolver type. |  | String
-| *camel.component.xquery.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.language.xquery.enabled* | Enable xquery language | true | Boolean
 | *camel.language.xquery.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
 | *camel.language.xquery.type* | Sets the class name of the result type (type from output) The default result type is NodeSet |  | String

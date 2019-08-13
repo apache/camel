@@ -37,7 +37,7 @@ for this component:
 
 
 // component options: START
-The Google Calendar component supports 4 options, which are listed below.
+The Google Calendar component supports 3 options, which are listed below.
 
 
 
@@ -46,7 +46,6 @@ The Google Calendar component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared configuration |  | GoogleCalendar Configuration
 | *clientFactory* (advanced) | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleCalendarClientFactory |  | GoogleCalendarClient Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -118,7 +117,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 15 options, which are listed below.
+The component supports 14 options, which are listed below.
 
 
 
@@ -139,7 +138,6 @@ The component supports 15 options, which are listed below.
 | *camel.component.google-calendar.configuration.scopes* | Specifies the level of permissions you want a calendar application to have to a user account. You can separate multiple scopes by comma. See \https://developers.google.com/google-apps/calendar/auth for more info. | https://www.googleapis.com/auth/calendar | String
 | *camel.component.google-calendar.configuration.user* | The email address of the user the application is trying to impersonate in the service account flow |  | String
 | *camel.component.google-calendar.enabled* | Enable google-calendar component | true | Boolean
-| *camel.component.google-calendar.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

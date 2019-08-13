@@ -33,7 +33,7 @@ kafka:topic[?options]
 
 
 // component options: START
-The Kafka component supports 9 options, which are listed below.
+The Kafka component supports 8 options, which are listed below.
 
 
 
@@ -47,7 +47,6 @@ The Kafka component supports 9 options, which are listed below.
 | *breakOnFirstError* (consumer) | This options controls what happens when a consumer is processing an exchange and it fails. If the option is false then the consumer continues to the next message and processes it. If the option is true then the consumer breaks out, and will seek back to offset of the message that caused a failure, and then re-attempt to process this message. However this can lead to endless processing of the same message if its bound to fail every time, eg a poison message. Therefore its recommended to deal with that for example by using Camel's error handler. | false | boolean
 | *allowManualCommit* (consumer) | Whether to allow doing manual commits via KafkaManualCommit. If this option is enabled then an instance of KafkaManualCommit is stored on the Exchange message header, which allows end users to access this API and perform manual offset commits via the Kafka consumer. | false | boolean
 | *kafkaManualCommit Factory* (consumer) | Factory to use for creating KafkaManualCommit instances. This allows to plugin a custom factory to create custom KafkaManualCommit instances in case special logic is needed when doing manual commits that deviates from the default implementation that comes out of the box. |  | KafkaManualCommit Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -194,7 +193,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 101 options, which are listed below.
+The component supports 100 options, which are listed below.
 
 
 
@@ -299,7 +298,6 @@ The component supports 101 options, which are listed below.
 | *camel.component.kafka.configuration.worker-pool-max-size* | Maximum number of threads for the worker pool for continue routing {@link Exchange} after kafka server has acknowledge the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing. | 20 | Integer
 | *camel.component.kafka.enabled* | Enable kafka component | true | Boolean
 | *camel.component.kafka.kafka-manual-commit-factory* | Factory to use for creating KafkaManualCommit instances. This allows to plugin a custom factory to create custom KafkaManualCommit instances in case special logic is needed when doing manual commits that deviates from the default implementation that comes out of the box. The option is a org.apache.camel.component.kafka.KafkaManualCommitFactory type. |  | String
-| *camel.component.kafka.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.kafka.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.component.kafka.worker-pool* | To use a shared custom worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing. If using this option then you must handle the lifecycle of the thread pool to shut the pool down when no longer needed. The option is a java.util.concurrent.ExecutorService type. |  | String
 |===

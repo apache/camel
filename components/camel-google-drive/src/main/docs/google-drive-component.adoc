@@ -64,7 +64,7 @@ Endpoint prefix can be one of:
 
 
 // component options: START
-The Google Drive component supports 4 options, which are listed below.
+The Google Drive component supports 3 options, which are listed below.
 
 
 
@@ -73,7 +73,6 @@ The Google Drive component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared configuration |  | GoogleDrive Configuration
 | *clientFactory* (advanced) | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleDriveClientFactory |  | GoogleDriveClient Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -143,7 +142,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 12 options, which are listed below.
+The component supports 11 options, which are listed below.
 
 
 
@@ -161,7 +160,6 @@ The component supports 12 options, which are listed below.
 | *camel.component.google-drive.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *camel.component.google-drive.configuration.scopes* | Specifies the level of permissions you want a drive application to have to a user account. See \https://developers.google.com/drive/web/scopes for more info. |  | List
 | *camel.component.google-drive.enabled* | Enable google-drive component | true | Boolean
-| *camel.component.google-drive.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

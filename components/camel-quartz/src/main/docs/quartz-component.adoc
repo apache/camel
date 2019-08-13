@@ -44,7 +44,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Quartz component supports 12 options, which are listed below.
+The Quartz component supports 11 options, which are listed below.
 
 
 
@@ -61,7 +61,6 @@ The Quartz component supports 12 options, which are listed below.
 | *interruptJobsOn Shutdown* (scheduler) | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. | false | boolean
 | *schedulerFactory* (advanced) | To use the custom SchedulerFactory which is used to create the Scheduler. |  | SchedulerFactory
 | *scheduler* (advanced) | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. |  | Scheduler
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -133,7 +132,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 13 options, which are listed below.
+The component supports 12 options, which are listed below.
 
 
 
@@ -149,7 +148,6 @@ The component supports 13 options, which are listed below.
 | *camel.component.quartz.prefix-job-name-with-endpoint-id* | Whether to prefix the quartz job with the endpoint id. This option is default false. | false | Boolean
 | *camel.component.quartz.properties* | Properties to configure the Quartz scheduler. The option is a java.util.Properties type. |  | String
 | *camel.component.quartz.properties-file* | File name of the properties to load from the classpath |  | String
-| *camel.component.quartz.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.quartz.scheduler* | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. The option is a org.quartz.Scheduler type. |  | String
 | *camel.component.quartz.scheduler-factory* | To use the custom SchedulerFactory which is used to create the Scheduler. The option is a org.quartz.SchedulerFactory type. |  | String
 | *camel.component.quartz.start-delayed-seconds* | Seconds to wait before starting the quartz scheduler. |  | Integer

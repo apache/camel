@@ -25,7 +25,7 @@ for this component:
 ----
 
 // component options: START
-The Atomix Messaging component supports 6 options, which are listed below.
+The Atomix Messaging component supports 5 options, which are listed below.
 
 
 
@@ -36,7 +36,6 @@ The Atomix Messaging component supports 6 options, which are listed below.
 | *atomix* (common) | The shared AtomixClient instance |  | AtomixClient
 | *nodes* (common) | The nodes the AtomixClient should connect to |  | List
 | *configurationUri* (common) | The path to the AtomixClient configuration |  | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -105,7 +104,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 11 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -122,7 +121,6 @@ The component supports 11 options, which are listed below.
 | *camel.component.atomix-messaging.configuration.result-header* | The header that wil carry the result. |  | String
 | *camel.component.atomix-messaging.enabled* | Whether to enable auto configuration of the atomix-messaging component. This is enabled by default. |  | Boolean
 | *camel.component.atomix-messaging.nodes* | The nodes the AtomixClient should connect to |  | List
-| *camel.component.atomix-messaging.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

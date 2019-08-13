@@ -52,7 +52,7 @@ apns:consumer[?options]
 
 
 // component options: START
-The APNS component supports 3 options, which are listed below.
+The APNS component supports 2 options, which are listed below.
 
 
 
@@ -60,7 +60,6 @@ The APNS component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *apnsService* (common) | *Required* The ApnsService to use. The org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to build a ApnsService |  | ApnsService
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -133,7 +132,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 3 options, which are listed below.
 
 
 
@@ -143,7 +142,6 @@ The component supports 4 options, which are listed below.
 | *camel.component.apns.apns-service* | The ApnsService to use. The org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to build a ApnsService. The option is a com.notnoop.apns.ApnsService type. |  | String
 | *camel.component.apns.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.apns.enabled* | Enable apns component | true | Boolean
-| *camel.component.apns.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

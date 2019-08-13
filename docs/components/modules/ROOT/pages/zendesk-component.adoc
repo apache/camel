@@ -22,7 +22,7 @@ for this component:
 == Zendesk Options
 
 // component options: START
-The Zendesk component supports 4 options, which are listed below.
+The Zendesk component supports 3 options, which are listed below.
 
 
 
@@ -31,7 +31,6 @@ The Zendesk component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared configuration |  | ZendeskConfiguration
 | *zendesk* (advanced) | To use a shared Zendesk instance. |  | Zendesk
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -91,7 +90,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
@@ -106,7 +105,6 @@ The component supports 10 options, which are listed below.
 | *camel.component.zendesk.configuration.token* | The security token. |  | String
 | *camel.component.zendesk.configuration.username* | The user name. |  | String
 | *camel.component.zendesk.enabled* | Enable zendesk component | true | Boolean
-| *camel.component.zendesk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.zendesk.zendesk* | To use a shared Zendesk instance. The option is a org.zendesk.client.v2.Zendesk type. |  | String
 |===
 // spring-boot-auto-configure options: END

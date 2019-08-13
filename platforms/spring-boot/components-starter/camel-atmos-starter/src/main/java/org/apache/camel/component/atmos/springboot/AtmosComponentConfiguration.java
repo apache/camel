@@ -53,12 +53,6 @@ public class AtmosComponentConfiguration
      */
     private Boolean sslValidation = false;
     /**
-     * Whether the component should resolve property placeholders on itself when
-     * starting. Only properties which are of String type can use property
-     * placeholders.
-     */
-    private Boolean resolvePropertyPlaceholders = true;
-    /**
      * Whether the component should use basic property binding (Camel 2.x) or
      * the newer property binding with additional capabilities
      */
@@ -94,15 +88,6 @@ public class AtmosComponentConfiguration
 
     public void setSslValidation(Boolean sslValidation) {
         this.sslValidation = sslValidation;
-    }
-
-    public Boolean getResolvePropertyPlaceholders() {
-        return resolvePropertyPlaceholders;
-    }
-
-    public void setResolvePropertyPlaceholders(
-            Boolean resolvePropertyPlaceholders) {
-        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public Boolean getBasicPropertyBinding() {

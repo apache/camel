@@ -41,7 +41,7 @@ Where *someName* can be any string to uniquely identify the endpoint
 
 
 // component options: START
-The Direct VM component supports 6 options, which are listed below.
+The Direct VM component supports 5 options, which are listed below.
 
 
 
@@ -52,7 +52,6 @@ The Direct VM component supports 6 options, which are listed below.
 | *timeout* (producer) | The timeout value to use if block is enabled. | 30000 | long
 | *headerFilterStrategy* (advanced) | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none. |  | HeaderFilterStrategy
 | *propagateProperties* (advanced) | Whether to propagate or not properties from the producer side to the consumer side, and vice versa. Default value: true. | true | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END

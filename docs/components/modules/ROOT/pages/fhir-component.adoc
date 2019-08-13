@@ -47,7 +47,7 @@ Endpoint prefix can be one of:
 
 
 // component options: START
-The FHIR component supports 3 options, which are listed below.
+The FHIR component supports 2 options, which are listed below.
 
 
 
@@ -55,7 +55,6 @@ The FHIR component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared configuration |  | FhirConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -135,7 +134,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 28 options, which are listed below.
+The component supports 27 options, which are listed below.
 
 
 
@@ -169,6 +168,5 @@ The component supports 28 options, which are listed below.
 | *camel.component.fhir.configuration.username* | What sub operation to use for the selected operation |  | String
 | *camel.component.fhir.configuration.validation-mode* | What sub operation to use for the selected operation | ONCE | String
 | *camel.component.fhir.enabled* | Whether to enable auto configuration of the fhir component. This is enabled by default. |  | Boolean
-| *camel.component.fhir.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
