@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb3.springboot;
+package org.apache.camel.component.mongodb.springboot;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.mongodb3.MongoDbComponent;
+import org.apache.camel.component.mongodb.MongoDbComponent;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
