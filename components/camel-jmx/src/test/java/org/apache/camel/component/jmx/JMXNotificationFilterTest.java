@@ -22,9 +22,9 @@ import javax.management.NotificationFilter;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jmx.beans.ISimpleMXBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests that the NotificationFilter is applied if configured
@@ -40,7 +40,7 @@ public class JMXNotificationFilterTest extends SimpleBeanFixture {
     public void testNotificationFilter() throws Exception {
         ISimpleMXBean bean = getSimpleMXBean();
 
-        assertEquals("no notifications should have been filtered at this point", 0, mRejected.size());
+        assertEquals(0, mRejected.size(), "no notifications should have been filtered at this point");
 
         // we should only get 5 messages, which is 1/2 the number of times we touched the object.
         // The 1/2 is due to the behavior of the test NotificationFilter implemented below 
@@ -50,7 +50,7 @@ public class JMXNotificationFilterTest extends SimpleBeanFixture {
         }
 
         getMockFixture().waitForMessages();
-        assertEquals("5 notifications should have been filtered", 5, mRejected.size());
+        assertEquals(5, mRejected.size(), "5 notifications should have been filtered");
 
         // assert that all of the rejected ones are odd and accepted ones even
         for (Notification rejected : mRejected) {

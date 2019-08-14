@@ -30,7 +30,7 @@ import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public final class XmlFixture {
 
@@ -50,7 +50,7 @@ public final class XmlFixture {
                 .ignoreComments().ignoreWhitespace()
                 .checkForSimilar().build();
         try {
-            assertFalse(aMessage + ":\n" + diff.toString(), diff.hasDifferences());
+            assertFalse(diff.hasDifferences(), aMessage + ":\n" + diff.toString());
         } catch (Throwable t) {
             dump(aActual);
             throw t;
