@@ -193,6 +193,9 @@ org.apache.olingo.commons.api.http.HttpStatusCode for other OData resources
 |read |queryParams, resourcePath, endpointHttpHeaders |GET |Depends on OData resource being queried as described next
 
 |update |data, resourcePath, endpointHttpHeaders |PUT |org.apache.olingo.commons.api.http.HttpStatusCode
+
+|action |data, resourcePath, endpointHttpHeaders |POST |org.apache.olingo.client.api.domain.ClientEntity for action's
+that have a "ReturnType" defined org.apache.olingo.commons.api.http.HttpStatusCode otherwise
 |=======================================================================
 
 == Endpoint HTTP Headers
@@ -296,4 +299,17 @@ The following route creates People entity using the
 ------------------------------------------------------------
 from("direct:...")
     .to("olingo4://create/People");
+------------------------------------------------------------
+
+
+
+The following route calls an odata action using the *ClientEntity* in the body message. The body message may be null for
+actions that don't expect an input.
+
+
+
+[source,java]
+------------------------------------------------------------
+from("direct:...")
+    .to("olingo4://action/People");
 ------------------------------------------------------------
