@@ -19,9 +19,9 @@ package org.apache.camel.component.jmx;
 import java.io.File;
 
 import org.apache.camel.component.jmx.beans.ISimpleMXBean;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that trigger notification events on our simple bean without
@@ -32,7 +32,7 @@ public class JMXConsumerTest extends SimpleBeanFixture {
     ISimpleMXBean simpleBean;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         simpleBean = getSimpleMXBean();
@@ -78,7 +78,7 @@ public class JMXConsumerTest extends SimpleBeanFixture {
         waitAndAssertMessageReceived("src/test/resources/consumer-test/mbeanServerNotification.xml");
     }
 
-    @Ignore
+    @Disabled
     public void relationNotification() throws Exception {
         simpleBean.triggerRelationNotification();
         waitAndAssertMessageReceived("src/test/resources/consumer-test/relationNotification.xml");
