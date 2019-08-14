@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SimpleNotifyBuilderTest extends CamelTestSupport {
 
     @Test
-    public void testNotifyBuilder() throws Exception {
+    public void testNotifyBuilder() {
         NotifyBuilder notify = new NotifyBuilder(context).from("seda:start").wereSentTo("seda:queue").whenDone(10).create();
 
         for (int i = 0; i < 10; i++) {
@@ -41,10 +41,10 @@ public class SimpleNotifyBuilderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").transform(simple("Bye ${body}")).to("seda:queue");
             }
         };

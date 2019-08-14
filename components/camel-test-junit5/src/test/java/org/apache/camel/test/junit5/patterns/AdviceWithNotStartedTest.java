@@ -40,7 +40,7 @@ public class AdviceWithNotStartedTest extends CamelTestSupport {
     public void testNotStarted() throws Exception {
         RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveAddLast().to("mock:result");
             }
         });
@@ -63,10 +63,10 @@ public class AdviceWithNotStartedTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").to("log:foo");
             }
         };

@@ -52,10 +52,10 @@ public class IsMockEndpointsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("direct:foo").to("log:foo").to("mock:result");
 
                 from("direct:foo").transform(constant("Bye World"));

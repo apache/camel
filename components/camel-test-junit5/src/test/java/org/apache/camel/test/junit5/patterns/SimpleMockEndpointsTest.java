@@ -38,10 +38,10 @@ public class SimpleMockEndpointsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").transform(simple("Bye ${body}")).to("seda:queue");
             }
         };

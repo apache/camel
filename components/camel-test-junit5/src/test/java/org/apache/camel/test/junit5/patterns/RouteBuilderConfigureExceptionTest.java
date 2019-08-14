@@ -30,7 +30,7 @@ public class RouteBuilderConfigureExceptionTest extends CamelTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         try {
             super.setUp();
             fail("Should have thrown exception");
@@ -40,7 +40,7 @@ public class RouteBuilderConfigureExceptionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFoo() throws Exception {
+    public void testFoo() {
     }
 
     @Override
