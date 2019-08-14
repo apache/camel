@@ -53,10 +53,10 @@ public class IsMockEndpointsAndSkipJUnit5Test extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("direct:foo").to("mock:result");
 
                 from("direct:foo").transform(constant("Bye World")).to("seda:foo");

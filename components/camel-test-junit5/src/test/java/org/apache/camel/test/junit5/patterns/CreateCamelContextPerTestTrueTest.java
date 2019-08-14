@@ -112,7 +112,7 @@ public class CreateCamelContextPerTestTrueTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void shouldTearDown() throws Exception {
+    public static void shouldTearDown() {
         // we are called before doPostTearDown so lets wait for that to be
         // called
         Runnable r = () -> {

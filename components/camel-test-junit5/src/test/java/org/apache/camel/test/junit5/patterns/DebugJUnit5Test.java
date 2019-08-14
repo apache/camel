@@ -75,10 +75,10 @@ public class DebugJUnit5Test extends CamelTestSupport {
 
     // START SNIPPET: e2
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // this is the route we want to debug
                 from("direct:start").to("mock:a").transform(body().prepend("Hello ")).to("mock:b");
             }

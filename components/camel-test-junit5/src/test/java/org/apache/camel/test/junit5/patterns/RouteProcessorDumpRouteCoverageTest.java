@@ -36,13 +36,13 @@ public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProcessorJunit5() throws Exception {
+    public void testProcessorJunit5() {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
-    public void testProcessorJunit5WithTestParameterInjection(TestInfo info, TestReporter testReporter) throws Exception {
+    public void testProcessorJunit5WithTestParameterInjection(TestInfo info, TestReporter testReporter) {
         assertNotNull(info);
         assertNotNull(testReporter);
         String out = template.requestBody("direct:start", "Hello World", String.class);
@@ -57,10 +57,10 @@ public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };

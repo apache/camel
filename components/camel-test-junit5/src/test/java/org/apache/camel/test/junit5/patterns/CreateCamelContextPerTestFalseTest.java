@@ -103,7 +103,7 @@ public class CreateCamelContextPerTestFalseTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void validateTearDown() throws Exception {
+    public static void validateTearDown() {
         assertEquals(3, CREATED_CONTEXTS.get());
         assertEquals(3, POST_TEAR_DOWN.get());
     }
