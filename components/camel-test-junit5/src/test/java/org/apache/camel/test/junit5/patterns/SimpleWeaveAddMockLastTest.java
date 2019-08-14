@@ -33,7 +33,7 @@ public class SimpleWeaveAddMockLastTest extends CamelTestSupport {
     public void testWeaveAddMockLast() throws Exception {
         RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveAddLast().to("mock:result");
             }
         });
@@ -47,10 +47,10 @@ public class SimpleWeaveAddMockLastTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").transform(simple("Bye ${body}")).to("seda:queue");
             }
         };
