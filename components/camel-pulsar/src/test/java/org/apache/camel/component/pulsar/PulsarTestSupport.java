@@ -22,7 +22,7 @@ import org.testcontainers.containers.GenericContainer;
 
 public class PulsarTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "apachepulsar/pulsar:2.3.2";
+    public static final String CONTAINER_IMAGE = "apachepulsar/pulsar:2.4.0";
     public static final String CONTAINER_NAME = "pulsar";
     public static final int BROKER_PORT = 6650;
     public static final int BROKER_HTTP_PORT = 8080;
