@@ -65,10 +65,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>apt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-base</artifactId>
         </dependency>
         <dependency>
@@ -639,6 +635,25 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <!-- enables the APT dependency so that it can be disabled in IDE builds -->
+        <profile>
+            <id>apt</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <dependencies>
+
+                <!-- enable the APT processor -->
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>apt</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+
+            </dependencies>
         </profile>
 
         <!-- skip management tests on AIX as it hangs CI servers -->
