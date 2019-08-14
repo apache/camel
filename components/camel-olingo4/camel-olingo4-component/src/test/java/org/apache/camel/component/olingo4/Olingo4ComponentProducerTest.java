@@ -276,7 +276,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     @Test
     public void testUnboundActionRequest() throws Exception {
         final HttpStatusCode status = requestBody("direct:unbound-action-ResetDataSource", null);
-        assertEquals(204, status.getStatusCode());
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
     }
 
     @Test
@@ -286,7 +286,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         clientEntity.getProperties().add(objFactory.newPrimitiveProperty("tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
 
         final HttpStatusCode status = requestBody("direct:bound-action-people", clientEntity);
-        assertEquals(204, status.getStatusCode());
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
     }
 
     @SuppressWarnings("unchecked")
