@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseTestingUtility;
@@ -30,10 +30,10 @@ import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Table;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +70,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
             family[1].getBytes(),
             family[2].getBytes()};
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         try {
             hbaseUtil.startMiniCluster(numServers);
@@ -80,7 +80,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() throws Exception {
         if (systemReady) {
             hbaseUtil.shutdownMiniCluster();
@@ -88,7 +88,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         if (systemReady) {
             try {
@@ -102,7 +102,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (systemReady) {
             hbaseUtil.deleteTable(PERSON_TABLE.getBytes());
@@ -112,7 +112,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
     @Override
     public CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(createRegistry());
+        CamelContext context = new DefaultCamelContext(createCamelRegistry());
         // configure hbase component
         HBaseComponent component = context.getComponent("hbase", HBaseComponent.class);
         component.setConfiguration(hbaseUtil.getConfiguration());

@@ -28,7 +28,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hbase.filters.ModelAwareColumnMatchingFilter;
 import org.apache.hadoop.hbase.filter.Filter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
 
@@ -52,10 +54,10 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
             exchange.getIn().setHeader(HBaseAttribute.HBASE_VALUE.asHeader(), body[0][0][0]);
             Exchange resp = template.send(endpoint, exchange);
             Message out = resp.getOut();
-            assertTrue("two first keys returned",
-                out.getHeaders().containsValue(body[0][0][0])
-                    && out.getHeaders().containsValue(body[1][0][0])
-                    && !out.getHeaders().containsValue(body[2][0][0]));
+            assertTrue(out.getHeaders().containsValue(body[0][0][0])
+                       && out.getHeaders().containsValue(body[1][0][0])
+                       && !out.getHeaders().containsValue(body[2][0][0]),
+                       "two first keys returned");
         }
     }
 
