@@ -130,7 +130,7 @@
         <errorprone-version>2.5</errorprone-version>
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>1.6.2</gmavenplus-plugin-version>
-        <groovy-version>2.5.7</groovy-version>
+        <groovy-version>2.5.8</groovy-version>
     </properties>
 
     <!-- Comment out the snapshot repositories as we don't need them now -->
