@@ -61,6 +61,7 @@ Projects using `camel-test` would need to use `camel-test-junit5`. For instance,
 * Imports of `org.apache.camel.test.junit4.\*` should be replaced with `org.apache.camel.test.junit5.*`
 * `TestSupport` static methods should be imported where needed, for instance `import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf`
 * Usage of the field `CamelTestSupport.log` should be replaced by another logger, for instance `org.slf4j.LoggerFactory.getLogger(MyCamelTest.class);`
+* Usage of the method `CamelTestSupport.createRegistry` should be replaced by `CamelTestSupport.createCamelRegistry()`
 
 === Typical migration steps linked to JUnit 5 itself
 Once Camel related steps have been performed, there are still typical JUnit 5 migration steps to remember:
