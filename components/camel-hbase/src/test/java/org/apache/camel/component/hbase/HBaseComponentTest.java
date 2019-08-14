@@ -22,8 +22,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class HBaseComponentTest {
 
@@ -39,7 +40,7 @@ public class HBaseComponentTest {
         component.doStop();
 
         ClassLoader actualClassLoader = component.getConfiguration().getClassLoader();
-        Assert.assertSame(expectedClassLoader, actualClassLoader);
+        assertSame(expectedClassLoader, actualClassLoader);
     }
 
     @Test
@@ -59,7 +60,7 @@ public class HBaseComponentTest {
         component.doStop();
 
         ClassLoader actualClassLoader = component.getConfiguration().getClassLoader();
-        Assert.assertSame(expectedClassLoader, actualClassLoader);
+        assertSame(expectedClassLoader, actualClassLoader);
     }
 
     @Test
@@ -71,6 +72,6 @@ public class HBaseComponentTest {
         component.doStop();
 
         ClassLoader actualClassLoader = component.getConfiguration().getClassLoader();
-        Assert.assertSame(expectedClassLoader, actualClassLoader);
+        assertSame(expectedClassLoader, actualClassLoader);
     }
 }

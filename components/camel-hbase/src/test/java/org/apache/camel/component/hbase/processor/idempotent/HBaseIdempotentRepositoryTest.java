@@ -24,9 +24,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.hadoop.hbase.TableExistsException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
 
@@ -36,7 +39,7 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
     private String key02 = "456";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         if (systemReady) {
             try {
@@ -50,7 +53,7 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (systemReady) {
             hbaseUtil.deleteTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE));
@@ -145,7 +148,7 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
 
     @Override
     public CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext(createRegistry());
+        return new DefaultCamelContext(createCamelRegistry());
     }
 
     @Override
