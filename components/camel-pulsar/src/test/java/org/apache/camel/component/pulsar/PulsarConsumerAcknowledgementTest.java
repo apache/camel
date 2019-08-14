@@ -53,7 +53,7 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint to;
 
-    Producer<String> producer;
+    private Producer<String> producer;
 
     @Before
     public void setup() throws Exception {

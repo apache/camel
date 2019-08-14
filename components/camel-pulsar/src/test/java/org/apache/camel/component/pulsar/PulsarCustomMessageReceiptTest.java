@@ -16,14 +16,8 @@
  */
 package org.apache.camel.component.pulsar;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -40,6 +34,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class PulsarCustomMessageReceiptTest extends PulsarTestSupport {
 
@@ -63,7 +64,7 @@ public class PulsarCustomMessageReceiptTest extends PulsarTestSupport {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint to;
 
-    Producer<String> producer;
+    private Producer<String> producer;
 
     @Before
     public void setup() throws Exception {

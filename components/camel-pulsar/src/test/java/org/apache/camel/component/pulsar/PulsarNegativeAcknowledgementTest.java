@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.pulsar;
 
-import static org.mockito.Mockito.mock;
-
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.MessageId;
 import org.junit.Test;
+
+import static org.mockito.Mockito.mock;
 
 public class PulsarNegativeAcknowledgementTest {
 
