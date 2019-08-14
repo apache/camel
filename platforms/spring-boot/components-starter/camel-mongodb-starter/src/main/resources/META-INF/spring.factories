@@ -16,4 +16,4 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.mongodb3.springboot.MongoDbComponentAutoConfiguration
+org.apache.camel.component.mongodb.springboot.MongoDbComponentAutoConfiguration
