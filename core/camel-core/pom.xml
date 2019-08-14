@@ -61,11 +61,11 @@
         <!-- required dependencies by camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>apt</artifactId>
+            <artifactId>camel-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-api</artifactId>
+            <artifactId>apt</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
