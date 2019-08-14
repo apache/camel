@@ -420,7 +420,7 @@ public class Olingo4AppAPITest {
         olingoApp.action(edm, TEST_UNBOUND_ACTION_RESETDATASOURCE, null, null, responseHandler);
 
         final HttpStatusCode statusCode = responseHandler.await();
-        assertEquals(204, statusCode.getStatusCode());
+        assertEquals(HttpStatusCode.NO_CONTENT, statusCode);
     }
 
     @Test
@@ -433,7 +433,7 @@ public class Olingo4AppAPITest {
         olingoApp.action(edm, TEST_BOUND_ACTION_PEOPLE_SHARETRIP, null, clientEntity, responseHandler);
 
         final HttpStatusCode statusCode = responseHandler.await();
-        assertEquals(204, statusCode.getStatusCode());
+        assertEquals(HttpStatusCode.NO_CONTENT, statusCode);
     }
 
 
@@ -447,13 +447,13 @@ public class Olingo4AppAPITest {
         httpClientBuilder.addInterceptorFirst(new HttpResponseInterceptor() {
             @Override
             public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
-                if (response.getStatusLine().getStatusCode() == 204) {
+                if (response.getStatusLine().getStatusCode() == HttpStatusCode.NO_CONTENT.getStatusCode()) {
                     try {
                         response.setEntity(
                                 new InputStreamEntity(
                                         odataWriter.writeEntity(createEntity(), ContentType.JSON),
                                         org.apache.http.entity.ContentType.parse(ContentType.JSON.toContentTypeString())));
-                        response.setStatusCode(200);
+                        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
                     } catch (ODataSerializerException e) {
                         throw new IOException(e);
                     }
