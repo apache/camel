@@ -53,8 +53,3 @@ the producer implements the marker interface
 should be able to automatic safely recover lost connection. Usually you
 implement logic that re connects if needed.
 
-[[ServicePool-SeeAlso]]
-== See Also
-
-* xref:architecture.adoc[Architecture]
-

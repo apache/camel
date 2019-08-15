@@ -357,7 +357,3 @@ should be the bundle which contains route definition. To do this, either
 register single instance of `org.slf4j.Logger` in the Registry or
 reference it using `logger` URI parameter.
 
-== See Also
-
-* LogEIP for using `log` directly in the DSL for human
-logs.

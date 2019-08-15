@@ -130,10 +130,3 @@ from("direct:start")
 </camelContext>
 ----
 
-== See Also
-
-xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] - for information
-on policy based scheduling capability for camel routes +
-xref:route-policy.adoc[RoutePolicy] - for information on route policies
-in general +
-xref:components::quartz-component.adoc[Quartz] -for more information on the quartz component

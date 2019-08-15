@@ -285,11 +285,3 @@ If you need more precise subnet settings you can create new object of the type *
 |=========================================================================
 
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* openstack Component

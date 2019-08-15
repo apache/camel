@@ -1167,8 +1167,3 @@ prior actions such as interceptors, onCompletion to take action.
 This component has log level *TRACE* that can be helpful if you have
 problems.
 
-== See Also
-
-* xref:manual::file-language.adoc[File Language]
-* FTP
-* Polling Consumer

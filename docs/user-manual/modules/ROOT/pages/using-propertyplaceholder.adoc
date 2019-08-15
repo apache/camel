@@ -1204,8 +1204,3 @@ PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.
 pc.addFunction(new MyBeerFunction());
 ----
 
-
-[[UsingPropertyPlaceholder-SeeAlso]]
-== See Also
-
-* xref:components::properties-component.adoc[Properties] component

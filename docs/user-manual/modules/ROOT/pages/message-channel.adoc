@@ -43,9 +43,3 @@ And in XML:
 </route>
 ----
 
-== See Also
-
-For more details see
-
-* xref:message.adoc[Message]
-* xref:message-endpoint.adoc[Message Endpoint]

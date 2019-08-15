@@ -46,7 +46,3 @@ Next, navigate to the
 `org.apache.camel.example.console.CamelConsoleMain` class, right-click,
 and select Run As → Java Application.
 
-== See also
-
-* xref:examples.adoc[Examples]
-* xref:index.adoc[User Guide]

@@ -36,7 +36,3 @@ And in Spring XML its done as:
 At runtime you can see the `EndpointRegistry` in JMX as they are listed
 in the `services` category.
 
-[[HowdoIconfigurethemaximumendpointcachesizeforCamelContext-SeeAlso]]
-== See Also
-
-* xref:faq/how-do-i-configure-the-default-maximum-cache-size-for-producercache-or-producertemplate.adoc[How do I configure the default maximum cache size for ProducerCache or ProducerTemplate]

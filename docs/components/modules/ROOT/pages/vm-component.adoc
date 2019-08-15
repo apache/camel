@@ -160,6 +160,3 @@ deployed in another `.war` application):
 from("vm:order.email").bean(MyOrderEmailSender.class);
 ----
 
-== See Also
-
-* xref:seda-component.adoc[Seda]

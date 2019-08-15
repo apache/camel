@@ -216,11 +216,3 @@ This may be really useful for smarter configuration of the endpoint.
 
 where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* AWS Component

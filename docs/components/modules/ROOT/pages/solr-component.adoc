@@ -248,9 +248,3 @@ Tutorial]
 
 http://wiki.apache.org/solr/SolrQuerySyntax[Solr Query Syntax]
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

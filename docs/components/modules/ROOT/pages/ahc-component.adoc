@@ -465,12 +465,3 @@ Spring DSL based configuration of endpoint
 ...
 ----------------------------------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:jetty-component.adoc[Jetty]
-* xref:http-component.adoc[HTTP]

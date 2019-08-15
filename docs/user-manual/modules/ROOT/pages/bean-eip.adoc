@@ -82,8 +82,3 @@ xref:bean-binding.adoc[Bean Binding] mechanism which is used throughout
 all of the various xref:bean-integration.adoc[Bean Integration]
 mechanisms in Camel.
 
-== See also
-
-* xref:components::class-component.adoc[Class] component
-* xref:bean-binding.adoc[Bean Binding]
-* xref:bean-integration.adoc[Bean Integration]

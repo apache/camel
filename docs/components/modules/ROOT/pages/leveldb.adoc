@@ -149,15 +149,3 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------
 
-[[LevelDB-SeeAlso]]
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* Aggregator
-* HawtDB
-* Components
-

@@ -103,11 +103,3 @@ format.
 
 You would need to enable this using the JMX API.
 
-[[BacklogTracer-SeeAlso]]
-== See Also
-
-* xref:tracer.adoc[Tracer]
-* xref:debugger.adoc[Debugger]
-* xref:delay-interceptor.adoc[Delay Interceptor]
-* xref:components::log-component.adoc[Log]
-

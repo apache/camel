@@ -158,9 +158,3 @@ The same route using xref:mina-component.adoc[Mina Component]
 </camelContext>
 -------------------------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

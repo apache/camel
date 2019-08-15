@@ -30,7 +30,3 @@ The default maximum cache size is 1000.
 At runtime you can see the `ProducerCache` in JMX as they are listed in
 the `services` category.
 
-[[HowdoIconfigurethedefaultmaximumcachesizeforProducerCacheorProducerTemplate-SeeAlso]]
-== See Also
-
-* xref:faq/how-do-i-configure-the-maximum-endpoint-cache-size-for-camelcontext.adoc[How do I configure the maximum endpoint cache size for CamelContext]

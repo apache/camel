@@ -883,9 +883,3 @@ body in the *inBody* endpoint parameter.
 </blueprint>
 --------------------------------------------------------------------------------------------------------------------------------------------
 
-== See Also
-
-* xref:manual::configuring-camel.adoc[Configuring Camel]
-* xref:manual::component.adoc[Component]
-* xref:manual::endpoint.adoc[Endpoint]
-* xref:manual::getting-started.adoc[Getting Started]

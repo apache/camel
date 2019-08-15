@@ -301,20 +301,3 @@ requires the usage of the camel-spring component. +
 samples for how to use and transactional behavior and configuration with
 this error handler.
 
-[[ErrorHandler-Seealso]]
-== See also
-
-* Error handling in Camel for
-introduction and background material on error handling in Camel
-* Dead Letter Channel for the dead letter
-error handler
-* DefaultErrorHandler for the default
-error handler in Camel
-* TransactionErrorHandler for the
-default error handler for transacted routes
-* Transactional Client for transactional
-behavior
-* Exception Clause as it supports *handling*
-thrown exceptions
-* Try Catch Finally for try ... catch ...
-finally as DSL you can use in the routing

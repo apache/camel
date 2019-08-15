@@ -158,10 +158,3 @@ the download page for the latest versions).
 </dependency>
 ---------------------------------------
 
-[[ScriptingLanguages-SeeAlso]]
-== See Also
-
-* Languages
-* xref:dsl.adoc[DSL]
-* XML Configuration
-

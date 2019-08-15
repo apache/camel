@@ -11,10 +11,3 @@ Message, or *InOut* for a
 Request Reply where there is an inbound and
 outbound Message.
 
-[[Exchange-SeeAlso]]
-== See Also
-
-* Event Message
-* Request Reply
-* Exchange Pattern
-* Message

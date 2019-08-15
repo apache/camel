@@ -14,9 +14,3 @@ either the `@Consume` annotation or using the routing DSL:
 from("jms:someQueue").bean(MyBean.class, "someMethod");
 ----
 
-[[HowshouldIinvokemyPOJOsorSpringServices-SeeAlso]]
-== See Also
-
-* xref:bean-integration.adoc[Bean Integration]
-* xref:bean-binding.adoc[Bean Binding]
-* xref:pojo-consuming.adoc[POJO Consuming]

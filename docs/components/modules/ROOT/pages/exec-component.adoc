@@ -271,9 +271,3 @@ such a command - `echo` - in Windows.
 from("direct:exec").to("exec:cmd?args=/C echo echoString")
 ----------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

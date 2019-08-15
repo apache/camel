@@ -148,11 +148,3 @@ parameter:
     }
 ----
 
-[[WritingComponents-SeeAlso]]
-== See Also
-
-* xref:configuring-camel.adoc[Configuring Camel]
-* xref:endpoint.adoc[Endpoint]
-* xref:component.adoc[Component]
-* http://camel.apache.org/creating-a-new-camel-component.html[Creating a
-new Camel Component with Maven]

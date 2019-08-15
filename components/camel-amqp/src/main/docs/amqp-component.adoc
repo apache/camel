@@ -477,9 +477,3 @@ Keep in mind that both  `AMQPComponent#amqpComponent()` methods and
 `AMQPConnectionDetails` pre-configure the component with the topic
 prefix, so you don't have to configure it explicitly.
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

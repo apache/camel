@@ -244,9 +244,3 @@ command:
         setBody().constant("Installed patches have been deleted."); 
 -----------------------------------------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

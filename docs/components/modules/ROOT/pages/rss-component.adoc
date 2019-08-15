@@ -209,11 +209,3 @@ public static class FilterBean {
 return firstEntry.getTitle().contains("Camel");
 ----
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:atom-component.adoc[Atom]

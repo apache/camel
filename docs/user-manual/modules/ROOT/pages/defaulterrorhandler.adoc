@@ -59,8 +59,3 @@ since we use `handled(true)`, then the original exception is cleared,
 and we transform the message into a fixed response that is returned to
 jetty endpoint that returns it to the original caller.
 
-[[DefaultErrorHandler-SeeAlso]]
-== See Also
-
-* xref:error-handler.adoc[Error Handler]
-* xref:dead-letter-channel.adoc[Dead Letter Channel]

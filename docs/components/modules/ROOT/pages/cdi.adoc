@@ -847,12 +847,3 @@ mvn archetype:generate -DarchetypeGroupId=org.apache.camel.archetypes -Darchetyp
 ----
 
 
-== See Also
-
-* Camel CDI testing
-* http://www.cdi-spec.org[CDI specification Web site]
-* http://www.cdi-spec.org/ecosystem/[CDI ecosystem]
-* http://weld.cdi-spec.org[Weld home page]
-* http://openwebbeans.apache.org[OpenWebBeans home page]
-* https://github.com/astefanutti/further-cdi[Going further with CDI and Camel]
-(See Camel CDI section)

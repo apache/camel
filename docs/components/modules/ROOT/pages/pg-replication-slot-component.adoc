@@ -152,9 +152,3 @@ this component to sync data from PostgreSQL to other database, make sure your op
 instead of INSERT,...). This will make sure repeated messages won't affect your system negatively.
 
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

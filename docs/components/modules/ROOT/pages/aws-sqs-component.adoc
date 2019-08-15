@@ -411,11 +411,3 @@ The other one will use a NullMessageDeduplicationIdStrategy, that will use the b
 
 In case of send batch message operation, you'll need to use the `useContentBasedDeduplication` and on the Queue you're pointing you'll need to enable the `content based deduplication` option.
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* AWS Component

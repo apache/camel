@@ -928,8 +928,3 @@ The regular `PropertySource` will lookup the property on-demand, for example to 
 values from a backend source such as a database or HashiCorp Vault etc.
 
 
-== See Also
-
-* xref:properties-component.adoc[Properties] component
-* Jasypt for using encrypted values (eg passwords) in
-the properties

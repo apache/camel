@@ -22,12 +22,3 @@ to use raw values for password options, and using
 xref:using-propertyplaceholder.adoc[property placeholders] etc.
 ====
 
-[[Component-SeeAlso]]
-== See Also
-
-* xref:endpoint.adoc[Endpoint]
-* xref:uris.adoc[URIs]
-* xref:writing-components.adoc[Writing Components]
-* xref:configuring-camel.adoc[How do I add a component?]
-* xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
-* xref:using-propertyplaceholder.adoc[Using `PropertyPlaceholder`]

@@ -419,15 +419,3 @@ public class Foo {
 }
 --------------------------------------------------
 
-[[SpringTesting-SeeAlso]]
-== See Also
-
-* A
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/java/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.java[real
-example test case using Mock and Spring] along with its
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[Spring
-XML]
-* Bean Integration
-* xref:components::mock-component.adoc[Mock] endpoint
-* xref:components::test.adoc[Test] endpoint
-

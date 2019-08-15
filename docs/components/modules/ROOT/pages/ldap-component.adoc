@@ -378,9 +378,3 @@ public class CustomSocketFactory extends SSLSocketFactory {
 
  
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -93,10 +93,3 @@ Exchange at the node.
 
 You would need to enable this using the JMX API.
 
-[[BacklogDebugger-SeeAlso]]
-== See Also
-
-* BacklogTracer
-* xref:debugger.adoc[Debugger]
-* xref:components::log-component.adoc[Log]
-

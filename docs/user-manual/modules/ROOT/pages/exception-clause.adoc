@@ -790,9 +790,3 @@ Spring DSL as well. Here are a few examples:
 * Route specific scoped
 /components/camel-spring/src/test/resources/org/apache/camel/spring/processor/onexception/onExceptionSubRouteTest.xml
 
-[[ExceptionClause-Seealso]]
-== See also
-
-* The xref:error-handler.adoc[Error Handler] for the general error handling documentation
-* The xref:dead-letter-channel.adoc[Dead Letter Channel] for further details
-* The xref:transactional-client.adoc[Transactional Client] for transactional behavior

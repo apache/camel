@@ -299,11 +299,3 @@ can have multiple options in one line, eg this is the same:
 </route>
 ----
 
-[[HowdoIconfigureendpoints-SeeAlso]]
-== See Also
-
-* xref:configuring-camel.adoc[How do I add a component?]
-* xref:components::cdi.adoc[CDI]
-* xref:spring.adoc[Spring]
-* xref:uris.adoc[URIs]
-* xref:using-propertyplaceholder.adoc[Using `PropertyPlaceholder`]

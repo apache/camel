@@ -262,9 +262,3 @@ To use Ekstazi, you can run the tests with the maven profile ekstazi.
 mvn test -Pekstazi
 ------------------
 
-[[Building-SeeAlso]]
-== See Also
-
-* Running Unit Tests
-* Source
-* Examples

@@ -307,8 +307,3 @@ need to add the following dependency to your pom.
 </dependency>
 ----------------------------------------------------------
 
-== See Also
-
-* Data Format
-* Crypto (Digital Signatures)
-* http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]

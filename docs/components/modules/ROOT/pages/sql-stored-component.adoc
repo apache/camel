@@ -280,6 +280,3 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 
 You should also include the specific database driver, if needed.
 
-== See Also
-
-* xref:sql-component.adoc[SQL Component]
