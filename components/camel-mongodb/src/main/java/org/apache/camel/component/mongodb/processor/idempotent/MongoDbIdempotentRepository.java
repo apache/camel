@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb3.processor.idempotent;
+package org.apache.camel.component.mongodb.processor.idempotent;
 
 import com.mongodb.ErrorCategory;
 import com.mongodb.MongoClient;
@@ -29,7 +29,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 
 @ManagedResource(description = "Mongo db based message id repository")
 public class MongoDbIdempotentRepository extends ServiceSupport implements IdempotentRepository {

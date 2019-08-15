@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb3;
+package org.apache.camel.component.mongodb;
 
 import com.mongodb.CursorType;
 import com.mongodb.MongoCursorNotFoundException;
@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.bson.Document;
 
 import static com.mongodb.client.model.Filters.gt;
-import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 
 class MongoDbTailingThread extends MongoAbstractConsumerThread {
 

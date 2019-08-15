@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb3;
+package org.apache.camel.component.mongodb;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -22,6 +22,6 @@ import org.springframework.context.annotation.ImportResource;
 
 @Configuration
 @Import(EmbedMongoConfiguration.class)
-@ImportResource("org/apache/camel/component/mongodb3/mongoBasicOperationsTest.xml")
+@ImportResource("org/apache/camel/component/mongodb/mongoBasicOperationsTest.xml")
 public class MongoBasicOperationsConfiguration {
 }

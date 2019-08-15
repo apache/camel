@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb3;
+package org.apache.camel.component.mongodb;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,13 +46,13 @@ import org.apache.camel.util.StringHelper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import static org.apache.camel.component.mongodb3.MongoDbOperation.command;
-import static org.apache.camel.component.mongodb3.MongoDbOperation.findAll;
-import static org.apache.camel.component.mongodb3.MongoDbOperation.getDbStats;
-import static org.apache.camel.component.mongodb3.MongoDbOperation.valueOf;
-import static org.apache.camel.component.mongodb3.MongoDbOutputType.Document;
-import static org.apache.camel.component.mongodb3.MongoDbOutputType.DocumentList;
-import static org.apache.camel.component.mongodb3.MongoDbOutputType.MongoIterable;
+import static org.apache.camel.component.mongodb.MongoDbOperation.command;
+import static org.apache.camel.component.mongodb.MongoDbOperation.findAll;
+import static org.apache.camel.component.mongodb.MongoDbOperation.getDbStats;
+import static org.apache.camel.component.mongodb.MongoDbOperation.valueOf;
+import static org.apache.camel.component.mongodb.MongoDbOutputType.Document;
+import static org.apache.camel.component.mongodb.MongoDbOutputType.DocumentList;
+import static org.apache.camel.component.mongodb.MongoDbOutputType.MongoIterable;
 
 /**
  * Component for working with documents stored in MongoDB database.

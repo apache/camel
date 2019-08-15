@@ -132,7 +132,7 @@ public interface MongoDbEndpointBuilderFactory {
          * possible values, see MongoDbOperation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
@@ -147,7 +147,7 @@ public interface MongoDbEndpointBuilderFactory {
          * possible values, see MongoDbOperation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
@@ -163,7 +163,7 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
@@ -180,7 +180,7 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
@@ -669,7 +669,7 @@ public interface MongoDbEndpointBuilderFactory {
          * possible values, see MongoDbOperation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
@@ -684,7 +684,7 @@ public interface MongoDbEndpointBuilderFactory {
          * possible values, see MongoDbOperation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
@@ -700,7 +700,7 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
@@ -717,7 +717,7 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
@@ -1137,7 +1137,7 @@ public interface MongoDbEndpointBuilderFactory {
          * possible values, see MongoDbOperation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
@@ -1151,7 +1151,7 @@ public interface MongoDbEndpointBuilderFactory {
          * possible values, see MongoDbOperation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
@@ -1167,7 +1167,7 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
@@ -1183,7 +1183,7 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
@@ -1465,7 +1465,7 @@ public interface MongoDbEndpointBuilderFactory {
 
     /**
      * Proxy enum for
-     * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code> enum.
+     * <code>org.apache.camel.component.mongodb.MongoDbOperation</code> enum.
      */
     enum MongoDbOperation {
         findById,
@@ -1486,7 +1486,7 @@ public interface MongoDbEndpointBuilderFactory {
 
     /**
      * Proxy enum for
-     * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code> enum.
+     * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code> enum.
      */
     enum MongoDbOutputType {
         DocumentList,

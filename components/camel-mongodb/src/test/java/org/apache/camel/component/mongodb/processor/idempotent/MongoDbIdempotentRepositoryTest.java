@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb3.processor.idempotent;
+package org.apache.camel.component.mongodb.processor.idempotent;
 
 import java.util.UUID;
 
-import org.apache.camel.component.mongodb3.AbstractMongoDbTest;
+import org.apache.camel.component.mongodb.AbstractMongoDbTest;
 import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;

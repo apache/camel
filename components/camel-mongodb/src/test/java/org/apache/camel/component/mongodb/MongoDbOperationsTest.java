@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb3;
+package org.apache.camel.component.mongodb;
 
 import java.util.Arrays;
 import java.util.Formatter;
@@ -43,7 +43,7 @@ import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.currentTimestamp;
 import static com.mongodb.client.model.Updates.set;
-import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 
 public class MongoDbOperationsTest extends AbstractMongoDbTest {
 
