@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  serviceCall("myService/foo") -> http://hostname:port/foo
  serviceCall("http:myService/foo") -> http:hostname:port/foo
  serviceCall("myService", "http:myService.host:myService.port/foo") -> http:hostname:port/foo
- serviceCall("myService", "netty4:tcp:myService?connectTimeout=1000") -> netty:tcp:hostname:port?connectTimeout=1000
+ serviceCall("myService", "netty:tcp:myService?connectTimeout=1000") -> netty:tcp:hostname:port?connectTimeout=1000
  * </pre>
  */
 public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {

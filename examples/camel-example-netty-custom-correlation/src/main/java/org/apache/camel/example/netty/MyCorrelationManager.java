@@ -16,11 +16,11 @@
  */
 package org.apache.camel.example.netty;
 
-import org.apache.camel.component.netty4.TimeoutCorrelationManagerSupport;
+import org.apache.camel.component.netty.TimeoutCorrelationManagerSupport;
 import org.apache.camel.util.StringHelper;
 
 /**
- * Implement a timeout aware {@link org.apache.camel.component.netty4.NettyCamelStateCorrelationManager}
+ * Implement a timeout aware {@link org.apache.camel.component.netty.NettyCamelStateCorrelationManager}
  * that handles all the complexities for us, so we only need to implement how to extract the correlation id.
  */
 public class MyCorrelationManager extends TimeoutCorrelationManagerSupport {
