@@ -35,7 +35,6 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.netty.http.HttpServerInitializerFactory;
 import org.apache.camel.component.netty.http.HttpServerConsumerChannelFactory;
 import org.apache.camel.component.netty.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
@@ -51,7 +50,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
- * A multiplex {@link HttpServerInitializerFactory} which keeps a list of handlers, and delegates to the
+ * A multiplex {@link org.apache.camel.component.netty.http.HttpServerInitializerFactory} which keeps a list of handlers, and delegates to the
  * target handler based on the http context path in the incoming request. This is used to allow to reuse
  * the same Netty consumer, allowing to have multiple routes on the same netty {@link io.netty.bootstrap.ServerBootstrap}
  */
