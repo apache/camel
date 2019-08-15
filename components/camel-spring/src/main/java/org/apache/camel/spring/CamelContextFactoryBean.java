@@ -100,7 +100,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
 
-    @XmlAttribute(name = "depends-on")
+    @XmlAttribute(name = "depends-on") @Metadata(displayName = "Depends On")
     private String dependsOn;
     @XmlAttribute
     private String trace;
@@ -122,9 +122,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String autoStartup;
     @XmlAttribute @Metadata(defaultValue = "true")
     private String shutdownEager;
-    @XmlAttribute
+    @XmlAttribute @Metadata(displayName = "Use MDC Logging")
     private String useMDCLogging;
-    @XmlAttribute
+    @XmlAttribute @Metadata(displayName = "MDC Logging Keys Pattern")
     private String mdcLoggingKeysPattern;
     @XmlAttribute
     private String useDataType;
@@ -162,7 +162,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private ContextScanDefinition contextScan;
     @XmlElement(name = "streamCaching", type = CamelStreamCachingStrategyDefinition.class)
     private CamelStreamCachingStrategyDefinition camelStreamCachingStrategy;
-    @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class)
+    @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class) @Metadata(displayName = "JMX Agent")
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElements({
             @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class),
@@ -668,7 +668,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Configuration of JMX.
+     * Configuration of JMX Agent.
      */
     public void setCamelJMXAgent(CamelJMXAgentDefinition agent) {
         camelJMXAgent = agent;
