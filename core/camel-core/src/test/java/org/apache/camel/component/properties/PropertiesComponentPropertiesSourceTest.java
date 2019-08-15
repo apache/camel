@@ -43,7 +43,7 @@ public class PropertiesComponentPropertiesSourceTest {
     public void testOrderedPropertiesSources() {
         CamelContext context = new DefaultCamelContext();
         context.getRegistry().bind("my-ps-1", new PropertiesPropertiesSource(Ordered.HIGHEST, "ps1", "shared", "v1", "my-key-1", "my-val-1"));
-        context.getRegistry().bind("my-ps-2", new PropertiesPropertiesSource(Ordered.LOWEST,"ps2", "shared", "v2", "my-key-2", "my-val-2"));
+        context.getRegistry().bind("my-ps-2", new PropertiesPropertiesSource(Ordered.LOWEST, "ps2", "shared", "v2", "my-key-2", "my-val-2"));
 
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         Properties properties = pc.loadProperties();
