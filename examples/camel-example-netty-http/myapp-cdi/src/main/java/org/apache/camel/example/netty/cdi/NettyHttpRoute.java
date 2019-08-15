@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.netty4.http.NettySharedHttpServer;
+import org.apache.camel.component.netty.http.NettySharedHttpServer;
 import org.ops4j.pax.cdi.api.Service;
 
 @ApplicationScoped

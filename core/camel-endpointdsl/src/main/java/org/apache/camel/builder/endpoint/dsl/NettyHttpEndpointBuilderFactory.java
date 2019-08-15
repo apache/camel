@@ -510,11 +510,11 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * Refers to a
-         * org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration
+         * org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration
          * for configuring secure web resources.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration</code> type.
          * 
          * Group: security
          */
@@ -525,11 +525,11 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * Refers to a
-         * org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration
+         * org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration
          * for configuring secure web resources.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration</code> type.
          * 
          * Group: security
          */
@@ -1011,7 +1011,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom NettyServerBootstrapFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.NettyServerBootstrapFactory</code> type.
+         * <code>org.apache.camel.component.netty.NettyServerBootstrapFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -1024,7 +1024,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom NettyServerBootstrapFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.NettyServerBootstrapFactory</code> type.
+         * <code>org.apache.camel.component.netty.NettyServerBootstrapFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -1038,7 +1038,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * more details.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettySharedHttpServer</code> type.
+         * <code>org.apache.camel.component.netty.http.NettySharedHttpServer</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -1052,7 +1052,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * more details.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettySharedHttpServer</code> type.
+         * <code>org.apache.camel.component.netty.http.NettySharedHttpServer</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -1152,7 +1152,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom ServerInitializerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.ServerInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ServerInitializerFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -1165,7 +1165,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom ServerInitializerFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.ServerInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ServerInitializerFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -1206,8 +1206,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * space character. Notice this option is used by the default
          * org.apache.camel.component.netty.http.NettyHttpBinding and therefore
          * if you implement a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding then you
-         * would need to decode the headers accordingly to this option.
+         * org.apache.camel.component.netty.http.NettyHttpBinding then you would
+         * need to decode the headers accordingly to this option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1224,8 +1224,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * space character. Notice this option is used by the default
          * org.apache.camel.component.netty.http.NettyHttpBinding and therefore
          * if you implement a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding then you
-         * would need to decode the headers accordingly to this option.
+         * org.apache.camel.component.netty.http.NettyHttpBinding then you would
+         * need to decode the headers accordingly to this option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1323,7 +1323,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
@@ -1337,7 +1337,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
@@ -1462,11 +1462,11 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced
@@ -1478,11 +1478,11 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced
@@ -2582,7 +2582,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom ClientInitializerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.ClientInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ClientInitializerFactory</code> type.
          * 
          * Group: producer (advanced)
          */
@@ -2595,7 +2595,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom ClientInitializerFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.ClientInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ClientInitializerFactory</code> type.
          * 
          * Group: producer (advanced)
          */
@@ -2880,7 +2880,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
@@ -2894,7 +2894,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
@@ -3019,11 +3019,11 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced
@@ -3035,11 +3035,11 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced
@@ -3979,7 +3979,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
@@ -3993,7 +3993,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
@@ -4118,11 +4118,11 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced
@@ -4134,11 +4134,11 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced

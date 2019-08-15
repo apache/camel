@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HL7 MLLP Decoder for Netty4
+ * HL7 MLLP Decoder for Netty
  */
 class HL7MLLPNettyDecoder extends DelimiterBasedFrameDecoder {
 

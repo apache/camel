@@ -526,24 +526,24 @@ be resolved when the endpoint is created.
 [source,java]
 ----
 ChannelHandlerFactory lengthDecoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
- 
+
 StringDecoder stringDecoder = new StringDecoder();
 registry.bind("length-decoder", lengthDecoder);
 registry.bind("string-decoder", stringDecoder);
- 
+
 LengthFieldPrepender lengthEncoder = new LengthFieldPrepender(4);
 StringEncoder stringEncoder = new StringEncoder();
 registry.bind("length-encoder", lengthEncoder);
 registry.bind("string-encoder", stringEncoder);
- 
+
 List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
 decoders.add(lengthDecoder);
 decoders.add(stringDecoder);
- 
+
 List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
 encoders.add(lengthEncoder);
 encoders.add(stringEncoder);
- 
+
 registry.bind("encoders", encoders);
 registry.bind("decoders", decoders);
 ----
@@ -554,7 +554,7 @@ lists in an application context
 [source,xml]
 ----
 <util:list id="decoders" list-class="java.util.LinkedList">
-        <bean class="org.apache.camel.component.netty4.ChannelHandlerFactories" factory-method="newLengthFieldBasedFrameDecoder">
+        <bean class="org.apache.camel.component.netty.ChannelHandlerFactories" factory-method="newLengthFieldBasedFrameDecoder">
             <constructor-arg value="1048576"/>
             <constructor-arg value="0"/>
             <constructor-arg value="4"/>
@@ -576,7 +576,7 @@ lists in an application context
     </bean>
     <bean id="string-encoder" class="io.netty.handler.codec.string.StringEncoder"/>
 
-    <bean id="length-decoder" class="org.apache.camel.component.netty4.ChannelHandlerFactories" factory-method="newLengthFieldBasedFrameDecoder">
+    <bean id="length-decoder" class="org.apache.camel.component.netty.ChannelHandlerFactories" factory-method="newLengthFieldBasedFrameDecoder">
         <constructor-arg value="1048576"/>
         <constructor-arg value="0"/>
         <constructor-arg value="4"/>
@@ -592,7 +592,7 @@ a comma separated list or contained in a List e.g.
 [source,java]
 ----
  from("direct:multiple-codec").to("netty:tcp://0.0.0.0:{{port}}?encoders=#encoders&sync=false");
-                
+
  from("netty:tcp://0.0.0.0:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
 ----
 
@@ -738,9 +738,9 @@ using the `NettyWorkerPoolBuilder` with 2 worker threads as shown below:
 ----
 
 TIP: For boss thread pool there is a
-`org.apache.camel.component.netty4.NettyServerBossPoolBuilder` builder
+`org.apache.camel.component.netty.NettyServerBossPoolBuilder` builder
 for Netty consumers, and a
-`org.apache.camel.component.netty4.NettyClientBossPoolBuilder` for the
+`org.apache.camel.component.netty.NettyClientBossPoolBuilder` for the
 Netty producers.
 
 Then in the Camel routes we can refer to this worker pools by

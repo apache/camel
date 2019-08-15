@@ -214,7 +214,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testAsEndpointUriNetty4http() throws Exception {
+    public void testAsEndpointUriNettyhttp() throws Exception {
         Map<String, String> map = new HashMap<>();
         // use http protocol
         map.put("protocol", "http");
@@ -399,7 +399,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testEndpointPropertiesNetty4Http() throws Exception {
+    public void testEndpointPropertiesNettyHttp() throws Exception {
         Map<String, String> map = catalog.endpointProperties("netty-http:http:localhost:8080/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
@@ -413,7 +413,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testEndpointPropertiesNetty4HttpDefaultPort() throws Exception {
+    public void testEndpointPropertiesNettyHttpDefaultPort() throws Exception {
         Map<String, String> map = catalog.endpointProperties("netty-http:http:localhost/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(5, map.size());
@@ -426,7 +426,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testEndpointPropertiesNetty4HttpPlaceholder() throws Exception {
+    public void testEndpointPropertiesNettyHttpPlaceholder() throws Exception {
         Map<String, String> map = catalog.endpointProperties("netty-http:http:{{myhost}}:{{myport}}/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
@@ -440,7 +440,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testEndpointPropertiesNetty4HttpWithDoubleSlash() throws Exception {
+    public void testEndpointPropertiesNettyHttpWithDoubleSlash() throws Exception {
         Map<String, String> map = catalog.endpointProperties("netty-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());

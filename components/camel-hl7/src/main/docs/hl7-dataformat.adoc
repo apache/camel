@@ -32,7 +32,7 @@ for this component:
 == HL7 MLLP protocol
 
 HL7 is often used with the HL7 MLLP protocol, which is a text based TCP
-socket based protocol. This component ships with a Mina and Netty4 Codec
+socket based protocol. This component ships with a Mina and Netty Codec
 that conforms to the MLLP protocol so you can easily expose an HL7
 listener accepting HL7 requests over the TCP transport layer. To expose
 a HL7 listener service, the xref:mina-component.adoc[camel-mina] or

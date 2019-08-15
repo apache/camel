@@ -742,7 +742,7 @@
 			"name":"camel.rest.context-path",
 			"type":"java.lang.String",
 			"sourceType":"org.apache.camel.spi.RestConfiguration",
-			"description":"Sets a leading context-path the REST services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. Or for components such as camel-jetty or camel-netty4-http that includes a HTTP server."
+			"description":"Sets a leading context-path the REST services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. Or for components such as camel-jetty or camel-netty-http that includes a HTTP server."
 		},
 		{
 			"name":"camel.rest.cors-headers",

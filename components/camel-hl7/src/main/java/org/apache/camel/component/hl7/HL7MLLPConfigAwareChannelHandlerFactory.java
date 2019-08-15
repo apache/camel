@@ -18,7 +18,7 @@ package org.apache.camel.component.hl7;
 
 import java.nio.charset.Charset;
 
-import org.apache.camel.component.netty4.DefaultChannelHandlerFactory;
+import org.apache.camel.component.netty.DefaultChannelHandlerFactory;
 
 /**
  * Abstract helper for Netty decoder and encoder factory

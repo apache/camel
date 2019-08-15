@@ -471,8 +471,7 @@ public interface NettyEndpointBuilderFactory {
          * and NULL.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.TextLineDelimiter</code>
-         * type.
+         * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
          * Group: codec
          */
@@ -486,8 +485,7 @@ public interface NettyEndpointBuilderFactory {
          * and NULL.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.TextLineDelimiter</code>
-         * type.
+         * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
          * Group: codec
          */
@@ -1023,7 +1021,7 @@ public interface NettyEndpointBuilderFactory {
          * To use a custom NettyServerBootstrapFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.NettyServerBootstrapFactory</code> type.
+         * <code>org.apache.camel.component.netty.NettyServerBootstrapFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -1036,7 +1034,7 @@ public interface NettyEndpointBuilderFactory {
          * To use a custom NettyServerBootstrapFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.NettyServerBootstrapFactory</code> type.
+         * <code>org.apache.camel.component.netty.NettyServerBootstrapFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -1149,7 +1147,7 @@ public interface NettyEndpointBuilderFactory {
          * To use a custom ServerInitializerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.ServerInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ServerInitializerFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -1162,7 +1160,7 @@ public interface NettyEndpointBuilderFactory {
          * To use a custom ServerInitializerFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.ServerInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ServerInitializerFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -1990,8 +1988,7 @@ public interface NettyEndpointBuilderFactory {
          * and NULL.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.TextLineDelimiter</code>
-         * type.
+         * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
          * Group: codec
          */
@@ -2005,8 +2002,7 @@ public interface NettyEndpointBuilderFactory {
          * and NULL.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.TextLineDelimiter</code>
-         * type.
+         * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
          * Group: codec
          */
@@ -2352,7 +2348,7 @@ public interface NettyEndpointBuilderFactory {
          * To use a custom ClientInitializerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.ClientInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ClientInitializerFactory</code> type.
          * 
          * Group: producer (advanced)
          */
@@ -2365,7 +2361,7 @@ public interface NettyEndpointBuilderFactory {
          * To use a custom ClientInitializerFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.ClientInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ClientInitializerFactory</code> type.
          * 
          * Group: producer (advanced)
          */
@@ -2390,7 +2386,7 @@ public interface NettyEndpointBuilderFactory {
          * producerPoolEnabled option for more details.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.NettyCamelStateCorrelationManager</code> type.
+         * <code>org.apache.camel.component.netty.NettyCamelStateCorrelationManager</code> type.
          * 
          * Group: producer (advanced)
          */
@@ -2415,7 +2411,7 @@ public interface NettyEndpointBuilderFactory {
          * producerPoolEnabled option for more details.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.NettyCamelStateCorrelationManager</code> type.
+         * <code>org.apache.camel.component.netty.NettyCamelStateCorrelationManager</code> type.
          * 
          * Group: producer (advanced)
          */
@@ -3351,8 +3347,7 @@ public interface NettyEndpointBuilderFactory {
          * and NULL.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.TextLineDelimiter</code>
-         * type.
+         * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
          * Group: codec
          */
@@ -3365,8 +3360,7 @@ public interface NettyEndpointBuilderFactory {
          * and NULL.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.TextLineDelimiter</code>
-         * type.
+         * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
          * Group: codec
          */
@@ -4092,7 +4086,7 @@ public interface NettyEndpointBuilderFactory {
 
     /**
      * Proxy enum for
-     * <code>org.apache.camel.component.netty4.TextLineDelimiter</code> enum.
+     * <code>org.apache.camel.component.netty.TextLineDelimiter</code> enum.
      */
     enum TextLineDelimiter {
         LINE,
