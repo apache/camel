@@ -199,12 +199,3 @@ Note you can have as many route policy factories as you want. Just call
 the *`addRoutePolicyFactory`* again, or declare the other factories
 as *`<bean>`* in XML.
 
-== See Also
-
-* xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] for information
-on policy based scheduling capability for camel routes
-* xref:components::metrics-component.adoc[MetricsRoutePolicyFactory] for information
-on a policy using the metrics component to expose route statistics using
-the metrics library.
-* xref:architecture.adoc[Architecture]
-

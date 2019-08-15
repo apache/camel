@@ -281,11 +281,3 @@ If you want to be injected with the xref:camelcontext.adoc[CamelContext] in your
 
 To avoid a hung route when testing using Spring Transactions see the note about Spring Integration Testing under Transactional Client.
 
-== See also
-
-* Spring JMS Tutorial
-* Creating a new Spring based Camel Route
-* Spring example
-* Xml Reference
-* Advanced configuration of CamelContext using Spring
-* How Do I Import Routes From Other XML Files?

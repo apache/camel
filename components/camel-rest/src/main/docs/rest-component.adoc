@@ -281,7 +281,3 @@ Rest DSL with SERVLET as
 transport that can be deployed on Apache Tomcat, or similar web
 containers.
 
-== See Also
-
-* Rest DSL
-* xref:servlet-component.adoc[SERVLET]

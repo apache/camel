@@ -26,12 +26,3 @@ implementations.
 
 See first example in https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/to-eip.adoc[To EIP]
 
-== See Also
-
-For more details see:
-
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/toD-eip.adoc[ToD EIP]
-* xref:recipientList-eip.adoc[Recipient List]
-* xref:message.adoc[Message]
-* xref:wireTap-eip.adoc[Wire Tap] 
-

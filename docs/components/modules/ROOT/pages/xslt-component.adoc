@@ -320,9 +320,3 @@ xsl:message.
 The exception is stored on the Exchange as a warning with the
 key `Exchange.XSLT_WARNING.`
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

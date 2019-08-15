@@ -201,7 +201,3 @@ starting the route. To do that you use the repeatCount option as shown:
 </route>
 ----
 
-== See Also
-
-* xref:scheduler-component.adoc[Scheduler]
-* xref:quartz-component.adoc[Quartz]

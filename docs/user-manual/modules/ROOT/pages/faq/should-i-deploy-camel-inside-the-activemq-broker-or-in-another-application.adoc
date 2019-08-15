@@ -30,7 +30,3 @@ to refresh routing rules. Note that at some point
 https://issues.apache.org/activemq/browse/CAMEL-234[Camel will support auto-reload of routing rules on the fly without having to stop and reload the JVM]
 so one day this won't be such a big benefit.
 
-[[ShouldIdeployCamelinsidetheActiveMQbrokerorinanotherapplication-SeeAlso]]
-== See Also
-
-* http://activemq.apache.org/should-i-deploy-the-broker-inside-my-jvm-or-appserver.html[Should I embed the broker in my JVM or run it separately]

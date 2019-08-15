@@ -314,10 +314,3 @@ And in XML DSL you set the mode attribute to BeforeConsumer:
       </onCompletion>
 ------------------------------------------
 
- 
-
-[[OnCompletion-SeeAlso]]
-== See Also
-
-* Unit of Work
-

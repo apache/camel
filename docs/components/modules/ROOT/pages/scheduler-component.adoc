@@ -188,7 +188,3 @@ The consumer will otherwise as by default return 1 message polled to the
 scheduler, every time the consumer has completed processing the
 exchange.
 
-== See Also
-
-* xref:timer-component.adoc[Timer]
-* xref:quartz-component.adoc[Quartz]

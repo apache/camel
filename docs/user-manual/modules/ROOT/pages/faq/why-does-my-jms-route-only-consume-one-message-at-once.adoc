@@ -15,7 +15,3 @@ from("activemq:SomeQueue?concurrentConsumers=25").
   bean(SomeCode.class);
 ----
 
-[[WhydoesmyJMSrouteonlyconsumeonemessageatonce-SeeAlso]]
-== See Also
-
-* xref:components::jms-component.adoc[JMS] for more configuration details

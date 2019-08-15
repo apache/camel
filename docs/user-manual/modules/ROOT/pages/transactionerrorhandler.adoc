@@ -170,9 +170,3 @@ from("direct:fail")
     .setBody(constant("Donkey in Action")).bean("bookService");
 ----
 
-[[TransactionErrorHandler-SeeAlso]]
-== See Also
-
-* xref:error-handler.adoc[Error Handler]
-* xref:error-handling-in-camel.adoc[Error handling in Camel]
-* xref:transactional-client.adoc[Transactional Client]

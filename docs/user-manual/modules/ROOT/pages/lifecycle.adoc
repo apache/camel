@@ -102,10 +102,3 @@ stop/start.
 If a route consumer does not support suspension, it will fallback and
 stop the route instead.
 
-[[Lifecycle-SeeAlso]]
-== See Also
-
-* xref:camelcontext.adoc[CamelContext]
-* xref:architecture.adoc[Architecture]
-* JMX
-

@@ -31,8 +31,3 @@ Notice that from Camel 2.9 onwards its encouraged to use the
 `@ManagedResource`, `@ManagedAttribute` and `@ManagedOperation` from the
 `org.apache.camel.api.management` package. This allows your custom code
 to not depend on Spring JARs anymore.
-
-[[WhyismyprocessornotshowingupinJConsole-Seealso]]
-== See also
-
-* xref:components::jmx-component.adoc[Camel JMX]

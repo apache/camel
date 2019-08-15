@@ -354,15 +354,3 @@ To avoid a hung route when testing using Spring Transactions see the
 note about Spring Integration Testing
 under Transactional Client.
 
-== See also
-
-* Spring JMS Tutorial
-* xref:manual::creating-a-new-spring-based-camel-route.adoc[Creating a new
-Spring based Camel Route]
-* Spring example
-* Xml Reference
-* xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
-configuration of CamelContext using Spring]
-* xref:manual::faq/how-do-i-import-routes-from-other-xml-files.adoc[How do I import
-routes from other XML files]
-

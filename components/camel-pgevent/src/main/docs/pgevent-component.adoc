@@ -120,9 +120,3 @@ The component supports 2 options, which are listed below.
 
 
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

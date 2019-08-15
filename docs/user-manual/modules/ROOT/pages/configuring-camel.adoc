@@ -68,8 +68,3 @@ xref:contributing.adoc[contribute a patch] to the camel XSD. Otherwise
 you could write your own namespace & schema if you prefer.
 
 
-[[ConfiguringCamel-SeeAlso]]
-== See Also
-
-* xref:writing-components.adoc[Writing Components]
-* xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]

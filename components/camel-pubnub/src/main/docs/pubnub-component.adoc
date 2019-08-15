@@ -235,11 +235,3 @@ The example PubNubSensorExample already contains a subscribe key provided by Pub
 The example illustrates the PubNub component subscribing to a infinite stream of sensor data.
 
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:rss-component.adoc[RSS]

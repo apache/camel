@@ -336,10 +336,3 @@ from("apns:consumer?initialDelay=10&delay=3600&timeUnit=SECONDS")
     .to("mock:result");
 --------------------------------------------------------------------------
 
-== See Also
-
-* http://camel.apache.org/component.html[Component]
-* http://camel.apache.org/endpoint.html[Endpoint]
-*
-http://blog.xebia.fr/2010/09/30/creer-un-composant-apache-camel-de-connexion-a-lapns-1-sur-3/[Blog
-about using APNS (in french)]

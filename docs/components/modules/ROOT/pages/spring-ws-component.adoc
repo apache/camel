@@ -630,9 +630,3 @@ from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointM
 .to("mock:example").marshal(jaxb);
 --------------------------------------------------------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

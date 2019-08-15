@@ -154,9 +154,3 @@ Currently camel-jsch only supports a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
 (i.e. copy files to another host). 
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

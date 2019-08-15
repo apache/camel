@@ -137,8 +137,3 @@ And the sample using spring DSL:
 </route>
 ----
 
-== See Also
-
-* xref:direct-component.adoc[Direct]
-* xref:seda-component.adoc[SEDA]
-* xref:vm-component.adoc[VM]

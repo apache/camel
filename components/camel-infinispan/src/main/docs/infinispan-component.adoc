@@ -858,9 +858,3 @@ XML file as well:
 </camelContext>
 ----
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

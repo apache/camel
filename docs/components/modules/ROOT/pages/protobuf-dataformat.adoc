@@ -241,5 +241,3 @@ To use Protobuf in your camel routes you need to add the a dependency on
   <!-- use the same version as your Camel core version -->
 </dependency>
 -----------------------------------------
-== See Also
-* xref:grpc-component.adoc[Camel gRPC component]

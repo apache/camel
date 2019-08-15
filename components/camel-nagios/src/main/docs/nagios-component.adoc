@@ -183,9 +183,3 @@ In Spring XML its just a matter of defining a Spring bean with the type
 xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring].
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

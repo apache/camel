@@ -156,14 +156,3 @@ The component supports 21 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-
-
-
-
-
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

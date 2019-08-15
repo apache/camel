@@ -125,9 +125,3 @@ public void inspectRecievedOrders() {
 }
 ----
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

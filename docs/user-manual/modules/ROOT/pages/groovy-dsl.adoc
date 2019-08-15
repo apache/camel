@@ -394,7 +394,3 @@ Using the plain Java DSL, the route would look something like this:
 ...
 -----------------------------------
 
-[[GroovyDSL-SeeAlso]]
-== See Also
-
-* xref:dsl.adoc[DSL]

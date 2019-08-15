@@ -255,9 +255,3 @@ The known security policy URIs and enum literals are can be seen here: https://g
 
 **Note:** In any case security policies are considered case sensitive.
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

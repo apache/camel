@@ -10,11 +10,3 @@ http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework
 See xref:lifecycle.adoc[Lifecycle] to understand the overall lifecycle
 of the CamelContext.
 
-[[CamelContext-SeeAlso]]
-== See Also
-
-* xref:route-builder.adoc[RouteBuilder]
-* xref:routes.adoc[Routes]
-* xref:lifecycle.adoc[Lifecycle]
-* xref:architecture.adoc[Architecture]
-

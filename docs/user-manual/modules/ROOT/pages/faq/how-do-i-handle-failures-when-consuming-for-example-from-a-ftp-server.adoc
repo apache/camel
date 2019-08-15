@@ -24,8 +24,3 @@ xref:polling-consumer.adoc[Polling Consumer].
 Notice that the option `pollStrategy` applies for all consumers which is
 a `ScheduledPollConsumer` consumer. The page lists those.
 
-[[HowdoIhandlefailureswhenconsumingforexamplefromaFTPserver-Seealso]]
-== See also
-
-* xref:components::ftp-component.adoc[FTP]
-* xref:polling-consumer.adoc[Polling Consumer]

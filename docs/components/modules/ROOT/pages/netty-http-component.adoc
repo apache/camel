@@ -624,13 +624,3 @@ below:
 </route>
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:netty-component.adoc[Netty]
-* Netty HTTP Server Example
-* xref:jetty-component.adoc[Jetty]

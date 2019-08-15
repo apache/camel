@@ -222,14 +222,3 @@ instance to set a maximum redelivers to a number > 0.
 See xref:transactional-client.adoc[Transactional Client]
 for more.
 
-[[ErrorhandlinginCamel-Seealso]]
-== See also
-
-* xref:error-handler.adoc[Error Handler]
-* xref:dead-letter-channel.adoc[Dead Letter Channel]
-* xref:exception-clause.adoc[Exception Clause]
-* xref:transactional-client.adoc[Transactional Client]
-* xref:transactionerrorhandler.adoc[TransactionErrorHandler]
-* xref:defaulterrorhandler.adoc[DefaultErrorHandler]
-* xref:try-catch-finally.adoc[Try Catch Finally]
-* xref:loadBalance-eip.adoc[Failover Load Balancer]

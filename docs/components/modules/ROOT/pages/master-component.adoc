@@ -190,9 +190,3 @@ Camel provide the following ClusterService implementations:
 - camel-kubernetes
 - camel-zookeeper
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

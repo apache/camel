@@ -201,7 +201,3 @@ wish to use.
 |https://github.com/apache/camel/blob/master/components/camel-saxon/src/main/java/org/apache/camel/component/xquery/XQueryBuilder.java[org.apache.camel.builder.saxon.XQueryBuilder]
 |=======================================================================
 
-[[Predicate-SeeAlso]]
-== See Also
-
-* xref:expression.adoc[Expression]

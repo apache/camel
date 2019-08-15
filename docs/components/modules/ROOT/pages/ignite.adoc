@@ -104,9 +104,3 @@ When installing on Apache Karaf:
 
 Please refer to the OSGi section in the Ignite documentation for more information.
 
-== See Also
-
-* http://camel.apache.org/configuring-camel.html[Configuring Camel]
-* http://camel.apache.org/component.html[Component]
-* http://camel.apache.org/endpoint.html[Endpoint]
-* http://camel.apache.org/getting-started.html[Getting Started]

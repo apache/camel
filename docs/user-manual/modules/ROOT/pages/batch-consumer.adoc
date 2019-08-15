@@ -59,8 +59,3 @@ this batch.
 Is only `true` for the last entry.
 |=======================================================================
 
-[[BatchConsumer-SeeAlso]]
-== See Also
-
-* Polling Consumer
-

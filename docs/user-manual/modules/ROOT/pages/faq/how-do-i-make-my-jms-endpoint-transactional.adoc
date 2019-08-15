@@ -24,8 +24,3 @@ set `transacted=true` flag on the JMS endpoint and configure
 a `transactionManager` on the xref:component.adoc[Component] or
 xref:endpoint.adoc[Endpoint].
 
-[[HowDoIMakeMyJMSEndpointTransactional-SeeAlso]]
-== See Also
-
-* xref:transactional-client.adoc[Transactional Client]
-* xref:components::jms-component.adoc[JMS]

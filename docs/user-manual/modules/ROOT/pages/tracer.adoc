@@ -37,8 +37,3 @@ camel.springboot.tracing = true
 ----
 
 
-== See Also
-
-* xref:debugger.adoc[Debugger]
-* xref:delay-interceptor.adoc[Delay Interceptor]
-* xref:log-eip.adoc[Log]

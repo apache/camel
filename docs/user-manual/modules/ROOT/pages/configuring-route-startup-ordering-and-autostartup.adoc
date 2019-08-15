@@ -263,9 +263,3 @@ they were started.
 
 See also xref:graceful-shutdown.adoc[Graceful Shutdown].
 
-[[Configuringroutestartuporderingandautostartup-Seealso]]
-== See also
-
-* xref:configuring-camel.adoc[Configuring Camel]
-* xref:graceful-shutdown.adoc[Graceful Shutdown]
-* xref:index.adoc[User Guide]

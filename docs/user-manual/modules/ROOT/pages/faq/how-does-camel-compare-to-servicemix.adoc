@@ -32,12 +32,3 @@ then as and when you need to migrate your integration components into
 your ESB for more centralised management, governance and operational
 monitoring etc.
 
-[[HowdoesCamelcomparetoServiceMix-SeeAlso]]
-== See Also
-
-* xref:faq/how-does-camel-work-with-servicemix.adoc[How does Camel work with
-ServiceMix]
-* xref:faq/how-does-camel-compare-to-servicemix-eip.adoc[How does Camel
-compare to ServiceMix EIP]
-* http://incubator.apache.org/servicemix/servicemix-camel.html[ServiceMix
-Camel plugin]

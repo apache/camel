@@ -50,12 +50,3 @@ from("jbi:endpoint:test:messageFilter:endpoint").
   to("jbi:service:test:trace3");
 ----
 
-[[HowdoesCamelcomparetoServiceMixEIP-SeeAlso]]
-== See Also
-
-* xref:faq/how-does-camel-work-with-servicemix.adoc[How does Camel work with
-ServiceMix]
-* xref:faq/how-does-camel-compare-to-servicemix.adoc[How does Camel compare
-to ServiceMix]
-* http://incubator.apache.org/servicemix/servicemix-camel.html[ServiceMix
-Camel plugin]

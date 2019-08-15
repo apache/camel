@@ -113,9 +113,3 @@ http://localhost:8080/camel-example-servlet-tomcat which has more instructions.
 You can then use a web browser and send a request to the
 http://localhost:8080/camel-example-servlet-tomcat/camel/hello URL.
 
-[[ServletTomcatExample-SeeAlso]]
-== See Also
-
-* xref:examples.adoc[Examples]
-*  xref:components::servlet-component.adoc[Servlet]
-*  xref:components::http-component.adoc[HTTP]

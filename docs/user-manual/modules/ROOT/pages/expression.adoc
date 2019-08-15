@@ -115,8 +115,3 @@ xref:components::groovy-language.adoc[Groovy] |
 |xref:components::xquery-component.adoc[XQuery] |https://github.com/apache/camel/blob/master/components/camel-saxon/src/main/java/org/apache/camel/component/xquery/XQueryBuilder.java[org.apache.camel.builder.saxon.XQueryBuilder]
 |=======================================================================
 
-[[Expression-SeeAlso]]
-=== See Also
-
-* Predicate
-

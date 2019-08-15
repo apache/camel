@@ -674,9 +674,3 @@ configuration:
 log4j.logger.org.apache.camel.component.smpp=DEBUG
 --------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

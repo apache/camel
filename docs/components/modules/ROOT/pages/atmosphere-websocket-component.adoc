@@ -206,13 +206,3 @@ And the equivalent Spring sample:
 
  
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:servlet-component.adoc[SERVLET]
-* xref:ahc-ws-component.adoc[AHC-WS]
-* xref:websocket-component.adoc[Websocket]

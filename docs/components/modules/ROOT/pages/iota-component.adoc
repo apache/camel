@@ -181,7 +181,3 @@ The following route defined in Spring XML retrieve transfers data
 </route>
 ---------------------------------------------------------------------------------------------------------------------------
 
-== See also
-
-* https://www.iota.org/[IOTA website]
-* https://github.com/iotaledger/iota.lib.java[IOTA java lib]

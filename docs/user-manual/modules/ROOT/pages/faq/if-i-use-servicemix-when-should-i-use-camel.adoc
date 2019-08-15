@@ -13,10 +13,3 @@ between your existing JBI endpoints.
 You can also reuse any of the Camel xref:component.adoc[Components]
 within JBI or expose Camel endpoints as JBI endpoints.
 
-[[IfIuseServiceMixwhenshouldIuseCamel-SeeAlso]]
-== See Also
-
-* xref:faq/how-does-camel-compare-to-servicemix.adoc[How does Camel compare
-to ServiceMix]
-* xref:faq/how-does-camel-compare-to-servicemix-eip.adoc[How does Camel
-compare to ServiceMix EIP]

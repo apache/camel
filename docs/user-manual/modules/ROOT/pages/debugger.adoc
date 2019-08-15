@@ -109,9 +109,3 @@ endpoint.
 
 image:debugger.data/debug.png[image]
 
-[[Debugger-SeeAlso]]
-== See Also
-
-* Tracer
-* xref:backlogdebugger.adoc[BacklogDebugger]
-

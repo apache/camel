@@ -491,12 +491,3 @@ The automatic mapping of the Camel servlet can also be disabled.
 | camel.component.servlet.mapping.servlet-name | CamelServlet | The name of the Camel servlet
 |=======================================================================
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:http-component.adoc[HTTP]
-* xref:jetty-component.adoc[Jetty]

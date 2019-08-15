@@ -256,9 +256,3 @@ out of buried and/or delayed state to the normal queue.
 
  
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

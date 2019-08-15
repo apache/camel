@@ -185,7 +185,3 @@ What you must understand as well is the *in-out* message exchange
 pattern, where the caller expects a response. We will look into this in
 another example.
 
-== See also
-
-* xref:examples.adoc[Examples]
-* xref:index.adoc[User Guide]

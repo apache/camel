@@ -1003,12 +1003,3 @@ object to a `Map`, which is in turn used to initialise a new
 
 This type converter is auto-discovered, so you don't need to configure anything manually.
 
-== See also
-
-* http://www.mongodb.org/[MongoDB website]
-* http://en.wikipedia.org/wiki/NoSQL[NoSQL Wikipedia article]
-* http://api.mongodb.org/java/current/[MongoDB Java driver API docs -
-current version]
-*
-http://svn.apache.org/viewvc/camel/trunk/components/camel-mongodb/src/test/[Unit
-tests] for more examples of usage

@@ -724,13 +724,3 @@ public class CamelCdiTest {
 }
 ----
 
-[[CDITesting-SeeAlso]]
-== See Also
-
-* CDI component
-* http://arquillian.org[Arquillian Web site]
-* http://arquillian.org/modules/descriptors-shrinkwrap/[ShrinkWrap
-Descriptors]
-* http://arquillian.org/guides/shrinkwrap_introduction/[Creating
-Deployable Archives with ShrinkWrap]
-* https://ops4j1.jira.com/wiki/display/PAXEXAM4[PAX Exam]
