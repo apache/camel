@@ -194,7 +194,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             // sources are ordered according to {@link org.apache.camel.support.OrderComparator} so
             // it is needed to iterate them in reverse order otherwise lower priority sources may
             // override properties from higher priority ones
-            for (int i = sources.size(); i-- > 0; ) {
+            for (int i = sources.size(); i-- > 0;) {
                 PropertiesSource ps = sources.get(i);
                 if (ps instanceof LoadablePropertiesSource) {
                     LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
@@ -233,7 +233,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             // sources are ordered according to {@link org.apache.camel.support.OrderComparator} so
             // it is needed to iterate them in reverse order otherwise lower priority sources may
             // override properties from higher priority ones
-            for (int i = sources.size(); i-- > 0; ) {
+            for (int i = sources.size(); i-- > 0;) {
                 PropertiesSource ps = sources.get(i);
                 if (ps instanceof LoadablePropertiesSource) {
                     LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
