@@ -232,9 +232,3 @@ convertBodyTo(String.class).
 to("activemq:snmp.states");
 ------------------------------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

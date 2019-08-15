@@ -466,13 +466,3 @@ argument to the JVM:
 -javaagent:<path_to_your_local_m2_cache>/org/apache/openjpa/openjpa/2.2.1/openjpa-2.2.1.jar
 -------------------------------------------------------------------------------------------
 
-
-
-== See Also
-
-* http://camel.apache.org/configuring-camel.html[Configuring Camel]
-* http://camel.apache.org/component.html[Component]
-* http://camel.apache.org/endpoint.html[Endpoint]
-* http://camel.apache.org/getting-started.html[Getting Started]
-
-* http://camel.apache.org/tracer-example.html[Tracer Example]

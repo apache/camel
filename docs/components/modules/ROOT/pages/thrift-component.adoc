@@ -191,9 +191,3 @@ It's possible to automate Java code generation for .thrift files using *thrift-m
 https://github.com/apache/thrift/[Thrift project GitHub]
 https://thrift.apache.org/tutorial/java [Apache Thrift Java tutorial]
 
-== See Also
-
-* Getting Started
-* Configuring Camel
-* Component
-* Endpoint

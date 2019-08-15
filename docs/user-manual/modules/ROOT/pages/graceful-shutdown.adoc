@@ -424,12 +424,3 @@ xref:batch-consumer.adoc[Batch Consumer] should implement
 `ShutdownAware` so they properly support the `ShutdownRunningTask`
 option. See `GenericFileConsumer` for an example.
 
-[[GracefulShutdown-SeeAlso]]
-== See Also
-
-* xref:configuring-route-startup-ordering-and-autostartup.adoc[Configuring
-route startup ordering and autostartup]
-* xref:advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
-configuration of CamelContext using Spring]
-* xref:index.adoc[User Guide]
-

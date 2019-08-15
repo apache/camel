@@ -1535,6 +1535,3 @@ wmq.setDestinationResolver(new DestinationResolver() {
 });
 ----------------------------------------------------------------------------------------------------------------------------------
 
-== See Also
-
-* http://activemq.apache.org/jmstemplate-gotchas.html[JMSTemplate gotchas]

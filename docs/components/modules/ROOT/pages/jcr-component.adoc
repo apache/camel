@@ -157,9 +157,3 @@ all the children.
 </route>
 ---------------------------------------------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

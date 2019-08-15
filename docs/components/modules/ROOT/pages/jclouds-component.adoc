@@ -395,13 +395,3 @@ Here is the same using spring xml.
 </route>
 ----------------------------------------------------------------------------------------------
 
-=== See also
-
-If you want to find out more about jclouds here is list of interesting
-resources 
-
-http://jclouds.incubator.apache.org/documentation/userguide/blobstore-guide/[Jclouds
-Blobstore wiki] 
-
-http://jclouds.incubator.apache.org/documentation/userguide/compute/[Jclouds
-Compute wiki]

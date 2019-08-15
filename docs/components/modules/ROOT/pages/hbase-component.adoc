@@ -530,7 +530,3 @@ myvalue to the column myfamily:myqualifier. +
 advantage it has over the header mapping strategy is that the HBaseData
 object can be easily converted to or from xml/json.
 
-== See also
-
-* Polling Consumer
-* http://hbase.apache.org[Apache HBase]

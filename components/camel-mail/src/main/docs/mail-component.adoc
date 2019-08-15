@@ -733,9 +733,3 @@ builder.unseen().body(Op.not, "Spam").subject(Op.not, "Spam")
 SearchTerm term = builder.build();
 --------------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

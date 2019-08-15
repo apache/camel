@@ -240,12 +240,3 @@ case of any exceptions we should handle it and just rollback this
 transaction. This is done using the `markRollbackOnlyLast` which tells
 Camel to only do it for the current transaction and not globally.
 
-=== See Also
-
-* xref:error-handling-in-camel.adoc[Error handling in Camel]
-* xref:transactionerrorhandler.adoc[TransactionErrorHandler]
-* https://github.com/apache/camel/blob/master/docs/user-manual/en/error-handler.adoc[Error Handler]
-* https://github.com/apache/camel/blob/master/components/camel-jms/src/main/docs/jms-component.adoc[JMS]
-* https://github.com/apache/camel/blob/master/docs/user-manual/en/oncompletion.adoc[On Completion]
-
-xref:using-this-pattern.adoc[Using This Pattern]

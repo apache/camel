@@ -202,9 +202,3 @@ from("direct:start").
 
  
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

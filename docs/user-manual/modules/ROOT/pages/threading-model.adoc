@@ -236,9 +236,3 @@ to wait for its tasks to complete). Will wait until all tasks is
 completed or a timeout value is hit.
 |===
 
-[[ThreadingModel-SeeAlso]]
-== See Also
-
-* xref:architecture.adoc[Architecture]
-* xref:async.adoc[Async]
-

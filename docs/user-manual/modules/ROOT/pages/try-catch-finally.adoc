@@ -123,9 +123,3 @@ contains the *damn* word.
 
 https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/SpringTryProcessorOnWhenTest.xml[SpringTryProcessorOnWhenTest.xml]
 
-[[TryCatchFinally-SeeAlso]]
-== See Also
-
-* xref:error-handling-in-camel.adoc[Error handling in Camel]
-* xref:error-handler.adoc[Error Handler]
-* xref:exception-clause.adoc[Exception Clause]

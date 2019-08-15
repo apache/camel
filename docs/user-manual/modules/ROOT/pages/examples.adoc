@@ -41,8 +41,3 @@ to date:
 https://github.com/apache/camel/tree/master/examples#welcome-to-the-apache-camel-examples
 
 
-[[Examples-SeeAlso]]
-== See Also
-
-* xref:enterprise-integration-patterns.adoc[Enterprise Integration
-Patterns]

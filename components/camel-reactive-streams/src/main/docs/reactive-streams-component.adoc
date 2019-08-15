@@ -445,9 +445,3 @@ To use the starter, add the following to your spring boot pom.xml file:
 ------------------------------------------------------
 
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

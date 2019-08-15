@@ -279,15 +279,3 @@ Java DSL based configuration of endpoint
 ...
 ----------------------------------------------------------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:ahc-component.adoc[AHC]
-* xref:jetty-component.adoc[Jetty]
-* Twitter Websocket Example
-demonstrates how to poll a constant feed of twitter searches and publish
-results in real time using web socket to a web page.

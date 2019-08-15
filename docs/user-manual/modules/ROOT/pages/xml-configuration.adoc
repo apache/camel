@@ -14,8 +14,3 @@ xref:faq/how-do-i-configure-endpoints.adoc[Java code to configure components and
 For examples on how to use Camel XML, see the
 xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] or refer to the xref:components::spring.adoc[Spring Support].
 
-[[XMLConfiguration-SeeAlso]]
-== See Also
-
-* xref:xml-reference.adoc[XML Reference]
-* xref:faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do I use Spring Property Placeholder with Camel XML]

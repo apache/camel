@@ -222,11 +222,3 @@ Destination city: SAN FRANCISCO
 Destination airport: SFO
 -------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:http-component.adoc[HTTP]

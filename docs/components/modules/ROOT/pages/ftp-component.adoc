@@ -774,11 +774,3 @@ String data = template.retrieveBodyNoWait("ftp://admin@localhost:21/nolist/?pass
 This component has log level *TRACE* that can be helpful if you have
 problems.
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* File2

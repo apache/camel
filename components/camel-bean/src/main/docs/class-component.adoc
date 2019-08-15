@@ -119,13 +119,3 @@ id `foo` and invoke the `setCool` method on the created instance of the
 TIP:See more details at the xref:bean-component.adoc[Bean] component as the *class*
 component works in much the same way.
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:bean-component.adoc[Bean]
-* Bean Binding
-* Bean Integration

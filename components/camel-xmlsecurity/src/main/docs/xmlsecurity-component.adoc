@@ -797,6 +797,3 @@ the XML signer endpoint).
 * The `AllDataObjectsTimeStamp` element is not supported
 * The `IndividualDataObjectsTimeStamp` element is not supported
 
-== See Also
-
-* http://www.w3.org/TR/xmldsig-bestpractices/[Best Practices]

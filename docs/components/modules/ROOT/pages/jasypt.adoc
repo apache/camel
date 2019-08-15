@@ -286,10 +286,3 @@ to Jasypt.
 </blueprint>
 ----------------------------------------------------------------------------------------------------------------
 
-== See Also
-
-* Security
-* xref:properties-component.adoc[Properties]
-* http://activemq.apache.org/encrypted-passwords.html[Encrypted
-passwords in ActiveMQ] - ActiveMQ has a similar feature as this
-`camel-jasypt` component

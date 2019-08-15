@@ -184,9 +184,3 @@ RouteBuilder builder = new RouteBuilder() {
 };
 -------------------------------------------------------
 
-[[JavaDSL-SeeAlso]]
-== See Also
-
-* xref:dsl.adoc[DSL]
-
-

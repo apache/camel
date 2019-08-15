@@ -103,9 +103,3 @@ Camel provide the following ServiceRegistry implementations:
 - camel-zookeeper
 - camel-spring-cloud
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

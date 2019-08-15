@@ -48,8 +48,3 @@ from("activemq:My.Queue").
   to("activemq:Another.Queue");
 ----
 
-[[Templating-SeeAlso]]
-== See Also
-
-* xref:components::mock-component.adoc[Mock] for details of mock endpoint testing (as opposed
-to template based stubs).

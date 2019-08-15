@@ -127,9 +127,3 @@ based on whether or not the XML matches the given
 http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
 Syntax] schema (which is supplied on the classpath).
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

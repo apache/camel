@@ -314,9 +314,3 @@ Note that the body should include an instance of a class to validate.
 
 
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

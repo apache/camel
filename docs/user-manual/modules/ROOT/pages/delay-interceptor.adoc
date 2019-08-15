@@ -62,9 +62,3 @@ with 200 millis.
 </camelContext>
 ------------------------
 
-[[DelayInterceptor-SeeAlso]]
-== See Also
-
-* Tracer
-* xref:debugger.adoc[Debugger]
-

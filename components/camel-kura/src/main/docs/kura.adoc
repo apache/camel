@@ -296,11 +296,3 @@ service, you can use `activate` and `deactivate` methods provided by
 </scr:component>
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Kura-SeeAlso]]
-=== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-

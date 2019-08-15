@@ -98,9 +98,3 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/D
 which returns instances of ProcessorEndpoint. For more details see
 xref:writing-components.adoc[Writing Components]
 
-== See Also
-
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message Translator]
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/enrich-eip.adoc[Content Enricher-Enrich EIP]
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/pollEnrich-eip.adoc[Content Enricher-Poll Enrich EIP]
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/content-filter.adoc[Content Filter]

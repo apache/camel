@@ -351,9 +351,3 @@ the download page for the latest versions).
 </dependency>
 -----------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

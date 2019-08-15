@@ -480,7 +480,3 @@ In the example above we use `seconds` as the time unit, but Camel offers
 `milliseconds`, and `minutes` as well.
 
 
-== See Also
-
-* Spring Testing
-* Testing

@@ -620,13 +620,3 @@ within transaction. Its only the client that submitted the
 Exchange that does not participate in the same
 transaction.
 
-[[Async-SeeAlso]]
-== See Also
-
-* xref:async.adoc[Asynchronous Processing]
-* xref:requestReply-eip.adoc[Request Reply]
-* http://davsclaus.blogspot.com/2009/05/on-road-to-camel-20-concurrency-with.html[Blog
-entry on using async for concurrent file processing]
-* xref:components::seda-component.adoc[SEDA]
-* xref:components::direct-component.adoc[Direct]
-

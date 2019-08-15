@@ -30,13 +30,3 @@ rulebase
 * RouteBuilder for creating a collection of
 routes using the routing DSL
 
-[[DSL-SeeAlso]]
-== See Also
-
-For more examples of the DSL in action see
-
-* xref:enterprise-integration-patterns.adoc[Enterprise Integration
-Patterns]
-* xref:routes.adoc[Routes]
-* Examples
-

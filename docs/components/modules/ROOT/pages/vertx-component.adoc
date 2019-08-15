@@ -147,9 +147,3 @@ vertxComponent.setVertx(vertx);
 camelContext.addComponent("vertx", vertxComponent);
 -----------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

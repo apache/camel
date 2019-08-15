@@ -61,10 +61,3 @@ See more details about the xref:lifecycle.adoc[Lifecycle].
 NOTE: You can also use the xref:components::controlbus-component.adoc[ControlBus] component to let
 it stop/start routes.
 
-[[HowcanIstoparoutefromaroute-SeeAlso]]
-== See Also
-
-* xref:route-policy.adoc[RoutePolicy]
-* xref:graceful-shutdown.adoc[Graceful Shutdown]
-* xref:lifecycle.adoc[Lifecycle]
-* xref:components::controlbus-component.adoc[ControlBus]

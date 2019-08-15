@@ -383,11 +383,3 @@ case of any exceptions we should handle it and just rollback this
 transaction. This is done using the `markRollbackOnlyLast` which tells
 Camel to only do it for the current transaction and not globally.
 
-[[TransactionalClient-SeeAlso]]
-== See Also
-
-* xref:error-handling-in-camel.adoc[Error handling in Camel]
-* xref:transactionerrorhandler.adoc[TransactionErrorHandler]
-* xref:error-handler.adoc[Error Handler]
-* xref:components::jms-component.adoc[JMS]
-* xref:using-this-pattern.adoc[Using This Pattern]

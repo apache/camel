@@ -269,9 +269,3 @@ SedaEndpoint seda = context.getEndpoint("seda:xxxx");
 int size = seda.getExchanges().size();
 ----
 
-== See Also
-
-* xref:vm-component.adoc[VM]
-* xref:disruptor-component.adoc[Disruptor]
-* xref:direct-component.adoc[Direct]
-* Async

@@ -25,10 +25,3 @@ implements the Polling Consumer pattern for
 consuming message exchanges from the endpoint via a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
 
-[[Endpoint-SeeAlso]]
-== See Also
-
-* Configuring Camel
-* Message Endpoint pattern
-* URIs
-* Writing Components

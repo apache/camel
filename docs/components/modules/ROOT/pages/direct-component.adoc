@@ -149,7 +149,3 @@ And the sample using spring DSL:
 See also samples from the xref:seda-component.adoc[SEDA] component, how they can
 be used together.
 
-== See Also
-
-* xref:seda-component.adoc[SEDA]
-* xref:vm-component.adoc[VM]

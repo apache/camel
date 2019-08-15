@@ -198,13 +198,3 @@ This dependency will also pull in
 `org.springframework.security:spring-security-core:3.0.3.RELEASE` and
 `org.springframework.security:spring-security-config:3.0.3.RELEASE`.
 
-[[SpringSecurity-SeeAlso]]
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* Components
-

@@ -183,9 +183,3 @@ from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
   .to("optaplanner:/org/foo/barSolverConfig.xml");
 -------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

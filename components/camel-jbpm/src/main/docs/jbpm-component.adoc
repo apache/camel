@@ -311,11 +311,3 @@ from("direct:start")
         &deploymentId=evaluation");
 ----------------------------------------------------------------------------------------------
 
-== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
- 

@@ -228,10 +228,3 @@ INFO  CamelContextFactoryBean        - Using custom intercept strategy with id: 
 *Notice:* If we have more than 1 container wide interceptor, we can just
 define them as spring bean. Camel will find and use them.
 
-[[AdvancedconfigurationofCamelContextusingSpring-SeeAlso]]
-== See Also
-
-* xref:spring.adoc[Spring]
-* xref:creating-a-new-spring-based-camel-route.adoc[Creating a new
-Spring based Camel Route]
-* xref:xml-reference.adoc[Xml Reference]
