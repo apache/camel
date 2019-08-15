@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
-import org.apache.camel.component.netty.http.handlers.HttpServerChannelHandler;
-
 /**
- * A matcher used for selecting the correct {@link HttpServerChannelHandler}
+ * A matcher used for selecting the correct {@link org.apache.camel.component.netty.http.handlers.HttpServerChannelHandler}
  * to handle an incoming {@link io.netty.handler.codec.http.HttpRequest} when you use multiple routes on the same
  * port.
  * <p/>

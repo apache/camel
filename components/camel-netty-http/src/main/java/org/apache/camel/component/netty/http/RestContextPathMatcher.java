@@ -20,7 +20,7 @@ import java.util.Locale;
 
 
 /**
- * A {@link ContextPathMatcher} that supports the Rest DSL.
+ * A {@link org.apache.camel.component.netty.http.ContextPathMatcher} that supports the Rest DSL.
  */
 public class RestContextPathMatcher extends DefaultContextPathMatcher {
 
