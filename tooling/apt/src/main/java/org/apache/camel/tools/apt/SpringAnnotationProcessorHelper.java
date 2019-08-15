@@ -252,7 +252,12 @@ public class SpringAnnotationProcessorHelper {
         TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
 
         String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
-        String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
+        String docComment;
+        if ("mdcLoggingKeysPattern".equals(fieldName)) {
+            docComment = findJavaDoc(elementUtils, fieldElement, "MDCLoggingKeysPattern", name, classElement, true);
+        } else {
+            docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
+        }
         if (isNullOrEmpty(docComment)) {
             Metadata metadata = fieldElement.getAnnotation(Metadata.class);
             docComment = metadata != null ? metadata.description() : null;
