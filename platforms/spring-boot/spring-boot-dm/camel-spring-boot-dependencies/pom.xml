@@ -3767,8 +3767,13 @@
       </dependency>
       <dependency>
         <groupId>org.eclipse.rdf4j</groupId>
-        <artifactId>rdf4j-runtime</artifactId>
-        <version>3.0.0-M1</version>
+        <artifactId>rdf4j-model</artifactId>
+        <version>2.4.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.rdf4j</groupId>
+        <artifactId>rdf4j-rio-api</artifactId>
+        <version>2.4.4</version>
       </dependency>
       <dependency>
         <groupId>org.hamcrest</groupId>
