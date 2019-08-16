@@ -211,7 +211,7 @@ public interface EndpointBuilderFactory extends
         MicrometerEndpointBuilderFactory,
         MiloClientEndpointBuilderFactory,
         MiloServerEndpointBuilderFactory,
-        Mina2EndpointBuilderFactory,
+        MinaEndpointBuilderFactory,
         MllpEndpointBuilderFactory,
         MockEndpointBuilderFactory,
         MongoDbEndpointBuilderFactory,

@@ -95,7 +95,7 @@
                     <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
                     <excludes>
                         <!-- This test just show the shutdown error -->
-                        <exclude>**/Mina2ProducerShutdownTest.*</exclude>
+                        <exclude>**/MinaProducerShutdownTest.*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -105,7 +105,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>org.apache.camel.component.mina2.Mina2ProducerShutdownTest</mainClass>
+                    <mainClass>org.apache.camel.component.mina.MinaProducerShutdownTest</mainClass>
                     <includePluginDependencies>false</includePluginDependencies>
                 </configuration>
             </plugin>

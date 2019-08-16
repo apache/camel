@@ -52,7 +52,7 @@ eliminates the dependencies on other camel components.
 While Camel already includes some of this functionality in the camel-hl7 component, the implementation does not
 provide all of the functionality required to effectively handle the MLLP protocol - especially under adverse conditions.
   
-The camel-hl7 Mina2 codec and Netty decoder do not handle MLLP Framing errors very well - the component will hang waiting
+The camel-hl7 Mina codec and Netty decoder do not handle MLLP Framing errors very well - the component will hang waiting
 for frames to complete in some instances.
 
 While both camel-mina and camel-netty provide a "timeout" function, it is only applied to Producers.  MLLP Consumers
@@ -60,7 +60,7 @@ also need to be able to timeout to recover from MLLP framing errors.  Additional
 camel-netty component is disable after any data is received on the connection, making in ineffective for detecting
 timeouts after the first messages is received.
 
-Also, neither the Mina2 codec nor the Netty decoder interrogate HL7 Acknowledgments.  Therefore, it is much more
+Also, neither the Mina codec nor the Netty decoder interrogate HL7 Acknowledgments.  Therefore, it is much more
 difficult to use the redelivery and error handling features Camel provides.
 
 The above issues may be addressable by updating/patching the existing components, but there is one more that is not.

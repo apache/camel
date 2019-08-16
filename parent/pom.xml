@@ -451,7 +451,7 @@
         <micrometer-version>1.2.0</micrometer-version>
         <milo-version>0.2.5</milo-version>
         <mimepull-version>1.9.11</mimepull-version>
-        <mina2-version>2.0.21</mina2-version>
+        <mina-version>2.0.21</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
         <mock-javamail-version>1.9</mock-javamail-version>
@@ -4630,7 +4630,7 @@
             <dependency>
                 <groupId>org.apache.mina</groupId>
                 <artifactId>mina-core</artifactId>
-                <version>${mina2-version}</version>
+                <version>${mina-version}</version>
             </dependency>
 
             <dependency>

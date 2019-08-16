@@ -16,4 +16,5 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.mina2.springboot.Mina2ComponentAutoConfiguration
+org.apache.camel.component.mina.springboot.MinaComponentAutoConfiguration
+

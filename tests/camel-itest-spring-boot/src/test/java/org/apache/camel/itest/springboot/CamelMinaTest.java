@@ -35,7 +35,7 @@ public class CamelMinaTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelMinaTest.class))
-                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseMina2Test$)")
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseMinaTest$)")
                 .build();
     }
 
