@@ -34,7 +34,7 @@ public class AtmosConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("atmos:foo/get?remotePath=/path&fullTokenId=fakeToken&secretKey=%sSecret&uri=https://fake/uri", fake)
+                fromF("atmos:foo/get?remotePath=/path&fullTokenId=fakeToken&secretKey=%s&uri=https://fake/uri", fake)
                     .to("mock:test");
             }
         };
