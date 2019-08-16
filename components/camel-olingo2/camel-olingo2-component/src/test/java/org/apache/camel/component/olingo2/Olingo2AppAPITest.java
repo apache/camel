@@ -16,19 +16,14 @@
  */
 package org.apache.camel.component.olingo2;
 import java.io.InputStream;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.component.olingo2.api.Olingo2App;
-import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchQueryRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchRequest;
@@ -36,8 +31,6 @@ import org.apache.camel.component.olingo2.api.batch.Olingo2BatchResponse;
 import org.apache.camel.component.olingo2.api.batch.Operation;
 import org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl;
 import org.apache.camel.component.olingo2.api.impl.SystemQueryOption;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.http.entity.ContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -45,63 +38,22 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
-import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.servicedocument.Collection;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
  * Integration test for {@link org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl}
  * using the sample Olingo2 Server dynamically downloaded and started during the test.
  */
-public class Olingo2AppAPITest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Olingo2AppAPITest.class);
-    private static final int PORT = AvailablePortFinder.getNextAvailable();  
-
-    private static final long TIMEOUT = 10;
-
-    private static final String MANUFACTURERS = "Manufacturers";
-    private static final String FQN_MANUFACTURERS = "DefaultContainer.Manufacturers";
-    private static final String ADDRESS = "Address";
-    private static final String CARS = "Cars";
-
-    private static final String TEST_KEY = "'1'";
-    private static final String TEST_CREATE_KEY = "'123'";
-    private static final String TEST_MANUFACTURER = FQN_MANUFACTURERS + "(" + TEST_KEY + ")";
-    private static final String TEST_CREATE_MANUFACTURER = MANUFACTURERS + "(" + TEST_CREATE_KEY + ")";
-
-    private static final String TEST_RESOURCE_CONTENT_ID = "1";
-    private static final String TEST_RESOURCE = "$" + TEST_RESOURCE_CONTENT_ID;
-
-    private static final char NEW_LINE = '\n';
-    private static final String TEST_CAR = "Manufacturers('1')/Cars('1')";
-    private static final String TEST_MANUFACTURER_FOUNDED_PROPERTY = "Manufacturers('1')/Founded";
-    private static final String TEST_MANUFACTURER_FOUNDED_VALUE = "Manufacturers('1')/Founded/$value";
-    private static final String FOUNDED_PROPERTY = "Founded";
-    private static final String TEST_MANUFACTURER_ADDRESS_PROPERTY = "Manufacturers('1')/Address";
-    private static final String TEST_MANUFACTURER_LINKS_CARS = "Manufacturers('1')/$links/Cars";
-    private static final String TEST_CAR_LINK_MANUFACTURER = "Cars('1')/$links/Manufacturer";
-    private static final String COUNT_OPTION = "/$count";
-
-    private static final String TEST_SERVICE_URL = "http://localhost:" + PORT + "/MyFormula.svc";
-    //    private static final String TEST_SERVICE_URL = "http://localhost:8080/cars-annotations-sample/MyFormula.svc";
-//    private static final ContentType TEST_FORMAT = ContentType.APPLICATION_XML_CS_UTF_8;
-    private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON;
-    private static final String TEST_FORMAT_STRING = TEST_FORMAT.toString();
-//    private static final Pattern LINK_PATTERN = Pattern.compile("[^(]+\\('([^']+)'\\)");
-    private static final String ID_PROPERTY = "Id";
+public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
     private static Olingo2App olingoApp;
     private static Edm edm;
@@ -522,130 +474,5 @@ public class Olingo2AppAPITest {
         final Exception exception = (Exception) responseParts.get(7).getBody();
         assertNotNull(exception);
         LOG.info("Batch retrieve deleted entry:  {}", exception);
-    }
-
-    private Map<String, Object> getEntityData() {
-        Map<String, Object> data = new HashMap<>();
-        data.put(ID_PROPERTY, "123");
-        data.put("Name", "MyCarManufacturer");
-        data.put(FOUNDED_PROPERTY, new Date());
-        Map<String, Object> address = new HashMap<>();
-        address.put("Street", "Main");
-        address.put("ZipCode", "42421");
-        address.put("City", "Fairy City");
-        address.put("Country", "FarFarAway");
-        data.put(ADDRESS, address);
-        return data;
-    }
-
-    private static String prettyPrint(ODataFeed dataFeed) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[\n");
-        for (ODataEntry entry : dataFeed.getEntries()) {
-            builder.append(prettyPrint(entry.getProperties(), 1)).append('\n');
-        }
-        builder.append("]\n");
-        return builder.toString();
-    }
-
-    private static String prettyPrint(ODataEntry createdEntry) {
-        return prettyPrint(createdEntry.getProperties(), 0);
-    }
-
-    private static String prettyPrint(Map<String, Object> properties, int level) {
-        StringBuilder b = new StringBuilder();
-        Set<Map.Entry<String, Object>> entries = properties.entrySet();
-
-        for (Map.Entry<String, Object> entry : entries) {
-            indent(b, level);
-            b.append(entry.getKey()).append(": ");
-            Object value = entry.getValue();
-            if (value instanceof Map) {
-                @SuppressWarnings("unchecked")
-                final Map<String, Object> objectMap = (Map<String, Object>) value;
-                value = prettyPrint(objectMap, level + 1);
-                b.append(value).append(NEW_LINE);
-            } else if (value instanceof Calendar) {
-                Calendar cal = (Calendar) value;
-                value = DateFormat.getInstance().format(cal.getTime());
-                b.append(value).append(NEW_LINE);
-            } else if (value instanceof ODataDeltaFeed) {
-                ODataDeltaFeed feed = (ODataDeltaFeed) value;
-                List<ODataEntry> inlineEntries = feed.getEntries();
-                b.append("{");
-                for (ODataEntry oDataEntry : inlineEntries) {
-                    value = prettyPrint(oDataEntry.getProperties(), level + 1);
-                    b.append("\n[\n").append(value).append("\n],");
-                }
-                b.deleteCharAt(b.length() - 1);
-                indent(b, level);
-                b.append("}\n");
-            } else {
-                b.append(value).append(NEW_LINE);
-            }
-        }
-        // remove last line break
-        b.deleteCharAt(b.length() - 1);
-        return b.toString();
-    }
-
-    private static void indent(StringBuilder builder, int indentLevel) {
-        for (int i = 0; i < indentLevel; i++) {
-            builder.append("  ");
-        }
-    }
-
-    private static final class TestOlingo2ResponseHandler<T> implements Olingo2ResponseHandler<T> {
-
-        private T response;
-        private Exception error;
-        private CountDownLatch latch = new CountDownLatch(1);
-
-        @Override
-        public void onResponse(T response, Map<String, String> responseHeaders) {
-            this.response = response;
-            if (LOG.isDebugEnabled()) {
-                if (response instanceof ODataFeed) {
-                    LOG.debug("Received response: {}", prettyPrint((ODataFeed) response));
-                } else if (response instanceof ODataEntry) {
-                    LOG.debug("Received response: {}", prettyPrint((ODataEntry) response));
-                } else {
-                    LOG.debug("Received response: {}", response);
-                }
-            }
-            latch.countDown();
-        }
-
-        @Override
-        public void onException(Exception ex) {
-            error = ex;
-            latch.countDown();
-        }
-
-        @Override
-        public void onCanceled() {
-            error = new IllegalStateException("Request Canceled");
-            latch.countDown();
-        }
-
-        public T await() throws Exception {
-            return await(TIMEOUT, TimeUnit.SECONDS);
-        }
-
-        public T await(long timeout, TimeUnit unit) throws Exception {
-            assertTrue("Timeout waiting for response", latch.await(timeout, unit));
-            if (error != null) {
-                throw error;
-            }
-            assertNotNull("Response", response);
-            return response;
-        }
-
-        public void reset() {
-            latch.countDown();
-            latch = new CountDownLatch(1);
-            response = null;
-            error = null;
-        }
     }
 }
