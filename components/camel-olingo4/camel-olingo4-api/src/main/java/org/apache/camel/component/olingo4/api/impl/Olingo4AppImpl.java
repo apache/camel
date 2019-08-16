@@ -28,7 +28,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 import org.apache.camel.component.olingo4.api.Olingo4App;
 import org.apache.camel.component.olingo4.api.Olingo4ResponseHandler;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchChangeRequest;
@@ -56,6 +58,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.config.MessageConstraints;
@@ -276,32 +279,50 @@ public final class Olingo4AppImpl implements Olingo4App {
     public <T> void update(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
         final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
-        writeContent(edm, new HttpPut(createUri(resourcePath, null)), uriInfo, data, endpointHttpHeaders, responseHandler);
+        augmentWithETag(edm, resourcePath, endpointHttpHeaders,
+                        new HttpPut(createUri(resourcePath, null)),
+                        request -> writeContent(edm, (HttpPut) request, uriInfo, data, endpointHttpHeaders, responseHandler),
+                        responseHandler);
     }
 
     @Override
     public void delete(final String resourcePath, final Map<String, String> endpointHttpHeaders, final Olingo4ResponseHandler<HttpStatusCode> responseHandler) {
-        execute(new HttpDelete(createUri(resourcePath)), contentType, endpointHttpHeaders, new AbstractFutureCallback<HttpStatusCode>(responseHandler) {
-            @Override
-            public void onCompleted(HttpResponse result) {
-                final StatusLine statusLine = result.getStatusLine();
-                responseHandler.onResponse(HttpStatusCode.fromStatusCode(statusLine.getStatusCode()), headersToMap(result.getAllHeaders()));
-            }
-        });
+        HttpDelete deleteRequest = new HttpDelete(createUri(resourcePath));
+
+        Consumer<HttpRequestBase> deleteFunction = (request) -> {
+            execute(request, contentType, endpointHttpHeaders, new AbstractFutureCallback<HttpStatusCode>(responseHandler) {
+                @Override
+                public void onCompleted(HttpResponse result) {
+                    final StatusLine statusLine = result.getStatusLine();
+                    responseHandler.onResponse(HttpStatusCode.fromStatusCode(statusLine.getStatusCode()), headersToMap(result.getAllHeaders()));
+                }
+            });
+        };
+
+        augmentWithETag(null, resourcePath, endpointHttpHeaders,
+                        deleteRequest,
+                        deleteFunction,
+                        responseHandler);
     }
 
     @Override
     public <T> void patch(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
         final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
-        writeContent(edm, new HttpPatch(createUri(resourcePath, null)), uriInfo, data, endpointHttpHeaders, responseHandler);
+        augmentWithETag(edm, resourcePath, endpointHttpHeaders,
+                        new HttpPatch(createUri(resourcePath, null)),
+                        request -> writeContent(edm, (HttpPatch) request, uriInfo, data, endpointHttpHeaders, responseHandler),
+                        responseHandler);
     }
 
     @Override
     public <T> void merge(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
         final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
-        writeContent(edm, new HttpMerge(createUri(resourcePath, null)), uriInfo, data, endpointHttpHeaders, responseHandler);
+        augmentWithETag(edm, resourcePath, endpointHttpHeaders,
+                        new HttpMerge(createUri(resourcePath, null)),
+                        request -> writeContent(edm, (HttpMerge) request, uriInfo, data, endpointHttpHeaders, responseHandler),
+                        responseHandler);
     }
 
     @Override
@@ -343,6 +364,91 @@ public final class Olingo4AppImpl implements Olingo4App {
             resourceContentType = contentType;
         }
         return resourceContentType;
+    }
+
+    /**
+     * On occasion, some resources are protected with Optimistic Concurrency via the use of eTags.
+     * This will first conduct a read on the given entity resource, find its eTag then perform the given
+     * delegate request function, augmenting the request with the eTag, if appropriate.
+     *
+     * Since read operations may be asynchronous, it is necessary to chain together the methods via
+     * the use of a {@link Consumer} function. Only when the response from the read returns will
+     * this delegate function be executed.
+     *
+     * @param edm the Edm object to be interrogated
+     * @param resourcePath the resource path of the entity to be operated on
+     * @param endpointHttpHeaders the headers provided from the endpoint which may be required for the read operation
+     * @param httpRequest the request to be updated, if appropriate, with the eTag and provided to the delegate request function
+     * @param delegateRequestFn the function to be invoked in response to the read operation
+     * @param delegateResponseHandler the response handler to respond if any errors occur during the read operation
+     */
+    private <T> void augmentWithETag(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders,
+                                     final HttpRequestBase httpRequest,
+                                     final Consumer<HttpRequestBase> delegateRequestFn,
+                                     final Olingo4ResponseHandler<T> delegateResponseHandler) {
+
+        if (edm == null) {
+            // Can be the case if calling a delete then need to do a metadata call first
+            final Olingo4ResponseHandler<Edm> edmResponseHandler = new Olingo4ResponseHandler<Edm>() {
+                @Override
+                public void onResponse(Edm response, Map<String, String> responseHeaders) {
+                    //
+                    // Call this method again with an intact edm object
+                    //
+                    augmentWithETag(response, resourcePath, endpointHttpHeaders, httpRequest, delegateRequestFn, delegateResponseHandler);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    delegateResponseHandler.onException(ex);
+                }
+
+                @Override
+                public void onCanceled() {
+                    delegateResponseHandler.onCanceled();
+                }
+            };
+
+            //
+            // Reads the metadata to establish an Edm object
+            // then the response handler invokes this method again with the new edm object
+            //
+            read(null, Constants.METADATA, null, null, edmResponseHandler);
+
+        } else {
+
+            //
+            // The handler that responds to the read operation and supplies an ETag if necessary
+            // and invokes the delegate request function
+            //
+            Olingo4ResponseHandler<T> eTagReadHandler = new Olingo4ResponseHandler<T>() {
+
+                @Override
+                public void onResponse(T response, Map<String, String> responseHeaders) {
+                    if (response instanceof ClientEntity) {
+                        ClientEntity e = (ClientEntity) response;
+                        Optional
+                           .ofNullable(e.getETag())
+                           .ifPresent(v -> httpRequest.addHeader("If-Match", v));
+                    }
+
+                    // Invoke the delegate request function providing the modified request
+                    delegateRequestFn.accept(httpRequest);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    delegateResponseHandler.onException(ex);
+                }
+
+                @Override
+                public void onCanceled() {
+                    delegateResponseHandler.onCanceled();
+                }
+            };
+
+            read(edm, resourcePath, null, endpointHttpHeaders, eTagReadHandler);
+        }
     }
 
     private <T> void readContent(UriInfo uriInfo, InputStream content, Map<String, String> endpointHttpHeaders, Olingo4ResponseHandler<T> responseHandler) {

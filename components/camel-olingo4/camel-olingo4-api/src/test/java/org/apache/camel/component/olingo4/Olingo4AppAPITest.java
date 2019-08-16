@@ -30,7 +30,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.component.olingo4.api.Olingo4App;
 import org.apache.camel.component.olingo4.api.Olingo4ResponseHandler;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchChangeRequest;
@@ -95,6 +94,8 @@ public class Olingo4AppAPITest {
     private static final String PEOPLE = "People";
     private static final String TEST_PEOPLE = "People('russellwhyte')";
     private static final String TEST_AIRLINE = "Airlines('FM')";
+    private static final String TEST_AIRLINE_TO_UPDATE = "Airlines('AA')"; // Careful using this as it get updated!
+    private static final String TEST_AIRLINE_TO_DELETE = "Airlines('MU')"; // Careful using this as it gets deleted!
     private static final String TRIPS = "Trips";
     private static final String TEST_CREATE_RESOURCE_CONTENT_ID = "1";
     private static final String TEST_UPDATE_RESOURCE_CONTENT_ID = "2";
@@ -300,6 +301,140 @@ public class Olingo4AppAPITest {
         Long count = countHandler.await();
         assertEquals(20, count.intValue());
         LOG.info("People count: {}", count);
+    }
+
+    /**
+     * The Airline resource is implemented with Optimistic Concurrency.
+     * This requires an eTag to be first fetched via a read before performing
+     * patch, update, delete or merge operations.
+     *
+     * The test should complete successfully and not throw an error of the form
+     * 'The request need to have If-Match or If-None-Match header'
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testDeleteOptimisticConcurrency() throws Exception {
+        // test simple property Airlines
+        final TestOlingo4ResponseHandler<ClientEntity> entityHandler = new TestOlingo4ResponseHandler<>();
+
+        olingoApp.read(edm, TEST_AIRLINE_TO_DELETE, null, null, entityHandler);
+
+        // Confirm presence of eTag
+        ClientEntity airline = entityHandler.await();
+        assertNotNull(airline);
+        assertNotNull(airline.getETag());
+
+        TestOlingo4ResponseHandler<HttpStatusCode> statusHandler = new TestOlingo4ResponseHandler<>();
+
+        //
+        // Call delete
+        //
+        olingoApp.delete(TEST_AIRLINE_TO_DELETE, null, statusHandler);
+
+        HttpStatusCode statusCode = statusHandler.await();
+        assertEquals(HttpStatusCode.NO_CONTENT, statusCode);
+        LOG.info("Deleted entity at {}", TEST_AIRLINE_TO_DELETE);
+
+        // Check for deleted entity
+        final TestOlingo4ResponseHandler<HttpStatusCode> responseHandler = new TestOlingo4ResponseHandler<>();
+        olingoApp.read(edm, TEST_AIRLINE_TO_DELETE, null, null, responseHandler);
+
+        statusCode = statusHandler.await();
+        assertEquals(HttpStatusCode.NO_CONTENT, statusCode);
+        LOG.info("Deleted entity at {}", TEST_AIRLINE_TO_DELETE);
+    }
+
+    /**
+     * The Airline resource is implemented with Optimistic Concurrency.
+     * This requires an eTag to be first fetched via a read before performing
+     * patch, update, delete or merge operations.
+     *
+     * The test should complete successfully and not throw an error of the form
+     * 'The request need to have If-Match or If-None-Match header'
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testPatchOptimisticConcurrency() throws Exception {
+        // test simple property Airlines
+        final TestOlingo4ResponseHandler<ClientEntity> entityHandler = new TestOlingo4ResponseHandler<>();
+
+        olingoApp.read(edm, TEST_AIRLINE_TO_UPDATE, null, null, entityHandler);
+
+        // Confirm presence of eTag
+        ClientEntity airline = entityHandler.await();
+        assertNotNull(airline);
+        assertNotNull(airline.getETag());
+
+        TestOlingo4ResponseHandler<HttpStatusCode> statusHandler = new TestOlingo4ResponseHandler<>();
+        ClientEntity clientEntity = objFactory.newEntity(null);
+        String newAirlineName = "The Patched American Airlines";
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("Name",
+                                                                         objFactory.newPrimitiveValueBuilder().buildString(newAirlineName)));
+
+        //
+        // Call patch
+        //
+        olingoApp.patch(edm, TEST_AIRLINE_TO_UPDATE, null, clientEntity, statusHandler);
+
+        HttpStatusCode statusCode = statusHandler.await();
+        assertEquals(HttpStatusCode.NO_CONTENT, statusCode);
+        LOG.info("Name property updated with status {}", statusCode.getStatusCode());
+
+        // Check for updated entity
+        final TestOlingo4ResponseHandler<ClientEntity> responseHandler = new TestOlingo4ResponseHandler<>();
+
+        olingoApp.read(edm, TEST_AIRLINE_TO_UPDATE, null, null, responseHandler);
+        ClientEntity entity = responseHandler.await();
+        assertEquals(newAirlineName, entity.getProperty("Name").getValue().toString());
+        LOG.info("Updated Single Entity:  {}", prettyPrint(entity));
+    }
+
+    /**
+     * The Airline resource is implemented with Optimistic Concurrency.
+     * This requires an eTag to be first fetched via a read before performing
+     * patch, update, delete or merge operations.
+     *
+     * The test should complete successfully and not throw an error of the form
+     * 'The request need to have If-Match or If-None-Match header'
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testUpdateOptimisticConcurrency() throws Exception {
+        // test simple property Airlines
+        final TestOlingo4ResponseHandler<ClientEntity> entityHandler = new TestOlingo4ResponseHandler<>();
+
+        olingoApp.read(edm, TEST_AIRLINE_TO_UPDATE, null, null, entityHandler);
+
+        // Confirm presence of eTag
+        ClientEntity airline = entityHandler.await();
+        assertNotNull(airline);
+        assertNotNull(airline.getETag());
+
+        TestOlingo4ResponseHandler<HttpStatusCode> statusHandler = new TestOlingo4ResponseHandler<>();
+        ClientEntity clientEntity = objFactory.newEntity(null);
+        String newAirlineName = "The Updated American Airlines";
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("Name",
+                                                                         objFactory.newPrimitiveValueBuilder().buildString(newAirlineName)));
+
+        //
+        // Call update
+        //
+        olingoApp.update(edm, TEST_AIRLINE_TO_UPDATE, null, clientEntity, statusHandler);
+
+        HttpStatusCode statusCode = statusHandler.await();
+        assertEquals(HttpStatusCode.NO_CONTENT, statusCode);
+        LOG.info("Name property updated with status {}", statusCode.getStatusCode());
+
+        // Check for updated entity
+        final TestOlingo4ResponseHandler<ClientEntity> responseHandler = new TestOlingo4ResponseHandler<>();
+
+        olingoApp.read(edm, TEST_AIRLINE_TO_UPDATE, null, null, responseHandler);
+        ClientEntity entity = responseHandler.await();
+        assertEquals(newAirlineName, entity.getProperty("Name").getValue().toString());
+        LOG.info("Updated Single Entity:  {}", prettyPrint(entity));
     }
 
     @Test
