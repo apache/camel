@@ -172,7 +172,7 @@
   </feature>
   <feature name='camel-apns' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-databind-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
@@ -1252,7 +1252,7 @@
   </feature>
   <feature name='camel-hl7' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-netty</feature>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle dependency='true'>mvn:ca.uhn.hapi/hapi-osgi-base/${hapi-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hl7/${project.version}</bundle>
   </feature>
@@ -1638,7 +1638,7 @@
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ldif/${project.version}</bundle>
   </feature>
   <feature name='camel-linkedin' version='${project.version}' start-level='50'>
@@ -1772,7 +1772,7 @@
   </feature>
   <feature name='camel-mina' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mina/${project.version}</bundle>
   </feature>
   <feature name='camel-mllp' version='${project.version}' start-level='50'>
@@ -2061,7 +2061,7 @@
   </feature>
   <feature name='camel-quickfix' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saxon/${saxon-bundle-version}</bundle>
     <bundle>mvn:org.quickfixj/quickfixj-all/${quickfixj-version}</bundle>
@@ -2432,7 +2432,7 @@
   </feature>
   <feature name='camel-ssh' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.sshd/sshd-core/${sshd-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bcprov-jdk15on/${bouncycastle-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bcpkix-jdk15on/${bouncycastle-version}</bundle>

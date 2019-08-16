@@ -464,4 +464,3 @@ Spring DSL based configuration of endpoint
   <to uri="ahc:https://localhost/foo?sslContextParameters=#sslContextParameters"/>
 ...
 ----------------------------------------------------------------------------------
-

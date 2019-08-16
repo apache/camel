@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.10*
 
-The Mina2 component is a transport for working with
+The Mina component is a transport for working with
 http://mina.apache.org/[Apache MINA 2.x]
 
 TIP: Favor using xref:netty-component.adoc[Netty] as Netty is a much more active
@@ -71,7 +71,7 @@ The Mina component supports 3 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | To use the shared mina configuration. |  | Mina2Configuration
+| *configuration* (advanced) | To use the shared mina configuration. |  | MinaConfiguration
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
@@ -137,7 +137,7 @@ with the following path and query parameters:
 | *encoding* (codec) | You can configure the encoding (a charset name) to use for the TCP textline codec and the UDP protocol. If not provided, Camel will use the JVM default Charset |  | String
 | *filters* (codec) | You can set a list of Mina IoFilters to use. |  | List
 | *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP. | false | boolean
-| *textlineDelimiter* (codec) | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided, Camel will use DEFAULT. This delimiter is used to mark the end of text. |  | Mina2TextLineDelimiter
+| *textlineDelimiter* (codec) | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided, Camel will use DEFAULT. This delimiter is used to mark the end of text. |  | MinaTextLineDelimiter
 | *autoStartTls* (security) | Whether to auto start SSL handshake. | true | boolean
 | *sslContextParameters* (security) | To configure SSL security. |  | SSLContextParameters
 |===
@@ -188,7 +188,7 @@ The component supports 29 options, which are listed below.
 | *camel.component.mina.configuration.ssl-context-parameters* | To configure SSL security. |  | SSLContextParameters
 | *camel.component.mina.configuration.sync* | Setting to set endpoint as one-way or request-response. | true | Boolean
 | *camel.component.mina.configuration.textline* | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP. | false | Boolean
-| *camel.component.mina.configuration.textline-delimiter* | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided, Camel will use DEFAULT. This delimiter is used to mark the end of text. |  | Mina2TextLineDelimiter
+| *camel.component.mina.configuration.textline-delimiter* | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided, Camel will use DEFAULT. This delimiter is used to mark the end of text. |  | MinaTextLineDelimiter
 | *camel.component.mina.configuration.timeout* | You can configure the timeout that specifies how long to wait for a response from a remote server. The timeout unit is in milliseconds, so 60000 is 60 seconds. | 30000 | Long
 | *camel.component.mina.configuration.transfer-exchange* | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | Boolean
 | *camel.component.mina.configuration.write-timeout* | Maximum amount of time it should take to send data to the MINA session. Default is 10000 milliseconds. | 10000 | Long
@@ -227,9 +227,9 @@ it on port 6200.
 -------------------------------------------------------------------------------------------------
 MockEndpoint mock = getMockEndpoint("mock:result");
 mock.expectedBodiesReceived("Hello World");
- 
+
 template.sendBody("mina:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
- 
+
 assertMockEndpointsSatisfied();
 -------------------------------------------------------------------------------------------------
 
@@ -303,7 +303,7 @@ written the `bye` message back to the client:
             public void process(Exchange exchange) throws Exception {
                 String body = exchange.getIn().getBody(String.class);
                 exchange.getOut().setBody("Bye " + body);
-                exchange.getOut().setHeader(Mina2Constants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);
+                exchange.getOut().setHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);
             }
         });
 ---------------------------------------------------------------------------------------------------
@@ -311,9 +311,9 @@ written the `bye` message back to the client:
 == Get the IoSession for message
 
 You can get the IoSession from the message header with this key
-`Mina2Constants.MINA_IOSESSION`, and also get the local host address
-with the key `Mina2Constants.MINA_LOCAL_ADDRESS` and remote host address
-with the key `Mina2Constants.MINA_REMOTE_ADDRESS`.
+`MinaConstants.MINA_IOSESSION`, and also get the local host address
+with the key `MinaConstants.MINA_LOCAL_ADDRESS` and remote host address
+with the key `MinaConstants.MINA_REMOTE_ADDRESS`.
 
 == Configuring Mina filters
 

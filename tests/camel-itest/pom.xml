@@ -181,11 +181,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- ftpserver using mina2 -->
+        <!-- ftpserver using mina -->
         <dependency>
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
-            <version>${mina2-version}</version>
+            <version>${mina-version}</version>
             <scope>test</scope>
         </dependency>
 
