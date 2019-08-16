@@ -1,0 +1,26 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" Version="1.0">
+    <script/>
+    <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="1.0">
+        <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="MyFormula">
+            <EntityType Name="Manufacturer">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <!-- Includes concurrency support which is then handled using ETags -->
+                <Property Name="Id" Type="Edm.String" Nullable="true" ConcurrencyMode="Fixed"/>
+                <Property Name="Name" Type="Edm.String" Nullable="true" ConcurrencyMode="Fixed"/>
+                <Property Name="Founded" Type="Edm.DateTimeOffset" Nullable="true" ConcurrencyMode="Fixed"/>
+                <Property Name="Address" Type="MyFormula.Address" Nullable="true" ConcurrencyMode="Fixed"/>
+            </EntityType>
+            <ComplexType Name="Address">
+                <Property Name="Street" Type="Edm.String" Nullable="true"/>
+                <Property Name="City" Type="Edm.String" Nullable="true"/>
+                <Property Name="ZipCode" Type="Edm.String" Nullable="true"/>
+                <Property Name="Country" Type="Edm.String" Nullable="true"/>
+            </ComplexType>
+            <EntityContainer Name="DefaultContainer" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="Manufacturers" EntityType="MyFormula.Manufacturer"/>
+            </EntityContainer>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

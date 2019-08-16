@@ -156,7 +156,8 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         try {
             requestBody("direct:read-deleted-entity", null);
         } catch (CamelExecutionException e) {
-            assertEquals("Resource Not Found [HTTP/1.1 404 Not Found]", e.getCause().getMessage());
+            String causeMsg = e.getCause().getMessage();
+            assertTrue(causeMsg.contains("[HTTP/1.1 404 Not Found]"));
         }
     }
 
@@ -185,7 +186,8 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         try {
             requestBody("direct:read-deleted-entity", null);
         } catch (CamelExecutionException e) {
-            assertEquals("Resource Not Found [HTTP/1.1 404 Not Found]", e.getCause().getMessage());
+            String causeMsg = e.getCause().getMessage();
+            assertTrue(causeMsg.contains("[HTTP/1.1 404 Not Found]"));
         }
     }
 
