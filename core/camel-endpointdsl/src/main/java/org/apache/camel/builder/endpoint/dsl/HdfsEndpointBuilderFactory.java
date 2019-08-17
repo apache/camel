@@ -85,8 +85,7 @@ public interface HdfsEndpointBuilderFactory {
          * Set to LOCAL to not use HDFS but local java.io.File instead.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
-         * type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
          * Group: common
          */
@@ -99,8 +98,7 @@ public interface HdfsEndpointBuilderFactory {
          * Set to LOCAL to not use HDFS but local java.io.File instead.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
-         * type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
          * Group: common
          */
@@ -113,7 +111,7 @@ public interface HdfsEndpointBuilderFactory {
          * about the various files types.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
          * Group: common
          */
@@ -126,7 +124,7 @@ public interface HdfsEndpointBuilderFactory {
          * about the various files types.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
          * Group: common
          */
@@ -138,7 +136,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -150,7 +148,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -174,7 +172,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -186,7 +184,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -838,7 +836,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression codec to use.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
+         * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
          * Group: advanced
@@ -852,7 +850,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression codec to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
+         * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
          * Group: advanced
@@ -1037,8 +1035,7 @@ public interface HdfsEndpointBuilderFactory {
          * Set to LOCAL to not use HDFS but local java.io.File instead.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
-         * type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
          * Group: common
          */
@@ -1051,8 +1048,7 @@ public interface HdfsEndpointBuilderFactory {
          * Set to LOCAL to not use HDFS but local java.io.File instead.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
-         * type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
          * Group: common
          */
@@ -1065,7 +1061,7 @@ public interface HdfsEndpointBuilderFactory {
          * about the various files types.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
          * Group: common
          */
@@ -1078,7 +1074,7 @@ public interface HdfsEndpointBuilderFactory {
          * about the various files types.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
          * Group: common
          */
@@ -1090,7 +1086,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -1102,7 +1098,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -1126,7 +1122,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -1138,7 +1134,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -1367,7 +1363,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression codec to use.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
+         * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
          * Group: advanced
@@ -1381,7 +1377,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression codec to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
+         * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
          * Group: advanced
@@ -1564,8 +1560,7 @@ public interface HdfsEndpointBuilderFactory {
          * Set to LOCAL to not use HDFS but local java.io.File instead.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
-         * type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
          * Group: common
          */
@@ -1578,8 +1573,7 @@ public interface HdfsEndpointBuilderFactory {
          * Set to LOCAL to not use HDFS but local java.io.File instead.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
-         * type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
          * Group: common
          */
@@ -1592,7 +1586,7 @@ public interface HdfsEndpointBuilderFactory {
          * about the various files types.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
          * Group: common
          */
@@ -1605,7 +1599,7 @@ public interface HdfsEndpointBuilderFactory {
          * about the various files types.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
+         * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
          * Group: common
          */
@@ -1617,7 +1611,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -1629,7 +1623,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -1653,7 +1647,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -1665,7 +1659,7 @@ public interface HdfsEndpointBuilderFactory {
          * The type for the key in case of sequence or map files.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
+         * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
          * Group: common
          */
@@ -1808,7 +1802,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression codec to use.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
+         * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
          * Group: advanced
@@ -1822,7 +1816,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression codec to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
+         * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
          * Group: advanced
@@ -1956,7 +1950,7 @@ public interface HdfsEndpointBuilderFactory {
 
     /**
      * Proxy enum for
-     * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code> enum.
+     * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> enum.
      */
     enum HdfsFileSystemType {
         LOCAL,
@@ -1964,7 +1958,7 @@ public interface HdfsEndpointBuilderFactory {
     }
 
     /**
-     * Proxy enum for <code>org.apache.camel.component.hdfs2.HdfsFileType</code>
+     * Proxy enum for <code>org.apache.camel.component.hdfs.HdfsFileType</code>
      * enum.
      */
     enum HdfsFileType {
@@ -1976,7 +1970,7 @@ public interface HdfsEndpointBuilderFactory {
     }
 
     /**
-     * Proxy enum for <code>org.apache.camel.component.hdfs2.WritableType</code>
+     * Proxy enum for <code>org.apache.camel.component.hdfs.WritableType</code>
      * enum.
      */
     enum WritableType {
@@ -1993,7 +1987,7 @@ public interface HdfsEndpointBuilderFactory {
 
     /**
      * Proxy enum for
-     * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code> enum.
+     * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code> enum.
      */
     enum HdfsCompressionCodec {
         DEFAULT,

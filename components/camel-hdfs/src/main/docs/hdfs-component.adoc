@@ -304,7 +304,7 @@ resource with bundle that contains blueprint definition.
 
 [source,java]
 ------------------------------------------------------------------------------------------------------
-<bean id="hdfsOsgiHelper" class="org.apache.camel.component.hdfs2.HdfsOsgiHelper">
+<bean id="hdfsOsgiHelper" class="org.apache.camel.component.hdfs.HdfsOsgiHelper">
    <argument>
       <map>
          <entry key="file:///" value="org.apache.hadoop.fs.LocalFileSystem"  />
@@ -314,7 +314,7 @@ resource with bundle that contains blueprint definition.
    </argument>
 </bean>
 
-<bean id="hdfs2" class="org.apache.camel.component.hdfs2.HdfsComponent" depends-on="hdfsOsgiHelper" />
+<bean id="hdfs" class="org.apache.camel.component.hdfs.HdfsComponent" depends-on="hdfsOsgiHelper" />
 ------------------------------------------------------------------------------------------------------
 
 This way Hadoop 2.x will have correct mapping of URI schemes to

@@ -48,7 +48,7 @@
             org.apache.hadoop.ipc
         </camel.osgi.import.additional>
         <camel.osgi.activator>
-            org.apache.camel.component.hdfs2.osgi.HdfsActivator
+            org.apache.camel.component.hdfs.osgi.HdfsActivator
         </camel.osgi.activator>
     </properties>
 

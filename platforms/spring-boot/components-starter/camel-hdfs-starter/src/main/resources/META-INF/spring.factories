@@ -16,4 +16,4 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.hdfs2.springboot.HdfsComponentAutoConfiguration
+org.apache.camel.component.hdfs.springboot.HdfsComponentAutoConfiguration
