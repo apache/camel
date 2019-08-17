@@ -73,9 +73,9 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
             @Override
             public void configure() {
                 from("direct:indexWithIpAndPort")
-                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_FIRST_NODE_TRANSPORT_PORT);
+                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:indexWithSniffer")
-                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&enableSniffer=true&hostAddresses=localhost:" + ES_FIRST_NODE_TRANSPORT_PORT);
+                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&enableSniffer=true&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
             }
         };
     }

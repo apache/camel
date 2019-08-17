@@ -44,19 +44,6 @@ final class TestUtils {
         return RandomStringUtils.randomAlphanumeric(8) + "-" + directory;
     }
 
-    public static int getAvailablePort() {
-        try {
-            ServerSocket socket = new ServerSocket(0);
-            try {
-                return socket.getLocalPort();
-            } finally {
-                socket.close();
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Cannot find available port: " + e.getMessage(), e);
-        }
-    }
-
     public static boolean deleteFile(File path) throws FileNotFoundException {
         if (!path.exists()) {
             throw new FileNotFoundException(path.getAbsolutePath());

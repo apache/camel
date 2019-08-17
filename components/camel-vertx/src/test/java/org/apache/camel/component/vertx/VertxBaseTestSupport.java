@@ -26,7 +26,7 @@ public class VertxBaseTestSupport extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(24000);
+        port = AvailablePortFinder.getNextAvailable();
     }
 
     protected int getPort() {

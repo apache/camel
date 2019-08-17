@@ -38,10 +38,9 @@ public abstract class BaseJettyTest extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        // start from somewhere in the 23xxx range
-        port = AvailablePortFinder.getNextAvailable(23000);
+        port = AvailablePortFinder.getNextAvailable();
         // find another ports for proxy route test
-        port2 = AvailablePortFinder.getNextAvailable(24000);
+        port2 = AvailablePortFinder.getNextAvailable();
     }
 
     @Override
@@ -61,11 +60,7 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     }
 
     protected int getNextPort() {
-        return AvailablePortFinder.getNextAvailable(port + counter.getAndIncrement());
-    }
-
-    protected int getNextPort(int startWithPort) {
-        return AvailablePortFinder.getNextAvailable(startWithPort);
+        return AvailablePortFinder.getNextAvailable();
     }
 
     public void setSSLProps(JettyHttpComponent jetty, String path, String keyStorePasswd, String keyPasswd) {

@@ -30,7 +30,7 @@ import org.littleshoot.proxy.ProxyAuthorizationHandler;
 
 public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
 
-    private final int proxyPort = AvailablePortFinder.getNextAvailable(25000);
+    private final int proxyPort = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testSftpSimpleProduceThroughProxy() throws Exception {

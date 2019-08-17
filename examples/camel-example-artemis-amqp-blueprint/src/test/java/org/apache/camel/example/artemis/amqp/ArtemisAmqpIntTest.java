@@ -36,7 +36,7 @@ public class ArtemisAmqpIntTest extends CamelBlueprintTestSupport {
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected String useOverridePropertiesWithConfigAdmin(Dictionary props) { 
         //obtain an available port
-        int port = AvailablePortFinder.getNextAvailable(9090);
+        int port = AvailablePortFinder.getNextAvailable();
 
         if (port != 9090) {
             //override the Netty port to use

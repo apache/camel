@@ -30,10 +30,10 @@ import org.junit.Test;
 
 public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
 
-    private static int port1 = AvailablePortFinder.getNextAvailable(23041);
-    private static int port2 = AvailablePortFinder.getNextAvailable(23042);
-    private static int port3 = AvailablePortFinder.getNextAvailable(23043);
-    private static int port4 = AvailablePortFinder.getNextAvailable(23044);
+    private static int port1 = AvailablePortFinder.getNextAvailable();
+    private static int port2 = AvailablePortFinder.getNextAvailable();
+    private static int port3 = AvailablePortFinder.getNextAvailable();
+    private static int port4 = AvailablePortFinder.getNextAvailable();
 
     private String bad = "jetty:http://localhost:" + port1 + "/bad";
     private String bad2 = "jetty:http://localhost:" + port2 + "/bad2";

@@ -80,7 +80,7 @@ public class SftpKeyPairRSAConsumeTest extends SftpServerTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         context.getRegistry().bind("keyPair", keyPair);
-        context.getRegistry().bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
+        context.getRegistry().bind("knownHosts", buildKnownHosts());
 
         return new RouteBuilder() {
             @Override

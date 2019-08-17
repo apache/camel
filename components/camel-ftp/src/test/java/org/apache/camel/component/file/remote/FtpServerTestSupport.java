@@ -52,7 +52,7 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
         deleteDirectory(FTP_ROOT_DIR);
 
         canTest = false;
-
+        initPort();
         FtpServerFactory factory = createFtpServerFactory();
         if (factory != null) {
             ftpServer = factory.createServer();
@@ -103,7 +103,7 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
 
     protected FtpServerFactory createFtpServerFactory() throws Exception {
         assertTrue(USERS_FILE.exists());
-        assertTrue("Port number is not initialized in an expected range: " + BaseServerTestSupport.port, BaseServerTestSupport.port >= 21000);
+        assertTrue("Port number is not initialized in an expected range: " + getPort(), getPort() > 0);
 
         NativeFileSystemFactory fsf = new NativeFileSystemFactory();
         fsf.setCreateHome(true);
@@ -113,10 +113,10 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
         pumf.setPasswordEncryptor(new ClearTextPasswordEncryptor());
         pumf.setFile(USERS_FILE);
         UserManager userMgr = pumf.createUserManager();
-        
+
         ListenerFactory factory = new ListenerFactory();
-        factory.setPort(BaseServerTestSupport.port);
-        
+        factory.setPort(getPort());
+
         FtpServerFactory serverFactory = new FtpServerFactory();
         serverFactory.setUserManager(userMgr);
         serverFactory.setFileSystem(fsf);

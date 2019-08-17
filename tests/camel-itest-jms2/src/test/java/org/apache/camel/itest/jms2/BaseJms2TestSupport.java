@@ -71,7 +71,7 @@ public class BaseJms2TestSupport extends CamelTestSupport {
     protected void doPreSetup() throws Exception {
         broker = new EmbeddedJMS();
         deleteDirectory("target/data");
-        port = AvailablePortFinder.getNextAvailable(33333);
+        port = AvailablePortFinder.getNextAvailable();
         brokerUri = "tcp://localhost:" + port;
         configureBroker(this.broker);
         startBroker();

@@ -46,7 +46,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Before
     public void setUp() throws Exception {
         port1 = getNextPort();
-        port2 = getNextPort(port1 + 1);
+        port2 = getNextPort();
         
         super.setUp();
         // ensure jsse clients can validate the self signed dummy localhost cert, 

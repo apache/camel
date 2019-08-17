@@ -43,7 +43,7 @@ public class FtpXQueryTest extends CamelTestSupport {
     
     @BeforeClass
     public static void initPort() throws Exception {
-        ftpPort = AvailablePortFinder.getNextAvailable(20127);
+        ftpPort = AvailablePortFinder.getNextAvailable();
     }
 
     @Test

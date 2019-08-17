@@ -59,7 +59,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(16300);
+        port = AvailablePortFinder.getNextAvailable();
 
         uri = "websocket://" + server + ":" + port + "/test?sslContextParameters=#sslContextParameters";
 

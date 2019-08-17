@@ -16,6 +16,10 @@
  */
 package org.apache.camel.test;
 
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.MulticastSocket;
 import java.net.ServerSocket;
 
 import org.junit.jupiter.api.Test;
@@ -27,42 +31,32 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class AvailablePortFinderTest {
 
     @Test
-    public void getNextAvailablePort() throws Exception {
+    public void testNotAvailableTcpPort() throws Exception {
         int p1 = AvailablePortFinder.getNextAvailable();
-        int p2 = AvailablePortFinder.getNextAvailable();
-        assertFalse(p1 == p2, "Port " + p1 + " Port2 " + p2);
-    }
-
-    @Test
-    public void testGetNextAvailablePortInt() throws Exception {
-        int p1 = AvailablePortFinder.getNextAvailable(9123);
-        int p2 = AvailablePortFinder.getNextAvailable(9123);
-        // these calls only check availability but don't mark the port as in
-        // use.
-        assertEquals(p1, p2);
-    }
-
-    @Test
-    public void testNotAvailablePort() throws Exception {
-        int p1 = AvailablePortFinder.getNextAvailable(11000);
         ServerSocket socket = new ServerSocket(p1);
-        int p2 = AvailablePortFinder.getNextAvailable(p1);
+        int p2 = AvailablePortFinder.getNextAvailable();
         assertFalse(p1 == p2, "Port " + p1 + " Port2 " + p2);
         socket.close();
     }
 
     @Test
-    public void getMinOutOfRangePort() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> {
-            AvailablePortFinder.getNextAvailable(AvailablePortFinder.MIN_PORT_NUMBER - 1);
-        });
+    public void testNotAvailableUdpPort() throws Exception {
+        int p1 = AvailablePortFinder.getNextAvailable();
+        DatagramSocket socket = new DatagramSocket(p1);
+        int p2 = AvailablePortFinder.getNextAvailable();
+        assertFalse(p1 == p2, "Port " + p1 + " Port2 " + p2);
+        socket.close();
     }
 
     @Test
-    public void getMaxOutOfRangePort() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> {
-            AvailablePortFinder.getNextAvailable(AvailablePortFinder.MAX_PORT_NUMBER + 1);
-        });
+    public void testNotAvailableMulticastPort() throws Exception {
+        int p1 = AvailablePortFinder.getNextAvailable();
+        MulticastSocket socket = new MulticastSocket(null);
+        socket.setReuseAddress(false); // true is default for MulticastSocket, we wan to fail if port is occupied
+        socket.bind(new InetSocketAddress(InetAddress.getLocalHost(), p1));
+        int p2 = AvailablePortFinder.getNextAvailable();
+        assertFalse(p1 == p2, "Port " + p1 + " Port2 " + p2);
+        socket.close();
     }
 
 }

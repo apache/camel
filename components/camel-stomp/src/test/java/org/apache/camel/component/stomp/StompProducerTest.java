@@ -92,7 +92,7 @@ public class StompProducerTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:foo").to("stomp:test");
+                from("direct:foo").toF("stomp:test?brokerURL=tcp://localhost:%s", getPort());
             }
         };
     }

@@ -35,7 +35,7 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
 
     @Override
     public void configure() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(8000);
+        port = AvailablePortFinder.getNextAvailable();
 
         // if its a 404 then regard it as handled
         onException(HttpOperationFailedException.class).onWhen(new Predicate() {

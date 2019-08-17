@@ -25,6 +25,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
@@ -45,10 +46,7 @@ public class ZooKeeperGroupTest {
     private ZooKeeperGroup<NodeState> group;
 
     private int findFreePort() throws Exception {
-        ServerSocket ss = new ServerSocket(0);
-        int port = ss.getLocalPort();
-        ss.close();
-        return port;
+        return AvailablePortFinder.getNextAvailable();
     }
 
     @Before
