@@ -86,9 +86,9 @@
 			"sourceType":"org.apache.camel.component.properties.PropertiesComponent"
 		},
 		{
-			"name":"camel.component.quartz2",
+			"name":"camel.component.quartz",
 			"description":"Provides a scheduled delivery of messages using the Quartz 2.x scheduler.",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent"
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent"
 		},
 		{
 			"name":"camel.component.ref",
@@ -1197,81 +1197,81 @@
 			"defaultValue":"false"
 		},
 		{
-			"name":"camel.component.quartz2.auto-start-scheduler",
+			"name":"camel.component.quartz.auto-start-scheduler",
 			"type":"java.lang.Boolean",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"Whether or not the scheduler should be auto started. This options is default true",
 			"defaultValue":"true"
 		},
 		{
-			"name":"camel.component.quartz2.start-delayed-seconds",
+			"name":"camel.component.quartz.start-delayed-seconds",
 			"type":"java.lang.Integer",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"Seconds to wait before starting the quartz scheduler."
 		},
 		{
-			"name":"camel.component.quartz2.prefix-job-name-with-endpoint-id",
+			"name":"camel.component.quartz.prefix-job-name-with-endpoint-id",
 			"type":"java.lang.Boolean",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"Whether to prefix the quartz job with the endpoint id. This option is default false.",
 			"defaultValue":"false"
 		},
 		{
-			"name":"camel.component.quartz2.enable-jmx",
+			"name":"camel.component.quartz.enable-jmx",
 			"type":"java.lang.Boolean",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true",
 			"defaultValue":"true"
 		},
 		{
-			"name":"camel.component.quartz2.properties",
+			"name":"camel.component.quartz.properties",
 			"type":"java.util.Properties",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"Properties to configure the Quartz scheduler."
 		},
 		{
-			"name":"camel.component.quartz2.properties-file",
+			"name":"camel.component.quartz.properties-file",
 			"type":"java.lang.String",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"File name of the properties to load from the classpath"
 		},
 		{
-			"name":"camel.component.quartz2.prefix-instance-name",
+			"name":"camel.component.quartz.prefix-instance-name",
 			"type":"java.lang.Boolean",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's.",
 			"defaultValue":"true"
 		},
 		{
-			"name":"camel.component.quartz2.interrupt-jobs-on-shutdown",
+			"name":"camel.component.quartz.interrupt-jobs-on-shutdown",
 			"type":"java.lang.Boolean",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted.",
 			"defaultValue":"false"
 		},
 		{
-			"name":"camel.component.quartz2.scheduler-factory",
+			"name":"camel.component.quartz.scheduler-factory",
 			"type":"org.quartz.SchedulerFactory",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"To use the custom SchedulerFactory which is used to create the Scheduler."
 		},
 		{
-			"name":"camel.component.quartz2.scheduler",
+			"name":"camel.component.quartz.scheduler",
 			"type":"org.quartz.Scheduler",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"To use the custom configured Quartz scheduler, instead of creating a new Scheduler."
 		},
 		{
-			"name":"camel.component.quartz2.resolve-property-placeholders",
+			"name":"camel.component.quartz.resolve-property-placeholders",
 			"type":"java.lang.Boolean",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
 			"defaultValue":"true"
 		},
 		{
-			"name":"camel.component.quartz2.basic-property-binding",
+			"name":"camel.component.quartz.basic-property-binding",
 			"type":"java.lang.Boolean",
-			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
 			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
 			"defaultValue":"false"
 		},

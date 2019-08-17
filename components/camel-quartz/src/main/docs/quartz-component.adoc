@@ -176,7 +176,7 @@ for the next execution.
 
 If you run in OSGi such as Apache ServiceMix, or Apache Karaf, and have
 multiple bundles with Camel routes that start from
-xref:quartz-component.adoc[Quartz] endpoints, then make sure if you assign an `id` 
+xref:quartz-component.adoc[Quartz] endpoints, then make sure if you assign an `id`
 to the `<camelContext>` that this id is unique, as this is
 required by the `QuartzScheduler` in the OSGi container. If you do not
 set any `id` on `<camelContext>` then a unique id is auto assigned, and there is no problem.
@@ -205,7 +205,7 @@ To do this you can configure this in Spring XML as follows
 
 [source,xml]
 ----
-<bean id="quartz2" class="org.apache.camel.component.quartz2.QuartzComponent">
+<bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent">
     <property name="propertiesFile" value="com/mycompany/myquartz.properties"/>
 </bean>
 ----
@@ -228,7 +228,7 @@ This is an example:
 
 [source,xml]
 ----
-<bean id="quartz2" class="org.apache.camel.component.quartz2.QuartzComponent">
+<bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent">
     <property name="startDelayedSeconds" value="5"/>
 </bean>
 ----
@@ -441,7 +441,7 @@ and used.
 |===
 
 *Important:* Remember configuring these options from the endpoint
-URIs must be prefixed with `scheduler.`. 
+URIs must be prefixed with `scheduler.`.
 For example to configure the trigger id and group:
 
 [source,java]

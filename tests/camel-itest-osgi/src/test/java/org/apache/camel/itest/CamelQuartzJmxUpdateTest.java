@@ -58,7 +58,7 @@ public class CamelQuartzJmxUpdateTest extends AbstractFeatureTest {
         installCamelFeature("camel-quartz");
 
         // install the camel blueprint xml file we use in this test
-        URL url = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelQuartz2JmxUpdateTest.xml",
+        URL url = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelQuartzJmxUpdateTest.xml",
             CamelQuartzJmxUpdateTest.class.getClassLoader());
         installBlueprintAsBundle("CamelQuartzJmxUpdateTest", url, true);
 

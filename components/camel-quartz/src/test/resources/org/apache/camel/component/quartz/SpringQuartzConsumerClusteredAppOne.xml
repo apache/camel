@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <bean id="quartzDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+    <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+    <!-- refer the embedded database we setup inside SpringQuartzConsumerClusteredAppDatabase.xml -->
+    <property name="url" value="jdbc:derby:memory:quartz-db" />
+    <property name="username" value="sa" />
+    <property name="password" value="" />
+  </bean>
+
+  <bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent">
+    <property name="scheduler" ref="scheduler"/>
+  </bean>
+
+  <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    <property name="dataSource" ref="quartzDataSource"/>
+    <property name="autoStartup" value="false"/>
+    <property name="schedulerContextAsMap">
+      <!-- hook Camel into Quartz -->
+      <map>
+        <!-- CamelJob makes use of the following key below to find the same Job as we failover to 'app-two' -->
+        <!-- QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName  -->
+        <entry key="CamelQuartzCamelContext-camelContext" value-ref="camelContext"/>
+      </map>
+    </property>
+    <property name="quartzProperties">
+      <props>
+        <prop key="org.quartz.scheduler.instanceName">myscheduler</prop>
+        <prop key="org.quartz.scheduler.instanceId">app-one</prop>
+        <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
+        <prop key="org.terracotta.quartz.skipUpdateCheck">true</prop>
+        <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
+        <prop key="org.quartz.jobStore.isClustered">true</prop>
+        <prop key="org.quartz.jobStore.clusterCheckinInterval">5000</prop>
+      </props>
+    </property>
+  </bean>
+
+  <camelContext id="camelContext" shutdownEager="false" xmlns="http://camel.apache.org/schema/spring">
+    <template id="template" />
+    <route id="myRoute">
+      <from uri="quartz://app/test?trigger.repeatInterval=1000&amp;trigger.repeatCount=-1" />
+      <transform>
+        <simple>clustering PINGS!</simple>
+      </transform>
+      <to uri="log:triggered" />
+      <to uri="mock:result" />
+    </route>
+  </camelContext>
+
+</beans>

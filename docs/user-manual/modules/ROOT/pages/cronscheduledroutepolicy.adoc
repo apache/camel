@@ -35,7 +35,7 @@ xref:components::quartz-component.adoc[Quartz] based implementation of this rout
 
 [source,xml]
 ----
-<bean id="myStartPolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy">
+<bean id="myStartPolicy" class="org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy">
   <!-- start every 5min from monday to saturday -->
   <property name="routeStartTime" value="0 0/5 * ? * 1-6 *" />
 </bean>
