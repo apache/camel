@@ -65,7 +65,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
         
     @BeforeClass
     public static void setupTestServer() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(39913);
+        port = AvailablePortFinder.getNextAvailable();
         
         LOG.info("Starting Zookeeper Test Infrastructure");
         server = new TestZookeeperServer(getServerPort(), clearServerData());

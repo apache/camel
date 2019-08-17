@@ -82,7 +82,7 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port2 = AvailablePortFinder.getNextAvailable(localServer.getLocalPort());
+                port2 = AvailablePortFinder.getNextAvailable();
 
                 from("direct:foo")
                         .to("https-foo://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters");

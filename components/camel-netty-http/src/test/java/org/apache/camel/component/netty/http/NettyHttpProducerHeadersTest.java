@@ -74,7 +74,7 @@ public class NettyHttpProducerHeadersTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port = AvailablePortFinder.getNextAvailable(8000);
+                port = AvailablePortFinder.getNextAvailable();
 
                 from("netty-http:http://localhost:" + port + "?matchOnUriPrefix=true")
                     .setBody(simple("${header." + Exchange.HTTP_URI + "}"));

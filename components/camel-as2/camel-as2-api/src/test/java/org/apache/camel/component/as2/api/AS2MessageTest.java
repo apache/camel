@@ -119,7 +119,7 @@ public class AS2MessageTest {
 
     private static final String METHOD = "POST";
     private static final String TARGET_HOST = "localhost";
-    private static final int TARGET_PORT = AvailablePortFinder.getNextAvailable(8080);
+    private static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
     private static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + TARGET_PORT + "/handle-receipts";
     private static final String AS2_VERSION = "1.1";
     private static final String USER_AGENT = "Camel AS2 Endpoint";

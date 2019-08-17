@@ -28,8 +28,8 @@ public abstract class SolrTestSupport extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(8999);
-        httpsPort = AvailablePortFinder.getNextAvailable(8999);
+        port = AvailablePortFinder.getNextAvailable();
+        httpsPort = AvailablePortFinder.getNextAvailable();
         //TODO : add test for TLSv1.3
         System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
         System.setProperty("jdk.tls.server.protocols", "TLSv1.2");

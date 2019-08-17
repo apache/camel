@@ -46,7 +46,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration
 public class SpringFileAntPathMatcherRemoteFileFilterTest extends AbstractJUnit4SpringContextTests {
    
-    private static int ftpPort = AvailablePortFinder.getNextAvailable(20123);
+    private static int ftpPort = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 

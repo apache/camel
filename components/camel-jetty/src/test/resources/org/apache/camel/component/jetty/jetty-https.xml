@@ -42,11 +42,6 @@
         <property name="targetMethod">
             <value>getNextAvailable</value>
         </property>
-        <property name="arguments">
-            <list>
-                <value>9000</value>
-            </list>
-        </property>
     </bean>
 
 

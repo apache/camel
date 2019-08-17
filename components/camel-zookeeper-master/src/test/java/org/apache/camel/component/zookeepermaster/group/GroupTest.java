@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.zookeepermaster.group.internal.ChildData;
 import org.apache.camel.component.zookeepermaster.group.internal.ZooKeeperGroup;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
@@ -55,13 +56,6 @@ public class GroupTest {
         }
     };
 
-    private int findFreePort() throws Exception {
-        ServerSocket ss = new ServerSocket(0);
-        int port = ss.getLocalPort();
-        ss.close();
-        return port;
-    }
-
     private NIOServerCnxnFactory startZooKeeper(int port) throws Exception {
         ServerConfig cfg = new ServerConfig();
         cfg.parse(new String[] {Integer.toString(port), "target/zk/data"});
@@ -81,7 +75,7 @@ public class GroupTest {
 
     @Test
     public void testOrder() throws Exception {
-        int port = findFreePort();
+        int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
             .connectString("localhost:" + port)
@@ -135,7 +129,7 @@ public class GroupTest {
 
     @Test
     public void testJoinAfterConnect() throws Exception {
-        int port = findFreePort();
+        int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
             .connectString("localhost:" + port)
@@ -172,7 +166,7 @@ public class GroupTest {
 
     @Test
     public void testJoinBeforeConnect() throws Exception {
-        int port = findFreePort();
+        int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
             .connectString("localhost:" + port)
@@ -207,7 +201,7 @@ public class GroupTest {
 
     @Test
     public void testRejoinAfterDisconnect() throws Exception {
-        int port = findFreePort();
+        int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
             .connectString("localhost:" + port)
@@ -258,7 +252,7 @@ public class GroupTest {
     //(see  https://github.com/jboss-fuse/fuse/issues/133)
     @Test
     public void testGroupClose() throws Exception {
-        int port = findFreePort();
+        int port = AvailablePortFinder.getNextAvailable();
         NIOServerCnxnFactory cnxnFactory = startZooKeeper(port);
 
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
@@ -297,7 +291,7 @@ public class GroupTest {
     @Test
     public void testAddFieldIgnoredOnParse() throws Exception {
 
-        int port = findFreePort();
+        int port = AvailablePortFinder.getNextAvailable();
         NIOServerCnxnFactory cnxnFactory = startZooKeeper(port);
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()

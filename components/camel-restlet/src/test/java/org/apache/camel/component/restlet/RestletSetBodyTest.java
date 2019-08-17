@@ -37,7 +37,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assume.assumeThat;
 
 public class RestletSetBodyTest extends RestletTestSupport {
-    protected static int portNum2 =  AvailablePortFinder.getNextAvailable(4000);
+    protected static int portNum2 =  AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testSetBody() throws Exception {

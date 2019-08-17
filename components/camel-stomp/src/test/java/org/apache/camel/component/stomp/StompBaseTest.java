@@ -75,7 +75,7 @@ public abstract class StompBaseTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(61613);
+        port = AvailablePortFinder.getNextAvailable();
 
         try {
             brokerService = new BrokerService();
