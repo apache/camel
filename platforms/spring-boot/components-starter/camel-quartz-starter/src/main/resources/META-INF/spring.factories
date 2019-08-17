@@ -16,4 +16,4 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.quartz2.springboot.QuartzComponentAutoConfiguration
+org.apache.camel.component.quartz.springboot.QuartzComponentAutoConfiguration

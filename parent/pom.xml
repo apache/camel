@@ -525,7 +525,7 @@
         <qpid-broker-version>7.1.4</qpid-broker-version>
         <qpid-proton-j-version>0.33.1</qpid-proton-j-version>
         <qpid-jms-client-version>0.44.0</qpid-jms-client-version>
-        <quartz2-version>2.3.1</quartz2-version>
+        <quartz-version>2.3.1</quartz-version>
         <quickfixj-version>2.1.1</quickfixj-version>
         <rabbitmq-amqp-client-version>5.7.3</rabbitmq-amqp-client-version>
         <reactive-streams-version>1.0.2</reactive-streams-version>

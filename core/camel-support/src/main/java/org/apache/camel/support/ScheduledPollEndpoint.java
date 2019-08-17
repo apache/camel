@@ -35,7 +35,7 @@ import org.apache.camel.spi.UriParam;
 public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
 
     private static final String SPRING_SCHEDULER = "org.apache.camel.spring.pollingconsumer.SpringScheduledPollConsumerScheduler";
-    private static final String QUARTZ_2_SCHEDULER = "org.apache.camel.pollconsumer.quartz2.QuartzScheduledPollConsumerScheduler";
+    private static final String QUARTZ_SCHEDULER = "org.apache.camel.pollconsumer.quartz.QuartzScheduledPollConsumerScheduler";
 
     // if adding more options then align with org.apache.camel.support.ScheduledPollConsumer
     @UriParam(optionalPrefix = "consumer.", defaultValue = "true", label = "consumer,scheduler",
@@ -126,10 +126,10 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             } else if ("quartz".equals(schedulerName)) {
                 // special for scheduler if its "spring" or "quartz"
                 try {
-                    Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(QUARTZ_2_SCHEDULER, ScheduledPollConsumerScheduler.class);
+                    Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(QUARTZ_SCHEDULER, ScheduledPollConsumerScheduler.class);
                     setScheduler(getCamelContext().getInjector().newInstance(clazz));
                 } catch (ClassNotFoundException e) {
-                    throw new IllegalArgumentException("Cannot load " + QUARTZ_2_SCHEDULER + " from classpath. Make sure camel-quartz.jar is on the classpath.", e);
+                    throw new IllegalArgumentException("Cannot load " + QUARTZ_SCHEDULER + " from classpath. Make sure camel-quartz.jar is on the classpath.", e);
                 }
             } else {
                 // must refer to a custom scheduler by the given name
