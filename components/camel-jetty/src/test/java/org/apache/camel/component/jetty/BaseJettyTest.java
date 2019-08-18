@@ -108,9 +108,4 @@ public abstract class BaseJettyTest extends CamelTestSupport {
         jetty.setHeaderFilterStrategy(filterStrat);
     }
 
-    protected boolean isJetty8() {
-        String majorVersion = Server.getVersion().split("\\.")[0];
-        return "8".equals(majorVersion);
-    }
-
 }

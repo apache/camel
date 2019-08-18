@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty9.springboot;
+package org.apache.camel.component.jetty.springboot;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.jetty9.JettyHttpComponent9;
+import org.apache.camel.component.jetty.JettyHttpComponent9;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
