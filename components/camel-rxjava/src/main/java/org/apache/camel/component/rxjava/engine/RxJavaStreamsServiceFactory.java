@@ -14,25 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rxjava2.engine;
+package org.apache.camel.component.rxjava.engine;
 
-import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsServiceFactory;
+import org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration;
 
-/**
- * Useful constants used in the Camel Reactive Streams component.
- */
-public final class RxJavaStreamsConstants {
-    public static final String SERVICE_NAME =  "rxjava";
-
-    /**
-     * An implementation of the {@link AsyncCallback} that does nothing.
-     */
-    public static final AsyncCallback EMPTY_ASYNC_CALLBACK = new AsyncCallback() {
-        @Override
-        public void done(boolean doneSync) {
-        }
-    };
-
-    private RxJavaStreamsConstants() {
+public class RxJavaStreamsServiceFactory implements CamelReactiveStreamsServiceFactory {
+    @Override
+    public CamelReactiveStreamsService newInstance(CamelContext context, ReactiveStreamsEngineConfiguration configuration) {
+        return new RxJavaStreamsService(context);
     }
 }
