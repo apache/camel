@@ -142,7 +142,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-deploy</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -158,13 +158,13 @@
                 <dependency>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-webapp</artifactId>
-                    <version>${jetty9-version}</version>
+                    <version>${jetty-version}</version>
                     <scope>runtime</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-annotations</artifactId>
-                    <version>${jetty9-version}</version>
+                    <version>${jetty-version}</version>
                     <scope>runtime</scope>
                 </dependency>
                 <dependency>
@@ -189,7 +189,7 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty9-version}</version>
+                <version>${jetty-version}</version>
             </plugin>
         </plugins>
     </build>

@@ -119,7 +119,7 @@
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty9-version}</version>
+        <version>${jetty-version}</version>
         <configuration>
           <webApp>
             <contextPath>/${project.artifactId}</contextPath>
