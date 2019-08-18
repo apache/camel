@@ -23,7 +23,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 
-public class RxJava2PlatformTest extends AbstractPlatformTestSupport {
+public class RxJavaPlatformTest extends AbstractPlatformTestSupport {
 
     @Override
     protected void changeSign(Publisher<Integer> data, Consumer<Integer> consume) {

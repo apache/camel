@@ -200,7 +200,7 @@ CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 // Get a stream from all the files in a directory
 Publisher<String> files = camel.from("file:folder", String.class);
 
-// Use the stream in RxJava2
+// Use the stream in RxJava
 Flowable.fromPublisher(files)
     .doOnNext(System.out::println)
     .subscribe();
@@ -333,7 +333,7 @@ A reactive processing step can be associated to the "direct:reactive" endpoint:
 CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
 camel.process("direct:reactive", Integer.class, items ->
-    Flowable.fromPublisher(items) // RxJava2
+    Flowable.fromPublisher(items) // RxJava
         .map(n -> -n)); // make every number negative
 ---------------------------------------------------------
 
