@@ -30,7 +30,7 @@
     <artifactId>camel-rxjava</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: RxJava</name>
-    <description>RxJava2 based back-end for Camel's reactive streams component</description>
+    <description>RxJava based back-end for Camel's reactive streams component</description>
 
     <properties>
         <firstVersion>2.22.0</firstVersion>

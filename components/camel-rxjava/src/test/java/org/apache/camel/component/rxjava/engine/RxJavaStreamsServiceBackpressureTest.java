@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rxjava2.engine;
+package org.apache.camel.component.rxjava.engine;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -24,8 +24,7 @@ import io.reactivex.Flowable;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
-import org.apache.camel.component.rxjava2.engine.suport.TestSubscriber;
-import org.junit.Assert;
+import org.apache.camel.component.rxjava.engine.support.TestSubscriber;
 import org.junit.Test;
 
 public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTestSupport {
@@ -56,12 +55,12 @@ public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTe
 
         context.start();
 
-        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
-        Assert.assertEquals(20, queue.size());
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertEquals(20, queue.size());
 
         int num = 1;
         for (int i : queue) {
-            Assert.assertEquals(num++, i);
+            assertEquals(num++, i);
         }
     }
 
@@ -97,17 +96,17 @@ public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTe
         crs.fromStream("integers", Integer.class).subscribe(subscriber);
         context.start();
 
-        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
         Thread.sleep(1000); // wait for all numbers to be generated
 
         subscriber.request(19);
-        Assert.assertTrue(latch2.await(1, TimeUnit.SECONDS));
+        assertTrue(latch2.await(1, TimeUnit.SECONDS));
 
         Thread.sleep(200); // add other time to ensure no other items arrive
-        Assert.assertEquals(2, queue.size());
+        assertEquals(2, queue.size());
 
         int sum = queue.stream().reduce((i, j) -> i + j).get();
-        Assert.assertEquals(3, sum); // 1 + 2 = 3
+        assertEquals(3, sum); // 1 + 2 = 3
 
         subscriber.cancel();
     }
@@ -144,21 +143,21 @@ public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTe
         crs.fromStream("integers", Integer.class).subscribe(subscriber);
         context.start();
 
-        Assert.assertTrue(latch1.await(5, TimeUnit.SECONDS));
+        assertTrue(latch1.await(5, TimeUnit.SECONDS));
         Thread.sleep(1000); // wait for all numbers to be generated
 
         subscriber.request(19);
-        Assert.assertTrue(latch2.await(1, TimeUnit.SECONDS));
+        assertTrue(latch2.await(1, TimeUnit.SECONDS));
 
         Thread.sleep(200); // add other time to ensure no other items arrive
 
         // TODO: the chain caches two elements instead of one: change it if you find an EmitterProcessor without prefetch
         // Assert.assertEquals(2, queue.size());
-        Assert.assertEquals(3, queue.size());
+        assertEquals(3, queue.size());
 
         int sum = queue.stream().reduce((i, j) -> i + j).get();
         // Assert.assertEquals(21, sum); // 1 + 20 = 21
-        Assert.assertEquals(23, sum); // 1 + 2 + 20 = 23
+        assertEquals(23, sum); // 1 + 2 + 20 = 23
 
         subscriber.cancel();
     }
