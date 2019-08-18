@@ -104,7 +104,7 @@ The properties component will now use OS environment variables as preferred valu
 
 ### Removed components
 
-We have removed all deprecated components from Camel 2.x, also including the old `camel-http` component. `camel-http4` has been renamed to `camel-http`, and it's corresponding component package from `org.apache.camel.component.http4` to `org.apache.camel.component.http`.
+We have removed all deprecated components from Camel 2.x, including the old `camel-http`, `camel-hdfs`, `camel-mina`, `camel-mongodb`, `camel-netty`, `camel-netty-http`, `camel-quartz` and `camel-rxjava` components.
 
 We removed `camel-jibx` component which wasn't working on JDK 8.
 
@@ -120,23 +120,23 @@ The `twitter-streaming` component has been removed as it relied on the deprecate
 
 The `test` component has been renamed to `dataset-test` and moved out of `camel-core` into `camel-dataset` JAR.
 
-The `http4` component has been renamed to `http`. The supported schemes are now only `http` and `https`.
+The `http4` component has been renamed to `http`, and it's corresponding component package from `org.apache.camel.component.http4` to `org.apache.camel.component.http`. The supported schemes are now only `http` and `https`.
 
-The `hdfs2` component has been renamed to `hdfs`. The supported scheme is now `hdfs`.
+The `hdfs2` component has been renamed to `hdfs`, and it's corresponding component package from `org.apache.camel.component.hdfs2` to `org.apache.camel.component.hdfs`. The supported scheme is now `hdfs`.
 
-The `mina2` component has been renamed to `mina`. The supported scheme is now `mina`.
+The `mina2` component has been renamed to `mina`, and it's corresponding component package from `org.apache.camel.component.mina2` to `org.apache.camel.component.mina`. The supported scheme is now `mina`.
 
-The `mongodb3` component has been renamed to `mongodb`. The supported scheme is now `mongodb`.
+The `mongodb3` component has been renamed to `mongodb`, and it's corresponding component package from `org.apache.camel.component.mongodb3` to `org.apache.camel.component.mongodb`. The supported scheme is now `mongodb`.
 
-The `netty4` component has been renamed to `netty`. The supported scheme is now `netty`.
+The `netty4-http` component has been renamed to `netty-http`, and it's corresponding component package from `org.apache.camel.component.netty4.http` to `org.apache.camel.component.netty.http`. The supported scheme is now `netty-http`.
 
-The `quartz2` component has been renamed to `quartz`. The supported scheme is now `quartz`.
+The `netty4` component has been renamed to `netty`, and it's corresponding component package from `org.apache.camel.component.netty4` to `org.apache.camel.component.netty`. The supported scheme is now `netty`.
 
-The `netty4-http` component has been renamed to `netty-http`. The supported scheme is now `netty-http`.
+The `quartz2` component has been renamed to `quartz`, and it's corresponding component package from `org.apache.camel.component.quartz2` to `org.apache.camel.component.quartz`. The supported scheme is now `quartz`.
 
-The `rxjava2` component has been renamed to `rxjava`.
+The `rxjava2` component has been renamed to `rxjava`, and it's corresponding component package from `org.apache.camel.component.rxjava2` to `org.apache.camel.component.rxjava`.
 
-We have also renamed `camel-jetty9` to `camel-jetty`.
+We have also renamed `camel-jetty9` to `camel-jetty`, and it's corresponding component package from `org.apache.camel.component.jetty9` to `org.apache.camel.component.jetty`.
 
 ### Tracing
 
