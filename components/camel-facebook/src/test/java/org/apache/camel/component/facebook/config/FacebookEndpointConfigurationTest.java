@@ -29,8 +29,8 @@ public class FacebookEndpointConfigurationTest extends CamelTestSupport {
     public void testConfigurationBeanUriParam() throws Exception {
         FacebookComponent component = new FacebookComponent(context);
         FacebookEndpoint facebookEndpoint = (FacebookEndpoint) component.createEndpoint("facebook://getFeed?configuration=#configuration");
-        assertTrue("Configuration bean wasn't taken into account!", "fakeId".equals(facebookEndpoint.getConfiguration().getOAuthAppId()));
-        assertTrue("Configuration bean wasn't taken into account!", "fakeSecret".equals(facebookEndpoint.getConfiguration().getOAuthAppSecret()));
+        assertEquals("Configuration bean wasn't taken into account!", "fakeId", facebookEndpoint.getConfiguration().getOAuthAppId());
+        assertEquals("Configuration bean wasn't taken into account!", "fakeSecret", facebookEndpoint.getConfiguration().getOAuthAppSecret());
     }
 
     @BindToRegistry("configuration")

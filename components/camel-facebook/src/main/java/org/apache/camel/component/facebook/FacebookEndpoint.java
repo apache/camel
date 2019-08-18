@@ -36,7 +36,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -201,7 +200,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
 
     /**
      * Sets the {@link FacebookEndpointConfiguration} to use
-     * 
+     *
      * @param configuration the {@link FacebookEndpointConfiguration} to use
      */
     public void setConfiguration(FacebookEndpointConfiguration configuration) {

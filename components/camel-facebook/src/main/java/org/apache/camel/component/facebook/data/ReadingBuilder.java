@@ -27,7 +27,7 @@ import facebook4j.Reading;
  * Builds {@link facebook4j.Reading} instances.
  */
 public final class ReadingBuilder {
-    
+
     private ReadingBuilder() {
         // Helper class
     }
@@ -37,10 +37,10 @@ public final class ReadingBuilder {
         // use private field access to make a copy
         Field field = Reading.class.getDeclaredField("parameterMap");
         field.setAccessible(true);
-        final LinkedHashMap<String, String> source = (LinkedHashMap<String, String>) field.get(reading);
+        final Map<String, String> source = (Map<String, String>) field.get(reading);
         // create another reading, and add all fields from source
         Reading copy = new Reading();
-        final LinkedHashMap<String, String> copyMap = new LinkedHashMap<>();
+        final Map<String, String> copyMap = new LinkedHashMap<>();
         copyMap.putAll(source);
         if (skipSinceUtil) {
             copyMap.remove("since");
@@ -117,8 +117,8 @@ public final class ReadingBuilder {
 
         Field field = Reading.class.getDeclaredField("parameterMap");
         field.setAccessible(true);
-        final LinkedHashMap<String, Object> readingParameters = (LinkedHashMap<String, Object>) field.get(reading);
-        readingParameters.putAll((LinkedHashMap<String, Object>) field.get(readingUpdate));
+        final Map<String, Object> readingParameters = (Map<String, Object>) field.get(reading);
+        readingParameters.putAll((Map<String, Object>) field.get(readingUpdate));
         field.setAccessible(false);
 
         setProperties(mergedReading, readingParameters);

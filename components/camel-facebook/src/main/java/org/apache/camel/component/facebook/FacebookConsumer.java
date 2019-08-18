@@ -215,10 +215,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         } else {
             try {
                 reading = ReadingBuilder.copy(reading, true);
-            } catch (NoSuchFieldException e) {
-                throw new IllegalArgumentException(String.format("Error creating property [%s]: %s",
-                        READING_PROPERTY, e.getMessage()), e);
-            } catch (IllegalAccessException e) {
+            } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new IllegalArgumentException(String.format("Error creating property [%s]: %s",
                         READING_PROPERTY, e.getMessage()), e);
             }

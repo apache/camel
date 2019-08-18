@@ -105,11 +105,11 @@ public class FacebookProducer extends DefaultAsyncProducer {
                     }
 
                     // producer returns a single response, even for methods with List return types
-                    exchange.getOut().setBody(result);
+                    exchange.getMessage().setBody(result);
                     // copy headers
-                    exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                    exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
                     if (rawJSON != null) {
-                        exchange.getOut().setHeader(FacebookConstants.FACEBOOK_PROPERTY_PREFIX + "rawJSON",
+                        exchange.getMessage().setHeader(FacebookConstants.FACEBOOK_PROPERTY_PREFIX + "rawJSON",
                             rawJSON);
                     }
 
