@@ -172,7 +172,7 @@ To
                     <header>mySize</header>
                 </completionSizeExpression>
 
-And the same for `<completionTimeout`.
+And the same for `<completionTimeout>`.
 
 #### camel-cdi
 
