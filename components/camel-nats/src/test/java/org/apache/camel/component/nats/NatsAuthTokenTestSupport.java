@@ -22,7 +22,7 @@ import org.testcontainers.containers.GenericContainer;
 
 public class NatsAuthTokenTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "nats:2.0.0";
+    public static final String CONTAINER_IMAGE = "nats:2.0.4";
     public static final String CONTAINER_NAME = "nats-auth-token";
     public static final String TOKEN = "!admin23456";
     
