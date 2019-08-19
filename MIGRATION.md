@@ -524,7 +524,8 @@ The XMLSecurity data format has renamed the attribute `keyOrTrustStoreParameters
 The `<zipFile>` data format has been renamed to `<zipfile>`.
 
 
-### Migrating Camel Maven Plugins
+Migrating Camel Maven Plugins
+----------------------------
 
 The `camel-maven-plugin` has been split up into two maven plugins:
 
@@ -536,7 +537,8 @@ The former has the `run` goal, which is intended for quickly running Camel appli
 The `camel-report-maven-plugin` has the `validate` and `route-coverage` goals which is used for generating reports of your Camel projects such as validating Camel endpoint URIs and route coverage reports, etc.
 
 
-### Known Issues
+Known Issues
+----------------------------
 
 There is an issue with MDC logging and correctly transferring the Camel breadcrumb id's under certain situations with routing over asynchronous endpoints, due to the internal routing engine refactorings. This change also affects the `camel-zipkin` component, which may not correctly transfer the span id's when using MDC logging as well.
 
