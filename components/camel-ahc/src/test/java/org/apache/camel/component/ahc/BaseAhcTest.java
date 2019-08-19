@@ -38,7 +38,7 @@ public abstract class BaseAhcTest extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(24000);
+        port = AvailablePortFinder.getNextAvailable();
     }
 
     @Override
@@ -128,7 +128,7 @@ public abstract class BaseAhcTest extends CamelTestSupport {
     }
 
     protected synchronized int getNextPort() {
-        port = AvailablePortFinder.getNextAvailable(port + 1);
+        port = AvailablePortFinder.getNextAvailable();
         return port;
     }
 

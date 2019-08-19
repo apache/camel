@@ -33,7 +33,7 @@ import org.junit.Test;
 
 public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
     private static final String REQUEST_STRING = "user: Willem\n"
-        + "GET http://localhost:8101/test HTTP/1.1\n" + "another: value\n Host: localhost\n";
+        + "GET http://localhost:%s/test HTTP/1.1\n" + "another: value\n Host: localhost\n";
     private int port1;
 
     @BindToRegistry("string-decoder")
@@ -62,7 +62,7 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
 
     @Test
     public void testNettyHttpServer() throws Exception {
-        invokeService(8100);
+        invokeService(port1);
     }
 
     //@Test
@@ -74,7 +74,7 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
         Exchange out = template.request("netty:tcp://localhost:" + port + "?encoders=#encoders&decoders=#decoders&sync=true", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(REQUEST_STRING);
+                exchange.getIn().setBody(String.format(REQUEST_STRING, port));
             }
         });
 
@@ -92,7 +92,7 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port1 = AvailablePortFinder.getNextAvailable(8100);
+                port1 = AvailablePortFinder.getNextAvailable();
 
                // set up a netty http proxy
                 from("netty-http:http://localhost:" + port1 + "/test")

@@ -61,7 +61,7 @@ import org.apache.http.protocol.ResponseServer;
  */
 public class HttpTestServer {
     
-    public static final int PORT = AvailablePortFinder.getNextAvailable(18080);
+    public static final int PORT = AvailablePortFinder.getNextAvailable();
     
     /**
      * The local address to bind to.

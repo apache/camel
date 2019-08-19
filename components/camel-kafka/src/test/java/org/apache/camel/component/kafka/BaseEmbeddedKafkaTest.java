@@ -35,12 +35,12 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
     @ClassRule
     public static EmbeddedZookeeper zookeeper = new EmbeddedZookeeper(
-            AvailablePortFinder.getNextAvailable(23000));
+            AvailablePortFinder.getNextAvailable());
 
     @ClassRule
     public static EmbeddedKafkaBroker kafkaBroker =
             new EmbeddedKafkaBroker(0,
-                    AvailablePortFinder.getNextAvailable(24000),
+                    AvailablePortFinder.getNextAvailable(),
                     zookeeper.getConnection(),
                     new Properties());
 

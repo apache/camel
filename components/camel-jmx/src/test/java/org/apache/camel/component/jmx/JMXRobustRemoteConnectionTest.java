@@ -55,7 +55,7 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
     @Before
     @Override
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(39000);
+        port = AvailablePortFinder.getNextAvailable();
         url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + port + "/" + DOMAIN);
 
         initContext();

@@ -48,7 +48,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(16200);
+        port = AvailablePortFinder.getNextAvailable();
         super.setUp();
         received.clear();
         latch =  new CountDownLatch(1);

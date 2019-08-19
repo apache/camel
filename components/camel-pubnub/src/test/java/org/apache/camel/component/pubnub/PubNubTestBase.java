@@ -34,7 +34,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static com.pubnub.api.enums.PNHeartbeatNotificationOptions.NONE;
 
 public class PubNubTestBase extends CamelTestSupport {
-    private final int port = AvailablePortFinder.getNextAvailable(3344);
+    private final int port = AvailablePortFinder.getNextAvailable();
 
     @BindToRegistry("pubnub")
     private PubNub pubnub = createPubNubInstance();

@@ -36,8 +36,8 @@ public class BaseUndertowTest extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(8000);
-        port2 = AvailablePortFinder.getNextAvailable(9000);
+        port = AvailablePortFinder.getNextAvailable();
+        port2 = AvailablePortFinder.getNextAvailable();
     }
 
     protected static int getPort() {
@@ -65,10 +65,10 @@ public class BaseUndertowTest extends CamelTestSupport {
     }
 
     protected int getNextPort() {
-        return AvailablePortFinder.getNextAvailable(port + counter.getAndIncrement());
+        return AvailablePortFinder.getNextAvailable();
     }
 
     protected int getNextPort(int startWithPort) {
-        return AvailablePortFinder.getNextAvailable(startWithPort);
+        return AvailablePortFinder.getNextAvailable();
     }
 }
