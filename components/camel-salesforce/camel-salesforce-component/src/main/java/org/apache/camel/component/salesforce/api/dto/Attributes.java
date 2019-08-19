@@ -16,10 +16,18 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 public class Attributes extends AbstractDTOBase {
 
+    @XStreamAsAttribute
     private String type;
+
+    @XStreamAsAttribute
     private String url;
+
+    @XStreamAsAttribute
+    String referenceId;
 
     public String getType() {
         return type;
@@ -35,5 +43,18 @@ public class Attributes extends AbstractDTOBase {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getReferenceId() {
+        return referenceId;
+    }
+
+    public void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
+    }
+
+    @Override
+    public String toString() {
+        return "Attribute<type: " + type + ", referenceId: " + referenceId + ">";
     }
 }

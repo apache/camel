@@ -94,6 +94,7 @@ public class SObjectDescription extends SObject {
         pruned.setLabelPlural(getLabelPlural());
         pruned.fields = fields;
         pruned.urls = urls;
+        pruned.setChildRelationships(childRelationships);
 
         return pruned;
     }

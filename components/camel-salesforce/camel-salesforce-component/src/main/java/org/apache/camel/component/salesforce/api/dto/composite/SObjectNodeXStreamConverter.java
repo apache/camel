@@ -37,8 +37,8 @@ public final class SObjectNodeXStreamConverter implements Converter {
     public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
         final SObjectNode node = (SObjectNode) source;
 
-        writer.addAttribute("type", node.attributes.type);
-        writer.addAttribute("referenceId", node.attributes.referenceId);
+        writer.addAttribute("type", node.object.getAttributes().getType());
+        writer.addAttribute("referenceId", node.object.getAttributes().getReferenceId());
 
         context.convertAnother(node.object);
 

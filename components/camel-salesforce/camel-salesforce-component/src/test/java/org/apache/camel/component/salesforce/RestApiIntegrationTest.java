@@ -22,6 +22,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,9 +42,13 @@ import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.Version;
 import org.apache.camel.component.salesforce.api.dto.Versions;
+import org.apache.camel.component.salesforce.dto.generated.Account;
+import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.apache.camel.component.salesforce.dto.generated.Document;
 import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
+import org.apache.camel.component.salesforce.dto.generated.QueryRecordsAccount;
+import org.apache.camel.component.salesforce.dto.generated.QueryRecordsContact;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Task;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -65,6 +70,7 @@ import org.junit.runners.Parameterized.Parameters;
 @Category(Standalone.class)
 @RunWith(Parameterized.class)
 public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
+
 
     /**
      * Request DTO for Salesforce APEX REST calls. See
@@ -114,11 +120,13 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     @Parameter
     public String format;
 
-    private String testId;
+    private String merchandiseId;
+    private String accountId;
+    private String contactId;
 
     @After
     public void removeData() {
-        template.request("salesforce:deleteSObject?sObjectName=Merchandise__c&sObjectId=" + testId, (Processor) (e) -> {
+        template.request("salesforce:deleteSObject?sObjectName=Merchandise__c&sObjectId=" + merchandiseId, (Processor) (e) -> {
             // NOOP
         });
         template.request("direct:deleteLineItems", (Processor) (e) -> {
@@ -133,28 +141,60 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         merchandise.setPrice__c(10.0);
         merchandise.setTotal_Inventory__c(100.0);
         merchandise.setDescription__c("Test Merchandise!");
-        final CreateSObjectResult result = template().requestBody("salesforce:createSObject", merchandise,
+        final CreateSObjectResult merchandiseResult = template().requestBody("salesforce:createSObject", merchandise,
             CreateSObjectResult.class);
 
-        testId = result.getId();
+        merchandiseId = merchandiseResult.getId();
+    }
+
+    private void createAccountAndContact() {
+        final Account account = new Account();
+        account.setName("Child Test");
+        String accountExternalId = UUID.randomUUID().toString();
+        account.setExternal_Id__c(accountExternalId);
+        CreateSObjectResult accountResult = template().requestBody("direct:createSObject", account,
+                CreateSObjectResult.class);
+        accountId = accountResult.getId();
+
+        final Account accountRef = new Account();
+        accountRef.setExternal_Id__c(accountExternalId);
+        final Contact contact = new Contact();
+        contact.setAccount(accountRef);
+        contact.setLastName("RelationshipTest");
+        CreateSObjectResult contactResult = template().requestBody("direct:createSObject", contact,
+                CreateSObjectResult.class);
+        contactId = contactResult.getId();
+    }
+
+    private void deleteAccountAndContact() {
+        if (accountId != null) {
+            template.request("salesforce:deleteSObject?sObjectName=Account&sObjectId=" + accountId, (Processor) (e) -> {
+                // NOOP
+            });
+        }
+        if (contactId != null) {
+            template.request("salesforce:deleteSObject?sObjectName=Contact&sObjectId=" + contactId, (Processor) (e) -> {
+                // NOOP
+            });
+        }
     }
 
     @Test
     public void testApexCall() throws Exception {
         // request merchandise with id in URI template
-        Merchandise__c merchandise = template().requestBodyAndHeader("direct:apexCallGet", null, "id", testId,
+        Merchandise__c merchandise = template().requestBodyAndHeader("direct:apexCallGet", null, "id", merchandiseId,
             Merchandise__c.class);
         assertNotNull(merchandise);
 
         // request merchandise with id as query param
         merchandise = template().requestBodyAndHeader("direct:apexCallGetWithId", null,
-            SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "id", testId, Merchandise__c.class);
+            SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "id", merchandiseId, Merchandise__c.class);
         assertNotNull(merchandise);
 
         // patch merchandise
         // clear fields that won't be modified
         merchandise.clearBaseFields();
-        merchandise.setId(testId);
+        merchandise.setId(merchandiseId);
         merchandise.setPrice__c(null);
         merchandise.setTotal_Inventory__c(null);
 
@@ -188,6 +228,35 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
         // delete the newly created SObject
         assertNull(template().requestBody("direct:deleteSObject", result.getId()));
+    }
+
+    @Test
+    public void testRelationshipCreateDelete() throws Exception {
+        final Account account = new Account();
+        account.setName("Account 1");
+        String accountExternalId = UUID.randomUUID().toString();
+        account.setExternal_Id__c(accountExternalId);
+        final CreateSObjectResult accountResult = template().requestBody("direct:createSObject", account,
+                CreateSObjectResult.class);
+        assertNotNull(accountResult);
+        assertTrue("Create success", accountResult.getSuccess());
+
+        final Account accountRef = new Account();
+        accountRef.setExternal_Id__c(accountExternalId);
+        final Contact contact = new Contact();
+        contact.setAccount(accountRef);
+        contact.setLastName("RelationshipTest");
+        final CreateSObjectResult contactResult = template().requestBody("direct:createSObject", contact,
+                CreateSObjectResult.class);
+        assertNotNull(accountResult);
+        assertTrue("Create success", contactResult.getSuccess());
+
+        // delete the Contact
+        template().requestBodyAndHeader("direct:deleteSObject", contactResult.getId(), "sObjectName", "Contact");
+
+        // delete the Account
+        template().requestBodyAndHeader("direct:deleteSObject", accountResult.getId(), "sObjectName", "Account");
+
     }
 
     @Test
@@ -240,7 +309,6 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         assertTrue(result.getSuccess());
 
         // clear read only parent type fields
-        lineItem.setInvoice_Statement__c(null);
         lineItem.setMerchandise__c(null);
         // change the units sold
         lineItem.setUnits_Sold__c(25.0);
@@ -262,7 +330,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
         // set test Id for testGetSObject
         assertFalse("RecentItems is empty", objectBasicInfo.getRecentItems().isEmpty());
-        testId = objectBasicInfo.getRecentItems().get(0).getId();
+        merchandiseId = objectBasicInfo.getRecentItems().get(0).getId();
     }
 
     @Test
@@ -307,7 +375,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     @Test
     public void testGetSObject() throws Exception {
-        final Merchandise__c merchandise = template().requestBody("direct:getSObject", testId, Merchandise__c.class);
+        final Merchandise__c merchandise = template().requestBody("direct:getSObject", merchandiseId, Merchandise__c.class);
         assertNotNull(merchandise);
 
         assertNull(merchandise.getTotal_Inventory__c());
@@ -335,6 +403,37 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         final QueryRecordsLine_Item__c queryRecords = template().requestBody("direct:query", null,
             QueryRecordsLine_Item__c.class);
         assertNotNull(queryRecords);
+    }
+
+    @Test
+    public void testParentRelationshipQuery() throws Exception {
+        try {
+            createAccountAndContact();
+            final QueryRecordsContact queryRecords = template().requestBody("direct:parentRelationshipQuery", null,
+                    QueryRecordsContact.class);
+            Account account = queryRecords.getRecords().get(0).getAccount();
+            assertNotNull("Account was null", account);
+        }
+        finally {
+            deleteAccountAndContact();
+        }
+    }
+
+
+    @Test
+    public void testChildRelationshipQuery() throws Exception {
+        try {
+            createAccountAndContact();
+            final QueryRecordsAccount queryRecords = template().requestBody("direct:childRelationshipQuery", null,
+                    QueryRecordsAccount.class);
+
+            assertFalse(queryRecords.getRecords().isEmpty());
+            Account account1 = queryRecords.getRecords().get(0);
+            assertFalse(account1.getContacts().getRecords().isEmpty());
+        }
+        finally {
+            deleteAccountAndContact();
+        }
     }
 
     @Test
@@ -413,7 +512,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     public void testStatus300() throws Exception {
         // get test merchandise
         // note that the header value overrides sObjectFields in endpoint
-        final Merchandise__c merchandise = template().requestBodyAndHeader("direct:getSObject", testId, "sObjectFields",
+        final Merchandise__c merchandise = template().requestBodyAndHeader("direct:getSObject", merchandiseId, "sObjectFields",
             "Name,Description__c,Price__c,Total_Inventory__c", Merchandise__c.class);
         assertNotNull(merchandise);
         assertNotNull(merchandise.getName());
@@ -453,7 +552,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     public void testStatus400() throws Exception {
         // get test merchandise
         // note that the header value overrides sObjectFields in endpoint
-        final Merchandise__c merchandise = template().requestBodyAndHeader("direct:getSObject", testId, "sObjectFields",
+        final Merchandise__c merchandise = template().requestBodyAndHeader("direct:getSObject", merchandiseId, "sObjectFields",
             "Description__c,Price__c", Merchandise__c.class);
         assertNotNull(merchandise);
         assertNotNull(merchandise.getPrice__c());
@@ -570,6 +669,19 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 // testQuery
                 from("direct:query").to("salesforce:query?sObjectQuery=SELECT name from Line_Item__c&sObjectClass="
                     + QueryRecordsLine_Item__c.class.getName() + "&format=" + format);
+
+                // testParentRelationshipQuery
+                from("direct:parentRelationshipQuery")
+                    .process(exchange -> exchange.getIn()
+                        .setBody("SELECT LastName, Account.Name FROM Contact WHERE Id = '" + contactId + "'"))
+                    .to("salesforce:query?sObjectClass=" + QueryRecordsContact.class.getName() + "&format=" + format);
+
+                // testChildRelationshipQuery
+                from("direct:childRelationshipQuery")
+                    .process(exchange -> exchange.getIn()
+                    .setBody("SELECT Id, Name, (SELECT Id, LastName FROM Contacts)"
+                        + " FROM Account WHERE Id = '" + accountId + "'"))
+                    .to("salesforce:query?sObjectClass=" + QueryRecordsAccount.class.getName() + "&format=" + format);
 
                 // testQueryAll
                 from("direct:queryAll")

@@ -43,6 +43,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.util.ObjectHelper;
 
@@ -226,7 +227,8 @@ public final class SObjectTree implements Serializable {
     }
 
     boolean setErrorFor(final SObjectNode node, final String referenceId, final List<RestError> errors) {
-        final Attributes attributes = node.getAttributes();
+        final Attributes attributes =
+                node.getObject().getAttributes();
 
         final String attributesReferenceId = attributes.getReferenceId();
 
@@ -240,7 +242,8 @@ public final class SObjectTree implements Serializable {
     }
 
     boolean setIdFor(final SObjectNode node, final String referenceId, final String id) {
-        final Attributes attributes = node.getAttributes();
+        final Attributes attributes =
+                node.getObject().getAttributes();
 
         final String attributesReferenceId = attributes.getReferenceId();
 

@@ -13,6 +13,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
 import org.apache.camel.component.salesforce.api.dto.InfoUrls;
 import org.apache.camel.component.salesforce.api.dto.NamedLayoutInfo;
@@ -30,9 +31,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @XStreamAlias("Case")
 public class Case extends AbstractDescribedSObjectBase {
 
+    public Case() {
+        Attributes attributes = new Attributes();
+        attributes.setType("Case");
+        setAttributes(attributes);
+    }
+
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();
 
-    // PickListAccentMark
     @XStreamConverter(PicklistEnumConverter.class)
     private Case_PickListAccentMarkEnum PickListAccentMark;
 
@@ -46,7 +52,6 @@ public class Case extends AbstractDescribedSObjectBase {
         this.PickListAccentMark = PickListAccentMark;
     }
 
-    // PickListSlash
     @XStreamConverter(PicklistEnumConverter.class)
     private Case_PickListSlashEnum PickListSlash;
 
@@ -60,7 +65,6 @@ public class Case extends AbstractDescribedSObjectBase {
         this.PickListSlash = PickListSlash;
     }
 
-    // PickListQuotationMark
     @XStreamConverter(PicklistEnumConverter.class)
     private Case_PickListQuotationMarkEnum PickListQuotationMark;
 
@@ -74,7 +78,7 @@ public class Case extends AbstractDescribedSObjectBase {
         this.PickListQuotationMark = PickListQuotationMark;
     }
 
-
+ 
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;

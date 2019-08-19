@@ -38,6 +38,10 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 @XStreamAlias("MSPTest")
 public class MSPTest extends AbstractSObjectBase {
 
+    public MSPTest() {
+        getAttributes().setType("MSPTest");
+    }
+
     @XStreamConverter(MultiSelectPicklistConverter.class)
     private MSPEnum[] MspField;
 
@@ -84,7 +88,6 @@ public class MSPTest extends AbstractSObjectBase {
             }
             throw new IllegalArgumentException(value);
         }
-
     }
 }
 //CHECKSTYLE:ON
