@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -325,6 +326,43 @@ public interface UndertowEndpointBuilderFactory {
         default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Specifies a comma-delimited set of io.undertow.server.HttpHandler
+         * instances in your Registry (such as your Spring ApplicationContext).
+         * These handlers are added to the Undertow handler chain (for example,
+         * to add security). Important: You can not use different handlers with
+         * different Undertow endpoints using the same port number. The handlers
+         * is associated to the port number. If you need different handlers,
+         * then use different port numbers.
+         * 
+         * The option is a:
+         * <code>java.util.Set&lt;org.apache.camel.component.undertow.HttpHandlerRegistrationInfo&gt;</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedUndertowEndpointConsumerBuilder handlers(
+                Set<Object> handlers) {
+            setProperty("handlers", handlers);
+            return this;
+        }
+        /**
+         * Specifies a comma-delimited set of io.undertow.server.HttpHandler
+         * instances in your Registry (such as your Spring ApplicationContext).
+         * These handlers are added to the Undertow handler chain (for example,
+         * to add security). Important: You can not use different handlers with
+         * different Undertow endpoints using the same port number. The handlers
+         * is associated to the port number. If you need different handlers,
+         * then use different port numbers.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Set&lt;org.apache.camel.component.undertow.HttpHandlerRegistrationInfo&gt;</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedUndertowEndpointConsumerBuilder handlers(String handlers) {
+            setProperty("handlers", handlers);
             return this;
         }
         /**
