@@ -136,7 +136,7 @@ The `quartz2` component has been renamed to `quartz`, and it's corresponding com
 
 The `rxjava2` component has been renamed to `rxjava`, and it's corresponding component package from `org.apache.camel.component.rxjava2` to `org.apache.camel.component.rxjava`.
 
-We have also renamed `camel-jetty9` to `camel-jetty`, and it's corresponding component package from `org.apache.camel.component.jetty9` to `org.apache.camel.component.jetty`.
+We have also renamed `camel-jetty9` to `camel-jetty`. The supported scheme is now `jetty`.
 
 ### Tracing
 
