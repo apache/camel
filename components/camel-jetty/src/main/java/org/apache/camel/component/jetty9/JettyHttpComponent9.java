@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty;
+package org.apache.camel.component.jetty9;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.jetty.CamelHttpClient;
+import org.apache.camel.component.jetty.JettyHttpComponent;
+import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.eclipse.jetty.client.HttpClientTransport;
@@ -51,7 +54,7 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
     protected JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException {
         return new JettyHttpEndpoint9(this, endpointUri.toString(), httpUri);
     }
-
+    
     @Override
     protected AbstractConnector createConnectorJettyInternal(Server server,
                                                              JettyHttpEndpoint endpoint,
@@ -78,8 +81,8 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
             }
             if (useXForwardedForHeader) {
                 httpConfig.addCustomizer(new ForwardedRequestCustomizer());
-            }
-            HttpConnectionFactory httpFactory = new org.eclipse.jetty.server.HttpConnectionFactory(httpConfig);
+            }            
+            HttpConnectionFactory httpFactory = new org.eclipse.jetty.server.HttpConnectionFactory(httpConfig); 
 
             ArrayList<ConnectionFactory> connectionFactories = new ArrayList<>();
             ServerConnector result = new org.eclipse.jetty.server.ServerConnector(server);

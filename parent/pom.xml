@@ -342,7 +342,8 @@
         <jedis-client-version>2.9.0</jedis-client-version>
         <jedis-client-bundle-version>2.9.0_1</jedis-client-bundle-version>
         <jersey-version>2.28</jersey-version>
-        <jetty-version>9.4.19.v20190610</jetty-version>
+        <jetty9-version>9.4.19.v20190610</jetty9-version>
+        <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.4.0</jettison-version>

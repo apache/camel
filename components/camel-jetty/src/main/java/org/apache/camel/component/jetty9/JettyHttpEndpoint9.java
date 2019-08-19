@@ -14,13 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty;
+package org.apache.camel.component.jetty9;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.component.jetty.JettyContentExchange;
+import org.apache.camel.component.jetty.JettyHttpComponent;
+import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.http.common.HttpBinding;
+import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
@@ -40,7 +44,7 @@ public class JettyHttpEndpoint9 extends JettyHttpEndpoint implements AsyncEndpoi
 
     @Override
     public HttpBinding getHttpBinding() {
-        // make sure we include jetty variant of the http binding
+        // make sure we include jetty9 variant of the http binding
         if (this.binding == null) {
             this.binding = new AttachmentHttpBinding();
             this.binding.setTransferException(isTransferException());
@@ -61,9 +65,9 @@ public class JettyHttpEndpoint9 extends JettyHttpEndpoint implements AsyncEndpoi
         super.setHttpBinding(binding);
         this.binding = binding;
     }
-
+    
     @Override
     public JettyContentExchange createContentExchange() {
         return new JettyContentExchange9();
-    }
+    } 
 }
