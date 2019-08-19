@@ -11,6 +11,7 @@ import javax.annotation.Generated;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
 import org.apache.camel.component.salesforce.api.dto.InfoUrls;
 import org.apache.camel.component.salesforce.api.dto.NamedLayoutInfo;
@@ -28,9 +29,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @XStreamAlias("With_Reference__c")
 public class With_Reference__c extends AbstractDescribedSObjectBase {
 
+    public With_Reference__c() {
+        Attributes attributes = new Attributes();
+        attributes.setType("With_Reference__c");
+        setAttributes(attributes);
+    }
+
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();
 
-    // account_ref__c
     private String account_ref__c;
 
     @JsonProperty("account_ref__c")
@@ -43,7 +49,6 @@ public class With_Reference__c extends AbstractDescribedSObjectBase {
         this.account_ref__c = account_ref__c;
     }
 
-    // ProductId__c
     private String ProductId__c;
 
     @JsonProperty("ProductId__c")
@@ -56,7 +61,6 @@ public class With_Reference__c extends AbstractDescribedSObjectBase {
         this.ProductId__c = ProductId__c;
     }
 
-    // External__c
     private String External__c;
 
     @JsonProperty("External__c")
@@ -69,18 +73,7 @@ public class With_Reference__c extends AbstractDescribedSObjectBase {
         this.External__c = External__c;
     }
 
-    private With_External_Id__c_Lookup External__c_Lookup;
-
-    @JsonProperty("External__r")
-    public With_External_Id__c_Lookup getExternal__c_Lookup() {
-        return this.External__c_Lookup;
-    }
-
-    @JsonProperty("External__r")
-    public void setExternal__c(With_External_Id__c_Lookup External__c_Lookup) {
-        this.External__c_Lookup = External__c_Lookup;
-    }
-
+  
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;

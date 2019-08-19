@@ -11,6 +11,7 @@ import javax.annotation.Generated;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
 import org.apache.camel.component.salesforce.api.dto.InfoUrls;
 import org.apache.camel.component.salesforce.api.dto.NamedLayoutInfo;
@@ -28,9 +29,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @XStreamAlias("ComplexCalculatedFormula")
 public class ComplexCalculatedFormula extends AbstractDescribedSObjectBase {
 
+    public ComplexCalculatedFormula() {
+        Attributes attributes = new Attributes();
+        attributes.setType("ComplexCalculatedFormula");
+        setAttributes(attributes);
+    }
+
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();
 
-    // ComplexCalculatedFormula
     private String ComplexCalculatedFormula;
 
     @JsonProperty("ComplexCalculatedFormula")
@@ -43,7 +49,7 @@ public class ComplexCalculatedFormula extends AbstractDescribedSObjectBase {
         this.ComplexCalculatedFormula = ComplexCalculatedFormula;
     }
 
-
+ 
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;

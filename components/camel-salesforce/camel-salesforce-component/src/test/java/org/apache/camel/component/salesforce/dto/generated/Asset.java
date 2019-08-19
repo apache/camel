@@ -27,6 +27,10 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 @XStreamAlias("Asset")
 public class Asset extends AbstractSObjectBase {
 
+    public Asset() {
+        getAttributes().setType("Asset");
+    }
+
     // ContactId
     private String ContactId;
 

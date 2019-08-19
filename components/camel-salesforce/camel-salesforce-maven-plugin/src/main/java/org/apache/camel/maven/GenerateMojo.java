@@ -41,6 +41,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.PickListValue;
@@ -179,6 +180,10 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             return descriptions.hasExternalIds(name);
         }
 
+        public boolean atLeastOneHasExternalIds(final List<String> names) {
+            return names.stream().anyMatch(n -> descriptions.hasExternalIds(n));
+        }
+
         public boolean hasMultiSelectPicklists(final SObjectDescription desc) {
             for (final SObjectField field : desc.getFields()) {
                 if (isMultiSelectPicklist(field)) {
@@ -304,7 +309,6 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     private static final String MULTIPICKLIST = "multipicklist";
     private static final String PACKAGE_NAME_PATTERN = "(\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*\\.)+\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
     private static final String PICKLIST = "picklist";
-    private static final String SOBJECT_LOOKUP_VM = "/sobject-lookup.vm";
     private static final String SOBJECT_PICKLIST_VM = "/sobject-picklist.vm";
     private static final String SOBJECT_POJO_OPTIONAL_VM = "/sobject-pojo-optional.vm";
 
@@ -399,7 +403,8 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         parsePicklistOverrideArgs(picklistToStrings, picklistsStringToSObject);
     }
 
-    void processDescription(final File pkgDir, final SObjectDescription description, final GeneratorUtility utility)
+    void processDescription(final File pkgDir, final SObjectDescription description,
+            final GeneratorUtility utility, final Set<String> sObjectNames)
         throws IOException {
         useStringsForPicklists = useStringsForPicklists == null ? Boolean.FALSE : useStringsForPicklists;
 
@@ -416,6 +421,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
         final String pojoFileName = description.getName() + JAVA_EXT;
         final File pojoFile = new File(pkgDir, pojoFileName);
+        context.put("sObjectNames", sObjectNames);
         context.put("descriptions", descriptions);
         try (final Writer writer = new OutputStreamWriter(new FileOutputStream(pojoFile), StandardCharsets.UTF_8)) {
             final Template pojoTemplate = engine.getTemplate(SOBJECT_POJO_VM, UTF_8);
@@ -432,42 +438,6 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             }
         }
 
-        // generate ExternalIds Lookup class for all lookup fields that point to
-        // an Object that has at least one externalId
-        final Set<String> generatedLookupObjects = new HashSet<>();
-        for (final SObjectField field : description.getFields()) {
-            if (!utility.isLookup(field)) {
-                continue;
-            }
-
-            for (final String reference : field.getReferenceTo()) {
-                final List<SObjectField> externalIds = descriptions.externalIdsOf(reference);
-                final String lookupClassName = reference + "_Lookup";
-
-                if (generatedLookupObjects.contains(lookupClassName)) {
-                    continue;
-                }
-
-                for (final SObjectField externalId : externalIds) {
-                    generatedLookupObjects.add(lookupClassName);
-                    final String lookupClassFileName = lookupClassName + JAVA_EXT;
-                    final File lookupClassFile = new File(pkgDir, lookupClassFileName);
-
-                    context.put("field", externalId);
-                    context.put("lookupRelationshipName", field.getRelationshipName());
-                    context.put("lookupType", lookupClassName);
-                    context.put("externalIdsList", externalIds);
-                    context.put("lookupClassName", lookupClassName);
-                    context.put("type", reference);                    
-
-                    try (final Writer writer = new OutputStreamWriter(new FileOutputStream(lookupClassFile),
-                        StandardCharsets.UTF_8)) {
-                        final Template lookupClassTemplate = engine.getTemplate(SOBJECT_LOOKUP_VM, UTF_8);
-                        lookupClassTemplate.merge(context, writer);
-                    }
-                }
-            }
-        }
 
         // write required Enumerations for any picklists
         for (final SObjectField field : description.getFields()) {
@@ -538,6 +508,9 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         }
 
         getLog().info("Generating Java Classes...");
+        Set<String> sObjectNames = StreamSupport.stream(descriptions.fetched().spliterator(), false)
+                .map(d -> d.getName())
+                .collect(Collectors.toSet());
         // generate POJOs for every object description
         final GeneratorUtility utility = new GeneratorUtility();
         for (final SObjectDescription description : descriptions.fetched()) {
@@ -545,7 +518,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                 continue;
             }
             try {
-                processDescription(pkgDir, description, utility);
+                processDescription(pkgDir, description, utility, sObjectNames);
             } catch (final IOException e) {
                 throw new MojoExecutionException("Unable to generate source files for: " + description.getName(), e);
             }

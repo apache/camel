@@ -20,12 +20,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -77,20 +80,24 @@ public class CamelSalesforceMojoOutputTest {
     @Test
     public void testProcessDescription() throws Exception {
         final File pkgDir = temp.newFolder();
-
         final GenerateMojo.GeneratorUtility utility = mojo.new GeneratorUtility();
 
         final RestClient client = mockRestClient();
 
         mojo.descriptions = new ObjectDescriptions(client, 0, null, null, null, null, mojo.getLog());
 
-        mojo.processDescription(pkgDir, description, utility);
+        Set<String> sObjectNames = StreamSupport.stream(mojo.descriptions.fetched().spliterator(), false)
+                .map(SObjectDescription::getName)
+                .collect(Collectors.toSet());
+
+        mojo.processDescription(pkgDir, description, utility, sObjectNames);
 
         for (final String source : sources) {
             final String expected = fileNameAdapter.apply(source);
 
             final File generatedFile = new File(pkgDir, source);
             final String generatedContent = FileUtils.readFileToString(generatedFile, StandardCharsets.UTF_8);
+
 
             final String expectedContent = IOUtils.toString(
                 CamelSalesforceMojoOutputTest.class.getResource("/generated/" + expected), StandardCharsets.UTF_8);
@@ -116,7 +123,7 @@ public class CamelSalesforceMojoOutputTest {
 
                 mojo.setup();
             }, s -> "Asset_LocalDateTime.java", "Asset.java"), //
-            testCase("with_reference.json", "With_Reference__c.java", "With_External_Id__c_Lookup.java"));
+            testCase("with_reference.json", "With_Reference__c.java"));
     }
 
     static GenerateMojo createMojo() {

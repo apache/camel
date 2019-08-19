@@ -9,7 +9,10 @@
       "BillingStreet" : "Landmark @ 1 Market Street",
       "BillingCity" : "San Francisco",
       "BillingState" : "California",
-      "Industry" : "Technology"
+      "Industry" : "Technology",
+      "attributes" : {
+        "type" : "Account"
+      }
     }
   }, {
     "method" : "POST",
@@ -17,7 +20,10 @@
     "referenceId" : "NewContact",
     "body" : {
       "LastName" : "John Doe",
-      "Phone" : "1234567890"
+      "Phone" : "1234567890",
+      "attributes" : {
+        "type" : "Contact"
+      }
     }
   }, {
     "method" : "POST",
@@ -25,7 +31,10 @@
     "referenceId" : "JunctionRecord",
     "body" : {
       "account__c" : "001xx000003DIpcAAG",
-      "contactId__c" : "@{NewContact.id}"
+      "contactId__c" : "@{NewContact.id}",
+      "attributes" : {
+        "type" : "AccountContactJunction__c"
+      }
     }
   } ]
 }

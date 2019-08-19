@@ -66,6 +66,10 @@ final class ObjectDescriptions {
         return descriptions.computeIfAbsent(name, this::fetchDescriptionOf);
     }
 
+    boolean hasDescription(final String name) {
+        return descriptions.containsKey(name);
+    }
+
     List<SObjectField> externalIdsOf(final String name) {
         return descriptionOf(name).getFields().stream().filter(SObjectField::isExternalId).collect(Collectors.toList());
     }

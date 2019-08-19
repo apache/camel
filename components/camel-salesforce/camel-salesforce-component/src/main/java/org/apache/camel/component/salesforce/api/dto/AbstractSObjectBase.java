@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce.api.dto;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 //CHECKSTYLE:OFF
 public abstract class AbstractSObjectBase extends AbstractDTOBase {
@@ -26,6 +27,7 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     // WARNING: these fields have case sensitive names,
     // the field name MUST match the field name used by Salesforce
     // DO NOT change these field names to camel case!!!
+    @XStreamOmitField
     private Attributes attributes;
     private String Id;
     private String OwnerId;
@@ -39,6 +41,10 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     private ZonedDateTime LastActivityDate;
     private ZonedDateTime LastViewedDate;
     private ZonedDateTime LastReferencedDate;
+
+    public AbstractSObjectBase() {
+        attributes = new Attributes();
+    }
 
     /**
      * Utility method to clear all system {@link AbstractSObjectBase} fields.
@@ -57,10 +63,12 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
         LastActivityDate = null;
     }
 
+    @JsonProperty("attributes")
     public Attributes getAttributes() {
         return attributes;
     }
 
+    @JsonProperty("attributes")
     public void setAttributes(Attributes attributes) {
         this.attributes = attributes;
     }
