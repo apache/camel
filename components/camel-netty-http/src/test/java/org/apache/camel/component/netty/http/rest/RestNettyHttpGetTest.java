@@ -20,8 +20,8 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.netty.http.RestNettyHttpBinding;
 import org.apache.camel.component.netty.http.BaseNettyTest;
+import org.apache.camel.component.netty.http.RestNettyHttpBinding;
 import org.junit.Test;
 
 public class RestNettyHttpGetTest extends BaseNettyTest {

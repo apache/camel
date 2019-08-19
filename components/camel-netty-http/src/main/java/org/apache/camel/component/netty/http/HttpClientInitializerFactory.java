@@ -30,7 +30,6 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.netty.http.handlers.HttpClientChannelHandler;
 import org.apache.camel.component.netty.ChannelHandlerFactory;
 import org.apache.camel.component.netty.ClientInitializerFactory;
 import org.apache.camel.component.netty.NettyConfiguration;
