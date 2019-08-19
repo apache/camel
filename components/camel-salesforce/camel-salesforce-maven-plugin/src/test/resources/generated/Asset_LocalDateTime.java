@@ -11,6 +11,7 @@ import javax.annotation.Generated;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
 import org.apache.camel.component.salesforce.api.dto.InfoUrls;
 import org.apache.camel.component.salesforce.api.dto.NamedLayoutInfo;
@@ -28,9 +29,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @XStreamAlias("Asset")
 public class Asset extends AbstractDescribedSObjectBase {
 
+    public Asset() {
+        Attributes attributes = new Attributes();
+        attributes.setType("Asset");
+        setAttributes(attributes);
+    }
+
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();
 
-    // InstallDate
     private java.time.LocalDateTime InstallDate;
 
     @JsonProperty("InstallDate")
@@ -43,7 +49,6 @@ public class Asset extends AbstractDescribedSObjectBase {
         this.InstallDate = InstallDate;
     }
 
-    // date_time
     private java.time.ZonedDateTime date_time;
 
     @JsonProperty("date_time")
@@ -56,7 +61,6 @@ public class Asset extends AbstractDescribedSObjectBase {
         this.date_time = date_time;
     }
 
-    // time
     private java.time.OffsetTime time;
 
     @JsonProperty("time")
@@ -69,7 +73,7 @@ public class Asset extends AbstractDescribedSObjectBase {
         this.time = time;
     }
 
-
+ 
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;

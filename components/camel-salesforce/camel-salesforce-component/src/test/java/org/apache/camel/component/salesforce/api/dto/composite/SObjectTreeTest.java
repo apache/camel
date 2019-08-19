@@ -75,41 +75,54 @@ public class SObjectTreeTest extends CompositeTestBase {
         final String json = writer.writeValueAsString(tree);
 
         assertEquals("Should serialize to JSON as in Salesforce example",
-            "{\"records\":["//
-                + "{"//
-                + "\"attributes\":{\"referenceId\":\"ref1\",\"type\":\"Account\"},"//
-                + "\"Industry\":\"Banking\","//
-                + "\"Name\":\"SampleAccount\","//
-                + "\"NumberOfEmployees\":100,"//
-                + "\"Phone\":\"1234567890\","//
-                + "\"Website\":\"www.salesforce.com\","//
-                + "\"Contacts\":{"//
-                + "\"records\":["//
-                + "{"//
-                + "\"attributes\":{\"referenceId\":\"ref2\",\"type\":\"Contact\"},"//
-                + "\"Email\":\"sample@salesforce.com\","//
-                + "\"LastName\":\"Smith\","//
-                + "\"Title\":\"President\""//
-                + "},"//
-                + "{"//
-                + "\"attributes\":{\"referenceId\":\"ref3\",\"type\":\"Contact\"},"//
-                + "\"Email\":\"sample@salesforce.com\","//
-                + "\"LastName\":\"Evans\","//
-                + "\"Title\":\"Vice President\""//
-                + "}"//
-                + "]"//
-                + "}"//
-                + "},"//
-                + "{"//
-                + "\"attributes\":{\"referenceId\":\"ref4\",\"type\":\"Account\"},"//
-                + "\"Industry\":\"Banking\","//
-                + "\"Name\":\"SampleAccount2\","//
-                + "\"NumberOfEmployees\":100,"//
-                + "\"Phone\":\"1234567890\","//
-                + "\"Website\":\"www.salesforce2.com\""//
-                + "}"//
-                + "]"//
-                + "}",
+            "{" +
+                    "\"records\":[" +
+                    "{" +
+                    "\"Industry\":\"Banking\"," +
+                    "\"Name\":\"SampleAccount\"," +
+                    "\"NumberOfEmployees\":100," +
+                    "\"Phone\":\"1234567890\"," +
+                    "\"Website\":\"www.salesforce.com\"," +
+                    "\"attributes\":{" +
+                    "\"referenceId\":\"ref1\"," +
+                    "\"type\":\"Account\"" +
+                    "}," +
+                    "\"Contacts\":{" +
+                    "\"records\":[" +
+                    "{" +
+                    "\"Email\":\"sample@salesforce.com\"," +
+                    "\"LastName\":\"Smith\"," +
+                    "\"Title\":\"President\"," +
+                    "\"attributes\":{" +
+                    "\"referenceId\":\"ref2\"," +
+                    "\"type\":\"Contact\"" +
+                    "}" +
+                    "}," +
+                    "{" +
+                    "\"Email\":\"sample@salesforce.com\"," +
+                    "\"LastName\":\"Evans\"," +
+                    "\"Title\":\"Vice President\"," +
+                    "\"attributes\":{" +
+                    "\"referenceId\":\"ref3\"," +
+                    "\"type\":\"Contact\"" +
+                    "}" +
+                    "}" +
+                    "]" +
+                    "}" +
+                    "}," +
+                    "{" +
+                    "\"Industry\":\"Banking\"," +
+                    "\"Name\":\"SampleAccount2\"," +
+                    "\"NumberOfEmployees\":100," +
+                    "\"Phone\":\"1234567890\"," +
+                    "\"Website\":\"www.salesforce2.com\"," +
+                    "\"attributes\":{" +
+                    "\"referenceId\":\"ref4\"," +
+                    "\"type\":\"Account\"" +
+                    "}" +
+                    "}" +
+                    "]" +
+                    "}",
             json);
     }
 
@@ -140,13 +153,13 @@ public class SObjectTreeTest extends CompositeTestBase {
                 + "<NumberOfEmployees>100</NumberOfEmployees>"//
                 + "<Contacts>"//
                 + "<records type=\"Contact\" referenceId=\"ref2\">"//
-                + "<Email>sample@salesforce.com</Email>"//
                 + "<LastName>Smith</LastName>"//
+                + "<Email>sample@salesforce.com</Email>"//
                 + "<Title>President</Title>"//
                 + "</records>"//
                 + "<records type=\"Contact\" referenceId=\"ref3\">"//
-                + "<Email>sample@salesforce.com</Email>"//
                 + "<LastName>Evans</LastName>"//
+                + "<Email>sample@salesforce.com</Email>"//
                 + "<Title>Vice President</Title>"//
                 + "</records>"//
                 + "</Contacts>"//
@@ -203,9 +216,9 @@ public class SObjectTreeTest extends CompositeTestBase {
         final SObjectNode assetNode = new SObjectNode(tree, asset);
         contactNode.addChild("Assets", assetNode);
 
-        assertEquals("ref1", accountNode.getAttributes().getReferenceId());
-        assertEquals("ref2", contactNode.getAttributes().getReferenceId());
-        assertEquals("ref3", assetNode.getAttributes().getReferenceId());
+        assertEquals("ref1", accountNode.getObject().getAttributes().getReferenceId());
+        assertEquals("ref2", contactNode.getObject().getAttributes().getReferenceId());
+        assertEquals("ref3", assetNode.getObject().getAttributes().getReferenceId());
 
         tree.setIdFor("ref1", "id1");
         tree.setIdFor("ref3", "id3");
@@ -229,13 +242,13 @@ public class SObjectTreeTest extends CompositeTestBase {
         tree.addNode(account2);
 
         final SObjectNode simpleAccountFromTree = tree.records.get(0);
-        assertEquals("ref1", simpleAccountFromTree.getAttributes().getReferenceId());
+        assertEquals("ref1", simpleAccountFromTree.getObject().getAttributes().getReferenceId());
 
         final Iterator<SObjectNode> simpleAccountNodes = simpleAccountFromTree.getChildNodes().iterator();
-        assertEquals("ref2", simpleAccountNodes.next().getAttributes().getReferenceId());
-        assertEquals("ref3", simpleAccountNodes.next().getAttributes().getReferenceId());
+        assertEquals("ref2", simpleAccountNodes.next().getObject().getAttributes().getReferenceId());
+        assertEquals("ref3", simpleAccountNodes.next().getObject().getAttributes().getReferenceId());
 
-        assertEquals("ref4", account2.getAttributes().getReferenceId());
+        assertEquals("ref4", account2.getObject().getAttributes().getReferenceId());
     }
 
     @Test

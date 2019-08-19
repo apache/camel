@@ -40,6 +40,11 @@ public class SObjectCompositeTest {
     @JsonPropertyOrder({"account__c", "contactId__c"})
     public static class AccountContactJunction__c extends AbstractDescribedSObjectBase {
 
+        public AccountContactJunction__c() {
+            super();
+            getAttributes().setType("AccountContactJunction__c");
+        }
+
         private String account__c;
 
         private String contactId__c;
@@ -115,7 +120,6 @@ public class SObjectCompositeTest {
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
         final String serialized = mapper.writerFor(SObjectComposite.class).writeValueAsString(composite);
-
         assertThat(serialized).as("Should serialize as expected by Salesforce").isEqualTo(expectedJson);
     }
 }

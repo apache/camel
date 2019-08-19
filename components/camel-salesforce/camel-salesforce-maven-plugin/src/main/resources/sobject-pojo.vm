@@ -48,6 +48,7 @@ import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
 #end
 #end
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
 import org.apache.camel.component.salesforce.api.dto.InfoUrls;
 import org.apache.camel.component.salesforce.api.dto.NamedLayoutInfo;
@@ -71,6 +72,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @XStreamAlias("$desc.Name")
 public class $desc.Name extends AbstractDescribedSObjectBase {
 
+    public ${desc.Name}() {
+        Attributes attributes = new Attributes();
+        attributes.setType("$desc.Name");
+        setAttributes(attributes);
+    }
+
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();
 
 #foreach ( $field in $desc.Fields )
@@ -78,7 +85,6 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
 #if ( ($utility.notBaseField($field.Name)) && ($fieldType) )
 #set ( $fieldName = $field.Name )
 #set ( $isMultiSelectPicklist = $utility.isMultiSelectPicklist($field) )
-    // $fieldName
 #if ( $utility.isBlobField($field) )
 #set ( $propertyName = $fieldName + "Url" )
 #else
@@ -127,32 +133,49 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
         this.$propertyName = $propertyName;
     }
 
-#if ( $utility.isLookup($field) )## IS LOOKUP
-#foreach ( $reference in $field.getReferenceTo() )## REFERENCE LOOP
-#if ( $utility.hasExternalIds($reference) )## HAS EXTERNAL IDS
-#set( $fieldName = $field.getName() )
-#if ( $fieldName.endsWith("Id") )## PROPERTY IS ID
-#set( $jsonPropertyName = $fieldName.substring(0, $fieldName.length() - 2) )
-#elseif ( $fieldName.endsWith("__pc") )
-#set ( $jsonPropertyName = $fieldName.replace("__pc", "__pr") )
+#if ( $field.type == "reference" && $utility.notNull($field.relationshipName)
+    && $utility.atLeastOneHasExternalIds($field.getReferenceTo()) ) ## IS LOOKUP $hasDescription
+#if ( $field.getReferenceTo().size() > 1)
+#set ( $propertyType = "AbstractDescribedSObjectBase")
+#set ( $needed = true )
 #else
-#set( $jsonPropertyName = $fieldName.replace("__c", "__r") )
-#end## PROPERTY IS ID
+#set ( $propertyType = $field.getReferenceTo().get(0) )
+#set ( $needed = $sObjectNames.contains($field.getReferenceTo().get(0)) )
+#end
+#if ( $needed )
+#set( $fieldName = $field.getName() )
+#set( $jsonPropertyName = $field.relationshipName )
 #set( $lookupObjectType = $reference )
-    private ${lookupObjectType}_Lookup ${fieldName}_Lookup;
+    @XStreamAlias("${jsonPropertyName}")
+    private $propertyType $jsonPropertyName;
 
-    @JsonProperty("$jsonPropertyName")
-    public ${lookupObjectType}_Lookup get${fieldName}_Lookup() {
-        return this.${fieldName}_Lookup;
+    @JsonProperty("${jsonPropertyName}")
+    public $propertyType get${jsonPropertyName}() {
+        return this.$jsonPropertyName;
     }
 
-    @JsonProperty("$jsonPropertyName")
-    public void set$fieldName(${lookupObjectType}_Lookup ${fieldName}_Lookup) {
-        this.${fieldName}_Lookup = ${fieldName}_Lookup;
+    @JsonProperty("${jsonPropertyName}")
+    public void set${jsonPropertyName}($propertyType $jsonPropertyName) {
+        this.${jsonPropertyName} = $jsonPropertyName;
     }
-#end## HAS EXTERNAL IDS
-#end## END REFERENCE LOOP
+#end
 #end## END IS LOOKUP
+#end
+#end ##foreach field
+#foreach ( $rel in $desc.childRelationships )
+#set (  $hasDescription = $sObjectNames.contains($rel.childSObject) )
+#if ( $utility.notNull($rel.relationshipName) && $hasDescription )
+    private QueryRecords${rel.childSObject} $rel.relationshipName;
+
+    @JsonProperty("$rel.relationshipName")
+    public QueryRecords${rel.childSObject} get${rel.relationshipName}() {
+        return $rel.relationshipName;
+    }
+
+    @JsonProperty("$rel.relationshipName")
+    public void set${rel.relationshipName}(QueryRecords${rel.childSObject} ${rel.relationshipName}) {
+        this.${rel.relationshipName} = ${rel.relationshipName};
+    }
 #end
 #end
 

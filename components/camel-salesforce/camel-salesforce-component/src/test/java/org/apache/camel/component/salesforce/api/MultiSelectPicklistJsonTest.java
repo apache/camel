@@ -28,8 +28,8 @@ import static org.junit.Assert.assertNull;
 
 public class MultiSelectPicklistJsonTest {
 
-    private static final String TEST_JSON = "{\"MspField\":\"Value1;Value2;Value3\"}";
-    private static final String TEST_NULL_JSON = "{\"MspField\":null}";
+    private static final String TEST_JSON = "{\"attributes\":{\"type\":\"MSPTest\"},\"MspField\":\"Value1;Value2;Value3\"}";
+    private static final String TEST_NULL_JSON = "{\"attributes\":{\"type\":\"MSPTest\"},\"MspField\":null}";
 
     private static ObjectMapper objectMapper = JsonUtils.createObjectMapper();
 

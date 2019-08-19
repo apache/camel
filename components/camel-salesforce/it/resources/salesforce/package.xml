@@ -32,6 +32,7 @@
     </types>
     <types>
         <members>Account.Shipping_Location__c</members>
+        <members>Account.External_Id__c</members>
         <members>Invoice__c.Status__c</members>
         <members>Line_Item__c.Merchandise__c</members>
         <members>Line_Item__c.Unit_Price__c</members>

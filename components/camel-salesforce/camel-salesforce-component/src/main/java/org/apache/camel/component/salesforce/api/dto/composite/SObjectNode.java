@@ -45,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents one node in the SObject tree request. SObject trees ({@link SObjectTree}) are composed from instances of
- * {@link SObjectNode}s. Each {@link SObjectNode} contains {@link Attributes}, the SObject ({@link AbstractSObjectBase})
+ * {@link SObjectNode}s. Each {@link SObjectNode} contains the SObject ({@link AbstractSObjectBase})
  * and any child records linked to it. SObjects at root level are added to {@link SObjectTree} using
  * {@link SObjectTree#addObject(AbstractSObjectBase)}, then you can add child records on the {@link SObjectNode}
  * returned by using {@link #addChild(AbstractDescribedSObjectBase)},
@@ -69,9 +69,6 @@ public final class SObjectNode implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @JsonProperty
-    final Attributes attributes;
-
     @JsonUnwrapped
     final AbstractSObjectBase object;
 
@@ -90,8 +87,7 @@ public final class SObjectNode implements Serializable {
             final AbstractSObjectBase object) {
         this.referenceGenerator = requireNonNull(referenceGenerator, "ReferenceGenerator cannot be null");
         this.object = requireNonNull(object, "Root SObject cannot be null");
-        attributes = new Attributes(referenceGenerator.nextReferenceFor(object),
-            requireNonNull(type, "Object type cannot be null"));
+        object.getAttributes().setReferenceId(referenceGenerator.nextReferenceFor(object));
     }
 
     static String pluralOf(final AbstractDescribedSObjectBase object) {
@@ -287,13 +283,9 @@ public final class SObjectNode implements Serializable {
             .collect(Collectors.toMap(Map.Entry::getKey, e -> Collections.singletonMap("records", e.getValue())));
     }
 
-    Attributes getAttributes() {
-        return attributes;
-    }
-
     @JsonIgnore
     String getObjectType() {
-        return attributes.type;
+        return object.getAttributes().getType();
     }
 
     Stream<Class> objectTypes() {
