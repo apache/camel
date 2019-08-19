@@ -51,7 +51,7 @@
         <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
         <apacheds-version>2.0.0-M24</apacheds-version>
         <apache-drill-version>1.16.0</apache-drill-version>
-        <apache-gora-version>0.8</apache-gora-version>
+        <apache-gora-version>0.9</apache-gora-version>
         <apache-mime4j-version>0.8.3</apache-mime4j-version>
         <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
         <aries-blueprint-cm-version>1.3.0</aries-blueprint-cm-version>
