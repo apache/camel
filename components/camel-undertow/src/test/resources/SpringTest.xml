@@ -43,11 +43,6 @@
         <property name="targetMethod">
             <value>getNextAvailable</value>
         </property>
-        <property name="arguments">
-            <list>
-                <value>8800</value>
-            </list>
-        </property>
     </bean>
 
     <bean id="accessLogReceiver" class="io.undertow.server.handlers.accesslog.JBossLoggingAccessLogReceiver"/>

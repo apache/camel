@@ -32,11 +32,6 @@
         <property name="targetMethod">
             <value>getNextAvailable</value>
         </property>
-        <property name="arguments">
-            <list>
-                <value>5000</value>
-            </list>
-        </property>
     </bean>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">

@@ -111,9 +111,9 @@ public class InterfacesTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 port1 = getNextPort();
-                port2 = getNextPort(port1 + 1);
-                port3 = getNextPort(port2 + 1);
-                port4 = getNextPort(port3 + 1);
+                port2 = getNextPort();
+                port3 = getNextPort();
+                port4 = getNextPort();
 
                 from("jetty:http://localhost:" + port1 + "/testRoute")
                     .setBody().constant("local")

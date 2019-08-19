@@ -31,9 +31,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
 
-    private static int port1 = AvailablePortFinder.getNextAvailable(20032);
-    private static int port2 = AvailablePortFinder.getNextAvailable(20043);
-    private static int port3 = AvailablePortFinder.getNextAvailable(20044);
+    private static int port1 = AvailablePortFinder.getNextAvailable();
+    private static int port2 = AvailablePortFinder.getNextAvailable();
+    private static int port3 = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts

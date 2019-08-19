@@ -27,8 +27,8 @@ public final class ITestSupport {
 
     static final int PORT1 = AvailablePortFinder.getNextAvailable();
     static final int PORT2 = AvailablePortFinder.getNextAvailable();
-    static final int PORT3 = AvailablePortFinder.getNextAvailable(61616);
-    static final int PORT4 = AvailablePortFinder.getNextAvailable(61616);
+    static final int PORT3 = AvailablePortFinder.getNextAvailable();
+    static final int PORT4 = AvailablePortFinder.getNextAvailable();
 
     static {
         //set them as system properties so Spring can use the property placeholder

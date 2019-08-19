@@ -37,7 +37,7 @@ public class SyslogSpringMinaTest extends CamelSpringTestSupport {
 
     @BeforeClass
     public static void initPort() {
-        serverPort = AvailablePortFinder.getNextAvailable(3000);
+        serverPort = AvailablePortFinder.getNextAvailable();
         System.setProperty("server-port", new Integer(serverPort).toString());
     }
 

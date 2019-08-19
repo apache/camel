@@ -42,8 +42,8 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
     
     @BeforeClass
     public static void initPort() throws Exception {
-        ftpPort = AvailablePortFinder.getNextAvailable(20126);
-        httpPort = AvailablePortFinder.getNextAvailable(9193);
+        ftpPort = AvailablePortFinder.getNextAvailable();
+        httpPort = AvailablePortFinder.getNextAvailable();
     }
 
     @Test

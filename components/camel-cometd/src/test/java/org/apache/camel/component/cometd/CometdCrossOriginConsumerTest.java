@@ -53,7 +53,7 @@ public class CometdCrossOriginConsumerTest extends CamelTestSupport {
     public void testFilterArgumentsSetOnEndpoint() throws Exception {
         // setup
         CometdComponent component = context.getComponent("cometd", CometdComponent.class);
-        int port = AvailablePortFinder.getNextAvailable(23500);
+        int port = AvailablePortFinder.getNextAvailable();
 
         // act
         Endpoint result = component

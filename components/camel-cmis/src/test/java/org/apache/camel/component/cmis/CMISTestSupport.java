@@ -149,7 +149,7 @@ public class CMISTestSupport extends CamelTestSupport {
 
     @BeforeClass
     public static void startServer() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(26500);
+        port = AvailablePortFinder.getNextAvailable();
         cmisServer = new Server(port);
         cmisServer.setHandler(new WebAppContext(OPEN_CMIS_SERVER_WAR_PATH, "/chemistry-opencmis-server-inmemory"));
         cmisServer.start();

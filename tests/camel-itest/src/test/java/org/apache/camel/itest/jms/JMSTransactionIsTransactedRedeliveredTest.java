@@ -33,7 +33,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSupport {
 
-    private static int port = AvailablePortFinder.getNextAvailable(20039);
+    private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts

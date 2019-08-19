@@ -33,7 +33,7 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
 
     @BindToRegistry("setId")
     private static final Processor SET_ROUTE_ID_AS_BODY = exchange -> exchange.getIn().setBody(exchange.getFromRouteId());
-    private int port = AvailablePortFinder.getNextAvailable(6000);
+    private int port = AvailablePortFinder.getNextAvailable();
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {

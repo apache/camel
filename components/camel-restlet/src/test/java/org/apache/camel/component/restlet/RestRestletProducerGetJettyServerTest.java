@@ -38,7 +38,7 @@ public class RestRestletProducerGetJettyServerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // find free port
-                int port = AvailablePortFinder.getNextAvailable(22400);
+                int port = AvailablePortFinder.getNextAvailable();
 
                 // configure to use restlet on localhost with the given port
                 restConfiguration().component("restlet").host("localhost").port(port);

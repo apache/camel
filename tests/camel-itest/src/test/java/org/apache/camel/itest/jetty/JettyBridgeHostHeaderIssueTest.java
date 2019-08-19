@@ -98,11 +98,11 @@ public class JettyBridgeHostHeaderIssueTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(12000);
-        port2 = AvailablePortFinder.getNextAvailable(12100);
-        port3 = AvailablePortFinder.getNextAvailable(12200);
-        port4 = AvailablePortFinder.getNextAvailable(12300);
-        port5 = AvailablePortFinder.getNextAvailable(12400);
+        port = AvailablePortFinder.getNextAvailable();
+        port2 = AvailablePortFinder.getNextAvailable();
+        port3 = AvailablePortFinder.getNextAvailable();
+        port4 = AvailablePortFinder.getNextAvailable();
+        port5 = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override

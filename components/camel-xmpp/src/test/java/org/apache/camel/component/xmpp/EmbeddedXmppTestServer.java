@@ -73,7 +73,7 @@ public final class EmbeddedXmppTestServer {
             xmppServer.setStorageProviderRegistry(providerRegistry);
 
             endpoint = new TCPEndpoint();
-            this.port = AvailablePortFinder.getNextAvailable(5222);
+            this.port = AvailablePortFinder.getNextAvailable();
             endpoint.setPort(port);
 
             xmppServer.addEndpoint(endpoint);

@@ -94,7 +94,7 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port = AvailablePortFinder.getNextAvailable(8000);
+                port = AvailablePortFinder.getNextAvailable();
 
                 from("netty:tcp://localhost:" + port + "?textline=true&sync=true&reuseAddress=true&synchronous=false")
                     .to("activemq:queue:foo")

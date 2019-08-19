@@ -47,7 +47,7 @@ public class HttpProducerSessionTest extends CamelTestSupport {
 
     @BeforeClass
     public static void initServer() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(24000);
+        port = AvailablePortFinder.getNextAvailable();
         localServer = new Server(new InetSocketAddress("127.0.0.1", port));
         ContextHandler contextHandler = new ContextHandler();
         contextHandler.setContextPath("/session");

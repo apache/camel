@@ -64,14 +64,6 @@ public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private byte[] getBytesFromFile(String filename) throws IOException {
-        InputStream input;
-        input = new FileInputStream(new File(filename));
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        IOHelper.copyAndCloseInput(input, output);
-        return output.toByteArray();
-    }
-
     @Override
     protected PublickeyAuthenticator getPublickeyAuthenticator() {
         return (username, key, session) -> key.equals(keyPair.getPublic());
@@ -80,7 +72,7 @@ public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         context.getRegistry().bind("keyPair", keyPair);
-        context.getRegistry().bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
+        context.getRegistry().bind("knownHosts", buildKnownHosts());
 
         return new RouteBuilder() {
             @Override

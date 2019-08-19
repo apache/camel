@@ -48,7 +48,7 @@ public class JmsToHttpRoute extends SpringRouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(8000);
+        port = AvailablePortFinder.getNextAvailable();
 
         // configure a global transacted error handler
         errorHandler(transactionErrorHandler(required));

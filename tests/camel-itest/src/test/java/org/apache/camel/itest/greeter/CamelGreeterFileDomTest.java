@@ -44,7 +44,7 @@ public class CamelGreeterFileDomTest extends AbstractJUnit4SpringContextTests {
         + "<soap:Body><greetMe xmlns=\"http://apache.org/hello_world_soap_http/types\">"
         + "<requestType>Willem</requestType></greetMe></soap:Body></soap:Envelope>";
     private static Endpoint endpoint;
-    private static int port = AvailablePortFinder.getNextAvailable(20003);
+    private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 

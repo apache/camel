@@ -41,7 +41,7 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testSetServletInitalparameters() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(16330);
+        port = AvailablePortFinder.getNextAvailable();
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=25000&maxIdleTime=3000&maxTextMessageSize=500&maxBinaryMessageSize=550";
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
@@ -80,7 +80,7 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
     @Test
     public void testSetServletNoMinThreadsNoMaxThreadsNoThreadPool() throws Exception {
         assumeTrue("At lease 18 CPUs available", 1 + Runtime.getRuntime().availableProcessors() * 2 >= 19);
-        port = AvailablePortFinder.getNextAvailable(16331);
+        port = AvailablePortFinder.getNextAvailable();
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=25000&maxIdleTime=3000";
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
@@ -107,7 +107,7 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
     
     @Test
     public void testSetServletThreadPool() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(16332);
+        port = AvailablePortFinder.getNextAvailable();
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=25000&maxIdleTime=3000";
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
