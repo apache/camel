@@ -103,6 +103,7 @@ added.
 |Claus Straube | 
 |Dan Checkoway | 
 |Dennis Byrne |Thoughtworks
+|Dimitrios Liapis |
 |Erik Onnen | 
 |Fabrizio Spataro |Bizmate
 |Fernando Ribeiro | 
