@@ -140,7 +140,7 @@ Subscribe for new vault state changes:
 
 [source,java]
 ---------------------------------------------------------------------------------------------
-from("corda://localhost:10006?username=user1&password=test?operation=VAULT_TRACK&contractStateClass=#contractStateClass")
+from("corda://localhost:10006?username=user1&password=test&operation=VAULT_TRACK&contractStateClass=#contractStateClass")
     .to("jms:queue:vault");
 ---------------------------------------------------------------------------------------------
 
@@ -149,5 +149,5 @@ Read the node information:
 [source,java]
 --------------------------------------------------------
 from("direct:start")
-    .to("corda://localhost:10006?username=user1&password=test?operation=NODE_INFO");
+    .to("corda://localhost:10006?username=user1&password=test&operation=NODE_INFO");
 --------------------------------------------------------
