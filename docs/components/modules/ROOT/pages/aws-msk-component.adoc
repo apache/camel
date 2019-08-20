@@ -3,7 +3,7 @@
 
 *Available as of Camel version 3.0*
 
-The KMS component supports create, run, start, stop and terminate
+The AWS MSK component supports create, run, start, stop and terminate
 https://aws.amazon.com/msk/[AWS MSK] instances.
 
 Prerequisites
@@ -125,7 +125,7 @@ The component supports 12 options, which are listed below.
 
 Required MSK component options
 
-You have to provide the amazonKmsClient in the
+You have to provide the amazonMskClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/msk/[Amazon MSK] service.
 
@@ -152,9 +152,9 @@ the https://aws.amazon.com/msk/[Amazon MSK] service.
 |`CamelAwsMSKBrokerNodesGroupInfo` |`com.amazonaws.services.kafka.model.BrokerNodeGroupInfo`| The Broker nodes group info to provide during the create operation
 |=======================================================================
 
-=== KMS Producer operations
+=== MSK Producer operations
 
-Camel-AWS KMS component provides the following operation on the producer side:
+Camel-AWS MSK component provides the following operation on the producer side:
 
 - listClusters
 - createCluster
