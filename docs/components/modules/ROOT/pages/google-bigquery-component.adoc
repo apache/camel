@@ -145,10 +145,10 @@ The component supports 8 options, which are listed below.
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Name |Type |Description
-|`CamelGoogleBigQuery.TableSuffix` |`String` |Table suffix to use when inserting data
-|`CamelGoogleBigQuery.InsertId` |`String` |InsertId to use when inserting data
-|`CamelGoogleBigQuery.PartitionDecorator` |`String` |Partition decorator to indicate partition to use when inserting data
-|`CamelGoogleBigQuery.TableId` |`String` |Table id where data will be submitted. If specified will override endpoint configuration
+|`CamelGoogleBigQueryTableSuffix` |`String` |Table suffix to use when inserting data
+|`CamelGoogleBigQueryInsertId` |`String` |InsertId to use when inserting data
+|`CamelGoogleBigQueryPartitionDecorator` |`String` |Partition decorator to indicate partition to use when inserting data
+|`CamelGoogleBigQueryTableId` |`String` |Table id where data will be submitted. If specified will override endpoint configuration
 |=======================================================================
 
 
