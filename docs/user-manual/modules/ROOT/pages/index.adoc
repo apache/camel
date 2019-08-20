@@ -11,7 +11,7 @@
 * xref:getting-started.adoc[Getting Started]
 * xref:book-getting-started.adoc[Longer Getting Started Guide]
 * xref:faq.adoc[FAQ]
-* https://github.com/apache/camel/blob/master/docs/user-manual/en/notice.md[Legal Notice]
+* https://github.com/apache/camel/blob/master/NOTICE.txt[Legal Notice]
 
 == Documentation
 
