@@ -53,9 +53,9 @@
       <artifactId>camel-olingo2-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>${commons-lang-version}</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3-version}</version>
     </dependency>
 
     <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->

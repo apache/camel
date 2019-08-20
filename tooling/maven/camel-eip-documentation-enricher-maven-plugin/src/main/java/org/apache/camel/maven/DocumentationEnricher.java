@@ -28,8 +28,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.util.JsonSchemaHelper;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.maven.plugin.logging.Log;
 
 import static org.apache.camel.maven.XmlHelper.isNullOrEmpty;
