@@ -30,10 +30,10 @@ import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 /**
- * Jackson deserializer base class for reading ';' separated strings for MultiSelect pick-lists.
+ * Jackson deserializer base class for reading ';' separated strings for
+ * MultiSelect pick-lists.
  */
-public class MultiSelectPicklistDeserializer
-    extends StdDeserializer<Object> implements ContextualDeserializer {
+public class MultiSelectPicklistDeserializer extends StdDeserializer<Object> implements ContextualDeserializer {
 
     private static final long serialVersionUID = -4568286926393043366L;
 
@@ -92,6 +92,6 @@ public class MultiSelectPicklistDeserializer
         if (componentType == null || !componentType.isEnum()) {
             throw new JsonMappingException(context.getParser(), "Pick list Enum array expected for " + rawClass);
         }
-        return new MultiSelectPicklistDeserializer(context.getParser(), (Class<? extends Enum<?>>) componentType);
+        return new MultiSelectPicklistDeserializer(context.getParser(), (Class<? extends Enum<?>>)componentType);
     }
 }

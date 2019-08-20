@@ -52,13 +52,11 @@ public class SalesforceComponentVerifierExtension extends DefaultComponentVerifi
         // - OAuth JWT Flow
         //
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-            .errors(ResultErrorHelper.requiresAny(parameters,
-                OptionsGroup.withName(AuthenticationType.USERNAME_PASSWORD)
-                    .options("clientId", "clientSecret", "userName", "password", "!refreshToken", "!keystore"),
-                OptionsGroup.withName(AuthenticationType.REFRESH_TOKEN)
-                    .options("clientId", "clientSecret", "refreshToken", "!password", "!keystore"),
-                OptionsGroup.withName(AuthenticationType.JWT)
-                    .options("clientId", "userName", "keystore", "!password", "!refreshToken")));
+            .errors(ResultErrorHelper
+                .requiresAny(parameters,
+                             OptionsGroup.withName(AuthenticationType.USERNAME_PASSWORD).options("clientId", "clientSecret", "userName", "password", "!refreshToken", "!keystore"),
+                             OptionsGroup.withName(AuthenticationType.REFRESH_TOKEN).options("clientId", "clientSecret", "refreshToken", "!password", "!keystore"),
+                             OptionsGroup.withName(AuthenticationType.JWT).options("clientId", "userName", "keystore", "!password", "!refreshToken")));
 
         // Validate using the catalog
         super.verifyParametersAgainstCatalog(builder, parameters);
@@ -99,20 +97,11 @@ public class SalesforceComponentVerifierExtension extends DefaultComponentVerifi
 
     private static void processSalesforceException(ResultBuilder builder, Optional<SalesforceException> exception) {
         exception.ifPresent(e -> {
-            builder.error(
-                ResultErrorBuilder.withException(e)
-                    .detail(VerificationError.HttpAttribute.HTTP_CODE, e.getStatusCode())
-                    .build()
-            );
+            builder.error(ResultErrorBuilder.withException(e).detail(VerificationError.HttpAttribute.HTTP_CODE, e.getStatusCode()).build());
 
             for (RestError error : e.getErrors()) {
-                builder.error(
-                    ResultErrorBuilder.withCode(VerificationError.StandardCode.GENERIC)
-                        .description(error.getMessage())
-                        .parameterKeys(error.getFields())
-                        .detail("salesforce_code", error.getErrorCode())
-                        .build()
-                );
+                builder.error(ResultErrorBuilder.withCode(VerificationError.StandardCode.GENERIC).description(error.getMessage()).parameterKeys(error.getFields())
+                    .detail("salesforce_code", error.getErrorCode()).build());
             }
         });
     }

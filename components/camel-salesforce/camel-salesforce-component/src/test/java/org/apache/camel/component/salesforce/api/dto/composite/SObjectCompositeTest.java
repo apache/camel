@@ -110,13 +110,10 @@ public class SObjectCompositeTest {
     @Test
     public void shouldSerializeToJson() throws IOException {
 
-        final String expectedJson = IOUtils.toString(
-            SObjectCompositeTest.class
-                .getResourceAsStream("/org/apache/camel/component/salesforce/api/dto/composite_request_example.json"),
-            StandardCharsets.UTF_8);
+        final String expectedJson = IOUtils
+            .toString(SObjectCompositeTest.class.getResourceAsStream("/org/apache/camel/component/salesforce/api/dto/composite_request_example.json"), StandardCharsets.UTF_8);
 
-        final ObjectMapper mapper = JsonUtils.createObjectMapper().copy()
-            .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+        final ObjectMapper mapper = JsonUtils.createObjectMapper().copy().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
         final String serialized = mapper.writerFor(SObjectComposite.class).writeValueAsString(composite);

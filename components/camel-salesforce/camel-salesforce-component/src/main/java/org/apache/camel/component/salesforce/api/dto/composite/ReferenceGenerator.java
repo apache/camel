@@ -17,23 +17,25 @@
 package org.apache.camel.component.salesforce.api.dto.composite;
 
 /**
- * SObject tree Composite API interface for {@code referenceId} generation. For each object given to the
- * {@link ReferenceGenerator#nextReferenceFor(Object)} method, the implementation should generate reference identifiers.
- * Reference identifiers need to be unique within one SObject tree request and should start with alphanumeric character.
+ * SObject tree Composite API interface for {@code referenceId} generation. For
+ * each object given to the {@link ReferenceGenerator#nextReferenceFor(Object)}
+ * method, the implementation should generate reference identifiers. Reference
+ * identifiers need to be unique within one SObject tree request and should
+ * start with alphanumeric character.
  * <p/>
- * For example you can provide your {@link ReferenceGenerator} implementation that uses identities within your own
- * system as references, i.e. primary keys of records in your database.
+ * For example you can provide your {@link ReferenceGenerator} implementation
+ * that uses identities within your own system as references, i.e. primary keys
+ * of records in your database.
  *
  * @see Counter
  */
 public interface ReferenceGenerator {
 
     /**
-     * Generates unique, within a request, reference identifier for the given object. Reference identifier must start
-     * with an alphanumeric.
+     * Generates unique, within a request, reference identifier for the given
+     * object. Reference identifier must start with an alphanumeric.
      *
-     * @param object
-     *            object to generate reference identifier for
+     * @param object object to generate reference identifier for
      * @return generated reference identifier
      */
     String nextReferenceFor(Object object);

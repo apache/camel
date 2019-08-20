@@ -48,8 +48,9 @@ import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Payload and response for the SObject tree Composite API. The main interface for specifying what to include in the
- * sumission to the API endpoint. To build the tree out use: <blockquote>
+ * Payload and response for the SObject tree Composite API. The main interface
+ * for specifying what to include in the sumission to the API endpoint. To build
+ * the tree out use: <blockquote>
  *
  * <pre>
  * {@code
@@ -67,9 +68,7 @@ import org.apache.camel.util.ObjectHelper;
  * }
  * </pre>
  *
- * </blockquote>
- *
- * This will generate a tree of SObjects resembling: <blockquote>
+ * </blockquote> This will generate a tree of SObjects resembling: <blockquote>
  *
  * <pre>
  * .
@@ -81,11 +80,11 @@ import org.apache.camel.util.ObjectHelper;
  *         `-- someAsset
  * </pre>
  *
- * </blockquote>
- *
- * By default references that correlate between SObjects in the tree and returned identifiers and errors are handled
- * automatically, if you wish to customize the generation of the reference implement {@link ReferenceGenerator} and
- * supply it as constructor argument to {@link #SObjectTree(ReferenceGenerator)}.
+ * </blockquote> By default references that correlate between SObjects in the
+ * tree and returned identifiers and errors are handled automatically, if you
+ * wish to customize the generation of the reference implement
+ * {@link ReferenceGenerator} and supply it as constructor argument to
+ * {@link #SObjectTree(ReferenceGenerator)}.
  * <p/>
  * Note that the tree can hold single object type at the root of the tree.
  *
@@ -120,15 +119,13 @@ public final class SObjectTree implements Serializable {
      * Create new SObject tree with custom {@link ReferenceGenerator}.
      */
     public SObjectTree(final ReferenceGenerator referenceGenerator) {
-        this.referenceGenerator = requireNonNull(referenceGenerator,
-            "You must specify the ReferenceGenerator implementation");
+        this.referenceGenerator = requireNonNull(referenceGenerator, "You must specify the ReferenceGenerator implementation");
     }
 
     /**
      * Add SObject at the root of the tree.
      *
-     * @param object
-     *            SObject to add
+     * @param object SObject to add
      * @return {@link SObjectNode} for the given SObject
      */
     public SObjectNode addObject(final AbstractSObjectBase object) {
@@ -172,12 +169,11 @@ public final class SObjectTree implements Serializable {
     }
 
     /**
-     * Sets errors for the given reference. Used when processing the response of API invocation.
+     * Sets errors for the given reference. Used when processing the response of
+     * API invocation.
      *
-     * @param referenceId
-     *            reference identifier
-     * @param errors
-     *            list of {@link RestError}
+     * @param referenceId reference identifier
+     * @param errors list of {@link RestError}
      */
     public void setErrorFor(final String referenceId, final List<RestError> errors) {
         for (final SObjectNode node : records) {
@@ -188,12 +184,11 @@ public final class SObjectTree implements Serializable {
     }
 
     /**
-     * Sets identifier of SObject for the given reference. Used when processing the response of API invocation.
+     * Sets identifier of SObject for the given reference. Used when processing
+     * the response of API invocation.
      *
-     * @param referenceId
-     *            reference identifier
-     * @param id
-     *            SObject identifier
+     * @param referenceId reference identifier
+     * @param id SObject identifier
      */
     public void setIdFor(final String referenceId, final String id) {
         for (final SObjectNode node : records) {
@@ -216,8 +211,8 @@ public final class SObjectTree implements Serializable {
         final String givenObjectType = node.getObjectType();
 
         if (objectType != null && !objectType.equals(givenObjectType)) {
-            throw new IllegalArgumentException("SObjectTree can hold only records of the same type, previously given: "
-                + objectType + ", and now trying to add: " + givenObjectType);
+            throw new IllegalArgumentException("SObjectTree can hold only records of the same type, previously given: " + objectType + ", and now trying to add: "
+                                               + givenObjectType);
         }
         objectType = givenObjectType;
 
@@ -227,8 +222,7 @@ public final class SObjectTree implements Serializable {
     }
 
     boolean setErrorFor(final SObjectNode node, final String referenceId, final List<RestError> errors) {
-        final Attributes attributes =
-                node.getObject().getAttributes();
+        final Attributes attributes = node.getObject().getAttributes();
 
         final String attributesReferenceId = attributes.getReferenceId();
 
@@ -237,13 +231,11 @@ public final class SObjectTree implements Serializable {
             return true;
         }
 
-        return StreamSupport.stream(node.getChildNodes().spliterator(), false)
-            .anyMatch(n -> setErrorFor(n, referenceId, errors));
+        return StreamSupport.stream(node.getChildNodes().spliterator(), false).anyMatch(n -> setErrorFor(n, referenceId, errors));
     }
 
     boolean setIdFor(final SObjectNode node, final String referenceId, final String id) {
-        final Attributes attributes =
-                node.getObject().getAttributes();
+        final Attributes attributes = node.getObject().getAttributes();
 
         final String attributesReferenceId = attributes.getReferenceId();
 
@@ -251,14 +243,13 @@ public final class SObjectTree implements Serializable {
             final Object object = node.getObject();
 
             if (object != null) {
-                return updateBaseObjectId(id, (AbstractSObjectBase) object);
+                return updateBaseObjectId(id, (AbstractSObjectBase)object);
             } else {
                 return updateGeneralObjectId(id, object);
             }
         }
 
-        return StreamSupport.stream(node.getChildNodes().spliterator(), false)
-            .anyMatch(n -> setIdFor(n, referenceId, id));
+        return StreamSupport.stream(node.getChildNodes().spliterator(), false).anyMatch(n -> setIdFor(n, referenceId, id));
     }
 
     boolean updateBaseObjectId(final String id, final AbstractSObjectBase object) {
@@ -278,8 +269,7 @@ public final class SObjectTree implements Serializable {
 
         final PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
 
-        final Optional<PropertyDescriptor> maybeIdProperty = Arrays.stream(propertyDescriptors)
-            .filter(pd -> "id".equals(pd.getName())).findFirst();
+        final Optional<PropertyDescriptor> maybeIdProperty = Arrays.stream(propertyDescriptors).filter(pd -> "id".equals(pd.getName())).findFirst();
 
         if (maybeIdProperty.isPresent()) {
             final Method readMethod = maybeIdProperty.get().getReadMethod();

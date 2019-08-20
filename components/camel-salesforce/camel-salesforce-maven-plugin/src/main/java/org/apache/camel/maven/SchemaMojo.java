@@ -77,16 +77,14 @@ public class SchemaMojo extends AbstractSalesforceMojo {
      * Location of generated JSON schema files, defaults to
      * target/generated-sources/camel-salesforce.
      */
-    @Parameter(property = "camelSalesforce.outputDirectory",
-        defaultValue = "${project.build.directory}/generated-sources/camel-salesforce")
+    @Parameter(property = "camelSalesforce.outputDirectory", defaultValue = "${project.build.directory}/generated-sources/camel-salesforce")
     File outputDirectory;
 
     @Override
     protected void executeWithClient(final RestClient client) throws MojoExecutionException {
         getLog().info("Generating JSON Schema...");
 
-        final ObjectDescriptions descriptions = new ObjectDescriptions(client, getResponseTimeout(), includes,
-            includePattern, excludes, excludePattern, getLog());
+        final ObjectDescriptions descriptions = new ObjectDescriptions(client, getResponseTimeout(), includes, includePattern, excludes, excludePattern, getLog());
 
         // generate JSON schema for every object description
         final ObjectMapper schemaObjectMapper = JsonUtils.createSchemaObjectMapper();
@@ -98,21 +96,18 @@ public class SchemaMojo extends AbstractSalesforceMojo {
             try {
                 allSchemas.addAll(JsonUtils.getSObjectJsonSchema(schemaObjectMapper, description, jsonSchemaId, true));
             } catch (final IOException e) {
-                throw new MojoExecutionException("Unable to generate JSON Schema types for: " + description.getName(),
-                    e);
+                throw new MojoExecutionException("Unable to generate JSON Schema types for: " + description.getName(), e);
             }
         }
 
         final Path schemaFilePath = outputDirectory.toPath().resolve(jsonSchemaFilename);
         try {
-            Files.write(schemaFilePath,
-                JsonUtils.getJsonSchemaString(schemaObjectMapper, allSchemas, jsonSchemaId).getBytes("UTF-8"));
+            Files.write(schemaFilePath, JsonUtils.getJsonSchemaString(schemaObjectMapper, allSchemas, jsonSchemaId).getBytes("UTF-8"));
         } catch (final IOException e) {
             throw new MojoExecutionException("Unable to generate JSON Schema source file: " + schemaFilePath, e);
         }
 
-        getLog().info(
-            String.format("Successfully generated %s JSON Types in file %s", descriptions.count() * 2, schemaFilePath));
+        getLog().info(String.format("Successfully generated %s JSON Types in file %s", descriptions.count() * 2, schemaFilePath));
     }
 
 }

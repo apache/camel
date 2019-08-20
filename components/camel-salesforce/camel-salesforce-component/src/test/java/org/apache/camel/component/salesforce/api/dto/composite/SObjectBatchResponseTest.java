@@ -39,23 +39,23 @@ public class SObjectBatchResponseTest {
     public void shouldDeserializeFromJson() throws IOException {
 
         final String json = "{\n"//
-            + "   \"hasErrors\" : false,\n"//
-            + "   \"results\" : [{\n"//
-            + "      \"statusCode\" : 204,\n"//
-            + "      \"result\" : null\n"//
-            + "      },{\n"//
-            + "      \"statusCode\" : 200,\n"//
-            + "      \"result\": {\n"//
-            + "         \"attributes\" : {\n"//
-            + "            \"type\" : \"Account\",\n"//
-            + "            \"url\" : \"/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ\"\n"//
-            + "         },\n"//
-            + "         \"Name\" : \"NewName\",\n"//
-            + "         \"BillingPostalCode\" : \"94105\",\n"//
-            + "         \"Id\" : \"001D000000K0fXOIAZ\"\n"//
-            + "      }\n"//
-            + "   }]\n"//
-            + "}";
+                            + "   \"hasErrors\" : false,\n"//
+                            + "   \"results\" : [{\n"//
+                            + "      \"statusCode\" : 204,\n"//
+                            + "      \"result\" : null\n"//
+                            + "      },{\n"//
+                            + "      \"statusCode\" : 200,\n"//
+                            + "      \"result\": {\n"//
+                            + "         \"attributes\" : {\n"//
+                            + "            \"type\" : \"Account\",\n"//
+                            + "            \"url\" : \"/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ\"\n"//
+                            + "         },\n"//
+                            + "         \"Name\" : \"NewName\",\n"//
+                            + "         \"BillingPostalCode\" : \"94105\",\n"//
+                            + "         \"Id\" : \"001D000000K0fXOIAZ\"\n"//
+                            + "      }\n"//
+                            + "   }]\n"//
+                            + "}";
 
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
@@ -67,28 +67,28 @@ public class SObjectBatchResponseTest {
     @Test
     public void shouldDeserializeFromXml() {
         final String xml = "<batchResults>\n"//
-            + "    <hasErrors>false</hasErrors>\n"//
-            + "    <results>\n"//
-            + "        <batchResult>\n"//
-            + "            <statusCode>204</statusCode>\n"//
-            + "            <result/>\n"//
-            + "        </batchResult>\n"//
-            + "        <batchResult>\n"//
-            + "            <statusCode>200</statusCode>\n"//
-            + "            <result>\n"//
-            + "                <Account type=\"Account\" url=\"/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ\">\n"//
-            + "                    <Id>001D000000K0fXOIAZ</Id>\n"//
-            + "                    <Name>NewName</Name>\n"//
-            + "                    <BillingPostalCode>94105</BillingPostalCode>"//
-            + "                </Account>\n"//
-            + "            </result>\n"//
-            + "        </batchResult>\n"//
-            + "    </results>\n"//
-            + "</batchResults>";
+                           + "    <hasErrors>false</hasErrors>\n"//
+                           + "    <results>\n"//
+                           + "        <batchResult>\n"//
+                           + "            <statusCode>204</statusCode>\n"//
+                           + "            <result/>\n"//
+                           + "        </batchResult>\n"//
+                           + "        <batchResult>\n"//
+                           + "            <statusCode>200</statusCode>\n"//
+                           + "            <result>\n"//
+                           + "                <Account type=\"Account\" url=\"/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ\">\n"//
+                           + "                    <Id>001D000000K0fXOIAZ</Id>\n"//
+                           + "                    <Name>NewName</Name>\n"//
+                           + "                    <BillingPostalCode>94105</BillingPostalCode>"//
+                           + "                </Account>\n"//
+                           + "            </result>\n"//
+                           + "        </batchResult>\n"//
+                           + "    </results>\n"//
+                           + "</batchResults>";
 
         final XStream xStream = XStreamUtils.createXStream(SObjectBatchResponse.class);
 
-        final SObjectBatchResponse response = (SObjectBatchResponse) xStream.fromXML(xml);
+        final SObjectBatchResponse response = (SObjectBatchResponse)xStream.fromXML(xml);
 
         assertNotNull("Response should be parsed", response);
 
@@ -99,26 +99,23 @@ public class SObjectBatchResponseTest {
 
         final SObjectBatchResult firstResult = results.get(0);
         assertEquals("First result should have status code of 204", 204, firstResult.getStatusCode());
-        assertTrue("First result contain no data", ((Map) firstResult.getResult()).isEmpty());
+        assertTrue("First result contain no data", ((Map)firstResult.getResult()).isEmpty());
 
         final SObjectBatchResult secondResult = results.get(1);
         assertEquals("Second result should have status code of 200", 200, secondResult.getStatusCode());
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> secondResultMap = (Map<String, Object>) secondResult.getResult();
+        final Map<String, Object> secondResultMap = (Map<String, Object>)secondResult.getResult();
         @SuppressWarnings("unchecked")
-        final Map<String, Object> account = (Map<String, Object>) secondResultMap.get("Account");
+        final Map<String, Object> account = (Map<String, Object>)secondResultMap.get("Account");
 
         @SuppressWarnings("unchecked")
-        final Map<String, String> attributes = (Map<String, String>) account.get("attributes");
-        assertEquals("Second result data should have attribute type set to `Account`", "Account",
-            attributes.get("type"));
-        assertEquals("Second result data should have attribute url set as expected",
-            "/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ", attributes.get("url"));
+        final Map<String, String> attributes = (Map<String, String>)account.get("attributes");
+        assertEquals("Second result data should have attribute type set to `Account`", "Account", attributes.get("type"));
+        assertEquals("Second result data should have attribute url set as expected", "/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ", attributes.get("url"));
 
         assertEquals("Second result data should have `NewName` set as expected", "NewName", account.get("Name"));
-        assertEquals("Second result data should have `BillingPostalCode` set as expected", "94105",
-            account.get("BillingPostalCode"));
+        assertEquals("Second result data should have `BillingPostalCode` set as expected", "94105", account.get("BillingPostalCode"));
         assertEquals("Second result data should have `Id` set as expected", "001D000000K0fXOIAZ", account.get("Id"));
     }
 
@@ -138,20 +135,15 @@ public class SObjectBatchResponseTest {
         assertEquals("Second result should have status code of 200", 200, secondResult.getStatusCode());
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> secondResultMap = (Map<String, Object>) secondResult.getResult();
+        final Map<String, Object> secondResultMap = (Map<String, Object>)secondResult.getResult();
         @SuppressWarnings("unchecked")
-        final Map<String, String> attributes = (Map<String, String>) secondResultMap.get("attributes");
-        assertEquals("Second result data should have attribute type set to `Account`", "Account",
-            attributes.get("type"));
-        assertEquals("Second result data should have attribute url set as expected",
-            "/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ", attributes.get("url"));
+        final Map<String, String> attributes = (Map<String, String>)secondResultMap.get("attributes");
+        assertEquals("Second result data should have attribute type set to `Account`", "Account", attributes.get("type"));
+        assertEquals("Second result data should have attribute url set as expected", "/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ", attributes.get("url"));
 
-        assertEquals("Second result data should have `NewName` set as expected", "NewName",
-            secondResultMap.get("Name"));
-        assertEquals("Second result data should have `BillingPostalCode` set as expected", "94105",
-            secondResultMap.get("BillingPostalCode"));
-        assertEquals("Second result data should have `Id` set as expected", "001D000000K0fXOIAZ",
-            secondResultMap.get("Id"));
+        assertEquals("Second result data should have `NewName` set as expected", "NewName", secondResultMap.get("Name"));
+        assertEquals("Second result data should have `BillingPostalCode` set as expected", "94105", secondResultMap.get("BillingPostalCode"));
+        assertEquals("Second result data should have `Id` set as expected", "001D000000K0fXOIAZ", secondResultMap.get("Id"));
     }
 
 }

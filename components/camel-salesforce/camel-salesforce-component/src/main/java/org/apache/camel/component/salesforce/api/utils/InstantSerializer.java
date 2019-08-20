@@ -37,8 +37,7 @@ final class InstantSerializer extends StdSerializer<Instant> {
     }
 
     @Override
-    public void serialize(final Instant value, final JsonGenerator gen, final SerializerProvider serializers)
-        throws IOException {
+    public void serialize(final Instant value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
         final ZonedDateTime zonedDateTime = value.atZone(ZoneId.systemDefault());
 
         serializers.defaultSerializeValue(zonedDateTime, gen);

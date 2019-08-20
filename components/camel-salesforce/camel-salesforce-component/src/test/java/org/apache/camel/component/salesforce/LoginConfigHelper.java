@@ -42,10 +42,8 @@ public final class LoginConfigHelper {
         }
 
         System.getenv().keySet().stream()//
-            .filter(k -> k.startsWith("SALESFORCE_") && isNotEmpty(System.getenv(k)))
-            .forEach(k -> configuration.put(fromEnvName(k), System.getenv(k)));
-        System.getProperties().keySet().stream().map(String.class::cast)
-            .filter(k -> k.startsWith("salesforce.") && isNotEmpty(System.getProperty(k)))
+            .filter(k -> k.startsWith("SALESFORCE_") && isNotEmpty(System.getenv(k))).forEach(k -> configuration.put(fromEnvName(k), System.getenv(k)));
+        System.getProperties().keySet().stream().map(String.class::cast).filter(k -> k.startsWith("salesforce.") && isNotEmpty(System.getProperty(k)))
             .forEach(k -> configuration.put(k, System.getProperty(k)));
     }
 

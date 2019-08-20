@@ -88,6 +88,7 @@ public class Account extends AbstractDescribedSObjectBase {
     public void setParent(Account Parent) {
         this.Parent = Parent;
     }
+
     private String BillingStreet;
 
     @JsonProperty("BillingStreet")
@@ -593,7 +594,6 @@ public class Account extends AbstractDescribedSObjectBase {
         this.External_Id__c = External_Id__c;
     }
 
-
     private QueryRecordsAccount ChildAccounts;
 
     @JsonProperty("ChildAccounts")
@@ -605,6 +605,7 @@ public class Account extends AbstractDescribedSObjectBase {
     public void setChildAccounts(QueryRecordsAccount ChildAccounts) {
         this.ChildAccounts = ChildAccounts;
     }
+
     private QueryRecordsContact Contacts;
 
     @JsonProperty("Contacts")
@@ -624,8 +625,6 @@ public class Account extends AbstractDescribedSObjectBase {
 
     private static SObjectDescription createSObjectDescription() {
         final SObjectDescription description = new SObjectDescription();
-
-
 
         final List<SObjectField> fields1 = new ArrayList<>();
         description.setFields(fields1);
@@ -656,7 +655,8 @@ public class Account extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField12);
         final SObjectField sObjectField13 = createField("BillingLongitude", "Billing Longitude", "double", "xsd:double", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField13);
-        final SObjectField sObjectField14 = createField("BillingGeocodeAccuracy", "Billing Geocode Accuracy", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField14 = createField("BillingGeocodeAccuracy", "Billing Geocode Accuracy", "picklist", "xsd:string", 40, false, true, false, false, false, false,
+                                                        false);
         fields1.add(sObjectField14);
         final SObjectField sObjectField15 = createField("BillingAddress", "Billing Address", "address", "urn:address", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField15);
@@ -666,7 +666,8 @@ public class Account extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField17);
         final SObjectField sObjectField18 = createField("ShippingState", "Shipping State/Province", "string", "xsd:string", 80, false, true, false, false, false, false, false);
         fields1.add(sObjectField18);
-        final SObjectField sObjectField19 = createField("ShippingPostalCode", "Shipping Zip/Postal Code", "string", "xsd:string", 20, false, true, false, false, false, false, false);
+        final SObjectField sObjectField19 = createField("ShippingPostalCode", "Shipping Zip/Postal Code", "string", "xsd:string", 20, false, true, false, false, false, false,
+                                                        false);
         fields1.add(sObjectField19);
         final SObjectField sObjectField20 = createField("ShippingCountry", "Shipping Country", "string", "xsd:string", 80, false, true, false, false, false, false, false);
         fields1.add(sObjectField20);
@@ -674,7 +675,8 @@ public class Account extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField21);
         final SObjectField sObjectField22 = createField("ShippingLongitude", "Shipping Longitude", "double", "xsd:double", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField22);
-        final SObjectField sObjectField23 = createField("ShippingGeocodeAccuracy", "Shipping Geocode Accuracy", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField23 = createField("ShippingGeocodeAccuracy", "Shipping Geocode Accuracy", "picklist", "xsd:string", 40, false, true, false, false, false,
+                                                        false, false);
         fields1.add(sObjectField23);
         final SObjectField sObjectField24 = createField("ShippingAddress", "Shipping Address", "address", "urn:address", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField24);
@@ -722,7 +724,8 @@ public class Account extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField45);
         final SObjectField sObjectField46 = createField("LastViewedDate", "Last Viewed Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField46);
-        final SObjectField sObjectField47 = createField("LastReferencedDate", "Last Referenced Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField47 = createField("LastReferencedDate", "Last Referenced Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false,
+                                                        false);
         fields1.add(sObjectField47);
         final SObjectField sObjectField48 = createField("Jigsaw", "Data.com Key", "string", "xsd:string", 20, false, true, false, false, false, false, false);
         fields1.add(sObjectField48);
@@ -748,9 +751,11 @@ public class Account extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField58);
         final SObjectField sObjectField59 = createField("OperatingHoursId", "Operating Hour ID", "reference", "tns:ID", 18, false, true, false, false, false, false, false);
         fields1.add(sObjectField59);
-        final SObjectField sObjectField60 = createField("Shipping_Location__Latitude__s", "Shipping_Location (Latitude)", "double", "xsd:double", 0, false, true, false, false, true, false, false);
+        final SObjectField sObjectField60 = createField("Shipping_Location__Latitude__s", "Shipping_Location (Latitude)", "double", "xsd:double", 0, false, true, false, false,
+                                                        true, false, false);
         fields1.add(sObjectField60);
-        final SObjectField sObjectField61 = createField("Shipping_Location__Longitude__s", "Shipping_Location (Longitude)", "double", "xsd:double", 0, false, true, false, false, true, false, false);
+        final SObjectField sObjectField61 = createField("Shipping_Location__Longitude__s", "Shipping_Location (Longitude)", "double", "xsd:double", 0, false, true, false, false,
+                                                        true, false, false);
         fields1.add(sObjectField61);
         final SObjectField sObjectField62 = createField("Shipping_Location__c", "Shipping_Location", "location", "urn:location", 0, false, true, false, false, true, false, false);
         fields1.add(sObjectField62);

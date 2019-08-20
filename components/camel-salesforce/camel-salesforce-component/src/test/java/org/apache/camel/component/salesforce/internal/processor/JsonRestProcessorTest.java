@@ -59,14 +59,12 @@ public class JsonRestProcessorTest {
     public void byDefaultItShouldNotSerializeNullValues() throws SalesforceException, IOException {
         final SalesforceComponent salesforce = new SalesforceComponent();
         final SalesforceEndpointConfig configuration = new SalesforceEndpointConfig();
-        final SalesforceEndpoint endpoint = new SalesforceEndpoint("", salesforce, configuration,
-            OperationName.UPDATE_SOBJECT, "");
+        final SalesforceEndpoint endpoint = new SalesforceEndpoint("", salesforce, configuration, OperationName.UPDATE_SOBJECT, "");
 
         final JsonRestProcessor jsonProcessor = new JsonRestProcessor(endpoint);
 
         final Message in = new DefaultMessage(new DefaultCamelContext());
-        try (InputStream stream = jsonProcessor.getRequestStream(in, new TestObject());
-            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+        try (InputStream stream = jsonProcessor.getRequestStream(in, new TestObject()); InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             final String json = IOUtils.toString(reader);
 
             assertThat(json).isEqualTo("{}");
@@ -86,8 +84,7 @@ public class JsonRestProcessorTest {
         doc.setCreationDate(ZonedDateTime.of(1717, 1, 2, 3, 4, 5, 6, ZoneId.systemDefault()));
 
         exchange.getIn().setBody(doc);
-        try (InputStream stream = jsonRestProcessor.getRequestStream(exchange);
-            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+        try (InputStream stream = jsonRestProcessor.getRequestStream(exchange); InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             final String result = IOUtils.toString(reader);
             assertThat(result.length()).isLessThanOrEqualTo(48);
         }
@@ -98,14 +95,12 @@ public class JsonRestProcessorTest {
         final SalesforceComponent salesforce = new SalesforceComponent();
         final SalesforceEndpointConfig configuration = new SalesforceEndpointConfig();
         configuration.setSerializeNulls(true);
-        final SalesforceEndpoint endpoint = new SalesforceEndpoint("", salesforce, configuration,
-            OperationName.UPDATE_SOBJECT, "");
+        final SalesforceEndpoint endpoint = new SalesforceEndpoint("", salesforce, configuration, OperationName.UPDATE_SOBJECT, "");
 
         final JsonRestProcessor jsonProcessor = new JsonRestProcessor(endpoint);
 
         final Message in = new DefaultMessage(new DefaultCamelContext());
-        try (InputStream stream = jsonProcessor.getRequestStream(in, new TestObject());
-            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+        try (InputStream stream = jsonProcessor.getRequestStream(in, new TestObject()); InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             final String json = IOUtils.toString(reader);
 
             assertThat(json).isEqualTo("{\"creationDate\":null}");
@@ -116,15 +111,13 @@ public class JsonRestProcessorTest {
     public void shouldSerializeNullValuesViaHeaderConfiguration() throws SalesforceException, IOException {
         final SalesforceComponent salesforce = new SalesforceComponent();
         final SalesforceEndpointConfig configuration = new SalesforceEndpointConfig();
-        final SalesforceEndpoint endpoint = new SalesforceEndpoint("", salesforce, configuration,
-            OperationName.UPDATE_SOBJECT, "");
+        final SalesforceEndpoint endpoint = new SalesforceEndpoint("", salesforce, configuration, OperationName.UPDATE_SOBJECT, "");
 
         final JsonRestProcessor jsonProcessor = new JsonRestProcessor(endpoint);
 
         final Message in = new DefaultMessage(new DefaultCamelContext());
         in.setHeader(SalesforceEndpointConfig.SERIALIZE_NULLS, true);
-        try (InputStream stream = jsonProcessor.getRequestStream(in, new TestObject());
-            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+        try (InputStream stream = jsonProcessor.getRequestStream(in, new TestObject()); InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             final String json = IOUtils.toString(reader);
 
             assertThat(json).isEqualTo("{\"creationDate\":null}");

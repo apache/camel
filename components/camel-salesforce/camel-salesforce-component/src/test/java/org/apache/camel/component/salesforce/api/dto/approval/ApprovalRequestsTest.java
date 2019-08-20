@@ -60,24 +60,24 @@ public class ApprovalRequestsTest {
     @Test
     public void shouldSerializeAsJson() throws JsonProcessingException {
         final String json = "{\"requests\":["//
-            + "{"//
-            + "\"actionType\":\"Submit\","//
-            + "\"contextActorId\":\"005D00000015rZy\","//
-            + "\"contextId\":\"001D000000I8mIm\","//
-            + "\"comments\":\"this is a test 1\","//
-            + "\"nextApproverIds\":[\"005D00000015rY9\"],"//
-            + "\"processDefinitionNameOrId\":\"PTO_Request_Process\","//
-            + "\"skipEntryCriteria\":true"//
-            + "},{"//
-            + "\"actionType\":\"Submit\","//
-            + "\"contextActorId\":\"005D00000015rZy\","//
-            + "\"contextId\":\"001D000000I8dIm\","//
-            + "\"comments\":\"this is a test 2\","//
-            + "\"nextApproverIds\":[\"005D00000015xY9\"],"//
-            + "\"processDefinitionNameOrId\":\"PTO_Request_Process\","//
-            + "\"skipEntryCriteria\":true"//
-            + "}"//
-            + "]}";
+                            + "{"//
+                            + "\"actionType\":\"Submit\","//
+                            + "\"contextActorId\":\"005D00000015rZy\","//
+                            + "\"contextId\":\"001D000000I8mIm\","//
+                            + "\"comments\":\"this is a test 1\","//
+                            + "\"nextApproverIds\":[\"005D00000015rY9\"],"//
+                            + "\"processDefinitionNameOrId\":\"PTO_Request_Process\","//
+                            + "\"skipEntryCriteria\":true"//
+                            + "},{"//
+                            + "\"actionType\":\"Submit\","//
+                            + "\"contextActorId\":\"005D00000015rZy\","//
+                            + "\"contextId\":\"001D000000I8dIm\","//
+                            + "\"comments\":\"this is a test 2\","//
+                            + "\"nextApproverIds\":[\"005D00000015xY9\"],"//
+                            + "\"processDefinitionNameOrId\":\"PTO_Request_Process\","//
+                            + "\"skipEntryCriteria\":true"//
+                            + "}"//
+                            + "]}";
 
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
@@ -89,25 +89,25 @@ public class ApprovalRequestsTest {
     @Test
     public void shouldSerializeAsXml() {
         final String xml = "<ProcessApprovalRequest>"//
-            + "<requests>"//
-            + "<actionType>Submit</actionType>"//
-            + "<contextActorId>005D00000015rZy</contextActorId>"//
-            + "<contextId>001D000000I8mIm</contextId>"//
-            + "<comments>this is a test 1</comments>"//
-            + "<nextApproverIds>005D00000015rY9</nextApproverIds>"//
-            + "<processDefinitionNameOrId>PTO_Request_Process</processDefinitionNameOrId>"//
-            + "<skipEntryCriteria>true</skipEntryCriteria>"//
-            + "</requests>"//
-            + "<requests>"//
-            + "<actionType>Submit</actionType>"//
-            + "<contextActorId>005D00000015rZy</contextActorId>"//
-            + "<contextId>001D000000I8dIm</contextId>"//
-            + "<comments>this is a test 2</comments>"//
-            + "<nextApproverIds>005D00000015xY9</nextApproverIds>"//
-            + "<processDefinitionNameOrId>PTO_Request_Process</processDefinitionNameOrId>"//
-            + "<skipEntryCriteria>true</skipEntryCriteria>"//
-            + "</requests>"//
-            + "</ProcessApprovalRequest>";
+                           + "<requests>"//
+                           + "<actionType>Submit</actionType>"//
+                           + "<contextActorId>005D00000015rZy</contextActorId>"//
+                           + "<contextId>001D000000I8mIm</contextId>"//
+                           + "<comments>this is a test 1</comments>"//
+                           + "<nextApproverIds>005D00000015rY9</nextApproverIds>"//
+                           + "<processDefinitionNameOrId>PTO_Request_Process</processDefinitionNameOrId>"//
+                           + "<skipEntryCriteria>true</skipEntryCriteria>"//
+                           + "</requests>"//
+                           + "<requests>"//
+                           + "<actionType>Submit</actionType>"//
+                           + "<contextActorId>005D00000015rZy</contextActorId>"//
+                           + "<contextId>001D000000I8dIm</contextId>"//
+                           + "<comments>this is a test 2</comments>"//
+                           + "<nextApproverIds>005D00000015xY9</nextApproverIds>"//
+                           + "<processDefinitionNameOrId>PTO_Request_Process</processDefinitionNameOrId>"//
+                           + "<skipEntryCriteria>true</skipEntryCriteria>"//
+                           + "</requests>"//
+                           + "</ProcessApprovalRequest>";
 
         final XStream xStream = XStreamUtils.createXStream(ApprovalRequests.class);
 

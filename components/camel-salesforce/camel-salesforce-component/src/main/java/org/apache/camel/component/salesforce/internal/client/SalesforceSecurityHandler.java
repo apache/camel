@@ -65,21 +65,21 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
     @Override
     public boolean accept(Request request, Response response) {
 
-        HttpConversation conversation = ((SalesforceHttpRequest) request).getConversation();
-        Integer retries = (Integer) conversation.getAttribute(AUTHENTICATION_RETRIES_ATTRIBUTE);
+        HttpConversation conversation = ((SalesforceHttpRequest)request).getConversation();
+        Integer retries = (Integer)conversation.getAttribute(AUTHENTICATION_RETRIES_ATTRIBUTE);
 
-        // is this an authentication response for a previously handled conversation?
-        if (conversation.getAttribute(AUTHENTICATION_REQUEST_ATTRIBUTE) != null
-            && (retries == null || retries <= maxAuthenticationRetries)) {
+        // is this an authentication response for a previously handled
+        // conversation?
+        if (conversation.getAttribute(AUTHENTICATION_REQUEST_ATTRIBUTE) != null && (retries == null || retries <= maxAuthenticationRetries)) {
             return true;
         }
 
         final int status = response.getStatus();
         // handle UNAUTHORIZED and BAD_REQUEST for Bulk API,
-        // the actual InvalidSessionId Bulk API error is checked and handled in the listener
+        // the actual InvalidSessionId Bulk API error is checked and handled in
+        // the listener
         // also check retries haven't exceeded maxAuthenticationRetries
-        return (status == HttpStatus.UNAUTHORIZED_401 || status == HttpStatus.BAD_REQUEST_400)
-            && (retries == null || retries <= maxAuthenticationRetries);
+        return (status == HttpStatus.UNAUTHORIZED_401 || status == HttpStatus.BAD_REQUEST_400) && (retries == null || retries <= maxAuthenticationRetries);
     }
 
     @Override
@@ -101,13 +101,14 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
 
             // get number of retries
             HttpConversation conversation = request.getConversation();
-            Integer retries = (Integer) conversation.getAttribute(AUTHENTICATION_RETRIES_ATTRIBUTE);
+            Integer retries = (Integer)conversation.getAttribute(AUTHENTICATION_RETRIES_ATTRIBUTE);
             if (retries == null) {
                 retries = 0;
             }
 
-            // get AbstractClientBase if request originated from one, for updating token and setting auth header
-            final AbstractClientBase client = (AbstractClientBase) conversation.getAttribute(CLIENT_ATTRIBUTE);
+            // get AbstractClientBase if request originated from one, for
+            // updating token and setting auth header
+            final AbstractClientBase client = (AbstractClientBase)conversation.getAttribute(CLIENT_ATTRIBUTE);
 
             // exception response
             if (result.isFailed()) {
@@ -117,14 +118,15 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             }
 
             // response to a re-login request
-            SalesforceHttpRequest origRequest = (SalesforceHttpRequest) conversation.getAttribute(AUTHENTICATION_REQUEST_ATTRIBUTE);
+            SalesforceHttpRequest origRequest = (SalesforceHttpRequest)conversation.getAttribute(AUTHENTICATION_REQUEST_ATTRIBUTE);
             if (origRequest != null) {
 
                 // parse response
                 try {
                     session.parseLoginResponse(response, response.getContentAsString());
                 } catch (SalesforceException e) {
-                    // retry login request on error if we have login attempts left
+                    // retry login request on error if we have login attempts
+                    // left
                     if (retries < maxAuthenticationRetries) {
                         retryOnFailure(request, conversation, retries, client, e);
                     } else {
@@ -156,16 +158,17 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
                 // REST token expiry
                 LOG.warn("Retrying on Salesforce authentication error [{}]: [{}]", status, reason);
 
-                // remember original request and send a relogin request in current conversation
+                // remember original request and send a relogin request in
+                // current conversation
                 retryLogin(request, retries);
 
             } else if (status < HttpStatus.OK_200 || status >= HttpStatus.MULTIPLE_CHOICES_300) {
 
                 // HTTP failure status
-                // get detailed cause, if request comes from an AbstractClientBase
+                // get detailed cause, if request comes from an
+                // AbstractClientBase
                 final InputStream inputStream = getContent().length == 0 ? null : getContentAsInputStream();
-                final SalesforceException cause = client != null
-                    ? client.createRestException(response, inputStream) : null;
+                final SalesforceException cause = client != null ? client.createRestException(response, inputStream) : null;
 
                 if (status == HttpStatus.BAD_REQUEST_400 && cause != null && isInvalidSessionError(cause)) {
 
@@ -189,8 +192,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
         }
 
         private boolean isInvalidSessionError(SalesforceException e) {
-            return e.getErrors() != null && e.getErrors().size() == 1
-                && "InvalidSessionId".equals(e.getErrors().get(0).getErrorCode());
+            return e.getErrors() != null && e.getErrors().size() == 1 && "InvalidSessionId".equals(e.getErrors().get(0).getErrorCode());
         }
 
         private void retryLogin(SalesforceHttpRequest request, Integer retries) {
@@ -202,16 +204,17 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             retryRequest((SalesforceHttpRequest)session.getLoginRequest(conversation), null, retries, conversation, false);
         }
 
-        private void retryRequest(SalesforceHttpRequest request, AbstractClientBase client, Integer retries, HttpConversation conversation,
-                                  boolean copy) {
+        private void retryRequest(SalesforceHttpRequest request, AbstractClientBase client, Integer retries, HttpConversation conversation, boolean copy) {
             // copy the request to resend
-            // TODO handle a change in Salesforce instanceUrl, right now we retry with the same destination
+            // TODO handle a change in Salesforce instanceUrl, right now we
+            // retry with the same destination
             final Request newRequest;
             if (copy) {
                 newRequest = httpClient.copyRequest(request, request.getURI());
                 newRequest.method(request.getMethod());
                 HttpFields headers = newRequest.getHeaders();
-                // copy cookies and host for subscriptions to avoid '403::Unknown Client' errors
+                // copy cookies and host for subscriptions to avoid
+                // '403::Unknown Client' errors
                 for (HttpField field : request.getHeaders()) {
                     HttpHeader header = field.getHeader();
                     if (HttpHeader.COOKIE.equals(header) || HttpHeader.HOST.equals(header)) {
@@ -266,16 +269,15 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             notifier.forwardSuccessComplete(conversation.getResponseListeners(), request, response);
         }
 
-        private void forwardFailureComplete(SalesforceHttpRequest request, Throwable requestFailure,
-                                            Response response, Throwable responseFailure) {
+        private void forwardFailureComplete(SalesforceHttpRequest request, Throwable requestFailure, Response response, Throwable responseFailure) {
             HttpConversation conversation = request.getConversation();
             conversation.updateResponseListeners(null);
-            notifier.forwardFailureComplete(conversation.getResponseListeners(), request, requestFailure,
-                response, responseFailure);
+            notifier.forwardFailureComplete(conversation.getResponseListeners(), request, requestFailure, response, responseFailure);
         }
     }
 
-    // no @Override annotation here to keep it compatible with Jetty 9.2, getName was added in 9.3
+    // no @Override annotation here to keep it compatible with Jetty 9.2,
+    // getName was added in 9.3
     @Override
     public String getName() {
         return "CamelSalesforceSecurityHandler";

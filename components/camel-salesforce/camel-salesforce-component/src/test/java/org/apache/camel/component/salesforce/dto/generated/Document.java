@@ -214,8 +214,6 @@ public class Document extends AbstractDescribedSObjectBase {
         this.IsBodySearchable = IsBodySearchable;
     }
 
-
-
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;
@@ -223,8 +221,6 @@ public class Document extends AbstractDescribedSObjectBase {
 
     private static SObjectDescription createSObjectDescription() {
         final SObjectDescription description = new SObjectDescription();
-
-
 
         final List<SObjectField> fields1 = new ArrayList<>();
         description.setFields(fields1);
@@ -271,11 +267,13 @@ public class Document extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField20);
         final SObjectField sObjectField21 = createField("SystemModstamp", "System Modstamp", "datetime", "xsd:dateTime", 0, false, false, false, false, false, false, false);
         fields1.add(sObjectField21);
-        final SObjectField sObjectField22 = createField("IsBodySearchable", "Document Content Searchable", "boolean", "xsd:boolean", 0, false, false, false, false, false, false, false);
+        final SObjectField sObjectField22 = createField("IsBodySearchable", "Document Content Searchable", "boolean", "xsd:boolean", 0, false, false, false, false, false, false,
+                                                        false);
         fields1.add(sObjectField22);
         final SObjectField sObjectField23 = createField("LastViewedDate", "Last Viewed Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField23);
-        final SObjectField sObjectField24 = createField("LastReferencedDate", "Last Referenced Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField24 = createField("LastReferencedDate", "Last Referenced Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false,
+                                                        false);
         fields1.add(sObjectField24);
 
         description.setLabel("Document");

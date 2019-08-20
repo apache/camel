@@ -39,16 +39,16 @@ public class ApprovalResultTest {
     @Test
     public void shouldDeserializeFromJson() throws JsonProcessingException, IOException {
         final String json = "["//
-            + "{"//
-            + "\"actorIds\":[\"0050Y000000u5NOQAY\"],"//
-            + "\"entityId\":\"0010Y000005BYrZQAW\","//
-            + "\"errors\":null,"//
-            + "\"instanceId\":\"04g0Y000000PL53QAG\","//
-            + "\"instanceStatus\":\"Pending\","//
-            + "\"newWorkitemIds\":[\"04i0Y000000L0fkQAC\"],"//
-            + "\"success\":true"//
-            + "}"//
-            + "]";
+                            + "{"//
+                            + "\"actorIds\":[\"0050Y000000u5NOQAY\"],"//
+                            + "\"entityId\":\"0010Y000005BYrZQAW\","//
+                            + "\"errors\":null,"//
+                            + "\"instanceId\":\"04g0Y000000PL53QAG\","//
+                            + "\"instanceStatus\":\"Pending\","//
+                            + "\"newWorkitemIds\":[\"04i0Y000000L0fkQAC\"],"//
+                            + "\"success\":true"//
+                            + "}"//
+                            + "]";
 
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
@@ -64,16 +64,16 @@ public class ApprovalResultTest {
         final XStream xStream = XStreamUtils.createXStream(ApprovalResult.class);
 
         xStream.fromXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"//
-            + "<ProcessApprovalResult>"//
-            + "<ProcessApprovalResult>"//
-            + "<actorIds>0050Y000000u5NOQAY</actorIds>"//
-            + "<entityId>0010Y000005BYrZQAW</entityId>"//
-            + "<instanceId>04g0Y000000PL53QAG</instanceId>"//
-            + "<instanceStatus>Pending</instanceStatus>"//
-            + "<newWorkitemIds>04i0Y000000L0fkQAC</newWorkitemIds>"//
-            + "<success>true</success>"//
-            + "</ProcessApprovalResult>"//
-            + "</ProcessApprovalResult>", results);
+                        + "<ProcessApprovalResult>"//
+                        + "<ProcessApprovalResult>"//
+                        + "<actorIds>0050Y000000u5NOQAY</actorIds>"//
+                        + "<entityId>0010Y000005BYrZQAW</entityId>"//
+                        + "<instanceId>04g0Y000000PL53QAG</instanceId>"//
+                        + "<instanceStatus>Pending</instanceStatus>"//
+                        + "<newWorkitemIds>04i0Y000000L0fkQAC</newWorkitemIds>"//
+                        + "<success>true</success>"//
+                        + "</ProcessApprovalResult>"//
+                        + "</ProcessApprovalResult>", results);
 
         assertResponseReadCorrectly(results);
     }

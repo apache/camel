@@ -56,9 +56,7 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
         component.setHttpClientProperties(clientProperties);
 
         // set DTO package
-        component.setPackages(new String[] {
-            Merchandise__c.class.getPackage().getName()
-        });
+        component.setPackages(new String[] {Merchandise__c.class.getPackage().getName()});
 
         // add it to context
         context().addComponent("salesforce", component);

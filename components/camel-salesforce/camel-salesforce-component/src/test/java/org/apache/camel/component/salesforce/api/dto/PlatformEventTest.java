@@ -34,15 +34,14 @@ public class PlatformEventTest {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final PlatformEvent platformEvent = mapper.readValue("{\n" + //
-            "  \"CreatedDate\": \"2017-04-14T13:35:23Z\", \n" + //
-            "  \"CreatedById\": \"005B00000031mqb\", \n" + //
-            "  \"Order_Number__c\": \"10013\", \n" + //
-            "  \"Type__c\": \"Placed\"\n" + //
-            "}", PlatformEvent.class);
+                                                             "  \"CreatedDate\": \"2017-04-14T13:35:23Z\", \n" + //
+                                                             "  \"CreatedById\": \"005B00000031mqb\", \n" + //
+                                                             "  \"Order_Number__c\": \"10013\", \n" + //
+                                                             "  \"Type__c\": \"Placed\"\n" + //
+                                                             "}", PlatformEvent.class);
 
         assertThat(platformEvent.getCreated()).isEqualTo(ZonedDateTime.parse("2017-04-14T13:35:23Z"));
         assertThat(platformEvent.getCreatedById()).isEqualTo("005B00000031mqb");
-        assertThat(platformEvent.getEventData()).containsOnly(entry("Order_Number__c", "10013"),
-            entry("Type__c", "Placed"));
+        assertThat(platformEvent.getEventData()).containsOnly(entry("Order_Number__c", "10013"), entry("Type__c", "Placed"));
     }
 }

@@ -48,8 +48,13 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
 
     /**
      * Utility method to clear all system {@link AbstractSObjectBase} fields.
-     * <p>Useful when reusing a DTO for a new record, or for update/upsert.</p>
-     * <p>This method does not clear {@code Name} to allow updating it, so it must be explicitly set to {@code null} if needed.</p>
+     * <p>
+     * Useful when reusing a DTO for a new record, or for update/upsert.
+     * </p>
+     * <p>
+     * This method does not clear {@code Name} to allow updating it, so it must
+     * be explicitly set to {@code null} if needed.
+     * </p>
      */
     public final void clearBaseFields() {
         attributes = null;

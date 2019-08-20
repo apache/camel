@@ -53,43 +53,32 @@ public interface BulkApiClient {
     /**
      * Creates a Bulk Job
      *
-     * @param jobInfo  {@link JobInfo} with required fields
-     * @param callback {@link JobInfoResponseCallback} to be invoked on response or error
+     * @param jobInfo {@link JobInfo} with required fields
+     * @param callback {@link JobInfoResponseCallback} to be invoked on response
+     *            or error
      */
-    void createJob(JobInfo jobInfo, Map<String, List<String>> header,
-                   JobInfoResponseCallback callback);
+    void createJob(JobInfo jobInfo, Map<String, List<String>> header, JobInfoResponseCallback callback);
 
-    void getJob(String jobId, Map<String, List<String>> header,
-                JobInfoResponseCallback callback);
+    void getJob(String jobId, Map<String, List<String>> header, JobInfoResponseCallback callback);
 
-    void closeJob(String jobId, Map<String, List<String>> header,
-                  JobInfoResponseCallback callback);
+    void closeJob(String jobId, Map<String, List<String>> header, JobInfoResponseCallback callback);
 
-    void abortJob(String jobId, Map<String, List<String>> header,
-                  JobInfoResponseCallback callback);
+    void abortJob(String jobId, Map<String, List<String>> header, JobInfoResponseCallback callback);
 
-    void createBatch(InputStream batchStream, String jobId, ContentType contentTypeEnum,
-        Map<String, List<String>> header, BatchInfoResponseCallback callback);
+    void createBatch(InputStream batchStream, String jobId, ContentType contentTypeEnum, Map<String, List<String>> header, BatchInfoResponseCallback callback);
 
-    void getBatch(String jobId, String batchId, Map<String, List<String>> header,
-                  BatchInfoResponseCallback callback);
+    void getBatch(String jobId, String batchId, Map<String, List<String>> header, BatchInfoResponseCallback callback);
 
-    void getAllBatches(String jobId, Map<String, List<String>> header,
-                       BatchInfoListResponseCallback callback);
+    void getAllBatches(String jobId, Map<String, List<String>> header, BatchInfoListResponseCallback callback);
 
-    void getRequest(String jobId, String batchId, Map<String, List<String>> header,
-                    StreamResponseCallback callback);
+    void getRequest(String jobId, String batchId, Map<String, List<String>> header, StreamResponseCallback callback);
 
-    void getResults(String jobId, String batchId, Map<String, List<String>> header,
-                    StreamResponseCallback callback);
+    void getResults(String jobId, String batchId, Map<String, List<String>> header, StreamResponseCallback callback);
 
-    void createBatchQuery(String jobId, String soqlQuery, ContentType jobContentType,
-        Map<String, List<String>> header, BatchInfoResponseCallback callback);
+    void createBatchQuery(String jobId, String soqlQuery, ContentType jobContentType, Map<String, List<String>> header, BatchInfoResponseCallback callback);
 
-    void getQueryResultIds(String jobId, String batchId, Map<String, List<String>> header,
-                           QueryResultIdsCallback callback);
+    void getQueryResultIds(String jobId, String batchId, Map<String, List<String>> header, QueryResultIdsCallback callback);
 
-    void getQueryResult(String jobId, String batchId, String resultId,
-        Map<String, List<String>> header, StreamResponseCallback callback);
+    void getQueryResult(String jobId, String batchId, String resultId, Map<String, List<String>> header, StreamResponseCallback callback);
 
 }

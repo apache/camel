@@ -76,20 +76,18 @@ public class ApprovalExamplesIntegrationTest extends AbstractApprovalIntegration
             public void configure() throws Exception {
                 // tag::example1Route[]
                 from("direct:example1")//
-                        .setHeader("approval.ContextId", simple("${body['contextId']}"))
-                        .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
-                        .to("salesforce:approval?"//
-                            + "approvalActionType=Submit"//
-                            + "&approvalComments=this is a test"//
-                            + "&approvalProcessDefinitionNameOrId=Test_Account_Process"//
-                            + "&approvalSkipEntryCriteria=true");
+                    .setHeader("approval.ContextId", simple("${body['contextId']}")).setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
+                    .to("salesforce:approval?"//
+                        + "approvalActionType=Submit"//
+                        + "&approvalComments=this is a test"//
+                        + "&approvalProcessDefinitionNameOrId=Test_Account_Process"//
+                        + "&approvalSkipEntryCriteria=true");
                 // end::example1Route[]
 
                 // tag::example2Route[]
                 from("direct:example2")//
-                        .setHeader("approval.ContextId", simple("${body['contextId']}"))
-                        .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
-                        .to("salesforce:approval?approval=#approvalTemplate");
+                    .setHeader("approval.ContextId", simple("${body['contextId']}")).setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
+                    .to("salesforce:approval?approval=#approvalTemplate");
                 // end::example2Route[]
             }
         };

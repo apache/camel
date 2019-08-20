@@ -24,8 +24,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * The response of the batch request it contains individual results of each request submitted in a batch at the same
- * index. The flag {@link #hasErrors()} indicates if any of the requests in the batch has failed with status 400 or 500.
+ * The response of the batch request it contains individual results of each
+ * request submitted in a batch at the same index. The flag {@link #hasErrors()}
+ * indicates if any of the requests in the batch has failed with status 400 or
+ * 500.
  */
 @XStreamAlias("batchResults")
 public final class SObjectBatchResponse implements Serializable {
@@ -37,8 +39,9 @@ public final class SObjectBatchResponse implements Serializable {
     private final List<SObjectBatchResult> results;
 
     @JsonCreator
-    public SObjectBatchResponse(@JsonProperty("hasErrors") final boolean hasErrors,
-            @JsonProperty("results") final List<SObjectBatchResult> results) {
+    public SObjectBatchResponse(@JsonProperty("hasErrors")
+    final boolean hasErrors, @JsonProperty("results")
+    final List<SObjectBatchResult> results) {
         this.hasErrors = hasErrors;
         this.results = results;
     }

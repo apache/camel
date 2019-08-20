@@ -85,8 +85,7 @@ public class CompositeApiTreeIntegrationTest extends AbstractSalesforceTestBase 
 
         tree.addObject(simpleAccount3).addChild("Contacts", contact).addChild("Assets", asset);
 
-        final SObjectTree response = template.requestBody("salesforce:composite-tree?format=" + format, tree,
-            SObjectTree.class);
+        final SObjectTree response = template.requestBody("salesforce:composite-tree?format=" + format, tree, SObjectTree.class);
 
         assertNotNull("Response should be provided", response);
 

@@ -24,7 +24,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 
 /**
- * Thin wrapper to handle callback for {@link RestClient.ResponseCallback} and allow waiting for results
+ * Thin wrapper to handle callback for {@link RestClient.ResponseCallback} and
+ * allow waiting for results
  */
 public class SyncResponseCallback implements RestClient.ResponseCallback {
 

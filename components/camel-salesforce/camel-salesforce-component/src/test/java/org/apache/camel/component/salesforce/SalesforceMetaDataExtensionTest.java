@@ -49,7 +49,7 @@ import static org.mockito.Mockito.mock;
 public class SalesforceMetaDataExtensionTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static final Class<Map<String, List<String>>> HEADERS_TYPE = (Class) Map.class;
+    private static final Class<Map<String, List<String>>> HEADERS_TYPE = (Class)Map.class;
 
     final SalesforceComponent component = new SalesforceComponent();
 
@@ -72,8 +72,7 @@ public class SalesforceMetaDataExtensionTest {
     public void shouldProvideSalesforceObjectFields() throws IOException {
         final Optional<MetaData> maybeMeta;
         try (InputStream stream = resource("/objectDescription.json")) {
-            doAnswer(provideStreamToCallback(stream)).when(restClient).getDescription(eq("Account"), any(HEADERS_TYPE),
-                any(ResponseCallback.class));
+            doAnswer(provideStreamToCallback(stream)).when(restClient).getDescription(eq("Account"), any(HEADERS_TYPE), any(ResponseCallback.class));
             maybeMeta = metadata.meta(Collections.singletonMap(SalesforceEndpointConfig.SOBJECT_NAME, "Account"));
         }
 
@@ -108,23 +107,18 @@ public class SalesforceMetaDataExtensionTest {
         assertThat(payload).isNotNull();
 
         @SuppressWarnings({"unchecked", "rawtypes"})
-        final Set<JsonSchema> oneOf = (Set) payload.getOneOf();
+        final Set<JsonSchema> oneOf = (Set)payload.getOneOf();
         assertThat(oneOf).hasSize(4);
 
-        assertThat(schemaFor(payload, "AcceptedEventRelation")).isPresent()
-            .hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Accepted Event Relation"));
-        assertThat(schemaFor(payload, "Account")).isPresent()
-            .hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Account"));
-        assertThat(schemaFor(payload, "AccountCleanInfo")).isPresent()
-            .hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Account Clean Info"));
-        assertThat(schemaFor(payload, "AccountContactRole")).isPresent()
-            .hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Account Contact Role"));
+        assertThat(schemaFor(payload, "AcceptedEventRelation")).isPresent().hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Accepted Event Relation"));
+        assertThat(schemaFor(payload, "Account")).isPresent().hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Account"));
+        assertThat(schemaFor(payload, "AccountCleanInfo")).isPresent().hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Account Clean Info"));
+        assertThat(schemaFor(payload, "AccountContactRole")).isPresent().hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Account Contact Role"));
     }
 
     static Answer<Void> provideStreamToCallback(final InputStream stream) {
         return invocation -> {
-            final ResponseCallback callback = (ResponseCallback) Arrays.stream(invocation.getArguments())
-                .filter(ResponseCallback.class::isInstance).findFirst().get();
+            final ResponseCallback callback = (ResponseCallback)Arrays.stream(invocation.getArguments()).filter(ResponseCallback.class::isInstance).findFirst().get();
             callback.onResponse(stream, Collections.emptyMap(), null);
 
             return null;
@@ -137,10 +131,9 @@ public class SalesforceMetaDataExtensionTest {
 
     static Optional<ObjectSchema> schemaFor(final ObjectSchema schema, final String sObjectName) {
         @SuppressWarnings({"unchecked", "rawtypes"})
-        final Set<ObjectSchema> oneOf = (Set) schema.getOneOf();
+        final Set<ObjectSchema> oneOf = (Set)schema.getOneOf();
 
-        return StreamSupport.stream(oneOf.spliterator(), false)
-            .filter(idMatches(JsonUtils.DEFAULT_ID_PREFIX + ":" + sObjectName)).findAny();
+        return StreamSupport.stream(oneOf.spliterator(), false).filter(idMatches(JsonUtils.DEFAULT_ID_PREFIX + ":" + sObjectName)).findAny();
     }
 
     static String valueAt(final JsonNode payload, final int idx, final String name) {

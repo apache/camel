@@ -50,13 +50,12 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * executed in the context of the same user. In a subrequest’s body, you specify
  * a reference ID that maps to the subrequest’s response. You can then refer to
  * the ID in the url or body fields of later subrequests by using a
- * JavaScript-like reference notation.
- *
- * Most requests that are supported in the Composite batch API the helper
- * builder methods are provided. For batch requests that do not have their
- * corresponding helper builder method, use {@link #addGeneric(Method, String)}
- * or {@link #addGeneric(Method, String, Object)} methods. To build the batch
- * use: <blockquote>
+ * JavaScript-like reference notation. Most requests that are supported in the
+ * Composite batch API the helper builder methods are provided. For batch
+ * requests that do not have their corresponding helper builder method, use
+ * {@link #addGeneric(Method, String)} or
+ * {@link #addGeneric(Method, String, Object)} methods. To build the batch use:
+ * <blockquote>
  *
  * <pre>
  * {@code
@@ -72,12 +71,9 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * composite.addCreate(payment, "NewPayment1");
  * composite.addCreate(payment, "NewPayment2");
  * }
- *
  * </pre>
  *
- * </blockquote>
- *
- * This will build a composite of two insert operations.
+ * </blockquote> This will build a composite of two insert operations.
  */
 @XStreamAlias("batch")
 public final class SObjectComposite implements Serializable {
@@ -127,12 +123,10 @@ public final class SObjectComposite implements Serializable {
      * Add create SObject to the composite request.
      *
      * @param data object to create
-     *
      * @return this batch builder
      */
     public SObjectComposite addCreate(final AbstractDescribedSObjectBase data, final String referenceId) {
-        addCompositeRequest(
-            new CompositeRequest(Method.POST, apiPrefix + "/sobjects/" + typeOf(data) + "/", data, referenceId));
+        addCompositeRequest(new CompositeRequest(Method.POST, apiPrefix + "/sobjects/" + typeOf(data) + "/", data, referenceId));
 
         return this;
     }
@@ -162,8 +156,7 @@ public final class SObjectComposite implements Serializable {
      * @param richInput body of the request, to be placed in richInput
      * @return this batch builder
      */
-    public SObjectComposite addGeneric(final Method method, final String url, final Object richInput,
-        final String referenceId) {
+    public SObjectComposite addGeneric(final Method method, final String url, final Object richInput, final String referenceId) {
         addCompositeRequest(new CompositeRequest(method, apiPrefix + url, richInput, referenceId));
 
         return this;
@@ -194,8 +187,7 @@ public final class SObjectComposite implements Serializable {
      * @param fields to return
      * @return this batch builder
      */
-    public SObjectComposite addGet(final String type, final String id, final String referenceId,
-        final String... fields) {
+    public SObjectComposite addGet(final String type, final String id, final String referenceId, final String... fields) {
         final String fieldsParameter = composeFieldsParameter(fields);
 
         addCompositeRequest(new CompositeRequest(Method.GET, rowBaseUrl(type, id) + fieldsParameter, referenceId));
@@ -213,8 +205,7 @@ public final class SObjectComposite implements Serializable {
      * @param fields to return
      * @return this batch builder
      */
-    public SObjectComposite addGetByExternalId(final String type, final String fieldName, final String fieldValue,
-        final String referenceId) {
+    public SObjectComposite addGetByExternalId(final String type, final String fieldName, final String fieldValue, final String referenceId) {
         addCompositeRequest(new CompositeRequest(Method.GET, rowBaseUrl(type, fieldName, fieldValue), referenceId));
 
         return this;
@@ -237,14 +228,12 @@ public final class SObjectComposite implements Serializable {
      * @param fields to return
      * @return this batch builder
      */
-    public SObjectComposite addGetRelated(final String type, final String id, final String relation,
-        final String referenceId, final String... fields) {
+    public SObjectComposite addGetRelated(final String type, final String id, final String relation, final String referenceId, final String... fields) {
         version.requireAtLeast(36, 0);
 
         final String fieldsParameter = composeFieldsParameter(fields);
 
-        addCompositeRequest(new CompositeRequest(Method.GET,
-            rowBaseUrl(type, id) + "/" + notEmpty(relation, "relation") + fieldsParameter, referenceId));
+        addCompositeRequest(new CompositeRequest(Method.GET, rowBaseUrl(type, id) + "/" + notEmpty(relation, "relation") + fieldsParameter, referenceId));
 
         return this;
     }
@@ -256,8 +245,7 @@ public final class SObjectComposite implements Serializable {
      * @return this batch builder
      */
     public SObjectComposite addQuery(final String query, final String referenceId) {
-        addCompositeRequest(
-            new CompositeRequest(Method.GET, apiPrefix + "/query/?q=" + notEmpty(query, "query"), referenceId));
+        addCompositeRequest(new CompositeRequest(Method.GET, apiPrefix + "/query/?q=" + notEmpty(query, "query"), referenceId));
 
         return this;
     }
@@ -269,8 +257,7 @@ public final class SObjectComposite implements Serializable {
      * @return this batch builder
      */
     public SObjectComposite addQueryAll(final String query, final String referenceId) {
-        addCompositeRequest(
-            new CompositeRequest(Method.GET, apiPrefix + "/queryAll/?q=" + notEmpty(query, "query"), referenceId));
+        addCompositeRequest(new CompositeRequest(Method.GET, apiPrefix + "/queryAll/?q=" + notEmpty(query, "query"), referenceId));
 
         return this;
     }
@@ -286,10 +273,8 @@ public final class SObjectComposite implements Serializable {
      * @param data SObject with fields to change
      * @return this batch builder
      */
-    public SObjectComposite addUpdate(final String type, final String id, final AbstractSObjectBase data,
-        final String referenceId) {
-        addCompositeRequest(
-            new CompositeRequest(Method.PATCH, rowBaseUrl(type, notEmpty(id, "data.Id")), data, referenceId));
+    public SObjectComposite addUpdate(final String type, final String id, final AbstractSObjectBase data, final String referenceId) {
+        addCompositeRequest(new CompositeRequest(Method.PATCH, rowBaseUrl(type, notEmpty(id, "data.Id")), data, referenceId));
 
         return this;
     }
@@ -306,11 +291,9 @@ public final class SObjectComposite implements Serializable {
      * @param data SObject with fields to change
      * @return this batch builder
      */
-    public SObjectComposite addUpdateByExternalId(final String type, final String fieldName, final String fieldValue,
-        final AbstractSObjectBase data, final String referenceId) {
+    public SObjectComposite addUpdateByExternalId(final String type, final String fieldName, final String fieldValue, final AbstractSObjectBase data, final String referenceId) {
 
-        addCompositeRequest(
-            new CompositeRequest(Method.PATCH, rowBaseUrl(type, fieldName, fieldValue), data, referenceId));
+        addCompositeRequest(new CompositeRequest(Method.PATCH, rowBaseUrl(type, fieldName, fieldValue), data, referenceId));
 
         return this;
     }
@@ -328,8 +311,7 @@ public final class SObjectComposite implements Serializable {
      * @param data SObject with fields to change
      * @return this batch builder
      */
-    public SObjectComposite addUpsertByExternalId(final String type, final String fieldName, final String fieldValue,
-        final AbstractSObjectBase data, final String referenceId) {
+    public SObjectComposite addUpsertByExternalId(final String type, final String fieldName, final String fieldValue, final AbstractSObjectBase data, final String referenceId) {
 
         return addUpdateByExternalId(type, fieldName, fieldValue, data, referenceId);
     }
@@ -367,8 +349,7 @@ public final class SObjectComposite implements Serializable {
     @SuppressWarnings("rawtypes")
     public Class[] objectTypes() {
         final Set<Class<?>> types = Stream
-            .concat(Stream.of(SObjectComposite.class, BatchRequest.class), compositeRequests.stream()
-                .map(CompositeRequest::getBody).filter(Objects::nonNull).map(Object::getClass))
+            .concat(Stream.of(SObjectComposite.class, BatchRequest.class), compositeRequests.stream().map(CompositeRequest::getBody).filter(Objects::nonNull).map(Object::getClass))
             .collect(Collectors.toSet());
 
         return types.toArray(new Class[types.size()]);
@@ -377,7 +358,7 @@ public final class SObjectComposite implements Serializable {
     void addCompositeRequest(final CompositeRequest compositeRequest) {
         if (compositeRequests.size() >= MAX_COMPOSITE_OPERATIONS) {
             throw new IllegalArgumentException("You can add up to " + MAX_COMPOSITE_OPERATIONS
-                + " requests in a single composite request. Split your requests across multiple composite request.");
+                                               + " requests in a single composite request. Split your requests across multiple composite request.");
         }
         compositeRequests.add(compositeRequest);
     }
@@ -388,9 +369,8 @@ public final class SObjectComposite implements Serializable {
 
     String rowBaseUrl(final String type, final String fieldName, final String fieldValue) {
         try {
-            return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/"
-                + notEmpty(fieldName, "fieldName") + "/"
-                + URLEncoder.encode(notEmpty(fieldValue, "fieldValue"), StandardCharsets.UTF_8.name());
+            return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/" + notEmpty(fieldName, "fieldName") + "/"
+                   + URLEncoder.encode(notEmpty(fieldValue, "fieldValue"), StandardCharsets.UTF_8.name());
         } catch (final UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }

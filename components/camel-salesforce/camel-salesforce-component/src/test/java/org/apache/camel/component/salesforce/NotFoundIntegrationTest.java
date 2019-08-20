@@ -36,9 +36,8 @@ public class NotFoundIntegrationTest extends AbstractSalesforceTestBase {
 
     @Test
     public void shouldNotReportNotFoundExceptionFromRestApiIfConfiguredNotTo() {
-        final Account got = template
-            .requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format=" + format
-                + "&notFoundBehaviour=NULL", "NonExistant", Account.class);
+        final Account got = template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format=" + format + "&notFoundBehaviour=NULL", "NonExistant",
+                                                 Account.class);
 
         assertNull("Expecting null when `notFoundBehaviour` is set to NULL", got);
     }
@@ -46,12 +45,10 @@ public class NotFoundIntegrationTest extends AbstractSalesforceTestBase {
     @Test
     public void shouldReportNotFoundExceptionFromRestApi() {
         try {
-            template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format=" + format,
-                "NonExistant", Account.class);
+            template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format=" + format, "NonExistant", Account.class);
             fail("Expecting CamelExecutionException");
         } catch (final CamelExecutionException e) {
-            assertTrue("Expecting the cause of CamelExecutionException to be NoSuchSObjectException",
-                e.getCause() instanceof NoSuchSObjectException);
+            assertTrue("Expecting the cause of CamelExecutionException to be NoSuchSObjectException", e.getCause() instanceof NoSuchSObjectException);
         }
     }
 

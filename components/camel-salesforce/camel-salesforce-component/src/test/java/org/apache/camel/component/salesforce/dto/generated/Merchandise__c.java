@@ -75,7 +75,6 @@ public class Merchandise__c extends AbstractDescribedSObjectBase {
         this.Total_Inventory__c = Total_Inventory__c;
     }
 
-
     private QueryRecordsLine_Item__c Line_Items__r;
 
     @JsonProperty("Line_Items__r")
@@ -87,6 +86,7 @@ public class Merchandise__c extends AbstractDescribedSObjectBase {
     public void setLine_Items__r(QueryRecordsLine_Item__c Line_Items__r) {
         this.Line_Items__r = Line_Items__r;
     }
+
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;
@@ -94,8 +94,6 @@ public class Merchandise__c extends AbstractDescribedSObjectBase {
 
     private static SObjectDescription createSObjectDescription() {
         final SObjectDescription description = new SObjectDescription();
-
-
 
         final List<SObjectField> fields1 = new ArrayList<>();
         description.setFields(fields1);
@@ -122,7 +120,8 @@ public class Merchandise__c extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField10);
         final SObjectField sObjectField11 = createField("LastViewedDate", "Last Viewed Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField11);
-        final SObjectField sObjectField12 = createField("LastReferencedDate", "Last Referenced Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField12 = createField("LastReferencedDate", "Last Referenced Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false,
+                                                        false);
         fields1.add(sObjectField12);
         final SObjectField sObjectField13 = createField("Description__c", "Description", "string", "xsd:string", 100, false, true, false, false, true, false, false);
         fields1.add(sObjectField13);

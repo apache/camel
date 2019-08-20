@@ -53,8 +53,7 @@ public class SchemaMojoIntegrationTest {
         Assert.assertTrue("Output file was not created", schemaFile.exists());
         final ObjectMapper objectMapper = JsonUtils.createObjectMapper();
         final JsonSchema jsonSchema = objectMapper.readValue(schemaFile, JsonSchema.class);
-        Assert.assertTrue("Expected root JSON schema with oneOf element",
-            jsonSchema.isObjectSchema() && !((ObjectSchema) jsonSchema).getOneOf().isEmpty());
+        Assert.assertTrue("Expected root JSON schema with oneOf element", jsonSchema.isObjectSchema() && !((ObjectSchema)jsonSchema).getOneOf().isEmpty());
     }
 
 }

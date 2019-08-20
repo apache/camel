@@ -33,8 +33,7 @@ final class OffsetDateTimeDeserializer extends JsonDeserializer<OffsetDateTime> 
     }
 
     @Override
-    public OffsetDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
-        throws IOException, JsonProcessingException {
+    public OffsetDateTime deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
         final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
 
         return zonedDateTime.toOffsetDateTime();

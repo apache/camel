@@ -66,33 +66,37 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
      * Gets String value for a parameter from header, endpoint config, or
      * exchange body (optional).
      *
-     * @param exchange          exchange to inspect
-     * @param convertInBody     converts In body to String value if true
-     * @param propName          name of property
-     * @param optional          if {@code true} returns null, otherwise throws RestException
-     * @return value of property, or {@code null} for optional parameters if not found.
-     * @throws org.apache.camel.component.salesforce.api.SalesforceException
-     *          if the property can't be found or on conversion errors.
+     * @param exchange exchange to inspect
+     * @param convertInBody converts In body to String value if true
+     * @param propName name of property
+     * @param optional if {@code true} returns null, otherwise throws
+     *            RestException
+     * @return value of property, or {@code null} for optional parameters if not
+     *         found.
+     * @throws org.apache.camel.component.salesforce.api.SalesforceException if
+     *         the property can't be found or on conversion errors.
      */
-    protected final String getParameter(final String propName, final Exchange exchange, final boolean convertInBody,
-        final boolean optional) throws SalesforceException {
+    protected final String getParameter(final String propName, final Exchange exchange, final boolean convertInBody, final boolean optional) throws SalesforceException {
         return getParameter(propName, exchange, convertInBody, optional, String.class);
     }
 
     /**
-     * Gets value for a parameter from header, endpoint config, or exchange body (optional).
+     * Gets value for a parameter from header, endpoint config, or exchange body
+     * (optional).
      *
-     * @param exchange          exchange to inspect
-     * @param convertInBody     converts In body to parameterClass value if true
-     * @param propName          name of property
-     * @param optional          if {@code true} returns null, otherwise throws RestException
-     * @param parameterClass    parameter type
-     * @return value of property, or {@code null} for optional parameters if not found.
-     * @throws org.apache.camel.component.salesforce.api.SalesforceException
-     *          if the property can't be found or on conversion errors.
+     * @param exchange exchange to inspect
+     * @param convertInBody converts In body to parameterClass value if true
+     * @param propName name of property
+     * @param optional if {@code true} returns null, otherwise throws
+     *            RestException
+     * @param parameterClass parameter type
+     * @return value of property, or {@code null} for optional parameters if not
+     *         found.
+     * @throws org.apache.camel.component.salesforce.api.SalesforceException if
+     *         the property can't be found or on conversion errors.
      */
-    protected final <T> T getParameter(final String propName, final Exchange exchange, final boolean convertInBody,
-        final boolean optional, final Class<T> parameterClass) throws SalesforceException {
+    protected final <T> T getParameter(final String propName, final Exchange exchange, final boolean convertInBody, final boolean optional, final Class<T> parameterClass)
+        throws SalesforceException {
 
         final Message in = exchange.getIn();
         T propValue = in.getHeader(propName, parameterClass);
@@ -100,8 +104,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
         if (propValue == null) {
             // check if type conversion failed
             if (in.getHeader(propName) != null) {
-                throw new IllegalArgumentException(
-                    "Header " + propName + " could not be converted to type " + parameterClass.getName());
+                throw new IllegalArgumentException("Header " + propName + " could not be converted to type " + parameterClass.getName());
             }
 
             final Object value = endpointConfigMap.get(propName);
@@ -122,8 +125,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
 
         // error if property was not set
         if (propValue == null && !optional) {
-            final String msg = "Missing property " + propName
-                + (convertInBody ? ", message body could not be converted to type " + parameterClass.getName() : "");
+            final String msg = "Missing property " + propName + (convertInBody ? ", message body could not be converted to type " + parameterClass.getName() : "");
             throw new SalesforceException(msg, null);
         }
 

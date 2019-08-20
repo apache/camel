@@ -52,26 +52,23 @@ public class LimitsTest {
     public void shouldDeserializeFromSalesforceGeneratedJSON() throws JsonProcessingException, IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final Object read = mapper.readerFor(Limits.class)
-            .readValue(LimitsTest.class.getResource("/org/apache/camel/component/salesforce/api/dto/limits.json"));
+        final Object read = mapper.readerFor(Limits.class).readValue(LimitsTest.class.getResource("/org/apache/camel/component/salesforce/api/dto/limits.json"));
 
         assertThat("Limits should be parsed from JSON", read, instanceOf(Limits.class));
 
-        final Limits limits = (Limits) read;
+        final Limits limits = (Limits)read;
 
         final Usage dailyApiRequests = limits.getDailyApiRequests();
         assertFalse("Should have some usage present", dailyApiRequests.isUnknown());
         assertFalse("Per application usage should be present", dailyApiRequests.getPerApplicationUsage().isEmpty());
-        assertNotNull("'Camel Salesman' application usage should be present",
-            dailyApiRequests.forApplication("Camel Salesman"));
+        assertNotNull("'Camel Salesman' application usage should be present", dailyApiRequests.forApplication("Camel Salesman"));
     }
 
     @Test
     public void shouldDeserializeWithUnsupportedKeys() throws JsonProcessingException, IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final Limits withUnsupported = mapper.readerFor(Limits.class)
-            .readValue("{\"Camel-NotSupportedKey\": {\"Max\": 200,\"Remaining\": 200}}");
+        final Limits withUnsupported = mapper.readerFor(Limits.class).readValue("{\"Camel-NotSupportedKey\": {\"Max\": 200,\"Remaining\": 200}}");
 
         assertNotNull(withUnsupported);
         assertNotNull(withUnsupported.forOperation("Camel-NotSupportedKey"));
@@ -88,13 +85,11 @@ public class LimitsTest {
             found.add(descriptor.getName());
         }
 
-        final Set<String> defined = Arrays.stream(Limits.Operation.values()).map(Limits.Operation::name)
-            .map(Introspector::decapitalize).collect(Collectors.toSet());
+        final Set<String> defined = Arrays.stream(Limits.Operation.values()).map(Limits.Operation::name).map(Introspector::decapitalize).collect(Collectors.toSet());
 
         defined.removeAll(found);
 
-        assertThat("All operations declared in Operation enum should have it's corresponding getter", defined,
-            is(Collections.emptySet()));
+        assertThat("All operations declared in Operation enum should have it's corresponding getter", defined, is(Collections.emptySet()));
     }
 
     @Test

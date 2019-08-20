@@ -148,8 +148,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                 // if all else fails, get body as String
                 final String body = in.getBody(String.class);
                 if (null == body) {
-                    String msg = "Unsupported request message body "
-                        + (in.getBody() == null ? null : in.getBody().getClass());
+                    String msg = "Unsupported request message body " + (in.getBody() == null ? null : in.getBody().getClass());
                     throw new SalesforceException(msg, null);
                 } else {
                     request = new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8));
@@ -174,8 +173,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
     }
 
     @Override
-    protected void processResponse(Exchange exchange, InputStream responseEntity, Map<String, String> headers, 
-        SalesforceException ex, AsyncCallback callback) {
+    protected void processResponse(Exchange exchange, InputStream responseEntity, Map<String, String> headers, SalesforceException ex, AsyncCallback callback) {
 
         // process JSON response for TypeReference
         try {

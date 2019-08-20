@@ -32,7 +32,8 @@ final class InstantConverter implements SingleValueConverter {
     }
 
     @Override
-    public boolean canConvert(@SuppressWarnings("rawtypes") final Class type) {
+    public boolean canConvert(@SuppressWarnings("rawtypes")
+    final Class type) {
         return Instant.class.equals(type);
     }
 
@@ -47,7 +48,7 @@ final class InstantConverter implements SingleValueConverter {
             return null;
         }
 
-        final Instant instant = (Instant) value;
+        final Instant instant = (Instant)value;
 
         return ISO_OFFSET_DATE_TIME.format(instant.atZone(ZoneId.systemDefault()));
     }

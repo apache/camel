@@ -96,7 +96,7 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         }
     }
 
-    private static  boolean isCompositeOperation(OperationName operationName) {
+    private static boolean isCompositeOperation(OperationName operationName) {
         switch (operationName) {
         case COMPOSITE_TREE:
         case COMPOSITE_BATCH:
@@ -109,8 +109,7 @@ public class SalesforceProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        log.debug("Processing {}",
-                ((SalesforceEndpoint) getEndpoint()).getOperationName());
+        log.debug("Processing {}", ((SalesforceEndpoint)getEndpoint()).getOperationName());
         return processor.process(exchange, callback);
     }
 

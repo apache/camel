@@ -38,52 +38,41 @@ public abstract class AbstractBulkApiTestBase extends AbstractSalesforceTestBase
             @Override
             public void configure() throws Exception {
                 // test createJob
-                from("direct:createJob").
-                    to("salesforce://createJob");
+                from("direct:createJob").to("salesforce://createJob");
 
                 // test getJob
-                from("direct:getJob").
-                    to("salesforce:getJob");
+                from("direct:getJob").to("salesforce:getJob");
 
                 // test closeJob
-                from("direct:closeJob").
-                    to("salesforce:closeJob");
+                from("direct:closeJob").to("salesforce:closeJob");
 
                 // test abortJob
-                from("direct:abortJob").
-                    to("salesforce:abortJob");
+                from("direct:abortJob").to("salesforce:abortJob");
 
                 // test createBatch
-                from("direct:createBatch").
-                    to("salesforce:createBatch");
+                from("direct:createBatch").to("salesforce:createBatch");
 
                 // test getBatch
-                from("direct:getBatch").
-                    to("salesforce:getBatch");
+                from("direct:getBatch").to("salesforce:getBatch");
 
                 // test getAllBatches
-                from("direct:getAllBatches").
-                    to("salesforce:getAllBatches");
+                from("direct:getAllBatches").to("salesforce:getAllBatches");
 
                 // test getRequest
-                from("direct:getRequest").
-                    to("salesforce:getRequest");
+                from("direct:getRequest").to("salesforce:getRequest");
 
                 // test getResults
-                from("direct:getResults").
-                    to("salesforce:getResults");
+                from("direct:getResults").to("salesforce:getResults");
 
                 // test createBatchQuery
-                from("direct:createBatchQuery").
-                    to("salesforce:createBatchQuery?sObjectQuery=SELECT Name, Description__c, Price__c, Total_Inventory__c FROM Merchandise__c WHERE Name LIKE '%25Bulk API%25'");
+                from("direct:createBatchQuery")
+                    .to("salesforce:createBatchQuery?sObjectQuery=SELECT Name, Description__c, Price__c, Total_Inventory__c FROM Merchandise__c WHERE Name LIKE '%25Bulk API%25'");
 
                 // test getQueryResultIds
-                from("direct:getQueryResultIds").
-                    to("salesforce:getQueryResultIds");
+                from("direct:getQueryResultIds").to("salesforce:getQueryResultIds");
 
                 // test getQueryResult
-                from("direct:getQueryResult").
-                    to("salesforce:getQueryResult");
+                from("direct:getQueryResult").to("salesforce:getQueryResult");
 
             }
         };

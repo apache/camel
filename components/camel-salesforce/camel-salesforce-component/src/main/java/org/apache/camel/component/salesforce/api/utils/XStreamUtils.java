@@ -82,8 +82,7 @@ public final class XStreamUtils {
     }
 
     public static XStream createXStream(final Class<?>... additionalTypes) {
-        final PureJavaReflectionProvider reflectionProvider = new PureJavaReflectionProvider(
-            new FieldDictionary(new AnnotationFieldKeySorter()));
+        final PureJavaReflectionProvider reflectionProvider = new PureJavaReflectionProvider(new FieldDictionary(new AnnotationFieldKeySorter()));
 
         // use NoNameCoder to avoid escaping __ in custom field names
         // and CompactWriter to avoid pretty printing

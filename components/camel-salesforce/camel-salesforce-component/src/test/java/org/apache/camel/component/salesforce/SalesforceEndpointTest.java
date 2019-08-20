@@ -27,22 +27,18 @@ import org.junit.Test;
 public class SalesforceEndpointTest {
 
     @Test
-    public void allOperationValuesShouldBeListedInOperationNameUriPath()
-        throws NoSuchFieldException, SecurityException {
+    public void allOperationValuesShouldBeListedInOperationNameUriPath() throws NoSuchFieldException, SecurityException {
         UriPath uriPath = SalesforceEndpoint.class.getDeclaredField("operationName").getAnnotation(UriPath.class);
 
         String[] operationNamesInAnnotation = uriPath.enums().split(",");
         Arrays.sort(operationNamesInAnnotation);
 
-        String[] operationNamesInEnum = Arrays.stream(OperationName.values()).map(OperationName::value)
-            .toArray((length) -> new String[length]);
+        String[] operationNamesInEnum = Arrays.stream(OperationName.values()).map(OperationName::value).toArray((length) -> new String[length]);
         Arrays.sort(operationNamesInEnum);
 
-        Assert.assertArrayEquals(
-            "All operation values, the String value returned from OperationName::value, must be defined in the @UriPath "
-                + "enum parameter of the operationName field in SalesforceEndpoint, set the enums parameter to:\n"
-                + Arrays.stream(operationNamesInEnum).collect(Collectors.joining(",")),
-            operationNamesInEnum, operationNamesInAnnotation);
+        Assert.assertArrayEquals("All operation values, the String value returned from OperationName::value, must be defined in the @UriPath "
+                                 + "enum parameter of the operationName field in SalesforceEndpoint, set the enums parameter to:\n"
+                                 + Arrays.stream(operationNamesInEnum).collect(Collectors.joining(",")), operationNamesInEnum, operationNamesInAnnotation);
     }
 
 }

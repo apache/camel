@@ -43,8 +43,10 @@ public final class ReferenceId implements Serializable {
     private final String referenceId;
 
     @JsonCreator
-    ReferenceId(@JsonProperty("referenceId") final String referenceId, @JsonProperty("id") final String id,
-            @JsonProperty("errors") final List<RestError> errors) {
+    ReferenceId(@JsonProperty("referenceId")
+    final String referenceId, @JsonProperty("id")
+    final String id, @JsonProperty("errors")
+    final List<RestError> errors) {
         this.referenceId = referenceId;
         this.id = id;
         this.errors = errors;
@@ -60,10 +62,9 @@ public final class ReferenceId implements Serializable {
             return false;
         }
 
-        final ReferenceId other = (ReferenceId) obj;
+        final ReferenceId other = (ReferenceId)obj;
 
-        return Objects.equals(id, other.id) && Objects.equals(referenceId, other.referenceId)
-            && Objects.equals(getErrors(), other.getErrors());
+        return Objects.equals(id, other.id) && Objects.equals(referenceId, other.referenceId) && Objects.equals(getErrors(), other.getErrors());
     }
 
     public List<RestError> getErrors() {

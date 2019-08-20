@@ -28,7 +28,7 @@ public class SalesforceHeadersIntegrationTest extends AbstractSalesforceTestBase
 
     @Test
     public void shouldSendCustomHeaders() {
-        final Exchange exchange = template().request("salesforce:getGlobalObjects", (Processor) exchange1 -> {
+        final Exchange exchange = template().request("salesforce:getGlobalObjects", (Processor)exchange1 -> {
             exchange1.getIn().setHeader("Sforce-Limit-Info", Collections.singletonList("api-usage"));
         });
 

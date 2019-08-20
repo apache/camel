@@ -33,10 +33,7 @@ public class BulkApiQueryIntegrationTest extends AbstractBulkApiTestBase {
 
     @DataPoints
     public static ContentType[] getContentTypes() {
-        return new ContentType[] {
-            ContentType.XML,
-            ContentType.CSV
-        };
+        return new ContentType[] {ContentType.XML, ContentType.CSV};
     }
 
     @Theory
@@ -79,8 +76,7 @@ public class BulkApiQueryIntegrationTest extends AbstractBulkApiTestBase {
 
         // test getQueryResult
         for (String resultId : resultIds) {
-            InputStream results = template().requestBodyAndHeader("direct:getQueryResult", batchInfo,
-                SalesforceEndpointConfig.RESULT_ID, resultId, InputStream.class);
+            InputStream results = template().requestBodyAndHeader("direct:getQueryResult", batchInfo, SalesforceEndpointConfig.RESULT_ID, resultId, InputStream.class);
             assertNotNull("Null query result", results);
         }
 

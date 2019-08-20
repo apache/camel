@@ -42,10 +42,11 @@ public final class SObjectCompositeResult implements Serializable {
     private final String referenceId;
 
     @JsonCreator
-    public SObjectCompositeResult(@JsonProperty("body") final Object body,
-        @JsonProperty("headers") final Map<String, String> headers,
-        @JsonProperty("httpStatusCode") final int httpStatusCode,
-        @JsonProperty("referenceID") final String referenceId) {
+    public SObjectCompositeResult(@JsonProperty("body")
+    final Object body, @JsonProperty("headers")
+    final Map<String, String> headers, @JsonProperty("httpStatusCode")
+    final int httpStatusCode, @JsonProperty("referenceID")
+    final String referenceId) {
         this.body = body;
         httpHeaders = headers;
         this.httpStatusCode = httpStatusCode;
@@ -70,7 +71,6 @@ public final class SObjectCompositeResult implements Serializable {
 
     @Override
     public String toString() {
-        return "SObjectCompositeResult [body=" + body + ", headers=" + httpHeaders + ", httpStatusCode="
-            + httpStatusCode + ", referenceId=" + referenceId + "]";
+        return "SObjectCompositeResult [body=" + body + ", headers=" + httpHeaders + ", httpStatusCode=" + httpStatusCode + ", referenceId=" + referenceId + "]";
     }
 }
