@@ -21,21 +21,23 @@ package org.apache.camel.component.salesforce.api.dto;
  * <p>
  * Derived classes must follow the template below:
  * </p>
+ * 
  * <pre>
- * {@code
- * public class QueryResultMySObject extends AbstractQueryRecordsBase {
- *     @XStreamImplicit
- *     private List<MySObject> records;
+ * {
+ *     &#64;code
+ *     public class QueryResultMySObject extends AbstractQueryRecordsBase {
+ *         &#64;XStreamImplicit
+ *         private List<MySObject> records;
  *
- *     public List<MySObject> getRecords() {
- *         return records;
+ *         public List<MySObject> getRecords() {
+ *             return records;
+ *         }
+ *
+ *         public void setRecords(List<MySObject> records) {
+ *             this.records = records;
+ *         }
+ *
  *     }
- *
- *     public void setRecords(List<MySObject> records) {
- *         this.records = records;
- *     }
- *
- * }
  * }
  * </pre>
  */

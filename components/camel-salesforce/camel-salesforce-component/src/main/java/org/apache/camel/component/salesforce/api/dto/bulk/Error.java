@@ -23,10 +23,14 @@ import javax.xml.bind.annotation.XmlType;
 
 //CHECKSTYLE:OFF
 /**
- * <p>Java class for Error complex type.
+ * <p>
+ * Java class for Error complex type.
  * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p/>
+ * 
  * <pre>
  * &lt;complexType name="Error">
  *   &lt;complexContent>
@@ -41,10 +45,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Error", propOrder = {
-        "exceptionCode",
-        "exceptionMessage"
-        })
+@XmlType(name = "Error", propOrder = {"exceptionCode", "exceptionMessage"})
 public class Error {
 
     @XmlElement(required = true)
@@ -55,8 +56,7 @@ public class Error {
     /**
      * Gets the value of the exceptionCode property.
      *
-     * @return possible object is
-     *         {@link String }
+     * @return possible object is {@link String }
      */
     public String getExceptionCode() {
         return exceptionCode;
@@ -65,8 +65,7 @@ public class Error {
     /**
      * Sets the value of the exceptionCode property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value allowed object is {@link String }
      */
     public void setExceptionCode(String value) {
         this.exceptionCode = value;
@@ -75,8 +74,7 @@ public class Error {
     /**
      * Gets the value of the exceptionMessage property.
      *
-     * @return possible object is
-     *         {@link String }
+     * @return possible object is {@link String }
      */
     public String getExceptionMessage() {
         return exceptionMessage;
@@ -85,8 +83,7 @@ public class Error {
     /**
      * Sets the value of the exceptionMessage property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value allowed object is {@link String }
      */
     public void setExceptionMessage(String value) {
         this.exceptionMessage = value;

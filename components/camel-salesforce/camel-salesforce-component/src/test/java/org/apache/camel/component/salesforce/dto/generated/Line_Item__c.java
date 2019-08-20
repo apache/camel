@@ -76,8 +76,6 @@ public class Line_Item__c extends AbstractDescribedSObjectBase {
         this.Units_Sold__c = Units_Sold__c;
     }
 
-
-
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;
@@ -85,8 +83,6 @@ public class Line_Item__c extends AbstractDescribedSObjectBase {
 
     private static SObjectDescription createSObjectDescription() {
         final SObjectDescription description = new SObjectDescription();
-
-
 
         final List<SObjectField> fields1 = new ArrayList<>();
         description.setFields(fields1);

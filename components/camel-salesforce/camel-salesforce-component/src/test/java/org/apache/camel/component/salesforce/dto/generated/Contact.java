@@ -65,6 +65,7 @@ public class Contact extends AbstractDescribedSObjectBase {
     public void setMasterRecord(Contact MasterRecord) {
         this.MasterRecord = MasterRecord;
     }
+
     private String AccountId;
 
     @JsonProperty("AccountId")
@@ -89,6 +90,7 @@ public class Contact extends AbstractDescribedSObjectBase {
     public void setAccount(Account Account) {
         this.Account = Account;
     }
+
     private String LastName;
 
     @JsonProperty("LastName")
@@ -401,6 +403,7 @@ public class Contact extends AbstractDescribedSObjectBase {
     public void setReportsTo(Contact ReportsTo) {
         this.ReportsTo = ReportsTo;
     }
+
     private String Email;
 
     @JsonProperty("Email")
@@ -589,8 +592,6 @@ public class Contact extends AbstractDescribedSObjectBase {
     private static SObjectDescription createSObjectDescription() {
         final SObjectDescription description = new SObjectDescription();
 
-
-
         final List<SObjectField> fields1 = new ArrayList<>();
         description.setFields(fields1);
 
@@ -624,7 +625,8 @@ public class Contact extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField14);
         final SObjectField sObjectField15 = createField("OtherLongitude", "Other Longitude", "double", "xsd:double", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField15);
-        final SObjectField sObjectField16 = createField("OtherGeocodeAccuracy", "Other Geocode Accuracy", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField16 = createField("OtherGeocodeAccuracy", "Other Geocode Accuracy", "picklist", "xsd:string", 40, false, true, false, false, false, false,
+                                                        false);
         fields1.add(sObjectField16);
         final SObjectField sObjectField17 = createField("OtherAddress", "Other Address", "address", "urn:address", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField17);
@@ -642,7 +644,8 @@ public class Contact extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField23);
         final SObjectField sObjectField24 = createField("MailingLongitude", "Mailing Longitude", "double", "xsd:double", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField24);
-        final SObjectField sObjectField25 = createField("MailingGeocodeAccuracy", "Mailing Geocode Accuracy", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField25 = createField("MailingGeocodeAccuracy", "Mailing Geocode Accuracy", "picklist", "xsd:string", 40, false, true, false, false, false, false,
+                                                        false);
         fields1.add(sObjectField25);
         final SObjectField sObjectField26 = createField("MailingAddress", "Mailing Address", "address", "urn:address", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField26);
@@ -688,13 +691,16 @@ public class Contact extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField46);
         final SObjectField sObjectField47 = createField("LastActivityDate", "Last Activity", "date", "xsd:date", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField47);
-        final SObjectField sObjectField48 = createField("LastCURequestDate", "Last Stay-in-Touch Request Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField48 = createField("LastCURequestDate", "Last Stay-in-Touch Request Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false,
+                                                        false, false);
         fields1.add(sObjectField48);
-        final SObjectField sObjectField49 = createField("LastCUUpdateDate", "Last Stay-in-Touch Save Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField49 = createField("LastCUUpdateDate", "Last Stay-in-Touch Save Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false,
+                                                        false);
         fields1.add(sObjectField49);
         final SObjectField sObjectField50 = createField("LastViewedDate", "Last Viewed Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField50);
-        final SObjectField sObjectField51 = createField("LastReferencedDate", "Last Referenced Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField51 = createField("LastReferencedDate", "Last Referenced Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false,
+                                                        false);
         fields1.add(sObjectField51);
         final SObjectField sObjectField52 = createField("EmailBouncedReason", "Email Bounced Reason", "string", "xsd:string", 255, false, true, false, false, false, false, false);
         fields1.add(sObjectField52);

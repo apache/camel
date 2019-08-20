@@ -43,25 +43,25 @@ public class ApprovalIntegrationTest extends AbstractApprovalIntegrationTest {
 
     @Test
     public void shouldSubmitAndFetchApprovals() {
-        final ApprovalResult approvalResult = template.requestBody(
-            String.format("salesforce:approval?"//
-                + "format=%s"//
-                + "&approvalActionType=Submit"//
-                + "&approvalContextId=%s"//
-                + "&approvalNextApproverIds=%s"//
-                + "&approvalComments=Integration test"//
-                + "&approvalProcessDefinitionNameOrId=Test_Account_Process", format, accountIds.get(0), userId),
-            NOT_USED, ApprovalResult.class);
+        final ApprovalResult approvalResult = template.requestBody(String.format("salesforce:approval?"//
+                                                                                 + "format=%s"//
+                                                                                 + "&approvalActionType=Submit"//
+                                                                                 + "&approvalContextId=%s"//
+                                                                                 + "&approvalNextApproverIds=%s"//
+                                                                                 + "&approvalComments=Integration test"//
+                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process", format, accountIds.get(0), userId),
+                                                                   NOT_USED, ApprovalResult.class);
 
         assertNotNull("Approval should have resulted in value", approvalResult);
 
         assertEquals("There should be one Account waiting approval", 1, approvalResult.size());
 
-        assertEquals("Instance status of the item in approval result should be `Pending`", "Pending",
-            approvalResult.iterator().next().getInstanceStatus());
+        assertEquals("Instance status of the item in approval result should be `Pending`", "Pending", approvalResult.iterator().next().getInstanceStatus());
 
-        // as it stands on 18.11.2016. the GET method on /vXX.X/process/approvals/ with Accept other than
-        // `application/json` results in HTTP status 500, so only JSON is supported
+        // as it stands on 18.11.2016. the GET method on
+        // /vXX.X/process/approvals/ with Accept other than
+        // `application/json` results in HTTP status 500, so only JSON is
+        // supported
         final Approvals approvals = template.requestBody("salesforce:approvals", NOT_USED, Approvals.class);
 
         assertNotNull("Approvals should be fetched", approvals);
@@ -81,16 +81,14 @@ public class ApprovalIntegrationTest extends AbstractApprovalIntegrationTest {
             return request;
         }).collect(Collectors.toList());
 
-        final ApprovalResult approvalResult = template.requestBody(
-            String.format("salesforce:approval?"//
-                + "format=%s"//
-                + "&approvalActionType=Submit"//
-                + "&approvalNextApproverIds=%s"//
-                + "&approvalProcessDefinitionNameOrId=Test_Account_Process", format, userId),
-            approvalRequests, ApprovalResult.class);
+        final ApprovalResult approvalResult = template.requestBody(String.format("salesforce:approval?"//
+                                                                                 + "format=%s"//
+                                                                                 + "&approvalActionType=Submit"//
+                                                                                 + "&approvalNextApproverIds=%s"//
+                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process", format, userId),
+                                                                   approvalRequests, ApprovalResult.class);
 
-        assertEquals("Should have same number of approval results as requests", approvalRequests.size(),
-            approvalResult.size());
+        assertEquals("Should have same number of approval results as requests", approvalRequests.size(), approvalResult.size());
     }
 
     @Parameters(name = "format = {0}")

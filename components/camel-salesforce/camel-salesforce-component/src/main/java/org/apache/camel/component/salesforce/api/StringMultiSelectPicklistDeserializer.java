@@ -29,10 +29,10 @@ import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 /**
- * Jackson deserializer base class for reading ';' separated strings for MultiSelect pick-lists.
+ * Jackson deserializer base class for reading ';' separated strings for
+ * MultiSelect pick-lists.
  */
-public class StringMultiSelectPicklistDeserializer
-    extends StdDeserializer<Object> implements ContextualDeserializer {
+public class StringMultiSelectPicklistDeserializer extends StdDeserializer<Object> implements ContextualDeserializer {
 
     private static final long serialVersionUID = 7380774744798254325L;
 

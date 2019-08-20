@@ -41,7 +41,8 @@ import org.apache.camel.component.salesforce.api.dto.Limits.LimitsDeserializer;
 /**
  * Data given by the `Limits` resource on Salesforce.
  *
- * @see <a href= "https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_limits.htm">
+ * @see <a href=
+ *      "https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_limits.htm">
  *      https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_limits.htm</a>
  */
 @JsonDeserialize(using = LimitsDeserializer.class)
@@ -50,8 +51,7 @@ public final class Limits implements Serializable {
     public static final class LimitsDeserializer extends JsonDeserializer {
 
         @Override
-        public Object deserialize(final JsonParser parser, final DeserializationContext context)
-                throws IOException, JsonProcessingException {
+        public Object deserialize(final JsonParser parser, final DeserializationContext context) throws IOException, JsonProcessingException {
 
             final Map<String, Usage> usages = parser.readValueAs(TypeReferences.USAGES_TYPE);
 
@@ -61,30 +61,13 @@ public final class Limits implements Serializable {
     }
 
     public enum Operation {
-        ConcurrentAsyncGetReportInstances,
-        ConcurrentSyncReportRuns,
-        DailyApiRequests,
-        DailyAsyncApexExecutions,
-        DailyBulkApiRequests,
-        DailyDurableGenericStreamingApiEvents,
-        DailyDurableStreamingApiEvents,
-        DailyGenericStreamingApiEvents,
-        DailyStreamingApiEvents,
-        DailyWorkflowEmails,
-        DataStorageMB,
-        DurableStreamingApiConcurrentClients,
-        FileStorageMB,
-        HourlyAsyncReportRuns,
-        HourlyDashboardRefreshes,
-        HourlyDashboardResults,
-        HourlyDashboardStatuses,
-        HourlyODataCallout,
-        HourlySyncReportRuns,
-        HourlyTimeBasedWorkflow,
-        MassEmail,
-        PermissionSets,
-        SingleEmail,
-        StreamingApiConcurrentClients
+        ConcurrentAsyncGetReportInstances, ConcurrentSyncReportRuns, DailyApiRequests, 
+        DailyAsyncApexExecutions, DailyBulkApiRequests, DailyDurableGenericStreamingApiEvents, 
+        DailyDurableStreamingApiEvents, DailyGenericStreamingApiEvents, DailyStreamingApiEvents, 
+        DailyWorkflowEmails, DataStorageMB, DurableStreamingApiConcurrentClients, FileStorageMB, 
+        HourlyAsyncReportRuns, HourlyDashboardRefreshes, HourlyDashboardResults, HourlyDashboardStatuses, 
+        HourlyODataCallout, HourlySyncReportRuns, HourlyTimeBasedWorkflow, MassEmail, PermissionSets, 
+        SingleEmail, StreamingApiConcurrentClients
     }
 
     /**
@@ -105,7 +88,9 @@ public final class Limits implements Serializable {
         private final Map<String, Usage> perApplication = new HashMap<>();
 
         @JsonCreator
-        Usage(@JsonProperty("Max") final int max, @JsonProperty("Remaining") final int remaining) {
+        Usage(@JsonProperty("Max")
+        final int max, @JsonProperty("Remaining")
+        final int remaining) {
             this.max = max;
             this.remaining = remaining;
         }
@@ -202,21 +187,24 @@ public final class Limits implements Serializable {
     }
 
     /**
-     * Daily durable generic streaming events (if generic streaming is enabled for your organization)
+     * Daily durable generic streaming events (if generic streaming is enabled
+     * for your organization)
      */
     public Usage getDailyDurableGenericStreamingApiEvents() {
         return forOperation(Operation.DailyDurableGenericStreamingApiEvents.name());
     }
 
     /**
-     * Daily durable streaming events (if generic streaming is enabled for your organization)
+     * Daily durable streaming events (if generic streaming is enabled for your
+     * organization)
      */
     public Usage getDailyDurableStreamingApiEvents() {
         return forOperation(Operation.DailyDurableStreamingApiEvents.name());
     }
 
     /**
-     * Daily generic streaming events (if generic streaming is enabled for your organization)
+     * Daily generic streaming events (if generic streaming is enabled for your
+     * organization)
      */
     public Usage getDailyGenericStreamingApiEvents() {
         return forOperation(Operation.DailyGenericStreamingApiEvents.name());
@@ -283,7 +271,8 @@ public final class Limits implements Serializable {
     }
 
     /**
-     * Daily number of mass emails that are sent to external email addresses by using Apex or Force.com APIs
+     * Daily number of mass emails that are sent to external email addresses by
+     * using Apex or Force.com APIs
      */
     public Usage getMassEmail() {
         return forOperation(Operation.MassEmail.name());
@@ -297,7 +286,8 @@ public final class Limits implements Serializable {
     }
 
     /**
-     * Daily number of single emails that are sent to external email addresses by using Apex or Force.com APIs
+     * Daily number of single emails that are sent to external email addresses
+     * by using Apex or Force.com APIs
      */
     public Usage getSingleEmail() {
         return forOperation(Operation.SingleEmail.name());
@@ -311,7 +301,6 @@ public final class Limits implements Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Limits: " + usages.entrySet().stream().map(e -> e.getKey() + ": " + e.getValue())
-                .collect(Collectors.joining(", "));
+        return "Limits: " + usages.entrySet().stream().map(e -> e.getKey() + ": " + e.getValue()).collect(Collectors.joining(", "));
     }
 }

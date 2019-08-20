@@ -51,11 +51,11 @@ public class MultiSelectPicklistXmlTest {
 
     @Test
     public void testUnmarshal() throws Exception {
-        MSPTest mspTest = (MSPTest) xStream.fromXML(TEST_XML);
+        MSPTest mspTest = (MSPTest)xStream.fromXML(TEST_XML);
         assertArrayEquals(MSPTest.MSPEnum.values(), mspTest.getMspField());
 
         // test null field value
-        mspTest = (MSPTest) xStream.fromXML(TEST_NULL_XML);
+        mspTest = (MSPTest)xStream.fromXML(TEST_NULL_XML);
         assertNull(mspTest.getMspField());
     }
 

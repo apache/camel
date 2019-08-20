@@ -20,12 +20,15 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for OperationEnum.
+ * <p>
+ * Java class for OperationEnum.
  * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p/>
+ * 
  * <pre>
  * &lt;simpleType name="OperationEnum">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -44,16 +47,11 @@ import javax.xml.bind.annotation.XmlType;
 public enum OperationEnum {
 
     @XmlEnumValue("insert")
-    INSERT("insert"),
-    @XmlEnumValue("upsert")
-    UPSERT("upsert"),
-    @XmlEnumValue("update")
-    UPDATE("update"),
-    @XmlEnumValue("delete")
-    DELETE("delete"),
-    @XmlEnumValue("hardDelete")
-    HARD_DELETE("hardDelete"),
-    @XmlEnumValue("query")
+    INSERT("insert"), @XmlEnumValue("upsert")
+    UPSERT("upsert"), @XmlEnumValue("update")
+    UPDATE("update"), @XmlEnumValue("delete")
+    DELETE("delete"), @XmlEnumValue("hardDelete")
+    HARD_DELETE("hardDelete"), @XmlEnumValue("query")
     QUERY("query");
     private final String value;
 

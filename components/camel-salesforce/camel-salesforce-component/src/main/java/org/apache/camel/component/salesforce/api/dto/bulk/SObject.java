@@ -24,12 +24,15 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for sObject complex type.
+ * <p>
+ * Java class for sObject complex type.
  * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p/>
+ * 
  * <pre>
  * &lt;complexType name="sObject">
  *   &lt;complexContent>
@@ -45,11 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "sObject", propOrder = {
-        "type",
-        "id",
-        "any"
-        })
+@XmlType(name = "sObject", propOrder = {"type", "id", "any"})
 public class SObject {
 
     @XmlElement(required = true)
@@ -62,8 +61,7 @@ public class SObject {
     /**
      * Gets the value of the type property.
      *
-     * @return possible object is
-     *         {@link String }
+     * @return possible object is {@link String }
      */
     public String getType() {
         return type;
@@ -72,8 +70,7 @@ public class SObject {
     /**
      * Sets the value of the type property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value allowed object is {@link String }
      */
     public void setType(String value) {
         this.type = value;
@@ -82,8 +79,7 @@ public class SObject {
     /**
      * Gets the value of the id property.
      *
-     * @return possible object is
-     *         {@link String }
+     * @return possible object is {@link String }
      */
     public String getId() {
         return id;
@@ -92,8 +88,7 @@ public class SObject {
     /**
      * Sets the value of the id property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value allowed object is {@link String }
      */
     public void setId(String value) {
         this.id = value;
@@ -103,21 +98,21 @@ public class SObject {
      * Gets the value of the any property.
      * <p/>
      * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the any property.
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the any property.
      * <p/>
      * <p/>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getAny().add(newItem);
+     * getAny().add(newItem);
      * </pre>
      * <p/>
      * <p/>
      * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Object }
+     * Objects of the following type(s) are allowed in the list {@link Object }
      * {@link org.w3c.dom.Element }
      */
     public List<Object> getAny() {

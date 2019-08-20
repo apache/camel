@@ -41,8 +41,7 @@ public class LimitsIntegrationTest extends AbstractSalesforceTestBase {
 
         assertLimitIsFetched("DailyBulkApiRequests", limits.getDailyBulkApiRequests());
 
-        assertLimitIsFetched("DailyDurableGenericStreamingApiEvents",
-                limits.getDailyDurableGenericStreamingApiEvents());
+        assertLimitIsFetched("DailyDurableGenericStreamingApiEvents", limits.getDailyDurableGenericStreamingApiEvents());
 
         assertLimitIsFetched("DailyDurableStreamingApiEvents", limits.getDailyDurableStreamingApiEvents());
 

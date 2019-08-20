@@ -42,7 +42,7 @@ public final class RichInputConverter implements Converter {
     public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
         if (source instanceof Map) {
             @SuppressWarnings("unchecked")
-            final Map<String, String> map = (Map) source;
+            final Map<String, String> map = (Map)source;
 
             for (final Map.Entry<String, String> e : map.entrySet()) {
                 writer.startNode(e.getKey());

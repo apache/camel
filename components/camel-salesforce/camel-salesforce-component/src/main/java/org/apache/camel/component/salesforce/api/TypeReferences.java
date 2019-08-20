@@ -30,7 +30,8 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.RecentRep
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportInstance;
 
 /**
- * Class that holds {@link TypeReference} instances needed for Jackson mapper to support generics.
+ * Class that holds {@link TypeReference} instances needed for Jackson mapper to
+ * support generics.
  */
 public final class TypeReferences {
 

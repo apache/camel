@@ -37,12 +37,10 @@ public class RestErrorTest {
         final ObjectMapper objectMapper = JsonUtils.createObjectMapper();
         final ObjectReader reader = objectMapper.readerFor(RestError.class);
 
-        final RestError gotWithErrorCode = reader.<RestError>readValue(
-            "{\"errorCode\":\"errorCode\",\"message\":\"message\",\"fields\":[ \"field1\",\"field2\" ]}");
+        final RestError gotWithErrorCode = reader.<RestError> readValue("{\"errorCode\":\"errorCode\",\"message\":\"message\",\"fields\":[ \"field1\",\"field2\" ]}");
         assertEquals(gotWithErrorCode, error);
 
-        final RestError gotWithStatusCode = reader.<RestError>readValue(
-            "{\"statusCode\":\"errorCode\",\"message\":\"message\",\"fields\":[ \"field1\",\"field2\" ]}");
+        final RestError gotWithStatusCode = reader.<RestError> readValue("{\"statusCode\":\"errorCode\",\"message\":\"message\",\"fields\":[ \"field1\",\"field2\" ]}");
         assertEquals(gotWithStatusCode, error);
     }
 
@@ -51,12 +49,12 @@ public class RestErrorTest {
         final XStream xStream = XStreamUtils.createXStream(RestError.class);
         xStream.alias("errors", RestError.class);
 
-        final RestError gotWithErrorCode = (RestError) xStream.fromXML(
-            "<errors><fields>field1</fields><fields>field2</fields><message>message</message><errorCode>errorCode</errorCode></errors>");
+        final RestError gotWithErrorCode = (RestError)xStream
+            .fromXML("<errors><fields>field1</fields><fields>field2</fields><message>message</message><errorCode>errorCode</errorCode></errors>");
         assertEquals(gotWithErrorCode, error);
 
-        final RestError gotWithStatusCode = (RestError) xStream.fromXML(
-            "<errors><fields>field1</fields><fields>field2</fields><message>message</message><statusCode>errorCode</statusCode></errors>");
+        final RestError gotWithStatusCode = (RestError)xStream
+            .fromXML("<errors><fields>field1</fields><fields>field2</fields><message>message</message><statusCode>errorCode</statusCode></errors>");
         assertEquals(gotWithStatusCode, error);
     }
 }

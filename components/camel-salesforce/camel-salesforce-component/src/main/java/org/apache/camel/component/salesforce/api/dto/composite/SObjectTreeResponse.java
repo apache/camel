@@ -32,8 +32,10 @@ import org.apache.camel.component.salesforce.api.dto.RestError;
 /**
  * Response from the SObject tree Composite API invocation.
  */
-@XStreamAlias("Result") // you might be wondering why `Result` and not `SObjectTreeResponse` as in documentation, well,
-                        // the difference between documentation and practice is usually found in practice, this depends
+@XStreamAlias("Result") // you might be wondering why `Result` and not
+                        // `SObjectTreeResponse` as in documentation, well,
+                        // the difference between documentation and practice is
+                        // usually found in practice, this depends
                         // on the version of the API that's used
 public final class SObjectTreeResponse implements Serializable {
 
@@ -45,8 +47,9 @@ public final class SObjectTreeResponse implements Serializable {
     private final List<ReferenceId> results;
 
     @JsonCreator
-    public SObjectTreeResponse(@JsonProperty("hasErrors") final boolean hasErrors,
-            @JsonProperty("results") final List<ReferenceId> results) {
+    public SObjectTreeResponse(@JsonProperty("hasErrors")
+    final boolean hasErrors, @JsonProperty("results")
+    final List<ReferenceId> results) {
         this.hasErrors = hasErrors;
         this.results = Optional.ofNullable(results).orElse(Collections.emptyList());
     }

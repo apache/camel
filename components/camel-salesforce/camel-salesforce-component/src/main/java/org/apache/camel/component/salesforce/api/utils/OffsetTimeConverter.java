@@ -30,7 +30,8 @@ final class OffsetTimeConverter implements SingleValueConverter {
     }
 
     @Override
-    public boolean canConvert(@SuppressWarnings("rawtypes") final Class type) {
+    public boolean canConvert(@SuppressWarnings("rawtypes")
+    final Class type) {
         return OffsetTime.class.equals(type);
     }
 
@@ -45,7 +46,7 @@ final class OffsetTimeConverter implements SingleValueConverter {
             return null;
         }
 
-        final OffsetTime offsetTime = (OffsetTime) value;
+        final OffsetTime offsetTime = (OffsetTime)value;
 
         return ISO_OFFSET_TIME.format(offsetTime);
     }

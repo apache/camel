@@ -89,8 +89,7 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
         final Account account = new Account();
         account.setName("Composite API Batch");
 
-        final CreateSObjectResult result = template.requestBody("salesforce:createSObject", account,
-            CreateSObjectResult.class);
+        final CreateSObjectResult result = template.requestBody("salesforce:createSObject", account, CreateSObjectResult.class);
 
         accountId = result.getId();
     }
@@ -220,8 +219,7 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
                 from("direct:deleteBatchAccounts")
                     .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
                         + "&sObjectQuery=SELECT Id FROM Account WHERE Name = 'Account created from Composite batch API'")
-                    .split(simple("${body.records}")).setHeader("sObjectId", simple("${body.id}"))
-                    .to("salesforce:deleteSObject?sObjectName=Account").end();
+                    .split(simple("${body.records}")).setHeader("sObjectId", simple("${body.id}")).to("salesforce:deleteSObject?sObjectName=Account").end();
             }
         };
     }
@@ -249,7 +247,7 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
         Assertions.assertThat(firstCompositeResponseBody).isInstanceOf(Map.class);
 
         @SuppressWarnings("unchecked")
-        final Map<String, ?> body = (Map<String, ?>) firstCompositeResponseBody;
+        final Map<String, ?> body = (Map<String, ?>)firstCompositeResponseBody;
         Assertions.assertThat(body).containsKey(key);
         Assertions.assertThat(body.get(key)).isNotNull();
     }

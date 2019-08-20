@@ -36,7 +36,8 @@ import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
- * Custom Salesforce HTTP Client that creates {@link SalesforceHttpRequest} requests.
+ * Custom Salesforce HTTP Client that creates {@link SalesforceHttpRequest}
+ * requests.
  */
 public class SalesforceHttpClient extends HttpClient {
 

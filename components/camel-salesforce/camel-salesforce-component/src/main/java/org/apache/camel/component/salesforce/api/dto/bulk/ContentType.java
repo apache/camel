@@ -19,12 +19,15 @@ package org.apache.camel.component.salesforce.api.dto.bulk;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for ContentType.
+ * <p>
+ * Java class for ContentType.
  * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p/>
+ * 
  * <pre>
  * &lt;simpleType name="ContentType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -42,12 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ContentType {
 
-    XML,
-    CSV,
-    JSON,
-    ZIP_XML,
-    ZIP_CSV,
-    ZIP_JSON;
+    XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON;
 
     public String value() {
         return name();

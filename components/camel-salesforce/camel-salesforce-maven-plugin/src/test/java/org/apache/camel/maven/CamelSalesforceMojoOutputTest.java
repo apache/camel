@@ -86,9 +86,7 @@ public class CamelSalesforceMojoOutputTest {
 
         mojo.descriptions = new ObjectDescriptions(client, 0, null, null, null, null, mojo.getLog());
 
-        Set<String> sObjectNames = StreamSupport.stream(mojo.descriptions.fetched().spliterator(), false)
-                .map(SObjectDescription::getName)
-                .collect(Collectors.toSet());
+        Set<String> sObjectNames = StreamSupport.stream(mojo.descriptions.fetched().spliterator(), false).map(SObjectDescription::getName).collect(Collectors.toSet());
 
         mojo.processDescription(pkgDir, description, utility, sObjectNames);
 
@@ -98,32 +96,25 @@ public class CamelSalesforceMojoOutputTest {
             final File generatedFile = new File(pkgDir, source);
             final String generatedContent = FileUtils.readFileToString(generatedFile, StandardCharsets.UTF_8);
 
+            final String expectedContent = IOUtils.toString(CamelSalesforceMojoOutputTest.class.getResource("/generated/" + expected), StandardCharsets.UTF_8);
 
-            final String expectedContent = IOUtils.toString(
-                CamelSalesforceMojoOutputTest.class.getResource("/generated/" + expected), StandardCharsets.UTF_8);
-
-            Assert.assertEquals("Generated source file in " + source
-                + " must be equal to the one present in test/resources/" + expected, expectedContent, generatedContent);
+            Assert.assertEquals("Generated source file in " + source + " must be equal to the one present in test/resources/" + expected, expectedContent, generatedContent);
         }
     }
 
     @Parameters(name = "json = {0}, source = {2}")
     public static Iterable<Object[]> parameters() throws IOException {
-        return Arrays.asList(testCase(TEST_CASE_FILE, "Case.java"),
-            testCase(TEST_CASE_FILE, "Case_PickListAccentMarkEnum.java"),
-            testCase(TEST_CASE_FILE, "Case_PickListQuotationMarkEnum.java"),
-            testCase(TEST_CASE_FILE, "Case_PickListSlashEnum.java"), //
-            testCase(TEST_CASE_FILE, "QueryRecordsCase.java"),
-            testCase(TEST_CALCULATED_FORMULA_FILE, "ComplexCalculatedFormula.java"),
-            testCase(TEST_CALCULATED_FORMULA_FILE, "QueryRecordsComplexCalculatedFormula.java"),
-            testCase("asset.json", "Asset.java"), //
-            testCase("asset.json", mojo -> {
-                mojo.customTypes = new HashMap<>();
-                mojo.customTypes.put("date", "java.time.LocalDateTime");
+        return Arrays.asList(testCase(TEST_CASE_FILE, "Case.java"), testCase(TEST_CASE_FILE, "Case_PickListAccentMarkEnum.java"),
+                             testCase(TEST_CASE_FILE, "Case_PickListQuotationMarkEnum.java"), testCase(TEST_CASE_FILE, "Case_PickListSlashEnum.java"), //
+                             testCase(TEST_CASE_FILE, "QueryRecordsCase.java"), testCase(TEST_CALCULATED_FORMULA_FILE, "ComplexCalculatedFormula.java"),
+                             testCase(TEST_CALCULATED_FORMULA_FILE, "QueryRecordsComplexCalculatedFormula.java"), testCase("asset.json", "Asset.java"), //
+                             testCase("asset.json", mojo -> {
+                                 mojo.customTypes = new HashMap<>();
+                                 mojo.customTypes.put("date", "java.time.LocalDateTime");
 
-                mojo.setup();
-            }, s -> "Asset_LocalDateTime.java", "Asset.java"), //
-            testCase("with_reference.json", "With_Reference__c.java"));
+                                 mojo.setup();
+                             }, s -> "Asset_LocalDateTime.java", "Asset.java"), //
+                             testCase("with_reference.json", "With_Reference__c.java"));
     }
 
     static GenerateMojo createMojo() {
@@ -143,54 +134,39 @@ public class CamelSalesforceMojoOutputTest {
 
     static RestClient mockRestClient() {
         final RestClient client = mock(RestClient.class);
-        doAnswer(provideResource("/global_sobjects.json")).when(client).getGlobalObjects(anyMap(),
-            any(ResponseCallback.class));
-        doAnswer(provideResource("/account.json")).when(client).getDescription(eq("Account"), anyMap(),
-            any(ResponseCallback.class));
-        doAnswer(provideResource("/asset.json")).when(client).getDescription(eq("Asset"), anyMap(),
-            any(ResponseCallback.class));
-        doAnswer(provideResource("/case.json")).when(client).getDescription(eq("Case"), anyMap(),
-            any(ResponseCallback.class));
-        doAnswer(provideResource("/invoice.json")).when(client).getDescription(eq("Invoice__c"), anyMap(),
-            any(ResponseCallback.class));
-        doAnswer(provideResource("/line_item.json")).when(client).getDescription(eq("Line_Item__c"), anyMap(),
-            any(ResponseCallback.class));
-        doAnswer(provideResource("/merchandise.json")).when(client).getDescription(eq("Merchandise__c"), anyMap(),
-            any(ResponseCallback.class));
-        doAnswer(provideResource("/with_reference.json")).when(client).getDescription(eq("With_Reference__c"), anyMap(),
-            any(ResponseCallback.class));
-        doAnswer(provideResource("/product2.json")).when(client).getDescription(eq("Product2"), anyMap(),
-            any(ResponseCallback.class));
-        doAnswer(provideResource("/with_external_id.json")).when(client).getDescription(eq("With_External_Id__c"),
-            anyMap(), any(ResponseCallback.class));
-        doAnswer(provideResource("/group.json")).when(client).getDescription(eq("Group"), anyMap(),
-            any(ResponseCallback.class));
-        doAnswer(provideResource("/user.json")).when(client).getDescription(eq("User"), anyMap(),
-            any(ResponseCallback.class));
+        doAnswer(provideResource("/global_sobjects.json")).when(client).getGlobalObjects(anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/account.json")).when(client).getDescription(eq("Account"), anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/asset.json")).when(client).getDescription(eq("Asset"), anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/case.json")).when(client).getDescription(eq("Case"), anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/invoice.json")).when(client).getDescription(eq("Invoice__c"), anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/line_item.json")).when(client).getDescription(eq("Line_Item__c"), anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/merchandise.json")).when(client).getDescription(eq("Merchandise__c"), anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/with_reference.json")).when(client).getDescription(eq("With_Reference__c"), anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/product2.json")).when(client).getDescription(eq("Product2"), anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/with_external_id.json")).when(client).getDescription(eq("With_External_Id__c"), anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/group.json")).when(client).getDescription(eq("Group"), anyMap(), any(ResponseCallback.class));
+        doAnswer(provideResource("/user.json")).when(client).getDescription(eq("User"), anyMap(), any(ResponseCallback.class));
         return client;
     }
 
     static Answer<Void> provideResource(final String resource) {
         return invocation -> {
-            final ResponseCallback callback = Arrays.stream(invocation.getArguments())
-                .filter(ResponseCallback.class::isInstance).map(ResponseCallback.class::cast).findFirst().get();
+            final ResponseCallback callback = Arrays.stream(invocation.getArguments()).filter(ResponseCallback.class::isInstance).map(ResponseCallback.class::cast).findFirst()
+                .get();
 
             callback.onResponse(CamelSalesforceMojoOutputTest.class.getResourceAsStream(resource), null, null);
             return null;
         };
     }
 
-    static Object[] testCase(final String json, final Consumer<GenerateMojo> mojoConfigurator,
-        final Function<String, String> adapter, final String... sources) throws IOException {
+    static Object[] testCase(final String json, final Consumer<GenerateMojo> mojoConfigurator, final Function<String, String> adapter, final String... sources) throws IOException {
         final GenerateMojo mojo = createMojo();
         mojoConfigurator.accept(mojo);
 
-        return new Object[] {json, createSObjectDescription(json), new HashSet<>(Arrays.asList(sources)), mojo,
-            adapter};
+        return new Object[] {json, createSObjectDescription(json), new HashSet<>(Arrays.asList(sources)), mojo, adapter};
     }
 
-    static Object[] testCase(final String json, final Consumer<GenerateMojo> mojoConfigurator, final String... sources)
-        throws IOException {
+    static Object[] testCase(final String json, final Consumer<GenerateMojo> mojoConfigurator, final String... sources) throws IOException {
         return testCase(json, mojoConfigurator, Function.identity(), sources);
     }
 

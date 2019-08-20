@@ -39,22 +39,21 @@ public class ApprovalsTest {
     public void shouldDeserialize() throws JsonProcessingException, IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final Object read = mapper.readerFor(Approvals.class)
-            .readValue("{\n" + //
-                "  \"approvals\" : {\n" + //
-                "   \"Account\" : [ {\n" + //
-                "     \"description\" : null,\n" + //
-                "     \"id\" : \"04aD00000008Py9\",\n" + //
-                "     \"name\" : \"Account Approval Process\",\n" + //
-                "     \"object\" : \"Account\",\n" + //
-                "     \"sortOrder\" : 1\n" + //
-                "   } ]\n" + //
-                "  }\n" + //
-                "}");
+        final Object read = mapper.readerFor(Approvals.class).readValue("{\n" + //
+                                                                        "  \"approvals\" : {\n" + //
+                                                                        "   \"Account\" : [ {\n" + //
+                                                                        "     \"description\" : null,\n" + //
+                                                                        "     \"id\" : \"04aD00000008Py9\",\n" + //
+                                                                        "     \"name\" : \"Account Approval Process\",\n" + //
+                                                                        "     \"object\" : \"Account\",\n" + //
+                                                                        "     \"sortOrder\" : 1\n" + //
+                                                                        "   } ]\n" + //
+                                                                        "  }\n" + //
+                                                                        "}");
 
         assertThat("Should deserialize Approvals", read, instanceOf(Approvals.class));
 
-        final Approvals approvals = (Approvals) read;
+        final Approvals approvals = (Approvals)read;
 
         final Map<String, List<Info>> approvalsMap = approvals.getApprovals();
         assertEquals("Deserialized approvals should have one entry", 1, approvalsMap.size());
@@ -68,8 +67,7 @@ public class ApprovalsTest {
 
         assertNull("Deserialized `Account` approval should have null description", accountInfo.getDescription());
         assertEquals("Deserialized `Account` approval should have defined id", "04aD00000008Py9", accountInfo.getId());
-        assertEquals("Deserialized `Account` approval should have defined name", "Account Approval Process",
-            accountInfo.getName());
+        assertEquals("Deserialized `Account` approval should have defined name", "Account Approval Process", accountInfo.getName());
         assertEquals("Deserialized `Account` approval should have defined object", "Account", accountInfo.getObject());
         assertEquals("Deserialized `Account` approval should have defined sortOrder", 1, accountInfo.getSortOrder());
     }

@@ -47,9 +47,8 @@ public class BulkApiJobIntegrationTest extends AbstractBulkApiTestBase {
     public void setupProfileWithHardDelete() throws IOException {
         final SalesforceLoginConfig loginConfig = LoginConfigHelper.getLoginConfig();
 
-        template().requestBodyAndHeader(
-            "salesforce:apexCall/UpdateProfile?apexMethod=PATCH&sObjectClass=java.lang.String", null,
-            SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "username", loginConfig.getUserName());
+        template().requestBodyAndHeader("salesforce:apexCall/UpdateProfile?apexMethod=PATCH&sObjectClass=java.lang.String", null,
+                                        SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "username", loginConfig.getUserName());
     }
 
     @Test

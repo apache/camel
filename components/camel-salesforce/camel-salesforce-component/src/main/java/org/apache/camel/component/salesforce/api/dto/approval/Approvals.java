@@ -28,7 +28,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Holds approvals resource data.
  *
- * @see <a href="https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_process_approvals.htm">
+ * @see <a href=
+ *      "https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_process_approvals.htm">
  *      https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_process_approvals.htm</a>
  */
 public final class Approvals implements Serializable {
@@ -51,9 +52,12 @@ public final class Approvals implements Serializable {
         private final int sortOrder;
 
         @JsonCreator
-        Info(@JsonProperty("id") final String id, @JsonProperty("description") final String description,
-                @JsonProperty("name") final String name, @JsonProperty("object") final String object,
-                @JsonProperty("sortOrder") final int sortOrder) {
+        Info(@JsonProperty("id")
+        final String id, @JsonProperty("description")
+        final String description, @JsonProperty("name")
+        final String name, @JsonProperty("object")
+        final String object, @JsonProperty("sortOrder")
+        final int sortOrder) {
             this.description = description;
             this.id = id;
             this.name = name;
@@ -104,15 +108,15 @@ public final class Approvals implements Serializable {
     private final Map<String, List<Info>> approvals;
 
     @JsonCreator
-    Approvals(@JsonProperty("approvals") final Map<String, List<Info>> approvals) {
+    Approvals(@JsonProperty("approvals")
+    final Map<String, List<Info>> approvals) {
         this.approvals = Optional.ofNullable(approvals).orElse(Collections.emptyMap());
     }
 
     /**
      * Returns approvals for specific Salesforce object type.
      *
-     * @param object
-     *            type
+     * @param object type
      * @return approvals of specified type
      */
     public List<Info> approvalsFor(final String object) {
@@ -120,8 +124,9 @@ public final class Approvals implements Serializable {
     };
 
     /**
-     * Returns approvals by Salesforce object type. You might have approvals for "Account" and "Case" Salesforce
-     * objects, then the resulting map would hold a list of {@link Info} objects keyed by the object type, i.e.:
+     * Returns approvals by Salesforce object type. You might have approvals for
+     * "Account" and "Case" Salesforce objects, then the resulting map would
+     * hold a list of {@link Info} objects keyed by the object type, i.e.:
      *
      * <pre>
      * Approvals approvals = ...;

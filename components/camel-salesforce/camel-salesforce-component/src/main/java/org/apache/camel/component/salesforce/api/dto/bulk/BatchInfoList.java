@@ -22,12 +22,15 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for BatchInfoList complex type.
+ * <p>
+ * Java class for BatchInfoList complex type.
  * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p/>
+ * 
  * <pre>
  * &lt;complexType name="BatchInfoList">
  *   &lt;complexContent>
@@ -41,9 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "BatchInfoList", propOrder = {
-        "batchInfo"
-        })
+@XmlType(name = "BatchInfoList", propOrder = {"batchInfo"})
 public class BatchInfoList {
 
     protected List<BatchInfo> batchInfo;
@@ -52,21 +53,22 @@ public class BatchInfoList {
      * Gets the value of the batchInfo property.
      * <p/>
      * <p/>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the batchInfo property.
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the batchInfo property.
      * <p/>
      * <p/>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getBatchInfo().add(newItem);
+     * getBatchInfo().add(newItem);
      * </pre>
      * <p/>
      * <p/>
      * <p/>
-     * Objects of the following type(s) are allowed in the list
-     * {@link BatchInfo }
+     * Objects of the following type(s) are allowed in the list {@link BatchInfo
+     * }
      */
     public List<BatchInfo> getBatchInfo() {
         if (batchInfo == null) {

@@ -49,7 +49,7 @@ public final class ApprovalRequests implements Serializable {
             return false;
         }
 
-        return ((ApprovalRequests) obj).requests.equals(requests);
+        return ((ApprovalRequests)obj).requests.equals(requests);
     }
 
     public List<ApprovalRequest> getRequests() {

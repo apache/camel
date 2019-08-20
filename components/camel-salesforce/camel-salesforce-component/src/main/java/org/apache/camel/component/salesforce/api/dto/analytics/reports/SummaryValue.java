@@ -45,6 +45,7 @@ public class SummaryValue extends AbstractDTOBase {
 
     /**
      * Helper method for JSON un-marshaling.
+     * 
      * @param name field name, MUST be "value"
      * @param value field value
      * @throws java.lang.IllegalArgumentException if field name is not "value"

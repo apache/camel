@@ -26,7 +26,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
- * Jackson Serializer for generating ';' separated strings for MultiSelect pick-lists.
+ * Jackson Serializer for generating ';' separated strings for MultiSelect
+ * pick-lists.
  */
 public class MultiSelectPicklistSerializer extends StdSerializer<Object> {
 
@@ -51,7 +52,7 @@ public class MultiSelectPicklistSerializer extends StdSerializer<Object> {
             // construct a string of form value1;value2;...
             final StringBuilder buffer = new StringBuilder();
             for (int i = 0; i < length; i++) {
-                buffer.append((String) getterMethod.invoke(Array.get(value, i)));
+                buffer.append((String)getterMethod.invoke(Array.get(value, i)));
                 if (i < (length - 1)) {
                     buffer.append(';');
                 }
@@ -60,9 +61,7 @@ public class MultiSelectPicklistSerializer extends StdSerializer<Object> {
             jgen.writeString(buffer.toString());
 
         } catch (Exception e) {
-            throw new JsonGenerationException(
-                    String.format("Exception writing pick list value %s of type %s: %s",
-                            value, value.getClass().getName(), e.getMessage()), jgen);
+            throw new JsonGenerationException(String.format("Exception writing pick list value %s of type %s: %s", value, value.getClass().getName(), e.getMessage()), jgen);
         }
     }
 }

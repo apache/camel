@@ -47,9 +47,8 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
         merchandise.setDescription__c("Merchandise for testing Streaming API updated on " + ZonedDateTime.now().toString());
         merchandise.setPrice__c(9.99);
         merchandise.setTotal_Inventory__c(1000.0);
-        CreateSObjectResult result = template().requestBody(
-            "direct:upsertSObject", merchandise, CreateSObjectResult.class);
-        assertTrue("Merchandise test record not created",  result == null || result.getSuccess());
+        CreateSObjectResult result = template().requestBody("direct:upsertSObject", merchandise, CreateSObjectResult.class);
+        assertTrue("Merchandise test record not created", result == null || result.getSuccess());
 
         try {
             // wait for Salesforce notification
@@ -78,11 +77,9 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
 
             // remove the test topic
             // find it using SOQL first
-            QueryRecordsPushTopic records = template().requestBody("direct:query", null,
-                QueryRecordsPushTopic.class);
+            QueryRecordsPushTopic records = template().requestBody("direct:query", null, QueryRecordsPushTopic.class);
             assertEquals("Test topic not found", 1, records.getTotalSize());
-            assertNull(template().requestBody("direct:deleteSObject",
-                records.getRecords().get(0)));
+            assertNull(template().requestBody("direct:deleteSObject", records.getRecords().get(0)));
 
         }
     }
@@ -94,34 +91,25 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             public void configure() throws Exception {
 
                 // test topic subscription
-                //from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&"
-                from("salesforce:CamelTestTopic?notifyForFields=ALL&"
-                    + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
-                    + "sObjectName=Merchandise__c&"
-                    + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").
-                    to("mock:CamelTestTopic");
+                // from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&"
+                from("salesforce:CamelTestTopic?notifyForFields=ALL&" + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
+                     + "sObjectName=Merchandise__c&" + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").to("mock:CamelTestTopic");
 
-                from("salesforce:CamelTestTopic?rawPayload=true&notifyForFields=ALL&"
-                    + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
-                    + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").
-                    to("mock:RawPayloadCamelTestTopic");
+                from("salesforce:CamelTestTopic?rawPayload=true&notifyForFields=ALL&" + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
+                     + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").to("mock:RawPayloadCamelTestTopic");
 
                 // route for creating test record
-                from("direct:upsertSObject").
-                    to("salesforce:upsertSObject?SObjectIdName=Name");
+                from("direct:upsertSObject").to("salesforce:upsertSObject?SObjectIdName=Name");
 
                 // route for finding test topic
-                from("direct:query").
-                    to("salesforce:query?sObjectQuery=SELECT Id FROM PushTopic WHERE Name = 'CamelTestTopic'&"
-                        + "sObjectClass=" + QueryRecordsPushTopic.class.getName());
+                from("direct:query")
+                    .to("salesforce:query?sObjectQuery=SELECT Id FROM PushTopic WHERE Name = 'CamelTestTopic'&" + "sObjectClass=" + QueryRecordsPushTopic.class.getName());
 
                 // route for removing test record
-                from("direct:deleteSObjectWithId").
-                    to("salesforce:deleteSObjectWithId?sObjectIdName=Name");
+                from("direct:deleteSObjectWithId").to("salesforce:deleteSObjectWithId?sObjectIdName=Name");
 
                 // route for removing topic
-                from("direct:deleteSObject").
-                    to("salesforce:deleteSObject");
+                from("direct:deleteSObject").to("salesforce:deleteSObject");
 
             }
         };

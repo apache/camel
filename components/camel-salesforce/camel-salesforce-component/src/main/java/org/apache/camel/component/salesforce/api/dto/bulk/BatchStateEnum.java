@@ -20,12 +20,15 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for BatchStateEnum.
+ * <p>
+ * Java class for BatchStateEnum.
  * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p/>
+ * 
  * <pre>
  * &lt;simpleType name="BatchStateEnum">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -43,14 +46,10 @@ import javax.xml.bind.annotation.XmlType;
 public enum BatchStateEnum {
 
     @XmlEnumValue("Queued")
-    QUEUED("Queued"),
-    @XmlEnumValue("InProgress")
-    IN_PROGRESS("InProgress"),
-    @XmlEnumValue("Completed")
-    COMPLETED("Completed"),
-    @XmlEnumValue("Failed")
-    FAILED("Failed"),
-    @XmlEnumValue("NotProcessed")
+    QUEUED("Queued"), @XmlEnumValue("InProgress")
+    IN_PROGRESS("InProgress"), @XmlEnumValue("Completed")
+    COMPLETED("Completed"), @XmlEnumValue("Failed")
+    FAILED("Failed"), @XmlEnumValue("NotProcessed")
     NOT_PROCESSED("NotProcessed");
     private final String value;
 

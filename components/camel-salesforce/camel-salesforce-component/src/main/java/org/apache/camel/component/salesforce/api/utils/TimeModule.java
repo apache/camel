@@ -34,16 +34,13 @@ import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.I
 
 public class TimeModule extends SimpleModule {
 
-    private static final LocalDateDeserializer LOCAL_DATE_DESERIALIZER = new LocalDateDeserializer(
-        DateTimeFormatter.ISO_DATE);
+    private static final LocalDateDeserializer LOCAL_DATE_DESERIALIZER = new LocalDateDeserializer(DateTimeFormatter.ISO_DATE);
 
-    private static final LocalDateSerializer LOCAL_DATE_SERIALIZER = new LocalDateSerializer(
-        DateTimeFormatter.ISO_DATE);
+    private static final LocalDateSerializer LOCAL_DATE_SERIALIZER = new LocalDateSerializer(DateTimeFormatter.ISO_DATE);
 
     private static final long serialVersionUID = 1L;
 
-    private static final ZonedDateTimeSerializer ZONED_DATE_TIME_SERIALIZER = new ZonedDateTimeSerializer(
-        ISO_OFFSET_DATE_TIME);
+    private static final ZonedDateTimeSerializer ZONED_DATE_TIME_SERIALIZER = new ZonedDateTimeSerializer(ISO_OFFSET_DATE_TIME);
 
     private final JavaTimeModule delegate = new JavaTimeModule();
 

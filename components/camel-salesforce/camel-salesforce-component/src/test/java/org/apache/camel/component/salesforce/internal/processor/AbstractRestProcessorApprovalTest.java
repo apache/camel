@@ -89,8 +89,8 @@ public class AbstractRestProcessorApprovalTest {
         }
 
         @Override
-        protected void processResponse(final Exchange exchange, final InputStream responseEntity,
-                final Map<String, String> headers, final SalesforceException ex, final AsyncCallback callback) {
+        protected void processResponse(final Exchange exchange, final InputStream responseEntity, final Map<String, String> headers, final SalesforceException ex,
+                                       final AsyncCallback callback) {
         }
     }
 
@@ -129,11 +129,10 @@ public class AbstractRestProcessorApprovalTest {
         final ApprovalRequest approvalRequest2 = new ApprovalRequest();
         approvalRequest2.setComments("it should be me second");
 
-        final TestRestProcessor processor = sendBodyAndHeader(Arrays.asList(approvalRequest1, approvalRequest2),
-                template);
+        final TestRestProcessor processor = sendBodyAndHeader(Arrays.asList(approvalRequest1, approvalRequest2), template);
 
-        verify(processor).getRequestStream(any(Message.class), eq(new ApprovalRequests(
-                Arrays.asList(approvalRequest1.applyTemplate(template), approvalRequest2.applyTemplate(template)))));
+        verify(processor).getRequestStream(any(Message.class),
+                                           eq(new ApprovalRequests(Arrays.asList(approvalRequest1.applyTemplate(template), approvalRequest2.applyTemplate(template)))));
     }
 
     @Test
@@ -142,9 +141,8 @@ public class AbstractRestProcessorApprovalTest {
             sendBodyAndHeader(Collections.EMPTY_LIST, null);
             fail("SalesforceException should be thrown");
         } catch (final SalesforceException e) {
-            assertEquals("Exception should be about not giving a body or a header",
-                    "Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
-                    e.getMessage());
+            assertEquals("Exception should be about not giving a body or a header", "Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
+                         e.getMessage());
         }
     }
 
@@ -154,9 +152,8 @@ public class AbstractRestProcessorApprovalTest {
             sendBodyAndHeader(null, null);
             fail("SalesforceException should be thrown");
         } catch (final SalesforceException e) {
-            assertEquals("Exception should be about not giving a body or a header",
-                    "Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
-                    e.getMessage());
+            assertEquals("Exception should be about not giving a body or a header", "Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
+                         e.getMessage());
         }
     }
 
@@ -184,8 +181,7 @@ public class AbstractRestProcessorApprovalTest {
         final ApprovalRequest request = new ApprovalRequest();
         request.setComments("hi there");
 
-        final TestRestProcessor processor = sendBodyAndHeaders("Nothing to see here", request,
-                Collections.singletonMap("approval.ContextId", "context-id"));
+        final TestRestProcessor processor = sendBodyAndHeaders("Nothing to see here", request, Collections.singletonMap("approval.ContextId", "context-id"));
 
         final ApprovalRequest combined = new ApprovalRequest();
         combined.setComments("hi there");
@@ -249,8 +245,7 @@ public class AbstractRestProcessorApprovalTest {
         return sendBodyAndHeaders(body, template, Collections.emptyMap());
     }
 
-    TestRestProcessor sendBodyAndHeaders(final Object body, final ApprovalRequest template,
-            final Map<String, Object> headers) throws SalesforceException {
+    TestRestProcessor sendBodyAndHeaders(final Object body, final ApprovalRequest template, final Map<String, Object> headers) throws SalesforceException {
         final TestRestProcessor processor = spy(new TestRestProcessor());
 
         final CamelContext context = new DefaultCamelContext();

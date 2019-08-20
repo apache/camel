@@ -64,7 +64,8 @@ import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 
 /**
- * Factory class for creating {@linkplain com.fasterxml.jackson.databind.ObjectMapper}
+ * Factory class for creating
+ * {@linkplain com.fasterxml.jackson.databind.ObjectMapper}
  */
 public abstract class JsonUtils {
 
@@ -91,16 +92,12 @@ public abstract class JsonUtils {
         Set<Class<?>> schemaClasses = new HashSet<>();
 
         // get non-abstract extensions of AbstractDTOBase
-        schemaClasses.addAll(packageScanClassResolver.findByFilter(
-            type -> !Modifier.isAbstract(type.getModifiers())
-                    && AbstractDTOBase.class.isAssignableFrom(type),
-                "org.apache.camel.component.salesforce.api.dto"));
+        schemaClasses.addAll(packageScanClassResolver.findByFilter(type -> !Modifier.isAbstract(type.getModifiers()) && AbstractDTOBase.class.isAssignableFrom(type),
+                                                                   "org.apache.camel.component.salesforce.api.dto"));
 
         // get non-abstract extensions of AbstractDTOBase
-        schemaClasses.addAll(packageScanClassResolver.findByFilter(
-            type -> !Modifier.isAbstract(type.getModifiers())
-                    && AbstractDTOBase.class.isAssignableFrom(type),
-                "org.apache.camel.component.salesforce.api.dto"));
+        schemaClasses.addAll(packageScanClassResolver.findByFilter(type -> !Modifier.isAbstract(type.getModifiers()) && AbstractDTOBase.class.isAssignableFrom(type),
+                                                                   "org.apache.camel.component.salesforce.api.dto"));
 
         Set<JsonSchema> allSchemas = new HashSet<>();
         for (Class<?> aClass : schemaClasses) {
@@ -122,7 +119,7 @@ public abstract class JsonUtils {
         rootSchema.set$schema(SCHEMA4);
         rootSchema.setId(id);
         @SuppressWarnings({"unchecked", "rawtypes"})
-        Set<Object> tmp = (Set) allSchemas;
+        Set<Object> tmp = (Set)allSchemas;
         rootSchema.setOneOf(tmp);
 
         return rootSchema;
@@ -146,7 +143,8 @@ public abstract class JsonUtils {
         return getJsonSchemaAsSchema(getSObjectJsonSchema(schemaObjectMapper, description, DEFAULT_ID_PREFIX, addQuerySchema), DEFAULT_ID_PREFIX);
     }
 
-    public static Set<JsonSchema> getSObjectJsonSchema(ObjectMapper objectMapper, SObjectDescription description, String idPrefix, boolean addQuerySchema) throws JsonProcessingException {
+    public static Set<JsonSchema> getSObjectJsonSchema(ObjectMapper objectMapper, SObjectDescription description, String idPrefix, boolean addQuerySchema)
+        throws JsonProcessingException {
         Set<JsonSchema> allSchemas = new HashSet<>();
 
         // generate SObject schema from description
@@ -166,7 +164,8 @@ public abstract class JsonUtils {
             case "ID": // mapping for tns:ID SOAP type
             case "string":
             case "base64Binary":
-                // Salesforce maps any types like string, picklist, reference, etc. to string
+                // Salesforce maps any types like string, picklist, reference,
+                // etc. to string
             case "anyType":
                 fieldSchema = new StringSchema();
                 break;
@@ -194,16 +193,16 @@ public abstract class JsonUtils {
 
             case "date":
                 fieldSchema = new StringSchema();
-                ((StringSchema) fieldSchema).setFormat(JsonValueFormat.DATE);
+                ((StringSchema)fieldSchema).setFormat(JsonValueFormat.DATE);
                 break;
-            case "dateTime": 
+            case "dateTime":
             case "g":
                 fieldSchema = new StringSchema();
-                ((StringSchema) fieldSchema).setFormat(JsonValueFormat.DATE_TIME);
+                ((StringSchema)fieldSchema).setFormat(JsonValueFormat.DATE_TIME);
                 break;
             case "time":
                 fieldSchema = new StringSchema();
-                ((StringSchema) fieldSchema).setFormat(JsonValueFormat.TIME);
+                ((StringSchema)fieldSchema).setFormat(JsonValueFormat.TIME);
                 break;
 
             case "address":
@@ -227,19 +226,15 @@ public abstract class JsonUtils {
             List<PickListValue> picklistValues = field.getPicklistValues();
             switch (field.getType()) {
             case "picklist":
-                fieldSchema.asStringSchema().setEnums(
-                        picklistValues == null ? Collections.emptySet() : picklistValues.stream()
-                                .map(PickListValue::getValue)
-                                .distinct()
-                                .collect(Collectors.toSet()));
+                fieldSchema.asStringSchema()
+                    .setEnums(picklistValues == null ? Collections.emptySet() : picklistValues.stream().map(PickListValue::getValue).distinct().collect(Collectors.toSet()));
                 break;
 
             case "multipicklist":
-                // TODO regex needs more work to not allow values not separated by ','
-                fieldSchema.asStringSchema().setPattern(picklistValues == null ? "" : picklistValues.stream()
-                        .map(val -> "(,?(" + val.getValue() + "))")
-                        .distinct()
-                        .collect(joining("|", "(", ")")));
+                // TODO regex needs more work to not allow values not separated
+                // by ','
+                fieldSchema.asStringSchema()
+                    .setPattern(picklistValues == null ? "" : picklistValues.stream().map(val -> "(,?(" + val.getValue() + "))").distinct().collect(joining("|", "(", ")")));
                 break;
 
             default:
@@ -253,20 +248,12 @@ public abstract class JsonUtils {
                 fieldSchema.setReadonly(!field.isUpdateable());
             }
 
-            final String descriptionText = Arrays.asList(new Object[] {
-                "unique",
-                field.isUnique()
-            }, new Object[] {
-                "idLookup",
-                field.isIdLookup()
-            }, new Object[] {
-                "autoNumber",
-                field.isAutoNumber()
-            }, new Object[] {
-                "calculated",
-                field.isCalculated()
-            }).stream().filter(ary -> Boolean.TRUE.equals(ary[1])).map(ary -> String.valueOf(ary[0])).collect(Collectors.joining(","));
-            // JSON schema currently does not support the above attributes so we'll store this information
+            final String descriptionText = Arrays
+                .asList(new Object[] {"unique", field.isUnique()}, new Object[] {"idLookup", field.isIdLookup()}, new Object[] {"autoNumber", field.isAutoNumber()},
+                        new Object[] {"calculated", field.isCalculated()})
+                .stream().filter(ary -> Boolean.TRUE.equals(ary[1])).map(ary -> String.valueOf(ary[0])).collect(Collectors.joining(","));
+            // JSON schema currently does not support the above attributes so
+            // we'll store this information
             // in the description
             fieldSchema.setDescription(descriptionText);
 
@@ -326,20 +313,18 @@ public abstract class JsonUtils {
     }
 
     public static ObjectMapper withNullSerialization(final ObjectMapper objectMapper) {
-        final SerializerFactory factory = BeanSerializerFactory.instance
-            .withSerializerModifier(new BeanSerializerModifier() {
-                @Override
-                public JsonSerializer<?> modifySerializer(final SerializationConfig config,
-                    final BeanDescription beanDesc, final JsonSerializer<?> serializer) {
-                    for (final PropertyWriter writer : (Iterable<PropertyWriter>) serializer::properties) {
-                        if (writer instanceof BeanPropertyWriter) {
-                            ((BeanPropertyWriter) writer).assignNullSerializer(NullSerializer.instance);
-                        }
+        final SerializerFactory factory = BeanSerializerFactory.instance.withSerializerModifier(new BeanSerializerModifier() {
+            @Override
+            public JsonSerializer<?> modifySerializer(final SerializationConfig config, final BeanDescription beanDesc, final JsonSerializer<?> serializer) {
+                for (final PropertyWriter writer : (Iterable<PropertyWriter>)serializer::properties) {
+                    if (writer instanceof BeanPropertyWriter) {
+                        ((BeanPropertyWriter)writer).assignNullSerializer(NullSerializer.instance);
                     }
-
-                    return serializer;
                 }
-            });
+
+                return serializer;
+            }
+        });
 
         return objectMapper.copy().setSerializerFactory(factory);
     }
