@@ -137,14 +137,14 @@ Import -> Maven -> Existing Maven Projects*. Point the wizard to the
 root directory of the cloned repository. Eclipse will analyze all Camel
 projects and eventually present the following summary:
 
-image:building.data/camel-eclipse-m2e-import.png[image]
+image::camel-eclipse-m2e-import.png[image]
 
 Simply confirm the import of all projects by clicking *Finish*. The
 import process will create Eclipse projects and automatically set up
 build paths using dependency details provided by the pom.xml files. Once
 completed, all Camel projects will be available in your workspace:
 
-image:building.data/camel-eclipse-m2e-import-completed.png[image]
+image::camel-eclipse-m2e-import-completed.png[image]
 
 NOTE: As you can see main project is combined with multiple sub projects/modules (e.g. components, archetypes, tooling etc.). Many sub projects/modules are again categorized or packaged with another layer of sub modules and so on. Developers can import project/module which is relevant to them and work on it instead importing entire project which will consume memory and eventually slow down Eclipse. This approach is not only easy to import and work in eclipse as well as easy to test. Lets say you do some code changes in the camel-ftp component, then you can run the checks from within this directory.
 

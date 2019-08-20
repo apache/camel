@@ -496,7 +496,7 @@ localhost `URL:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel`.
 
 Using the Apache Camel with JConsole:
 
-image:camel-jmx.png[image]
+image::camel-jmx.png[image]
 
 == Which endpoints are registered
 
@@ -572,7 +572,7 @@ Now you can register for TraceEvent Notifications on the Tracer MBean
 using JConsole. There will be one Notification for every step on the
 route with all exchange and message details:
 
-image:jconsole_trace_notifications.png[image]
+image::jconsole_trace_notifications.png[image]
 
 == Using JMX for your own Camel Code
 

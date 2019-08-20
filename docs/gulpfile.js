@@ -29,6 +29,10 @@ function deleteComponentSymlinks() {
     return del(['components/modules/ROOT/pages/*', '!components/modules/ROOT/pages/index.adoc']);
 }
 
+function deleteComponentImageSymlinks() {
+    return del(['components/modules/ROOT/assets/images/*']);
+}
+
 function createComponentSymlinks() {
     return src('../components/{*,*/*}/src/main/docs/*.adoc')
         .pipe(map((file, done) => {
@@ -47,6 +51,26 @@ function createComponentSymlinks() {
         // uncomment above .pipe() and remove the .pipe() below
         // when antora#188 is resolved
         .pipe(dest('components/modules/ROOT/pages/'));
+}
+
+function createComponentImageSymlinks() {
+    return src('../components/{*,*/*}/src/main/docs/*.png')
+        .pipe(map((file, done) => {
+            // this flattens the output to just .../pages/....adoc
+            // instead of .../pages/camel-.../src/main/docs/....adoc
+            file.base = path.dirname(file.path);
+            done(null, file);
+        }))
+        // Antora disabled symlinks, there is an issue open
+        // https://gitlab.com/antora/antora/issues/188
+        // to reinstate symlink support, until that's resolved
+        // we'll simply copy over instead of creating symlinks
+        // .pipe(symlink('components/modules/ROOT/pages/', {
+        //     relativeSymlinks: true
+        // }));
+        // uncomment above .pipe() and remove the .pipe() below
+        // when antora#188 is resolved
+        .pipe(dest('components/modules/ROOT/assets/images/'));
 }
 
 function deleteUserManualSymlinks() {
@@ -161,7 +185,11 @@ function createComponentExamples() {
         .pipe(dest('components/modules/ROOT/examples/'));
 }
 
-const symlinks = parallel(series(deleteComponentSymlinks, createComponentSymlinks), series(deleteUserManualSymlinks, createUserManualSymlinks));
+const symlinks = parallel(
+  series(deleteComponentSymlinks, createComponentSymlinks),
+  series(deleteComponentImageSymlinks, createComponentImageSymlinks),
+  series(deleteUserManualSymlinks, createUserManualSymlinks)
+);
 const nav = parallel(createComponentNav, createUserManualNav);
 const examples = series(deleteExamples, createUserManualExamples, createComponentExamples);
 
