@@ -36,7 +36,7 @@ import org.apache.camel.component.aws.xray.TestDataBuilder.TestTrace;
 import org.apache.camel.component.aws.xray.json.JsonArray;
 import org.apache.camel.component.aws.xray.json.JsonObject;
 import org.apache.camel.component.aws.xray.json.JsonParser;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

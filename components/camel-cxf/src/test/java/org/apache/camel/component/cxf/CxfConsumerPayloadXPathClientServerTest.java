@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.frontend.ClientFactoryBean;
