@@ -297,7 +297,7 @@ while you can do:
 
 [source,java]
 ----
-from("ftp://myserver?username=foo&passowrd=secret?delete=true&delay=5s&backoffMultiplier=6&backoffIdleThreshold=5")
+from("ftp://myserver?username=foo&password=secret&delete=true&delay=5s&backoffMultiplier=6&backoffIdleThreshold=5")
 .to("bean:processFile");
 ----
 
