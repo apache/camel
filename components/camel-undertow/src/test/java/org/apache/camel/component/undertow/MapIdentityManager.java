@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.undertow;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -25,6 +23,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import io.undertow.security.idm.Account;
 import io.undertow.security.idm.Credential;
