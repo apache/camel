@@ -19,20 +19,14 @@ package org.apache.camel.test.junit5.patterns;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 /**
  * Tests filtering using Camel Test
  */
 // START SNIPPET: example
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        // we override this method and return true, to tell Camel test-kit that
-        // it should only create CamelContext once (per class), so we will
-        // re-use the CamelContext between each test method in this class
-        return true;
-    }
 
     @Test
     public void testSendMatchingMessage() throws Exception {
