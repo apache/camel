@@ -37,4 +37,4 @@ xref:parameter-binding-annotations.adoc[Annotation Based Expression Language].
 [[Architecture-Diagram]]
 == Diagram
 
-image:images/architecture.data/camel-components.png[image]
+image::camel-components.png[image]

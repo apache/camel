@@ -107,5 +107,5 @@ parameters. +
  Notice how we can see that the message is to be send to the "mock:a"
 endpoint.
 
-image:debugger.data/debug.png[image]
+image::debug.png[image]
 

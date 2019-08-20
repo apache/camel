@@ -69,7 +69,7 @@ A synchronous exchange is defined as the caller sends a message and
 waits until its complete before continuing. This is illustrated in the
 diagram below:
 
-image:async.data/camel_sync_request_reply.png[image]
+image::camel_sync_request_reply.png[image]
 
 \1. The client sends a sync Request Reply
 message over xref:components::http-component.adoc[HTTP] to Camel. The client application will
@@ -89,7 +89,7 @@ the asynchronous thread. Then the caller can continue doing other work
 and at the same time the asynchronous thread is processing the message.
 This is illustrated in the diagram below:
 
-image:async.data/camel_async_request_reply.png[image]
+image::camel_async_request_reply.png[image]
 
  1. The client sends an Async
 Request Reply message over HTTP
@@ -110,7 +110,7 @@ Camel. The client sends a message to Camel in which a reply is not
 expected. However the client still waits until the message is processed
 completely. This is illustrated in the diagram below:
 
-image:async.data/camel_sync_request_only.png[image]
+image::camel_sync_request_only.png[image]
 
 \1. The client sends a Request only and we can
 still use xref:components::http-component.adoc[HTTP] despite http being
@@ -138,7 +138,7 @@ of the message to complete. In this case the client can immediately
 continue doing other work while the message is being routed and
 processed in Camel. This is illustrated in the diagram below:
 
-image:async.data/camel_async_request_only.png[image]
+image::camel_async_request_only.png[image]
 
 \1. The client sends a Request only and we can
 still use xref:components::http-component.adoc[HTTP] despite http being

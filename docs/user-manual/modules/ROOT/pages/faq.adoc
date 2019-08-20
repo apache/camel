@@ -168,25 +168,3 @@ Common Problems that people have when riding the Camel
 * xref:faq/why-does-camel-use-too-many-threads-with-producertemplate.adoc[Why does Camel use too many threads with ProducerTemplate?]
 * xref:faq/why-does-maven-not-download-dependencies.adoc[Why does maven not download dependencies?]
 
-[[FAQ-Acknowledgement]]
-== Acknowledgement
-
-Many thanks to the following organizations for helping the Camel
-project.
-
-[width="100%",cols="50%,50%",]
-|=======================================================================
-|image:http://www.structure101.com/structure101-java/images/webapp.gif[image]
-|http://www.headwaysoftware.com/[Headway Software] provided free
-licenses of
-http://www.headwaysoftware.com/products/structure101/index.php[Structure101]
-for analyzing and managing the
-http://www.structure101.com/structure101-java/tracker/camel/1.2.0/summary.html[architecture
-of Camel] Java code.
-
-|image:https://www.yourkit.com/images/yk_logo.png[image]
-|https://www.yourkit.com/[YourKit], LLC kindly provide free licenses for
-the YourKit Java Profiler to open source projects. YourKit Java Profiler
-is primarily used to investigate performance and memory leak issues
-reported in Apache Camel.
-|=======================================================================

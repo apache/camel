@@ -16,12 +16,12 @@ results of the execution back to the Camel pipeline.
 Spark component can be used as a driver application deployed into an
 application server (or executed as a fat jar).
 
-image:camel_spark_driver.png[image]
+image::camel_spark_driver.png[image]
 
 Spark component can also be submitted as a job directly into the Spark
 cluster.
 
-image:camel_spark_cluster.png[image]
+image::camel_spark_cluster.png[image]
 
 While Spark component is primary designed to work as a _long running
 job_ serving as an bridge between Spark cluster and the other endpoints,

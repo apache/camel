@@ -25,7 +25,7 @@ bundles, the camel routes will use +
  the same thread. That autorises to develop applications using
 Transactions - Tx.
 
-image:camel-direct-vm.png[image]
+image::camel-direct-vm.png[image]
 
 == URI format
 

@@ -59,7 +59,7 @@ resuming.
 A service (`org.apache.camel.Service`) in Camel adheres to the following
 lifecycle states as illustrated in the diagram below:
 
-image:lifecycle.data/service_lifecycle.png[image]
+image::service_lifecycle.png[image]
 
 *Notice:* A service can optimally support suspend/resume by the
 `org.apache.camel.SuspendableService`. This means not all services in

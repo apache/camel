@@ -4,7 +4,7 @@
 
 https://ignite.apache.org/[Apache Ignite] In-Memory Data Fabric is a high-performance, integrated and distributed in-memory platform for computing and transacting on large-scale data sets in real-time, orders of magnitude faster than possible with traditional disk-based or flash technologies. It is designed to deliver uncompromised performance for a wide set of in-memory computing use cases from high performance computing, to the industry most advanced data grid, highly available service grid, and streaming. See all https://ignite.apache.org/features.html[features].
 
-image:apache-ignite.png[]
+image::apache-ignite.png[]
 
 This component offers seven endpoints to cover much of Ignite's functionality:
 

@@ -8,7 +8,7 @@ EIP patterns allows for the
 integration system to be monitored and managed from within the
 framework.
 
-image:ControlBus.gif[image]
+image::control_bus.png[image]
 
 Use a Control Bus to manage an enterprise integration system. The
 Control Bus uses the same messaging mechanism used by the application
