@@ -463,6 +463,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-debezium</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-digitalocean</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1993,6 +1998,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-dataset-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-debezium-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

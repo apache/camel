@@ -171,6 +171,7 @@
         <!-- Avoid upgrading to newer version for the moment: see https://issues.apache.org/jira/browse/CAMEL-13654 -->
         <drools-version>7.22.0.Final</drools-version>
         <dropbox-version>3.1.1</dropbox-version>
+        <debezium-version>0.9.5.Final</debezium-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
         <ehcache-version>2.10.6</ehcache-version>
@@ -1168,6 +1169,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dataset</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2742,6 +2748,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dataset-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

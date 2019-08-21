@@ -167,6 +167,7 @@
     <module>camel-cxf-transport-starter</module>
     <module>camel-dataformat-starter</module>
     <module>camel-dataset-starter</module>
+    <module>camel-debezium-starter</module>
     <module>camel-digitalocean-starter</module>
     <module>camel-direct-starter</module>
     <module>camel-directvm-starter</module>
