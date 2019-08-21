@@ -27,15 +27,15 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class SqsBatchConsumerTest extends CamelTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-        
+
     @Test
     public void receiveBatch() throws Exception {
         mock.expectedMessageCount(5);
         assertMockEndpointsSatisfied();
-        
+
         mock.message(0).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(0);
         mock.message(1).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(1);
         mock.message(2).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(2);
@@ -49,10 +49,10 @@ public class SqsBatchConsumerTest extends CamelTestSupport {
         mock.message(4).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(true);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 5);
     }
-    
+
     @BindToRegistry("amazonSQSClient")
     public AmazonSQSClientMock addClient() throws Exception {
-        
+
         AmazonSQSClientMock clientMock = new AmazonSQSClientMock();
         // add 6 messages, one more we will poll
         for (int counter = 0; counter < 6; counter++) {
@@ -61,10 +61,10 @@ public class SqsBatchConsumerTest extends CamelTestSupport {
             message.setMD5OfBody("6a1559560f67c5e7a7d5d838bf0272ee");
             message.setMessageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
             message.setReceiptHandle("0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5");
-            
+
             clientMock.messages.add(message);
         }
-        
+
         return clientMock;
     }
 
@@ -73,8 +73,7 @@ public class SqsBatchConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=5000&maxMessagesPerPoll=5")
-                    .to("mock:result");
+                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=5000&maxMessagesPerPoll=5").to("mock:result");
             }
         };
     }

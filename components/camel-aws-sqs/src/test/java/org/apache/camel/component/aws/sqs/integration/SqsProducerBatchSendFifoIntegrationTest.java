@@ -61,9 +61,8 @@ public class SqsProducerBatchSendFifoIntegrationTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final String sqsEndpointUri = 
-              String.format("aws-sqs://camel-1.fifo?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&messageGroupIdStrategy=useExchangeId" 
-                  + "&messageDeduplicationIdStrategy=useContentBasedDeduplication");
+        final String sqsEndpointUri = String.format("aws-sqs://camel-1.fifo?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&messageGroupIdStrategy=useExchangeId"
+                                                    + "&messageDeduplicationIdStrategy=useContentBasedDeduplication");
 
         return new RouteBuilder() {
             @Override

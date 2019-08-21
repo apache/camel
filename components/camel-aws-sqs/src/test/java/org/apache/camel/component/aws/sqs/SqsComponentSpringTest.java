@@ -33,25 +33,25 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SqsComponentSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("direct:start")
     private ProducerTemplate template;
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint result;
-    
+
     @Test
     public void sendInOnly() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ID));
@@ -59,23 +59,23 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ATTRIBUTES));
-        
+
         assertNotNull(exchange.getIn().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
     }
-    
+
     @Test
     public void sendInOut() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE));
@@ -83,11 +83,11 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ATTRIBUTES));
-        
+
         assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
     }
-    
+
     @Test
     public void sendBatchMessage() throws Exception {
         result.expectedMessageCount(1);
@@ -109,7 +109,7 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         assertEquals(2, res.getFailed().size());
         assertEquals(2, res.getSuccessful().size());
     }
-    
+
     @Test
     public void deleteMessage() throws Exception {
         result.expectedMessageCount(1);

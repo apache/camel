@@ -71,7 +71,7 @@ public class AmazonSQSClientMock extends AbstractAmazonSQS {
         ListQueuesResult result = new ListQueuesResult();
         return result;
     }
-    
+
     @Override
     public ListQueuesResult listQueues(ListQueuesRequest request) {
         ListQueuesResult result = new ListQueuesResult();
@@ -98,12 +98,12 @@ public class AmazonSQSClientMock extends AbstractAmazonSQS {
         message.setMD5OfBody("6a1559560f67c5e7a7d5d838bf0272ee");
         message.setMessageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
         message.setReceiptHandle("0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5zC9+4QMqJZ0DJ3gVOmjI2Gh/oFnb0IeJqy5Zc8kH4JX7GVpfjcEDjaAPSeOkXQZRcaBqt"
-                + "4lOtyfj0kcclVV/zS7aenhfhX5Ixfgz/rHhsJwtCPPvTAdgQFGYrqaHly+etJiawiNPVc=");
- 
+                                 + "4lOtyfj0kcclVV/zS7aenhfhX5Ixfgz/rHhsJwtCPPvTAdgQFGYrqaHly+etJiawiNPVc=");
+
         synchronized (messages) {
             messages.add(message);
         }
-        
+
         SendMessageResult result = new SendMessageResult();
         result.setMessageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
         result.setMD5OfMessageBody("6a1559560f67c5e7a7d5d838bf0272ee");
@@ -115,7 +115,7 @@ public class AmazonSQSClientMock extends AbstractAmazonSQS {
         Integer maxNumberOfMessages = receiveMessageRequest.getMaxNumberOfMessages() != null ? receiveMessageRequest.getMaxNumberOfMessages() : Integer.MAX_VALUE;
         ReceiveMessageResult result = new ReceiveMessageResult();
         Collection<Message> resultMessages = new ArrayList<>();
-        
+
         synchronized (messages) {
             int fetchSize = 0;
             for (Iterator<Message> iterator = messages.iterator(); iterator.hasNext() && fetchSize < maxNumberOfMessages; fetchSize++) {
@@ -125,14 +125,14 @@ public class AmazonSQSClientMock extends AbstractAmazonSQS {
                 scheduleCancelInflight(receiveMessageRequest.getQueueUrl(), rc);
             }
         }
-        
+
         result.setMessages(resultMessages);
         return result;
     }
 
     /*
-     * Cancel (put back onto queue) in flight messages if the visibility time has expired
-     * and has not been manually deleted (ack'd)
+     * Cancel (put back onto queue) in flight messages if the visibility time
+     * has expired and has not been manually deleted (ack'd)
      */
     private void scheduleCancelInflight(final String queueUrl, final Message message) {
         if (scheduler != null) {
@@ -193,11 +193,12 @@ public class AmazonSQSClientMock extends AbstractAmazonSQS {
     }
 
     @Override
-    public ChangeMessageVisibilityResult changeMessageVisibility(ChangeMessageVisibilityRequest changeMessageVisibilityRequest) throws AmazonServiceException, AmazonClientException {
+    public ChangeMessageVisibilityResult changeMessageVisibility(ChangeMessageVisibilityRequest changeMessageVisibilityRequest)
+        throws AmazonServiceException, AmazonClientException {
         this.changeMessageVisibilityRequests.add(changeMessageVisibilityRequest);
         return new ChangeMessageVisibilityResult();
     }
-    
+
     @Override
     public SendMessageBatchResult sendMessageBatch(SendMessageBatchRequest request) {
         SendMessageBatchResult result = new SendMessageBatchResult();

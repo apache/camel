@@ -63,11 +63,9 @@ public class SqsEndpointTest {
     @Test
     public void doStartWithDifferentQueueOwner() throws Exception {
 
-        GetQueueUrlRequest expectedGetQueueUrlRequest = new GetQueueUrlRequest("test-queue")
-                            .withQueueOwnerAWSAccountId("111222333");
+        GetQueueUrlRequest expectedGetQueueUrlRequest = new GetQueueUrlRequest("test-queue").withQueueOwnerAWSAccountId("111222333");
         Mockito.when(amazonSQSClient.getQueueUrl(expectedGetQueueUrlRequest))
-            .thenReturn(new GetQueueUrlResult()
-                           .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
+            .thenReturn(new GetQueueUrlResult().withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
 
         endpoint.getConfiguration().setQueueOwnerAWSAccountId("111222333");
         endpoint.doInit();
@@ -81,12 +79,10 @@ public class SqsEndpointTest {
         config.setQueueName("test-queue.fifo");
         config.setMessageDeduplicationIdStrategy("useContentBasedDeduplication");
 
-        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue.fifo")
-                .addAttributesEntry(QueueAttributeName.FifoQueue.name(), "true")
-                .addAttributesEntry(QueueAttributeName.ContentBasedDeduplication.name(), "true");
+        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue.fifo").addAttributesEntry(QueueAttributeName.FifoQueue.name(), "true")
+            .addAttributesEntry(QueueAttributeName.ContentBasedDeduplication.name(), "true");
         Mockito.when(amazonSQSClient.createQueue(ArgumentMatchers.any(CreateQueueRequest.class)))
-                .thenReturn(new CreateQueueResult()
-                                .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue.fifo"));
+            .thenReturn(new CreateQueueResult().withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue.fifo"));
 
         endpoint.createQueue(amazonSQSClient);
 
@@ -99,12 +95,10 @@ public class SqsEndpointTest {
         config.setQueueName("test-queue.fifo");
         config.setMessageDeduplicationIdStrategy("useExchangeId");
 
-        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue.fifo")
-                .addAttributesEntry(QueueAttributeName.FifoQueue.name(), "true")
-                .addAttributesEntry(QueueAttributeName.ContentBasedDeduplication.name(), "false");
+        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue.fifo").addAttributesEntry(QueueAttributeName.FifoQueue.name(), "true")
+            .addAttributesEntry(QueueAttributeName.ContentBasedDeduplication.name(), "false");
         Mockito.when(amazonSQSClient.createQueue(ArgumentMatchers.any(CreateQueueRequest.class)))
-                .thenReturn(new CreateQueueResult()
-                                .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue.fifo"));
+            .thenReturn(new CreateQueueResult().withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue.fifo"));
 
         endpoint.createQueue(amazonSQSClient);
 
@@ -121,23 +115,19 @@ public class SqsEndpointTest {
         config.setReceiveMessageWaitTimeSeconds(5);
         config.setRedrivePolicy("{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
 
-        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue")
-                .addAttributesEntry(QueueAttributeName.VisibilityTimeout.name(), "1000")
-                .addAttributesEntry(QueueAttributeName.MaximumMessageSize.name(), "128")
-                .addAttributesEntry(QueueAttributeName.MessageRetentionPeriod.name(), "1000")
-                .addAttributesEntry(QueueAttributeName.Policy.name(), "{\"Version\": \"2012-10-17\"}")
-                .addAttributesEntry(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), "5")
-                .addAttributesEntry(QueueAttributeName.RedrivePolicy.name(), "{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
+        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue").addAttributesEntry(QueueAttributeName.VisibilityTimeout.name(), "1000")
+            .addAttributesEntry(QueueAttributeName.MaximumMessageSize.name(), "128").addAttributesEntry(QueueAttributeName.MessageRetentionPeriod.name(), "1000")
+            .addAttributesEntry(QueueAttributeName.Policy.name(), "{\"Version\": \"2012-10-17\"}").addAttributesEntry(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), "5")
+            .addAttributesEntry(QueueAttributeName.RedrivePolicy.name(), "{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
         Mockito.when(amazonSQSClient.createQueue(ArgumentMatchers.any(CreateQueueRequest.class)))
-                .thenReturn(new CreateQueueResult()
-                                .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
+            .thenReturn(new CreateQueueResult().withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
 
         endpoint.createQueue(amazonSQSClient);
 
         Mockito.verify(amazonSQSClient).createQueue(expectedCreateQueueRequest);
         assertEquals("https://sqs.us-east-1.amazonaws.com/111222333/test-queue", endpoint.getQueueUrl());
     }
-    
+
     @Test
     public void createQueueWithSSEShouldCreateStandardQueueWithSSESet() {
         config.setDefaultVisibilityTimeout(1000);
@@ -150,25 +140,20 @@ public class SqsEndpointTest {
         config.setKmsDataKeyReusePeriodSeconds(300);
         config.setServerSideEncryptionEnabled(true);
 
-        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue")
-                .addAttributesEntry(QueueAttributeName.VisibilityTimeout.name(), "1000")
-                .addAttributesEntry(QueueAttributeName.MaximumMessageSize.name(), "128")
-                .addAttributesEntry(QueueAttributeName.MessageRetentionPeriod.name(), "1000")
-                .addAttributesEntry(QueueAttributeName.Policy.name(), "{\"Version\": \"2012-10-17\"}")
-                .addAttributesEntry(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), "5")
-                .addAttributesEntry(QueueAttributeName.KmsMasterKeyId.name(), "keyMaster1")
-                .addAttributesEntry(QueueAttributeName.KmsDataKeyReusePeriodSeconds.name(), "300")
-                .addAttributesEntry(QueueAttributeName.RedrivePolicy.name(), "{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
+        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue").addAttributesEntry(QueueAttributeName.VisibilityTimeout.name(), "1000")
+            .addAttributesEntry(QueueAttributeName.MaximumMessageSize.name(), "128").addAttributesEntry(QueueAttributeName.MessageRetentionPeriod.name(), "1000")
+            .addAttributesEntry(QueueAttributeName.Policy.name(), "{\"Version\": \"2012-10-17\"}").addAttributesEntry(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), "5")
+            .addAttributesEntry(QueueAttributeName.KmsMasterKeyId.name(), "keyMaster1").addAttributesEntry(QueueAttributeName.KmsDataKeyReusePeriodSeconds.name(), "300")
+            .addAttributesEntry(QueueAttributeName.RedrivePolicy.name(), "{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
         Mockito.when(amazonSQSClient.createQueue(ArgumentMatchers.any(CreateQueueRequest.class)))
-                .thenReturn(new CreateQueueResult()
-                                .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
+            .thenReturn(new CreateQueueResult().withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
 
         endpoint.createQueue(amazonSQSClient);
 
         Mockito.verify(amazonSQSClient).createQueue(expectedCreateQueueRequest);
         assertEquals("https://sqs.us-east-1.amazonaws.com/111222333/test-queue", endpoint.getQueueUrl());
     }
-    
+
     @Test
     public void createQueueWithoutSSEShouldNotCreateStandardQueueWithSSESet() {
         config.setDefaultVisibilityTimeout(1000);
@@ -180,16 +165,12 @@ public class SqsEndpointTest {
         config.setKmsMasterKeyId("keyMaster1");
         config.setKmsDataKeyReusePeriodSeconds(300);
 
-        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue")
-                .addAttributesEntry(QueueAttributeName.VisibilityTimeout.name(), "1000")
-                .addAttributesEntry(QueueAttributeName.MaximumMessageSize.name(), "128")
-                .addAttributesEntry(QueueAttributeName.MessageRetentionPeriod.name(), "1000")
-                .addAttributesEntry(QueueAttributeName.Policy.name(), "{\"Version\": \"2012-10-17\"}")
-                .addAttributesEntry(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), "5")
-                .addAttributesEntry(QueueAttributeName.RedrivePolicy.name(), "{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
+        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue").addAttributesEntry(QueueAttributeName.VisibilityTimeout.name(), "1000")
+            .addAttributesEntry(QueueAttributeName.MaximumMessageSize.name(), "128").addAttributesEntry(QueueAttributeName.MessageRetentionPeriod.name(), "1000")
+            .addAttributesEntry(QueueAttributeName.Policy.name(), "{\"Version\": \"2012-10-17\"}").addAttributesEntry(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), "5")
+            .addAttributesEntry(QueueAttributeName.RedrivePolicy.name(), "{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
         Mockito.when(amazonSQSClient.createQueue(ArgumentMatchers.any(CreateQueueRequest.class)))
-                .thenReturn(new CreateQueueResult()
-                                .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
+            .thenReturn(new CreateQueueResult().withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
 
         endpoint.createQueue(amazonSQSClient);
 

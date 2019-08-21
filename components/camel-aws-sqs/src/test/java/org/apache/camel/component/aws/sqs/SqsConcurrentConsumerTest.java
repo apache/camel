@@ -38,7 +38,8 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
 
     @Test
     public void consumeMessagesFromQueue() throws Exception {
-        // simple test to make sure that concurrent consumers were used in the test
+        // simple test to make sure that concurrent consumers were used in the
+        // test
 
         NotifyBuilder notifier = new NotifyBuilder(context).whenCompleted(NUM_MESSAGES).create();
         assertTrue("We didn't process " + NUM_MESSAGES + " messages as we expected!", notifier.matches(5, TimeUnit.SECONDS));
@@ -46,10 +47,10 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
         if (isPlatform("windows")) {
             // threading is different on windows
         } else {
-            // usually we use all threads evenly but sometimes threads are reused so just test that 50%+ was used
+            // usually we use all threads evenly but sometimes threads are
+            // reused so just test that 50%+ was used
             if (threadNumbers.size() < (NUM_CONCURRENT / 2)) {
-                fail(String.format("We were expecting to have about half of %d numbers of concurrent consumers, but only found %d",
-                        NUM_CONCURRENT, threadNumbers.size()));
+                fail(String.format("We were expecting to have about half of %d numbers of concurrent consumers, but only found %d", NUM_CONCURRENT, threadNumbers.size()));
             }
         }
     }
@@ -77,13 +78,12 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-sqs://demo?concurrentConsumers=" + NUM_CONCURRENT + "&maxMessagesPerPoll=10&amazonSQSClient=#client")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                threadNumbers.add(Thread.currentThread().getId());
-                            }
-                        }).log("processed a new message!");
+                from("aws-sqs://demo?concurrentConsumers=" + NUM_CONCURRENT + "&maxMessagesPerPoll=10&amazonSQSClient=#client").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        threadNumbers.add(Thread.currentThread().getId());
+                    }
+                }).log("processed a new message!");
             }
         };
     }

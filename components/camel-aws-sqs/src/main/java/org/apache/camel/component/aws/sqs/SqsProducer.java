@@ -105,7 +105,7 @@ public class SqsProducer extends DefaultProducer {
         if (exchange.getIn().getBody() instanceof Iterable) {
             Iterable c = exchange.getIn().getBody(Iterable.class);
             for (Object o : c) {
-                String object = (String) o;
+                String object = (String)o;
                 SendMessageBatchRequestEntry entry = new SendMessageBatchRequestEntry();
                 entry.setId(UUID.randomUUID().toString());
                 entry.setMessageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
@@ -125,7 +125,7 @@ public class SqsProducer extends DefaultProducer {
             message.setBody(result);
         }
     }
-    
+
     private void deleteMessage(AmazonSQS amazonSQS, Exchange exchange) {
         String receiptHandle = exchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE, String.class);
         DeleteMessageRequest request = new DeleteMessageRequest();
@@ -138,7 +138,7 @@ public class SqsProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void listQueues(AmazonSQS amazonSQS, Exchange exchange) {
         ListQueuesRequest request = new ListQueuesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SqsConstants.SQS_QUEUE_PREFIX))) {
