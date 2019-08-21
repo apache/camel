@@ -70,7 +70,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     /**
      * Handles the given exception
      *
-     * @param exceptionType  the exception
+     * @param exceptionType the exception
      * @return the try builder
      */
     @SuppressWarnings("unchecked")
@@ -84,7 +84,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     /**
      * Handles the given exception(s)
      *
-     * @param exceptionType  the exception(s)
+     * @param exceptionType the exception(s)
      * @return the try builder
      */
     public TryDefinition doCatch(Class<? extends Throwable>... exceptionType) {
@@ -99,7 +99,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     /**
      * The finally block for a given handle
      *
-     * @return  the try builder
+     * @return the try builder
      */
     public TryDefinition doFinally() {
         popBlock();
@@ -110,16 +110,18 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     /**
-     * Sets an additional predicate that should be true before the onCatch is triggered.
+     * Sets an additional predicate that should be true before the onCatch is
+     * triggered.
      * <p/>
-     * To be used for fine grained controlling whether a thrown exception should be intercepted
-     * by this exception type or not.
+     * To be used for fine grained controlling whether a thrown exception should
+     * be intercepted by this exception type or not.
      *
-     * @param predicate  predicate that determines true or false
+     * @param predicate predicate that determines true or false
      * @return the builder
      */
     public TryDefinition onWhen(@AsPredicate Predicate predicate) {
-        // we must use a delegate so we can use the fluent builder based on TryDefinition
+        // we must use a delegate so we can use the fluent builder based on
+        // TryDefinition
         // to configure all with try .. catch .. finally
         // set the onWhen predicate on all the catch definitions
         Iterator<CatchDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
@@ -188,8 +190,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
                     catchClauses.add((CatchDefinition)output);
                 } else if (output instanceof FinallyDefinition) {
                     if (finallyClause != null) {
-                        throw new IllegalArgumentException("Multiple finally clauses added: " + finallyClause
-                                                           + " and " + output);
+                        throw new IllegalArgumentException("Multiple finally clauses added: " + finallyClause + " and " + output);
                     } else {
                         finallyClause = (FinallyDefinition)output;
                     }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
@@ -70,10 +71,8 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
         Stream<String> fileContent = Files.lines(store.toPath());
         List<String> fileEntries = fileContent.collect(Collectors.toList());
         fileContent.close();
-        //expected order
-        Assert.assertThat(fileEntries, IsIterableContainingInOrder.contains(
-            "ZZZZZZZZZZ",
-            "XXXXXXXXXX"));
+        // expected order
+        Assert.assertThat(fileEntries, IsIterableContainingInOrder.contains("ZZZZZZZZZZ", "XXXXXXXXXX"));
     }
 
     protected void sendMessage(final Object messageId, final Object body) {
@@ -95,7 +94,8 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
             store.delete();
         }
 
-        // 5 elements in cache, and 50 bytes as max size limit for when trunking should start
+        // 5 elements in cache, and 50 bytes as max size limit for when trunking
+        // should start
         repo = FileIdempotentRepository.fileIdempotentRepository(store, 5, 50);
         repo.start();
 
@@ -108,9 +108,7 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock:result");
+                from("direct:start").idempotentConsumer(header("messageId"), repo).to("mock:result");
             }
         };
     }

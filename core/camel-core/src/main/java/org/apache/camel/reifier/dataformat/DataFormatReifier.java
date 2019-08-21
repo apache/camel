@@ -24,8 +24,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
+import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -77,7 +77,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
     private static final Map<Class<? extends DataFormatDefinition>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
     static {
         Map<Class<? extends DataFormatDefinition>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map = new HashMap<>();
-        map.put(Any23DataFormat.class,Any23DataFormatReifier::new);
+        map.put(Any23DataFormat.class, Any23DataFormatReifier::new);
         map.put(ASN1DataFormat.class, ASN1DataFormatReifier::new);
         map.put(AvroDataFormat.class, AvroDataFormatReifier::new);
         map.put(BarcodeDataFormat.class, BarcodeDataFormatReifier::new);
@@ -128,7 +128,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
         this.definition = definition;
     }
 
-    public static void registerReifier(Class<? extends DataFormatDefinition> dataFormatClass, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> creator) {
+    public static void registerReifier(Class<? extends DataFormatDefinition> dataFormatClass,
+                                       Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> creator) {
         DATAFORMATS.put(dataFormatClass, creator);
     }
 
@@ -136,8 +137,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
      * Factory method to create the data format
      *
      * @param camelContext the camel context
-     * @param type         the data format type
-     * @param ref          reference to lookup for a data format
+     * @param type the data format type
+     * @param ref reference to lookup for a data format
      * @return the data format or null if not possible to create
      */
     public static DataFormat getDataFormat(CamelContext camelContext, DataFormatDefinition type, String ref) {
@@ -149,7 +150,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
                 return dataFormat;
             }
 
-            // try to let resolver see if it can resolve it, its not always possible
+            // try to let resolver see if it can resolve it, its not always
+            // possible
             type = camelContext.getExtension(Model.class).resolveDataFormatDefinition(ref);
 
             if (type == null) {
@@ -194,14 +196,15 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
                     try {
                         setProperty(camelContext, dataFormat, "contentTypeHeader", contentTypeHeader);
                     } catch (Exception e) {
-                        // ignore as this option is optional and not all data formats support this
+                        // ignore as this option is optional and not all data
+                        // formats support this
                     }
                     // configure the rest of the options
                     configureDataFormat(dataFormat, camelContext);
                 } else {
-                    throw new IllegalArgumentException(
-                            "Data format '" + (definition.getDataFormatName() != null ? definition.getDataFormatName() : "<null>") + "' could not be created. "
-                                    + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
+                    throw new IllegalArgumentException("Data format '" + (definition.getDataFormatName() != null ? definition.getDataFormatName() : "<null>")
+                                                       + "' could not be created. "
+                                                       + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
                 }
             } finally {
                 propertyPlaceholdersChangeReverter.run();
@@ -214,7 +217,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
      * Factory method to create the data format instance
      */
     protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        // must use getDataFormatName() as we need special logic in json dataformat
+        // must use getDataFormatName() as we need special logic in json
+        // dataformat
         if (definition.getDataFormatName() != null) {
             return camelContext.createDataFormat(definition.getDataFormatName());
         }
@@ -244,4 +248,3 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
     }
 
 }
-

@@ -59,11 +59,7 @@ public class AggregateNewExchangeAndConfirmTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new MyNewExchangeAggregationStrategy())
-                        .aggregationRepository(repo)
-                        .completionSize(3)
-                    .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyNewExchangeAggregationStrategy()).aggregationRepository(repo).completionSize(3).to("mock:aggregated");
             }
         };
     }

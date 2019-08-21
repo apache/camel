@@ -26,5 +26,5 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum Any23Type {
 
-  NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL
+    NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL
 }

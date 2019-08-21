@@ -56,8 +56,7 @@ public class OnExceptionOccurredProcessorOnExceptionTest extends ContextTestSupp
 
                 onException(Exception.class).maximumRedeliveries(3).redeliveryDelay(0).onExceptionOccurred(myProcessor);
 
-                from("direct:start")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

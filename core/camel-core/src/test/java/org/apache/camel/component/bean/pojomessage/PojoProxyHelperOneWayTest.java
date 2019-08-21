@@ -29,7 +29,7 @@ import org.junit.Test;
 public class PojoProxyHelperOneWayTest extends ContextTestSupport {
 
     PersonReceiver receiver = new PersonReceiver();
-    
+
     @Test
     public void testOneWay() throws Exception {
         Endpoint personEndpoint = context.getEndpoint("direct:person");
@@ -37,25 +37,25 @@ public class PojoProxyHelperOneWayTest extends ContextTestSupport {
         Person person = new Person("Chris");
         result.expectedBodiesReceived(person);
         PersonHandler sender = PojoProxyHelper.createProxy(personEndpoint, PersonHandler.class);
-        
+
         sender.onPerson(person);
-        
+
         result.assertIsSatisfied();
         assertEquals(1, receiver.receivedPersons.size());
         assertEquals(person.getName(), receiver.receivedPersons.get(0).getName());
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            
+
             @Override
             public void configure() throws Exception {
                 from("direct:person").to("mock:result").bean(receiver);
             }
         };
     }
-    
+
     public final class PersonReceiver implements PersonHandler {
         public List<Person> receivedPersons = new ArrayList<>();
 

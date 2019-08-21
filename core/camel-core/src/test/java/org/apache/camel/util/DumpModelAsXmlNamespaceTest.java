@@ -56,10 +56,7 @@ public class DumpModelAsXmlNamespaceTest extends ContextTestSupport {
                 Namespaces foo = new Namespaces("foo", URL_FOO);
                 Namespaces bar = new Namespaces("bar", URL_BAR);
 
-                from("direct:start").routeId("myRoute")
-                    .choice()
-                        .when(xpath("/foo:customer", foo)).to("mock:foo")
-                        .when(xpath("/bar:customer", bar)).to("mock:bar");
+                from("direct:start").routeId("myRoute").choice().when(xpath("/foo:customer", foo)).to("mock:foo").when(xpath("/bar:customer", bar)).to("mock:bar");
             }
         };
     }

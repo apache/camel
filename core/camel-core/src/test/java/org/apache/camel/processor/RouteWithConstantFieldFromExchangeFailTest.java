@@ -45,9 +45,7 @@ public class RouteWithConstantFieldFromExchangeFailTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:bar")
-                    .setHeader("Exchange.XXX", constant("bar"))
-                    .to("mock:bar");
+                from("direct:bar").setHeader("Exchange.XXX", constant("bar")).to("mock:bar");
             }
         };
     }

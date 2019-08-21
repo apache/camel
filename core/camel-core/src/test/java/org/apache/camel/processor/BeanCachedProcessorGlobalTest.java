@@ -30,10 +30,8 @@ public class BeanCachedProcessorGlobalTest extends BeanCachedProcessorTest {
                 BeanComponent bean = getContext().getComponent("bean", BeanComponent.class);
                 bean.setCache(true);
 
-                from("direct:noCache")
-                        .to("bean:something?cache=false");
-                from("direct:cached")
-                        .to("bean:something");
+                from("direct:noCache").to("bean:something?cache=false");
+                from("direct:cached").to("bean:something");
 
             }
         };

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class LogReifier extends ProcessorReifier<LogDefinition> {
 
     LogReifier(ProcessorDefinition<?> definition) {
-        super((LogDefinition) definition);
+        super((LogDefinition)definition);
     }
 
     @Override
@@ -58,7 +58,8 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         }
 
         if (logger == null) {
-            // first - try to lookup single instance in the registry, just like LogComponent
+            // first - try to lookup single instance in the registry, just like
+            // LogComponent
             Map<String, Logger> availableLoggers = routeContext.lookupByType(Logger.class);
             if (availableLoggers.size() == 1) {
                 logger = availableLoggers.values().iterator().next();

@@ -80,7 +80,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                         brothers.add(newExchange.getIn().getBody(String.class));
                         answer = oldExchange;
                     } else {
-                        List<String>brothers = new ArrayList<>();
+                        List<String> brothers = new ArrayList<>();
                         brothers.add(newExchange.getIn().getBody(String.class));
                         newExchange.getIn().setBody(brothers);
                     }
@@ -132,43 +132,40 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
             public void configure() throws Exception {
 
                 from("direct:start")
-                        // Separate people
-                        .split(bodyAs(String.class).tokenize(",")).process(
+                    // Separate people
+                    .split(bodyAs(String.class).tokenize(",")).process(
 
-                            // Split the name, erase the surname and put it in a
-                            // header
-                            new Processor() {
-                                public void process(Exchange exchange) throws Exception {
+                    // Split
+                    // the
+                    // name,
+                    // erase
+                    // the
+                    // surname
+                    // and
+                    // put it
+                    // in a
+                    // header
+                    new Processor() {
+                        public void process(Exchange exchange) throws Exception {
 
-                                    String[] parts = exchange.getIn()
-                                            .getBody(String.class).split(
-                                            " ");
-                                    exchange.getIn().setBody(parts[0]);
-                                    exchange.getIn().setHeader(
-                                            SURNAME_HEADER, parts[1]);
-                                } // process
-                            }) // Processor
+                            String[] parts = exchange.getIn().getBody(String.class).split(" ");
+                            exchange.getIn().setBody(parts[0]);
+                            exchange.getIn().setHeader(SURNAME_HEADER, parts[1]);
+                        } // process
+                    }) // Processor
 
-                        .to("direct:joinSurnames");
+                    .to("direct:joinSurnames");
 
-                from("direct:joinSurnames")
-                        .aggregate(header(SURNAME_HEADER), surnameAggregator)
-                            .completionTimeout(100).completionTimeoutCheckerInterval(10)
-                            .setHeader(TYPE_HEADER, constant(BROTHERS_TYPE))
-                            .to("direct:joinBrothers");
+                from("direct:joinSurnames").aggregate(header(SURNAME_HEADER), surnameAggregator).completionTimeout(100).completionTimeoutCheckerInterval(10)
+                    .setHeader(TYPE_HEADER, constant(BROTHERS_TYPE)).to("direct:joinBrothers");
 
                 // Join all brothers lists and remove surname and type headers
-                AggregateDefinition agg =
-                        from("direct:joinBrothers")
-                            .aggregate(header(TYPE_HEADER), brothersAggregator);
+                AggregateDefinition agg = from("direct:joinBrothers").aggregate(header(TYPE_HEADER), brothersAggregator);
 
                 agg.setCompletionTimeout(100L);
                 agg.setCompletionTimeoutCheckerInterval(10L);
-                agg.removeHeader(SURNAME_HEADER)
-                        .removeHeader(TYPE_HEADER)
-                        .to("mock:result");
+                agg.removeHeader(SURNAME_HEADER).removeHeader(TYPE_HEADER).to("mock:result");
             }
         };
     }
 }
-

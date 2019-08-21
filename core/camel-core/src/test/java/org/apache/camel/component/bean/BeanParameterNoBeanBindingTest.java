@@ -57,9 +57,7 @@ public class BeanParameterNoBeanBindingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                    .to("bean:foo?method=echo")
-                    .to("mock:result");
+                from("direct:a").to("bean:foo?method=echo").to("mock:result");
             }
         };
     }

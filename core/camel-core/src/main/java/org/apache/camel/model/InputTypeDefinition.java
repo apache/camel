@@ -24,14 +24,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Set the expected data type of the input message. If the actual message type is different at runtime,
- * camel look for a required {@link Transformer} and apply if exists. If validate attribute is true
- * then camel applies {@link Validator} as well.
- * Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
- * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.
- * It's also possible to specify only scheme part, so that it works like a wildcard. If only 'xml'
- * is specified, all the XML message matches. It's handy to add only one transformer/validator
- * for all the transformation from/to XML.
+ * Set the expected data type of the input message. If the actual message type
+ * is different at runtime, camel look for a required {@link Transformer} and
+ * apply if exists. If validate attribute is true then camel applies
+ * {@link Validator} as well. Type name consists of two parts, 'scheme' and
+ * 'name' connected with ':'. For Java type 'name' is a fully qualified class
+ * name. For example {@code java:java.lang.String}, {@code json:ABCOrder}. It's
+ * also possible to specify only scheme part, so that it works like a wildcard.
+ * If only 'xml' is specified, all the XML message matches. It's handy to add
+ * only one transformer/validator for all the transformation from/to XML.
  * 
  * @see {@link OutputTypeDefinition} {@link Transformer} {@link Validator}
  */
@@ -39,9 +40,11 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "inputType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeDefinition> {
-    @XmlAttribute @Metadata(required = true)
+    @XmlAttribute
+    @Metadata(required = true)
     private String urn;
-    @XmlAttribute  @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private Boolean validate = false;
 
     public InputTypeDefinition() {
@@ -49,6 +52,7 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
 
     /**
      * Get input type URN.
+     * 
      * @return input type URN
      */
     public String getUrn() {
@@ -57,6 +61,7 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
 
     /**
      * Set input type URN.
+     * 
      * @param urn input type URN
      */
     public void setUrn(String urn) {
@@ -65,6 +70,7 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
 
     /**
      * Set input type via Java Class.
+     * 
      * @param clazz Java Class
      */
     public void setJavaClass(Class<?> clazz) {
@@ -73,6 +79,7 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
 
     /**
      * Get if validation is required for this input type.
+     * 
      * @return true if validate
      */
     public boolean isValidate() {
@@ -81,6 +88,7 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
 
     /**
      * Set if validation is required for this input type.
+     * 
      * @param validate true if validate
      */
     public void setValidate(boolean validate) {

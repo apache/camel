@@ -52,54 +52,65 @@ public interface Model {
     /**
      * Adds a collection of route definitions to the context
      * <p/>
-     * <b>Important: </b> Each route in the same {@link CamelContext} must have an <b>unique</b> route id.
-     * If you use the API from {@link CamelContext} or {@link Model} to add routes, then any
-     * new routes which has a route id that matches an old route, then the old route is replaced by the new route.
+     * <b>Important: </b> Each route in the same {@link CamelContext} must have
+     * an <b>unique</b> route id. If you use the API from {@link CamelContext}
+     * or {@link Model} to add routes, then any new routes which has a route id
+     * that matches an old route, then the old route is replaced by the new
+     * route.
      *
      * @param is input stream with the route(s) definition to add
-     * @throws Exception if the route definitions could not be added for whatever reason
+     * @throws Exception if the route definitions could not be added for
+     *             whatever reason
      */
     void addRouteDefinitions(InputStream is) throws Exception;
 
     /**
      * Adds a collection of route definitions to the context
      * <p/>
-     * <b>Important: </b> Each route in the same {@link CamelContext} must have an <b>unique</b> route id.
-     * If you use the API from {@link CamelContext} or {@link Model} to add routes, then any
-     * new routes which has a route id that matches an old route, then the old route is replaced by the new route.
+     * <b>Important: </b> Each route in the same {@link CamelContext} must have
+     * an <b>unique</b> route id. If you use the API from {@link CamelContext}
+     * or {@link Model} to add routes, then any new routes which has a route id
+     * that matches an old route, then the old route is replaced by the new
+     * route.
      *
      * @param routeDefinitions the route(s) definition to add
-     * @throws Exception if the route definitions could not be added for whatever reason
+     * @throws Exception if the route definitions could not be added for
+     *             whatever reason
      */
     void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
     /**
      * Add a route definition to the context
      * <p/>
-     * <b>Important: </b> Each route in the same {@link CamelContext} must have an <b>unique</b> route id.
-     * If you use the API from {@link CamelContext} or {@link Model} to add routes, then any
-     * new routes which has a route id that matches an old route, then the old route is replaced by the new route.
+     * <b>Important: </b> Each route in the same {@link CamelContext} must have
+     * an <b>unique</b> route id. If you use the API from {@link CamelContext}
+     * or {@link Model} to add routes, then any new routes which has a route id
+     * that matches an old route, then the old route is replaced by the new
+     * route.
      *
      * @param routeDefinition the route definition to add
-     * @throws Exception if the route definition could not be added for whatever reason
+     * @throws Exception if the route definition could not be added for whatever
+     *             reason
      */
     void addRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
     /**
-     * Removes a collection of route definitions from the context - stopping any previously running
-     * routes if any of them are actively running
+     * Removes a collection of route definitions from the context - stopping any
+     * previously running routes if any of them are actively running
      *
      * @param routeDefinitions route(s) definitions to remove
-     * @throws Exception if the route definitions could not be removed for whatever reason
+     * @throws Exception if the route definitions could not be removed for
+     *             whatever reason
      */
     void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
     /**
-     * Removes a route definition from the context - stopping any previously running
-     * routes if any of them are actively running
+     * Removes a route definition from the context - stopping any previously
+     * running routes if any of them are actively running
      *
      * @param routeDefinition route definition to remove
-     * @throws Exception if the route definition could not be removed for whatever reason
+     * @throws Exception if the route definition could not be removed for
+     *             whatever reason
      */
     void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
@@ -114,8 +125,10 @@ public interface Model {
      * Adds a collection of rest definitions to the context
      *
      * @param is input stream with the rest(s) definition to add
-     * @param addToRoutes whether the rests should also automatically be added as routes
-     * @throws Exception if the rest definitions could not be created for whatever reason
+     * @param addToRoutes whether the rests should also automatically be added
+     *            as routes
+     * @throws Exception if the rest definitions could not be created for
+     *             whatever reason
      */
     void addRestDefinitions(InputStream is, boolean addToRoutes) throws Exception;
 
@@ -123,8 +136,10 @@ public interface Model {
      * Adds a collection of rest definitions to the context
      *
      * @param restDefinitions the rest(s) definition to add
-     * @param addToRoutes whether the rests should also automatically be added as routes
-     * @throws Exception if the rest definitions could not be created for whatever reason
+     * @param addToRoutes whether the rests should also automatically be added
+     *            as routes
+     * @throws Exception if the rest definitions could not be created for
+     *             whatever reason
      */
     void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception;
 
@@ -145,13 +160,16 @@ public interface Model {
     /**
      * Resolve a data format definition given its name
      *
-     * @param name the data format definition name or a reference to it in the {@link org.apache.camel.spi.Registry}
-     * @return the resolved data format definition, or <tt>null</tt> if not found
+     * @param name the data format definition name or a reference to it in the
+     *            {@link org.apache.camel.spi.Registry}
+     * @return the resolved data format definition, or <tt>null</tt> if not
+     *         found
      */
     DataFormatDefinition resolveDataFormatDefinition(String name);
 
     /**
-     * Gets the processor definition from any of the routes which with the given id
+     * Gets the processor definition from any of the routes which with the given
+     * id
      *
      * @param id id of the processor definition
      * @return the processor definition or <tt>null</tt> if not found
@@ -159,7 +177,8 @@ public interface Model {
     ProcessorDefinition getProcessorDefinition(String id);
 
     /**
-     * Gets the processor definition from any of the routes which with the given id
+     * Gets the processor definition from any of the routes which with the given
+     * id
      *
      * @param id id of the processor definition
      * @param type the processor definition type
@@ -176,11 +195,13 @@ public interface Model {
     void setValidators(List<ValidatorDefinition> validators);
 
     /**
-     * Gets the Hystrix configuration by the given name. If no name is given
-     * the default configuration is returned, see <tt>setHystrixConfiguration</tt>
+     * Gets the Hystrix configuration by the given name. If no name is given the
+     * default configuration is returned, see <tt>setHystrixConfiguration</tt>
      *
-     * @param id id of the configuration, or <tt>null</tt> to return the default configuration
-     * @return the configuration, or <tt>null</tt> if no configuration has been registered
+     * @param id id of the configuration, or <tt>null</tt> to return the default
+     *            configuration
+     * @return the configuration, or <tt>null</tt> if no configuration has been
+     *         registered
      */
     HystrixConfigurationDefinition getHystrixConfiguration(String id);
 
@@ -228,11 +249,14 @@ public interface Model {
     List<TransformerDefinition> getTransformers();
 
     /**
-     * Gets the service call configuration by the given name. If no name is given
-     * the default configuration is returned, see <tt>setServiceCallConfiguration</tt>
+     * Gets the service call configuration by the given name. If no name is
+     * given the default configuration is returned, see
+     * <tt>setServiceCallConfiguration</tt>
      *
-     * @param serviceName name of service, or <tt>null</tt> to return the default configuration
-     * @return the configuration, or <tt>null</tt> if no configuration has been registered
+     * @param serviceName name of service, or <tt>null</tt> to return the
+     *            default configuration
+     * @return the configuration, or <tt>null</tt> if no configuration has been
+     *         registered
      */
     ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName);
 
@@ -264,25 +288,23 @@ public interface Model {
     void startRouteDefinitions() throws Exception;
 
     /**
-     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     * Used for filtering routes routes matching the given pattern, which
+     * follows the following rules: - Match by route id - Match by route input
+     * endpoint uri The matching is using exact match, by wildcard and regular
+     * expression as documented by
+     * {@link PatternHelper#matchPattern(String, String)}. For example to only
+     * include routes which starts with foo in their route id's, use:
+     * include=foo&#42; And to exclude routes which starts from JMS endpoints,
+     * use: exclude=jms:&#42; Exclude takes precedence over include.
      *
-     * - Match by route id
-     * - Match by route input endpoint uri
-     *
-     * The matching is using exact match, by wildcard and regular expression as documented by {@link PatternHelper#matchPattern(String, String)}.
-     *
-     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
-     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
-     *
-     * Exclude takes precedence over include.
-     *
-     * @param include  the include pattern
-     * @param exclude  the exclude pattern
+     * @param include the include pattern
+     * @param exclude the exclude pattern
      */
     void setRouteFilterPattern(String include, String exclude);
 
     /**
-     * Sets a custom route filter to use for filtering unwanted routes when routes are added.
+     * Sets a custom route filter to use for filtering unwanted routes when
+     * routes are added.
      *
      * @param filter the filter
      */
@@ -291,7 +313,8 @@ public interface Model {
     /**
      * Gets the current route filter
      *
-     * @return the filter, or <tt>null</tt> if no custom filter has been configured.
+     * @return the filter, or <tt>null</tt> if no custom filter has been
+     *         configured.
      */
     Function<RouteDefinition, Boolean> getRouteFilter();
 

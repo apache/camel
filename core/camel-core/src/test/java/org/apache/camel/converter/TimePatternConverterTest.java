@@ -29,14 +29,14 @@ public class TimePatternConverterTest extends ContextTestSupport {
         long milliseconds = TimePatternConverter.toMilliSeconds(source);
         assertEquals(444, milliseconds);
     }
-    
+
     @Test
     public void testMilliseconds2TimePattern() throws Exception {
         String source = "-72";
         long milliseconds = TimePatternConverter.toMilliSeconds(source);
         assertEquals(-72, milliseconds);
     }
-    
+
     @Test
     public void testSTimePattern() throws Exception {
         String source = "35s";
@@ -148,7 +148,7 @@ public class TimePatternConverterTest extends ContextTestSupport {
         long milliseconds = TimePatternConverter.toMilliSeconds(source);
         assertEquals(5401000, milliseconds);
     }
-    
+
     @Test
     public void testHMSTimePattern3() throws Exception {
         String source = "1HOUR3m5s";
@@ -160,9 +160,9 @@ public class TimePatternConverterTest extends ContextTestSupport {
     public void testMSTimePattern() throws Exception {
         String source = "30m55s";
         long milliseconds = TimePatternConverter.toMilliSeconds(source);
-        assertEquals(1855000, milliseconds);        
+        assertEquals(1855000, milliseconds);
     }
-    
+
     @Test
     public void testHMTimePattern() throws Exception {
         String source = "1h30m";
@@ -183,22 +183,22 @@ public class TimePatternConverterTest extends ContextTestSupport {
         long milliseconds = TimePatternConverter.toMilliSeconds(source);
         assertEquals(300000, milliseconds);
     }
-    
+
     @Test
     public void testMTimePattern3() throws Exception {
         String source = "5MIN";
         long milliseconds = TimePatternConverter.toMilliSeconds(source);
         assertEquals(300000, milliseconds);
     }
-    
+
     @Test
     public void testMSTimePattern2() throws Exception {
         String source = "4min2sec";
         long milliseconds = TimePatternConverter.toMilliSeconds(source);
         assertEquals(242000, milliseconds);
-    }    
-    
-    //Negative Tests    
+    }
+
+    // Negative Tests
     @Test
     public void testIllegalHMSTimePattern() {
         String source = "36h88m5s";

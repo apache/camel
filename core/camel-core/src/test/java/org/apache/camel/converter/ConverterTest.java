@@ -51,8 +51,8 @@ public class ConverterTest extends Assert {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
-    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), true);
+    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector(),
+                                                                 new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), true);
 
     public static class IntegerPropertyEditor extends PropertyEditorSupport {
         @Override
@@ -62,7 +62,7 @@ public class ConverterTest extends Assert {
 
         @Override
         public String getAsText() {
-            Integer value = (Integer) getValue();
+            Integer value = (Integer)getValue();
             return value != null ? value.toString() : "";
         }
     }
@@ -116,7 +116,7 @@ public class ConverterTest extends Assert {
 
     @Test
     public void testArrayToListAndSetConversion() throws Exception {
-        String[] array = new String[]{"one", "two"};
+        String[] array = new String[] {"one", "two"};
 
         List<?> list = converter.convertTo(List.class, array);
         assertEquals("List size: " + list, 2, list.size());
@@ -129,7 +129,6 @@ public class ConverterTest extends Assert {
         set = converter.convertTo(Set.class, list);
         assertEquals("Set size: " + set, 2, set.size());
     }
-
 
     @Test
     public void testCollectionToArrayConversion() throws Exception {
@@ -227,7 +226,7 @@ public class ConverterTest extends Assert {
 
     @Test
     public void testInstanceMethodConversionWithExchange() throws Exception {
-        String[] values = new String[]{"5", "bar"};
+        String[] values = new String[] {"5", "bar"};
 
         CamelContext camel = new DefaultCamelContext();
         Exchange e = new DefaultExchange(camel);
@@ -236,7 +235,7 @@ public class ConverterTest extends Assert {
         assertEquals("converted using exchange", 5, bean.getFoo(), 5);
         assertEquals("converted using exchange", "foo-bar", bean.getBar());
     }
-    
+
     @Test
     public void testMandatoryConvertTo() {
         CamelContext camel = new DefaultCamelContext();
@@ -245,7 +244,7 @@ public class ConverterTest extends Assert {
             converter.mandatoryConvertTo(InputStream.class, e);
             fail("Expect exception here");
         } catch (Exception ex) {
-            assertTrue("Expect to get a NoTypeConversionAvailableException here", ex instanceof NoTypeConversionAvailableException); 
+            assertTrue("Expect to get a NoTypeConversionAvailableException here", ex instanceof NoTypeConversionAvailableException);
         }
     }
 

@@ -49,8 +49,8 @@ public class ExpressionSubElementDefinition {
 
     public ExpressionSubElementDefinition(Predicate predicate) {
         this.predicate = predicate;
-    }   
-    
+    }
+
     public ExpressionDefinition getExpressionType() {
         return expressionType;
     }
@@ -61,8 +61,8 @@ public class ExpressionSubElementDefinition {
 
     public Expression getExpression() {
         return expression;
-    }   
-    
+    }
+
     public void setExpression(Expression expression) {
         this.expression = expression;
     }
@@ -73,8 +73,8 @@ public class ExpressionSubElementDefinition {
 
     public Predicate getPredicate() {
         return predicate;
-    }    
-    
+    }
+
     public Expression createExpression(RouteContext routeContext) {
         ExpressionDefinition expressionType = getExpressionType();
         if (expressionType != null && expression == null) {
@@ -82,7 +82,7 @@ public class ExpressionSubElementDefinition {
         }
         return expression;
     }
-    
+
     public Predicate createPredicate(RouteContext routeContext) {
         ExpressionDefinition expressionType = getExpressionType();
         if (expressionType != null && getPredicate() == null) {
@@ -103,4 +103,3 @@ public class ExpressionSubElementDefinition {
         return super.toString();
     }
 }
-

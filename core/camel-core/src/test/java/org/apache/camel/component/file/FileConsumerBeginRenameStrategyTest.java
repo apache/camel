@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.io.FileWriter;
 
@@ -75,16 +76,14 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/reports?preMove=../inprogress/${file:name}&initialDelay=0&delay=10")
-                        .process(new Processor() {
-                            @SuppressWarnings("unchecked")
-                            public void process(Exchange exchange) throws Exception {
-                                GenericFile<File> file = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
-                                assertNotNull(file);
-                                assertTrue(file.getRelativeFilePath().indexOf("inprogress") > -1);
-                            }
-                        })
-                        .to("mock:report");
+                from("file://target/data/reports?preMove=../inprogress/${file:name}&initialDelay=0&delay=10").process(new Processor() {
+                    @SuppressWarnings("unchecked")
+                    public void process(Exchange exchange) throws Exception {
+                        GenericFile<File> file = (GenericFile<File>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+                        assertNotNull(file);
+                        assertTrue(file.getRelativeFilePath().indexOf("inprogress") > -1);
+                    }
+                }).to("mock:report");
             }
         };
     }

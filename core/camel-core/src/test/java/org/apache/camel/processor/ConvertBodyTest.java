@@ -31,7 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class ConvertBodyTest extends ContextTestSupport {
-    
+
     @Test
     public void testConvertBodyTo() {
         try {
@@ -56,7 +56,8 @@ public class ConvertBodyTest extends ContextTestSupport {
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        // do not propagate charset to avoid side effects with double conversion etc
+        // do not propagate charset to avoid side effects with double conversion
+        // etc
         getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isNull();
 
         template.sendBody("direct:foo", "Hello World");
@@ -73,7 +74,8 @@ public class ConvertBodyTest extends ContextTestSupport {
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        // do not propagate charset to avoid side effects with double conversion etc
+        // do not propagate charset to avoid side effects with double conversion
+        // etc
         getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isEqualTo("UTF-8");
 
         Exchange srcExchange = ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "UTF-8").withBody("Hello World").build();

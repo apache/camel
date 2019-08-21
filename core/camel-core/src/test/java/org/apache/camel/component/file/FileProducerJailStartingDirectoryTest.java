@@ -63,10 +63,7 @@ public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setHeader(Exchange.FILE_NAME, simple("../${file:name}"))
-                    .to("file:target/data/jail/outbox")
-                    .to("mock:result");
+                from("direct:start").setHeader(Exchange.FILE_NAME, simple("../${file:name}")).to("file:target/data/jail/outbox").to("mock:result");
             }
         };
     }

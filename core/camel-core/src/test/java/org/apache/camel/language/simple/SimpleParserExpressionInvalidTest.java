@@ -62,7 +62,8 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
     public void testSimpleNestedUnknownFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${bodyAs(${foo})} how are you?", true, null);
         try {
-            // nested functions can only be syntax evaluated when evaluating an exchange at runtime
+            // nested functions can only be syntax evaluated when evaluating an
+            // exchange at runtime
             parser.parseExpression().evaluate(exchange, String.class);
             fail("Should thrown exception");
         } catch (SimpleIllegalSyntaxException e) {
@@ -70,7 +71,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
             assertEquals(0, e.getIndex());
         }
     }
-    
+
     @Test
     public void testNoEndFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${body", true, null);

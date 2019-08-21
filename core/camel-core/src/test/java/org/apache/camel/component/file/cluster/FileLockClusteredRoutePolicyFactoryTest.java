@@ -81,10 +81,7 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:file-lock?delay=1s&period=1s")
-                        .routeId("route-" + id)
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                    from("timer:file-lock?delay=1s&period=1s").routeId("route-" + id).log("From ${routeId}").process(e -> contextLatch.countDown());
                 }
             });
 

@@ -46,9 +46,7 @@ public class FromFileInterceptSendToIssue extends ContextTestSupport {
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:foo").to("mock:foo");
 
-                from("file://target/intercept?initialDelay=0&delay=10")
-                    .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                    .to("seda:foo");
+                from("file://target/intercept?initialDelay=0&delay=10").setHeader(Exchange.FILE_NAME, constant("hello.txt")).to("seda:foo");
             }
         };
     }

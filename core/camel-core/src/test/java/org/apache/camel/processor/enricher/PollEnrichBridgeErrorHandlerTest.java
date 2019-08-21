@@ -63,7 +63,8 @@ public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
 
                 from("seda:start")
-                    // bridge the error handler when doing a polling so we can let Camel's error handler decide what to do
+                    // bridge the error handler when doing a polling so we can
+                    // let Camel's error handler decide what to do
                     .pollEnrich("file:target/data/foo?initialDelay=0&delay=10&pollStrategy=#myPoll&consumer.bridgeErrorHandler=true", 10000, new UseLatestAggregationStrategy())
                     .to("mock:result");
             }
@@ -94,5 +95,5 @@ public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
             return counter;
         }
     }
-    
+
 }

@@ -23,7 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * Unit test to verify that error handling using threads() also works as expected.
+ * Unit test to verify that error handling using threads() also works as
+ * expected.
  */
 public class AsyncDeadLetterChannelTest extends ContextTestSupport {
 
@@ -39,14 +40,11 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
-                from("direct:in")
-                    .threads(2)
-                    .to("mock:foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new Exception("Forced exception by unit test");
-                        }
-                    });
+                from("direct:in").threads(2).to("mock:foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new Exception("Forced exception by unit test");
+                    }
+                });
             }
         });
         context.start();

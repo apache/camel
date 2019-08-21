@@ -71,16 +71,14 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:echo")
-                    .delay(50)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            List<String> users = new ArrayList<>();
-                            users.add("Claus");
-                            users.add("Jonathan");
-                            exchange.getIn().setBody(users);
-                        }
-                    });
+                from("direct:echo").delay(50).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        List<String> users = new ArrayList<>();
+                        users.add("Claus");
+                        users.add("Jonathan");
+                        exchange.getIn().setBody(users);
+                    }
+                });
             }
         };
     }

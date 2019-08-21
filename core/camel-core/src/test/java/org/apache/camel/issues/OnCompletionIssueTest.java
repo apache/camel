@@ -63,37 +63,14 @@ public class OnCompletionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion().onFailureOnly().parallelProcessing()
-                    .log("failing ${body}")
-                    .to("mock:failed");
+                onCompletion().onFailureOnly().parallelProcessing().log("failing ${body}").to("mock:failed");
 
-                onCompletion().onCompleteOnly().parallelProcessing()
-                    .log("completing ${body}")
-                    .to("mock:complete");
+                onCompletion().onCompleteOnly().parallelProcessing().log("completing ${body}").to("mock:complete");
 
-                from("direct:input")
-                    .onException(IllegalArgumentException.class)
-                        .handled(true)
-                    .end()
-                    .choice()
-                        .when(simple("${body} == 'stop'"))
-                            .log("stopping")
-                            .stop()
-                        .when(simple("${body} == 'ile'"))
-                            .log("excepting")
-                            .throwException(new IllegalArgumentException("Exception requested"))
-                        .when(simple("${body} == 'npe'"))
-                            .log("excepting")
-                            .throwException(new NullPointerException("Darn NPE"))
-                        .when(simple("${body} == 'rollback'"))
-                            .log("rollback")
-                            .rollback()
-                        .when(simple("${body} == 'markRollback'"))
-                            .log("markRollback")
-                            .markRollbackOnly()
-                        .end()
-                        .log("finishing")
-                        .to("mock:end");
+                from("direct:input").onException(IllegalArgumentException.class).handled(true).end().choice().when(simple("${body} == 'stop'")).log("stopping").stop()
+                    .when(simple("${body} == 'ile'")).log("excepting").throwException(new IllegalArgumentException("Exception requested")).when(simple("${body} == 'npe'"))
+                    .log("excepting").throwException(new NullPointerException("Darn NPE")).when(simple("${body} == 'rollback'")).log("rollback").rollback()
+                    .when(simple("${body} == 'markRollback'")).log("markRollback").markRollbackOnly().end().log("finishing").to("mock:end");
             }
         };
     }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -58,9 +59,8 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 MyPolicy myPolicy = new MyPolicy();
-                from("file://target/data/suspended?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10")
-                    .routePolicy(myPolicy).id("myRoute")
-                    .convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/suspended?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10").routePolicy(myPolicy).id("myRoute").convertBodyTo(String.class)
+                    .to("mock:result");
             }
         };
     }

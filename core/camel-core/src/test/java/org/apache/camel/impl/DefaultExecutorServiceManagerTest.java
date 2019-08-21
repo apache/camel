@@ -29,7 +29,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
-    
+
     @Test
     public void testResolveThreadNameDefaultPattern() throws Exception {
         String foo = context.getExecutorServiceManager().resolveThreadName("foo");
@@ -134,7 +134,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(false, myPool.isShutdown());
 
         // should use default settings
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
+        ThreadPoolExecutor executor = (ThreadPoolExecutor)myPool;
         assertEquals(10, executor.getCorePoolSize());
         assertEquals(20, executor.getMaximumPoolSize());
         assertEquals(60, executor.getKeepAliveTime(TimeUnit.SECONDS));
@@ -159,7 +159,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(false, myPool.isShutdown());
 
         // should use default settings
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
+        ThreadPoolExecutor executor = (ThreadPoolExecutor)myPool;
         assertEquals(10, executor.getCorePoolSize());
         assertEquals(30, executor.getMaximumPoolSize());
         assertEquals(50, executor.getKeepAliveTime(TimeUnit.SECONDS));
@@ -184,7 +184,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(false, myPool.isShutdown());
 
         // should use default settings
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
+        ThreadPoolExecutor executor = (ThreadPoolExecutor)myPool;
         assertEquals(10, executor.getCorePoolSize());
         assertEquals(30, executor.getMaximumPoolSize());
         assertEquals(50, executor.getKeepAliveTime(TimeUnit.SECONDS));
@@ -209,7 +209,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(false, myPool.isShutdown());
 
         // should use default settings
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
+        ThreadPoolExecutor executor = (ThreadPoolExecutor)myPool;
         assertEquals(5, executor.getCorePoolSize());
         assertEquals(40, executor.getMaximumPoolSize());
         assertEquals(20, executor.getKeepAliveTime(TimeUnit.SECONDS));
@@ -309,7 +309,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     @Test
     public void testGetThreadPoolProfileInheritCustomDefaultValues2() throws Exception {
         ThreadPoolProfile newDefault = new ThreadPoolProfile("newDefault");
-        // just change the max pool as the default profile should then inherit the old default profile
+        // just change the max pool as the default profile should then inherit
+        // the old default profile
         newDefault.setMaxPoolSize(50);
         context.getExecutorServiceManager().setDefaultThreadPoolProfile(newDefault);
 

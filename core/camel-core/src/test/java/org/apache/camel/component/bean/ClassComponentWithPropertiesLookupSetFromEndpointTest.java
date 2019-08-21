@@ -44,9 +44,7 @@ public class ClassComponentWithPropertiesLookupSetFromEndpointTest extends Conte
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=#foo")
-                    .to("mock:result");
+                from("direct:start").to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=#foo").to("mock:result");
             }
         };
     }

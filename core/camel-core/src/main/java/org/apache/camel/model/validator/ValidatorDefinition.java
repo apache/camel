@@ -28,15 +28,15 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Validator;
 
 /**
- * <p>Represents a {@link Validator} which declaratively validates message content
- * according to the input type declared by {@link InputTypeDefinition} and/or output type
- * declared by {@link OutputTypeDefinition}.</p>
- * <p>If you specify type='xml:ABC', the validator
- * will be picked up when current message type is 'xml:ABC'.
- * If you specify type='json', then it will be picked up for all of json validation.
- * 
- * {@see Validator}
- * {@see InputTypeDefinition}
+ * <p>
+ * Represents a {@link Validator} which declaratively validates message content
+ * according to the input type declared by {@link InputTypeDefinition} and/or
+ * output type declared by {@link OutputTypeDefinition}.
+ * </p>
+ * <p>
+ * If you specify type='xml:ABC', the validator will be picked up when current
+ * message type is 'xml:ABC'. If you specify type='json', then it will be picked
+ * up for all of json validation. {@see Validator} {@see InputTypeDefinition}
  * {@see OutputTypeDefinition}
  */
 @Metadata(label = "validation")
@@ -52,10 +52,10 @@ public abstract class ValidatorDefinition {
     }
 
     /**
-     * Set the data type name.
-     * If you specify 'xml:XYZ', the validator will be picked up if message type is
-     * 'xml:XYZ'. If you specify just 'xml', the validator matches with all of
-     * 'xml' message type like 'xml:ABC' or 'xml:DEF'.
+     * Set the data type name. If you specify 'xml:XYZ', the validator will be
+     * picked up if message type is 'xml:XYZ'. If you specify just 'xml', the
+     * validator matches with all of 'xml' message type like 'xml:ABC' or
+     * 'xml:DEF'.
      * 
      * @param type data type name
      */
@@ -65,10 +65,10 @@ public abstract class ValidatorDefinition {
 
     /**
      * Set the data type using Java class.
+     * 
      * @param clazz Java class
      */
     public void setType(Class<?> clazz) {
         this.type = new DataType(clazz).toString();
     }
 }
-

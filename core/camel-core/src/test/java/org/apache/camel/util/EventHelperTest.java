@@ -29,7 +29,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class EventHelperTest {
-    
+
     @Test
     public void testStartStopEventsReceived() throws Exception {
         MyEventNotifier en1 = new MyEventNotifier();
@@ -38,10 +38,9 @@ public class EventHelperTest {
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").routeId("route-1")
-                    .to("mock:end");
+                from("direct:start").routeId("route-1").to("mock:end");
             }
-            
+
         });
 
         camelContext.getManagementStrategy().addEventNotifier(en1);
@@ -49,16 +48,16 @@ public class EventHelperTest {
 
         camelContext.start();
         camelContext.stop();
-        
+
         assertEquals(1, en1.routeStartedEvent.get());
         assertEquals(1, en1.routeStoppedEvent.get());
         assertEquals(1, en1.camelContextStoppingEvent.get());
-        
+
         assertEquals(1, en2.routeStartedEvent.get());
         assertEquals(1, en2.routeStoppedEvent.get());
         assertEquals(1, en2.camelContextStoppingEvent.get());
     }
-    
+
     @Test
     public void testStartStopEventsReceivedWhenTheFirstOneIgnoreTheseEvents() throws Exception {
         MyEventNotifier en1 = new MyEventNotifier();
@@ -69,10 +68,9 @@ public class EventHelperTest {
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").routeId("route-1")
-                    .to("mock:end");
+                from("direct:start").routeId("route-1").to("mock:end");
             }
-            
+
         });
 
         camelContext.getManagementStrategy().addEventNotifier(en1);
@@ -80,16 +78,16 @@ public class EventHelperTest {
 
         camelContext.start();
         camelContext.stop();
-        
+
         assertEquals(0, en1.routeStartedEvent.get());
         assertEquals(0, en1.routeStoppedEvent.get());
         assertEquals(0, en1.camelContextStoppingEvent.get());
-        
+
         assertEquals(1, en2.routeStartedEvent.get());
         assertEquals(1, en2.routeStoppedEvent.get());
         assertEquals(1, en2.camelContextStoppingEvent.get());
     }
-    
+
     @Test
     public void testStartStopEventsReceivedWhenTheSecondOneIgnoreTheseEvents() throws Exception {
         MyEventNotifier en1 = new MyEventNotifier();
@@ -100,10 +98,9 @@ public class EventHelperTest {
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").routeId("route-1")
-                    .to("mock:end");
+                from("direct:start").routeId("route-1").to("mock:end");
             }
-            
+
         });
 
         camelContext.getManagementStrategy().addEventNotifier(en1);
@@ -111,22 +108,22 @@ public class EventHelperTest {
 
         camelContext.start();
         camelContext.stop();
-        
+
         assertEquals(1, en1.routeStartedEvent.get());
         assertEquals(1, en1.routeStoppedEvent.get());
         assertEquals(1, en1.camelContextStoppingEvent.get());
-        
+
         assertEquals(0, en2.routeStartedEvent.get());
         assertEquals(0, en2.routeStoppedEvent.get());
         assertEquals(0, en2.camelContextStoppingEvent.get());
     }
-    
+
     static class MyEventNotifier extends EventNotifierSupport {
-        
+
         AtomicInteger routeStartedEvent = new AtomicInteger();
         AtomicInteger routeStoppedEvent = new AtomicInteger();
         AtomicInteger camelContextStoppingEvent = new AtomicInteger();
-        
+
         @Override
         public void notify(CamelEvent event) throws Exception {
             if (event.getType() == Type.RouteStarted) {

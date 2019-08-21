@@ -24,7 +24,7 @@ import org.apache.camel.spi.RouteContext;
 public class WhenReifier extends ExpressionReifier<WhenDefinition> {
 
     WhenReifier(ProcessorDefinition<?> definition) {
-        super((WhenDefinition) definition);
+        super((WhenDefinition)definition);
     }
 
     @Override

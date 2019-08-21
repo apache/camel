@@ -32,7 +32,8 @@ public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
         assertTrue(context.getRouteController().getRouteStatus("foo").isStarted());
         assertFalse(context.getRouteController().getRouteStatus("foo").isStopped());
 
-        // the policy should stop the route after 2 seconds which is approx 20-30 messages
+        // the policy should stop the route after 2 seconds which is approx
+        // 20-30 messages
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(10);
         assertMockEndpointsSatisfied();
 
@@ -51,8 +52,7 @@ public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
                 DurationRoutePolicy policy = new DurationRoutePolicy();
                 policy.setMaxSeconds(2);
 
-                from("timer:foo?period=100").routeId("foo").routePolicy(policy)
-                    .to("mock:foo");
+                from("timer:foo?period=100").routeId("foo").routePolicy(policy).to("mock:foo");
             }
         };
     }

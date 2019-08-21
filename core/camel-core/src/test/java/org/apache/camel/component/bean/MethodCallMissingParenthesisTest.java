@@ -33,9 +33,7 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .transform().method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo})")
-                    .to("mock:result");
+                from("direct:start").transform().method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo})").to("mock:result");
             }
         });
         context.start();
@@ -50,9 +48,7 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .transform().method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo}")
-                    .to("mock:result");
+                from("direct:start").transform().method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo}").to("mock:result");
             }
         });
         context.start();
@@ -71,9 +67,7 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .transform().method(MethodCallMissingParenthesisTest.class, "--doSomething(${body}, ${header.foo})")
-                    .to("mock:result");
+                from("direct:start").transform().method(MethodCallMissingParenthesisTest.class, "--doSomething(${body}, ${header.foo})").to("mock:result");
             }
         });
         context.start();

@@ -26,8 +26,8 @@ import org.junit.Test;
 public class AsyncEndpointDynamicRouterTest extends ContextTestSupport {
 
     private static int invoked;
-    private static List<String> bodies = new ArrayList<>();    
-    
+    private static List<String> bodies = new ArrayList<>();
+
     @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
@@ -36,7 +36,7 @@ public class AsyncEndpointDynamicRouterTest extends ContextTestSupport {
         assertEquals("Bye World", reply);
 
         assertMockEndpointsSatisfied();
-        
+
         assertEquals(4, invoked);
         assertEquals(4, bodies.size());
         assertEquals("Hello Camel", bodies.get(0));
@@ -52,14 +52,13 @@ public class AsyncEndpointDynamicRouterTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                    .dynamicRouter(method(AsyncEndpointDynamicRouterTest.class, "slip"));
-                
+                from("direct:start").dynamicRouter(method(AsyncEndpointDynamicRouterTest.class, "slip"));
+
                 from("direct:foo").transform(constant("Bye World"));
             }
         };
     }
-    
+
     /**
      * Use this method to compute dynamic where we should route next.
      *
@@ -80,6 +79,6 @@ public class AsyncEndpointDynamicRouterTest extends ContextTestSupport {
 
         // no more so return null
         return null;
-    }    
+    }
 
 }

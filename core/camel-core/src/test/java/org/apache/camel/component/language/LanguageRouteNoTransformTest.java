@@ -39,9 +39,7 @@ public class LanguageRouteNoTransformTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 String script = URLEncoder.encode("Hello ${body}", "UTF-8");
-                from("direct:start")
-                    .to("language:simple:" + script + "?transform=false")
-                    .to("mock:result");
+                from("direct:start").to("language:simple:" + script + "?transform=false").to("mock:result");
             }
         };
     }

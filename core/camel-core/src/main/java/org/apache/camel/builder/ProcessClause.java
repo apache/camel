@@ -51,19 +51,23 @@ public class ProcessClause<T> implements Processor {
         return parent;
     }
 
-
     // *******************************
     // Message
     // *******************************
-    
+
     /**
      * Define a {@link Processor} which targets the Exchange In Message.
-     *     
-     * <blockquote><pre>{@code
+     * <blockquote>
+     * 
+     * <pre>
+     * {@code
      * from("direct:aggregate")
      *     .process()
      *         .message(m -> m.setHeader("HasBody", m.getBody() != null));
-     * }</pre></blockquote>
+     * }
+     * </pre>
+     * 
+     * </blockquote>
      */
     public T message(final Consumer<Message> consumer) {
         processor = e -> consumer.accept(e.getIn());
@@ -76,12 +80,17 @@ public class ProcessClause<T> implements Processor {
 
     /**
      * Define a {@link Processor} which targets the Exchange In Body.
-     *     
-     * <blockquote><pre>{@code
+     * <blockquote>
+     * 
+     * <pre>
+     * {@code
      * from("direct:aggregate")
      *     .process()
      *         .body(System.out::println);
-     * }</pre></blockquote>
+     * }
+     * </pre>
+     * 
+     * </blockquote>
      */
     public T body(final Consumer<Object> consumer) {
         processor = e -> consumer.accept(e.getIn().getBody());
@@ -90,39 +99,48 @@ public class ProcessClause<T> implements Processor {
 
     /**
      * Define a {@link Processor} which targets the typed Exchange In Body.
-     *     
-     * <blockquote><pre>{@code
+     * <blockquote>
+     * 
+     * <pre>
+     * {@code
      * from("direct:aggregate")
      *     .process()
      *         .body(MyObject.class, MyObject::dumpToStdOut);
-     * }</pre></blockquote>
+     * }
+     * </pre>
+     * 
+     * </blockquote>
      */
     public <B> T body(Class<B> type, final Consumer<B> consumer) {
         processor = e -> consumer.accept(e.getIn().getBody(type));
         return parent;
     }
-    
+
     /**
-     * Define a {@link Processor} which targets the Exchange In Body and its Headers.
-     *     
-     * <blockquote><pre>{@code
+     * Define a {@link Processor} which targets the Exchange In Body and its
+     * Headers. <blockquote>
+     * 
+     * <pre>
+     * {@code
      * from("direct:aggregate")
      *     .process()
      *         .body((b, h) -> h.put("ClassName", b.getClass().getName()));
-     * }</pre></blockquote>
+     * }
+     * </pre>
+     * 
+     * </blockquote>
      */
     public T body(final BiConsumer<Object, Map<String, Object>> consumer) {
-        processor = e -> consumer.accept(
-            e.getIn().getBody(),
-            e.getIn().getHeaders()
-        );
+        processor = e -> consumer.accept(e.getIn().getBody(), e.getIn().getHeaders());
         return parent;
     }
-    
+
     /**
-     * Define a {@link Processor} which targets the typed Exchange In Body and its Headers.
-     *     
-     * <blockquote><pre>{@code
+     * Define a {@link Processor} which targets the typed Exchange In Body and
+     * its Headers. <blockquote>
+     * 
+     * <pre>
+     * {@code
      * from("direct:aggregate")
      *     .process()
      *         .body(MyObject.class, (b, h) -> { 
@@ -130,13 +148,13 @@ public class ProcessClause<T> implements Processor {
      *                  b.dumpToStdOut();
      *             }
      *         });
-     * }</pre></blockquote>
+     * }
+     * </pre>
+     * 
+     * </blockquote>
      */
     public <B> T body(Class<B> type, final BiConsumer<B, Map<String, Object>> consumer) {
-        processor = e -> consumer.accept(
-            e.getIn().getBody(type),
-            e.getIn().getHeaders()
-        );
+        processor = e -> consumer.accept(e.getIn().getBody(type), e.getIn().getHeaders());
         return parent;
     }
 }

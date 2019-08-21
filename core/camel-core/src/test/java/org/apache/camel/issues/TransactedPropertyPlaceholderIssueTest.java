@@ -44,10 +44,7 @@ public class TransactedPropertyPlaceholderIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo")
-                    .policy(new MyDummyPolicy())
-                    .setBody().constant("{{cool.name}}")
-                    .to("mock:result");
+                from("seda:foo").policy(new MyDummyPolicy()).setBody().constant("{{cool.name}}").to("mock:result");
             }
         };
     }

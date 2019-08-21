@@ -53,11 +53,14 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
     private final ServiceCallDefinition parent;
     @XmlTransient
     private final String factoryKey;
-    @XmlElement(name = "properties") @Metadata(label = "advanced")
+    @XmlElement(name = "properties")
+    @Metadata(label = "advanced")
     private List<PropertyDefinition> properties;
-    @XmlAttribute @Metadata(defaultValue = ServiceCallConstants.SERVICE_HOST)
+    @XmlAttribute
+    @Metadata(defaultValue = ServiceCallConstants.SERVICE_HOST)
     private String hostHeader = ServiceCallConstants.SERVICE_HOST;
-    @XmlAttribute @Metadata(defaultValue = ServiceCallConstants.SERVICE_PORT)
+    @XmlAttribute
+    @Metadata(defaultValue = ServiceCallConstants.SERVICE_PORT)
     private String portHeader = ServiceCallConstants.SERVICE_PORT;
     @XmlElementRef(required = false)
     private ExpressionDefinition expressionType;
@@ -141,7 +144,8 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
     }
 
     /**
-     * The header that holds the service host information, default ServiceCallConstants.SERVICE_HOST
+     * The header that holds the service host information, default
+     * ServiceCallConstants.SERVICE_HOST
      */
     public void setHostHeader(String hostHeader) {
         this.hostHeader = hostHeader;
@@ -152,7 +156,8 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
     }
 
     /**
-     * The header that holds the service port information, default ServiceCallConstants.SERVICE_PORT
+     * The header that holds the service port information, default
+     * ServiceCallConstants.SERVICE_PORT
      */
     public void setPortHeader(String portHeader) {
         this.portHeader = portHeader;
@@ -175,7 +180,8 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
     }
 
     /**
-     * The header that holds the service host information, default ServiceCallConstants.SERVICE_HOST
+     * The header that holds the service host information, default
+     * ServiceCallConstants.SERVICE_HOST
      */
     public ServiceCallExpressionConfiguration hostHeader(String hostHeader) {
         setHostHeader(hostHeader);
@@ -183,7 +189,8 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
     }
 
     /**
-     * The header that holds the service port information, default ServiceCallConstants.SERVICE_PORT
+     * The header that holds the service port information, default
+     * ServiceCallConstants.SERVICE_PORT
      */
     public ServiceCallExpressionConfiguration portHeader(String portHeader) {
         setPortHeader(portHeader);
@@ -220,7 +227,8 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
             // First try to find the factory from the registry.
             ServiceExpressionFactory factory = CamelContextHelper.lookup(camelContext, factoryKey, ServiceExpressionFactory.class);
             if (factory != null) {
-                // If a factory is found in the registry do not re-configure it as
+                // If a factory is found in the registry do not re-configure it
+                // as
                 // it should be pre-configured.
                 answer = factory.newInstance(camelContext);
             } else {
@@ -235,10 +243,10 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
 
                 if (type != null) {
                     if (ServiceExpressionFactory.class.isAssignableFrom(type)) {
-                        factory = (ServiceExpressionFactory) camelContext.getInjector().newInstance(type, false);
+                        factory = (ServiceExpressionFactory)camelContext.getInjector().newInstance(type, false);
                     } else {
-                        throw new IllegalArgumentException(
-                            "Resolving Expression: " + factoryKey + " detected type conflict: Not a ExpressionFactory implementation. Found: " + type.getName());
+                        throw new IllegalArgumentException("Resolving Expression: " + factoryKey + " detected type conflict: Not a ExpressionFactory implementation. Found: "
+                                                           + type.getName());
                     }
                 }
 
@@ -246,22 +254,17 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
                     Map<String, Object> parameters = new HashMap<>();
                     IntrospectionSupport.getProperties(this, parameters, null, false);
 
-                    parameters.replaceAll(
-                        (k, v) -> {
-                            if (v instanceof String) {
-                                try {
-                                    v = camelContext.resolvePropertyPlaceholders((String) v);
-                                } catch (Exception e) {
-                                    throw new IllegalArgumentException(
-                                        String.format("Exception while resolving %s (%s)", k, v.toString()),
-                                        e
-                                    );
-                                }
+                    parameters.replaceAll((k, v) -> {
+                        if (v instanceof String) {
+                            try {
+                                v = camelContext.resolvePropertyPlaceholders((String)v);
+                            } catch (Exception e) {
+                                throw new IllegalArgumentException(String.format("Exception while resolving %s (%s)", k, v.toString()), e);
                             }
-
-                            return v;
                         }
-                    );
+
+                        return v;
+                    });
 
                     // Convert properties to Map<String, String>
                     parameters.put("properties", getPropertiesAsMap(camelContext));
@@ -284,6 +287,6 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
     // Utilities
     // *************************************************************************
 
-    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception  {
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception {
     }
 }

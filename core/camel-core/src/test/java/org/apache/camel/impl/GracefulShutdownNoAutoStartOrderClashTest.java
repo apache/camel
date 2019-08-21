@@ -41,7 +41,7 @@ public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSuppor
             fail("Should have thrown an exception");
         } catch (Exception e) {
             assertEquals("Failed to start route bar because of startupOrder clash. Route foo already has startupOrder 5 configured"
-                + " which this route have as well. Please correct startupOrder to be unique among all your routes.", e.getMessage());
+                         + " which this route have as well. Please correct startupOrder to be unique among all your routes.", e.getMessage());
         }
     }
 

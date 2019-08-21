@@ -37,7 +37,7 @@ public abstract class ValidatorReifier<T> {
         map.put(PredicateValidatorDefinition.class, PredicateValidatorReifier::new);
         VALIDATORS = map;
     }
-    
+
     protected final T definition;
 
     ValidatorReifier(T definition) {

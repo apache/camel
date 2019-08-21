@@ -32,11 +32,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * Demonstrates how you can use a custom id factory to assign ids to Camel Java routes
- * and then attach your own debugger and be able to use the custom ids to know at what
- * point you are debugging
+ * Demonstrates how you can use a custom id factory to assign ids to Camel Java
+ * routes and then attach your own debugger and be able to use the custom ids to
+ * know at what point you are debugging
  */
 public class CustomIdFactoryTest extends ContextTestSupport {
 
@@ -58,25 +57,21 @@ public class CustomIdFactoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // use our own id factory so we can generate the keys we like to use
+                // use our own id factory so we can generate the keys we like to
+                // use
                 context.adapt(ExtendedCamelContext.class).setNodeIdFactory(new NodeIdFactory() {
                     public String createId(NamedNode definition) {
                         return "#" + definition.getShortName() + ++counter + "#";
                     }
                 });
 
-                // add our debugger so we can debug camel routes when we send in messages
+                // add our debugger so we can debug camel routes when we send in
+                // messages
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new MyDebuggerCheckingId());
 
-                // a little content based router so we got 2 paths to route at runtime
-                from("direct:start")
-                    .choice()
-                        .when(body().contains("Hello"))
-                            .to("mock:hello")
-                        .otherwise()
-                            .log("Hey")
-                            .to("mock:other")
-                    .end();
+                // a little content based router so we got 2 paths to route at
+                // runtime
+                from("direct:start").choice().when(body().contains("Hello")).to("mock:hello").otherwise().log("Hey").to("mock:other").end();
             }
         };
     }
@@ -114,12 +109,11 @@ public class CustomIdFactoryTest extends ContextTestSupport {
     private static class MyDebuggerCheckingId implements InterceptStrategy {
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context,
-                                                     final NamedNode definition, Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, Processor target, Processor nextTarget) throws Exception {
 
             // MUST DO THIS
             // force id creation as sub nodes have lazy assigned ids
-            ((OptionalIdentifiedDefinition<?>) definition).idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+            ((OptionalIdentifiedDefinition<?>)definition).idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
 
             return new DelegateProcessor(target) {
                 @Override

@@ -21,7 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class VmConcurrentConsumersTest extends AbstractVmTestSupport {
-    
+
     @Test
     public void testSendToSeda() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

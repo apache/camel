@@ -17,11 +17,13 @@
 package org.apache.camel.builder;
 
 /**
- * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
+ * A helper class for working with
+ * <a href="http://camel.apache.org/expression.html">expressions</a>.
  */
 public final class ExpressionBuilder extends org.apache.camel.support.builder.ExpressionBuilder {
 
-    // this class is included in camel-core to be backwards compatible by extending from camel-support
+    // this class is included in camel-core to be backwards compatible by
+    // extending from camel-support
 
     /**
      * Utility classes should not have a public constructor.

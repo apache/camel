@@ -35,7 +35,7 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
     public void testDefintionAugmentationPolicy() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedHeaderReceived("foo", "was wrapped");
-        getMockEndpoint("mock:foo").expectedBodyReceived().constant("body was altered");        
+        getMockEndpoint("mock:foo").expectedBodyReceived().constant("body was altered");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -59,7 +59,8 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // only wrap policy foo around the to(mock:foo) - notice the end()
+                    // only wrap policy foo around the to(mock:foo) - notice the
+                    // end()
                     .policy("foo").setBody().constant("body not altered").to("mock:foo").end();
             }
         };
@@ -80,7 +81,7 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
 
         @Override
         public void beforeWrap(RouteContext routeContext, NamedNode definition) {
-            SetBodyDefinition bodyDef = (SetBodyDefinition) ((ProcessorDefinition<?>) definition).getOutputs().get(0);
+            SetBodyDefinition bodyDef = (SetBodyDefinition)((ProcessorDefinition<?>)definition).getOutputs().get(0);
             bodyDef.setExpression(new ConstantExpression("body was altered"));
         }
 

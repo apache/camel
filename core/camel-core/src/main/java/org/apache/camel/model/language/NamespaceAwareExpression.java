@@ -28,8 +28,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.NamespaceAware;
 
 /**
- * A useful base class for any expression which may be namespace or XML content aware
- * such as {@link XPathExpression} or {@link XQueryExpression}
+ * A useful base class for any expression which may be namespace or XML content
+ * aware such as {@link XPathExpression} or {@link XQueryExpression}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class NamespaceAwareExpression extends ExpressionDefinition implements NamespaceAware {
@@ -43,7 +43,6 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
         super(expression);
     }
 
-
     @Override
     public Map<String, String> getNamespaces() {
         return namespaces;
@@ -52,7 +51,8 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
     /**
      * Injects the XML Namespaces of prefix -> uri mappings
      *
-     * @param namespaces the XML namespaces with the key of prefixes and the value the URIs
+     * @param namespaces the XML namespaces with the key of prefixes and the
+     *            value the URIs
      */
     @Override
     public void setNamespaces(Map<String, String> namespaces) {
@@ -73,7 +73,7 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
 
     protected void configureNamespaceAware(Object builder) {
         if (namespaces != null && builder instanceof NamespaceAware) {
-            NamespaceAware namespaceAware = (NamespaceAware) builder;
+            NamespaceAware namespaceAware = (NamespaceAware)builder;
             namespaceAware.setNamespaces(namespaces);
         }
     }

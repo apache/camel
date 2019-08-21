@@ -75,10 +75,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
         FluentProducerTemplate fluent = context.createFluentProducerTemplate();
 
-        Object result = fluent
-            .withBody("Hello World")
-            .to("direct:in")
-            .request();
+        Object result = fluent.withBody("Hello World").to("direct:in").request();
 
         assertMockEndpointsSatisfied();
 
@@ -92,10 +89,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        Object result = DefaultFluentProducerTemplate.on(context)
-            .withBody("Hello World")
-            .to("direct:in")
-            .request();
+        Object result = DefaultFluentProducerTemplate.on(context).withBody("Hello World").to("direct:in").request();
 
         assertMockEndpointsSatisfied();
 
@@ -109,10 +103,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Bye World");
 
-        Object result = DefaultFluentProducerTemplate.on(context)
-            .withBody("Hello World")
-            .to("direct:out")
-            .request();
+        Object result = DefaultFluentProducerTemplate.on(context).withBody("Hello World").to("direct:out").request();
 
         assertMockEndpointsSatisfied();
 
@@ -124,10 +115,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(11);
 
-        Object result = DefaultFluentProducerTemplate.on(context)
-            .withBodyAs("10", Integer.class)
-            .to("direct:sum")
-            .request();
+        Object result = DefaultFluentProducerTemplate.on(context).withBodyAs("10", Integer.class).to("direct:sum").request();
 
         assertMockEndpointsSatisfied();
 
@@ -140,10 +128,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         try {
-            DefaultFluentProducerTemplate.on(context)
-                .withBodyAs("10", Double.class)
-                .to("direct:sum")
-                .request();
+            DefaultFluentProducerTemplate.on(context).withBodyAs("10", Double.class).to("direct:sum").request();
         } catch (CamelExecutionException e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
             assertEquals("Expected body of type Integer", e.getCause().getMessage());
@@ -157,10 +142,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = DefaultFluentProducerTemplate.on(context)
-            .withBody("Hello World")
-            .to("direct:exception")
-            .send();
+        Exchange out = DefaultFluentProducerTemplate.on(context).withBody("Hello World").to("direct:exception").send();
 
         assertTrue(out.isFailed());
         assertTrue(out.getException() instanceof IllegalArgumentException);
@@ -174,10 +156,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = DefaultFluentProducerTemplate.on(context)
-            .withProcessor(exchange -> exchange.getIn().setBody("Hello World"))
-            .to("direct:exception")
-            .send();
+        Exchange out = DefaultFluentProducerTemplate.on(context).withProcessor(exchange -> exchange.getIn().setBody("Hello World")).to("direct:exception").send();
 
         assertTrue(out.isFailed());
         assertEquals("Forced exception by unit test", out.getException().getMessage());
@@ -190,14 +169,11 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = DefaultFluentProducerTemplate.on(context)
-                .withExchange(() -> {
-                    Exchange exchange = context.getEndpoint("direct:exception").createExchange();
-                    exchange.getIn().setBody("Hello World");
-                    return exchange;
-                })
-                .to("direct:exception")
-                .send();
+        Exchange out = DefaultFluentProducerTemplate.on(context).withExchange(() -> {
+            Exchange exchange = context.getEndpoint("direct:exception").createExchange();
+            exchange.getIn().setBody("Hello World");
+            return exchange;
+        }).to("direct:exception").send();
 
         assertTrue(out.isFailed());
         assertEquals("Forced exception by unit test", out.getException().getMessage());
@@ -211,10 +187,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         try {
-            DefaultFluentProducerTemplate.on(context)
-                .withBody("Hello World")
-                .to("direct:exception")
-                .request();
+            DefaultFluentProducerTemplate.on(context).withBody("Hello World").to("direct:exception").request();
 
             fail("Should have thrown RuntimeCamelException");
         } catch (RuntimeCamelException e) {
@@ -230,10 +203,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = DefaultFluentProducerTemplate.on(context)
-            .withProcessor(exchange -> exchange.getIn().setBody("Hello World"))
-            .to("direct:exception")
-            .request(Exchange.class);
+        Exchange out = DefaultFluentProducerTemplate.on(context).withProcessor(exchange -> exchange.getIn().setBody("Hello World")).to("direct:exception").request(Exchange.class);
 
         assertTrue(out.isFailed());
         assertEquals("Forced exception by unit test", out.getException().getMessage());
@@ -246,14 +216,11 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = DefaultFluentProducerTemplate.on(context)
-            .withExchange(() -> {
-                Exchange exchange = context.getEndpoint("direct:exception").createExchange(ExchangePattern.InOut);
-                exchange.getIn().setBody("Hello World");
-                return exchange;
-            })
-            .to("direct:exception")
-            .send();
+        Exchange out = DefaultFluentProducerTemplate.on(context).withExchange(() -> {
+            Exchange exchange = context.getEndpoint("direct:exception").createExchange(ExchangePattern.InOut);
+            exchange.getIn().setBody("Hello World");
+            return exchange;
+        }).to("direct:exception").send();
 
         assertTrue(out.isFailed());
         assertEquals("Forced exception by unit test", out.getException().getMessage());
@@ -263,23 +230,14 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
     @Test
     public void testWithExchange() throws Exception {
-        Exchange exchange = ExchangeBuilder.anExchange(context)
-            .withBody("Hello!")
-            .withPattern(ExchangePattern.InOut)
-            .build();
+        Exchange exchange = ExchangeBuilder.anExchange(context).withBody("Hello!").withPattern(ExchangePattern.InOut).build();
 
-        exchange = context.createFluentProducerTemplate()
-                .withExchange(exchange)
-                .to("direct:in")
-                .send();
+        exchange = context.createFluentProducerTemplate().withExchange(exchange).to("direct:in").send();
 
         assertEquals("Bye World", exchange.getMessage().getBody());
 
         try {
-            String out = context.createFluentProducerTemplate()
-                .withExchange(exchange)
-                .to("direct:in")
-                .request(String.class);
+            String out = context.createFluentProducerTemplate().withExchange(exchange).to("direct:in").request(String.class);
             fail("Should throw exception");
         } catch (IllegalArgumentException e) {
             assertEquals("withExchange not supported on FluentProducerTemplate.request method. Use send method instead.", e.getMessage());
@@ -293,61 +251,17 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
         final Integer expectedResult = new Integer(123);
 
-        assertEquals(
-            expectedResult,
-            template.clearBody()
-                .clearHeaders()
-                .withBody("Hello")
-                .to("direct:inout")
-                .request(Integer.class)
-        );
+        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello").to("direct:inout").request(Integer.class));
 
-        assertEquals(
-            expectedResult,
-            template.clearBody()
-                .clearHeaders()
-                .withHeader("foo", "bar")
-                .withBody("Hello")
-                .to("direct:inout")
-                .request(Integer.class)
-        );
+        assertEquals(expectedResult, template.clearBody().clearHeaders().withHeader("foo", "bar").withBody("Hello").to("direct:inout").request(Integer.class));
 
-        assertEquals(
-            expectedResult,
-            template.clearBody()
-                .clearHeaders()
-                .withBody("Hello")
-                .to("direct:inout")
-                .request(Integer.class)
-        );
+        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello").to("direct:inout").request(Integer.class));
 
-        assertEquals(
-            expectedResult,
-            template.clearBody()
-                .clearHeaders()
-                .withBody("Hello")
-                .to(context.getEndpoint("direct:inout"))
-                .request(Integer.class)
-        );
+        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello").to(context.getEndpoint("direct:inout")).request(Integer.class));
 
-        assertEquals(
-            expectedResult,
-            template.clearBody()
-                .clearHeaders()
-                .withHeader("foo", "bar")
-                .withBody("Hello")
-                .to(context.getEndpoint("direct:inout"))
-                .request(Integer.class)
-        );
+        assertEquals(expectedResult, template.clearBody().clearHeaders().withHeader("foo", "bar").withBody("Hello").to(context.getEndpoint("direct:inout")).request(Integer.class));
 
-        assertEquals(
-            expectedResult,
-            template.clearBody()
-                .clearHeaders()
-                .withBody("Hello")
-                .to(context.getEndpoint("direct:inout"))
-                .request(Integer.class)
-        );
+        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello").to(context.getEndpoint("direct:inout")).request(Integer.class));
     }
 
     @Test
@@ -405,33 +319,24 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
                 // for faster unit test
                 errorHandler(noErrorHandler());
 
-                from("direct:in")
-                    .process(exchange -> exchange.getIn().setBody("Bye World"))
-                    .to("mock:result");
-                from("direct:sum")
-                    .process(exchange -> {
-                        Object body = exchange.getIn().getBody();
-                        if (body instanceof Integer) {
-                            exchange.getIn().setBody((Integer) body + 1);
-                        } else {
-                            throw new IllegalArgumentException("Expected body of type Integer");
-                        }
-                    })
-                    .to("mock:result");
-                from("direct:out")
-                    .process(exchange -> exchange.getOut().setBody("Bye Bye World"))
-                    .to("mock:result");
+                from("direct:in").process(exchange -> exchange.getIn().setBody("Bye World")).to("mock:result");
+                from("direct:sum").process(exchange -> {
+                    Object body = exchange.getIn().getBody();
+                    if (body instanceof Integer) {
+                        exchange.getIn().setBody((Integer)body + 1);
+                    } else {
+                        throw new IllegalArgumentException("Expected body of type Integer");
+                    }
+                }).to("mock:result");
+                from("direct:out").process(exchange -> exchange.getOut().setBody("Bye Bye World")).to("mock:result");
 
-                from("direct:exception")
-                    .process(exchange -> {
-                        throw new IllegalArgumentException("Forced exception by unit test");
-                    })
-                    .to("mock:result");
+                from("direct:exception").process(exchange -> {
+                    throw new IllegalArgumentException("Forced exception by unit test");
+                }).to("mock:result");
 
                 from("direct:inout").transform(constant(123));
 
-                from("direct:async")
-                    .to("mock:async");
+                from("direct:async").to("mock:async");
             }
         };
     }

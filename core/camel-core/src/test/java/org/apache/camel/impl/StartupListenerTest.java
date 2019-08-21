@@ -44,10 +44,12 @@ public class StartupListenerTest extends ContextTestSupport {
             this.alreadyStarted = alreadyStarted;
 
             if (alreadyStarted) {
-                // the routes should already been started as we add the listener afterwards
+                // the routes should already been started as we add the listener
+                // afterwards
                 assertTrue(context.getRouteController().getRouteStatus("foo").isStarted());
             } else {
-                // the routes should not have been started as they start afterwards
+                // the routes should not have been started as they start
+                // afterwards
                 assertTrue(context.getRouteController().getRouteStatus("foo").isStopped());
             }
         }

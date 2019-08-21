@@ -79,9 +79,7 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:expressionMethod")
-                    .throttle(method("myBean", "getMessagesPerInterval")).timePeriodMillis(INTERVAL)
-                        .to("log:result", "mock:result");
+                from("direct:expressionMethod").throttle(method("myBean", "getMessagesPerInterval")).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
             }
         };
     }

@@ -29,8 +29,9 @@ public class XMLTokenizeLanguageGroupingTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\"></c:child>"
                                                               + "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\"></c:child></group>");
 
-        template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'></c:child></c:parent>");
+        template
+            .sendBody("direct:start",
+                      "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'></c:child></c:parent>");
 
         assertMockEndpointsSatisfied();
     }
@@ -40,77 +41,66 @@ public class XMLTokenizeLanguageGroupingTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\">\n</c:child>"
                                                               + "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\">\n</c:child></group>");
 
-        template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?>\n"
-                + "<c:parent xmlns:c='urn:c'>\n"
-                + "<c:child some_attr='a' anotherAttr='a'>\n"
-                + "</c:child>\n"
-                + "<c:child some_attr='b' anotherAttr='b'>\n"
-                + "</c:child>\n"
-                + "</c:parent>");
+        template.sendBody("direct:start", "<?xml version='1.0' encoding='UTF-8'?>\n" + "<c:parent xmlns:c='urn:c'>\n" + "<c:child some_attr='a' anotherAttr='a'>\n" + "</c:child>\n"
+                                          + "<c:child some_attr='b' anotherAttr='b'>\n" + "</c:child>\n" + "</c:parent>");
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSendSelfClosingTagMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("<group><c:child some_attr='a' anotherAttr='a'  xmlns:c=\"urn:c\"/>"
-                                                              + "<c:child some_attr='b' anotherAttr='b'  xmlns:c=\"urn:c\"/></group>");
+        getMockEndpoint("mock:result")
+            .expectedBodiesReceived("<group><c:child some_attr='a' anotherAttr='a'  xmlns:c=\"urn:c\"/>" + "<c:child some_attr='b' anotherAttr='b'  xmlns:c=\"urn:c\"/></group>");
 
-        template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a' /><c:child some_attr='b' anotherAttr='b' /></c:parent>");
+        template
+            .sendBody("direct:start",
+                      "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a' /><c:child some_attr='b' anotherAttr='b' /></c:parent>");
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSendMixedClosingTagMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-            "<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\">ha</c:child>"
-            + "<c:child some_attr='b' anotherAttr='b'  xmlns:c=\"urn:c\"/></group>", 
-            "<group><c:child some_attr='c' xmlns:c=\"urn:c\"></c:child></group>");
+        getMockEndpoint("mock:result").expectedBodiesReceived("<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\">ha</c:child>"
+                                                              + "<c:child some_attr='b' anotherAttr='b'  xmlns:c=\"urn:c\"/></group>",
+                                                              "<group><c:child some_attr='c' xmlns:c=\"urn:c\"></c:child></group>");
 
-        template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child>"
-            + "<c:child some_attr='b' anotherAttr='b' /><c:child some_attr='c'></c:child></c:parent>");
+        template.sendBody("direct:start", "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child>"
+                                          + "<c:child some_attr='b' anotherAttr='b' /><c:child some_attr='c'></c:child></c:parent>");
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSendMixedClosingTagInsideMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-            "<group><c:child name='child1' xmlns:c=\"urn:c\"><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></c:child>"
-            + "<c:child name='child2' xmlns:c=\"urn:c\"><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></c:child></group>");
+        getMockEndpoint("mock:result")
+            .expectedBodiesReceived("<group><c:child name='child1' xmlns:c=\"urn:c\"><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></c:child>"
+                                    + "<c:child name='child2' xmlns:c=\"urn:c\"><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></c:child></group>");
 
-        template.sendBody("direct:start",
-            "<c:parent xmlns:c='urn:c'><c:child name='child1'><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></c:child>"
-            + "<c:child name='child2'><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></c:child></c:parent>");
+        template.sendBody("direct:start", "<c:parent xmlns:c='urn:c'><c:child name='child1'><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></c:child>"
+                                          + "<c:child name='child2'><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></c:child></c:parent>");
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSendNamespacedChildMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-            "<group><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child><c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></group>");
+        getMockEndpoint("mock:result")
+            .expectedBodiesReceived("<group><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child><c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></group>");
 
-        template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child>"
-            + "<c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></c:parent>");
+        template.sendBody("direct:start", "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child>"
+                                          + "<c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></c:parent>");
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSendNamespacedParentMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-            "<group><c:child some_attr='a' anotherAttr='a' xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"></c:child>"
-            + "<c:child some_attr='b' anotherAttr='b' xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/></group>");
-        
-        template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='a' anotherAttr='a'></c:child>"
-            + "<c:child some_attr='b' anotherAttr='b'/></c:parent>");
+        getMockEndpoint("mock:result").expectedBodiesReceived("<group><c:child some_attr='a' anotherAttr='a' xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"></c:child>"
+                                                              + "<c:child some_attr='b' anotherAttr='b' xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/></group>");
+
+        template.sendBody("direct:start", "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='a' anotherAttr='a'></c:child>"
+                                          + "<c:child some_attr='b' anotherAttr='b'/></c:parent>");
 
         assertMockEndpointsSatisfied();
     }
@@ -118,19 +108,18 @@ public class XMLTokenizeLanguageGroupingTest extends ContextTestSupport {
     @Test
     public void testSendMoreParentsMessageToTokenize() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        if (getJavaMajorVersion() <= 7)  {
-            result.expectedBodiesReceived(
-                "<group><c:child some_attr='a' anotherAttr='a' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"></c:child>"
-                + "<c:child some_attr='b' anotherAttr='b' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/></group>");   
+        if (getJavaMajorVersion() <= 7) {
+            result.expectedBodiesReceived("<group><c:child some_attr='a' anotherAttr='a' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"></c:child>"
+                                          + "<c:child some_attr='b' anotherAttr='b' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/></group>");
         } else {
-            result.expectedBodiesReceived(
-                "<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>"
-                + "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/></group>");
+            result.expectedBodiesReceived("<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>"
+                                          + "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/></group>");
         }
 
-        template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-            + "<c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'/></c:parent></grandparent></g:greatgrandparent>");
+        template
+            .sendBody("direct:start",
+                      "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                      + "<c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'/></c:parent></grandparent></g:greatgrandparent>");
 
         assertMockEndpointsSatisfied();
     }
@@ -139,11 +128,9 @@ public class XMLTokenizeLanguageGroupingTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             Namespaces ns = new Namespaces("C", "urn:c");
+
             public void configure() {
-                from("direct:start")
-                    .split().xtokenize("//C:child", 'i', ns, 2)
-                        .to("mock:result")
-                    .end();
+                from("direct:start").split().xtokenize("//C:child", 'i', ns, 2).to("mock:result").end();
             }
         };
     }

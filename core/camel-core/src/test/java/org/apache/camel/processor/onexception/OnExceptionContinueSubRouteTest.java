@@ -47,18 +47,11 @@ public class OnExceptionContinueSubRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).continued(true).logContinued(true);
 
-                from("direct:start")
-                    .to("mock:start")
-                    .to("direct:b")
-                    .to("direct:c")
-                    .to("mock:result");
+                from("direct:start").to("mock:start").to("direct:b").to("direct:c").to("mock:result");
 
-                from("direct:b")
-                    .to("mock:b")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:b").to("mock:b").throwException(new IllegalArgumentException("Forced"));
 
-                from("direct:c")
-                    .to("mock:c");
+                from("direct:c").to("mock:c");
             }
         };
     }

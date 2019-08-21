@@ -69,14 +69,10 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:deadLetter")
-                        .allowRedeliveryWhileStopping(false)
-                        .onRedelivery(new MyRedeliverProcessor())
-                        .maximumRedeliveries(200).redeliveryDelay(10).retryAttemptedLogLevel(LoggingLevel.INFO));
+                errorHandler(deadLetterChannel("mock:deadLetter").allowRedeliveryWhileStopping(false).onRedelivery(new MyRedeliverProcessor()).maximumRedeliveries(200)
+                    .redeliveryDelay(10).retryAttemptedLogLevel(LoggingLevel.INFO));
 
-                from("seda:foo").routeId("foo")
-                    .to("mock:foo")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("seda:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

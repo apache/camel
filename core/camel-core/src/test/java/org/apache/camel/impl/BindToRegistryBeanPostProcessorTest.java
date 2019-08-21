@@ -46,7 +46,7 @@ public class BindToRegistryBeanPostProcessorTest extends ContextTestSupport {
         assertNotNull(foo);
         assertSame(context, foo.getCamelContext());
 
-        FooService other = (FooService) context.getRegistry().lookupByName("myOtherFoo");
+        FooService other = (FooService)context.getRegistry().lookupByName("myOtherFoo");
         assertNotNull(other);
         assertSame(context, other.getCamelContext());
     }

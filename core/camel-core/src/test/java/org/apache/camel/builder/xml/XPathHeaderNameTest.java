@@ -30,9 +30,8 @@ public class XPathHeaderNameTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:premium");
         mock.expectedBodiesReceived("<response>OK</response>");
         mock.expectedHeaderReceived("invoiceDetails", "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
- 
-        template.sendBodyAndHeader("direct:in", "<response>OK</response>",
-                                   "invoiceDetails", "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
+
+        template.sendBodyAndHeader("direct:in", "<response>OK</response>", "invoiceDetails", "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
 
         mock.assertIsSatisfied();
     }
@@ -42,33 +41,29 @@ public class XPathHeaderNameTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:standard");
         mock.expectedBodiesReceived("<response>OK</response>");
         mock.expectedHeaderReceived("invoiceDetails", "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
- 
-        template.sendBodyAndHeader("direct:in", "<response>OK</response>",
-                                   "invoiceDetails", "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
+
+        template.sendBodyAndHeader("direct:in", "<response>OK</response>", "invoiceDetails", "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testChoiceWithHeaderNameUnknown() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unknown");
         mock.expectedBodiesReceived("<response>OK</response>");
         mock.expectedHeaderReceived("invoiceDetails", "<invoice />");
- 
-        template.sendBodyAndHeader("direct:in", "<response>OK</response>",
-                                   "invoiceDetails", "<invoice />");
+
+        template.sendBodyAndHeader("direct:in", "<response>OK</response>", "invoiceDetails", "<invoice />");
 
         mock.assertIsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in")
-                    .choice().when().xpath("/invoice/@orderType = 'premium'", "invoiceDetails")
-                    .to("mock:premium").when().xpath("/invoice/@orderType = 'standard'", "invoiceDetails")
-                    .to("mock:standard").otherwise().to("mock:unknown").end();
+                from("direct:in").choice().when().xpath("/invoice/@orderType = 'premium'", "invoiceDetails").to("mock:premium").when()
+                    .xpath("/invoice/@orderType = 'standard'", "invoiceDetails").to("mock:standard").otherwise().to("mock:unknown").end();
             }
         };
     }

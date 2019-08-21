@@ -32,8 +32,7 @@ public class XPathWithNamespaceBuilderFilterTest extends ContextTestSupport {
     public void testSendMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
-                "<person xmlns='http://acme.com/cheese' name='James' city='London'/>");
+        template.sendBody("direct:start", "<person xmlns='http://acme.com/cheese' name='James' city='London'/>");
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -42,8 +41,7 @@ public class XPathWithNamespaceBuilderFilterTest extends ContextTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        template.sendBody("direct:start",
-                "<person xmlns='http://acme.com/cheese'  name='Hiram' city='Tampa'/>");
+        template.sendBody("direct:start", "<person xmlns='http://acme.com/cheese'  name='Hiram' city='Tampa'/>");
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -63,13 +61,10 @@ public class XPathWithNamespaceBuilderFilterTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 // lets define the namespaces we'll need in our filters
-                Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
-                        .add("xsd", "http://www.w3.org/2001/XMLSchema");
+                Namespaces ns = new Namespaces("c", "http://acme.com/cheese").add("xsd", "http://www.w3.org/2001/XMLSchema");
 
                 // now lets create an xpath based Message Filter
-                from("direct:start").
-                        filter(xpath("/c:person[@name='James']", ns)).
-                        to("mock:result");
+                from("direct:start").filter(xpath("/c:person[@name='James']", ns)).to("mock:result");
                 // END SNIPPET: example
             }
         };

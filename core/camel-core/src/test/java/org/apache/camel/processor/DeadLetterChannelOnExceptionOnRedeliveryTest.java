@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,8 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit test for testing possibility to modify exchange before redelivering specific
- * per on exception
+ * Unit test for testing possibility to modify exchange before redelivering
+ * specific per on exception
  */
 public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSupport {
 
@@ -67,26 +68,24 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // when we redeliver caused by an IOException we want to do some special
+                // when we redeliver caused by an IOException we want to do some
+                // special
                 // code before the redeliver attempt
                 onException(IOException.class)
-                        // try to redeliver at most 3 times
-                        .maximumRedeliveries(3)
-                        // setting delay to zero is just to make unit testing faster
-                        .redeliveryDelay(0)
-                        .onRedelivery(new MyIORedeliverProcessor());
+                    // try to redeliver at most 3 times
+                    .maximumRedeliveries(3)
+                    // setting delay to zero is just to make unit testing faster
+                    .redeliveryDelay(0).onRedelivery(new MyIORedeliverProcessor());
                 // END SNIPPET: e1
 
                 // START SNIPPET: e2
                 // we configure our Dead Letter Channel to invoke
                 // MyRedeliveryProcessor before a redelivery is
                 // attempted. This allows us to alter the message before
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5)
-                        .onRedelivery(new MyRedeliverProcessor())
-                        // setting delay to zero is just to make unit testing faster
-                        .redeliveryDelay(0L));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5).onRedelivery(new MyRedeliverProcessor())
+                    // setting delay to zero is just to make unit testing faster
+                    .redeliveryDelay(0L));
                 // END SNIPPET: e2
-
 
                 from("direct:start").process(new ThrowExceptionProcessor()).to("mock:result");
 
@@ -97,7 +96,8 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
 
     // START SNIPPET: e3
     // This is our processor that is executed before every redelivery attempt
-    // here we can do what we want in the java code, such as altering the message
+    // here we can do what we want in the java code, such as altering the
+    // message
     public static class MyRedeliverProcessor implements Processor {
 
         @Override
@@ -115,8 +115,10 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
     // END SNIPPET: e3
 
     // START SNIPPET: e4
-    // This is our processor that is executed before IOException redeliver attempt
-    // here we can do what we want in the java code, such as altering the message
+    // This is our processor that is executed before IOException redeliver
+    // attempt
+    // here we can do what we want in the java code, such as altering the
+    // message
 
     public static class MyIORedeliverProcessor implements Processor {
 
@@ -152,6 +154,5 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
 
         }
     }
-
 
 }

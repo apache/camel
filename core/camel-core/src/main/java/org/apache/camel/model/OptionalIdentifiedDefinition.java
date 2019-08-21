@@ -58,7 +58,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     /**
      * Sets the description of this node
      *
-     * @param description  sets the text description, use null to not set a text
+     * @param description sets the text description, use null to not set a text
      */
     @XmlElement
     public void setDescription(DescriptionDefinition description) {
@@ -76,7 +76,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     /**
      * Sets the description of this node
      *
-     * @param text  sets the text description, use null to not set a text
+     * @param text sets the text description, use null to not set a text
      * @return the builder
      */
     @SuppressWarnings("unchecked")
@@ -87,15 +87,16 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
             }
             description.setText(text);
         }
-        return (T) this;
+        return (T)this;
     }
 
     /**
      * Sets the description of this node
      *
-     * @param id  sets the id, use null to not set an id
-     * @param text  sets the text description, use null to not set a text
-     * @param lang  sets the language for the description, use null to not set a language
+     * @param id sets the id, use null to not set an id
+     * @param text sets the text description, use null to not set a text
+     * @param lang sets the language for the description, use null to not set a
+     *            language
      * @return the builder
      */
     @SuppressWarnings("unchecked")
@@ -115,19 +116,19 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
             }
             description.setLang(lang);
         }
-        return (T) this;
+        return (T)this;
     }
 
     /**
      * Sets the id of this node
      *
-     * @param id  the id
+     * @param id the id
      * @return the builder
      */
     @SuppressWarnings("unchecked")
     public T id(String id) {
         setId(id);
-        return (T) this;
+        return (T)this;
     }
 
     /**
@@ -160,7 +161,8 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     }
 
     /**
-     * Returns the description text or null if there is no description text associated with this node
+     * Returns the description text or null if there is no description text
+     * associated with this node
      */
     @Override
     public String getDescriptionText() {

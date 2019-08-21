@@ -36,8 +36,7 @@ public class ToDynamicRawTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .toD("mock:RAW(se+ret)");
+                from("direct:start").toD("mock:RAW(se+ret)");
             }
         };
     }

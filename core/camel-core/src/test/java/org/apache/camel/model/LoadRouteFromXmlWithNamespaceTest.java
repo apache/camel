@@ -37,7 +37,8 @@ public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
         MockEndpoint bar = context.getEndpoint("mock:bar", MockEndpoint.class);
         bar.expectedBodiesReceived("Hello from foo");
 
-        // Make sure loaded route can process a XML payload with namespaces attached
+        // Make sure loaded route can process a XML payload with namespaces
+        // attached
         context.createProducerTemplate().sendBody("direct:foo", "<?xml version='1.0'?><foo xmlns='http://foo'><bar>cheese</bar></foo>");
 
         bar.assertIsSatisfied();

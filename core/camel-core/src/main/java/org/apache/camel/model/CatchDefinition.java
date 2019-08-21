@@ -40,7 +40,8 @@ import org.apache.camel.spi.Metadata;
 public class CatchDefinition extends ProcessorDefinition<CatchDefinition> implements OutputNode {
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<>();
-    @XmlElement(name = "onWhen") @AsPredicate
+    @XmlElement(name = "onWhen")
+    @AsPredicate
     private WhenDefinition onWhen;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
@@ -90,13 +91,13 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> implem
     public void setExceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
         this.exceptionClasses = exceptionClasses;
     }
-    
+
     // Fluent API
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     /**
      * The exceptions to catch.
      *
-     * @param exceptionClasses  a list of the exception classes
+     * @param exceptionClasses a list of the exception classes
      * @return the builder
      * @deprecated use {@link #exception(Class[])}
      */
@@ -109,7 +110,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> implem
     /**
      * The exception(s) to catch.
      *
-     * @param exceptions  one or more exceptions
+     * @param exceptions one or more exceptions
      * @return the builder
      */
     public CatchDefinition exception(Class<? extends Throwable>... exceptions) {
@@ -121,14 +122,15 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> implem
         }
         return this;
     }
-    
+
     /**
-     * Sets an additional predicate that should be true before the onCatch is triggered.
+     * Sets an additional predicate that should be true before the onCatch is
+     * triggered.
      * <p/>
-     * To be used for fine grained controlling whether a thrown exception should be intercepted
-     * by this exception type or not.
+     * To be used for fine grained controlling whether a thrown exception should
+     * be intercepted by this exception type or not.
      *
-     * @param predicate  predicate that determines true or false
+     * @param predicate predicate that determines true or false
      * @return the builder
      */
     public CatchDefinition onWhen(@AsPredicate Predicate predicate) {
@@ -139,7 +141,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> implem
     /**
      * Sets the exception class that the CatchType want to catch
      *
-     * @param exception  the exception of class
+     * @param exception the exception of class
      * @return the builder
      * @deprecated use {@link #exception(Class[])}
      */

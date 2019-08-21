@@ -261,9 +261,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start")
-                    .onException(Exception.class).redeliveryDelay(0).retryWhile(method("myRetryBean")).end()
-                    .recipientList(header("recipientListHeader"))
+                from("seda:start").onException(Exception.class).redeliveryDelay(0).retryWhile(method("myRetryBean")).end().recipientList(header("recipientListHeader"))
                     .to("mock:result");
 
                 from("direct:foo").to("log:foo").to("mock:foo");
@@ -273,12 +271,14 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
     public class MyRetryBean {
 
-        // using bean binding we can bind the information from the exchange to the types we have in our method signature
+        // using bean binding we can bind the information from the exchange to
+        // the types we have in our method signature
         public boolean retry(@Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
             invoked.incrementAndGet();
 
-            // we can of course do what ever we want to determine the result but this is a unit test so we end after 3 attempts
+            // we can of course do what ever we want to determine the result but
+            // this is a unit test so we end after 3 attempts
             return counter < 3;
         }
     }

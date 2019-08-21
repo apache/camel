@@ -35,10 +35,7 @@ public class PropertiesComponentInitialPropertiesTest extends ContextTestSupport
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("{{first}}")
-                    .to("mock:{{second}}")
-                    .to("{{cool.end}}");
+                from("direct:start").to("{{first}}").to("mock:{{second}}").to("{{cool.end}}");
             }
         });
         context.start();

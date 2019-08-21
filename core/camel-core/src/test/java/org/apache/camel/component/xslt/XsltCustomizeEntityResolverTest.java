@@ -48,9 +48,8 @@ public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:src/test/data/?fileName=xml_with_entity.xml&noop=true&initialDelay=0&delay=10").
-                to("xslt:xslt/common/copy.xsl?allowStAX=false&output=string&entityResolver=#customEntityResolver").
-                    to("mock:resultURIResolverDirect");
+                from("file:src/test/data/?fileName=xml_with_entity.xml&noop=true&initialDelay=0&delay=10")
+                    .to("xslt:xslt/common/copy.xsl?allowStAX=false&output=string&entityResolver=#customEntityResolver").to("mock:resultURIResolverDirect");
             }
         };
     }

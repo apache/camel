@@ -20,7 +20,7 @@ package org.apache.camel.issues;
  *
  */
 public class MyTransformBean {
-    
+
     public String transformMe(String data) {
         return "Hello " + data;
     }

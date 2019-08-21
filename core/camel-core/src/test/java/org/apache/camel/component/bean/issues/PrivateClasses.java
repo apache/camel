@@ -22,7 +22,7 @@ package org.apache.camel.component.bean.issues;
 public final class PrivateClasses {
     public static final String EXPECTED_OUTPUT = "Hello Camel";
     public static final String METHOD_NAME = "sayHello";
-    
+
     private PrivateClasses() {
         // Utility class; can't be instantiated
     }

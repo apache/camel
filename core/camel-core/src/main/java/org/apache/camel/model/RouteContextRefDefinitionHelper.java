@@ -49,14 +49,17 @@ public final class RouteContextRefDefinitionHelper {
     /**
      * Lookup the routes from the {@link RouteContextRefDefinition}.
      * <p/>
-     * This implementation must be used to lookup the routes as it performs a deep clone of the routes
-     * as a {@link RouteContextRefDefinition} can be re-used with multiple {@link ModelCamelContext} and each
-     * context should have their own instances of the routes. This is to ensure no side-effects and sharing
-     * of instances between the contexts. For example such as property placeholders may be context specific
-     * so the routes should not use placeholders from another {@link ModelCamelContext}.
+     * This implementation must be used to lookup the routes as it performs a
+     * deep clone of the routes as a {@link RouteContextRefDefinition} can be
+     * re-used with multiple {@link ModelCamelContext} and each context should
+     * have their own instances of the routes. This is to ensure no side-effects
+     * and sharing of instances between the contexts. For example such as
+     * property placeholders may be context specific so the routes should not
+     * use placeholders from another {@link ModelCamelContext}.
      *
      * @param camelContext the CamelContext
-     * @param ref          the id of the {@link RouteContextRefDefinition} to lookup and get the routes.
+     * @param ref the id of the {@link RouteContextRefDefinition} to lookup and
+     *            get the routes.
      * @return the routes.
      */
     @SuppressWarnings("unchecked")
@@ -69,8 +72,10 @@ public final class RouteContextRefDefinitionHelper {
             throw new IllegalArgumentException("Cannot find RouteContext with id " + ref);
         }
 
-        // must clone the route definitions as they can be reused with multiple CamelContexts
-        // and they would need their own instances of the definitions to not have side effects among
+        // must clone the route definitions as they can be reused with multiple
+        // CamelContexts
+        // and they would need their own instances of the definitions to not
+        // have side effects among
         // the CamelContext - for example property placeholder resolutions etc.
         List<RouteDefinition> clones = new ArrayList<>(answer.size());
         try {
@@ -105,9 +110,10 @@ public final class RouteContextRefDefinitionHelper {
         Object clone = unmarshaller.unmarshal(bis);
 
         if (clone instanceof RouteDefinition) {
-            RouteDefinition def2 = (RouteDefinition) clone;
+            RouteDefinition def2 = (RouteDefinition)clone;
 
-            // need to clone the namespaces also as they are not JAXB marshalled (as they are transient)
+            // need to clone the namespaces also as they are not JAXB marshalled
+            // (as they are transient)
             Iterator<ExpressionNode> it = ProcessorDefinitionHelper.filterTypeInOutputs(def.getOutputs(), ExpressionNode.class);
             Iterator<ExpressionNode> it2 = ProcessorDefinitionHelper.filterTypeInOutputs(def2.getOutputs(), ExpressionNode.class);
             while (it.hasNext() && it2.hasNext()) {
@@ -117,10 +123,10 @@ public final class RouteContextRefDefinitionHelper {
                 NamespaceAwareExpression name = null;
                 NamespaceAwareExpression name2 = null;
                 if (node.getExpression() instanceof NamespaceAwareExpression) {
-                    name = (NamespaceAwareExpression) node.getExpression();
+                    name = (NamespaceAwareExpression)node.getExpression();
                 }
                 if (node2.getExpression() instanceof NamespaceAwareExpression) {
-                    name2 = (NamespaceAwareExpression) node2.getExpression();
+                    name2 = (NamespaceAwareExpression)node2.getExpression();
                 }
 
                 if (name != null && name2 != null && name.getNamespaces() != null && !name.getNamespaces().isEmpty()) {

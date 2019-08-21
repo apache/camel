@@ -24,7 +24,7 @@ import org.apache.camel.spi.RouteContext;
 public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerBuilderRef> {
 
     public ErrorHandlerRefReifier(ErrorHandlerFactory definition) {
-        super((ErrorHandlerBuilderRef) definition);
+        super((ErrorHandlerBuilderRef)definition);
     }
 
     @Override

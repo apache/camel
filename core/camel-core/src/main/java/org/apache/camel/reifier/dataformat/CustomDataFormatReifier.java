@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 public class CustomDataFormatReifier extends DataFormatReifier<CustomDataFormat> {
 
     public CustomDataFormatReifier(DataFormatDefinition definition) {
-        super((CustomDataFormat) definition);
+        super((CustomDataFormat)definition);
     }
 
     @Override

@@ -85,11 +85,9 @@ public class AdviceWithInterceptFromRemoveTest extends ContextTestSupport {
             public void configure() throws Exception {
                 interceptFrom().id("myIntercept").transform(constant("Bye World")).to("mock:intercept");
 
-                from("direct:bar").routeId("bar")
-                        .to("mock:c").to("mock:d");
+                from("direct:bar").routeId("bar").to("mock:c").to("mock:d");
 
-                from("direct:foo").routeId("foo")
-                        .to("mock:a").to("mock:b");
+                from("direct:foo").routeId("foo").to("mock:a").to("mock:b");
 
             }
         };

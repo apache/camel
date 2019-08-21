@@ -53,10 +53,8 @@ public class AggregateMultipleSourceTest extends ContextTestSupport {
                 from("seda:bar").to("direct:aggregate");
                 from("seda:baz").to("direct:aggregate");
 
-                from("direct:aggregate")
-                    .aggregate(header("type"), new MyAggregationStrategy()).completionSize(25).completionTimeout(500).completionTimeoutCheckerInterval(10)
-                        .to("mock:result")
-                    .end();
+                from("direct:aggregate").aggregate(header("type"), new MyAggregationStrategy()).completionSize(25).completionTimeout(500).completionTimeoutCheckerInterval(10)
+                    .to("mock:result").end();
             }
         };
     }

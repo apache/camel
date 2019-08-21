@@ -63,13 +63,9 @@ public class RouteAwareSynchronizationTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("start")
-                    .to("mock:a")
-                    .to("direct:foo")
-                    .to("mock:b");
+                from("direct:start").routeId("start").to("mock:a").to("direct:foo").to("mock:b");
 
-                from("direct:foo").routeId("foo")
-                    .to("mock:foo");
+                from("direct:foo").routeId("foo").to("mock:foo");
             }
         };
     }

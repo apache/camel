@@ -46,13 +46,7 @@ public class CBRHeaderPredicateTest extends ContextTestSupport {
             public void configure() throws Exception {
                 bindToRegistry("cbrBean", new MyCBRBean());
 
-                from("direct:start")
-                    .choice()
-                        .when().method("cbrBean", "checkHeader")
-                            .to("mock:foo")
-                        .otherwise()
-                            .to("mock:bar")
-                    .end();
+                from("direct:start").choice().when().method("cbrBean", "checkHeader").to("mock:foo").otherwise().to("mock:bar").end();
             }
         };
     }
@@ -61,9 +55,8 @@ public class CBRHeaderPredicateTest extends ContextTestSupport {
 
         public boolean checkHeader(Exchange exchange) {
             Message inMsg = exchange.getIn();
-            String foo = (String) inMsg.getHeader("foo");
+            String foo = (String)inMsg.getHeader("foo");
             return foo.equals("bar");
         }
     }
 }
-

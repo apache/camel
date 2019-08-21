@@ -39,7 +39,7 @@ public class MulticastParallelFailureEndpointTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye World");
 
         Exchange result = runTest("direct:start");
-        
+
         // try..catch block should clear handled exceptions
         assertNotNull(result);
         assertEquals(null, result.getProperty(Exchange.FAILURE_ENDPOINT));
@@ -66,19 +66,11 @@ public class MulticastParallelFailureEndpointTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .doTry()
-                        .to("direct:run")
-                    .doCatch(IllegalArgumentException.class)
-                        // ignore
-                    .end()
-                    .to("mock:result");
+                from("direct:start").doTry().to("direct:run").doCatch(IllegalArgumentException.class)
+                    // ignore
+                    .end().to("mock:result");
 
-                from("direct:run")
-                    .multicast().parallelProcessing()
-                        .to("direct:a", "direct:b")
-                    .end()
-                    .to("mock:run");
+                from("direct:run").multicast().parallelProcessing().to("direct:a", "direct:b").end().to("mock:run");
 
                 from("direct:a").throwException(new IllegalArgumentException("Oops...")).to("mock:a");
                 from("direct:b").setBody(constant("Bye World")).to("mock:b");

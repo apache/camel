@@ -32,7 +32,8 @@ public class AdviceWithWeaveLastCBRTest extends ContextTestSupport {
         RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // insert at the end of the existing route, the given piece of route
+                // insert at the end of the existing route, the given piece of
+                // route
                 weaveAddLast().to("mock:last");
             }
         });
@@ -52,7 +53,8 @@ public class AdviceWithWeaveLastCBRTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 weaveByToUri("mock:foo").replace().to("mock:foo2");
-                // insert at the end of the existing route, the given piece of route
+                // insert at the end of the existing route, the given piece of
+                // route
                 weaveAddLast().to("mock:last");
             }
         });
@@ -72,10 +74,7 @@ public class AdviceWithWeaveLastCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when().header("foo").to("mock:foo")
-                        .otherwise().to("mock:bar");
+                from("direct:start").choice().when().header("foo").to("mock:foo").otherwise().to("mock:bar");
             }
         };
     }

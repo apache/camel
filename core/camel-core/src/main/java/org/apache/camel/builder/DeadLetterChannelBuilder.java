@@ -30,8 +30,8 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.LoggerFactory;
 
 /**
- * A builder of a <a
- * href="http://camel.apache.org/dead-letter-channel.html">Dead Letter
+ * A builder of a
+ * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter
  * Channel</a>
  */
 public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
@@ -49,15 +49,15 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
     public DeadLetterChannelBuilder(String uri) {
         setDeadLetterUri(uri);
     }
-    
+
     @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         validateDeadLetterUri(routeContext);
 
-        DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), 
-                getRedeliveryPolicy(), getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(), isDeadLetterHandleNewException(),
-                isUseOriginalMessage(), isUseOriginalBody(), getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()),
-                getOnPrepareFailure(), getOnExceptionOccurred());
+        DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
+                                                         getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(), isDeadLetterHandleNewException(),
+                                                         isUseOriginalMessage(), isUseOriginalBody(), getRetryWhilePolicy(routeContext.getCamelContext()),
+                                                         getExecutorService(routeContext.getCamelContext()), getOnPrepareFailure(), getOnExceptionOccurred());
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;
@@ -81,9 +81,11 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
     @Override
     public Processor getFailureProcessor() {
         if (failureProcessor == null) {
-            // wrap in our special safe fallback error handler if sending to dead letter channel fails
+            // wrap in our special safe fallback error handler if sending to
+            // dead letter channel fails
             Processor child = new SendProcessor(deadLetter, ExchangePattern.InOnly);
-            // force MEP to be InOnly so when sending to DLQ we would not expect a reply if the MEP was InOut
+            // force MEP to be InOnly so when sending to DLQ we would not expect
+            // a reply if the MEP was InOut
             failureProcessor = new FatalFallbackErrorHandler(child, true);
         }
         return failureProcessor;

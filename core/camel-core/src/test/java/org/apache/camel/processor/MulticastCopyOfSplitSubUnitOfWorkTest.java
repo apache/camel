@@ -67,24 +67,17 @@ public class MulticastCopyOfSplitSubUnitOfWorkTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage()
-                        .maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start")
-                    .to("mock:a")
-                    // share unit of work in the multicast, which tells Camel to propagate failures from
-                    // processing the multicast messages back to the result of the splitter, which allows
+                from("direct:start").to("mock:a")
+                    // share unit of work in the multicast, which tells Camel to
+                    // propagate failures from
+                    // processing the multicast messages back to the result of
+                    // the splitter, which allows
                     // it to act as a combined unit of work
-                    .multicast().shareUnitOfWork()
-                        .to("mock:b")
-                        .to("direct:line")
-                    .end()
-                    .to("mock:result");
+                    .multicast().shareUnitOfWork().to("mock:b").to("direct:line").end().to("mock:result");
 
-                from("direct:line")
-                    .to("log:line")
-                    .process(new MyProcessor())
-                    .to("mock:line");
+                from("direct:line").to("log:line").process(new MyProcessor()).to("mock:line");
                 // END SNIPPET: e1
             }
         };

@@ -61,21 +61,10 @@ public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // Properties in headers
-                from("direct:header-start")
-                    .setHeader("foo", simple("{{foo}}"))
-                    .choice()
-                        .when(simple("${header.foo} == 'bar'"))
-                        .to("mock:header-ok")
-                    .otherwise()
-                        .to("mock:ko");
+                from("direct:header-start").setHeader("foo", simple("{{foo}}")).choice().when(simple("${header.foo} == 'bar'")).to("mock:header-ok").otherwise().to("mock:ko");
 
                 // Properties in choices
-                from("direct:choice-start")
-                    .choice()
-                        .when(simple("'{{foo}}' == 'bar'"))
-                            .to("mock:choice-ok")
-                        .otherwise()
-                            .to("mock:ko");
+                from("direct:choice-start").choice().when(simple("'{{foo}}' == 'bar'")).to("mock:choice-ok").otherwise().to("mock:ko");
 
                 // Properties in URI
                 from("direct:direct-start").to("direct:direct-{{foo}}");

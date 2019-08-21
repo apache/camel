@@ -45,22 +45,19 @@ public final class RouteFilters implements Function<RouteDefinition, Boolean> {
     }
 
     /**
-     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     * Used for filtering routes routes matching the given pattern, which
+     * follows the following rules: - Match by route id - Match by route input
+     * endpoint uri The matching is using exact match, by wildcard and regular
+     * expression as documented by
+     * {@link PatternHelper#matchPattern(String, String)}. For example to only
+     * include routes which starts with foo in their route id's, use:
+     * include=foo&#42; And to exclude routes which starts from JMS endpoints,
+     * use: exclude=jms:&#42; Multiple patterns can be separated by comma, for
+     * example to exclude both foo and bar routes, use:
+     * exclude=foo&#42;,bar&#42; Exclude takes precedence over include.
      *
-     * - Match by route id
-     * - Match by route input endpoint uri
-     *
-     * The matching is using exact match, by wildcard and regular expression as documented by {@link PatternHelper#matchPattern(String, String)}.
-     *
-     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
-     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
-     *
-     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
-     *
-     * Exclude takes precedence over include.
-     *
-     * @param include  the include pattern
-     * @param exclude  the exclude pattern
+     * @param include the include pattern
+     * @param exclude the exclude pattern
      */
     public static Function<RouteDefinition, Boolean> filterByPattern(String include, String exclude) {
         return new RouteFilters(include, exclude);
@@ -96,11 +93,12 @@ public final class RouteFilters implements Function<RouteDefinition, Boolean> {
                 }
             }
         } else {
-            // if include has not been set then, we assume its matched as it was not excluded
+            // if include has not been set then, we assume its matched as it was
+            // not excluded
             match = true;
         }
 
         return match;
     }
-    
+
 }

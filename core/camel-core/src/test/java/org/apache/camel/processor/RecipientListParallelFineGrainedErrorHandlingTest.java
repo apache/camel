@@ -42,9 +42,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
             public void configure() throws Exception {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start")
-                    .to("mock:a")
-                    .recipientList(header("foo")).stopOnException().parallelProcessing();
+                from("direct:start").to("mock:a").recipientList(header("foo")).stopOnException().parallelProcessing();
             }
         });
         context.start();
@@ -68,15 +66,14 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
             public void configure() throws Exception {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start")
-                    .to("mock:a")
-                    .recipientList(header("foo")).stopOnException().parallelProcessing();
+                from("direct:start").to("mock:a").recipientList(header("foo")).stopOnException().parallelProcessing();
             }
         });
         context.start();
 
         getMockEndpoint("mock:a").expectedMessageCount(1);
-        // can be 0 or 1 depending whether the task was executed or not (we run parallel)
+        // can be 0 or 1 depending whether the task was executed or not (we run
+        // parallel)
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
         getMockEndpoint("mock:bar").expectedMinimumMessageCount(0);
         getMockEndpoint("mock:baz").expectedMinimumMessageCount(0);
@@ -104,15 +101,14 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
 
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start")
-                    .to("mock:a")
-                    .bean(MyRecipientBean.class);
+                from("direct:start").to("mock:a").bean(MyRecipientBean.class);
             }
         });
         context.start();
 
         getMockEndpoint("mock:a").expectedMessageCount(1);
-        // can be 0 or 1 depending whether the task was executed or not (we run parallel)
+        // can be 0 or 1 depending whether the task was executed or not (we run
+        // parallel)
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
         getMockEndpoint("mock:bar").expectedMinimumMessageCount(0);
         getMockEndpoint("mock:baz").expectedMinimumMessageCount(0);

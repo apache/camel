@@ -119,9 +119,11 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("apple", exchange.getProperty("fruit"));
         assertEquals(null, exchange.getProperty("beer"));
         assertEquals(null, exchange.getProperty("beer", String.class));
-        
-        // Current TypeConverter support to turn the null value to false of boolean,
-        // as assertEquals needs the Object as the parameter, we have to use Boolean.FALSE value in this case
+
+        // Current TypeConverter support to turn the null value to false of
+        // boolean,
+        // as assertEquals needs the Object as the parameter, we have to use
+        // Boolean.FALSE value in this case
         assertEquals(Boolean.FALSE, exchange.getProperty("beer", boolean.class));
         assertEquals(null, exchange.getProperty("beer", Boolean.class));
 
@@ -130,7 +132,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("banana", exchange.getProperty("beer", "banana"));
         assertEquals("banana", exchange.getProperty("beer", "banana", String.class));
     }
-    
+
     @Test
     public void testRemoveProperties() throws Exception {
         exchange.removeProperty("foobar");
@@ -152,7 +154,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals(null, exchange.getProperty("fruit1", String.class));
         assertEquals("Africa", exchange.getProperty("zone", String.class));
     }
-    
+
     @Test
     public void testRemoveAllProperties() throws Exception {
         exchange.removeProperty("foobar");
@@ -192,7 +194,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("peach", exchange.getProperty("fruit2", String.class));
         assertEquals("Africa", exchange.getProperty("zone", String.class));
     }
-    
+
     @Test
     public void testRemovePropertiesPatternWithAllExcluded() throws Exception {
         exchange.removeProperty("foobar");
@@ -217,7 +219,6 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("peach", exchange.getProperty("fruit2", String.class));
         assertEquals("Africa", exchange.getProperty("zone", String.class));
     }
-    
 
     @Test
     public void testInType() throws Exception {
@@ -243,8 +244,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         Exchange destExchange = sourceExchange.copy();
         Message destIn = destExchange.getIn();
 
-        assertEquals("Dest message should be of the same type as source message",
-                     sourceIn.getClass(), destIn.getClass());
+        assertEquals("Dest message should be of the same type as source message", sourceIn.getClass(), destIn.getClass());
     }
 
     public static class MyMessage extends DefaultMessage {

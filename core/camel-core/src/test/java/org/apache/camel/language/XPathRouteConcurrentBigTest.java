@@ -26,21 +26,18 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(XPathRouteConcurrentBigTest.class);
 
-    private static final String XMLTEST1 =
-            "<message><messageType>AAA</messageType><sender>0123456789101112131415</sender>"
-            + "<rawData>Uyw7TSVkUMxUyw7TSgGUMQAyw7TSVkUMxUyA7TSgGUMQAyw7TSVkUMxUyA</rawData>"
-            + "<sentDate>2009-10-12T12:22:02+02:00</sentDate> <receivedDate>2009-10-12T12:23:31.248+02:00</receivedDate>"
-            + "<intproperty>1</intproperty><stringproperty>aaaaaaabbbbbbbccccccccdddddddd</stringproperty></message>";
-    private static final String XMLTEST2 =
-            "<message><messageType>AAB</messageType><sender>0123456789101112131415</sender>"
-            + "<rawData>Uyw7TSVkUMxUyw7TSgGUMQAyw7TSVkUMxUyA7TSgGUMQAyw7TSVkUMxUyA</rawData>"
-            + "<sentDate>2009-10-12T12:22:02+02:00</sentDate> <receivedDate>2009-10-12T12:23:31.248+02:00</receivedDate>"
-            + "<intproperty>1</intproperty><stringproperty>aaaaaaabbbbbbbccccccccdddddddd</stringproperty></message>";
-    private static final String XMLTEST3 =
-            "<message><messageType>ZZZ</messageType><sender>0123456789101112131415</sender>"
-            + "<rawData>Uyw7TSVkUMxUyw7TSgGUMQAyw7TSVkUMxUyA7TSgGUMQAyw7TSVkUMxUyA</rawData>"
-            + "<sentDate>2009-10-12T12:22:02+02:00</sentDate> <receivedDate>2009-10-12T12:23:31.248+02:00</receivedDate>"
-            + "<intproperty>1</intproperty><stringproperty>aaaaaaabbbbbbbccccccccdddddddd</stringproperty></message>";
+    private static final String XMLTEST1 = "<message><messageType>AAA</messageType><sender>0123456789101112131415</sender>"
+                                           + "<rawData>Uyw7TSVkUMxUyw7TSgGUMQAyw7TSVkUMxUyA7TSgGUMQAyw7TSVkUMxUyA</rawData>"
+                                           + "<sentDate>2009-10-12T12:22:02+02:00</sentDate> <receivedDate>2009-10-12T12:23:31.248+02:00</receivedDate>"
+                                           + "<intproperty>1</intproperty><stringproperty>aaaaaaabbbbbbbccccccccdddddddd</stringproperty></message>";
+    private static final String XMLTEST2 = "<message><messageType>AAB</messageType><sender>0123456789101112131415</sender>"
+                                           + "<rawData>Uyw7TSVkUMxUyw7TSgGUMQAyw7TSVkUMxUyA7TSgGUMQAyw7TSVkUMxUyA</rawData>"
+                                           + "<sentDate>2009-10-12T12:22:02+02:00</sentDate> <receivedDate>2009-10-12T12:23:31.248+02:00</receivedDate>"
+                                           + "<intproperty>1</intproperty><stringproperty>aaaaaaabbbbbbbccccccccdddddddd</stringproperty></message>";
+    private static final String XMLTEST3 = "<message><messageType>ZZZ</messageType><sender>0123456789101112131415</sender>"
+                                           + "<rawData>Uyw7TSVkUMxUyw7TSgGUMQAyw7TSVkUMxUyA7TSgGUMQAyw7TSVkUMxUyA</rawData>"
+                                           + "<sentDate>2009-10-12T12:22:02+02:00</sentDate> <receivedDate>2009-10-12T12:23:31.248+02:00</receivedDate>"
+                                           + "<intproperty>1</intproperty><stringproperty>aaaaaaabbbbbbbccccccccdddddddd</stringproperty></message>";
 
     @Test
     public void testConcurrent() throws Exception {
@@ -90,38 +87,14 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?concurrentConsumers=50&size=250000").choice()
-                    .when()
-                        .xpath("//messageType = 'AAA' or "
-                                + "//messageType = 'AAB' or "
-                                + "//messageType = 'AAC' or "
-                                + "//messageType = 'AAD' or "
-                                + "//messageType = 'AAE' or "
-                                + "//messageType = 'AAF' or "
-                                + "//messageType = 'AAG' or "
-                                + "//messageType = 'AAH' or "
-                                + "//messageType = 'AAI' or "
-                                + "//messageType = 'AAJ' or "
-                                + "//messageType = 'AAK' or "
-                                + "//messageType = 'AAL' or "
-                                + "//messageType = 'AAM' or "
-                                + "//messageType = 'AAN' or "
-                                + "//messageType = 'AAO' or "
-                                + "//messageType = 'AAP' or "
-                                + "//messageType = 'AAQ' or "
-                                + "//messageType = 'AAR' or "
-                                + "//messageType = 'AAS' or "
-                                + "//messageType = 'AAT' or "
-                                + "//messageType = 'AAU' or "
-                                + "//messageType = 'AAV' or "
-                                + "//messageType = 'AAW' or "
-                                + "//messageType = 'AAX' or "
-                                + "//messageType = 'AAY' or "
-                                + "//messageType = 'AAZ'")
-                        .to("mock:result")
-                    .otherwise()
-                        .to("mock:other")
-                    .end();
+                from("seda:foo?concurrentConsumers=50&size=250000").choice().when()
+                    .xpath("//messageType = 'AAA' or " + "//messageType = 'AAB' or " + "//messageType = 'AAC' or " + "//messageType = 'AAD' or " + "//messageType = 'AAE' or "
+                           + "//messageType = 'AAF' or " + "//messageType = 'AAG' or " + "//messageType = 'AAH' or " + "//messageType = 'AAI' or " + "//messageType = 'AAJ' or "
+                           + "//messageType = 'AAK' or " + "//messageType = 'AAL' or " + "//messageType = 'AAM' or " + "//messageType = 'AAN' or " + "//messageType = 'AAO' or "
+                           + "//messageType = 'AAP' or " + "//messageType = 'AAQ' or " + "//messageType = 'AAR' or " + "//messageType = 'AAS' or " + "//messageType = 'AAT' or "
+                           + "//messageType = 'AAU' or " + "//messageType = 'AAV' or " + "//messageType = 'AAW' or " + "//messageType = 'AAX' or " + "//messageType = 'AAY' or "
+                           + "//messageType = 'AAZ'")
+                    .to("mock:result").otherwise().to("mock:other").end();
             }
         };
     }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -49,8 +50,7 @@ public class FileConsumerPreMoveIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/premove?preMove=before/${file:name.noext}-moved.${file:ext}&initialDelay=0&delay=10")
-                    .process(new MyPreMoveCheckerProcessor())
+                from("file://target/data/premove?preMove=before/${file:name.noext}-moved.${file:ext}&initialDelay=0&delay=10").process(new MyPreMoveCheckerProcessor())
                     .to("mock:result");
             }
         };

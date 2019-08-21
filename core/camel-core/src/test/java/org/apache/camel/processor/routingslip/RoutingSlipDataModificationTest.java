@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.routingslip;
+
 import javax.naming.Context;
 
 import org.apache.camel.Body;
@@ -31,8 +32,7 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
 
     @Test
-    public void testModificationOfDataAlongRoute()
-        throws Exception {
+    public void testModificationOfDataAlongRoute() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
 
@@ -45,8 +45,7 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
     }
 
     protected void sendBody() {
-        template.sendBodyAndHeader("direct:a", ANSWER, ROUTING_SLIP_HEADER,
-                "mock:x , bean:myBean?method=modifyData");
+        template.sendBodyAndHeader("direct:a", ANSWER, ROUTING_SLIP_HEADER, "mock:x , bean:myBean?method=modifyData");
     }
 
     @Override

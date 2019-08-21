@@ -50,21 +50,15 @@ public class OnCompletionModeTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo")
-                    // we do not want parallel as we want to change the message before the consumer writes the response
-                    .onCompletion().modeBeforeConsumer()
-                        .transform(body().prepend("I was here "))
-                        .to("mock:after")
-                    .end()
-                    .to("mock:input")
-                    .transform(body().prepend("Hello ")).to("log:foo");
+                    // we do not want parallel as we want to change the message
+                    // before the consumer writes the response
+                    .onCompletion().modeBeforeConsumer().transform(body().prepend("I was here ")).to("mock:after").end().to("mock:input").transform(body().prepend("Hello "))
+                    .to("log:foo");
 
                 from("seda:bar")
-                    // need to use parallel to make copy so we do not do side-effects
-                    .onCompletion().modeAfterConsumer().parallelProcessing()
-                        .transform(body().prepend("I was here "))
-                        .to("mock:after")
-                    .end()
-                    .to("mock:input")
+                    // need to use parallel to make copy so we do not do
+                    // side-effects
+                    .onCompletion().modeAfterConsumer().parallelProcessing().transform(body().prepend("I was here ")).to("mock:after").end().to("mock:input")
                     .transform(body().prepend("Hello ")).to("log:bar");
             }
         };

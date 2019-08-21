@@ -38,9 +38,7 @@ public class RecipientListAggregationStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .recipientList(header("foo")).aggregationStrategy(new BodyInAggregatingStrategy())
-                    .to("mock:result");
+                from("direct:start").recipientList(header("foo")).aggregationStrategy(new BodyInAggregatingStrategy()).to("mock:result");
 
                 from("direct:a").transform(constant("a"));
                 from("direct:b").transform(constant("b"));

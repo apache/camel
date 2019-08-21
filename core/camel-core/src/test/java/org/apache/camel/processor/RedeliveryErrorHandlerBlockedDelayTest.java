@@ -36,7 +36,8 @@ public class RedeliveryErrorHandlerBlockedDelayTest extends ContextTestSupport {
         MockEndpoint before = getMockEndpoint("mock:result");
         before.expectedBodiesReceived("Hello World", "Hello Camel");
 
-        // we use blocked redelivery delay so the messages arrive in the same order
+        // we use blocked redelivery delay so the messages arrive in the same
+        // order
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World", "Hello Camel");
 
@@ -52,30 +53,24 @@ public class RedeliveryErrorHandlerBlockedDelayTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // will by default block
-                errorHandler(defaultErrorHandler()
-                    .maximumRedeliveries(5).redeliveryDelay(10));
+                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(10));
 
-                from("seda:start")
-                    .to("log:before")
-                    .to("mock:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            LOG.info("Processing at attempt {} {}", attempt, exchange);
+                from("seda:start").to("log:before").to("mock:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        LOG.info("Processing at attempt {} {}", attempt, exchange);
 
-                            String body = exchange.getIn().getBody(String.class);
-                            if (body.contains("World")) {
-                                if (++attempt <= 2) {
-                                    LOG.info("Processing failed will thrown an exception");
-                                    throw new IllegalArgumentException("Damn");
-                                }
+                        String body = exchange.getIn().getBody(String.class);
+                        if (body.contains("World")) {
+                            if (++attempt <= 2) {
+                                LOG.info("Processing failed will thrown an exception");
+                                throw new IllegalArgumentException("Damn");
                             }
-
-                            exchange.getIn().setBody("Hello " + body);
-                            LOG.info("Processing at attempt {} complete {}", attempt, exchange);
                         }
-                    })
-                    .to("log:after")
-                    .to("mock:result");
+
+                        exchange.getIn().setBody("Hello " + body);
+                        LOG.info("Processing at attempt {} complete {}", attempt, exchange);
+                    }
+                }).to("log:after").to("mock:result");
             }
         };
     }

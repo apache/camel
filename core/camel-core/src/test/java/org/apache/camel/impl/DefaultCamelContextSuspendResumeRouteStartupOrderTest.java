@@ -31,7 +31,7 @@ public class DefaultCamelContextSuspendResumeRouteStartupOrderTest extends Conte
         mock.expectedBodiesReceived("A");
 
         template.sendBody("seda:foo", "A");
-        
+
         assertMockEndpointsSatisfied();
 
         log.info("Suspending");

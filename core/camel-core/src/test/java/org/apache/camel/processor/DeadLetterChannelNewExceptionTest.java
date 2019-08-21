@@ -43,9 +43,7 @@ public class DeadLetterChannelNewExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("bean:" + BadErrorHandler.class.getName()));
 
-                from("direct:start")
-                    .log("Incoming ${body}")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

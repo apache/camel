@@ -26,7 +26,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Thrift data format is used for serialization and deserialization of messages using Apache Thrift binary dataformat.
+ * The Thrift data format is used for serialization and deserialization of
+ * messages using Apache Thrift binary dataformat.
  */
 @Metadata(firstVersion = "2.20.0", label = "dataformat,transformation", title = "Thrift")
 @XmlRootElement(name = "thrift")
@@ -34,20 +35,21 @@ import org.apache.camel.spi.Metadata;
 public class ThriftDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String instanceClass;
-    @XmlAttribute @Metadata(enums = "binary,json,sjson", defaultValue = "binary")
+    @XmlAttribute
+    @Metadata(enums = "binary,json,sjson", defaultValue = "binary")
     private String contentTypeFormat;
     @XmlTransient
     private Object defaultInstance;
-    
+
     public ThriftDataFormat() {
         super("thrift");
     }
-    
+
     public ThriftDataFormat(String instanceClass) {
         this();
-        setInstanceClass(instanceClass); 
+        setInstanceClass(instanceClass);
     }
-    
+
     public ThriftDataFormat(String instanceClass, String contentTypeFormat) {
         this();
         setInstanceClass(instanceClass);
@@ -64,12 +66,12 @@ public class ThriftDataFormat extends DataFormatDefinition {
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
     }
-    
+
     /**
      * Defines a content type format in which thrift message will be
-     * serialized/deserialized from(to) the Java been.
-     * The format can either be native or json for either native binary thrift, json or simple json fields representation.
-     * The default value is binary.
+     * serialized/deserialized from(to) the Java been. The format can either be
+     * native or json for either native binary thrift, json or simple json
+     * fields representation. The default value is binary.
      */
     public void setContentTypeFormat(String contentTypeFormat) {
         this.contentTypeFormat = contentTypeFormat;

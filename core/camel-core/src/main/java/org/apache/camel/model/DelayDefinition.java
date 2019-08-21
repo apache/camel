@@ -41,9 +41,11 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean asyncDelayed;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean callerRunsWhenRejected;
 
     public DelayDefinition() {
@@ -68,7 +70,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
         return "Delay[" + getExpression() + " -> " + getOutputs() + "]";
     }
 
-   // Fluent API
+    // Fluent API
     // -------------------------------------------------------------------------
 
     /**
@@ -83,7 +85,8 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Whether or not the caller should run the task when it was rejected by the thread pool.
+     * Whether or not the caller should run the task when it was rejected by the
+     * thread pool.
      * <p/>
      * Is by default <tt>true</tt>
      *
@@ -96,7 +99,8 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
+     * Enables asynchronous delay which means the thread will <b>not</b> block
+     * while delaying.
      */
     public DelayDefinition asyncDelayed() {
         setAsyncDelayed(true);
@@ -104,7 +108,8 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
+     * Enables asynchronous delay which means the thread will <b>not</b> block
+     * while delaying.
      */
     public DelayDefinition syncDelayed() {
         setAsyncDelayed(false);

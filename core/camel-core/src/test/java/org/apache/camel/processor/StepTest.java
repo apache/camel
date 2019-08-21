@@ -42,16 +42,7 @@ public class StepTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .step("foo")
-                        .to("log:foo")
-                        .to("mock:foo")
-                    .end()
-                    .step("bar")
-                        .to("log:bar")
-                        .to("mock:bar")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").step("foo").to("log:foo").to("mock:foo").end().step("bar").to("log:bar").to("mock:bar").end().to("mock:result");
             }
         };
     }

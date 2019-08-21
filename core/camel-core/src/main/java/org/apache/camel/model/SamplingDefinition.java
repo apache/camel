@@ -35,14 +35,17 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
 
-    // use Long to let it be optional in JAXB so when using XML the default is 1 second
+    // use Long to let it be optional in JAXB so when using XML the default is 1
+    // second
 
-    @XmlAttribute @Metadata(defaultValue = "1")
+    @XmlAttribute
+    @Metadata(defaultValue = "1")
     private Long samplePeriod;
     @XmlAttribute
     private Long messageFrequency;
     @XmlAttribute
-    @XmlJavaTypeAdapter(TimeUnitAdapter.class) @Metadata(defaultValue = "SECONDS")
+    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
+    @Metadata(defaultValue = "SECONDS")
     private TimeUnit units;
 
     public SamplingDefinition() {
@@ -66,7 +69,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     public String toString() {
         return "Sample[" + description() + " -> " + getOutputs() + "]";
     }
-    
+
     protected String description() {
         if (messageFrequency != null) {
             return "1 Exchange per " + getMessageFrequency() + " messages received";
@@ -85,18 +88,21 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     // -------------------------------------------------------------------------
 
     /**
-     * Sets the sample message count which only a single {@link org.apache.camel.Exchange} will pass through after this many received.
+     * Sets the sample message count which only a single
+     * {@link org.apache.camel.Exchange} will pass through after this many
+     * received.
      *
-     * @param messageFrequency 
+     * @param messageFrequency
      * @return the builder
      */
     public SamplingDefinition sampleMessageFrequency(long messageFrequency) {
         setMessageFrequency(messageFrequency);
         return this;
     }
-    
+
     /**
-     * Sets the sample period during which only a single {@link org.apache.camel.Exchange} will pass through.
+     * Sets the sample period during which only a single
+     * {@link org.apache.camel.Exchange} will pass through.
      *
      * @param samplePeriod the period
      * @return the builder
@@ -125,7 +131,8 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     }
 
     /**
-     * Sets the sample period during which only a single Exchange will pass through.
+     * Sets the sample period during which only a single Exchange will pass
+     * through.
      */
     public void setSamplePeriod(Long samplePeriod) {
         this.samplePeriod = samplePeriod;
@@ -136,7 +143,8 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     }
 
     /**
-     * Sets the sample message count which only a single Exchange will pass through after this many received.
+     * Sets the sample message count which only a single Exchange will pass
+     * through after this many received.
      */
     public void setMessageFrequency(Long messageFrequency) {
         this.messageFrequency = messageFrequency;

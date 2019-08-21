@@ -42,7 +42,8 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> implements OutputNode {
-    @XmlElementRef @AsPredicate
+    @XmlElementRef
+    @AsPredicate
     private List<WhenDefinition> whenClauses = new ArrayList<>();
     @XmlElement
     private OtherwiseDefinition otherwise;
@@ -51,17 +52,18 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
 
     public ChoiceDefinition() {
     }
-    
+
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
-        // wrap the outputs into a list where we can on the inside control the when/otherwise
+        // wrap the outputs into a list where we can on the inside control the
+        // when/otherwise
         // but make it appear as a list on the outside
         return new AbstractList<ProcessorDefinition<?>>() {
 
             public ProcessorDefinition<?> get(int index) {
                 if (index < whenClauses.size()) {
                     return whenClauses.get(index);
-                } 
+                }
                 if (index == whenClauses.size()) {
                     return otherwise;
                 }
@@ -75,8 +77,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                     otherwise = (OtherwiseDefinition)def;
                     return true;
                 }
-                throw new IllegalArgumentException("Expected either a WhenDefinition or OtherwiseDefinition but was "
-                        + ObjectHelper.classCanonicalName(def));
+                throw new IllegalArgumentException("Expected either a WhenDefinition or OtherwiseDefinition but was " + ObjectHelper.classCanonicalName(def));
             }
 
             public int size() {
@@ -93,8 +94,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                     if (element instanceof WhenDefinition) {
                         return whenClauses.set(index, (WhenDefinition)element);
                     }
-                    throw new IllegalArgumentException("Expected WhenDefinition but was "
-                            + ObjectHelper.classCanonicalName(element));
+                    throw new IllegalArgumentException("Expected WhenDefinition but was " + ObjectHelper.classCanonicalName(element));
                 } else if (index == whenClauses.size()) {
                     ProcessorDefinition<?> old = otherwise;
                     otherwise = (OtherwiseDefinition)element;
@@ -125,11 +125,12 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
     public void addOutput(ProcessorDefinition<?> output) {
         if (onlyWhenOrOtherwise) {
             if (output instanceof WhenDefinition || output instanceof OtherwiseDefinition) {
-                // okay we are adding a when or otherwise so allow any kind of output after this again
+                // okay we are adding a when or otherwise so allow any kind of
+                // output after this again
                 onlyWhenOrOtherwise = false;
             } else {
                 throw new IllegalArgumentException("A new choice clause should start with a when() or otherwise(). "
-                    + "If you intend to end the entire choice and are using endChoice() then use end() instead.");
+                                                   + "If you intend to end the entire choice and are using endChoice() then use end() instead.");
             }
         }
         super.addOutput(output);
@@ -174,14 +175,14 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
         addClause(new WhenDefinition(clause));
         return clause;
     }
-    
+
     private void addClause(ProcessorDefinition<?> when) {
         onlyWhenOrOtherwise = true;
         popBlock();
         addOutput(when);
         pushBlock(when);
     }
-    
+
     /**
      * Sets the otherwise node
      *
@@ -195,7 +196,8 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
 
     @Override
     public void setId(String value) {
-        // when setting id, we should set it on the fine grained element, if possible
+        // when setting id, we should set it on the fine grained element, if
+        // possible
         if (otherwise != null) {
             otherwise.setId(value);
         } else if (!getWhenClauses().isEmpty()) {
@@ -256,15 +258,19 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
             }
             Predicate pre = exp.getPredicate();
             if (pre instanceof ExpressionClause) {
-                ExpressionClause<?> clause = (ExpressionClause<?>) pre;
+                ExpressionClause<?> clause = (ExpressionClause<?>)pre;
                 if (clause.getExpressionType() != null) {
-                    // if using the Java DSL then the expression may have been set using the
-                    // ExpressionClause which is a fancy builder to define expressions and predicates
-                    // using fluent builders in the DSL. However we need afterwards a callback to
-                    // reset the expression to the expression type the ExpressionClause did build for us
+                    // if using the Java DSL then the expression may have been
+                    // set using the
+                    // ExpressionClause which is a fancy builder to define
+                    // expressions and predicates
+                    // using fluent builders in the DSL. However we need
+                    // afterwards a callback to
+                    // reset the expression to the expression type the
+                    // ExpressionClause did build for us
                     ExpressionFactory model = clause.getExpressionType();
                     if (model instanceof ExpressionDefinition) {
-                        when.setExpression((ExpressionDefinition) model);
+                        when.setExpression((ExpressionDefinition)model);
                     }
                 }
             }

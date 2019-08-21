@@ -50,8 +50,7 @@ public class MockEndpointWithParametersTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to(uri);
+                from("direct:start").to(uri);
             }
         };
     }

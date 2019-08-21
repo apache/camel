@@ -21,11 +21,11 @@ import org.apache.camel.Expression;
 
 //START SNIPPET: example
 public class MyFileNameExpression implements Expression {
-    
+
     public String getFileName(Exchange exchange) {
         return exchange.getIn().getBody(String.class);
     }
-    
+
     public Object evaluate(Exchange exchange) {
         // parser the file name with YYYYMMDD-DNNN pattern
         String fileName = getFileName(exchange);
@@ -33,7 +33,6 @@ public class MyFileNameExpression implements Expression {
         Long answer = Long.parseLong(files[0]) * 1000 + Long.parseLong(files[1]);
         return answer;
     }
-    
 
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {

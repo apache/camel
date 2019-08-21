@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -49,19 +50,21 @@ public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
     }
 
     /**
-     * Process 100 files with a sorted file endpoint. For each exchange the body will be replaced
-     * by a large buffer. In reality a similar thing happens if you have a lot of large files
-     * and use convertBodyTo(String.class). In both cases the Exchanges becomes quite large.
-     * The test will consume a lot of memory if all exchanges are kept in a list while doing
-     * the batch processing. This is because the garbage collector can not clean them as they
-     * are referenced in the list of exchanges.
+     * Process 100 files with a sorted file endpoint. For each exchange the body
+     * will be replaced by a large buffer. In reality a similar thing happens if
+     * you have a lot of large files and use convertBodyTo(String.class). In
+     * both cases the Exchanges becomes quite large. The test will consume a lot
+     * of memory if all exchanges are kept in a list while doing the batch
+     * processing. This is because the garbage collector can not clean them as
+     * they are referenced in the list of exchanges.
      * <p/>
-     * The test is not really a good integration test as it simply waits and does not fail
-     * or succeed fast
+     * The test is not really a good integration test as it simply waits and
+     * does not fail or succeed fast
      */
     @Test
     public void testMemoryLeak() throws Exception {
-        // run this manually and browse the memory usage, eg in IDEA there is a Statistics tab
+        // run this manually and browse the memory usage, eg in IDEA there is a
+        // Statistics tab
 
         deleteDirectory("target/data/filesorter/archiv");
         for (int c = 0; c < 100; c++) {
@@ -70,14 +73,13 @@ public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:" + fileUrl + "/c/?sortBy=ignoreCase:file:name")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                StringBuilder buf = new StringBuilder(10000000);
-                                buf.setLength(1000000);
-                                exchange.getIn().setBody(buf.toString());
-                            }
-                        }).to("file:target/data/filesorter/archiv");
+                from("file:" + fileUrl + "/c/?sortBy=ignoreCase:file:name").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        StringBuilder buf = new StringBuilder(10000000);
+                        buf.setLength(1000000);
+                        exchange.getIn().setBody(buf.toString());
+                    }
+                }).to("file:target/data/filesorter/archiv");
             }
         });
         context.start();

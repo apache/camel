@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,20 +51,20 @@ public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Exchange exchange =  mock.getExchanges().get(0);
-        GenericFile<File> gf = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        Exchange exchange = mock.getExchanges().get(0);
+        GenericFile<File> gf = (GenericFile<File>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         File file = gf.getFile();
         assertDirectoryEquals("target/data/multidir/bye.txt", file.getPath());
         assertEquals("bye.txt", file.getName());
 
-        exchange =  mock.getExchanges().get(1);
-        gf = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        exchange = mock.getExchanges().get(1);
+        gf = (GenericFile<File>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         file = gf.getFile();
         assertDirectoryEquals("target/data/multidir/sub/hello.txt", file.getPath());
         assertEquals("hello.txt", file.getName());
 
-        exchange =  mock.getExchanges().get(2);
-        gf = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        exchange = mock.getExchanges().get(2);
+        gf = (GenericFile<File>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         file = gf.getFile();
         assertDirectoryEquals("target/data/multidir/sub/sub2/godday.txt", file.getPath());
         assertEquals("godday.txt", file.getName());

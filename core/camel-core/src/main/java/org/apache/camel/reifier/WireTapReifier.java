@@ -48,7 +48,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         definition.setPattern(ExchangePattern.InOnly);
 
         // create the send dynamic producer to send to the wire tapped endpoint
-        SendDynamicProcessor dynamicTo = (SendDynamicProcessor) super.createProcessor(routeContext);
+        SendDynamicProcessor dynamicTo = (SendDynamicProcessor)super.createProcessor(routeContext);
 
         // create error handler we need to use for processing the wire tapped
         Processor target = wrapInErrorHandler(routeContext, dynamicTo);

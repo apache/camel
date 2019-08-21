@@ -37,8 +37,8 @@ public class MessageHistoryCopyExchangeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List listA = (List) a.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
-        List listB = (List) b.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
+        List listA = (List)a.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
+        List listB = (List)b.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
 
         assertNotSame(listA, listB);
     }
@@ -50,15 +50,9 @@ public class MessageHistoryCopyExchangeTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setMessageHistory(true);
 
-                from("seda:start")
-                        .to("log:foo")
-                        .to("mock:a")
-                        .to("direct:bar")
-                        .to("mock:b");
+                from("seda:start").to("log:foo").to("mock:a").to("direct:bar").to("mock:b");
 
-                from("direct:bar")
-                    .to("log:bar")
-                    .to("mock:bar");
+                from("direct:bar").to("log:bar").to("mock:bar");
             }
         };
     }

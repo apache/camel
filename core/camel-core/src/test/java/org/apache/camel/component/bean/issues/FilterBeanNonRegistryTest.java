@@ -29,9 +29,7 @@ public class FilterBeanNonRegistryTest extends ContextTestSupport {
             public void configure() throws Exception {
                 MyBean myBean = new MyBean();
 
-                from("direct:start")
-                    .filter().method(myBean, "isGoldCustomer")
-                    .to("mock:result");
+                from("direct:start").filter().method(myBean, "isGoldCustomer").to("mock:result");
             }
         });
         context.start();
@@ -52,9 +50,7 @@ public class FilterBeanNonRegistryTest extends ContextTestSupport {
             public void configure() throws Exception {
                 MyBean myBean = new MyBean();
 
-                from("direct:start")
-                    .filter().method(myBean)
-                    .to("mock:result");
+                from("direct:start").filter().method(myBean).to("mock:result");
             }
         });
         context.start();

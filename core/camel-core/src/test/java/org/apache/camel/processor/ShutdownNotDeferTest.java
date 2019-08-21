@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -65,9 +66,7 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo")
-                    .startupOrder(1)
-                    .to("file://target/data/deferred");
+                from("seda:foo").startupOrder(1).to("file://target/data/deferred");
 
                 // use file component to transfer files from route 1 -> route 2
                 MyDeferFileEndpoint defer = new MyDeferFileEndpoint("file://target/data/deferred?initialDelay=0&delay=10", getContext().getComponent("file"));
@@ -75,8 +74,7 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
 
                 from(defer)
                     // do NOT defer it but use default for testing this
-                    .startupOrder(2).shutdownRoute(Default)
-                    .to("mock:bar");
+                    .startupOrder(2).shutdownRoute(Default).to("mock:bar");
             }
         };
     }

@@ -38,9 +38,7 @@ public class MethodCallStaticMethodTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setHeader("foo", method(StringHelper.class, "removeLeadingAndEndingQuotes(${header.bar})"))
-                    .to("mock:result");
+                from("direct:start").setHeader("foo", method(StringHelper.class, "removeLeadingAndEndingQuotes(${header.bar})")).to("mock:result");
             }
         };
     }

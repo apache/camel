@@ -37,7 +37,7 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
         deleteDirectory("target/data/filemove");
         super.setUp();
     }
-    
+
     @Test
     public void testStoreFileExchangeBodyIsFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -70,8 +70,7 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in").to("file://target/data/filemove/?fileName=testStoreFile")
-                    .to("mock:result");
+                from("direct:in").to("file://target/data/filemove/?fileName=testStoreFile").to("mock:result");
             }
         };
     }

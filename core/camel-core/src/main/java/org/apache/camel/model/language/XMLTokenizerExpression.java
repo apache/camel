@@ -27,7 +27,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
+ * To use Camel message body or header with a XML tokenizer in Camel expressions
+ * or predicates.
  *
  * @see org.apache.camel.language.xtokenizer.XMLTokenizeLanguage
  */
@@ -72,10 +73,11 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     /**
      * The extraction mode. The available extraction modes are:
      * <ul>
-     *     <li>i - injecting the contextual namespace bindings into the extracted token (default)</li>
-     *     <li>w - wrapping the extracted token in its ancestor context</li>
-     *     <li>u - unwrapping the extracted token to its child content</li>
-     *     <li>t - extracting the text content of the specified element</li>
+     * <li>i - injecting the contextual namespace bindings into the extracted
+     * token (default)</li>
+     * <li>w - wrapping the extracted token in its ancestor context</li>
+     * <li>u - unwrapping the extracted token to its child content</li>
+     * <li>t - extracting the text content of the specified element</li>
      * </ul>
      */
     public void setMode(String mode) {

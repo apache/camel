@@ -23,29 +23,29 @@ import org.apache.camel.spi.DataFormat;
 
 public class Any23DataFormatReifier extends DataFormatReifier<Any23DataFormat> {
 
-  public Any23DataFormatReifier(DataFormatDefinition definition) {
-    super((Any23DataFormat) definition);
-  }
+    public Any23DataFormatReifier(DataFormatDefinition definition) {
+        super((Any23DataFormat)definition);
+    }
 
-  @Override
-  protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-    return super.doCreateDataFormat(camelContext);
-  }
+    @Override
+    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
+        return super.doCreateDataFormat(camelContext);
+    }
 
-  @Override
-  protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-    if (definition.getOutputFormat() != null) {
-      setProperty(camelContext, dataFormat, "outputFormat", definition.getOutputFormat());
+    @Override
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+        if (definition.getOutputFormat() != null) {
+            setProperty(camelContext, dataFormat, "outputFormat", definition.getOutputFormat());
+        }
+        if (definition.getConfigurations() != null) {
+            setProperty(camelContext, dataFormat, "configurations", definition.getConfigurations());
+        }
+        if (definition.getExtractors() != null) {
+            setProperty(camelContext, dataFormat, "extractors", definition.getExtractors());
+        }
+        if (definition.getBaseURI() != null) {
+            setProperty(camelContext, dataFormat, "baseURI", definition.getBaseURI());
+        }
     }
-    if (definition.getConfigurations() != null) {
-      setProperty(camelContext, dataFormat, "configurations", definition.getConfigurations());
-    }
-    if (definition.getExtractors() != null) {
-      setProperty(camelContext, dataFormat, "extractors", definition.getExtractors());
-    }
-    if (definition.getBaseURI() != null) {
-      setProperty(camelContext, dataFormat, "baseURI", definition.getBaseURI());
-    }
-  }
 
 }

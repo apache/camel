@@ -32,7 +32,8 @@ public abstract class RestSecurityDefinition {
     @XmlTransient
     RestDefinition rest;
 
-    @XmlAttribute(required = true) @Metadata(required = true)
+    @XmlAttribute(required = true)
+    @Metadata(required = true)
     private String key;
 
     @XmlAttribute

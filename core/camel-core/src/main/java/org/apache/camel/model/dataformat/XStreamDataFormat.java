@@ -38,7 +38,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * XSTream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
+ * XSTream data format is used for unmarshal a XML payload to POJO or to marshal
+ * POJO back to XML payload.
  */
 @Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,xml,json", title = "XStream")
 @XmlRootElement(name = "xstream")
@@ -71,12 +72,12 @@ public class XStreamDataFormat extends DataFormatDefinition {
     public XStreamDataFormat() {
         super("xstream");
     }
-    
+
     public XStreamDataFormat(String encoding) {
         this();
         setEncoding(encoding);
     }
-    
+
     public String getEncoding() {
         return encoding;
     }
@@ -93,8 +94,8 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To use a custom XStream driver.
-     * The instance must be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver
+     * To use a custom XStream driver. The instance must be of type
+     * com.thoughtworks.xstream.io.HierarchicalStreamDriver
      */
     public void setDriver(String driver) {
         this.driver = driver;
@@ -105,13 +106,14 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To refer to a custom XStream driver to lookup in the registry.
-     * The instance must be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver
+     * To refer to a custom XStream driver to lookup in the registry. The
+     * instance must be of type
+     * com.thoughtworks.xstream.io.HierarchicalStreamDriver
      */
     public void setDriverRef(String driverRef) {
         this.driverRef = driverRef;
     }
-    
+
     public String getMode() {
         return mode;
     }
@@ -119,12 +121,12 @@ public class XStreamDataFormat extends DataFormatDefinition {
     /**
      * Mode for dealing with duplicate references The possible values are:
      * <ul>
-     *     <li>NO_REFERENCES</li>
-     *     <li>ID_REFERENCES</li>
-     *     <li>XPATH_RELATIVE_REFERENCES</li>
-     *     <li>XPATH_ABSOLUTE_REFERENCES</li>
-     *     <li>SINGLE_NODE_XPATH_RELATIVE_REFERENCES</li>
-     *     <li>SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES</li>
+     * <li>NO_REFERENCES</li>
+     * <li>ID_REFERENCES</li>
+     * <li>XPATH_RELATIVE_REFERENCES</li>
+     * <li>XPATH_ABSOLUTE_REFERENCES</li>
+     * <li>SINGLE_NODE_XPATH_RELATIVE_REFERENCES</li>
+     * <li>SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES</li>
      * </ul>
      */
     public void setMode(String mode) {
@@ -136,8 +138,8 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * List of class names for using custom XStream converters.
-     * The classes must be of type com.thoughtworks.xstream.converters.Converter
+     * List of class names for using custom XStream converters. The classes must
+     * be of type com.thoughtworks.xstream.converters.Converter
      */
     public void setConverters(List<String> converters) {
         this.converters = converters;
@@ -159,8 +161,9 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Prevents a field from being serialized. To omit a field you must always provide the
-     * declaring type and not necessarily the type that is converted.
+     * Prevents a field from being serialized. To omit a field you must always
+     * provide the declaring type and not necessarily the type that is
+     * converted.
      */
     public void setOmitFields(Map<String, String[]> omitFields) {
         this.omitFields = omitFields;
@@ -171,7 +174,8 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Adds a default implicit collection which is used for any unmapped XML tag.
+     * Adds a default implicit collection which is used for any unmapped XML
+     * tag.
      */
     public void setImplicitCollections(Map<String, String[]> implicitCollections) {
         this.implicitCollections = implicitCollections;
@@ -182,18 +186,20 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Adds permissions that controls which Java packages and classes XStream is allowed to use during
-     * unmarshal from xml/json to Java beans.
+     * Adds permissions that controls which Java packages and classes XStream is
+     * allowed to use during unmarshal from xml/json to Java beans.
      * <p/>
-     * A permission must be configured either here or globally using a JVM system property. The permission
-     * can be specified in a syntax where a plus sign is allow, and minus sign is deny.
-     * <br/>
-     * Wildcards is supported by using <tt>.*</tt> as prefix. For example to allow <tt>com.foo</tt> and all subpackages
-     * then specfy <tt>+com.foo.*</tt>. Multiple permissions can be configured separated by comma, such as
-     * <tt>+com.foo.*,-com.foo.bar.MySecretBean</tt>.
-     * <br/>
-     * The following default permission is always included: <tt>"-*,java.lang.*,java.util.*"</tt> unless
-     * its overridden by specifying a JVM system property with they key <tt>org.apache.camel.xstream.permissions</tt>.
+     * A permission must be configured either here or globally using a JVM
+     * system property. The permission can be specified in a syntax where a plus
+     * sign is allow, and minus sign is deny. <br/>
+     * Wildcards is supported by using <tt>.*</tt> as prefix. For example to
+     * allow <tt>com.foo</tt> and all subpackages then specfy
+     * <tt>+com.foo.*</tt>. Multiple permissions can be configured separated by
+     * comma, such as <tt>+com.foo.*,-com.foo.bar.MySecretBean</tt>. <br/>
+     * The following default permission is always included:
+     * <tt>"-*,java.lang.*,java.util.*"</tt> unless its overridden by specifying
+     * a JVM system property with they key
+     * <tt>org.apache.camel.xstream.permissions</tt>.
      */
     public void setPermissions(String permissions) {
         this.permissions = permissions;
@@ -201,6 +207,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
     /**
      * To add permission for the given pojo classes.
+     * 
      * @param type the pojo class(es) xstream should use as allowed permission
      * @see #setPermissions(String)
      */
@@ -212,7 +219,6 @@ public class XStreamDataFormat extends DataFormatDefinition {
         }
         setPermissions(csb.toString());
     }
-
 
     @XmlTransient
     public static class ConvertersAdapter extends XmlAdapter<ConverterList, List<String>> {
@@ -278,8 +284,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     @XmlTransient
-    public static class ImplicitCollectionsAdapter 
-            extends XmlAdapter<ImplicitCollectionList, Map<String, String[]>> {
+    public static class ImplicitCollectionsAdapter extends XmlAdapter<ImplicitCollectionList, Map<String, String[]>> {
 
         @Override
         public ImplicitCollectionList marshal(Map<String, String[]> v) throws Exception {
@@ -455,8 +460,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     @XmlTransient
-    public static class OmitFieldsAdapter
-            extends XmlAdapter<OmitFieldList, Map<String, String[]>> {
+    public static class OmitFieldsAdapter extends XmlAdapter<OmitFieldList, Map<String, String[]>> {
 
         @Override
         public OmitFieldList marshal(Map<String, String[]> v) throws Exception {

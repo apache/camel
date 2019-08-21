@@ -50,29 +50,30 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteWithDefaultErrorHandle
 
                 from("direct:start")
                     // route specific on exception for MyFunctionalException
-                    // we MUST use .end() to indicate that this sub block is ended
-                    .onException(MyFunctionalException.class).handled(false).end()
-                    .to("bean:myServiceBean")
-                    .to("mock:result");
+                    // we MUST use .end() to indicate that this sub block is
+                    // ended
+                    .onException(MyFunctionalException.class).handled(false).end().to("bean:myServiceBean").to("mock:result");
 
                 from("direct:start2")
-                    // route specific on exception for MyFunctionalException that is different than the previous route
-                    // here we marked it as handled and send it to a different destination mock:handled
-                    // we MUST use .end() to indicate that this sub block is ended
-                    .onException(MyFunctionalException.class).handled(true).to("mock:handled").end()
-                    .to("bean:myServiceBean")
-                    .to("mock:result");
+                    // route specific on exception for MyFunctionalException
+                    // that is different than the previous route
+                    // here we marked it as handled and send it to a different
+                    // destination mock:handled
+                    // we MUST use .end() to indicate that this sub block is
+                    // ended
+                    .onException(MyFunctionalException.class).handled(true).to("mock:handled").end().to("bean:myServiceBean").to("mock:result");
 
                 // START SNIPPET: e1
                 from("direct:start3")
-                    // route specific error handler that is different than the global error handler
-                    // here we do not redeliver and send errors to mock:error3 instead of the global endpoint
+                    // route specific error handler that is different than the
+                    // global error handler
+                    // here we do not redeliver and send errors to mock:error3
+                    // instead of the global endpoint
                     .errorHandler(deadLetterChannel("mock:error3").maximumRedeliveries(0))
 
-                    // route specific on exception to mark MyFunctionalException as being handled
-                    .onException(MyFunctionalException.class).handled(true).end()
-                    .to("bean:myServiceBean")
-                    .to("mock:result");
+                    // route specific on exception to mark MyFunctionalException
+                    // as being handled
+                    .onException(MyFunctionalException.class).handled(true).end().to("bean:myServiceBean").to("mock:result");
                 // END SNIPPET: e1
             }
         };

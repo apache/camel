@@ -35,9 +35,7 @@ public class PropertiesComponentDisableDefaultsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .transform().simple("{{p:message}}")
-                    .to("mock:{{p:mockend}}");
+                from("direct:start").transform().simple("{{p:message}}").to("mock:{{p:mockend}}");
             }
         });
 

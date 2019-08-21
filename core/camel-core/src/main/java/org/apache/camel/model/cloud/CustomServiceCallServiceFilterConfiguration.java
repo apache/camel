@@ -69,7 +69,6 @@ public class CustomServiceCallServiceFilterConfiguration extends ServiceCallServ
         this.serviceFilter = serviceFilter;
     }
 
-
     // *************************************************************************
     // Fluent API
     // *************************************************************************

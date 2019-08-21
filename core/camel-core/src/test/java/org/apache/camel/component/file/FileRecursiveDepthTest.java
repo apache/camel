@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -85,17 +86,11 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("file:target/data/depth?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file:target/data/depth?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2").convertBodyTo(String.class).to("mock:result");
 
-                from("file:target/data/depth2?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=99")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file:target/data/depth2?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=99").convertBodyTo(String.class).to("mock:result");
 
-                from("file:target/data/depth3?initialDelay=0&delay=10&recursive=true&minDepth=1&maxDepth=1")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file:target/data/depth3?initialDelay=0&delay=10&recursive=true&minDepth=1&maxDepth=1").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

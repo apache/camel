@@ -42,15 +42,9 @@ public class ClaimCheckEipPushPopHeadersTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("mock:a")
-                    .claimCheck(ClaimCheckOperation.Push)
-                    .transform().constant("Bye World")
-                    .setHeader("foo", constant(456))
-                    .to("mock:b")
+                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World").setHeader("foo", constant(456)).to("mock:b")
                     // only merge in the message headers
-                    .claimCheck(ClaimCheckOperation.Pop, null, "headers")
-                    .to("mock:c");
+                    .claimCheck(ClaimCheckOperation.Pop, null, "headers").to("mock:c");
             }
         };
     }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -54,10 +55,8 @@ public class FileProducerNoForcedWritesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/file?initialDelay=0&delay=10&noop=true")
-                    .multicast().to(
-                        "file:target/data/file/?fileName=output.txt&forceWrites=false",
-                        "file:target/data/file/?fileName=output2.txt&charset=iso-8859-1&forceWrites=false")
+                from("file:target/data/file?initialDelay=0&delay=10&noop=true").multicast()
+                    .to("file:target/data/file/?fileName=output.txt&forceWrites=false", "file:target/data/file/?fileName=output2.txt&charset=iso-8859-1&forceWrites=false")
                     .to("mock:result");
             }
         };

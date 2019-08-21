@@ -39,7 +39,7 @@ public class WireTapShutdownBeanTest extends ContextTestSupport {
 
     @Test
     public void testWireTapShutdown() throws Exception {
-        final MyTapBean tapBean = (MyTapBean) context.getRegistry().lookupByName("tap");
+        final MyTapBean tapBean = (MyTapBean)context.getRegistry().lookupByName("tap");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -49,7 +49,8 @@ public class WireTapShutdownBeanTest extends ContextTestSupport {
 
         EXCHANGER.exchange(null);
 
-        // shutdown Camel which should let the inflight wire-tap message route to completion
+        // shutdown Camel which should let the inflight wire-tap message route
+        // to completion
         context.stop();
 
         // should allow to shutdown nicely
@@ -69,9 +70,7 @@ public class WireTapShutdownBeanTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .wireTap("bean:tap").dynamicUri(false)
-                    .to("mock:result");
+                from("direct:start").wireTap("bean:tap").dynamicUri(false).to("mock:result");
             }
         };
     }

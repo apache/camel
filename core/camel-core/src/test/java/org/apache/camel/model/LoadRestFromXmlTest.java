@@ -69,8 +69,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("localhost").component("dummy-rest").apiContextPath("/api-docs");
 
-                from("direct:foo").routeId("foo")
-                        .to("mock:foo");
+                from("direct:foo").routeId("foo").to("mock:foo");
             }
         };
     }

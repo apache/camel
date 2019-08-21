@@ -25,7 +25,7 @@ import org.apache.camel.spi.RouteContext;
 public class RollbackReifier extends ProcessorReifier<RollbackDefinition> {
 
     RollbackReifier(ProcessorDefinition<?> definition) {
-        super((RollbackDefinition) definition);
+        super((RollbackDefinition)definition);
     }
 
     @Override

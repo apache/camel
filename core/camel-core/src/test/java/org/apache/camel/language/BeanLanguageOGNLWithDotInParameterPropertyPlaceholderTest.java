@@ -66,9 +66,7 @@ public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends C
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setHeader("goto").simple("${bean:myBean.whereToMate({{myApp}}, ${header.id})}")
-                    .to("mock:result");
+                from("direct:start").setHeader("goto").simple("${bean:myBean.whereToMate({{myApp}}, ${header.id})}").to("mock:result");
             }
         };
     }

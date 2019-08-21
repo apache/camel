@@ -42,18 +42,10 @@ public class RecipientListAggregationStrategyInputExchangeTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .recipientList(constant("direct:a,direct:b")).aggregationStrategy(new MyAggregateBean());
+                from("direct:start").recipientList(constant("direct:a,direct:b")).aggregationStrategy(new MyAggregateBean());
 
-                from("direct:a")
-                        .setHeader("foo", constant("123"))
-                        .transform(constant("A"))
-                        .to("mock:a");
-                from("direct:b")
-                        .setHeader("bar", constant("456"))
-                        .transform(constant("B"))
-                        .throwException(new IllegalArgumentException("Forced"))
-                        .to("mock:b");
+                from("direct:a").setHeader("foo", constant("123")).transform(constant("A")).to("mock:a");
+                from("direct:b").setHeader("bar", constant("456")).transform(constant("B")).throwException(new IllegalArgumentException("Forced")).to("mock:b");
             }
         };
     }

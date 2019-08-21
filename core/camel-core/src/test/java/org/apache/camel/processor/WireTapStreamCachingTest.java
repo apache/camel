@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.StringReader;
 
 import javax.xml.transform.stream.StreamSource;
@@ -50,7 +51,7 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSendingAMessageUsingWiretapShouldNotDeleteStreamFileBeforeAllExcangesAreComplete() throws InterruptedException {
 
@@ -58,7 +59,8 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
         y.expectedMessageCount(1);
         z.expectedMessageCount(1);
 
-        // the used file should contain more than one character in order to be streamed into the file system
+        // the used file should contain more than one character in order to be
+        // streamed into the file system
         template.sendBody("direct:a", this.getClass().getClassLoader().getResourceAsStream("org/apache/camel/processor/twoCharacters.txt"));
 
         assertMockEndpointsSatisfied();
@@ -89,16 +91,19 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
             public void configure() {
                 // enable stream caching
                 context.setStreamCaching(true);
-                // set stream threshold to 1, in order to stream into the file system
+                // set stream threshold to 1, in order to stream into the file
+                // system
                 context.getStreamCachingStrategy().setSpoolThreshold(1);
 
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                //stream caching should fix re-readability issues when wire tapping messages
+                // stream caching should fix re-readability issues when wire
+                // tapping messages
                 from("direct:a").wireTap("direct:x").wireTap("direct:y").wireTap("direct:z");
 
                 from("direct:x").process(processor).to("mock:x");
-                // even if a process takes more time then the others the wire tap shall work
+                // even if a process takes more time then the others the wire
+                // tap shall work
                 from("direct:y").delay(500).process(processor).to("mock:y");
                 from("direct:z").process(processor).to("mock:z");
             }

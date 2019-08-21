@@ -23,7 +23,8 @@ import org.apache.camel.model.Constants;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 
 /**
- * Default implementation of {@link org.apache.camel.spi.ModelJAXBContextFactory}.
+ * Default implementation of
+ * {@link org.apache.camel.spi.ModelJAXBContextFactory}.
  */
 public class DefaultModelJAXBContextFactory implements ModelJAXBContextFactory {
 

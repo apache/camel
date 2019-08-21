@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -46,8 +47,7 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                     // using our custom load balancer
-                    .loadBalance(new MyLoadBalancer())
-                    .to("mock:x", "mock:y", "mock:z");
+                    .loadBalance(new MyLoadBalancer()).to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: e1
             }
         };

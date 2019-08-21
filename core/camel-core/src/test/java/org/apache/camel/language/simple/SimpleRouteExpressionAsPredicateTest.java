@@ -40,13 +40,11 @@ public class SimpleRouteExpressionAsPredicateTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:foo")
                     // evaluate as predicate because the result type is boolean
-                    .setBody().simple("${header.foo} == ${header.foo}", boolean.class)
-                    .to("mock:foo");
+                    .setBody().simple("${header.foo} == ${header.foo}", boolean.class).to("mock:foo");
 
                 from("direct:bar")
                     // evaluate as expression as no boolean as result type
-                    .setBody().simple("${header.bar} == ${header.bar}")
-                    .to("mock:bar");
+                    .setBody().simple("${header.bar} == ${header.bar}").to("mock:bar");
             }
         };
     }

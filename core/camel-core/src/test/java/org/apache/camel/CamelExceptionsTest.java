@@ -93,7 +93,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertEquals("java.lang.IllegalAccessException: Damn", e3.getMessage());
         assertNotNull(e3.getCause());
     }
-    
+
     @Test
     public void testRuntimeExpressionException() {
         RuntimeExpressionException e = new RuntimeExpressionException("Forced");
@@ -169,7 +169,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         CamelException e2 = new CamelException("Forced");
         assertNull(e2.getCause());
         assertEquals("Forced", e2.getMessage());
-        
+
         CamelException e3 = new CamelException("Forced", new IllegalArgumentException("Damn"));
         assertNotNull(e3.getCause());
         assertEquals("Forced", e3.getMessage());
@@ -286,7 +286,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertEquals("foo", e.getHeaderName());
         assertSame(exchange, e.getExchange());
     }
-    
+
     @Test
     public void testNoSuchPropertyException() {
         Exchange exchange = new DefaultExchange(context);

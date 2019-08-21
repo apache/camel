@@ -25,7 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 public class FhirDataFormatReifier<T extends FhirDataformat> extends DataFormatReifier<T> {
 
     public FhirDataFormatReifier(DataFormatDefinition definition) {
-        super((T) definition);
+        super((T)definition);
     }
 
     @Override

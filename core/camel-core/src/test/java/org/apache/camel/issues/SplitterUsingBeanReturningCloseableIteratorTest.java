@@ -58,8 +58,7 @@ public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split().method("mySplitter").to("log:foo", "mock:result");
+                from("direct:start").split().method("mySplitter").to("log:foo", "mock:result");
             }
         };
     }

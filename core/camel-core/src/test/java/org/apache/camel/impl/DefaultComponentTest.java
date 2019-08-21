@@ -42,8 +42,7 @@ public class DefaultComponentTest extends ContextTestSupport {
         }
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             return null;
         }
     }
@@ -120,9 +119,8 @@ public class DefaultComponentTest extends ContextTestSupport {
         try {
             my.resolveAndRemoveReferenceParameter(parameters, "number", Integer.class);
         } catch (TypeConversionException ex) {
-            assertEquals("Error during type conversion from type: java.lang.String "
-                    + "to the required type: java.lang.Integer "
-                    + "with value abc due to java.lang.NumberFormatException: For input string: \"abc\"", ex.getMessage());
+            assertEquals("Error during type conversion from type: java.lang.String " + "to the required type: java.lang.Integer "
+                         + "with value abc due to java.lang.NumberFormatException: For input string: \"abc\"", ex.getMessage());
         }
     }
 
@@ -166,7 +164,7 @@ public class DefaultComponentTest extends ContextTestSupport {
         assertEquals(1, values.size());
         assertEquals(new Date(10), values.get(0));
     }
-    
+
     @Test
     public void testResolveAndRemoveReferenceListParameterListComma() {
         Map<String, Object> parameters = new HashMap<>();

@@ -62,29 +62,18 @@ public class TryCatchNestedChoiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .doTry()
-                        .to("direct:bar")
-                        .choice()
-                            .when().simple("${header.foo} == 123")
-                                .to("mock:foo")
-                            .otherwise()
-                                .to("mock:other")
-                         .endDoTry()
-                    .doCatch(Exception.class)
-                        .to("mock:catch")
-                    .end();
+                from("direct:start").doTry().to("direct:bar").choice().when().simple("${header.foo} == 123").to("mock:foo").otherwise().to("mock:other").endDoTry()
+                    .doCatch(Exception.class).to("mock:catch").end();
 
-                from("direct:bar")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
-                            if (body.contains("Kaboom")) {
-                                throw new IllegalArgumentException("Forced error");
-                            }
+                from("direct:bar").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if (body.contains("Kaboom")) {
+                            throw new IllegalArgumentException("Forced error");
                         }
-                    });
+                    }
+                });
             }
         };
     }

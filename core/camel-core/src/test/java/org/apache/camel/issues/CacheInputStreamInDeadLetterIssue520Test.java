@@ -55,8 +55,10 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
 
-        // having dead letter channel as the errorHandler in place makes exchanges to appear as completed from
-        // the client point of view so that we don't count with any thrown exception here (the client side)
+        // having dead letter channel as the errorHandler in place makes
+        // exchanges to appear as completed from
+        // the client point of view so that we don't count with any thrown
+        // exception here (the client side)
         template.sendBody("direct:start", message);
 
         assertEquals("The message should be delivered 4 times", count, 4);
@@ -83,7 +85,7 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
                     }
                 });
 
-                //Need to set the streamCaching for the deadLetterChannel
+                // Need to set the streamCaching for the deadLetterChannel
                 from("direct:errorHandler").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String result = exchange.getIn().getBody(String.class);

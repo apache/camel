@@ -48,26 +48,18 @@ public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                    .to("mock:before")
-                    .to("log:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadId = Thread.currentThread().getId();
-                        }
-                    })
-                    .recipientList(constant("async:hi:camel,async:hi:world,direct:foo"));
+                from("direct:start").to("mock:before").to("log:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadId = Thread.currentThread().getId();
+                    }
+                }).recipientList(constant("async:hi:camel,async:hi:world,direct:foo"));
 
-                from("direct:foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadId = Thread.currentThread().getId();
-                            exchange.getMessage().setBody("Bye Camel");
-                        }
-                    })
-                    .to("log:after")
-                    .to("mock:after")
-                    .to("mock:result");
+                from("direct:foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadId = Thread.currentThread().getId();
+                        exchange.getMessage().setBody("Bye Camel");
+                    }
+                }).to("log:after").to("mock:after").to("mock:result");
             }
         };
     }

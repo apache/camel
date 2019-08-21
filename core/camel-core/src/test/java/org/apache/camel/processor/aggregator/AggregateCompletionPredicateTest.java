@@ -124,10 +124,8 @@ public class AggregateCompletionPredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy())
-                            .completionPredicate(body().contains("END")).completionTimeout(20000)
-                        .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionPredicate(body().contains("END")).completionTimeout(20000)
+                    .to("mock:aggregated");
             }
         };
     }

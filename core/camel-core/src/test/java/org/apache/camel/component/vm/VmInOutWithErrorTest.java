@@ -42,13 +42,11 @@ public class VmInOutWithErrorTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:foo").transform(constant("Bye World"))
-                    .throwException(new IllegalArgumentException("Damn I cannot do this"))
-                    .to("mock:result");
+                from("vm:foo").transform(constant("Bye World")).throwException(new IllegalArgumentException("Damn I cannot do this")).to("mock:result");
             }
         };
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
         return new RouteBuilder() {

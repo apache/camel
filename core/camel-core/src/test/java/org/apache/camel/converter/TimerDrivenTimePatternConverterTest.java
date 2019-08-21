@@ -26,10 +26,10 @@ import org.slf4j.LoggerFactory;
 
 public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TimerDrivenTimePatternConverterTest.class);
-    
+
     @Test
     public void testTimerInvocation() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result"); 
+        MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
         assertMockEndpointsSatisfied();
@@ -37,17 +37,17 @@ public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
 
     @Test
     public void testTimerUsingStopWatch() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result"); 
+        MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
         StopWatch watch = new StopWatch();
         assertMockEndpointsSatisfied();
         long interval = watch.taken();
-        
+
         LOG.trace("Should take approx 50 milliseconds, was: {}", interval);
         assertTrue("Should take approx 50 milliseconds, was: " + interval, interval >= 40);
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -55,5 +55,5 @@ public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
                 from("timer://foo?fixedRate=true&delay=0&period=50").to("mock:result");
             }
         };
-    } 
+    }
 }

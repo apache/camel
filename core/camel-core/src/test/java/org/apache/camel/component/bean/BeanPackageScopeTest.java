@@ -42,9 +42,7 @@ public class BeanPackageScopeTest extends ContextTestSupport {
             public void configure() throws Exception {
                 bindToRegistry("myBean", new MyBean());
 
-                from("direct:in")
-                    .to("bean:myBean")
-                    .to("mock:result");
+                from("direct:in").to("bean:myBean").to("mock:result");
             }
         };
     }

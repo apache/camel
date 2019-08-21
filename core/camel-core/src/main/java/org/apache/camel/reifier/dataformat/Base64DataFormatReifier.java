@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 public class Base64DataFormatReifier extends DataFormatReifier<Base64DataFormat> {
 
     public Base64DataFormatReifier(DataFormatDefinition definition) {
-        super((Base64DataFormat) definition);
+        super((Base64DataFormat)definition);
     }
 
     @Override

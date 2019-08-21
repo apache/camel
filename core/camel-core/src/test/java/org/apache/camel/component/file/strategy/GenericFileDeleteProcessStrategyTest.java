@@ -28,14 +28,13 @@ import org.apache.camel.util.FileUtil;
 import org.junit.Test;
 
 /**
- * Unit test about retrying deleting processed file, that can be a bit more tricky
- * on some OS as java.io.delete can return wrong answer
+ * Unit test about retrying deleting processed file, that can be a bit more
+ * tricky on some OS as java.io.delete can return wrong answer
  */
 public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
 
     private static int existsCounter;
     private static int deleteCounter;
-
 
     private static class MyGenericFileOperations implements GenericFileOperations<Object> {
 

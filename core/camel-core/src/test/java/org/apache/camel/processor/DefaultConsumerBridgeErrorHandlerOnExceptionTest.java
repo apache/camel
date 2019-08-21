@@ -66,22 +66,15 @@ public class DefaultConsumerBridgeErrorHandlerOnExceptionTest extends ContextTes
                 getContext().addComponent("my", new MyComponent());
 
                 // configure on exception
-                onException(Exception.class)
-                    .handled(true)
-                    .to("mock:a")
-                    .to("direct:error")
-                    .to("mock:dead");
+                onException(Exception.class).handled(true).to("mock:a").to("direct:error").to("mock:dead");
 
-                // configure the consumer to bridge with the Camel error handler,
+                // configure the consumer to bridge with the Camel error
+                // handler,
                 // so the above error handler will trigger if exceptions also
                 // occurs inside the consumer
-                from("my:foo?consumer.bridgeErrorHandler=true")
-                    .to("log:foo")
-                    .to("mock:result");
+                from("my:foo?consumer.bridgeErrorHandler=true").to("log:foo").to("mock:result");
 
-                from("direct:error")
-                    .to("mock:b")
-                    .log("Error happened due ${exception.message}");
+                from("direct:error").to("mock:b").log("Error happened due ${exception.message}");
             }
         };
         // END SNIPPET: e1
@@ -150,7 +143,8 @@ public class DefaultConsumerBridgeErrorHandlerOnExceptionTest extends ContextTes
                 @Override
                 public void run() {
                     try {
-                        // do not start before the mocks has been setup and is ready
+                        // do not start before the mocks has been setup and is
+                        // ready
                         latch.await(5, TimeUnit.SECONDS);
                         doSomething();
                         doSomething();

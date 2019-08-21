@@ -24,18 +24,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * Tests new converters added to XmlConverters to make Camel intelligent when needing to convert 
- * a NodeList of length 1 into a Document or a Node.
- *
+ * Tests new converters added to XmlConverters to make Camel intelligent when
+ * needing to convert a NodeList of length 1 into a Document or a Node.
  */
 public class XPathLanguageSingleNodeListTest extends ContextTestSupport {
-    
+
     private static final String XML_INPUT_SINGLE = "<root><name>Raul</name><surname>Kripalani</surname></root>";
     private static final String XML_INPUT_MULTIPLE = "<root><name>Raul</name><name>Raul</name><surname>Kripalani</surname></root>";
-    
+
     /**
-     * A single node XPath selection that internally returns a DTMNodeList of length 1 can now be automatically
-     * converted to a Document/Node.
+     * A single node XPath selection that internally returns a DTMNodeList of
+     * length 1 can now be automatically converted to a Document/Node.
+     * 
      * @throws Exception
      */
     @Test
@@ -47,11 +47,13 @@ public class XPathLanguageSingleNodeListTest extends ContextTestSupport {
 
         template.requestBody("direct:doTest", XML_INPUT_SINGLE, String.class);
         assertMockEndpointsSatisfied();
-        
+
     }
-    
+
     /**
-     * Regression test to ensure that a NodeList of length > 1 is not processed by the new converters.
+     * Regression test to ensure that a NodeList of length > 1 is not processed
+     * by the new converters.
+     * 
      * @throws Exception
      */
     @Test
@@ -68,7 +70,7 @@ public class XPathLanguageSingleNodeListTest extends ContextTestSupport {
             assertEquals(RuntimeCamelException.class, ex.getCause().getClass());
             assertEquals(NoTypeConversionAvailableException.class, ex.getCause().getCause().getClass());
         }
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -77,13 +79,7 @@ public class XPathLanguageSingleNodeListTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:doTest")
-                    .transform().xpath("/root/name")
-                    .choice()
-                        .when().xpath("/name")
-                            .to("mock:found")
-                        .otherwise()
-                            .to("mock:notfound");
+                from("direct:doTest").transform().xpath("/root/name").choice().when().xpath("/name").to("mock:found").otherwise().to("mock:notfound");
             }
         };
     }

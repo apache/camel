@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;

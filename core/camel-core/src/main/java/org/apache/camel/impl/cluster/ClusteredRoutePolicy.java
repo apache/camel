@@ -125,9 +125,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         }
 
         if (this.camelContext != null && this.camelContext != camelContext) {
-            throw new IllegalStateException(
-                "CamelContext should not be changed: current=" + this.camelContext + ", new=" + camelContext
-            );
+            throw new IllegalStateException("CamelContext should not be changed: current=" + this.camelContext + ", new=" + camelContext);
         }
 
         try {
@@ -179,17 +177,12 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     @Override
     public void doStart() throws Exception {
         if (clusterService == null) {
-            clusterService = ClusterServiceHelper.lookupService(camelContext, clusterServiceSelector).orElseThrow(
-                () -> new IllegalStateException("CamelCluster service not found")
-            );
+            clusterService = ClusterServiceHelper.lookupService(camelContext, clusterServiceSelector)
+                .orElseThrow(() -> new IllegalStateException("CamelCluster service not found"));
         }
 
-        log.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})",
-            this,
-            clusterService,
-            clusterService.getId(),
-            clusterService.getClass().getName()
-        );
+        log.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})", this, clusterService, clusterService.getId(),
+                  clusterService.getClass().getName());
 
         clusterView = clusterService.getView(namespace);
     }
@@ -287,10 +280,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     private void onCamelContextStarted() {
-        log.debug("Apply cluster policy (stopped-routes='{}', started-routes='{}')",
-            stoppedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")),
-            startedRoutes.stream().map(Route::getId).collect(Collectors.joining(","))
-        );
+        log.debug("Apply cluster policy (stopped-routes='{}', started-routes='{}')", stoppedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")),
+                  startedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")));
 
         clusterView.addEventListener(leadershipEventListener);
     }

@@ -143,7 +143,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     public void setInstance(Object instance) {
         // people may by mistake pass in a class type as the instance
         if (instance instanceof Class) {
-            this.beanType = (Class<?>) instance;
+            this.beanType = (Class<?>)instance;
             this.instance = null;
         } else {
             this.beanType = null;
@@ -164,10 +164,11 @@ public class MethodCallExpression extends ExpressionDefinition {
         // special for bean language where we need to configure it first
         Language lan = camelContext.resolveLanguage("bean");
         configureLanguage(camelContext, lan);
-        // .. and create expression with null value as we use the configured properties instead
+        // .. and create expression with null value as we use the configured
+        // properties instead
         Expression exp = lan.createExpression(null);
         if (exp instanceof AfterPropertiesConfigured) {
-            ((AfterPropertiesConfigured) exp).afterPropertiesConfigured(camelContext);
+            ((AfterPropertiesConfigured)exp).afterPropertiesConfigured(camelContext);
         }
         return exp;
     }
@@ -189,7 +190,7 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public Predicate createPredicate(CamelContext camelContext) {
-        return (Predicate) createExpression(camelContext);
+        return (Predicate)createExpression(camelContext);
     }
 
     private String beanName() {

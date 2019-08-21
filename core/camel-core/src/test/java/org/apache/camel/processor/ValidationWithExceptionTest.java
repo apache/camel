@@ -28,9 +28,7 @@ public class ValidationWithExceptionTest extends ValidationTest {
 
                 onException(ValidationException.class).to("mock:invalid");
 
-                from("direct:start").
-                        process(validator).
-                        to("mock:valid");
+                from("direct:start").process(validator).to("mock:valid");
             }
         };
     }

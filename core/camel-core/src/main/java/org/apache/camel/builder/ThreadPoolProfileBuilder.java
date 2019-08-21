@@ -37,12 +37,11 @@ public class ThreadPoolProfileBuilder {
         this.profile = origProfile.clone();
         this.profile.setId(id);
     }
-    
+
     public ThreadPoolProfileBuilder defaultProfile(Boolean defaultProfile) {
         this.profile.setDefaultProfile(defaultProfile);
         return this;
     }
-
 
     public ThreadPoolProfileBuilder poolSize(Integer poolSize) {
         profile.setPoolSize(poolSize);
@@ -64,7 +63,7 @@ public class ThreadPoolProfileBuilder {
         profile.setKeepAliveTime(keepAliveTime);
         return this;
     }
-    
+
     public ThreadPoolProfileBuilder maxQueueSize(Integer maxQueueSize) {
         if (maxQueueSize != null) {
             profile.setMaxQueueSize(maxQueueSize);

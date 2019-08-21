@@ -28,42 +28,42 @@ import org.apache.camel.CamelContext;
 import org.junit.Test;
 
 public class TrustManagersParametersTest extends AbstractJsseParametersTest {
-    
+
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        
+
         ksp.setResource("org/apache/camel/support/jsse/localhost.ks");
         ksp.setPassword("changeit");
-        
+
         return ksp;
     }
-    
+
     protected TrustManagersParameters createMinimalTrustManagersParameters() {
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(this.createMinimalKeyStoreParameters());
-        
+
         return tmp;
     }
-    
+
     @Test
     public void testPropertyPlaceholders() throws Exception {
         CamelContext context = this.createPropertiesPlaceholderAwareContext();
-        
+
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setCamelContext(context);
-        
+
         ksp.setType("{{keyStoreParameters.type}}");
         ksp.setProvider("{{keyStoreParameters.provider}}");
         ksp.setResource("{{keyStoreParameters.resource}}");
         ksp.setPassword("{{keyStoreParamerers.password}}");
-        
+
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setCamelContext(context);
         tmp.setKeyStore(ksp);
-        
+
         tmp.setAlgorithm("{{trustManagersParameters.algorithm}}");
         tmp.setProvider("{{trustManagersParameters.provider}}");
-        
+
         TrustManager[] tms = tmp.createTrustManagers();
         validateTrustManagers(tms);
     }
@@ -84,35 +84,34 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
     @Test
     public void testCreateTrustManagers() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
-        
+
         TrustManager[] tms = tmp.createTrustManagers();
         validateTrustManagers(tms);
     }
-    
+
     @Test
     public void testExplicitAlgorithm() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
         tmp.setAlgorithm(KeyManagerFactory.getDefaultAlgorithm());
-        
+
         TrustManager[] tms = tmp.createTrustManagers();
         validateTrustManagers(tms);
     }
-    
+
     @Test
     public void testExplicitProvider() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
-        tmp.setProvider(TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-                        .getProvider().getName());
-        
+        tmp.setProvider(TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).getProvider().getName());
+
         TrustManager[] tms = tmp.createTrustManagers();
         validateTrustManagers(tms);
     }
-    
+
     @Test
     public void testInvalidExplicitAlgorithm() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
         tmp.setAlgorithm("dsfsdfsdfdsfdsF");
-        
+
         try {
             tmp.createTrustManagers();
             fail();
@@ -120,12 +119,12 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
             // expected
         }
     }
-    
+
     @Test
     public void testInvalidExplicitProvider() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
         tmp.setProvider("dsfsdfsdfdsfdsF");
-        
+
         try {
             tmp.createTrustManagers();
             fail();
@@ -137,7 +136,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
     protected void validateTrustManagers(TrustManager[] tms) {
         assertEquals(1, tms.length);
         assertTrue(tms[0] instanceof X509TrustManager);
-        X509TrustManager tm = (X509TrustManager) tms[0];
+        X509TrustManager tm = (X509TrustManager)tms[0];
         assertNotNull(tm.getAcceptedIssuers());
     }
 }

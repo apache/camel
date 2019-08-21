@@ -60,8 +60,7 @@ public class ClusteredRoutePolicyFactory implements RoutePolicyFactory {
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         try {
             return clusterService != null
-                ? ClusteredRoutePolicy.forNamespace(clusterService, namespace)
-                : ClusteredRoutePolicy.forNamespace(camelContext, clusterServiceSelector, namespace);
+                ? ClusteredRoutePolicy.forNamespace(clusterService, namespace) : ClusteredRoutePolicy.forNamespace(camelContext, clusterServiceSelector, namespace);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }

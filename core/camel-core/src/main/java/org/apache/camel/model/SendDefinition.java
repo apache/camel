@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> implements EndpointRequiredDefinition {
-    @XmlAttribute @Metadata(required = true)
+    @XmlAttribute
+    @Metadata(required = true)
     protected String uri;
     @XmlTransient
     protected Endpoint endpoint;

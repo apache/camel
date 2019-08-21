@@ -61,10 +61,7 @@ public class DumpModelAsXmlSplitBodyRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                   .split().body()
-                        .to("mock:sub").id("myMock")
-                    .end();
+                from("direct:start").routeId("myRoute").split().body().to("mock:sub").id("myMock").end();
             }
         };
     }

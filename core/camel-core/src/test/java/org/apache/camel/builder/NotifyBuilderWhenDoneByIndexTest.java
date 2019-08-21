@@ -36,9 +36,7 @@ public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
         });
 
         // notify when the 1st exchange is done (by index)
-        NotifyBuilder notify = new NotifyBuilder(context)
-                .whenDoneByIndex(0)
-                .create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDoneByIndex(0).create();
 
         assertEquals(false, notify.matches());
 
@@ -54,12 +52,7 @@ public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("foo")
-                    .delay(500)
-                    .split(body().tokenize(","))
-                        .to("mock:split")
-                    .end()
-                    .to("mock:foo");
+                from("seda:foo").routeId("foo").delay(500).split(body().tokenize(",")).to("mock:split").end().to("mock:foo");
             }
         };
     }

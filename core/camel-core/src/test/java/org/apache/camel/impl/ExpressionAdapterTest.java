@@ -38,7 +38,7 @@ public class ExpressionAdapterTest extends ContextTestSupport {
             if ("Kabom".equals(in)) {
                 return null;
             }
-            return (T) in;
+            return (T)in;
         }
     }
 

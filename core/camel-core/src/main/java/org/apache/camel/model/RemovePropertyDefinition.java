@@ -31,15 +31,15 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyDefinition> {
     @XmlAttribute(required = true)
-    private String propertyName;   
-    
+    private String propertyName;
+
     public RemovePropertyDefinition() {
     }
-    
+
     public RemovePropertyDefinition(String propertyName) {
         setPropertyName(propertyName);
     }
-    
+
     @Override
     public String toString() {
         return "RemoveProperty[" + getPropertyName() + "]";

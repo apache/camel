@@ -75,31 +75,26 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
-                    .errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(2))
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            counter++;
-                            throw new Exception("Forced exception by unit test");
-                        }
-                    });
+                from("direct:start").errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(2)).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        counter++;
+                        throw new Exception("Forced exception by unit test");
+                    }
+                });
 
-                from("direct:no")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            counter++;
-                            throw new Exception("Forced exception by unit test");
-                        }
-                    });
+                from("direct:no").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        counter++;
+                        throw new Exception("Forced exception by unit test");
+                    }
+                });
 
-                from("direct:one")
-                    .errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(1))
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            counter++;
-                            throw new Exception("Forced exception by unit test");
-                        }
-                    });
+                from("direct:one").errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(1)).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        counter++;
+                        throw new Exception("Forced exception by unit test");
+                    }
+                });
             }
         };
     }

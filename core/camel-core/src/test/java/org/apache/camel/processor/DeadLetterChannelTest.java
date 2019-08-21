@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -52,7 +53,8 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         failUntilAttempt = 5;
 
         deadEndpoint.expectedBodiesReceived(body);
-        // no traces of redelivery as the dead letter channel will handle the exception when moving the DLQ
+        // no traces of redelivery as the dead letter channel will handle the
+        // exception when moving the DLQ
         deadEndpoint.message(0).header(Exchange.REDELIVERED).isNull();
         deadEndpoint.message(0).header(Exchange.REDELIVERY_COUNTER).isNull();
         deadEndpoint.message(0).header(Exchange.REDELIVERY_MAX_COUNTER).isNull();
@@ -77,7 +79,8 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         failUntilAttempt = 5;
 
         deadEndpoint.expectedBodiesReceived(body);
-        // no traces of redelivery as the dead letter channel will handle the exception when moving the DLQ
+        // no traces of redelivery as the dead letter channel will handle the
+        // exception when moving the DLQ
         deadEndpoint.message(0).header(Exchange.REDELIVERED).isNull();
         deadEndpoint.message(0).header(Exchange.REDELIVERY_COUNTER).isNull();
         deadEndpoint.message(0).header(Exchange.REDELIVERY_MAX_COUNTER).isNull();
@@ -113,18 +116,14 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                 Integer counter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
                 int attempt = (counter == null) ? 1 : counter + 1;
                 if (attempt < failUntilAttempt) {
-                    throw new RuntimeException("Failed to process due to attempt: " + attempt
-                                               + " being less than: " + failUntilAttempt);
+                    throw new RuntimeException("Failed to process due to attempt: " + attempt + " being less than: " + failUntilAttempt);
                 }
             }
         };
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").errorHandler(
-                    deadLetterChannel("mock:failed").maximumRedeliveries(2)
-                        .redeliveryDelay(50)
-                        .loggingLevel(LoggingLevel.DEBUG)
+                from("direct:start").errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(2).redeliveryDelay(50).loggingLevel(LoggingLevel.DEBUG)
 
                 ).process(processor).to("mock:success");
             }

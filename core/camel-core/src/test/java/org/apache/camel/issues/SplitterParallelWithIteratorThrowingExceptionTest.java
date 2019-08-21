@@ -67,13 +67,8 @@ public class SplitterParallelWithIteratorThrowingExceptionTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").
-                    split(body())
-                        .aggregationStrategy(new UseLatestAggregationStrategy())
-                        .streaming().stopOnException().parallelProcessing().parallelAggregate()
-                            .to("mock:line")
-                    .end()
-                    .to("mock:end");
+                from("direct:start").split(body()).aggregationStrategy(new UseLatestAggregationStrategy()).streaming().stopOnException().parallelProcessing().parallelAggregate()
+                    .to("mock:line").end().to("mock:end");
             }
         };
     }

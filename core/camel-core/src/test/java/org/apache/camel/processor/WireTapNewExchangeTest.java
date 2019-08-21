@@ -52,17 +52,13 @@ public class WireTapNewExchangeTest extends ContextTestSupport {
                     // tap a new message and send it to direct:tap
                     // the new message should be Bye World with 2 headers
                     .wireTap("direct:tap")
-                        // create the new tap message body and headers
-                        .newExchangeBody(constant("Bye World"))
-                        .newExchangeHeader("id", constant(123))
-                        .newExchangeHeader("date", simple("${date:now:yyyyMMdd}"))
-                    .end()
+                    // create the new tap message body and headers
+                    .newExchangeBody(constant("Bye World")).newExchangeHeader("id", constant(123)).newExchangeHeader("date", simple("${date:now:yyyyMMdd}")).end()
                     // here we continue routing the original messages
                     .to("mock:result");
 
                 // this is the tapped route
-                from("direct:tap")
-                    .to("mock:tap");
+                from("direct:tap").to("mock:tap");
                 // END SNIPPET: e1
             }
         };

@@ -25,7 +25,7 @@ import org.apache.camel.spi.RouteContext;
 public class StopReifier extends ProcessorReifier<StopDefinition> {
 
     StopReifier(ProcessorDefinition<?> definition) {
-        super((StopDefinition) definition);
+        super((StopDefinition)definition);
     }
 
     @Override

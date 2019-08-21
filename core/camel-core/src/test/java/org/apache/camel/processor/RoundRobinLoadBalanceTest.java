@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -43,8 +44,7 @@ public class RoundRobinLoadBalanceTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").loadBalance().
-                roundRobin().to("mock:x", "mock:y", "mock:z");
+                from("direct:start").loadBalance().roundRobin().to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         };
@@ -57,7 +57,7 @@ public class RoundRobinLoadBalanceTest extends ContextTestSupport {
         expectsMessageCount(0, y, z);
         sendMessage("bar", body);
         assertMockEndpointsSatisfied();
-        
+
         x.reset();
 
         body = "<two/>";
@@ -66,8 +66,8 @@ public class RoundRobinLoadBalanceTest extends ContextTestSupport {
         sendMessage("bar", body);
         assertMockEndpointsSatisfied();
 
-        y.reset();        
-        
+        y.reset();
+
         body = "<three/>";
         z.expectedBodiesReceived(body);
         expectsMessageCount(0, x, y);

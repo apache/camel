@@ -46,14 +46,15 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
         assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
 
-        // and now its started we can test that it works by sending in a message to the route
+        // and now its started we can test that it works by sending in a message
+        // to the route
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
 
         camel.createProducerTemplate().sendBody("direct:start", "Hello World");
 
         mock.assertIsSatisfied();
-        
+
         camel.stop();
     }
 
@@ -80,7 +81,8 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
         assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
 
-        // and now its started we can test that it works by sending in a message to the route
+        // and now its started we can test that it works by sending in a message
+        // to the route
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
 
@@ -115,7 +117,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         camel.createProducerTemplate().sendBody("direct:start", "Hello World");
 
         mock.assertIsSatisfied();
-        
+
         camel.stop();
     }
 
@@ -133,7 +135,8 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         });
         camel.start();
 
-        // this is special, when you have auto startup=false on CamelContext, then NO routes is started
+        // this is special, when you have auto startup=false on CamelContext,
+        // then NO routes is started
 
         assertEquals(true, camel.isStarted());
         assertEquals(1, camel.getRoutes().size());

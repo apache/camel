@@ -40,16 +40,14 @@ public class RoutingSlipNoCacheTest extends ContextTestSupport {
     }
 
     protected void sendBody(String body) {
-        template.sendBodyAndHeader("direct:a", body, "recipientListHeader",
-                "mock:x,mock:y,mock:z");
+        template.sendBodyAndHeader("direct:a", body, "recipientListHeader", "mock:x,mock:y,mock:z");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").routingSlip(
-                        header("recipientListHeader").tokenize(",")).cacheSize(0);
+                from("direct:a").routingSlip(header("recipientListHeader").tokenize(",")).cacheSize(0);
             }
         };
 

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,7 +41,7 @@ public class RemovePropertiesWithExclusionTest extends ContextTestSupport {
     public void testSetExchangePropertiesMidRouteThenRemoveWithPatternAndExclusion() throws Exception {
         mid.expectedMessageCount(1);
         end.expectedMessageCount(1);
-        
+
         template.sendBody("direct:start", "message");
 
         // make sure we got the message
@@ -55,11 +56,12 @@ public class RemovePropertiesWithExclusionTest extends ContextTestSupport {
         assertEquals(expectedPropertyValue, actualPropertyValue);
         assertEquals(expectedPropertyValue1, actualPropertyValue1);
         assertEquals(expectedPropertyValue2, actualPropertyValue2);
-        
+
         List<Exchange> endExchanges = end.getExchanges();
         Exchange endExchange = endExchanges.get(0);
-        
-        // properties should be removed but the last still have to be in the exchange
+
+        // properties should be removed but the last still have to be in the
+        // exchange
         assertNull(endExchange.getProperty(propertyName, String.class));
         assertNull(endExchange.getProperty(propertyName1, String.class));
         assertEquals(expectedPropertyValue2, endExchange.getProperty(propertyName2, String.class));
@@ -77,11 +79,8 @@ public class RemovePropertiesWithExclusionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                    setProperty(propertyName).constant(expectedPropertyValue)
-                    .setProperty(propertyName1).constant(expectedPropertyValue1)
-                    .setProperty(propertyName2).constant(expectedPropertyValue2).to("mock:mid").
-                    removeProperties(pattern, exclusion).to("mock:end");
+                from("direct:start").setProperty(propertyName).constant(expectedPropertyValue).setProperty(propertyName1).constant(expectedPropertyValue1)
+                    .setProperty(propertyName2).constant(expectedPropertyValue2).to("mock:mid").removeProperties(pattern, exclusion).to("mock:end");
             }
         };
     }

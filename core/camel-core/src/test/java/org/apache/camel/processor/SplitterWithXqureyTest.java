@@ -24,27 +24,23 @@ import org.apache.camel.support.builder.Namespaces;
 import org.junit.Test;
 
 public class SplitterWithXqureyTest extends ContextTestSupport {
-    private static String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" "
-        + "xmlns:two=\"http://camel.apache.org/schema/two\">"
-        + "<person><name>Willem</name></person> "
-        + "<other><two:test>One</two:test></other>"
-        + "<other><two:test>Two</two:test></other>"
-        + "<other><test>Three</test></other>"
-        + "<other><test>Foure</test></other></workflow>";
-    
+    private static String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" " + "xmlns:two=\"http://camel.apache.org/schema/two\">"
+                                    + "<person><name>Willem</name></person> " + "<other><two:test>One</two:test></other>" + "<other><two:test>Two</two:test></other>"
+                                    + "<other><test>Three</test></other>" + "<other><test>Foure</test></other></workflow>";
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // split the message with namespaces defined 
-                Namespaces namespaces = new Namespaces("one", "http://camel.apache.org/schema/one");                
-                from("direct:endpoint").split().xpath("//one:other", namespaces).to("mock:result");                
+                // split the message with namespaces defined
+                Namespaces namespaces = new Namespaces("one", "http://camel.apache.org/schema/one");
+                from("direct:endpoint").split().xpath("//one:other", namespaces).to("mock:result");
             }
         };
     }
-    
+
     @Test
-    public void testSenderXmlData() throws Exception {        
+    public void testSenderXmlData() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.reset();
         result.expectedMessageCount(4);
@@ -55,9 +51,7 @@ public class SplitterWithXqureyTest extends ContextTestSupport {
             log.debug("The message is " + message);
             assertTrue("The splitted message should start with <other", message.indexOf("<other") == 0);
         }
-        
-        
-        
+
     }
 
 }

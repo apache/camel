@@ -24,7 +24,7 @@ import org.apache.camel.spi.Transformer;
 public class CustomTransformeReifier extends TransformerReifier<CustomTransformerDefinition> {
 
     CustomTransformeReifier(TransformerDefinition definition) {
-        super((CustomTransformerDefinition) definition);
+        super((CustomTransformerDefinition)definition);
     }
 
     @Override
@@ -50,9 +50,7 @@ public class CustomTransformeReifier extends TransformerReifier<CustomTransforme
 
         }
         transformer.setCamelContext(context);
-        return transformer.setModel(definition.getScheme())
-                .setFrom(definition.getFromType())
-                .setTo(definition.getToType());
+        return transformer.setModel(definition.getScheme()).setFrom(definition.getFromType()).setTo(definition.getToType());
     }
 
 }

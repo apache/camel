@@ -26,7 +26,8 @@ public class RecipientListParallelStopOnExceptionWithOnExceptionTest extends Con
     public void testRecipientListStopOnException() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedMessageCount(1);
-        // we run parallel so the tasks could haven been processed so we get 0 or more messages
+        // we run parallel so the tasks could haven been processed so we get 0
+        // or more messages
         getMockEndpoint("mock:a").expectedMinimumMessageCount(0);
         getMockEndpoint("mock:c").expectedMinimumMessageCount(0);
 
@@ -41,14 +42,9 @@ public class RecipientListParallelStopOnExceptionWithOnExceptionTest extends Con
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(true)
-                    .to("mock:handled")
-                    .transform(simple("Damn ${exception.message}"));
+                onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
 
-                from("direct:start")
-                    .recipientList(header("foo")).stopOnException().parallelProcessing()
-                    .to("mock:result");
+                from("direct:start").recipientList(header("foo")).stopOnException().parallelProcessing().to("mock:result");
 
                 from("direct:a").to("mock:a");
                 from("direct:b").to("mock:b").throwException(new IllegalArgumentException("Forced"));

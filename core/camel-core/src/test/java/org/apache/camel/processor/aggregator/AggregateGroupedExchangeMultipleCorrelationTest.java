@@ -78,13 +78,15 @@ public class AggregateGroupedExchangeMultipleCorrelationTest extends ContextTest
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // our route is aggregating from the direct queue and sending the response to the mock
+                // our route is aggregating from the direct queue and sending
+                // the response to the mock
                 from("direct:start")
-                    // aggregate all using the foo header and group the exchanges so we get one single exchange containing all the others
+                    // aggregate all using the foo header and group the
+                    // exchanges so we get one single exchange containing all
+                    // the others
                     .aggregate(header("foo"), new GroupedExchangeAggregationStrategy())
                     // wait for 1 seconds to aggregate
-                    .completionTimeout(1000L)
-                    .to("mock:result");
+                    .completionTimeout(1000L).to("mock:result");
                 // END SNIPPET: e1
             }
         };

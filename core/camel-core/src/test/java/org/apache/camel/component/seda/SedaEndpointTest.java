@@ -34,7 +34,7 @@ public class SedaEndpointTest extends ContextTestSupport {
     @Test
     public void testSedaEndpointUnboundedQueue() throws Exception {
         BlockingQueue<Exchange> unbounded = new LinkedBlockingQueue<>();
-        SedaEndpoint seda = new SedaEndpoint("seda://foo", context.getComponent("seda"), unbounded);        
+        SedaEndpoint seda = new SedaEndpoint("seda://foo", context.getComponent("seda"), unbounded);
         assertNotNull(seda);
 
         assertEquals(Integer.MAX_VALUE, seda.getSize());
@@ -42,7 +42,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(1, seda.getConcurrentConsumers());
 
         Producer prod = seda.createProducer();
-        seda.onStarted((SedaProducer) prod);
+        seda.onStarted((SedaProducer)prod);
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
@@ -50,7 +50,7 @@ public class SedaEndpointTest extends ContextTestSupport {
                 // do nothing
             }
         });
-        seda.onStarted((SedaConsumer) cons);
+        seda.onStarted((SedaConsumer)cons);
         assertEquals(1, seda.getConsumers().size());
 
         assertEquals(0, seda.getExchanges().size());
@@ -66,7 +66,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(1, seda.getConcurrentConsumers());
 
         Producer prod = seda.createProducer();
-        seda.onStarted((SedaProducer) prod);
+        seda.onStarted((SedaProducer)prod);
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
@@ -74,7 +74,7 @@ public class SedaEndpointTest extends ContextTestSupport {
                 // do nothing
             }
         });
-        seda.onStarted((SedaConsumer) cons);
+        seda.onStarted((SedaConsumer)cons);
         assertEquals(1, seda.getConsumers().size());
 
         assertEquals(0, seda.getExchanges().size());
@@ -90,7 +90,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(2, seda.getConcurrentConsumers());
 
         Producer prod = seda.createProducer();
-        seda.onStarted((SedaProducer) prod);
+        seda.onStarted((SedaProducer)prod);
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
@@ -98,7 +98,7 @@ public class SedaEndpointTest extends ContextTestSupport {
                 // do nothing
             }
         });
-        seda.onStarted((SedaConsumer) cons);
+        seda.onStarted((SedaConsumer)cons);
         assertEquals(1, seda.getConsumers().size());
 
         assertEquals(0, seda.getExchanges().size());
@@ -120,7 +120,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(2, seda.getConcurrentConsumers());
 
         Producer prod = seda.createProducer();
-        seda.onStarted((SedaProducer) prod);
+        seda.onStarted((SedaProducer)prod);
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
@@ -128,7 +128,7 @@ public class SedaEndpointTest extends ContextTestSupport {
                 // do nothing
             }
         });
-        seda.onStarted((SedaConsumer) cons);
+        seda.onStarted((SedaConsumer)cons);
         assertEquals(1, seda.getConsumers().size());
 
         assertEquals(0, seda.getExchanges().size());
@@ -146,7 +146,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertSame(seda, consumer.getEndpoint());
         assertNotNull(consumer.toString());
     }
-    
+
     @Test
     public void testSedaDefaultValue() throws Exception {
         SedaComponent sedaComponent = new SedaComponent();
@@ -154,7 +154,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         sedaComponent.setConcurrentConsumers(3);
         context.addComponent("seda", sedaComponent);
         SedaEndpoint seda = context.getEndpoint("seda://foo", SedaEndpoint.class);
-        
+
         assertEquals(300, seda.getSize());
         assertEquals(3, seda.getConcurrentConsumers());
     }

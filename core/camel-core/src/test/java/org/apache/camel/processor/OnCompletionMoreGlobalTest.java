@@ -69,17 +69,17 @@ public class OnCompletionMoreGlobalTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // define a global on completion that is invoked when the exchage is complete
+                // define a global on completion that is invoked when the
+                // exchage is complete
                 onCompletion().to("log:global").to("mock:sync");
 
-                // we can define multiple on completion as we like as this is unit test we add a few more
+                // we can define multiple on completion as we like as this is
+                // unit test we add a few more
                 onCompletion().to("log:global").to("mock:two");
                 onCompletion().onCompleteOnly().to("log:global").to("mock:complete");
                 onCompletion().onFailureOnly().to("log:global").to("mock:failure");
 
-                from("direct:start")
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                from("direct:start").process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

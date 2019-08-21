@@ -82,7 +82,7 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> im
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
         if (output instanceof OnFallbackDefinition) {
-            onFallback = (OnFallbackDefinition) output;
+            onFallback = (OnFallbackDefinition)output;
         } else {
             if (onFallback != null) {
                 onFallback.addOutput(output);
@@ -109,7 +109,7 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> im
         while (it.hasNext()) {
             ProcessorDefinition<?> out = it.next();
             if (out instanceof OnFallbackDefinition) {
-                onFallback = (OnFallbackDefinition) out;
+                onFallback = (OnFallbackDefinition)out;
                 it.remove();
             }
         }
@@ -167,13 +167,14 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> im
     /**
      * Configures the Hystrix EIP
      * <p/>
-     * Use <tt>end</tt> when configuration is complete, to return back to the Hystrix EIP.
+     * Use <tt>end</tt> when configuration is complete, to return back to the
+     * Hystrix EIP.
      */
     public HystrixConfigurationDefinition hystrixConfiguration() {
         hystrixConfiguration = hystrixConfiguration == null ? new HystrixConfigurationDefinition(this) : hystrixConfiguration;
         return hystrixConfiguration;
     }
-    
+
     /**
      * Configures the Hystrix EIP using the given configuration
      */
@@ -191,10 +192,12 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> im
     }
 
     /**
-     * The Hystrix fallback route path to execute that does <b>not</b> go over the network.
+     * The Hystrix fallback route path to execute that does <b>not</b> go over
+     * the network.
      * <p>
-     * This should be a static or cached result that can immediately be returned upon failure.
-     * If the fallback requires network connection then use {@link #onFallbackViaNetwork()}.
+     * This should be a static or cached result that can immediately be returned
+     * upon failure. If the fallback requires network connection then use
+     * {@link #onFallbackViaNetwork()}.
      */
     public HystrixDefinition onFallback() {
         onFallback = new OnFallbackDefinition();
@@ -205,10 +208,12 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> im
     /**
      * The Hystrix fallback route path to execute that will go over the network.
      * <p/>
-     * If the fallback will go over the network it is another possible point of failure and so it also needs to be
-     * wrapped by a HystrixCommand. It is important to execute the fallback command on a separate thread-pool,
-     * otherwise if the main command were to become latent and fill the thread-pool
-     * this would prevent the fallback from running if the two commands share the same pool.
+     * If the fallback will go over the network it is another possible point of
+     * failure and so it also needs to be wrapped by a HystrixCommand. It is
+     * important to execute the fallback command on a separate thread-pool,
+     * otherwise if the main command were to become latent and fill the
+     * thread-pool this would prevent the fallback from running if the two
+     * commands share the same pool.
      */
     public HystrixDefinition onFallbackViaNetwork() {
         onFallback = new OnFallbackDefinition();

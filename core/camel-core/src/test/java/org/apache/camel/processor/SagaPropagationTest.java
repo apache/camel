@@ -37,7 +37,6 @@ public class SagaPropagationTest extends ContextTestSupport {
 
     private List<String> sagaIds;
 
-
     @Test
     public void testPropagationRequired() throws Exception {
         context.createFluentProducerTemplate().to("direct:required").request();
@@ -104,80 +103,47 @@ public class SagaPropagationTest extends ContextTestSupport {
 
                 // REQUIRED
 
-                from("direct:required")
-                        .saga()
-                        .process(addSagaIdToList())
-                        .to("direct:required2");
+                from("direct:required").saga().process(addSagaIdToList()).to("direct:required2");
 
-                from("direct:required2")
-                        .saga().propagation(SagaPropagation.REQUIRED)
-                        .process(addSagaIdToList())
-                        .to("direct:required3");
+                from("direct:required2").saga().propagation(SagaPropagation.REQUIRED).process(addSagaIdToList()).to("direct:required3");
 
-                from("direct:required3")
-                        .saga()
-                        .process(addSagaIdToList());
+                from("direct:required3").saga().process(addSagaIdToList());
 
                 // REQUIRES_NEW
 
-                from("direct:requiresNew")
-                        .saga().propagation(SagaPropagation.REQUIRES_NEW)
-                        .process(addSagaIdToList())
-                        .to("direct:requiresNew2")
-                        .to("direct:requiresNew2");
+                from("direct:requiresNew").saga().propagation(SagaPropagation.REQUIRES_NEW).process(addSagaIdToList()).to("direct:requiresNew2").to("direct:requiresNew2");
 
-                from("direct:requiresNew2")
-                        .saga().propagation(SagaPropagation.REQUIRES_NEW)
-                        .process(addSagaIdToList());
+                from("direct:requiresNew2").saga().propagation(SagaPropagation.REQUIRES_NEW).process(addSagaIdToList());
 
                 // NOT_SUPPORTED
 
-                from("direct:notSupported")
-                        .process(addSagaIdToList())
-                        .to("direct:notSupported2")
-                        .to("direct:notSupported3");
+                from("direct:notSupported").process(addSagaIdToList()).to("direct:notSupported2").to("direct:notSupported3");
 
-                from("direct:notSupported2")
-                        .saga() // required
-                        .process(addSagaIdToList())
-                        .to("direct:notSupported3");
+                from("direct:notSupported2").saga() // required
+                    .process(addSagaIdToList()).to("direct:notSupported3");
 
-                from("direct:notSupported3")
-                        .saga().propagation(SagaPropagation.NOT_SUPPORTED)
-                        .process(addSagaIdToList());
+                from("direct:notSupported3").saga().propagation(SagaPropagation.NOT_SUPPORTED).process(addSagaIdToList());
 
                 // SUPPORTS
 
-                from("direct:supports")
-                        .to("direct:supports2")
-                        .to("direct:supports3");
+                from("direct:supports").to("direct:supports2").to("direct:supports3");
 
-                from("direct:supports2")
-                        .saga() // required
-                        .to("direct:supports3");
+                from("direct:supports2").saga() // required
+                    .to("direct:supports3");
 
-                from("direct:supports3")
-                        .saga().propagation(SagaPropagation.SUPPORTS)
-                        .process(addSagaIdToList());
+                from("direct:supports3").saga().propagation(SagaPropagation.SUPPORTS).process(addSagaIdToList());
 
                 // MANDATORY
 
-                from("direct:mandatory")
-                        .to("direct:mandatory2");
+                from("direct:mandatory").to("direct:mandatory2");
 
-                from("direct:mandatory2")
-                        .saga().propagation(SagaPropagation.MANDATORY)
-                        .process(addSagaIdToList());
+                from("direct:mandatory2").saga().propagation(SagaPropagation.MANDATORY).process(addSagaIdToList());
 
                 // NEVER
 
-                from("direct:never")
-                        .saga()
-                        .to("direct:never2");
+                from("direct:never").saga().to("direct:never2");
 
-                from("direct:never2")
-                        .saga().propagation(SagaPropagation.NEVER)
-                        .process(addSagaIdToList());
+                from("direct:never2").saga().propagation(SagaPropagation.NEVER).process(addSagaIdToList());
 
             }
         };

@@ -26,7 +26,7 @@ import org.apache.camel.spi.RouteContext;
 public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
 
     SendReifier(ProcessorDefinition<?> definition) {
-        super((SendDefinition) definition);
+        super((SendDefinition)definition);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
     public Endpoint resolveEndpoint(RouteContext context) {
         if (definition.getEndpoint() == null) {
             if (definition.getEndpointProducerBuilder() == null) {
-                return context.resolveEndpoint(definition.getEndpointUri(), (String) null);
+                return context.resolveEndpoint(definition.getEndpointUri(), (String)null);
             } else {
                 return definition.getEndpointProducerBuilder().resolve(context.getCamelContext());
             }

@@ -44,14 +44,8 @@ public class CBRSimpleTypeTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .choice()
-                        .when().simple("${header.customer} == ${type:org.apache.camel.processor.Customer.GOLD}")
-                            .to("mock:gold")
-                        .when().simple("${header.customer} == ${type:org.apache.camel.processor.Customer.SILVER}")
-                            .to("mock:silver")
-                        .otherwise()
-                            .to("mock:other");
+                from("direct:start").choice().when().simple("${header.customer} == ${type:org.apache.camel.processor.Customer.GOLD}").to("mock:gold").when()
+                    .simple("${header.customer} == ${type:org.apache.camel.processor.Customer.SILVER}").to("mock:silver").otherwise().to("mock:other");
                 // END SNIPPET: e1
             }
         };

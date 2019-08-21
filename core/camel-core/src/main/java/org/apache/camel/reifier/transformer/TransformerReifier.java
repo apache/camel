@@ -37,7 +37,7 @@ public abstract class TransformerReifier<T> {
         map.put(EndpointTransformerDefinition.class, EndpointTransformeReifier::new);
         TRANSFORMERS = map;
     }
-    
+
     protected final T definition;
 
     public TransformerReifier(T definition) {

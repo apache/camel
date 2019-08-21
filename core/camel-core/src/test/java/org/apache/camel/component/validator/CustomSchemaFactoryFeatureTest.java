@@ -28,13 +28,12 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        SchemaFactory mySchemaFactory =  SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        SchemaFactory mySchemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         mySchemaFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);
         registry.bind("MySchemaFactory", mySchemaFactory);
         return registry;
     }
-    
-    
+
     // just inject the SchemaFactory as we want
     @Test
     public void testCustomSchemaFactory() throws Exception {

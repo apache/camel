@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -48,8 +49,7 @@ public class FileToFileNioLowBufferTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/nio/in?initialDelay=0&delay=10")
-                    .convertBodyTo(String.class).to("file://target/data/nio/out?bufferSize=4").to("mock:result");
+                from("file://target/data/nio/in?initialDelay=0&delay=10").convertBodyTo(String.class).to("file://target/data/nio/out?bufferSize=4").to("mock:result");
             }
         };
     }

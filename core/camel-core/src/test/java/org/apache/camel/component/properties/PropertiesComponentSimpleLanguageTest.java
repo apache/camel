@@ -33,8 +33,7 @@ public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
+                from("direct:start").transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
             }
         });
         context.start();
@@ -48,8 +47,7 @@ public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .transform().simple("Hi ${body} do you think ${properties:cheese.quote}? And do you like ${properties:cheese.type} cheese?");
+                from("direct:start").transform().simple("Hi ${body} do you think ${properties:cheese.quote}? And do you like ${properties:cheese.type} cheese?");
             }
         });
         context.start();

@@ -57,9 +57,7 @@ public class SplitterCollateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(simple("${collate(3)}"))
-                        .to("mock:line");
+                from("direct:start").split(simple("${collate(3)}")).to("mock:line");
             }
         };
     }

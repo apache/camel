@@ -59,7 +59,7 @@ public class TypeConverterRegistryMissesThenAddTest extends Assert {
             // converter from value to the MyOrder bean
             MyOrder order = new MyOrder();
             order.setId(Integer.parseInt(value.toString()));
-            return (T) order;
+            return (T)order;
         }
 
     }

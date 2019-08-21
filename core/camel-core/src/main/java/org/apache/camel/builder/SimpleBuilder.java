@@ -29,8 +29,9 @@ import org.apache.camel.support.ScriptHelper;
 /**
  * Creates an {@link Simple} language builder.
  * <p/>
- * This builder is available in the Java DSL from the {@link RouteBuilder} which means that using
- * simple language for {@link Expression}s or {@link Predicate}s is very easy with the help of this builder.
+ * This builder is available in the Java DSL from the {@link RouteBuilder} which
+ * means that using simple language for {@link Expression}s or
+ * {@link Predicate}s is very easy with the help of this builder.
  */
 public class SimpleBuilder implements Predicate, Expression, ExpressionResultTypeAware {
 
@@ -54,11 +55,11 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
         return answer;
     }
 
-    public static SimpleBuilder simpleF(String formatText, Object...values) {
+    public static SimpleBuilder simpleF(String formatText, Object... values) {
         return simple(String.format(formatText, values));
     }
 
-    public static SimpleBuilder simpleF(String formatText, Class<?> resultType, Object...values) {
+    public static SimpleBuilder simpleF(String formatText, Class<?> resultType, Object... values) {
         return simple(String.format(formatText, values), resultType);
     }
 
@@ -105,7 +106,8 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
         try {
             // resolve property placeholders
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
-            // and optional it be refer to an external script on the file/classpath
+            // and optional it be refer to an external script on the
+            // file/classpath
             resolve = ScriptHelper.resolveOptionalExternalScript(exchange.getContext(), exchange, resolve);
             Language simple = exchange.getContext().resolveLanguage("simple");
             return simple.createPredicate(resolve);
@@ -118,7 +120,8 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
         try {
             // resolve property placeholders
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
-            // and optional it be refer to an external script on the file/classpath
+            // and optional it be refer to an external script on the
+            // file/classpath
             resolve = ScriptHelper.resolveOptionalExternalScript(exchange.getContext(), exchange, resolve);
             Language simple = exchange.getContext().resolveLanguage("simple");
             return createSimpleExpression(simple, resolve, resultType);

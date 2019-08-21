@@ -29,13 +29,13 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Validator;
 
 /**
- * Represents a predicate {@link Validator} which leverages expression or predicates to
- * perform content validation. A {@link org.apache.camel.impl.validator.ProcessorValidator}
- * will be created internally with a {@link org.apache.camel.processor.validation.PredicateValidatingProcessor}
+ * Represents a predicate {@link Validator} which leverages expression or
+ * predicates to perform content validation. A
+ * {@link org.apache.camel.impl.validator.ProcessorValidator} will be created
+ * internally with a
+ * {@link org.apache.camel.processor.validation.PredicateValidatingProcessor}
  * which validates the message according to specified expression/predicates.
- * 
- * {@see ValidatorDefinition}
- * {@see Validator}
+ * {@see ValidatorDefinition} {@see Validator}
  */
 @Metadata(label = "validation")
 @XmlType(name = "predicateValidator")
@@ -50,15 +50,15 @@ public class PredicateValidatorDefinition extends ValidatorDefinition {
     }
 
     public void setExpression(ExpressionDefinition expression) {
-        // favour using the helper to set the expression as it can unwrap some unwanted builders when using Java DSL
+        // favour using the helper to set the expression as it can unwrap some
+        // unwanted builders when using Java DSL
         if (expression instanceof Expression) {
-            this.expression = ExpressionNodeHelper.toExpressionDefinition((Expression) expression);
+            this.expression = ExpressionNodeHelper.toExpressionDefinition((Expression)expression);
         } else if (expression instanceof Predicate) {
-            this.expression = ExpressionNodeHelper.toExpressionDefinition((Predicate) expression);
+            this.expression = ExpressionNodeHelper.toExpressionDefinition((Predicate)expression);
         } else {
             this.expression = expression;
         }
     }
 
 }
-

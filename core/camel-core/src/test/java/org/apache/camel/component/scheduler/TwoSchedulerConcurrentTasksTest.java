@@ -37,13 +37,9 @@ public class TwoSchedulerConcurrentTasksTest extends ContextTestSupport {
                 SchedulerComponent comp = context.getComponent("scheduler", SchedulerComponent.class);
                 comp.setConcurrentTasks(2);
 
-                from("scheduler://foo?delay=100")
-                    .to("log:a")
-                    .to("mock:a");
+                from("scheduler://foo?delay=100").to("log:a").to("mock:a");
 
-                from("scheduler://foo?delay=200")
-                    .to("log:b")
-                    .to("mock:b");
+                from("scheduler://foo?delay=200").to("log:b").to("mock:b");
             }
         };
     }

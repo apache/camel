@@ -68,7 +68,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     private String produces;
 
-    @XmlAttribute @Metadata(defaultValue = "auto")
+    @XmlAttribute
+    @Metadata(defaultValue = "auto")
     private RestBindingMode bindingMode;
 
     @XmlAttribute
@@ -115,7 +116,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * To configure a special tag for the operations within this rest definition.
+     * To configure a special tag for the operations within this rest
+     * definition.
      */
     public void setTag(String tag) {
         this.tag = tag;
@@ -126,8 +128,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * To define the content type what the REST service consumes (accept as input), such as application/xml or application/json.
-     * This option will override what may be configured on a parent level
+     * To define the content type what the REST service consumes (accept as
+     * input), such as application/xml or application/json. This option will
+     * override what may be configured on a parent level
      */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
@@ -138,8 +141,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * To define the content type what the REST service produces (uses for output), such as application/xml or application/json
-     * This option will override what may be configured on a parent level
+     * To define the content type what the REST service produces (uses for
+     * output), such as application/xml or application/json This option will
+     * override what may be configured on a parent level
      */
     public void setProduces(String produces) {
         this.produces = produces;
@@ -150,8 +154,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Sets the binding mode to use.
-     * This option will override what may be configured on a parent level
+     * Sets the binding mode to use. This option will override what may be
+     * configured on a parent level
      * <p/>
      * The default value is auto
      */
@@ -186,9 +190,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Whether to skip binding on output if there is a custom HTTP error code header.
-     * This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.
-     * This option will override what may be configured on a parent level
+     * Whether to skip binding on output if there is a custom HTTP error code
+     * header. This allows to build custom error messages that do not bind to
+     * json / xml etc, as success messages otherwise will do. This option will
+     * override what may be configured on a parent level
      */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
@@ -199,10 +204,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
-     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * Whether to enable validation of the client request to check whether the
+     * Content-Type and Accept headers from the client is supported by the
+     * Rest-DSL configuration of its consumes/produces settings.
      * <p/>
-     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned.
+     * This can be turned on, to enable this check. In case of validation error,
+     * then HTTP Status codes 415 or 406 is returned.
      * <p/>
      * The default value is false.
      */
@@ -215,8 +222,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Whether to enable CORS headers in the HTTP response.
-     * This option will override what may be configured on a parent level
+     * Whether to enable CORS headers in the HTTP response. This option will
+     * override what may be configured on a parent level
      * <p/>
      * The default value is false.
      */
@@ -239,7 +246,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     // Fluent API
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * To set the base path of this REST service
@@ -564,7 +571,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     /**
      * Routes directly to the given static endpoint.
      * <p/>
-     * If you need additional routing capabilities, then use {@link #route()} instead.
+     * If you need additional routing capabilities, then use {@link #route()}
+     * instead.
      *
      * @param uri the uri of the endpoint
      * @return this builder
@@ -585,7 +593,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     /**
      * Routes directly to the given dynamic endpoint.
      * <p/>
-     * If you need additional routing capabilities, then use {@link #route()} instead.
+     * If you need additional routing capabilities, then use {@link #route()}
+     * instead.
      *
      * @param uri the uri of the endpoint
      * @return this builder
@@ -616,7 +625,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         verb.setRoute(route);
         return route;
     }
-    
+
     /**
      * Build the from endpoint uri for the verb
      */
@@ -625,7 +634,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     // Implementation
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     private RestDefinition addVerb(String verb, String uri) {
         VerbDefinition answer;
@@ -653,9 +662,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Transforms this REST definition into a list of {@link org.apache.camel.model.RouteDefinition} which
-     * Camel routing engine can add and run. This allows us to define REST services using this
-     * REST DSL and turn those into regular Camel routes.
+     * Transforms this REST definition into a list of
+     * {@link org.apache.camel.model.RouteDefinition} which Camel routing engine
+     * can add and run. This allows us to define REST services using this REST
+     * DSL and turn those into regular Camel routes.
      *
      * @param camelContext The Camel context
      */
@@ -668,7 +678,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         List<RouteDefinition> answer = new ArrayList<>();
         if (camelContext.getRestConfigurations().isEmpty()) {
             // make sure to initialize a rest configuration when its empty
-            // lookup a global which may have been setup via camel-spring-boot etc
+            // lookup a global which may have been setup via camel-spring-boot
+            // etc
             RestConfiguration conf = CamelContextHelper.lookup(camelContext, RestConstants.DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
             if (conf == null) {
                 conf = CamelContextHelper.findByType(camelContext, RestConfiguration.class);
@@ -699,8 +710,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Transforms the rest api configuration into a {@link org.apache.camel.model.RouteDefinition} which
-     * Camel routing engine uses to service the rest api docs.
+     * Transforms the rest api configuration into a
+     * {@link org.apache.camel.model.RouteDefinition} which Camel routing engine
+     * uses to service the rest api docs.
      */
     public static RouteDefinition asRouteApiDefinition(CamelContext camelContext, RestConfiguration configuration) {
         RouteDefinition answer = new RouteDefinition();
@@ -736,7 +748,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             from = from + "?" + query;
         }
 
-        // we use the same uri as the producer (so we have a little route for the rest api)
+        // we use the same uri as the producer (so we have a little route for
+        // the rest api)
         String to = from;
         answer.fromRest(from);
         answer.id(routeId);
@@ -857,8 +870,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 options.put("producerComponentName", producerComponent);
             }
 
-            // include optional description, which we favor from 1) to/route description 2) verb description 3) rest description
-            // this allows end users to define general descriptions and override then per to/route or verb
+            // include optional description, which we favor from 1) to/route
+            // description 2) verb description 3) rest description
+            // this allows end users to define general descriptions and override
+            // then per to/route or verb
             String description = verb.getTo() != null ? verb.getTo().getDescriptionText() : route.getDescriptionText();
             if (description == null) {
                 description = verb.getDescriptionText();
@@ -904,7 +919,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     }
                     if (a.startsWith("{") && a.endsWith("}")) {
                         String key = a.substring(1, a.length() - 1);
-                        //  merge if exists
+                        // merge if exists
                         boolean found = false;
                         for (RestOperationParamDefinition param : verb.getParams()) {
                             // name is mandatory

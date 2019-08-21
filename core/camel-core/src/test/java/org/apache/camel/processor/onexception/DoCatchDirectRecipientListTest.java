@@ -38,23 +38,13 @@ public class DoCatchDirectRecipientListTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .doTry()
-                        .to("direct:a")
-                    .doCatch(Exception.class)
-                        .to("direct:c")
-                    .end();
+                from("direct:start").doTry().to("direct:a").doCatch(Exception.class).to("direct:c").end();
 
-                from("direct:a")
-                    .to("mock:a")
-                    .recipientList(constant("direct:b"));
+                from("direct:a").to("mock:a").recipientList(constant("direct:b"));
 
-                from("direct:b")
-                    .to("mock:b")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:b").to("mock:b").throwException(new IllegalArgumentException("Forced"));
 
-                from("direct:c")
-                    .to("mock:c");
+                from("direct:c").to("mock:c");
             }
         };
     }

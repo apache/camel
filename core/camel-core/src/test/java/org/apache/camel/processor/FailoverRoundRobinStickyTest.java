@@ -33,7 +33,8 @@ public class FailoverRoundRobinStickyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // as its round robin and sticky based it remembers that last good endpoint
+        // as its round robin and sticky based it remembers that last good
+        // endpoint
         // and will invoke the last good
 
         resetMocks();
@@ -55,27 +56,23 @@ public class FailoverRoundRobinStickyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // Use failover load balancer in stateful round robin and sticky mode
-                    // which mean it will failover immediately in case of an exception
-                    // as it does NOT inherit error handler. It will also keep retrying as
+                    // Use failover load balancer in stateful round robin and
+                    // sticky mode
+                    // which mean it will failover immediately in case of an
+                    // exception
+                    // as it does NOT inherit error handler. It will also keep
+                    // retrying as
                     // its configured to newer exhaust.
-                    .loadBalance().failover(-1, false, true, true).
-                        to("direct:bad", "direct:bad2", "direct:good", "direct:good2");
+                    .loadBalance().failover(-1, false, true, true).to("direct:bad", "direct:bad2", "direct:good", "direct:good2");
                 // END SNIPPET: e1
 
-                from("direct:bad")
-                    .to("mock:bad")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:bad").to("mock:bad").throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:bad2")
-                    .to("mock:bad2")
-                    .throwException(new IllegalArgumentException("Damn Again"));
+                from("direct:bad2").to("mock:bad2").throwException(new IllegalArgumentException("Damn Again"));
 
-                from("direct:good")
-                    .to("mock:good");
+                from("direct:good").to("mock:good");
 
-                from("direct:good2")
-                    .to("mock:good2");
+                from("direct:good2").to("mock:good2");
             }
         };
     }

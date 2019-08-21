@@ -68,8 +68,8 @@ public class CBORDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Lookup and use the existing CBOR ObjectMapper with the given id when using
-     * Jackson.
+     * Lookup and use the existing CBOR ObjectMapper with the given id when
+     * using Jackson.
      */
     public void setObjectMapper(String objectMapper) {
         this.objectMapper = objectMapper;
@@ -80,12 +80,13 @@ public class CBORDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether to lookup and use default Jackson CBOR ObjectMapper from the registry.
+     * Whether to lookup and use default Jackson CBOR ObjectMapper from the
+     * registry.
      */
     public void setUseDefaultObjectMapper(Boolean useDefaultObjectMapper) {
         this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
-    
+
     public String getUnmarshalTypeName() {
         return unmarshalTypeName;
     }
@@ -100,7 +101,7 @@ public class CBORDataFormat extends DataFormatDefinition {
     public Class<?> getUnmarshalType() {
         return unmarshalType;
     }
-    
+
     public Boolean getPrettyPrint() {
         return prettyPrint;
     }
@@ -113,7 +114,7 @@ public class CBORDataFormat extends DataFormatDefinition {
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
-    
+
     public Boolean getAllowJmsType() {
         return allowJmsType;
     }
@@ -132,7 +133,7 @@ public class CBORDataFormat extends DataFormatDefinition {
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
-    
+
     public String getCollectionTypeName() {
         return collectionTypeName;
     }
@@ -178,7 +179,7 @@ public class CBORDataFormat extends DataFormatDefinition {
     public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
     }
-    
+
     public String getEnableFeatures() {
         return enableFeatures;
     }

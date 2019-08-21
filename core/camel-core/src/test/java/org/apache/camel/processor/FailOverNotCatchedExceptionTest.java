@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.IOException;
 import java.net.SocketException;
 
@@ -50,11 +51,12 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                     // here we will load balance if IOException was thrown
-                    // any other kind of exception will result in the Exchange as failed
-                    // to failover over any kind of exception we can just omit the exception
+                    // any other kind of exception will result in the Exchange
+                    // as failed
+                    // to failover over any kind of exception we can just omit
+                    // the exception
                     // in the failOver DSL
-                    .loadBalance().failover(IOException.class)
-                        .to("direct:x", "direct:y", "direct:z");
+                    .loadBalance().failover(IOException.class).to("direct:x", "direct:y", "direct:z");
                 // END SNIPPET: e1
 
                 from("direct:x").to("mock:x").process(new Processor() {
@@ -80,7 +82,8 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
         y.expectedMessageCount(1);
         z.expectedMessageCount(0);
 
-        // to test that if a processor throw an exception that the failover loadbalancer
+        // to test that if a processor throw an exception that the failover
+        // loadbalancer
         // do not catch then the exception is propagated back
 
         try {

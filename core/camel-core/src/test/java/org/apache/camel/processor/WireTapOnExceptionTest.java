@@ -32,7 +32,7 @@ import org.junit.Test;
  *
  */
 public class WireTapOnExceptionTest extends ContextTestSupport {
-    
+
     @Test
     public void testWireTapOnException() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -52,7 +52,7 @@ public class WireTapOnExceptionTest extends ContextTestSupport {
                 context.addEndpoint("myEndpoint://foo", my);
 
                 onException(IllegalArgumentException.class).to("mock:error");
-                
+
                 from("direct:start").wireTap("myEndpoint:foo").to("mock:result");
             }
         };

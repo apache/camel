@@ -55,17 +55,16 @@ public class OnCompletionWhenTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .onCompletion().onWhen(body().contains("Hello"))
-                        // this route is only invoked when the original route is complete as a kind
-                        // of completion callback. And also only if the onWhen predicate is true
-                        .to("log:sync")
-                        .to("mock:sync")
+                from("direct:start").onCompletion().onWhen(body().contains("Hello"))
+                    // this route is only invoked when the original route is
+                    // complete as a kind
+                    // of completion callback. And also only if the onWhen
+                    // predicate is true
+                    .to("log:sync").to("mock:sync")
                     // must use end to denote the end of the onCompletion route
                     .end()
                     // here the original route contiues
-                    .to("log:original")
-                    .to("mock:result");
+                    .to("log:original").to("mock:result");
                 // END SNIPPET: e1
             }
         };

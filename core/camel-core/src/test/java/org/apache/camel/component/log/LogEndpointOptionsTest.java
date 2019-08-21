@@ -40,8 +40,7 @@ public class LogEndpointOptionsTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("log:foo?level=DEBUG&marker=bar&groupSize=20");
+                from("direct:start").to("log:foo?level=DEBUG&marker=bar&groupSize=20");
             }
         };
     }

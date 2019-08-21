@@ -26,7 +26,8 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchange;
 
 /**
- * Builder to create {@link Exchange} and add headers and set body on the Exchange {@link Message}.
+ * Builder to create {@link Exchange} and add headers and set body on the
+ * Exchange {@link Message}.
  * <p/>
  * Use the {@link #build()} method when done setting up the exchange.
  */
@@ -44,7 +45,7 @@ public final class ExchangeBuilder {
     /**
      * Create the exchange by setting the camel context
      *
-     * @param context the camel context 
+     * @param context the camel context
      * @return exchange builder
      */
     public static ExchangeBuilder anExchange(CamelContext context) {
@@ -84,7 +85,7 @@ public final class ExchangeBuilder {
         this.pattern = pattern;
         return this;
     }
-    
+
     /**
      * Set the exchange property
      *
@@ -100,7 +101,7 @@ public final class ExchangeBuilder {
     /**
      * Build up the exchange from the exchange builder
      *
-     * @return exchange 
+     * @return exchange
      */
     public Exchange build() {
         Exchange exchange = new DefaultExchange(context);

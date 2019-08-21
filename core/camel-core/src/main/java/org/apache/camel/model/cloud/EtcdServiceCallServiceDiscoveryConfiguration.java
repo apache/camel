@@ -31,17 +31,21 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 public class EtcdServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute
     private String uris;
-    @XmlAttribute @Metadata(label = "security")
+    @XmlAttribute
+    @Metadata(label = "security")
     private String userName;
-    @XmlAttribute @Metadata(label = "security")
+    @XmlAttribute
+    @Metadata(label = "security")
     private String password;
     @XmlAttribute
     private Long timeout;
-    @XmlAttribute @Metadata(defaultValue = "/services/")
+    @XmlAttribute
+    @Metadata(defaultValue = "/services/")
     private String servicePath = "/services/";
     @XmlTransient
     private SSLContextParameters sslContextParameters;
-    @XmlAttribute @Metadata(defaultValue = "on-demand", enums = "on-demand,watch")
+    @XmlAttribute
+    @Metadata(defaultValue = "on-demand", enums = "on-demand,watch")
     private String type = "on-demand";
 
     public EtcdServiceCallServiceDiscoveryConfiguration() {
@@ -77,6 +81,7 @@ public class EtcdServiceCallServiceDiscoveryConfiguration extends ServiceCallSer
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
     public String getPassword() {
         return password;
     }

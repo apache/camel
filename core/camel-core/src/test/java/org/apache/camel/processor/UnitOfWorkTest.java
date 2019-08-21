@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -82,7 +83,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
     }
 
     protected void sendMessage() throws InterruptedException {
-        
+
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader("foo", "bar");

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -34,7 +35,7 @@ public class RemovePropertyTest extends ContextTestSupport {
     public void testSetExchangePropertyMidRouteThenRemove() throws Exception {
         mid.expectedMessageCount(1);
         end.expectedMessageCount(1);
-        
+
         template.sendBody("direct:start", "<blah/>");
 
         // make sure we got the message
@@ -45,10 +46,10 @@ public class RemovePropertyTest extends ContextTestSupport {
         String actualPropertyValue = midExchange.getProperty(propertyName, String.class);
 
         assertEquals(expectedPropertyValue, actualPropertyValue);
-        
+
         List<Exchange> endExchanges = end.getExchanges();
         Exchange endExchange = endExchanges.get(0);
-        
+
         // property should be removed
         assertNull(endExchange.getProperty(propertyName, String.class));
     }
@@ -65,9 +66,7 @@ public class RemovePropertyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                    setProperty(propertyName).constant(expectedPropertyValue).to("mock:mid").
-                    removeProperty(propertyName).to("mock:end");
+                from("direct:start").setProperty(propertyName).constant(expectedPropertyValue).to("mock:mid").removeProperty(propertyName).to("mock:end");
             }
         };
     }

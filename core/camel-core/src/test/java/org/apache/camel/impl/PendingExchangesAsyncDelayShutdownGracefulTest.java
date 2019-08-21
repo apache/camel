@@ -48,10 +48,7 @@ public class PendingExchangesAsyncDelayShutdownGracefulTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo")
-                        .to("mock:foo")
-                        .delay(1000)
-                        .to("mock:result");
+                from("seda:foo").to("mock:foo").delay(1000).to("mock:result");
             }
         };
     }

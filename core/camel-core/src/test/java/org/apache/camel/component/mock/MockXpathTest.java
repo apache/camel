@@ -27,11 +27,11 @@ public class MockXpathTest extends ContextTestSupport {
     public void testXpathAssertion() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
-        
+
         XPathExpression xpath = new XPathExpression("/foo = 'bar'");
         xpath.setResultType(Boolean.class);
-        result.allMessages().body().matches(xpath);        
-               
+        result.allMessages().body().matches(xpath);
+
         template.sendBody("direct:start", "<foo>bar</foo>");
 
         assertMockEndpointsSatisfied();

@@ -40,7 +40,7 @@ public class RouteShutdownNotReverseOrderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // assert correct startup order
-        DefaultCamelContext dcc = (DefaultCamelContext) context;
+        DefaultCamelContext dcc = (DefaultCamelContext)context;
         List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
 
         assertEquals(2, order.size());

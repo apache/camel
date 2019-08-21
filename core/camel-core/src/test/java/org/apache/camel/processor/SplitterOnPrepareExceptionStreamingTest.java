@@ -28,9 +28,7 @@ public class SplitterOnPrepareExceptionStreamingTest extends SplitterOnPrepareEx
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body().tokenize(",")).onPrepare(new FixNamePrepare()).stopOnException().streaming()
-                        .to("mock:a");
+                from("direct:start").split(body().tokenize(",")).onPrepare(new FixNamePrepare()).stopOnException().streaming().to("mock:a");
             }
         };
     }

@@ -47,16 +47,13 @@ public class RouteIdAutoAssignClashIssue extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // use route1, route2 to clash with Camel's auto assigning
-                from("direct:start1").routeId("route1")
-                    .to("mock:start1");
+                from("direct:start1").routeId("route1").to("mock:start1");
 
                 // use route1, route2 to clash with Camel's auto assigning
-                from("direct:start2").routeId("route2")
-                    .to("mock:start2");
+                from("direct:start2").routeId("route2").to("mock:start2");
 
                 // no assigned route id which should be auto assigned
-                from("direct:start")
-                    .to("mock:start");
+                from("direct:start").to("mock:start");
             }
         };
     }

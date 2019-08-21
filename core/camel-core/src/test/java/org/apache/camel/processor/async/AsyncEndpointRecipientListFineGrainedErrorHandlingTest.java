@@ -42,9 +42,7 @@ public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends Cont
 
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start")
-                    .to("mock:a")
-                    .recipientList(header("foo")).stopOnException();
+                from("direct:start").to("mock:a").recipientList(header("foo")).stopOnException();
             }
         });
         context.start();
@@ -68,9 +66,7 @@ public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends Cont
 
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start")
-                    .to("mock:a")
-                    .recipientList(header("foo")).stopOnException();
+                from("direct:start").to("mock:a").recipientList(header("foo")).stopOnException();
             }
         });
         context.start();

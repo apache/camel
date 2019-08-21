@@ -33,11 +33,14 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     private String url;
     @XmlAttribute
     private String datacenter;
-    @XmlAttribute @Metadata(label = "security")
+    @XmlAttribute
+    @Metadata(label = "security")
     private String aclToken;
-    @XmlAttribute @Metadata(label = "security")
+    @XmlAttribute
+    @Metadata(label = "security")
     private String userName;
-    @XmlAttribute @Metadata(label = "security")
+    @XmlAttribute
+    @Metadata(label = "security")
     private String password;
     @XmlAttribute
     private Long connectTimeoutMillis;
@@ -45,7 +48,8 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     private Long readTimeoutMillis;
     @XmlAttribute
     private Long writeTimeoutMillis;
-    @XmlAttribute @Metadata(defaultValue = "10")
+    @XmlAttribute
+    @Metadata(defaultValue = "10")
     private Integer blockSeconds = 10;
     @XmlTransient
     private SSLContextParameters sslContextParameters;

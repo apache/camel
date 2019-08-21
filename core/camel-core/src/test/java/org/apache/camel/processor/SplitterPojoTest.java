@@ -36,7 +36,7 @@ public class SplitterPojoTest extends ContextTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("mySplitterBean", new MySplitterBean());       
+        jndi.bind("mySplitterBean", new MySplitterBean());
         return jndi;
     }
 
@@ -50,7 +50,7 @@ public class SplitterPojoTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSplitMessageWithPojoBean() throws Exception {
         String users[] = {"James", "Jonathan", "Hadrian", "Claus", "Willem"};
@@ -72,17 +72,16 @@ public class SplitterPojoTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:body")
-                        // here we use a POJO bean mySplitterBean to do the split of the payload
-                        .split().method("mySplitterBean", "splitBody")
-                        .to("mock:result");
+                    // here we use a POJO bean mySplitterBean to do the split of
+                    // the payload
+                    .split().method("mySplitterBean", "splitBody").to("mock:result");
                 from("direct:message")
-                        // here we use a POJO bean mySplitterBean to do the split of the message 
-                        // with a certain header value
-                        .split().method("mySplitterBean", "splitMessage")
-                        .to("mock:result");
+                    // here we use a POJO bean mySplitterBean to do the split of
+                    // the message
+                    // with a certain header value
+                    .split().method("mySplitterBean", "splitMessage").to("mock:result");
                 // END SNIPPET: e1
-                
-                
+
             }
         };
     }
@@ -91,7 +90,8 @@ public class SplitterPojoTest extends ContextTestSupport {
     public class MySplitterBean {
 
         /**
-         * The split body method returns something that is iteratable such as a java.util.List.
+         * The split body method returns something that is iteratable such as a
+         * java.util.List.
          *
          * @param body the payload of the incoming message
          * @return a list containing each part splitted
@@ -109,18 +109,19 @@ public class SplitterPojoTest extends ContextTestSupport {
             }
             return answer;
         }
-        
+
         /**
-         * The split message method returns something that is iteratable such as a java.util.List.
+         * The split message method returns something that is iteratable such as
+         * a java.util.List.
          *
          * @param header the header of the incoming message with the name user
          * @param body the payload of the incoming message
          * @return a list containing each part splitted
          */
         public List<Message> splitMessage(@Header(value = "user") String header, @Body String body, CamelContext camelContext) {
-            // we can leverage the Parameter Binding Annotations  
+            // we can leverage the Parameter Binding Annotations
             // http://camel.apache.org/parameter-binding-annotations.html
-            // to access the message header and body at same time, 
+            // to access the message header and body at same time,
             // then create the message that we want, splitter will
             // take care rest of them.
             // *NOTE* this feature requires Camel version >= 1.6.1

@@ -46,13 +46,13 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(4, notifier.getEvents().size());
-        ExchangeSentEvent e = (ExchangeSentEvent) notifier.getEvents().get(0);
+        ExchangeSentEvent e = (ExchangeSentEvent)notifier.getEvents().get(0);
         assertEquals("mock://bar", e.getEndpoint().getEndpointUri());
-        e = (ExchangeSentEvent) notifier.getEvents().get(1);
+        e = (ExchangeSentEvent)notifier.getEvents().get(1);
         assertEquals("direct://bar", e.getEndpoint().getEndpointUri());
-        e = (ExchangeSentEvent) notifier.getEvents().get(2);
+        e = (ExchangeSentEvent)notifier.getEvents().get(2);
         assertEquals("mock://result", e.getEndpoint().getEndpointUri());
-        e = (ExchangeSentEvent) notifier.getEvents().get(3);
+        e = (ExchangeSentEvent)notifier.getEvents().get(3);
         assertEquals("direct://start", e.getEndpoint().getEndpointUri());
     }
 

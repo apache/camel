@@ -39,7 +39,7 @@ import org.apache.camel.support.CamelContextHelper;
 public class RecipientListReifier extends ProcessorReifier<RecipientListDefinition<?>> {
 
     RecipientListReifier(ProcessorDefinition<?> definition) {
-        super((RecipientListDefinition<?>) definition);
+        super((RecipientListDefinition<?>)definition);
     }
 
     @Override
@@ -95,9 +95,11 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         // the second is the recipient list
         List<Processor> pipe = new ArrayList<>(2);
 
-        // the eval processor must be wrapped in error handler, so in case there was an
+        // the eval processor must be wrapped in error handler, so in case there
+        // was an
         // error during evaluation, the error handler can deal with it
-        // the recipient list is not in error handler, as its has its own special error handling
+        // the recipient list is not in error handler, as its has its own
+        // special error handling
         // when sending to the recipients individually
         Processor evalProcessor = new EvaluateExpressionProcessor(expression);
         evalProcessor = super.wrapInErrorHandler(routeContext, evalProcessor);
@@ -120,7 +122,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         if (strategy == null && definition.getStrategyRef() != null) {
             Object aggStrategy = routeContext.lookup(definition.getStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
+                strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
@@ -139,7 +141,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
         }
 
         if (definition.getShareUnitOfWork() != null && definition.getShareUnitOfWork()) {

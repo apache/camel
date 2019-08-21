@@ -69,7 +69,7 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
     public String getLabel() {
         return "throwException[" + description() + "]";
     }
-    
+
     public String getRef() {
         return ref;
     }
@@ -94,7 +94,8 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
     }
 
     /**
-     * To create a new exception instance and use the given message as caused message (supports simple language)
+     * To create a new exception instance and use the given message as caused
+     * message (supports simple language)
      */
     public void setMessage(String message) {
         this.message = message;

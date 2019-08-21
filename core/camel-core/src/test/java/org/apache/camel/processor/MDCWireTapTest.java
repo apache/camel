@@ -43,37 +43,28 @@ public class MDCWireTapTest extends ContextTestSupport {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
-                from("direct:a").routeId("route-a")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            assertEquals("route-a", MDC.get("camel.routeId"));
-                            assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                            MDC.put("custom.id", "1");
-                        }
-                    })
-                    .to("log:before-wiretap")
-                    .wireTap("direct:b")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-a", MDC.get("camel.routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                                assertEquals("1", MDC.get("custom.id"));
-                            }
-                        })
-                    .to("log:a-done")
-                    .to("mock:a");
+                from("direct:a").routeId("route-a").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals("route-a", MDC.get("camel.routeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                        MDC.put("custom.id", "1");
+                    }
+                }).to("log:before-wiretap").wireTap("direct:b").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals("route-a", MDC.get("camel.routeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                        assertEquals("1", MDC.get("custom.id"));
+                    }
+                }).to("log:a-done").to("mock:a");
 
-                from("direct:b").routeId("route-b")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-b", MDC.get("camel.routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                                // custom MDC is not propagated
-                                assertNull(MDC.get("custom.id"));
-                            }
-                        })
-                    .to("log:b-done")
-                    .to("mock:b");
+                from("direct:b").routeId("route-b").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals("route-b", MDC.get("camel.routeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                        // custom MDC is not propagated
+                        assertNull(MDC.get("custom.id"));
+                    }
+                }).to("log:b-done").to("mock:b");
             }
         };
     }

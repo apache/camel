@@ -57,9 +57,7 @@ public class FileSplitXPathCharsetTest extends ContextTestSupport {
         out.expectedMessageCount(3);
         out.expectedBodiesReceived("abc", "xyz", "åäö");
 
-        Files.copy(
-                getClass().getResourceAsStream("FileSplitXPathCharsetTest-input.xml"),
-                inputXml);
+        Files.copy(getClass().getResourceAsStream("FileSplitXPathCharsetTest-input.xml"), inputXml);
 
         out.assertIsSatisfied();
     }
@@ -70,14 +68,10 @@ public class FileSplitXPathCharsetTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // input: *.csv
-                fromF("file:%s?charset=ISO-8859-1&include=.*\\.csv", TEST_DIR)
-                    .split().tokenize(",")
-                        .to("mock:result");
+                fromF("file:%s?charset=ISO-8859-1&include=.*\\.csv", TEST_DIR).split().tokenize(",").to("mock:result");
 
                 // input: *.xml
-                fromF("file:%s?charset=ISO-8859-1&include=.*\\.xml", TEST_DIR)
-                    .split().xpath("/foo/bar/text()")
-                        .to("mock:result");
+                fromF("file:%s?charset=ISO-8859-1&include=.*\\.xml", TEST_DIR).split().xpath("/foo/bar/text()").to("mock:result");
             }
         };
     }

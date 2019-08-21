@@ -25,7 +25,7 @@ import org.apache.camel.spi.DataFormat;
 public class TidyMarkupDataFormatReifier extends DataFormatReifier<TidyMarkupDataFormat> {
 
     public TidyMarkupDataFormatReifier(DataFormatDefinition definition) {
-        super((TidyMarkupDataFormat) definition);
+        super((TidyMarkupDataFormat)definition);
     }
 
     @Override

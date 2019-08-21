@@ -28,10 +28,7 @@ public class AdviceWithRouteIdTest extends AdviceWithTest {
         RouteReifier.adviceWith(context.getRouteDefinition("myRoute"), context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock:foo")
-                        .skipSendToOriginalEndpoint()
-                        .to("log:foo")
-                        .to("mock:advised");
+                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
             }
         });
 

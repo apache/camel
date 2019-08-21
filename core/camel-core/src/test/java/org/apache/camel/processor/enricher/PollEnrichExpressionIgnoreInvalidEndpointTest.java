@@ -39,9 +39,7 @@ public class PollEnrichExpressionIgnoreInvalidEndpointTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .pollEnrich().header("source").ignoreInvalidEndpoint()
-                    .to("mock:result");
+                from("direct:start").pollEnrich().header("source").ignoreInvalidEndpoint().to("mock:result");
             }
         };
     }

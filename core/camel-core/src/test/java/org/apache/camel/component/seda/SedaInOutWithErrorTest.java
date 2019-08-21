@@ -45,9 +45,7 @@ public class SedaInOutWithErrorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to("seda:foo");
 
-                from("seda:foo").transform(constant("Bye World"))
-                    .throwException(new IllegalArgumentException("Damn I cannot do this"))
-                    .to("mock:result");
+                from("seda:foo").transform(constant("Bye World")).throwException(new IllegalArgumentException("Damn I cannot do this")).to("mock:result");
             }
         };
     }

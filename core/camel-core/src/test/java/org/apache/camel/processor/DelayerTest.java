@@ -37,7 +37,8 @@ public class DelayerTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(0);
         resultEndpoint.setResultWaitTime(10);
         template.sendBodyAndHeader("seda:a", "<hello>world!</hello>", "MyDelay", 100);
-        // we should not receive it as we wait at most 0.01 sec and it take 0.1 sec to send
+        // we should not receive it as we wait at most 0.01 sec and it take 0.1
+        // sec to send
         resultEndpoint.assertIsSatisfied();
 
         // now if we wait a bit longer we should receive the message!

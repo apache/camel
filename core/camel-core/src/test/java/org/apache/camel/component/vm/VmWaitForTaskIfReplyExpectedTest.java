@@ -44,7 +44,8 @@ public class VmWaitForTaskIfReplyExpectedTest extends AbstractVmTestSupport {
                 exchange.setPattern(ExchangePattern.InOnly);
             }
         });
-        // we do not expect a reply and thus do no wait so we just get our own input back
+        // we do not expect a reply and thus do no wait so we just get our own
+        // input back
         assertEquals("Hello World", out.getIn().getBody());
         assertNull(out.getOut().getBody());
 
@@ -60,7 +61,7 @@ public class VmWaitForTaskIfReplyExpectedTest extends AbstractVmTestSupport {
             }
         };
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
         return new RouteBuilder() {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,7 +43,7 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
     @Test
     public void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
-        GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
+        GenericFileProducer<?> producer = (GenericFileProducer<?>)endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
@@ -53,7 +54,7 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
     @Test
     public void testNoPathCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
-        GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
+        GenericFileProducer<?> producer = (GenericFileProducer<?>)endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
@@ -72,7 +73,7 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
     @Test
     public void testCreateParentTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(parentFileUrl);
-        GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
+        GenericFileProducer<?> producer = (GenericFileProducer<?>)endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 

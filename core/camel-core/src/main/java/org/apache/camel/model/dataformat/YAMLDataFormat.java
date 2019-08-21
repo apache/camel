@@ -35,7 +35,8 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "yaml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class YAMLDataFormat extends DataFormatDefinition {
-    @XmlAttribute @Metadata(defaultValue = "SnakeYAML")
+    @XmlAttribute
+    @Metadata(defaultValue = "SnakeYAML")
     private YAMLLibrary library = YAMLLibrary.SnakeYAML;
     @XmlTransient
     private ClassLoader classLoader;
@@ -51,11 +52,14 @@ public class YAMLDataFormat extends DataFormatDefinition {
     private String dumperOptions;
     @XmlAttribute
     private String resolver;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean useApplicationContextClassLoader = true;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private Boolean prettyFlow = false;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private Boolean allowAnyType = false;
     @XmlElement(name = "typeFilter")
     private List<YAMLTypeFilterDefinition> typeFilters;

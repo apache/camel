@@ -49,14 +49,8 @@ public class RoutingSlipNotStopErrorHandlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:result")
-                    .maximumRedeliveries(1)
-                    .redeliveryDelay(10)
-                    .retriesExhaustedLogLevel(LoggingLevel.ERROR)
-                    .retryAttemptedLogLevel(LoggingLevel.WARN)
-                    .logStackTrace(true)
-                    .logRetryStackTrace(true)
-                );
+                errorHandler(deadLetterChannel("mock:result").maximumRedeliveries(1).redeliveryDelay(10).retriesExhaustedLogLevel(LoggingLevel.ERROR)
+                    .retryAttemptedLogLevel(LoggingLevel.WARN).logStackTrace(true).logRetryStackTrace(true));
 
                 from(DIRECT_START).routingSlip(method(CustomRoutingSlip.class, "router"));
 

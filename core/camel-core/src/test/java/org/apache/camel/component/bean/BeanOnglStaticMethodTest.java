@@ -37,9 +37,7 @@ public class BeanOnglStaticMethodTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .filter().method(BeanOnglStaticMethodTest.class, "asCustomer.isGoldCustomer")
-                        .to("mock:result");
+                from("direct:start").filter().method(BeanOnglStaticMethodTest.class, "asCustomer.isGoldCustomer").to("mock:result");
             }
         };
     }

@@ -25,7 +25,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.Test;
 
 public class SedaWaitForTaskCompleteOnCompletionTest extends ContextTestSupport {
-    
+
     private static String done = "";
 
     @Test
@@ -53,36 +53,29 @@ public class SedaWaitForTaskCompleteOnCompletionTest extends ContextTestSupport 
             public void configure() throws Exception {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.addOnCompletion(new SynchronizationAdapter() {
-                                @Override
-                                public void onDone(Exchange exchange) {
-                                    done = done + "A";
-                                }
-                            });
-                        }
-                    })
-                    .to("seda:foo?waitForTaskToComplete=Always")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            done = done + "B";
-                        }
-                    })
-                    .to("mock:result");
+                from("direct:start").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.addOnCompletion(new SynchronizationAdapter() {
+                            @Override
+                            public void onDone(Exchange exchange) {
+                                done = done + "A";
+                            }
+                        });
+                    }
+                }).to("seda:foo?waitForTaskToComplete=Always").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        done = done + "B";
+                    }
+                }).to("mock:result");
 
-                from("seda:foo")
-                    .errorHandler(noErrorHandler())
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            done = done + "C";
-                        }
-                    })
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("seda:foo").errorHandler(noErrorHandler()).process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        done = done + "C";
+                    }
+                }).throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

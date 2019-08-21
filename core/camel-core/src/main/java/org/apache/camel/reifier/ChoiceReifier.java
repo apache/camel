@@ -48,27 +48,32 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
             }
             Predicate pre = exp.getPredicate();
             if (pre instanceof ExpressionClause) {
-                ExpressionClause<?> clause = (ExpressionClause<?>) pre;
+                ExpressionClause<?> clause = (ExpressionClause<?>)pre;
                 if (clause.getExpressionType() != null) {
-                    // if using the Java DSL then the expression may have been set using the
-                    // ExpressionClause which is a fancy builder to define expressions and predicates
-                    // using fluent builders in the DSL. However we need afterwards a callback to
-                    // reset the expression to the expression type the ExpressionClause did build for us
+                    // if using the Java DSL then the expression may have been
+                    // set using the
+                    // ExpressionClause which is a fancy builder to define
+                    // expressions and predicates
+                    // using fluent builders in the DSL. However we need
+                    // afterwards a callback to
+                    // reset the expression to the expression type the
+                    // ExpressionClause did build for us
                     ExpressionFactory model = clause.getExpressionType();
                     if (model instanceof ExpressionDefinition) {
-                        whenClause.setExpression((ExpressionDefinition) model);
+                        whenClause.setExpression((ExpressionDefinition)model);
                     }
                 }
                 exp = whenClause.getExpression();
             }
 
-            // also resolve properties and constant fields on embedded expressions in the when clauses
+            // also resolve properties and constant fields on embedded
+            // expressions in the when clauses
             if (exp != null) {
                 // resolve properties before we create the processor
                 ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), exp);
             }
 
-            FilterProcessor filter = (FilterProcessor) createProcessor(routeContext, whenClause);
+            FilterProcessor filter = (FilterProcessor)createProcessor(routeContext, whenClause);
             filters.add(filter);
         }
         Processor otherwiseProcessor = null;

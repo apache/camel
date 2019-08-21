@@ -42,21 +42,15 @@ public class OnExceptionProcessIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .useOriginalMessage()
-                    .handled(true)
-                    .setHeader("foo", constant("bar"))
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            Message in = exchange.getIn();
-                            Exception ex = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-                            in.setBody("ERROR: " + ex.getMessage() + " for message: " + in.getBody());
-                        }
-                    });
+                onException(Exception.class).useOriginalMessage().handled(true).setHeader("foo", constant("bar")).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Message in = exchange.getIn();
+                        Exception ex = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                        in.setBody("ERROR: " + ex.getMessage() + " for message: " + in.getBody());
+                    }
+                });
 
-                from("direct:start")
-                    .transform(constant("Bye World"))
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").transform(constant("Bye World")).throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

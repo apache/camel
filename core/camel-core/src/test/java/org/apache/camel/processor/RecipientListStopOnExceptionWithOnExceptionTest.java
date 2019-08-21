@@ -40,14 +40,9 @@ public class RecipientListStopOnExceptionWithOnExceptionTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(true)
-                    .to("mock:handled")
-                    .transform(simple("Damn ${exception.message}"));
+                onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
 
-                from("direct:start")
-                    .recipientList(header("foo")).stopOnException()
-                    .to("mock:result");
+                from("direct:start").recipientList(header("foo")).stopOnException().to("mock:result");
 
                 from("direct:a").to("mock:a");
                 from("direct:b").to("mock:b").throwException(new IllegalArgumentException("Forced"));

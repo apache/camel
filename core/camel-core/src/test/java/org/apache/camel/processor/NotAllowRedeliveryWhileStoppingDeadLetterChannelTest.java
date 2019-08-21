@@ -60,12 +60,9 @@ public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends Contex
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead")
-                    .maximumRedeliveries(5).redeliveryDelay(5000).allowRedeliveryWhileStopping(false));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(5).redeliveryDelay(5000).allowRedeliveryWhileStopping(false));
 
-                from("seda:start").routeId("foo")
-                    .to("mock:foo")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("seda:start").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

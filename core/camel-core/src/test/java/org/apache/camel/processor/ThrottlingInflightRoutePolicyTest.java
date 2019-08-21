@@ -47,10 +47,7 @@ public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
                 ThrottlingInflightRoutePolicy policy = new ThrottlingInflightRoutePolicy();
                 policy.setMaxInflightExchanges(10);
 
-                from(url)
-                    .routePolicy(policy)
-                    .delay(3)
-                    .to("log:foo?groupSize=10").to("mock:result");
+                from(url).routePolicy(policy).delay(3).to("log:foo?groupSize=10").to("mock:result");
             }
         };
     }

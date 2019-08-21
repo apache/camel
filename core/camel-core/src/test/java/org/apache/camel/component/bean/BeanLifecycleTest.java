@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.bean;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -69,7 +70,6 @@ public class BeanLifecycleTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
-
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -83,14 +83,10 @@ public class BeanLifecycleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").routeId("foo")
-                    .bean(statefulInstance, "doSomething")
-                    .bean(MyStatefulBean.class, "doSomething")
-                    .bean(MyStatefulBean.class.getName(), "doSomething", true)
-                    .bean(MyStatelessBean.class.getName(), "doSomething", false)
-                    .to("bean:statefulInstanceInRegistry?method=doSomething&cache=true")
-                    .to("bean:statefulInstanceInRegistryNoCache?method=doSomething&cache=false")
-                   .to("mock:result");
+                from("direct:foo").routeId("foo").bean(statefulInstance, "doSomething").bean(MyStatefulBean.class, "doSomething")
+                    .bean(MyStatefulBean.class.getName(), "doSomething", true).bean(MyStatelessBean.class.getName(), "doSomething", false)
+                    .to("bean:statefulInstanceInRegistry?method=doSomething&cache=true").to("bean:statefulInstanceInRegistryNoCache?method=doSomething&cache=false")
+                    .to("mock:result");
             }
         };
     }

@@ -49,16 +49,15 @@ public class OnCompletionOnCompleteOnlyTest extends OnCompletionTest {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // here we qualify onCompletion to only invoke when the exchange completed with success
-                    // if the exchange failed this onCompletion route will NOT be routed then
-                    .onCompletion().onCompleteOnly()
-                        .to("log:sync")
-                        .to("mock:sync")
+                    // here we qualify onCompletion to only invoke when the
+                    // exchange completed with success
+                    // if the exchange failed this onCompletion route will NOT
+                    // be routed then
+                    .onCompletion().onCompleteOnly().to("log:sync").to("mock:sync")
                     // must use end to denote the end of the onCompletion route
                     .end()
                     // here the original route contiues
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                    .process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

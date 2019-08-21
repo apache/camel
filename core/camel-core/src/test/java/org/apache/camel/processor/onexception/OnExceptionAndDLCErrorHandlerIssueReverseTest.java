@@ -51,16 +51,9 @@ public class OnExceptionAndDLCErrorHandlerIssueReverseTest extends ContextTestSu
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:foo").routeId("foo")
-                    .to("mock:foo")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:bar").routeId("bar")
-                    .onException(IllegalArgumentException.class)
-                        .handled(true)
-                        .to("mock:handled")
-                    .end()
-                    .to("mock:bar")
+                from("direct:bar").routeId("bar").onException(IllegalArgumentException.class).handled(true).to("mock:handled").end().to("mock:bar")
                     .throwException(new IllegalArgumentException("Damn"));
             }
         };

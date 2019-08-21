@@ -32,7 +32,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Base64DataFormat extends DataFormatDefinition {
 
-    @XmlAttribute @Metadata(defaultValue = "76")
+    @XmlAttribute
+    @Metadata(defaultValue = "76")
     private Integer lineLength;
     @XmlAttribute
     private String lineSeparator;
@@ -74,9 +75,9 @@ public class Base64DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Instead of emitting '+' and '/' we emit '-' and '_' respectively.
-     * urlSafe is only applied to encode operations. Decoding seamlessly handles both modes.
-     * Is by default false.
+     * Instead of emitting '+' and '/' we emit '-' and '_' respectively. urlSafe
+     * is only applied to encode operations. Decoding seamlessly handles both
+     * modes. Is by default false.
      */
     public void setUrlSafe(Boolean urlSafe) {
         this.urlSafe = urlSafe;

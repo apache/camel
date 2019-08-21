@@ -35,7 +35,6 @@ public class ProxyReturnNullIssueTest extends ContextTestSupport {
         assertEquals(null, service.echo(null));
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

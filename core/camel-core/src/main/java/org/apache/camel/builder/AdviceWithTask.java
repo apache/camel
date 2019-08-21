@@ -24,7 +24,8 @@ public interface AdviceWithTask {
     /**
      * The task to execute
      *
-     * @throws Exception is thrown if error during executing the task, or invalid input.
+     * @throws Exception is thrown if error during executing the task, or
+     *             invalid input.
      */
     void task() throws Exception;
 

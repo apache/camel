@@ -58,9 +58,7 @@ public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in")
-                    .to("bean:myBean")
-                    .to("mock:result");
+                from("direct:in").to("bean:myBean").to("mock:result");
             }
         };
     }

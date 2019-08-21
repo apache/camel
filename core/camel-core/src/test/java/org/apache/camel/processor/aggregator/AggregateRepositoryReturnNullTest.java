@@ -43,9 +43,7 @@ public class AggregateRepositoryReturnNullTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new MyNullAggregationStrategy()).completionSize(3)
-                        .to("mock:result");
+                from("direct:start").aggregate(header("id"), new MyNullAggregationStrategy()).completionSize(3).to("mock:result");
             }
         };
     }

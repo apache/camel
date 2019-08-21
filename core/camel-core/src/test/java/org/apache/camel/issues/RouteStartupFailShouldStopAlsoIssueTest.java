@@ -49,12 +49,11 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:bar").routeId("bar")
-                        .to("mock:bar");
+                from("direct:bar").routeId("bar").to("mock:bar");
 
-                // the foo route fails to startup but it should be stopped when camel stops
-                from("my:foo").routeId("foo")
-                        .to("mock:foo");
+                // the foo route fails to startup but it should be stopped when
+                // camel stops
+                from("my:foo").routeId("foo").to("mock:foo");
             }
         });
 

@@ -27,10 +27,10 @@ public class MyNormalizer {
 
     public void customerToPerson(Exchange exchange, @XPath("/customer/@name") String name) {
         exchange.getMessage().setBody(createPerson(name));
-    }        
-    
+    }
+
     private String createPerson(String name) {
         return "<person name=\"" + name + "\"/>";
     }
-}    
+}
 // END SNIPPET: example   

@@ -27,16 +27,14 @@ import org.apache.camel.support.processor.validation.PredicateValidatingProcesso
 public class PredicateValidatorReifier extends ValidatorReifier<PredicateValidatorDefinition> {
 
     PredicateValidatorReifier(ValidatorDefinition definition) {
-        super((PredicateValidatorDefinition) definition);
+        super((PredicateValidatorDefinition)definition);
     }
 
     @Override
     protected Validator doCreateValidator(CamelContext context) throws Exception {
         Predicate pred = definition.getExpression().createPredicate(context);
         PredicateValidatingProcessor processor = new PredicateValidatingProcessor(pred);
-        return new ProcessorValidator(context)
-                .setProcessor(processor)
-                .setType(definition.getType());
+        return new ProcessorValidator(context).setProcessor(processor).setType(definition.getType());
     }
 
 }

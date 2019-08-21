@@ -25,7 +25,7 @@ import org.junit.Test;
  *
  */
 public class SedaFromRouteIdTest extends ContextTestSupport {
-    
+
     @Test
     public void testSedaFromRouteId() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
@@ -49,11 +49,9 @@ public class SedaFromRouteIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("foo")
-                    .to("mock:foo").to("seda:bar");
-                
-                from("seda:bar").routeId("bar")
-                    .to("mock:bar");
+                from("seda:foo").routeId("foo").to("mock:foo").to("seda:bar");
+
+                from("seda:bar").routeId("bar").to("mock:bar");
             }
         };
     }

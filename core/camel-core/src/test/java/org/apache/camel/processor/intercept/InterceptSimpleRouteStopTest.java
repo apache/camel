@@ -43,8 +43,7 @@ public class InterceptSimpleRouteStopTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 intercept().to("mock:intercepted").stop();
 
-                from("direct:start")
-                    .to("mock:foo", "mock:bar", "mock:result");
+                from("direct:start").to("mock:foo", "mock:bar", "mock:result");
                 // END SNIPPET: e1
             }
         };

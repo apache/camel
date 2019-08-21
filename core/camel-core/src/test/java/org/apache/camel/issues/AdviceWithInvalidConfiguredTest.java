@@ -35,9 +35,7 @@ public class AdviceWithInvalidConfiguredTest extends ContextTestSupport {
                 public void configure() throws Exception {
                     errorHandler(defaultErrorHandler());
 
-                    interceptSendToEndpoint("direct:bar")
-                        .skipSendToOriginalEndpoint()
-                        .throwException(new IllegalArgumentException("Forced"));
+                    interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
                 }
             });
             fail("Should have thrown an exception");

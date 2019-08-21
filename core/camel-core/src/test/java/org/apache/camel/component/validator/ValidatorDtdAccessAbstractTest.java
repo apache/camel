@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
+
 import java.net.UnknownHostException;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,29 +26,27 @@ import org.apache.camel.support.processor.validation.SchemaReader;
 import org.junit.Before;
 
 public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport {
-    
+
     protected MockEndpoint finallyEndpoint;
     protected MockEndpoint invalidEndpoint;
     protected MockEndpoint unknownHostExceptionEndpoint;
     protected MockEndpoint validEndpoint;
-    
+
     protected String payloud = getPayloudPart("Hello world!");
-    
+
     protected String ssrfPayloud = "<!DOCTYPE roottag PUBLIC \"-//VSR//PENTEST//EN\" \"http://notexisting/test\">\n" + payloud;
-    
+
     protected String xxePayloud = "<!DOCTYPE updateProfile [<!ENTITY file SYSTEM \"http://notexistinghost/test\">]>\n" + getPayloudPart("&file;");
 
     private final boolean accessExternalDTD;
-    
+
     public ValidatorDtdAccessAbstractTest(boolean accessExternalDTD) {
         this.accessExternalDTD = accessExternalDTD;
     }
-    
-    
+
     private String getPayloudPart(String bodyValue) {
         return "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>" + bodyValue + "</body></mail>";
     }
-    
 
     @Override
     @Before
@@ -70,16 +69,8 @@ public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport 
                 if (accessExternalDTD) {
                     getContext().getGlobalOptions().put(SchemaReader.ACCESS_EXTERNAL_DTD, "true");
                 }
-                from("direct:start")
-                    .doTry()
-                        .to("validator:org/apache/camel/component/validator/schema.xsd")
-                        .to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .to("mock:invalid")
-                    .doCatch(UnknownHostException.class)
-                        .to("mock:unknownHostException")
-                    .doFinally()
-                        .to("mock:finally").end();
+                from("direct:start").doTry().to("validator:org/apache/camel/component/validator/schema.xsd").to("mock:valid").doCatch(ValidationException.class).to("mock:invalid")
+                    .doCatch(UnknownHostException.class).to("mock:unknownHostException").doFinally().to("mock:finally").end();
             }
         };
     }

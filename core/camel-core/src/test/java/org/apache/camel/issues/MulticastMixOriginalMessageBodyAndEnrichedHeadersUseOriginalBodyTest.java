@@ -34,25 +34,14 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersUseOriginalBodyTes
             public void configure() throws Exception {
                 context.setAllowUseOriginalMessage(true);
 
-                onException(Exception.class)
-                        .useOriginalBody()
-                        .handled(true)
-                        .to("mock:b");
+                onException(Exception.class).useOriginalBody().handled(true).to("mock:b");
 
-                from("direct:start")
-                        .setBody(constant("Changed body"))
-                        .setHeader("foo", constant("bar"))
-                        .multicast().shareUnitOfWork().stopOnException()
-                            .to("direct:a")
-                            .to("direct:b")
-                        .end();
+                from("direct:start").setBody(constant("Changed body")).setHeader("foo", constant("bar")).multicast().shareUnitOfWork().stopOnException().to("direct:a")
+                    .to("direct:b").end();
 
-                from("direct:a")
-                        .to("mock:a");
+                from("direct:a").to("mock:a");
 
-                from("direct:b")
-                        .to("mock:c")
-                        .throwException(new IllegalArgumentException("Forced"));
+                from("direct:b").to("mock:c").throwException(new IllegalArgumentException("Forced"));
             }
         });
         context.start();

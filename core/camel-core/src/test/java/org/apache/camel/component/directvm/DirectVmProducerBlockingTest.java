@@ -92,8 +92,7 @@ public class DirectVmProducerBlockingTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct-vm:suspended").routeId("foo")
-                    .to("mock:result");
+                from("direct-vm:suspended").routeId("foo").to("mock:result");
             }
         };
     }

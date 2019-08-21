@@ -94,8 +94,7 @@ public class FileDataSetProducerTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(sourceUri)
-                        .to(dataSetUri);
+                from(sourceUri).to(dataSetUri);
             }
         };
     }

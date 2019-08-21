@@ -35,8 +35,7 @@ public class FileIdempotentRenameReadLockTest extends FileIdempotentReadLockTest
                             int size = myRepo.getCacheSize();
                             assertTrue(size == 1 || size == 2);
                         }
-                    })
-                    .to("mock:result");
+                    }).to("mock:result");
             }
         };
     }

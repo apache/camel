@@ -85,23 +85,25 @@ public class PipelineMEPTest extends ContextTestSupport {
                     number = 0;
                 }
                 number = number + 1;
-                // this is a bit evil we let you set on OUT body even if the MEP is InOnly
-                // however the result after the routing is correct using APIs to get the result
-                // however the exchange will carry body IN and OUT when the route completes, as
+                // this is a bit evil we let you set on OUT body even if the MEP
+                // is InOnly
+                // however the result after the routing is correct using APIs to
+                // get the result
+                // however the exchange will carry body IN and OUT when the
+                // route completes, as
                 // we operate on the original exchange in this processor
-                // (= we are the first node in the route after the from consumer)
+                // (= we are the first node in the route after the from
+                // consumer)
                 exchange.getMessage().setBody(number);
             }
         };
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                        .process(outProcessor)
-                        // this pipeline is not really needed by to have some more routing in there to test with
-                        .pipeline("log:x", "log:y")
-                        .process(inProcessor)
-                        .to("mock:result");
+                from("direct:a").process(outProcessor)
+                    // this pipeline is not really needed by to have some more
+                    // routing in there to test with
+                    .pipeline("log:x", "log:y").process(inProcessor).to("mock:result");
             }
         };
     }

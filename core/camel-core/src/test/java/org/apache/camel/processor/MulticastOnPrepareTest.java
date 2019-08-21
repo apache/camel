@@ -45,8 +45,7 @@ public class MulticastOnPrepareTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .multicast().onPrepare(new AnimalDeepClonePrepare()).to("direct:a").to("direct:b");
+                from("direct:start").multicast().onPrepare(new AnimalDeepClonePrepare()).to("direct:a").to("direct:b");
                 // END SNIPPET: e1
 
                 from("direct:a").process(new ProcessorA()).to("mock:a");

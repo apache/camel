@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.Context;
@@ -49,7 +50,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
         super.setUp();
         checkBean();
     }
-    
+
     protected void checkBean() throws Exception {
         Object lookedUpBean = context.getRegistry().lookupByName("myBean");
         assertSame("Lookup of 'myBean' should return same object!", myBean, lookedUpBean);

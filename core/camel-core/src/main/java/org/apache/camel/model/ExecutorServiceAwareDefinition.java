@@ -22,7 +22,8 @@ import java.util.function.Supplier;
 import org.apache.camel.ExecutorServiceAware;
 
 /**
- * Enables definitions to support concurrency using {@link java.util.concurrent.ExecutorService}
+ * Enables definitions to support concurrency using
+ * {@link java.util.concurrent.ExecutorService}
  */
 public interface ExecutorServiceAwareDefinition<Type extends ProcessorDefinition<?>> extends ExecutorServiceAware {
 
@@ -47,8 +48,9 @@ public interface ExecutorServiceAwareDefinition<Type extends ProcessorDefinition
     /**
      * Setting the executor service for executing
      *
-     * @param executorServiceRef reference for a {@link java.util.concurrent.ExecutorService}
-     *                           to lookup in the {@link org.apache.camel.spi.Registry}
+     * @param executorServiceRef reference for a
+     *            {@link java.util.concurrent.ExecutorService} to lookup in the
+     *            {@link org.apache.camel.spi.Registry}
      * @return the builder
      */
     Type executorServiceRef(String executorServiceRef);

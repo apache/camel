@@ -57,17 +57,11 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
                 // will not use original exchange
                 errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).redeliveryDelay(0));
 
-                onException(IllegalArgumentException.class)
-                    .maximumRedeliveries(2).useOriginalMessage().handled(true)
-                    .to("mock:a");
+                onException(IllegalArgumentException.class).maximumRedeliveries(2).useOriginalMessage().handled(true).to("mock:a");
 
-                from("direct:a")
-                    .setBody(body().append(" World"))
-                    .process(new MyThrowProcessor(false));
+                from("direct:a").setBody(body().append(" World")).process(new MyThrowProcessor(false));
 
-                from("direct:b")
-                    .setBody(body().append(" World"))
-                    .process(new MyThrowProcessor(true));
+                from("direct:b").setBody(body().append(" World")).process(new MyThrowProcessor(true));
             }
         };
     }

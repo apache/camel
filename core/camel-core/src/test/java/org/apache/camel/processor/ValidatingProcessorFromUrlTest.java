@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.net.URL;
 
 import org.apache.camel.support.processor.validation.ValidatingProcessor;

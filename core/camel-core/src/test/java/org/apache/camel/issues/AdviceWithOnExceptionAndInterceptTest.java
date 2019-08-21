@@ -40,21 +40,14 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
     class AdviceWithRouteBuilder extends RouteBuilder {
         @Override
         public void configure() {
-            onException(SQLException.class)
-                .handled(true)
-                .transform(constant("Intercepted SQL!"))
-                .log("sending ${body}")
-                .to("mock:b");
+            onException(SQLException.class).handled(true).transform(constant("Intercepted SQL!")).log("sending ${body}").to("mock:b");
 
-            interceptSendToEndpoint("mock:a")
-                .skipSendToOriginalEndpoint()
-                .log("intercepted message")
-                .bean(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        throw new SQLException();
-                    }
-                });
+            interceptSendToEndpoint("mock:a").skipSendToOriginalEndpoint().log("intercepted message").bean(new Processor() {
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    throw new SQLException();
+                }
+            });
         }
     }
 
@@ -63,11 +56,7 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                    .loadBalance().failover(IOException.class)
-                        .to("mock:a")
-                        .to("mock:b")
-                    .end();
+                from("direct:a").loadBalance().failover(IOException.class).to("mock:a").to("mock:b").end();
             }
         });
 

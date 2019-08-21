@@ -176,19 +176,11 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(header("foo").isEqualTo("123")).to("mock:123")
-                        .when(header("foo").isEqualTo(456)).to("mock:456")
-                        .when(header("foo").isEqualTo(WaitForTaskToComplete.Always)).to("mock:enum")
-                        .otherwise().to("mock:other");
+                from("direct:start").choice().when(header("foo").isEqualTo("123")).to("mock:123").when(header("foo").isEqualTo(456)).to("mock:456")
+                    .when(header("foo").isEqualTo(WaitForTaskToComplete.Always)).to("mock:enum").otherwise().to("mock:other");
 
-                from("direct:foo")
-                    .choice()
-                        .when(header("enum").isGreaterThanOrEqualTo(WaitForTaskToComplete.IfReplyExpected)).to("mock:enum")
-                        .when(header("foo").isGreaterThan("200")).to("mock:max")
-                        .when(header("foo").isLessThanOrEqualTo(200)).to("mock:min")
-                        .otherwise().to("mock:other");
+                from("direct:foo").choice().when(header("enum").isGreaterThanOrEqualTo(WaitForTaskToComplete.IfReplyExpected)).to("mock:enum")
+                    .when(header("foo").isGreaterThan("200")).to("mock:max").when(header("foo").isLessThanOrEqualTo(200)).to("mock:min").otherwise().to("mock:other");
             }
         };
     }

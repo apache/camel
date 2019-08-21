@@ -38,7 +38,8 @@ public class SplitterStopOnExceptionWithOnExceptionTest extends ContextTestSuppo
 
     @Test
     public void testSplitStopOnExceptionStop1() throws Exception {
-        // we do stop so we stop splitting when the exception occurs and thus we wont receive any message
+        // we do stop so we stop splitting when the exception occurs and thus we
+        // wont receive any message
         getMockEndpoint("mock:split").expectedMessageCount(0);
         getMockEndpoint("mock:handled").expectedMessageCount(1);
 
@@ -51,7 +52,8 @@ public class SplitterStopOnExceptionWithOnExceptionTest extends ContextTestSuppo
     @Test
     public void testSplitStopOnExceptionStop2() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        // we do stop so we stop splitting when the exception occurs and thus we only receive 1 message
+        // we do stop so we stop splitting when the exception occurs and thus we
+        // only receive 1 message
         mock.expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:handled").expectedMessageCount(1);
 
@@ -64,7 +66,8 @@ public class SplitterStopOnExceptionWithOnExceptionTest extends ContextTestSuppo
     @Test
     public void testSplitStopOnExceptionStop3() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        // we do stop so we stop splitting when the exception occurs and thus we only receive 2 message
+        // we do stop so we stop splitting when the exception occurs and thus we
+        // only receive 2 message
         mock.expectedBodiesReceived("Hello World", "Bye World");
         getMockEndpoint("mock:handled").expectedMessageCount(1);
 
@@ -79,15 +82,9 @@ public class SplitterStopOnExceptionWithOnExceptionTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(true)
-                    .to("mock:handled")
-                    .transform(simple("Damn ${exception.message}"));
+                onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
 
-                from("direct:start")
-                    .split(body().tokenize(",")).stopOnException()
-                        .process(new MyProcessor())
-                        .to("mock:split");
+                from("direct:start").split(body().tokenize(",")).stopOnException().process(new MyProcessor()).to("mock:split");
             }
         };
     }

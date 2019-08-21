@@ -60,8 +60,8 @@ public class RestProducerBindingProcessorTest {
     public void shouldMarshalAndUnmarshalJson() throws Exception {
         final String outType = ResponsePojo.class.getName();
 
-        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(processor, context,
-            jsonDataFormat, xmlDataFormat, outJsonDataFormat, outXmlDataFormat, "json", true, outType);
+        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
+                                                                                               outXmlDataFormat, "json", true, outType);
 
         final Exchange exchange = new DefaultExchange(context);
         final Message input = new DefaultMessage(context);
@@ -94,8 +94,8 @@ public class RestProducerBindingProcessorTest {
     public void shouldMarshalAndUnmarshalXml() throws Exception {
         final String outType = ResponsePojo.class.getName();
 
-        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(processor, context,
-            jsonDataFormat, xmlDataFormat, outJsonDataFormat, outXmlDataFormat, "xml", true, outType);
+        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
+                                                                                               outXmlDataFormat, "xml", true, outType);
 
         final Exchange exchange = new DefaultExchange(context);
         final Message input = new DefaultMessage(context);
@@ -128,8 +128,8 @@ public class RestProducerBindingProcessorTest {
     public void shouldNotMarshalAndUnmarshalByDefault() throws Exception {
         final String outType = ResponsePojo.class.getName();
 
-        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(processor, context,
-            jsonDataFormat, xmlDataFormat, outJsonDataFormat, outXmlDataFormat, "off", true, outType);
+        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
+                                                                                               outXmlDataFormat, "off", true, outType);
 
         final Exchange exchange = new DefaultExchange(context);
         final Message input = new DefaultMessage(context);

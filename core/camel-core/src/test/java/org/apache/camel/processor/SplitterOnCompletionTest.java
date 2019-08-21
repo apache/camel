@@ -58,10 +58,7 @@ public class SplitterOnCompletionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onCompletion().to("log:done", "mock:done");
 
-                from("direct:start")
-                    .split(body().tokenize(","))
-                        .process(new MyProcessor())
-                        .to("mock:split");
+                from("direct:start").split(body().tokenize(",")).process(new MyProcessor()).to("mock:split");
             }
         };
     }

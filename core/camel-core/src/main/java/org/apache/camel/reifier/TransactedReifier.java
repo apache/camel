@@ -40,7 +40,7 @@ public class TransactedReifier extends ProcessorReifier<TransactedDefinition> {
     private static final Logger LOG = LoggerFactory.getLogger(TransactedReifier.class);
 
     TransactedReifier(ProcessorDefinition<?> definition) {
-        super((TransactedDefinition) definition);
+        super((TransactedDefinition)definition);
     }
 
     @Override
@@ -58,7 +58,8 @@ public class TransactedReifier extends ProcessorReifier<TransactedDefinition> {
         Processor target = policy.wrap(routeContext, childProcessor);
 
         if (!(target instanceof Service)) {
-            // wrap the target so it becomes a service and we can manage its lifecycle
+            // wrap the target so it becomes a service and we can manage its
+            // lifecycle
             target = new WrapProcessor(target, childProcessor);
         }
         return target;
@@ -81,12 +82,14 @@ public class TransactedReifier extends ProcessorReifier<TransactedDefinition> {
             return CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), ref, Policy.class);
         }
 
-        // no explicit reference given from user so we can use some convention over configuration here
+        // no explicit reference given from user so we can use some convention
+        // over configuration here
 
         // try to lookup by scoped type
         Policy answer = null;
         if (type != null) {
-            // try find by type, note that this method is not supported by all registry
+            // try find by type, note that this method is not supported by all
+            // registry
             Map<String, ?> types = routeContext.lookupByType(type);
             if (types.size() == 1) {
                 // only one policy defined so use it
@@ -104,20 +107,27 @@ public class TransactedReifier extends ProcessorReifier<TransactedDefinition> {
         }
 
         // this logic only applies if we are a transacted policy
-        // still no policy found then try lookup the platform transaction manager and use it as policy
+        // still no policy found then try lookup the platform transaction
+        // manager and use it as policy
         if (answer == null && type == TransactedPolicy.class) {
             Class<?> tmClazz = routeContext.getCamelContext().getClassResolver().resolveClass("org.springframework.transaction.PlatformTransactionManager");
             if (tmClazz != null) {
-                // see if we can find the platform transaction manager in the registry
+                // see if we can find the platform transaction manager in the
+                // registry
                 Map<String, ?> maps = routeContext.lookupByType(tmClazz);
                 if (maps.size() == 1) {
-                    // only one platform manager then use it as default and create a transacted
+                    // only one platform manager then use it as default and
+                    // create a transacted
                     // policy with it and default to required
 
-                    // as we do not want dependency on spring jars in the camel-core we use
-                    // reflection to lookup classes and create new objects and call methods
-                    // as this is only done during route building it does not matter that we
-                    // use reflection as performance is no a concern during route building
+                    // as we do not want dependency on spring jars in the
+                    // camel-core we use
+                    // reflection to lookup classes and create new objects and
+                    // call methods
+                    // as this is only done during route building it does not
+                    // matter that we
+                    // use reflection as performance is no a concern during
+                    // route building
                     Object transactionManager = maps.values().iterator().next();
                     LOG.debug("One instance of PlatformTransactionManager found in registry: {}", transactionManager);
                     Class<?> txClazz = routeContext.getCamelContext().getClassResolver().resolveClass("org.apache.camel.spring.spi.SpringTransactionPolicy");
@@ -141,7 +151,7 @@ public class TransactedReifier extends ProcessorReifier<TransactedDefinition> {
                         throw new NoSuchBeanException(null, "PlatformTransactionManager");
                     } else {
                         throw new IllegalArgumentException("Found " + maps.size() + " PlatformTransactionManager in registry. "
-                                + "Cannot determine which one to use. Please configure a TransactionTemplate on the transacted policy.");
+                                                           + "Cannot determine which one to use. Please configure a TransactionTemplate on the transacted policy.");
                     }
                 }
             }

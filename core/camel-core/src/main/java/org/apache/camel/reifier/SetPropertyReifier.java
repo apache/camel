@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 public class SetPropertyReifier extends ExpressionReifier<SetPropertyDefinition> {
 
     SetPropertyReifier(ProcessorDefinition<?> definition) {
-        super((SetPropertyDefinition) definition);
+        super((SetPropertyDefinition)definition);
     }
 
     @Override

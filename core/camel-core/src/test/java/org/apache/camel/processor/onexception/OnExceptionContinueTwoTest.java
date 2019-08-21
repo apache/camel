@@ -47,16 +47,14 @@ public class OnExceptionContinueTwoTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // tell Camel to handle and continue when this exception is thrown
+                // tell Camel to handle and continue when this exception is
+                // thrown
                 onException(IllegalArgumentException.class).continued(true);
 
-                from("direct:start")
-                    .to("mock:start")
-                    .throwException(new IllegalArgumentException("Forced"))
-                    .to("mock:middle")
-                    //throw a second time to validate that the exchange is reset appropriately
-                    .throwException(new IllegalArgumentException("Forced Again"))
-                    .to("mock:result");
+                from("direct:start").to("mock:start").throwException(new IllegalArgumentException("Forced")).to("mock:middle")
+                    // throw a second time to validate that the exchange is
+                    // reset appropriately
+                    .throwException(new IllegalArgumentException("Forced Again")).to("mock:result");
             }
         };
     }

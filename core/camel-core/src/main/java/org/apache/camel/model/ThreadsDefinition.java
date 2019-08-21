@@ -54,15 +54,17 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     private Integer maxQueueSize;
     @XmlAttribute
     private Boolean allowCoreThreadTimeOut;
-    @XmlAttribute @Metadata(defaultValue = "Threads")
+    @XmlAttribute
+    @Metadata(defaultValue = "Threads")
     private String threadName;
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean callerRunsWhenRejected;
-    
+
     public ThreadsDefinition() {
-        this.threadName =  "Threads";
+        this.threadName = "Threads";
     }
 
     @Override
@@ -90,7 +92,8 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     }
 
     /**
-     * To refer to a custom thread pool or use a thread pool profile (as overlay)
+     * To refer to a custom thread pool or use a thread pool profile (as
+     * overlay)
      */
     @Override
     public ThreadsDefinition executorServiceRef(String executorServiceRef) {
@@ -132,8 +135,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     }
 
     /**
-     * Sets the keep alive time unit.
-     * By default SECONDS is used.
+     * Sets the keep alive time unit. By default SECONDS is used.
      *
      * @param keepAliveTimeUnits time unit
      * @return the builder
@@ -159,7 +161,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     /**
      * Sets the handler for tasks which cannot be executed by the thread pool.
      *
-     * @param rejectedPolicy  the policy for the handler
+     * @param rejectedPolicy the policy for the handler
      * @return the builder
      */
     public ThreadsDefinition rejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
@@ -179,8 +181,10 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     }
 
     /**
-     * Whether or not to use as caller runs as <b>fallback</b> when a task is rejected being added to the thread pool (when its full).
-     * This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has no configured rejection handler.
+     * Whether or not to use as caller runs as <b>fallback</b> when a task is
+     * rejected being added to the thread pool (when its full). This is only
+     * used as fallback if no rejectedPolicy has been configured, or the thread
+     * pool has no configured rejection handler.
      * <p/>
      * Is by default <tt>true</tt>
      *
@@ -193,7 +197,8 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     }
 
     /**
-     * Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size
+     * Whether idle core threads is allowed to timeout and therefore can shrink
+     * the pool size below the core pool size
      * <p/>
      * Is by default <tt>false</tt>
      *

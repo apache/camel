@@ -41,17 +41,14 @@ public class FromToInOutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .inOut("direct:foo")
-                    .to("mock:result");
+                from("direct:start").inOut("direct:foo").to("mock:result");
 
-                from("direct:foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // but it should have been changed to InOut
-                            assertEquals(ExchangePattern.InOut, exchange.getPattern());
-                        }
-                    }).to("mock:foo");
+                from("direct:foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // but it should have been changed to InOut
+                        assertEquals(ExchangePattern.InOut, exchange.getPattern());
+                    }
+                }).to("mock:foo");
             }
         };
     }

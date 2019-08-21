@@ -134,10 +134,7 @@ public class AdviceWithTypeTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e5
-                from("direct:start")
-                    .transform(simple("Hello ${body}"))
-                    .log("Got ${body}")
-                    .to("mock:result");
+                from("direct:start").transform(simple("Hello ${body}")).log("Got ${body}").to("mock:result");
                 // END SNIPPET: e5
             }
         };

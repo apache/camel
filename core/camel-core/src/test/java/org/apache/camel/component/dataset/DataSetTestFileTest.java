@@ -44,8 +44,7 @@ public class DataSetTestFileTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("dataset-test:file:target/data/testme?noop=true&timeout=1500");
+                from("direct:start").to("dataset-test:file:target/data/testme?noop=true&timeout=1500");
             }
         });
         context.start();

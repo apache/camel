@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,9 +60,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/file/splitprop?initialDelay=0&delay=10&move=done")
-                    .convertBodyTo(String.class)
-                    .split(new MyCustomExpression())
+                from("file://target/data/file/splitprop?initialDelay=0&delay=10&move=done").convertBodyTo(String.class).split(new MyCustomExpression())
                     .recipientList(header("myCustomDestination"));
             }
         };
@@ -72,7 +71,8 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
         @Override
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
-            // must copy from the original exchange as Camel holds information about the file in progress
+            // must copy from the original exchange as Camel holds information
+            // about the file in progress
             Message msg1 = exchange.getIn().copy();
             Message msg2 = exchange.getIn().copy();
 
@@ -102,14 +102,16 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
             // as we use the recipientList afterwards we set the destination
             // as well on our message where we want to route it
 
-            // as we are an unit test then just store the list using toString so its easier to test
+            // as we are an unit test then just store the list using toString so
+            // its easier to test
             msg1.setBody(data1.toString());
             msg1.setHeader("myCustomDestination", "mock:foo");
             msg2.setBody(data2.toString());
             msg2.setHeader("myCustomDestination", "mock:bar");
 
-            // just cast it to T as its safe as its Object anyway for custom expressions
-            return (T) answer;
+            // just cast it to T as its safe as its Object anyway for custom
+            // expressions
+            return (T)answer;
         }
     }
 }

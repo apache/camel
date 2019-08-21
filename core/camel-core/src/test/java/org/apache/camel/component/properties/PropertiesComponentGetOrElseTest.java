@@ -67,8 +67,7 @@ public class PropertiesComponentGetOrElseTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .transform().simple("Hi ${body} do you think ${properties:cool.name} rocks?");
+                from("direct:start").transform().simple("Hi ${body} do you think ${properties:cool.name} rocks?");
             }
         });
         context.start();
@@ -82,8 +81,7 @@ public class PropertiesComponentGetOrElseTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .transform().simple("Hi ${body} do you think ${properties:unknown:Beer} rocks?");
+                from("direct:start").transform().simple("Hi ${body} do you think ${properties:unknown:Beer} rocks?");
             }
         });
         context.start();
@@ -91,7 +89,6 @@ public class PropertiesComponentGetOrElseTest extends ContextTestSupport {
         String reply = template.requestBody("direct:start", "Claus", String.class);
         assertEquals("Hi Claus do you think Beer rocks?", reply);
     }
-
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

@@ -37,9 +37,7 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueTest extends 
         RouteReifier.adviceWith(route, context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("seda:*")
-                    .skipSendToOriginalEndpoint()
-                    .throwException(new ConnectException("Forced"));
+                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().throwException(new ConnectException("Forced"));
             }
         });
 
@@ -64,18 +62,13 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueTest extends 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:global")
-                    .maximumRedeliveries(2)
-                    .redeliveryDelay(5000));
+                errorHandler(deadLetterChannel("mock:global").maximumRedeliveries(2).redeliveryDelay(5000));
 
                 from("direct:start")
                     // no redelivery delay for faster unit tests
-                    .onException(ConnectException.class).maximumRedeliveries(5).redeliveryDelay(0)
-                        .logRetryAttempted(true).retryAttemptedLogLevel(LoggingLevel.WARN)
-                        // send to mock when we are exhausted
-                        .to("mock:exhausted")
-                    .end()
-                    .to("seda:foo");
+                    .onException(ConnectException.class).maximumRedeliveries(5).redeliveryDelay(0).logRetryAttempted(true).retryAttemptedLogLevel(LoggingLevel.WARN)
+                    // send to mock when we are exhausted
+                    .to("mock:exhausted").end().to("seda:foo");
             }
         };
     }

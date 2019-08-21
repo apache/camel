@@ -21,15 +21,12 @@ import org.apache.camel.component.extension.ComponentVerifierExtension.Verificat
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class ComponentVerifierTest extends Assert {
 
     @Test
     public void testGetErrorDetails() {
         VerificationError error = ResultErrorBuilder.withCodeAndDescription(VerificationError.asCode("test_code"), "test error desc")
-            .detail(VerificationError.asAttribute("test_attr_1"), "test_detail_1")
-            .detail(VerificationError.HttpAttribute.HTTP_CODE, "test_detail_2")
-            .build();
+            .detail(VerificationError.asAttribute("test_attr_1"), "test_detail_1").detail(VerificationError.HttpAttribute.HTTP_CODE, "test_detail_2").build();
 
         Assert.assertEquals("test_detail_1", error.getDetail(VerificationError.asAttribute("test_attr_1")));
         Assert.assertEquals("test_detail_1", error.getDetail("test_attr_1"));

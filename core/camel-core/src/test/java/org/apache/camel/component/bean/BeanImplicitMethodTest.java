@@ -33,7 +33,7 @@ public class BeanImplicitMethodTest extends ContextTestSupport {
         assertEquals(stringBody, stringResponse);
 
         Integer intBody = 1;
-        Integer intResponse = (Integer)template.requestBody("direct:in", intBody); 
+        Integer intResponse = (Integer)template.requestBody("direct:in", intBody);
         assertEquals(1, intResponse.intValue());
     }
 

@@ -27,18 +27,17 @@ public class CamelContextDeadlockTest {
     public void testComponentDeadlock() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.getRegistry().bind("sql-connector", new DirectComponent() {
-                @Override
-                protected void doStart() throws Exception {
-                    Component delegate = new DirectComponent();
+            @Override
+            protected void doStart() throws Exception {
+                Component delegate = new DirectComponent();
 
-                    getCamelContext().removeComponent("sql-connector-component");
-                    getCamelContext().addService(delegate, true, true);
-                    getCamelContext().addComponent("sql-connector-component", delegate);
+                getCamelContext().removeComponent("sql-connector-component");
+                getCamelContext().addService(delegate, true, true);
+                getCamelContext().addComponent("sql-connector-component", delegate);
 
-                    super.doStart();
-                }
+                super.doStart();
             }
-        );
+        });
 
         context.start();
         context.getComponent("sql-connector", true, true);

@@ -25,12 +25,8 @@ public class OnCatchHandledTest extends OnExceptionHandledTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .doTry()
-                        .throwException(new IllegalArgumentException("Forced"))
-                    .doCatch(IllegalArgumentException.class)
-                        .to("log:foo?showAll=true").to("mock:handled")
-                    .end();
+                from("direct:start").doTry().throwException(new IllegalArgumentException("Forced")).doCatch(IllegalArgumentException.class).to("log:foo?showAll=true")
+                    .to("mock:handled").end();
             }
         };
     }

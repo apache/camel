@@ -57,20 +57,17 @@ public class SameRouteAndContextScopedErrorHandlerIssueTest extends ContextTestS
                     }
                 });
 
-                from("direct:start")
-                    .errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0))
-                    .process(new Processor() {
-                        private int counter;
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            if (counter++ < 2) {
-                                throw new IllegalArgumentException("Damn");
-                            }
-                            exchange.getIn().setBody("Bye World");
+                from("direct:start").errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0)).process(new Processor() {
+                    private int counter;
+
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        if (counter++ < 2) {
+                            throw new IllegalArgumentException("Damn");
                         }
-                    })
-                    .to("log:result")
-                    .to("mock:result");
+                        exchange.getIn().setBody("Bye World");
+                    }
+                }).to("log:result").to("mock:result");
             }
         };
     }

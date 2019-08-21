@@ -44,15 +44,11 @@ public class TracingWithDelayTest extends ContextTestSupport {
             public void configure() throws Exception {
                 getContext().setTracing(true);
 
-                from("direct:start").delay(10).to("mock:a").
-                        process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                LOG.info("This is the processor being invoked between mock:a and mock:b");
-                            }
-                        })
-                        .to("mock:b").toD("direct:c")
-                        .to("mock:result")
-                        .transform(simple("${body}${body}"));
+                from("direct:start").delay(10).to("mock:a").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        LOG.info("This is the processor being invoked between mock:a and mock:b");
+                    }
+                }).to("mock:b").toD("direct:c").to("mock:result").transform(simple("${body}${body}"));
 
                 from("direct:c").transform(constant("Bye World")).to("mock:c");
             }

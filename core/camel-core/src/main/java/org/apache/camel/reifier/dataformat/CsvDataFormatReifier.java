@@ -26,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 public class CsvDataFormatReifier extends DataFormatReifier<CsvDataFormat> {
 
     public CsvDataFormatReifier(DataFormatDefinition definition) {
-        super((CsvDataFormat) definition);
+        super((CsvDataFormat)definition);
     }
 
     @Override
@@ -121,7 +121,6 @@ public class CsvDataFormatReifier extends DataFormatReifier<CsvDataFormat> {
             setProperty(camelContext, dataFormat, "marshallerFactory", marshallerFactory);
         }
     }
-
 
     private static Character singleChar(String value, String attributeName) {
         if (value.length() != 1) {

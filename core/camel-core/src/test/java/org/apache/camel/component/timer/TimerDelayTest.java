@@ -37,7 +37,7 @@ public class TimerDelayTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("timer://foo?delay=10&period=10").to("mock:result");
-                
+
             }
         };
     }

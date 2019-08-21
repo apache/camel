@@ -98,11 +98,7 @@ public class RemoveHeadersTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .removeHeaders("dude*")
-                    .removeHeaders("Beer(Carlsberg|Tuborg)")
-                    .removeHeaders("foo")
-                    .to("mock:end");
+                from("direct:start").removeHeaders("dude*").removeHeaders("Beer(Carlsberg|Tuborg)").removeHeaders("foo").to("mock:end");
             }
         };
     }

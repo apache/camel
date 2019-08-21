@@ -165,7 +165,8 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
     public static class Bar {
         private int age;
         private boolean rider;
-        private Map<String, Company> works; // should auto-create this via the setter
+        private Map<String, Company> works; // should auto-create this via the
+                                            // setter
         private boolean goldCustomer;
 
         public int getAge() {
@@ -202,4 +203,3 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
     }
 
 }
-

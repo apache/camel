@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -38,8 +39,9 @@ public class FileExclusiveReadManuelTest extends ContextTestSupport {
     @Test
     public void testManually() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // this is used for manual testing where you can copy/lock files etc. while this test runs
-        //mock.setSleepForEmptyTest(10 * 1000L);
+        // this is used for manual testing where you can copy/lock files etc.
+        // while this test runs
+        // mock.setSleepForEmptyTest(10 * 1000L);
         mock.setSleepForEmptyTest(100);
         mock.expectedMessageCount(0);
 

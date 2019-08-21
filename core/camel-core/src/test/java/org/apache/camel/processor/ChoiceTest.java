@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,7 +35,8 @@ public class ChoiceTest extends ContextTestSupport {
         String body = "<one/>";
         x.expectedBodiesReceived(body);
         end.expectedBodiesReceived(body);
-        // The SpringChoiceTest.java can't setup the header by Spring configure file
+        // The SpringChoiceTest.java can't setup the header by Spring configure
+        // file
         // x.expectedHeaderReceived("name", "a");
         expectsMessageCount(0, y, z);
 
@@ -86,10 +88,7 @@ public class ChoiceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice()
-                  .when().xpath("$foo = 'bar'").to("mock:x")
-                  .when().xpath("$foo = 'cheese'").to("mock:y")
-                  .otherwise().to("mock:z").end().to("mock:end");
+                from("direct:start").choice().when().xpath("$foo = 'bar'").to("mock:x").when().xpath("$foo = 'cheese'").to("mock:y").otherwise().to("mock:z").end().to("mock:end");
             }
         };
     }

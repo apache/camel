@@ -38,10 +38,7 @@ public class AggregateStrategyServiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(constant(true), new MyAggregationStrategyService())
-                        .completionSize(3)
-                        .to("mock:result");
+                from("direct:start").aggregate(constant(true), new MyAggregationStrategyService()).completionSize(3).to("mock:result");
             }
         };
     }

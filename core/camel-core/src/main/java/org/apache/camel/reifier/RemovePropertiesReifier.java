@@ -26,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 public class RemovePropertiesReifier extends ProcessorReifier<RemovePropertiesDefinition> {
 
     RemovePropertiesReifier(ProcessorDefinition<?> definition) {
-        super((RemovePropertiesDefinition) definition);
+        super((RemovePropertiesDefinition)definition);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class RemovePropertiesReifier extends ProcessorReifier<RemovePropertiesDe
         if (definition.getExcludePatterns() != null) {
             return new RemovePropertiesProcessor(definition.getPattern(), definition.getExcludePatterns());
         } else if (definition.getExcludePattern() != null) {
-            return new RemovePropertiesProcessor(definition.getPattern(), new String[]{definition.getExcludePattern()});
+            return new RemovePropertiesProcessor(definition.getPattern(), new String[] {definition.getExcludePattern()});
         } else {
             return new RemovePropertiesProcessor(definition.getPattern(), null);
         }

@@ -31,12 +31,13 @@ public class MockScheduledPollConsumer extends ScheduledPollConsumer {
         super(endpoint, processor);
     }
 
-    // dummy constructor here - we just want to test the run() method, which calls poll()   
+    // dummy constructor here - we just want to test the run() method, which
+    // calls poll()
     public MockScheduledPollConsumer(Endpoint endpoint, Exception exceptionToThrowOnPoll) {
         super(endpoint, null, new ScheduledThreadPoolExecutor(1));
         this.exceptionToThrowOnPoll = exceptionToThrowOnPoll;
     }
-    
+
     @Override
     protected int poll() throws Exception {
         if (exceptionToThrowOnPoll != null) {

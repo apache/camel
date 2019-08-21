@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 public class ZipDataFormatReifier extends DataFormatReifier<ZipDeflaterDataFormat> {
 
     public ZipDataFormatReifier(DataFormatDefinition definition) {
-        super((ZipDeflaterDataFormat) definition);
+        super((ZipDeflaterDataFormat)definition);
     }
 
     @Override

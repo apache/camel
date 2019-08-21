@@ -44,8 +44,8 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
 /**
  * Helper for {@link RouteDefinition}
  * <p/>
- * Utility methods to help preparing {@link RouteDefinition} before they are added to
- * {@link org.apache.camel.CamelContext}.
+ * Utility methods to help preparing {@link RouteDefinition} before they are
+ * added to {@link org.apache.camel.CamelContext}.
  */
 @SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
 public final class RouteDefinitionHelper {
@@ -54,10 +54,11 @@ public final class RouteDefinitionHelper {
     }
 
     /**
-     * Gather all the endpoint uri's the route is using from the EIPs that has a static endpoint defined.
+     * Gather all the endpoint uri's the route is using from the EIPs that has a
+     * static endpoint defined.
      *
-     * @param route          the route
-     * @param includeInputs  whether to include inputs
+     * @param route the route
+     * @param includeInputs whether to include inputs
      * @param includeOutputs whether to include outputs
      * @return the endpoints uris
      */
@@ -66,12 +67,15 @@ public final class RouteDefinitionHelper {
     }
 
     /**
-     * Gather all the endpoint uri's the route is using from the EIPs that has a static or dynamic endpoint defined.
+     * Gather all the endpoint uri's the route is using from the EIPs that has a
+     * static or dynamic endpoint defined.
      *
-     * @param route          the route
-     * @param includeInput  whether to include inputs
+     * @param route the route
+     * @param includeInput whether to include inputs
      * @param includeOutputs whether to include outputs
-     * @param includeDynamic whether to include dynamic outputs which has been in use during routing at runtime, gathered from the {@link org.apache.camel.spi.RuntimeEndpointRegistry}.
+     * @param includeDynamic whether to include dynamic outputs which has been
+     *            in use during routing at runtime, gathered from the
+     *            {@link org.apache.camel.spi.RuntimeEndpointRegistry}.
      * @return the endpoints uris
      */
     public static Set<String> gatherAllEndpointUris(CamelContext camelContext, RouteDefinition route, boolean includeInput, boolean includeOutputs, boolean includeDynamic) {
@@ -120,19 +124,22 @@ public final class RouteDefinitionHelper {
      * Force assigning ids to the routes
      *
      * @param context the camel context
-     * @param routes  the routes
+     * @param routes the routes
      * @throws Exception is thrown if error force assign ids to the routes
      */
     public static void forceAssignIds(CamelContext context, List<RouteDefinition> routes) throws Exception {
-        // handle custom assigned id's first, and then afterwards assign auto generated ids
+        // handle custom assigned id's first, and then afterwards assign auto
+        // generated ids
         Set<String> customIds = new HashSet<>();
 
         for (final RouteDefinition route : routes) {
-            // if there was a custom id assigned, then make sure to support property placeholders
+            // if there was a custom id assigned, then make sure to support
+            // property placeholders
             if (route.hasCustomIdAssigned()) {
                 final String originalId = route.getId();
                 final String id = context.resolvePropertyPlaceholders(originalId);
-                // only set id if its changed, such as we did property placeholder
+                // only set id if its changed, such as we did property
+                // placeholder
                 if (!originalId.equals(id)) {
                     route.setId(id);
                     ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
@@ -162,7 +169,7 @@ public final class RouteDefinitionHelper {
         for (final RouteDefinition route : routes) {
             if (route.getId() == null) {
                 // keep assigning id's until we find a free name
-                
+
                 boolean done = false;
                 String id = null;
                 int attempts = 0;
@@ -201,7 +208,8 @@ public final class RouteDefinitionHelper {
                     verb.setRouteId(id);
                 }
 
-                // if its the rest/rest-api endpoints then they should include the route id as well
+                // if its the rest/rest-api endpoints then they should include
+                // the route id as well
                 if (ObjectHelper.isNotEmpty(route.getInput())) {
                     FromDefinition fromDefinition = route.getInput();
                     String endpointUri = fromDefinition.getEndpointUri();
@@ -209,7 +217,7 @@ public final class RouteDefinitionHelper {
                         Map<String, Object> options = new HashMap<String, Object>(1);
                         options.put("routeId", route.getId());
                         endpointUri = URISupport.appendParametersToURI(endpointUri, options);
-                     
+
                         // replace uri with new routeId
                         fromDefinition.setUri(endpointUri);
                         route.setInput(fromDefinition);
@@ -218,7 +226,7 @@ public final class RouteDefinitionHelper {
             }
         }
     }
-    
+
     /**
      * Find verb associated with the route by mapping uri
      */
@@ -227,11 +235,13 @@ public final class RouteDefinitionHelper {
         String preVerbUri = "";
         for (VerbDefinition verb : rest.getVerbs()) {
             String verbUri = rest.buildFromUri(verb);
-            if (endpointUri.startsWith(verbUri)
-                && preVerbUri.length() < verbUri.length()) {
-                //if there are multiple verb uri match, select the most specific one
-                //for example if the endpoint Uri is rest:get:/user:/{id}/user?produces=text%2Fplain
-                //then the verbUri rest:get:/user:/{id}/user should overweigh the est:get:/user:/{id}
+            if (endpointUri.startsWith(verbUri) && preVerbUri.length() < verbUri.length()) {
+                // if there are multiple verb uri match, select the most
+                // specific one
+                // for example if the endpoint Uri is
+                // rest:get:/user:/{id}/user?produces=text%2Fplain
+                // then the verbUri rest:get:/user:/{id}/user should overweigh
+                // the est:get:/user:/{id}
                 preVerbUri = verbUri;
                 ret = verb;
             }
@@ -240,16 +250,20 @@ public final class RouteDefinitionHelper {
     }
 
     /**
-     * Validates that the target route has no duplicate id's from any of the existing routes.
+     * Validates that the target route has no duplicate id's from any of the
+     * existing routes.
      *
-     * @param target  the target route
-     * @param routes  the existing routes
-     * @return <tt>null</tt> if no duplicate id's detected, otherwise the first found duplicate id is returned.
+     * @param target the target route
+     * @param routes the existing routes
+     * @return <tt>null</tt> if no duplicate id's detected, otherwise the first
+     *         found duplicate id is returned.
      */
     public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes) {
         Set<String> routesIds = new LinkedHashSet<>();
-        // gather all ids for the existing route, but only include custom ids, and no abstract ids
-        // as abstract nodes is cross-cutting functionality such as interceptors etc
+        // gather all ids for the existing route, but only include custom ids,
+        // and no abstract ids
+        // as abstract nodes is cross-cutting functionality such as interceptors
+        // etc
         for (RouteDefinition route : routes) {
             // skip target route as we gather ids in a separate set
             if (route == target) {
@@ -258,8 +272,10 @@ public final class RouteDefinitionHelper {
             ProcessorDefinitionHelper.gatherAllNodeIds(route, routesIds, true, false);
         }
 
-        // gather all ids for the target route, but only include custom ids, and no abstract ids
-        // as abstract nodes is cross-cutting functionality such as interceptors etc
+        // gather all ids for the target route, but only include custom ids, and
+        // no abstract ids
+        // as abstract nodes is cross-cutting functionality such as interceptors
+        // etc
         Set<String> targetIds = new LinkedHashSet<>();
         ProcessorDefinitionHelper.gatherAllNodeIds(target, targetIds, true, false);
 
@@ -284,8 +300,7 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    public static void prepareRouteForInit(RouteDefinition route, List<ProcessorDefinition<?>> abstracts,
-                                           List<ProcessorDefinition<?>> lower) {
+    public static void prepareRouteForInit(RouteDefinition route, List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> lower) {
         // filter the route into abstracts and lower
         for (ProcessorDefinition output : route.getOutputs()) {
             if (output.isAbstract()) {
@@ -302,30 +317,29 @@ public final class RouteDefinitionHelper {
      * This method does <b>not</b> mark the route as prepared afterwards.
      *
      * @param context the camel context
-     * @param route   the route
+     * @param route the route
      */
     public static void prepareRoute(CamelContext context, RouteDefinition route) {
         prepareRoute(context, route, null, null, null, null, null);
     }
 
     /**
-     * Prepares the route which supports context scoped features such as onException, interceptors and onCompletions
+     * Prepares the route which supports context scoped features such as
+     * onException, interceptors and onCompletions
      * <p/>
      * This method does <b>not</b> mark the route as prepared afterwards.
      *
-     * @param context                            the camel context
-     * @param route                              the route
-     * @param onExceptions                       optional list of onExceptions
-     * @param intercepts                         optional list of interceptors
-     * @param interceptFromDefinitions           optional list of interceptFroms
-     * @param interceptSendToEndpointDefinitions optional list of interceptSendToEndpoints
-     * @param onCompletions                      optional list onCompletions
+     * @param context the camel context
+     * @param route the route
+     * @param onExceptions optional list of onExceptions
+     * @param intercepts optional list of interceptors
+     * @param interceptFromDefinitions optional list of interceptFroms
+     * @param interceptSendToEndpointDefinitions optional list of
+     *            interceptSendToEndpoints
+     * @param onCompletions optional list onCompletions
      */
-    public static void prepareRoute(CamelContext context, RouteDefinition route,
-                                    List<OnExceptionDefinition> onExceptions,
-                                    List<InterceptDefinition> intercepts,
-                                    List<InterceptFromDefinition> interceptFromDefinitions,
-                                    List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
+    public static void prepareRoute(CamelContext context, RouteDefinition route, List<OnExceptionDefinition> onExceptions, List<InterceptDefinition> intercepts,
+                                    List<InterceptFromDefinition> interceptFromDefinitions, List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
                                     List<OnCompletionDefinition> onCompletions) {
 
         Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
@@ -338,24 +352,23 @@ public final class RouteDefinitionHelper {
     }
 
     /**
-     * Prepares the route which supports context scoped features such as onException, interceptors and onCompletions
+     * Prepares the route which supports context scoped features such as
+     * onException, interceptors and onCompletions
      * <p/>
      * This method does <b>not</b> mark the route as prepared afterwards.
      *
-     * @param context                            the camel context
-     * @param route                              the route
-     * @param onExceptions                       optional list of onExceptions
-     * @param intercepts                         optional list of interceptors
-     * @param interceptFromDefinitions           optional list of interceptFroms
-     * @param interceptSendToEndpointDefinitions optional list of interceptSendToEndpoints
-     * @param onCompletions                      optional list onCompletions
+     * @param context the camel context
+     * @param route the route
+     * @param onExceptions optional list of onExceptions
+     * @param intercepts optional list of interceptors
+     * @param interceptFromDefinitions optional list of interceptFroms
+     * @param interceptSendToEndpointDefinitions optional list of
+     *            interceptSendToEndpoints
+     * @param onCompletions optional list onCompletions
      */
-    private static void prepareRouteImp(CamelContext context, RouteDefinition route,
-                                    List<OnExceptionDefinition> onExceptions,
-                                    List<InterceptDefinition> intercepts,
-                                    List<InterceptFromDefinition> interceptFromDefinitions,
-                                    List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
-                                    List<OnCompletionDefinition> onCompletions) {
+    private static void prepareRouteImp(CamelContext context, RouteDefinition route, List<OnExceptionDefinition> onExceptions, List<InterceptDefinition> intercepts,
+                                        List<InterceptFromDefinition> interceptFromDefinitions, List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
+                                        List<OnCompletionDefinition> onCompletions) {
 
         // init the route inputs
         initRouteInput(context, route.getInput());
@@ -363,7 +376,8 @@ public final class RouteDefinitionHelper {
         // abstracts is the cross cutting concerns
         List<ProcessorDefinition<?>> abstracts = new ArrayList<>();
 
-        // upper is the cross cutting concerns such as interceptors, error handlers etc
+        // upper is the cross cutting concerns such as interceptors, error
+        // handlers etc
         List<ProcessorDefinition<?>> upper = new ArrayList<>();
 
         // lower is the regular route
@@ -419,8 +433,8 @@ public final class RouteDefinitionHelper {
     }
 
     /**
-     * Validates that top-level only definitions is not added in the wrong places, such as nested
-     * inside a splitter etc.
+     * Validates that top-level only definitions is not added in the wrong
+     * places, such as nested inside a splitter etc.
      */
     private static void validateTopLevel(List<ProcessorDefinition<?>> children) {
         for (ProcessorDefinition child : children) {
@@ -437,7 +451,8 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initRouteInput(CamelContext camelContext, FromDefinition input) {
-        // resolve property placeholders on route input which hasn't been done yet
+        // resolve property placeholders on route input which hasn't been done
+        // yet
         if (input != null) {
             try {
                 ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, input);
@@ -447,17 +462,19 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initParentAndErrorHandlerBuilder(CamelContext context, RouteDefinition route,
-                                                         List<ProcessorDefinition<?>> abstracts, List<OnExceptionDefinition> onExceptions) {
+    private static void initParentAndErrorHandlerBuilder(CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> abstracts,
+                                                         List<OnExceptionDefinition> onExceptions) {
 
         if (context != null) {
-            // let the route inherit the error handler builder from camel context if none already set
+            // let the route inherit the error handler builder from camel
+            // context if none already set
 
-            // must clone to avoid side effects while building routes using multiple RouteBuilders
+            // must clone to avoid side effects while building routes using
+            // multiple RouteBuilders
             ErrorHandlerFactory builder = context.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
             if (builder != null) {
                 if (builder instanceof ErrorHandlerBuilder) {
-                    builder = ((ErrorHandlerBuilder) builder).cloneBuilder();
+                    builder = ((ErrorHandlerBuilder)builder).cloneBuilder();
                     route.setErrorHandlerFactoryIfNull(builder);
                 } else {
                     throw new UnsupportedOperationException("The ErrorHandlerFactory must implement ErrorHandlerBuilder");
@@ -476,9 +493,7 @@ public final class RouteDefinitionHelper {
         }
     }
 
-
-    private static void initOnExceptions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
-                                         List<OnExceptionDefinition> onExceptions) {
+    private static void initOnExceptions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper, List<OnExceptionDefinition> onExceptions) {
         // add global on exceptions if any
         if (onExceptions != null && !onExceptions.isEmpty()) {
             for (OnExceptionDefinition output : onExceptions) {
@@ -491,10 +506,12 @@ public final class RouteDefinitionHelper {
         // now add onExceptions to the route
         for (ProcessorDefinition output : abstracts) {
             if (output instanceof OnExceptionDefinition) {
-                // on exceptions must be added at top, so the route flow is correct as
+                // on exceptions must be added at top, so the route flow is
+                // correct as
                 // on exceptions should be the first outputs
 
-                // find the index to add the on exception, it should be in the top
+                // find the index to add the on exception, it should be in the
+                // top
                 // but it should add itself after any existing onException
                 int index = 0;
                 for (int i = 0; i < upper.size(); i++) {
@@ -511,10 +528,8 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initInterceptors(CamelContext context, RouteDefinition route,
-                                         List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
-                                         List<InterceptDefinition> intercepts,
-                                         List<InterceptFromDefinition> interceptFromDefinitions,
+    private static void initInterceptors(CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
+                                         List<InterceptDefinition> intercepts, List<InterceptFromDefinition> interceptFromDefinitions,
                                          List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
 
         // move the abstracts interceptors into the dedicated list
@@ -523,27 +538,25 @@ public final class RouteDefinitionHelper {
                 if (interceptSendToEndpointDefinitions == null) {
                     interceptSendToEndpointDefinitions = new ArrayList<>();
                 }
-                interceptSendToEndpointDefinitions.add((InterceptSendToEndpointDefinition) processor);
+                interceptSendToEndpointDefinitions.add((InterceptSendToEndpointDefinition)processor);
             } else if (processor instanceof InterceptFromDefinition) {
                 if (interceptFromDefinitions == null) {
                     interceptFromDefinitions = new ArrayList<>();
                 }
-                interceptFromDefinitions.add((InterceptFromDefinition) processor);
+                interceptFromDefinitions.add((InterceptFromDefinition)processor);
             } else if (processor instanceof InterceptDefinition) {
                 if (intercepts == null) {
                     intercepts = new ArrayList<>();
                 }
-                intercepts.add((InterceptDefinition) processor);
+                intercepts.add((InterceptDefinition)processor);
             }
         }
 
         doInitInterceptors(context, route, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
     }
 
-    private static void doInitInterceptors(CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> upper,
-                                           List<InterceptDefinition> intercepts,
-                                           List<InterceptFromDefinition> interceptFromDefinitions,
-                                           List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
+    private static void doInitInterceptors(CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> upper, List<InterceptDefinition> intercepts,
+                                           List<InterceptFromDefinition> interceptFromDefinitions, List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
 
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {
@@ -551,8 +564,10 @@ public final class RouteDefinitionHelper {
                 intercept.afterPropertiesSet();
                 // init the parent
                 initParent(intercept);
-                // add as first output so intercept is handled before the actual route and that gives
-                // us the needed head start to init and be able to intercept all the remaining processing steps
+                // add as first output so intercept is handled before the actual
+                // route and that gives
+                // us the needed head start to init and be able to intercept all
+                // the remaining processing steps
                 upper.add(0, intercept);
             }
         }
@@ -565,7 +580,8 @@ public final class RouteDefinitionHelper {
                 boolean match = true;
                 if (intercept.getUri() != null) {
 
-                    // the uri can have property placeholders so resolve them first
+                    // the uri can have property placeholders so resolve them
+                    // first
                     String pattern;
                     try {
                         pattern = context.resolvePropertyPlaceholders(intercept.getUri());
@@ -576,9 +592,11 @@ public final class RouteDefinitionHelper {
 
                     match = false;
 
-                    // a bit more logic to lookup the endpoint as it can be uri/ref based
+                    // a bit more logic to lookup the endpoint as it can be
+                    // uri/ref based
                     String uri = route.getInput().getEndpointUri();
-                    // if the pattern is not a ref itself, then resolve the ref uris, so we can match the actual uri's with each other
+                    // if the pattern is not a ref itself, then resolve the ref
+                    // uris, so we can match the actual uri's with each other
                     if (!isRefPattern) {
                         if (uri != null && uri.startsWith("ref:")) {
                             // its a ref: so lookup the endpoint to get its url
@@ -595,8 +613,10 @@ public final class RouteDefinitionHelper {
                     intercept.afterPropertiesSet();
                     // init the parent
                     initParent(intercept);
-                    // add as first output so intercept is handled before the actual route and that gives
-                    // us the needed head start to init and be able to intercept all the remaining processing steps
+                    // add as first output so intercept is handled before the
+                    // actual route and that gives
+                    // us the needed head start to init and be able to intercept
+                    // all the remaining processing steps
                     upper.add(0, intercept);
                 }
             }
@@ -608,21 +628,22 @@ public final class RouteDefinitionHelper {
                 intercept.afterPropertiesSet();
                 // init the parent
                 initParent(intercept);
-                // add as first output so intercept is handled before the actual route and that gives
-                // us the needed head start to init and be able to intercept all the remaining processing steps
+                // add as first output so intercept is handled before the actual
+                // route and that gives
+                // us the needed head start to init and be able to intercept all
+                // the remaining processing steps
                 upper.add(0, intercept);
             }
         }
     }
 
-    private static void initOnCompletions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
-                                          List<OnCompletionDefinition> onCompletions) {
+    private static void initOnCompletions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper, List<OnCompletionDefinition> onCompletions) {
         List<OnCompletionDefinition> completions = new ArrayList<>();
 
         // find the route scoped onCompletions
         for (ProcessorDefinition out : abstracts) {
             if (out instanceof OnCompletionDefinition) {
-                completions.add((OnCompletionDefinition) out);
+                completions.add((OnCompletionDefinition)out);
             }
         }
 
@@ -650,7 +671,7 @@ public final class RouteDefinitionHelper {
         for (ProcessorDefinition<?> type : abstracts) {
             if (type instanceof SagaDefinition) {
                 if (saga == null) {
-                    saga = (SagaDefinition) type;
+                    saga = (SagaDefinition)type;
                 } else {
                     throw new IllegalArgumentException("The route can only have one saga defined");
                 }
@@ -673,7 +694,7 @@ public final class RouteDefinitionHelper {
         for (ProcessorDefinition<?> type : abstracts) {
             if (type instanceof TransactedDefinition) {
                 if (transacted == null) {
-                    transacted = (TransactedDefinition) type;
+                    transacted = (TransactedDefinition)type;
                 } else {
                     throw new IllegalArgumentException("The route can only have one transacted defined");
                 }
@@ -692,22 +713,24 @@ public final class RouteDefinitionHelper {
     /**
      * Force assigning ids to the give node and all its children (recursively).
      * <p/>
-     * This is needed when doing tracing or the likes, where each node should have its id assigned
-     * so the tracing can pin point exactly.
+     * This is needed when doing tracing or the likes, where each node should
+     * have its id assigned so the tracing can pin point exactly.
      *
-     * @param context   the camel context
+     * @param context the camel context
      * @param processor the node
      */
     public static void forceAssignIds(CamelContext context, final ProcessorDefinition processor) {
         // force id on the child
         processor.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
 
-        // if there was a custom id assigned, then make sure to support property placeholders
+        // if there was a custom id assigned, then make sure to support property
+        // placeholders
         if (processor.hasCustomIdAssigned()) {
             try {
                 final String originalId = processor.getId();
                 String id = context.resolvePropertyPlaceholders(originalId);
-                // only set id if its changed, such as we did property placeholder
+                // only set id if its changed, such as we did property
+                // placeholder
                 if (!originalId.equals(id)) {
                     processor.setId(id);
                     ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
@@ -731,10 +754,12 @@ public final class RouteDefinitionHelper {
     }
 
     public static String getRouteMessage(String route) {
-        // ensure to sanitize uri's in the route so we do not show sensitive information such as passwords
+        // ensure to sanitize uri's in the route so we do not show sensitive
+        // information such as passwords
         route = URISupport.sanitizeUri(route);
         // cut the route after 60 chars so it won't be too big in the message
-        // users just need to be able to identify the route so they know where to look
+        // users just need to be able to identify the route so they know where
+        // to look
         if (route.length() > 60) {
             return route.substring(0, 60) + "...";
         } else {

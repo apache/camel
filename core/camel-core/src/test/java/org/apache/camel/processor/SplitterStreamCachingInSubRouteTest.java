@@ -41,16 +41,16 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setSpoolDirectory("target/camel/cache");
                 context.getStreamCachingStrategy().setSpoolThreshold(1L);
 
-                from("direct:startIterable").split(body().tokenize(",")).streaming().aggregationStrategy(new InternalAggregationStrategy())
-                        .stopOnException().parallelProcessing().to("direct:sub").end().to("mock:result");
+                from("direct:startIterable").split(body().tokenize(",")).streaming().aggregationStrategy(new InternalAggregationStrategy()).stopOnException().parallelProcessing()
+                    .to("direct:sub").end().to("mock:result");
 
-                from("direct:start").split(body().tokenize(",")).aggregationStrategy(new InternalAggregationStrategy()).stopOnException()
-                        .parallelProcessing().to("direct:sub").end().to("mock:result");
+                from("direct:start").split(body().tokenize(",")).aggregationStrategy(new InternalAggregationStrategy()).stopOnException().parallelProcessing().to("direct:sub")
+                    .end().to("mock:result");
 
                 from("direct:sub").process(new InputProcessorWithStreamCache(22)).to("mock:resultsub");
 
-                from("direct:startNested").split(body().tokenize(",")).aggregationStrategy(new InternalAggregationStrategy())
-                        .stopOnException().parallelProcessing().to("direct:start").end().to("mock:resultNested");
+                from("direct:startNested").split(body().tokenize(",")).aggregationStrategy(new InternalAggregationStrategy()).stopOnException().parallelProcessing()
+                    .to("direct:start").end().to("mock:resultNested");
             }
 
         };
@@ -98,7 +98,7 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
             String s = "Test Message " + number;
             cos.write(s.getBytes(Charset.forName("UTF-8")));
             cos.close();
-            InputStream is = (InputStream) cos.newStreamCache();
+            InputStream is = (InputStream)cos.newStreamCache();
 
             exchange.getMessage().setBody(is);
         }
@@ -115,7 +115,7 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
                 String oldBody = oldExchange.getIn().getBody(String.class);
                 String newBody = newExchange.getIn().getBody(String.class);
                 String merged = oldBody + newBody;
-                //also do stream caching in the aggregation strategy            
+                // also do stream caching in the aggregation strategy
                 CachedOutputStream cos = new CachedOutputStream(newExchange);
                 cos.write(merged.getBytes("UTF-8"));
                 cos.close();

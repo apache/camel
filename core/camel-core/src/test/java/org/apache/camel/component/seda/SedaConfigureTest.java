@@ -25,7 +25,6 @@ import org.junit.Test;
 
 public class SedaConfigureTest extends ContextTestSupport {
 
-
     @SuppressWarnings("unchecked")
     @Test
     public void testBlockingQueueConfigured() throws Exception {

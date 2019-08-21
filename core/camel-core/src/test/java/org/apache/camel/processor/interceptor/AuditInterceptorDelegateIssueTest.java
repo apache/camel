@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -73,9 +74,7 @@ public class AuditInterceptorDelegateIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 getContext().adapt(ExtendedCamelContext.class).addInterceptStrategy(strategy);
 
-                onException(IllegalArgumentException.class)
-                        .handled(true)
-                        .to("mock:handled");
+                onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(1));
 

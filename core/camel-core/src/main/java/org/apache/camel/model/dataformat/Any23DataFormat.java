@@ -34,93 +34,94 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Any23DataFormat extends DataFormatDefinition {
 
-  @XmlAttribute
-  @Metadata(defaultValue = "RDF4JMODEL")
-  private Any23Type outputFormat;
-  @XmlElement
-  private Map<String, String> configurations;
-  @XmlElement
-  private List<String> extractors;
-  @XmlAttribute
-  private String baseURI;
+    @XmlAttribute
+    @Metadata(defaultValue = "RDF4JMODEL")
+    private Any23Type outputFormat;
+    @XmlElement
+    private Map<String, String> configurations;
+    @XmlElement
+    private List<String> extractors;
+    @XmlAttribute
+    private String baseURI;
 
-  public Any23DataFormat() {
-    super("any23");
-  }
+    public Any23DataFormat() {
+        super("any23");
+    }
 
-  public Any23DataFormat(String baseuri) {
-    this();
-    this.baseURI = baseuri;
-  }
+    public Any23DataFormat(String baseuri) {
+        this();
+        this.baseURI = baseuri;
+    }
 
-  public Any23DataFormat(String baseuri, Any23Type outputFormat) {
-    this(baseuri);
-    this.outputFormat = outputFormat;
-  }
+    public Any23DataFormat(String baseuri, Any23Type outputFormat) {
+        this(baseuri);
+        this.outputFormat = outputFormat;
+    }
 
-  public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations) {
-    this(baseuri, outputFormat);
-    this.outputFormat = outputFormat;
-    this.configurations = configurations;
-  }
+    public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations) {
+        this(baseuri, outputFormat);
+        this.outputFormat = outputFormat;
+        this.configurations = configurations;
+    }
 
-  public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations, List<String> extractors) {
-    this(baseuri, outputFormat, configurations);
-    this.outputFormat = outputFormat;
-    this.configurations = configurations;
-    this.extractors = extractors;
-  }
+    public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations, List<String> extractors) {
+        this(baseuri, outputFormat, configurations);
+        this.outputFormat = outputFormat;
+        this.configurations = configurations;
+        this.extractors = extractors;
+    }
 
-  public Any23Type getOutputFormat() {
-    return outputFormat;
-  }
+    public Any23Type getOutputFormat() {
+        return outputFormat;
+    }
 
-  /**
-   * What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS, RDFXML,
-   * JSONLD, RDFJSON, RDF4JMODEL. It is by default: RDF4JMODEL.
-   */
-  public void setOutputFormat(Any23Type outputFormat) {
-    this.outputFormat = outputFormat;
-  }
+    /**
+     * What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS,
+     * RDFXML, JSONLD, RDFJSON, RDF4JMODEL. It is by default: RDF4JMODEL.
+     */
+    public void setOutputFormat(Any23Type outputFormat) {
+        this.outputFormat = outputFormat;
+    }
 
-  public Map<String, String> getConfigurations() {
-    return configurations;
-  }
+    public Map<String, String> getConfigurations() {
+        return configurations;
+    }
 
-  /**
-   * Configurations for Apache Any23 as key-value pairs in order to customize
-   * the extraction process. The list of supported parameters can be found
-   * <a href="https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.properties">here</a>.
-   * If not provided, a default configuration is used.
-   */
-  public void setConfigurations(Map<String, String> configurations) {
-    this.configurations = configurations;
-  }
+    /**
+     * Configurations for Apache Any23 as key-value pairs in order to customize
+     * the extraction process. The list of supported parameters can be found
+     * <a href=
+     * "https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.properties">here</a>.
+     * If not provided, a default configuration is used.
+     */
+    public void setConfigurations(Map<String, String> configurations) {
+        this.configurations = configurations;
+    }
 
-  public List<String> getExtractors() {
-    return extractors;
-  }
+    public List<String> getExtractors() {
+        return extractors;
+    }
 
-  /**
-   * List of Any23 extractors to be used in the unmarshal operation. A list of
-   * the available extractors can be found here
-   * <a href="https://any23.apache.org/getting-started.html">here</a>. If not
-   * provided, all the available extractors are used.
-   */
-  public void setExtractors(List<String> extractors) {
-    this.extractors = extractors;
-  }
+    /**
+     * List of Any23 extractors to be used in the unmarshal operation. A list of
+     * the available extractors can be found here
+     * <a href="https://any23.apache.org/getting-started.html">here</a>. If not
+     * provided, all the available extractors are used.
+     */
+    public void setExtractors(List<String> extractors) {
+        this.extractors = extractors;
+    }
 
-  public String getBaseURI() {
-    return baseURI;
-  }
+    public String getBaseURI() {
+        return baseURI;
+    }
 
-  /**
-   * The URI to use as base for building RDF entities if only relative paths are
-   * provided.
-   */
-  public void setBaseURI(String baseURI) {
-    this.baseURI = baseURI;
-  }
+    /**
+     * The URI to use as base for building RDF entities if only relative paths
+     * are provided.
+     */
+    public void setBaseURI(String baseURI) {
+        this.baseURI = baseURI;
+    }
 
 }

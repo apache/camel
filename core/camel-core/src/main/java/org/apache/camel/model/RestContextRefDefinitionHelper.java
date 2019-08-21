@@ -49,16 +49,23 @@ public final class RestContextRefDefinitionHelper {
     }
 
     /**
-     * Lookup the rests from the {@link org.apache.camel.model.RestContextRefDefinition}.
+     * Lookup the rests from the
+     * {@link org.apache.camel.model.RestContextRefDefinition}.
      * <p/>
-     * This implementation must be used to lookup the rests as it performs a deep clone of the rests
-     * as a {@link org.apache.camel.model.RestContextRefDefinition} can be re-used with multiple {@link org.apache.camel.model.ModelCamelContext} and each
-     * context should have their own instances of the routes. This is to ensure no side-effects and sharing
-     * of instances between the contexts. For example such as property placeholders may be context specific
-     * so the routes should not use placeholders from another {@link org.apache.camel.CamelContext}.
+     * This implementation must be used to lookup the rests as it performs a
+     * deep clone of the rests as a
+     * {@link org.apache.camel.model.RestContextRefDefinition} can be re-used
+     * with multiple {@link org.apache.camel.model.ModelCamelContext} and each
+     * context should have their own instances of the routes. This is to ensure
+     * no side-effects and sharing of instances between the contexts. For
+     * example such as property placeholders may be context specific so the
+     * routes should not use placeholders from another
+     * {@link org.apache.camel.CamelContext}.
      *
      * @param camelContext the CamelContext
-     * @param ref          the id of the {@link org.apache.camel.model.RestContextRefDefinition} to lookup and get the routes.
+     * @param ref the id of the
+     *            {@link org.apache.camel.model.RestContextRefDefinition} to
+     *            lookup and get the routes.
      * @return the rests.
      */
     @SuppressWarnings("unchecked")
@@ -71,8 +78,10 @@ public final class RestContextRefDefinitionHelper {
             throw new IllegalArgumentException("Cannot find RestContext with id " + ref);
         }
 
-        // must clone the rest definitions as they can be reused with multiple CamelContexts
-        // and they would need their own instances of the definitions to not have side effects among
+        // must clone the rest definitions as they can be reused with multiple
+        // CamelContexts
+        // and they would need their own instances of the definitions to not
+        // have side effects among
         // the CamelContext - for example property placeholder resolutions etc.
         List<RestDefinition> clones = new ArrayList<>(answer.size());
         try {
@@ -108,7 +117,7 @@ public final class RestContextRefDefinitionHelper {
         Object clone = unmarshaller.unmarshal(bis);
 
         if (clone instanceof RestDefinition) {
-            RestDefinition def2 = (RestDefinition) clone;
+            RestDefinition def2 = (RestDefinition)clone;
 
             Iterator<VerbDefinition> verbit1 = def.getVerbs().iterator();
             Iterator<VerbDefinition> verbit2 = def2.getVerbs().iterator();
@@ -118,10 +127,11 @@ public final class RestContextRefDefinitionHelper {
                 VerbDefinition verb2 = verbit2.next();
 
                 if (verb1.getToOrRoute() instanceof RouteDefinition && verb2.getToOrRoute() instanceof RouteDefinition) {
-                    RouteDefinition route1 = (RouteDefinition) verb1.getToOrRoute();
-                    RouteDefinition route2 = (RouteDefinition) verb2.getToOrRoute();
+                    RouteDefinition route1 = (RouteDefinition)verb1.getToOrRoute();
+                    RouteDefinition route2 = (RouteDefinition)verb2.getToOrRoute();
 
-                    // need to clone the namespaces also as they are not JAXB marshalled (as they are transient)
+                    // need to clone the namespaces also as they are not JAXB
+                    // marshalled (as they are transient)
                     Iterator<ExpressionNode> it = ProcessorDefinitionHelper.filterTypeInOutputs(route1.getOutputs(), ExpressionNode.class);
                     Iterator<ExpressionNode> it2 = ProcessorDefinitionHelper.filterTypeInOutputs(route2.getOutputs(), ExpressionNode.class);
                     while (it.hasNext() && it2.hasNext()) {
@@ -131,10 +141,10 @@ public final class RestContextRefDefinitionHelper {
                         NamespaceAwareExpression name = null;
                         NamespaceAwareExpression name2 = null;
                         if (node.getExpression() instanceof NamespaceAwareExpression) {
-                            name = (NamespaceAwareExpression) node.getExpression();
+                            name = (NamespaceAwareExpression)node.getExpression();
                         }
                         if (node2.getExpression() instanceof NamespaceAwareExpression) {
-                            name2 = (NamespaceAwareExpression) node2.getExpression();
+                            name2 = (NamespaceAwareExpression)node2.getExpression();
                         }
 
                         if (name != null && name2 != null && name.getNamespaces() != null && !name.getNamespaces().isEmpty()) {

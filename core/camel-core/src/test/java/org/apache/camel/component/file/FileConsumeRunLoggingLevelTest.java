@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -47,8 +48,7 @@ public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/files?runLoggingLevel=INFO&initialDelay=0&delay=10")
-                    .to("mock:result");
+                from("file:target/data/files?runLoggingLevel=INFO&initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

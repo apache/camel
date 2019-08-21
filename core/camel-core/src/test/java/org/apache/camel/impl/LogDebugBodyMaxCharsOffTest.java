@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -55,7 +56,8 @@ public class LogDebugBodyMaxCharsOffTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // should be empty body as toString on the message will return an empty body
+        // should be empty body as toString on the message will return an empty
+        // body
         TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: [Body is not logged]]"));

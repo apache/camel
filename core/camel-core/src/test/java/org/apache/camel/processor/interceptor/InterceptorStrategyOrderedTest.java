@@ -44,7 +44,8 @@ public class InterceptorStrategyOrderedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // interceptors should be invoked according to how they are ordered
+                // interceptors should be invoked according to how they are
+                // ordered
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new BarInterceptStrategy());
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new FooInterceptStrategy());
 

@@ -38,7 +38,7 @@ public final class ProxyBuilder {
     /**
      * Send the proxied message to this endpoint
      *
-     * @param url  uri of endpoint
+     * @param url uri of endpoint
      * @return the builder
      */
     public ProxyBuilder endpoint(String url) {
@@ -49,7 +49,7 @@ public final class ProxyBuilder {
     /**
      * Send the proxied message to this endpoint
      *
-     * @param endpoint  the endpoint
+     * @param endpoint the endpoint
      * @return the builder
      */
     public ProxyBuilder endpoint(Endpoint endpoint) {
@@ -60,7 +60,7 @@ public final class ProxyBuilder {
     /**
      * Builds the proxy.
      *
-     * @param interfaceClass  the service interface
+     * @param interfaceClass the service interface
      * @return the proxied bean
      * @throws Exception is thrown if error creating the proxy
      */
@@ -69,13 +69,13 @@ public final class ProxyBuilder {
         // this method is introduced to avoid compiler warnings about the
         // generic Class arrays in the case we've got only one single Class
         // to build a Proxy for
-        return build((Class<T>[]) new Class[] {interfaceClass});
+        return build((Class<T>[])new Class[] {interfaceClass});
     }
 
     /**
      * Builds the proxy.
      *
-     * @param interfaceClasses  the service interface(s)
+     * @param interfaceClasses the service interface(s)
      * @return the proxied bean
      * @throws Exception is thrown if error creating the proxy
      */

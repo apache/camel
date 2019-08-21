@@ -55,11 +55,9 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
     }
 
     /**
-     * Sets the server blacklist.
-     * 
-     * Each entry can be a list of servers separated by comma in the format:
-     *
-     *   [service@]host:port,[service@]host2:port,[service@]host3:port
+     * Sets the server blacklist. Each entry can be a list of servers separated
+     * by comma in the format:
+     * [service@]host:port,[service@]host2:port,[service@]host3:port
      *
      * @param servers a list of servers.
      * @return this instance
@@ -73,11 +71,9 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
     // *************************************************************************
 
     /**
-     * Sets the server blacklist.
-     *
-     * Each entry can be a list of servers separated by comma in the format:
-     *
-     *   [service@]host:port,[service@]host2:port,[service@]host3:port
+     * Sets the server blacklist. Each entry can be a list of servers separated
+     * by comma in the format:
+     * [service@]host:port,[service@]host2:port,[service@]host3:port
      *
      * @param servers a list of servers.
      * @return this instance
@@ -90,7 +86,8 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
     /**
      * Sets the server blacklist.
      *
-     * @param servers a list of servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port
+     * @param servers a list of servers separated by comma in the format:
+     *            [service@]host:port,[service@]host2:port,[service@]host3:port
      * @return this instance
      */
     public BlacklistServiceCallServiceFilterConfiguration servers(String servers) {
@@ -112,7 +109,7 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
     // *************************************************************************
 
     @Override
-    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception  {
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception {
         List<String> servers = List.class.cast(parameters.get("servers"));
 
         if (ObjectHelper.isNotEmpty(servers)) {

@@ -38,7 +38,8 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     private String method;
     @XmlAttribute
     private String beanType;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean cache;
     @XmlTransient
     private Class<?> beanClass;
@@ -61,7 +62,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     public String toString() {
         return "Bean[" + description() + "]";
     }
-    
+
     public String description() {
         if (ref != null) {
             String methodText = "";
@@ -79,7 +80,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             return "";
         }
     }
-    
+
     @Override
     public String getShortName() {
         return "bean";
@@ -157,6 +158,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
 
     // Fluent API
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
 }

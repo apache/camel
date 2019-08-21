@@ -49,33 +49,21 @@ public class AsyncEndpointFailOverLoadBalanceMixed3Test extends ContextTestSuppo
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .loadBalance()
-                        .failover()
-                            // first is async, the 2nd is sync based
-                            .to("async:bye:camel?failFirstAttempts=5", "direct:ok")
-                        .end()
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // because the first is a sync then it will wait and thus use the same thread to continue
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                from("direct:start").to("mock:before").to("log:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                }).loadBalance().failover()
+                    // first is async, the 2nd is sync based
+                    .to("async:bye:camel?failFirstAttempts=5", "direct:ok").end().process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            // because the first is a sync then it will wait and
+                            // thus use the same thread to continue
+                            afterThreadName = Thread.currentThread().getName();
+                        }
+                    }).to("log:after").to("mock:after").to("mock:result");
 
-                from("direct:ok")
-                        .to("log:pok")
-                        .to("mock:ok")
-                        .transform(constant("Bye World"));
+                from("direct:ok").to("log:pok").to("mock:ok").transform(constant("Bye World"));
             }
         };
     }

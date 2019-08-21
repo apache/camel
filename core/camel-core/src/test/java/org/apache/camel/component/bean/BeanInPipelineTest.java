@@ -47,8 +47,7 @@ public class BeanInPipelineTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
-                    .pipeline("bean:one", "bean:two", "log:x", "log:y", "bean:three");
+                from("direct:start").pipeline("bean:one", "bean:two", "log:x", "log:y", "bean:three");
             }
         };
     }

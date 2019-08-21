@@ -31,13 +31,15 @@ import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 import org.junit.Test;
 
 /**
- * A crude unit test to navigate the route and build a Java DSL from the route definition
+ * A crude unit test to navigate the route and build a Java DSL from the route
+ * definition
  */
 public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
 
     @Test
     public void testNavigateRouteAsJavaDSLWithNavigate() throws Exception {
-        // this one navigate using the runtime route using the Navigate<Processor>
+        // this one navigate using the runtime route using the
+        // Navigate<Processor>
 
         StringBuilder sb = new StringBuilder();
 
@@ -74,7 +76,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
 
     private void navigateRoute(Navigate<Processor> nav, StringBuilder sb) {
         if (nav instanceof Pipeline) {
-            nav = (Navigate<Processor>) ((Pipeline) nav).getProcessors().get(0);
+            nav = (Navigate<Processor>)((Pipeline)nav).getProcessors().get(0);
         }
 
         if (!nav.hasNext()) {
@@ -82,8 +84,8 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         }
 
         if (nav instanceof DefaultChannel) {
-            DefaultChannel channel = (DefaultChannel) nav;
-            ProcessorDefinition<?> def = (ProcessorDefinition<?>) channel.getProcessorDefinition();
+            DefaultChannel channel = (DefaultChannel)nav;
+            ProcessorDefinition<?> def = (ProcessorDefinition<?>)channel.getProcessorDefinition();
             navigateDefinition(def, sb);
         }
     }
@@ -91,12 +93,12 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
     private void navigateDefinition(ProcessorDefinition<?> def, StringBuilder sb) {
 
         // must do this ugly cast to avoid compiler error on HP-UX
-        ProcessorDefinition<?> defn = (ProcessorDefinition<?>) def;
+        ProcessorDefinition<?> defn = (ProcessorDefinition<?>)def;
 
         if (defn instanceof LoadBalanceDefinition) {
             sb.append(".loadBalance()");
 
-            LoadBalanceDefinition lbd = (LoadBalanceDefinition) defn;
+            LoadBalanceDefinition lbd = (LoadBalanceDefinition)defn;
             LoadBalancer balancer = lbd.getLoadBalancerType().getLoadBalancer();
             if (balancer instanceof RandomLoadBalancer) {
                 sb.append(".random()");
@@ -104,7 +106,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         }
 
         if (defn instanceof SendDefinition) {
-            SendDefinition<?> send = (SendDefinition<?>) defn;
+            SendDefinition<?> send = (SendDefinition<?>)defn;
             sb.append(".to(\"" + send.getUri() + "\")");
         }
 

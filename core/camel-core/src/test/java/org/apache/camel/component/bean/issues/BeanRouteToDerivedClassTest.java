@@ -36,8 +36,7 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:derived?method=process");
+                from("direct:start").to("bean:derived?method=process");
             }
         });
         context.start();
@@ -46,7 +45,7 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
         assertEquals("Derived class should have been invoked", "Hello World", derived.getAndClearBody());
     }
-    
+
     @Test
     public void testDerivedClassCalledWithNoCustomProcessor() throws Exception {
         context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
@@ -54,11 +53,9 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:derived?method=process");
+                from("direct:start").to("bean:derived?method=process");
 
-                from("direct:other")
-                    .to("bean:derived");
+                from("direct:other").to("bean:derived");
             }
         });
         context.start();
@@ -75,7 +72,7 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
         assertEquals("Bye World", out.toString());
     }
-    
+
     @Test
     public void testDerivedClassCalledWithCustomProcessor() throws Exception {
         context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
@@ -84,12 +81,10 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // Explicit method name given so always call this
-                from("direct:start")
-                    .to("bean:derived?method=process");
+                from("direct:start").to("bean:derived?method=process");
 
                 // no explicit method name then a custom processor can kick in
-                from("direct:other")
-                    .to("bean:derived");
+                from("direct:other").to("bean:derived");
             }
         });
         context.start();

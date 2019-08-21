@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -38,14 +39,14 @@ public class WireTapTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testWireTapId() throws Exception {
         MockEndpoint a = getMockEndpoint("mock:a");
         MockEndpoint b = getMockEndpoint("mock:b");
         a.expectedBodiesReceived("Hello");
         b.expectedBodiesReceived("Hello");
-        
+
         template.sendBody("direct:test", "Hello");
         assertMockEndpointsSatisfied();
     }
@@ -63,16 +64,11 @@ public class WireTapTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .to("log:foo")
-                    .wireTap("direct:tap")
-                    .to("mock:result");
+                from("direct:start").to("log:foo").wireTap("direct:tap").to("mock:result");
                 // END SNIPPET: e1
 
-                from("direct:tap")
-                    .delay(1000).setBody().constant("Tapped")
-                    .to("mock:result", "mock:tap");
-                
+                from("direct:tap").delay(1000).setBody().constant("Tapped").to("mock:result", "mock:tap");
+
                 from("direct:test").wireTap("direct:a").id("wiretap_1").to("mock:a");
                 from("direct:a").to("mock:b");
             }

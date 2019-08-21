@@ -29,16 +29,19 @@ public class DefaultCamelContextEndpointCacheTest extends ContextTestSupport {
 
     @Test
     public void testCacheEndpoints() throws Exception {
-        // test that we cache at most 1000 endpoints in camel context to avoid it eating to much memory
+        // test that we cache at most 1000 endpoints in camel context to avoid
+        // it eating to much memory
         for (int i = 0; i < 1234; i++) {
             String uri = "my:endpoint?id=" + i;
             DefaultEndpoint e = new DefaultEndpoint() {
                 public Producer createProducer() throws Exception {
                     return null;
                 }
+
                 public Consumer createConsumer(Processor processor) throws Exception {
                     return null;
                 }
+
                 public boolean isSingleton() {
                     return true;
                 }

@@ -41,7 +41,7 @@ public class ExampleBean {
     public void setPrice(double price) {
         this.price = price;
     }
-    
+
     public String getId() {
         return id;
     }

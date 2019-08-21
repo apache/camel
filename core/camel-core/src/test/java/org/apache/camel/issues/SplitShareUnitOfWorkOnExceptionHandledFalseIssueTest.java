@@ -44,20 +44,11 @@ public class SplitShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Contex
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(false)
-                    .to("mock:a");
+                onException(Exception.class).handled(false).to("mock:a");
 
-                from("direct:start")
-                    .split(body()).shareUnitOfWork().stopOnException()
-                        .to("direct:b")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").split(body()).shareUnitOfWork().stopOnException().to("direct:b").end().to("mock:result");
 
-                from("direct:b")
-                    .to("mock:b")
-                    .filter(body().contains("Donkey"))
-                        .throwException(new IllegalArgumentException("Forced"));
+                from("direct:b").to("mock:b").filter(body().contains("Donkey")).throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

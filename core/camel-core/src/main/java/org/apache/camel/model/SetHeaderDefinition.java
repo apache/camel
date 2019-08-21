@@ -81,8 +81,8 @@ public class SetHeaderDefinition extends ExpressionNode {
     /**
      * Name of message header to set a new value
      * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used.
-     * Otherwise a constant name will be used.
+     * The <tt>simple</tt> language can be used to define a dynamic evaluated
+     * header name to be used. Otherwise a constant name will be used.
      */
     public void setName(String name) {
         this.name = name;

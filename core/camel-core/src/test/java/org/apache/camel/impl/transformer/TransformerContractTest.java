@@ -48,13 +48,11 @@ public class TransformerContractTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                    .inputType(A.class)
-                    .to("mock:a");
+                from("direct:a").inputType(A.class).to("mock:a");
             }
         });
         context.start();
-        
+
         MockEndpoint mock = context.getEndpoint("mock:a", MockEndpoint.class);
         mock.setExpectedCount(1);
         Object answer = template.requestBody("direct:a", "foo");
@@ -70,13 +68,11 @@ public class TransformerContractTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                    .outputType(A.class)
-                    .to("mock:a");
+                from("direct:a").outputType(A.class).to("mock:a");
             }
         });
         context.start();
-        
+
         MockEndpoint mock = context.getEndpoint("mock:a", MockEndpoint.class);
         mock.setExpectedCount(1);
         Object answer = template.requestBody("direct:a", "foo");
@@ -91,26 +87,15 @@ public class TransformerContractTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                transformer()
-                    .scheme("xml")
-                    .withDataFormat(new MyDataFormatDefinition());
-                from("direct:a")
-                    .inputType("xml")
-                    .outputType("xml")
-                    .to("mock:a")
-                    .to("direct:b")
-                    .to("mock:a2");
-                from("direct:b")
-                    .inputType("java")
-                    .outputType("java")
-                    .to("mock:b")
-                    .process(ex -> {
-                        ex.getIn().setBody(new B());
-                    });
+                transformer().scheme("xml").withDataFormat(new MyDataFormatDefinition());
+                from("direct:a").inputType("xml").outputType("xml").to("mock:a").to("direct:b").to("mock:a2");
+                from("direct:b").inputType("java").outputType("java").to("mock:b").process(ex -> {
+                    ex.getIn().setBody(new B());
+                });
             }
         });
         context.start();
-        
+
         MockEndpoint mocka = context.getEndpoint("mock:a", MockEndpoint.class);
         MockEndpoint mocka2 = context.getEndpoint("mock:a2", MockEndpoint.class);
         MockEndpoint mockb = context.getEndpoint("mock:b", MockEndpoint.class);
@@ -162,7 +147,9 @@ public class TransformerContractTest extends ContextTestSupport {
         }
     }
 
-    public static class A { }
+    public static class A {
+    }
 
-    public static class B { }
+    public static class B {
+    }
 }

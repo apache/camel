@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -25,15 +26,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ValidateRegExpTest extends ContextTestSupport {
-    
+
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
+
         startEndpoint = resolveMandatoryEndpoint("direct:start", Endpoint.class);
         resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     }
@@ -43,7 +44,7 @@ public class ValidateRegExpTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(1);
 
         template.sendBody(startEndpoint, "01.01.2010");
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -58,7 +59,8 @@ public class ValidateRegExpTest extends ContextTestSupport {
             // expected
             PredicateValidationException cause = assertIsInstanceOf(PredicateValidationException.class, e.getCause());
 
-            // as the Expression could be different between the DSL and simple language, here we just check part of the message 
+            // as the Expression could be different between the DSL and simple
+            // language, here we just check part of the message
             assertTrue("Get a wrong exception message", cause.getMessage().startsWith("Validation failed for Predicate"));
             assertTrue(cause.getMessage().contains("^\\d{2}\\.\\d{2}\\.\\d{4}$"));
 
@@ -69,14 +71,11 @@ public class ValidateRegExpTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .validate(bodyAs(String.class).regex("^\\d{2}\\.\\d{2}\\.\\d{4}$"))
-                    .to("mock:result");
+                from("direct:start").validate(bodyAs(String.class).regex("^\\d{2}\\.\\d{2}\\.\\d{4}$")).to("mock:result");
             }
         };
     }

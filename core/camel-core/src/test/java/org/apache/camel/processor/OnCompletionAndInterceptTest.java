@@ -66,14 +66,9 @@ public class OnCompletionAndInterceptTest extends ContextTestSupport {
             public void configure() throws Exception {
                 intercept().to("mock:intercept");
 
-                from("direct:start")
-                    .onCompletion()
-                        .to("log:sync")
-                        .to("mock:sync")
+                from("direct:start").onCompletion().to("log:sync").to("mock:sync")
                     // must use end to denote the end of the onCompletion route
-                    .end()
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                    .end().process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

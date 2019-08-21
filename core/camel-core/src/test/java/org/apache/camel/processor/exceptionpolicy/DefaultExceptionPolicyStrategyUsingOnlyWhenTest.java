@@ -72,9 +72,7 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel(ERROR_QUEUE).maximumRedeliveries(0).redeliveryDelay(100));
 
-                onException(MyUserException.class).onWhen(header("user").isNotNull())
-                    .maximumRedeliveries(1).redeliveryDelay(0)
-                    .to(ERROR_USER_QUEUE);
+                onException(MyUserException.class).onWhen(header("user").isNotNull()).maximumRedeliveries(1).redeliveryDelay(0).to(ERROR_USER_QUEUE);
 
                 from("direct:a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

@@ -32,9 +32,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://a")
-                    .skipSendToOriginalEndpoint()
-                    .throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
             }
         });
 
@@ -53,9 +51,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://b")
-                    .skipSendToOriginalEndpoint()
-                    .throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
             }
         });
 
@@ -74,9 +70,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://a")
-                    .skipSendToOriginalEndpoint()
-                    .throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
             }
         });
 
@@ -84,9 +78,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://b")
-                    .skipSendToOriginalEndpoint()
-                    .throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
             }
         });
 
@@ -107,21 +99,9 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").routeId("a")
-                    .onException(Exception.class)
-                        .handled(true)
-                        .to("mock:error")
-                    .end()
-                    .to("log:a")
-                    .to("mock:a");
+                from("direct:a").routeId("a").onException(Exception.class).handled(true).to("mock:error").end().to("log:a").to("mock:a");
 
-                from("direct:b").routeId("b")
-                        .onException(Exception.class)
-                            .handled(true)
-                            .to("mock:error")
-                        .end()
-                    .to("log:b")
-                    .to("mock:b");
+                from("direct:b").routeId("b").onException(Exception.class).handled(true).to("mock:error").end().to("log:b").to("mock:b");
             }
         };
     }

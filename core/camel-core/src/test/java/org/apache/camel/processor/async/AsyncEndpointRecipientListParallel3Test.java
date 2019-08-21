@@ -48,26 +48,18 @@ public class AsyncEndpointRecipientListParallel3Test extends ContextTestSupport 
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                    .to("mock:before")
-                    .to("log:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    .recipientList(constant("async:hi:camel?delay=200,direct:foo")).parallelProcessing();
+                from("direct:start").to("mock:before").to("log:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                }).recipientList(constant("async:hi:camel?delay=200,direct:foo")).parallelProcessing();
 
-                from("direct:foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                            exchange.getMessage().setBody("Bye Camel");
-                        }
-                    })
-                    .to("log:after")
-                    .to("mock:after")
-                    .to("mock:result");
+                from("direct:foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadName = Thread.currentThread().getName();
+                        exchange.getMessage().setBody("Bye Camel");
+                    }
+                }).to("log:after").to("mock:after").to("mock:result");
             }
         };
     }

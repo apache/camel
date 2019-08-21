@@ -92,7 +92,7 @@ public class RouteAutoStartupTest extends ContextTestSupport {
     @Test
     public void testRouteNotAutoStartedUsingString() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

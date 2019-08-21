@@ -42,7 +42,7 @@ public class DataSetSedaTest extends ContextTestSupport {
     @Test
     public void testDataSetWithSeda() throws Exception {
         MockEndpoint endpoint = getMockEndpoint(uri);
-        endpoint.expectedMessageCount((int) dataSet.getSize());
+        endpoint.expectedMessageCount((int)dataSet.getSize());
 
         context.getRouteController().startAllRoutes();
 

@@ -42,8 +42,7 @@ public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start-{{cheese.type}}").routeId("{{cheese.type}}")
-                        .to("direct:end-{{cheese.type}}").id("log");
+                from("direct:start-{{cheese.type}}").routeId("{{cheese.type}}").to("direct:end-{{cheese.type}}").id("log");
             }
         };
     }

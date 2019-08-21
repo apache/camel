@@ -37,10 +37,7 @@ public class DirectVmTwoCamelContextAdviceWithTest extends AbstractDirectVmTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:step-1a").routeId("step-1a")
-                    .log("Before Step-1a ${body}")
-                    .to("direct-vm:step-2a")
-                    .log("After Step-1a ${body}");
+                from("direct:step-1a").routeId("step-1a").log("Before Step-1a ${body}").to("direct-vm:step-2a").log("After Step-1a ${body}");
             }
         };
     }
@@ -50,10 +47,7 @@ public class DirectVmTwoCamelContextAdviceWithTest extends AbstractDirectVmTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct-vm:step-2a").routeId("step-2a")
-                    .log("Before Step-2a ${body}")
-                    .setBody(constant("Bye"))
-                    .log("After Step-2a ${body}");
+                from("direct-vm:step-2a").routeId("step-2a").log("Before Step-2a ${body}").setBody(constant("Bye")).log("After Step-2a ${body}");
             }
         };
     }

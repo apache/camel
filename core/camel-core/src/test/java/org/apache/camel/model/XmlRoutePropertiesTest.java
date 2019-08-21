@@ -32,11 +32,7 @@ public class XmlRoutePropertiesTest extends XmlTestSupport {
         assertEquals("route-id", route.getId());
         assertNotNull(route.getRouteProperties());
 
-        assertTrue(route.getRouteProperties().stream().anyMatch(
-            p -> Objects.equals("key1", p.getKey()) && Objects.equals("val1", p.getValue())
-        ));
-        assertTrue(route.getRouteProperties().stream().anyMatch(
-            p -> Objects.equals("key2", p.getKey()) && Objects.equals("val2", p.getValue())
-        ));
+        assertTrue(route.getRouteProperties().stream().anyMatch(p -> Objects.equals("key1", p.getKey()) && Objects.equals("val1", p.getValue())));
+        assertTrue(route.getRouteProperties().stream().anyMatch(p -> Objects.equals("key2", p.getKey()) && Objects.equals("val2", p.getValue())));
     }
 }

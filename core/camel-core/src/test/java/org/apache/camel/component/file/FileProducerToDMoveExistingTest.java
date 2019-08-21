@@ -53,9 +53,7 @@ public class FileProducerToDMoveExistingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .toD("file:target/${header.myDir}?fileExist=Move&moveExisting=target/out/old-${file:onlyname}")
-                    .to("mock:result");
+                from("direct:start").toD("file:target/${header.myDir}?fileExist=Move&moveExisting=target/out/old-${file:onlyname}").to("mock:result");
             }
         };
     }

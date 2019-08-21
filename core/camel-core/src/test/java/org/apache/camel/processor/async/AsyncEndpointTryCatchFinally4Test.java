@@ -42,17 +42,8 @@ public class AsyncEndpointTryCatchFinally4Test extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                        .doTry()
-                            .to("mock:try")
-                        .doCatch(IllegalArgumentException.class)
-                            .to("mock:catch")
-                            .to("async:bye:camel")
-                        .doFinally()
-                            .to("mock:finally")
-                            .to("async:bye:world")
-                        .end()
-                        .to("mock:result");
+                from("direct:start").doTry().to("mock:try").doCatch(IllegalArgumentException.class).to("mock:catch").to("async:bye:camel").doFinally().to("mock:finally")
+                    .to("async:bye:world").end().to("mock:result");
             }
         };
     }

@@ -27,7 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test for handling a StreamSource in a content-based router with XPath predicates
+ * Test for handling a StreamSource in a content-based router with XPath
+ * predicates
  */
 public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     protected MockEndpoint x;
@@ -37,10 +38,10 @@ public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     public void testSendStreamSource() throws Exception {
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);
-        
+
         sendBody("direct:start", new StreamSource(new StringReader("<message>xx</message>")));
         sendBody("direct:start", new StreamSource(new StringReader("<message>yy</message>")));
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -48,10 +49,10 @@ public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     public void testSendStringSource() throws Exception {
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);
-     
+
         sendBody("direct:start", new StringSource("<message>xx</message>"));
         sendBody("direct:start", new StringSource("<message>yy</message>"));
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -72,9 +73,7 @@ public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
                 // is enabled and make sure the predicates can be evaluated
                 // multiple times
 
-                from("direct:start").streamCaching().choice()
-                  .when().xpath("/message/text() = 'xx'").to("mock:x")
-                  .when().xpath("/message/text() = 'yy'").to("mock:y");
+                from("direct:start").streamCaching().choice().when().xpath("/message/text() = 'xx'").to("mock:x").when().xpath("/message/text() = 'yy'").to("mock:y");
             }
         };
     }

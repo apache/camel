@@ -51,7 +51,7 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
             // ok
         }
     }
-    
+
     @Test
     public void testTrailingAmpersand() throws Exception {
         try {
@@ -64,7 +64,8 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
 
     @Test
     public void testScheduledPollConsumerOptions() throws Exception {
-        // test that we support both notations of scheduled polling consumer options
+        // test that we support both notations of scheduled polling consumer
+        // options
 
         // with consumer. prefix
         Endpoint endpint = context.getEndpoint("file://target/data/foo?consumer.delay=1000");

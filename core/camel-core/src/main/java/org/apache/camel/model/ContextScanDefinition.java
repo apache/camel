@@ -28,7 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Scans for Java {@link org.apache.camel.builder.RouteBuilder} instances in the context {@link org.apache.camel.spi.Registry}.
+ * Scans for Java {@link org.apache.camel.builder.RouteBuilder} instances in the
+ * context {@link org.apache.camel.spi.Registry}.
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "contextScan")

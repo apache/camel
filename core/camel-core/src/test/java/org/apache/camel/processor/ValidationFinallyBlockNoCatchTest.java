@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -44,8 +45,9 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
     @Test
     public void testInvalidMessage() throws Exception {
         validEndpoint.expectedMessageCount(0);
-        
-        // allEndpoint should only receive 1 when the message is being moved to the dead letter queue
+
+        // allEndpoint should only receive 1 when the message is being moved to
+        // the dead letter queue
         allEndpoint.expectedMessageCount(1);
 
         // regular error handler is disbled for try .. catch .. finally
@@ -78,12 +80,7 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
                 // use dead letter channel that supports redeliveries
                 errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3).logStackTrace(false));
 
-                from("direct:start")
-                    .doTry()
-                        .process(validator)
-                        .to("mock:valid")
-                    .doFinally()
-                        .to("mock:all");
+                from("direct:start").doTry().process(validator).to("mock:valid").doFinally().to("mock:all");
             }
         };
     }

@@ -42,12 +42,10 @@ public class MulticastAggregationStrategyThrowExceptionTest extends ContextTestS
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                // must use share UoW if we want the error handler to react on exceptions
+                // must use share UoW if we want the error handler to react on
+                // exceptions
                 // from the aggregation strategy also.
-                from("direct:start").multicast(new MyAggregateBean()).shareUnitOfWork()
-                    .to("direct:a")
-                    .to("direct:b")
-                .end();
+                from("direct:start").multicast(new MyAggregateBean()).shareUnitOfWork().to("direct:a").to("direct:b").end();
 
                 from("direct:a").to("mock:a");
                 from("direct:b").to("mock:b");

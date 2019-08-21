@@ -54,10 +54,7 @@ public class AggregateCompletionOnlyTwoTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(repo)
-                            .completionSize(2)
-                        .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(repo).completionSize(2).to("mock:aggregated");
             }
         };
     }

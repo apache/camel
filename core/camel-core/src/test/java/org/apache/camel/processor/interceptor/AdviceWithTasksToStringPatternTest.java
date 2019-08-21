@@ -48,7 +48,8 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
         RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // weave nodes in the route which has foo anywhere in their to string representation
+                // weave nodes in the route which has foo anywhere in their to
+                // string representation
                 // and replace them with the following route path
                 weaveByToString(".*foo.*").replace().multicast().to("mock:a").to("mock:b");
             }
@@ -128,10 +129,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("mock:foo")
-                    .to("mock:bar")
-                    .to("mock:result");
+                from("direct:start").to("mock:foo").to("mock:bar").to("mock:result");
             }
         };
     }

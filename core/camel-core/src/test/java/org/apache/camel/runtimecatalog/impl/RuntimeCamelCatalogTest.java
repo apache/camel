@@ -243,7 +243,8 @@ public class RuntimeCamelCatalogTest {
 
     @Test
     public void validatePropertiesSummary() throws Exception {
-        EndpointValidationResult result = catalog.validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
+        EndpointValidationResult result = catalog
+            .validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
         assertFalse(result.isSuccess());
         String reason = result.summaryErrorMessage(true);
         LOG.info(reason);

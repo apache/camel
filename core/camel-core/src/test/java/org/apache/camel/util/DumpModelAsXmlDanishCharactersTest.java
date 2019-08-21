@@ -50,10 +50,7 @@ public class DumpModelAsXmlDanishCharactersTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                    .description("Hello danish \u00C6\u00D8\u00C5")
-                    .setBody(simple("Hello ${body}"))
-                    .to("mock:result");
+                from("direct:start").routeId("myRoute").description("Hello danish \u00C6\u00D8\u00C5").setBody(simple("Hello ${body}")).to("mock:result");
             }
         };
     }

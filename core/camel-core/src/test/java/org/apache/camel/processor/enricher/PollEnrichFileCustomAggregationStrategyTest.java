@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.enricher;
+
 import java.io.File;
 
 import org.apache.camel.AggregationStrategy;
@@ -34,7 +35,7 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         deleteDirectory("target/data/enrichdata");
         super.setUp();
     }
-    
+
     @Test
     public void testPollEnrichCustomAggregationStrategyBody() throws Exception {
 
@@ -53,7 +54,7 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         log.info("... write done");
 
         assertMockEndpointsSatisfied();
-        
+
         assertFileDoesNotExists("target/data/enrichdata/AAA.dat.camelLock");
     }
 
@@ -62,19 +63,17 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/enrich?initialDelay=0&delay=10&move=.done")
-                    .to("mock:start")
-                    .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done", 10000, new ReplaceAggregationStrategy())
-                    .to("mock:result");
+                from("file://target/data/enrich?initialDelay=0&delay=10&move=.done").to("mock:start")
+                    .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done", 10000, new ReplaceAggregationStrategy()).to("mock:result");
             }
         };
     }
-    
+
     private static void assertFileDoesNotExists(String filename) {
         File file = new File(filename);
         assertFalse("File " + filename + " should not exist, it should have been deleted after being processed", file.exists());
     }
-    
+
     class ReplaceAggregationStrategy implements AggregationStrategy {
 
         @Override

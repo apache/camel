@@ -196,8 +196,8 @@ public class DefaultTimeoutMapTest extends Assert {
 
         // start and wait for scheduler to purge
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() ->
-            // now it should be gone
-            assertEquals(0, map.size()));
+        // now it should be gone
+        assertEquals(0, map.size()));
 
         map.stop();
     }

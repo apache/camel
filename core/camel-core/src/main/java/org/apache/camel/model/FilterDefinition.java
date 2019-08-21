@@ -28,7 +28,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Filter out messages based using a predicate
  */
-@Metadata(label = "eip,routing") @AsPredicate
+@Metadata(label = "eip,routing")
+@AsPredicate
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FilterDefinition extends OutputExpressionNode {
@@ -48,7 +49,7 @@ public class FilterDefinition extends OutputExpressionNode {
     public String toString() {
         return "Filter[" + getExpression() + " -> " + getOutputs() + "]";
     }
-    
+
     @Override
     public String getShortName() {
         return "filter";
@@ -58,10 +59,11 @@ public class FilterDefinition extends OutputExpressionNode {
     public String getLabel() {
         return "filter[" + getExpression() + "]";
     }
-    
+
     /**
-     * Expression to determine if the message should be filtered or not. If the expression returns an empty value or <tt>false</tt>
-     * then the message is filtered (dropped), otherwise the message is continued being routed.
+     * Expression to determine if the message should be filtered or not. If the
+     * expression returns an empty value or <tt>false</tt> then the message is
+     * filtered (dropped), otherwise the message is continued being routed.
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {

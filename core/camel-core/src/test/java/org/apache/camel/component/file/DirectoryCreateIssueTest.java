@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,21 +48,18 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
                 for (int i = 0; i < numFiles; i++) {
                     destinations[i] = "direct:file" + i;
 
-                    from("direct:file" + i)
-                        .setHeader(Exchange.FILE_NAME, constant("file" + i + ".txt"))
-                        .to("file://" + path + "/?fileExist=Override&noop=true", "mock:result");
+                    from("direct:file" + i).setHeader(Exchange.FILE_NAME, constant("file" + i + ".txt")).to("file://" + path + "/?fileExist=Override&noop=true", "mock:result");
                 }
 
-                from("seda:testFileCreatedAsDir")
-                    .to(destinations);
+                from("seda:testFileCreatedAsDir").to(destinations);
             }
         };
     }
 
     @Test
     public void testFileCreatedAsDir() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");        
-        mock.expectedMessageCount(numFiles);         
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(numFiles);
         template.send("seda:testFileCreatedAsDir", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();

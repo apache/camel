@@ -231,7 +231,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
     private boolean isStarted(Service service) {
         if (service instanceof StatefulService) {
-            return ((StatefulService) service).isStarted();
+            return ((StatefulService)service).isStarted();
         }
         return true;
     }

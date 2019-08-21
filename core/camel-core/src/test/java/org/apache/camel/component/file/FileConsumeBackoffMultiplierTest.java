@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -49,8 +50,7 @@ public class FileConsumeBackoffMultiplierTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/files/?initialDelay=0&delay=10&delete=true&backoffMultiplier=4&backoffIdleThreshold=3")
-                    .convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/files/?initialDelay=0&delay=10&delete=true&backoffMultiplier=4&backoffIdleThreshold=3").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

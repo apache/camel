@@ -42,20 +42,15 @@ public class TransformBeanExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:transform")
-                    .transform().method(TransformBeanExceptionTest.class, "throwUp");
+                from("direct:transform").transform().method(TransformBeanExceptionTest.class, "throwUp");
 
-                from("direct:bean")
-                    .bean(TransformBeanExceptionTest.class, "throwUp");
+                from("direct:bean").bean(TransformBeanExceptionTest.class, "throwUp");
 
-                from("direct:setBody")
-                    .setBody().method(TransformBeanExceptionTest.class, "throwUp");
+                from("direct:setBody").setBody().method(TransformBeanExceptionTest.class, "throwUp");
 
-                from("direct:setHeader")
-                    .setHeader("hello").method(TransformBeanExceptionTest.class, "throwUp");
+                from("direct:setHeader").setHeader("hello").method(TransformBeanExceptionTest.class, "throwUp");
 
-                from("direct:setProperty")
-                    .setProperty("bye").method(TransformBeanExceptionTest.class, "throwUp");
+                from("direct:setProperty").setProperty("bye").method(TransformBeanExceptionTest.class, "throwUp");
             }
         };
     }

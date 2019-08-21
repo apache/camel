@@ -29,16 +29,16 @@ public class SplitterStreamCacheTest extends ContextTestSupport {
 
     private static final String TEST_FILE = "org/apache/camel/converter/stream/test.xml";
     protected int numMessages = 200;
-    
+
     @Test
     public void testSendStreamSource() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(numMessages);
-    
+
         for (int c = 0; c < numMessages; c++) {
             template.sendBody("seda:parallel", new StreamSource(getTestFileStream()));
         }
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -46,13 +46,11 @@ public class SplitterStreamCacheTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                //ensure stream is spooled to disk
+                // ensure stream is spooled to disk
                 context.getStreamCachingStrategy().setSpoolDirectory("target/tmp");
                 context.getStreamCachingStrategy().setSpoolThreshold(-1);
 
-                from("seda:parallel?concurrentConsumers=5").streamCaching()
-                    .split(xpath("//person/city"))
-                        .to("mock:result");
+                from("seda:parallel?concurrentConsumers=5").streamCaching().split(xpath("//person/city")).to("mock:result");
             }
         };
     }

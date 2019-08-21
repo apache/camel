@@ -32,7 +32,8 @@ public class RouteWithCustomIdTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // the problem is that they want to set A as ID on the "direct:start" endpoint
+        // the problem is that they want to set A as ID on the "direct:start"
+        // endpoint
 
         String id = context.getRouteDefinitions().get(0).getId();
         String id2 = context.getRouteDefinitions().get(0).getOutputs().get(0).getId();
@@ -47,9 +48,7 @@ public class RouteWithCustomIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").id("A")
-                    .to("log:foo").id("B")
-                    .to("mock:result").id("C");
+                from("direct:start").id("A").to("log:foo").id("B").to("mock:result").id("C");
             }
         };
     }

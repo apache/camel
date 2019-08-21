@@ -68,15 +68,8 @@ public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
             @SuppressWarnings("unchecked")
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .doTry()
-                        .process(new ProcessorFail())
-                        .to("mock:result")
-                    .doCatch(IOException.class, IllegalStateException.class)
-                        .to("mock:catch")
-                    .doFinally()
-                        .to("mock:finally")
-                    .end();
+                from("direct:start").doTry().process(new ProcessorFail()).to("mock:result").doCatch(IOException.class, IllegalStateException.class).to("mock:catch").doFinally()
+                    .to("mock:finally").end();
                 // END SNIPPET: e1
             }
         };

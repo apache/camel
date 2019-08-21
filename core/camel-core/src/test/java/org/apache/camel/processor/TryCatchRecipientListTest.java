@@ -117,24 +117,14 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .doTry()
-                        .to("direct:foo")
-                    .doCatch(Exception.class)
-                        .to("mock:catch")
-                        .transform().constant("doCatch")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").doTry().to("direct:foo").doCatch(Exception.class).to("mock:catch").transform().constant("doCatch").end().to("mock:result");
 
-                from("direct:foo")
-                    .errorHandler(noErrorHandler())
-                    .to("mock:foo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    });
+                from("direct:foo").errorHandler(noErrorHandler()).to("mock:foo").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced");
+                    }
+                });
             }
         };
     }
@@ -145,24 +135,15 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .doTry()
-                        .recipientList(constant("direct:foo")).end()
-                    .doCatch(Exception.class)
-                        .to("mock:catch")
-                        .transform().constant("doCatch")
-                    .end()
+                from("direct:start").doTry().recipientList(constant("direct:foo")).end().doCatch(Exception.class).to("mock:catch").transform().constant("doCatch").end()
                     .to("mock:result");
 
-                from("direct:foo")
-                    .errorHandler(noErrorHandler())
-                    .to("mock:foo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    });
+                from("direct:foo").errorHandler(noErrorHandler()).to("mock:foo").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced");
+                    }
+                });
             }
         };
     }
@@ -173,41 +154,23 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .doTry()
-                        .recipientList(constant("direct:foo")).end()
-                    .doCatch(Exception.class)
-                        .to("mock:catch")
-                        .transform().constant("doCatch")
-                    .end()
-                    .to("mock:result")
-                    .doTry()
-                        .recipientList(constant("direct:bar")).end()
-                    .doCatch(Exception.class)
-                        .to("mock:catch2")
-                        .transform().constant("doCatch2")
-                    .end()
+                from("direct:start").doTry().recipientList(constant("direct:foo")).end().doCatch(Exception.class).to("mock:catch").transform().constant("doCatch").end()
+                    .to("mock:result").doTry().recipientList(constant("direct:bar")).end().doCatch(Exception.class).to("mock:catch2").transform().constant("doCatch2").end()
                     .to("mock:result2");
 
-                from("direct:foo")
-                    .errorHandler(noErrorHandler())
-                    .to("mock:foo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    });
+                from("direct:foo").errorHandler(noErrorHandler()).to("mock:foo").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced");
+                    }
+                });
 
-                from("direct:bar")
-                    .errorHandler(noErrorHandler())
-                    .to("mock:bar")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Forced Again");
-                        }
-                    });
+                from("direct:bar").errorHandler(noErrorHandler()).to("mock:bar").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced Again");
+                    }
+                });
             }
         };
     }
@@ -218,19 +181,14 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .to("direct:foo")
-                    .to("mock:result");
+                from("direct:start").to("direct:foo").to("mock:result");
 
-                from("direct:foo")
-                    .errorHandler(noErrorHandler())
-                    .to("mock:foo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    });
+                from("direct:foo").errorHandler(noErrorHandler()).to("mock:foo").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced");
+                    }
+                });
             }
         };
     }
@@ -241,19 +199,14 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .recipientList(constant("direct:foo")).end()
-                    .to("mock:result");
+                from("direct:start").recipientList(constant("direct:foo")).end().to("mock:result");
 
-                from("direct:foo")
-                    .errorHandler(noErrorHandler())
-                    .to("mock:foo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    });
+                from("direct:foo").errorHandler(noErrorHandler()).to("mock:foo").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced");
+                    }
+                });
             }
         };
     }

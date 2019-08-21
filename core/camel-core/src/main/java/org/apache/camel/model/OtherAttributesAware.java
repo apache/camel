@@ -21,10 +21,12 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 /**
- * Models can support being configured with any other attributes to shadow existing options to be used for property placeholders.
+ * Models can support being configured with any other attributes to shadow
+ * existing options to be used for property placeholders.
  * <p/>
- * For example to override attributes that are configured as a boolean or integer type. Then the any attributes can be used to
- * override those existing attributes and supporting property placeholders.
+ * For example to override attributes that are configured as a boolean or
+ * integer type. Then the any attributes can be used to override those existing
+ * attributes and supporting property placeholders.
  */
 public interface OtherAttributesAware {
 

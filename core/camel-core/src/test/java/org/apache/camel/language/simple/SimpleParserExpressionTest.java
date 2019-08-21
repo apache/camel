@@ -40,7 +40,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
         assertEquals("'Hello'", exp.evaluate(exchange, String.class));
     }
-    
+
     @Test
     public void testSimpleStringList() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("\"Hello\" \"World\"", true, null);
@@ -48,7 +48,6 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
         assertEquals("\"Hello\" \"World\"", exp.evaluate(exchange, String.class));
     }
-    
 
     @Test
     public void testSimpleSingleQuoteWithFunction() throws Exception {

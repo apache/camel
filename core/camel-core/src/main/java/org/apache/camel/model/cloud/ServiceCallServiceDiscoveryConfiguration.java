@@ -51,7 +51,8 @@ public class ServiceCallServiceDiscoveryConfiguration extends IdentifiedType imp
     private final Optional<ServiceCallDefinition> parent;
     @XmlTransient
     private final String factoryKey;
-    @XmlElement(name = "properties") @Metadata(label = "advanced")
+    @XmlElement(name = "properties")
+    @Metadata(label = "advanced")
     private List<PropertyDefinition> properties;
 
     public ServiceCallServiceDiscoveryConfiguration() {
@@ -64,17 +65,11 @@ public class ServiceCallServiceDiscoveryConfiguration extends IdentifiedType imp
     }
 
     public ServiceCallDefinition end() {
-        return this.parent.orElseThrow(
-            () -> new IllegalStateException("Parent definition is not set")
-        );
+        return this.parent.orElseThrow(() -> new IllegalStateException("Parent definition is not set"));
     }
 
     public ProcessorDefinition<?> endParent() {
-        return this.parent.map(
-                ServiceCallDefinition::end
-            ).orElseThrow(
-                () -> new IllegalStateException("Parent definition is not set")
-            );
+        return this.parent.map(ServiceCallDefinition::end).orElseThrow(() -> new IllegalStateException("Parent definition is not set"));
     }
 
     // *************************************************************************
@@ -160,10 +155,10 @@ public class ServiceCallServiceDiscoveryConfiguration extends IdentifiedType imp
 
             if (type != null) {
                 if (ServiceDiscoveryFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceDiscoveryFactory) camelContext.getInjector().newInstance(type, false);
+                    factory = (ServiceDiscoveryFactory)camelContext.getInjector().newInstance(type, false);
                 } else {
-                    throw new IllegalArgumentException(
-                        "Resolving ServiceDiscovery: " + factoryKey + " detected type conflict: Not a ServiceDiscoveryFactory implementation. Found: " + type.getName());
+                    throw new IllegalArgumentException("Resolving ServiceDiscovery: " + factoryKey
+                                                       + " detected type conflict: Not a ServiceDiscoveryFactory implementation. Found: " + type.getName());
                 }
             }
 
@@ -171,22 +166,17 @@ public class ServiceCallServiceDiscoveryConfiguration extends IdentifiedType imp
                 Map<String, Object> parameters = new HashMap<>();
                 IntrospectionSupport.getProperties(this, parameters, null, false);
 
-                parameters.replaceAll(
-                    (k, v) -> {
-                        if (v instanceof String) {
-                            try {
-                                v = camelContext.resolvePropertyPlaceholders((String) v);
-                            } catch (Exception e) {
-                                throw new IllegalArgumentException(
-                                    String.format("Exception while resolving %s (%s)", k, v.toString()),
-                                    e
-                                );
-                            }
+                parameters.replaceAll((k, v) -> {
+                    if (v instanceof String) {
+                        try {
+                            v = camelContext.resolvePropertyPlaceholders((String)v);
+                        } catch (Exception e) {
+                            throw new IllegalArgumentException(String.format("Exception while resolving %s (%s)", k, v.toString()), e);
                         }
-
-                        return v;
                     }
-                );
+
+                    return v;
+                });
 
                 // Convert properties to Map<String, String>
                 parameters.put("properties", getPropertiesAsMap(camelContext));
@@ -208,6 +198,6 @@ public class ServiceCallServiceDiscoveryConfiguration extends IdentifiedType imp
     // Utilities
     // *************************************************************************
 
-    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception  {
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception {
     }
 }

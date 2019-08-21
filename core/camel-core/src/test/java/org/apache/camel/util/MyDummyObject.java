@@ -20,7 +20,7 @@ package org.apache.camel.util;
  *
  */
 public class MyDummyObject {
-    
+
     private String name;
 
     public MyDummyObject(String name) {

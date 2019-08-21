@@ -81,14 +81,14 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
     @Test
     public void testSedaBlockingWhenFull() throws Exception {
         getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 2);
-        
+
         SedaEndpoint seda = context.getEndpoint(BLOCK_WHEN_FULL_URI, SedaEndpoint.class);
         assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());
 
         sendTwoOverCapacity(BLOCK_WHEN_FULL_URI, QUEUE_SIZE);
         assertMockEndpointsSatisfied();
     }
-    
+
     /**
      * This method make sure that we hit the limit by sending two msg over the
      * given capacity which allows the delayer to kick in, leaving the 2nd msg
@@ -99,5 +99,5 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
             template.sendBody(uri, "Message " + i);
         }
     }
-    
+
 }

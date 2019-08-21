@@ -31,7 +31,7 @@ abstract class ExpressionReifier<T extends ExpressionNode> extends ProcessorReif
     /**
      * Creates the {@link FilterProcessor} from the expression node.
      *
-     * @param routeContext  the route context
+     * @param routeContext the route context
      * @return the created {@link FilterProcessor}
      * @throws Exception is thrown if error creating the processor
      */
@@ -43,7 +43,7 @@ abstract class ExpressionReifier<T extends ExpressionNode> extends ProcessorReif
     /**
      * Creates the {@link Predicate} from the expression node.
      *
-     * @param routeContext  the route context
+     * @param routeContext the route context
      * @return the created predicate
      */
     protected Predicate createPredicate(RouteContext routeContext) {

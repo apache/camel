@@ -58,7 +58,7 @@ public class ThrottlerAsyncDelayedTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         context.stop();
-        
+
         executor.shutdownNow();
     }
 

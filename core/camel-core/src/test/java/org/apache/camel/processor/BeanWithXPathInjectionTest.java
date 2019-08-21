@@ -32,8 +32,7 @@ public class BeanWithXPathInjectionTest extends ContextTestSupport {
 
     @Test
     public void testSendMessage() throws Exception {
-        String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
-                              + "<foo>bar</foo></env:Body></env:Envelope>";
+        String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>" + "<foo>bar</foo></env:Body></env:Envelope>";
 
         template.sendBodyAndHeader("direct:in", expectedBody, "foo", "bar");
 
@@ -44,8 +43,7 @@ public class BeanWithXPathInjectionTest extends ContextTestSupport {
     @Test
     public void testSendTwoMessages() throws Exception {
         // 1st message
-        String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
-                              + "<foo>bar</foo></env:Body></env:Envelope>";
+        String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>" + "<foo>bar</foo></env:Body></env:Envelope>";
 
         template.sendBodyAndHeader("direct:in", expectedBody, "foo", "bar");
 
@@ -53,8 +51,7 @@ public class BeanWithXPathInjectionTest extends ContextTestSupport {
         assertEquals("bean foo: " + myBean, "bar", myBean.foo);
 
         // 2nd message
-        String expectedBody2 = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
-                + "<foo>baz</foo></env:Body></env:Envelope>";
+        String expectedBody2 = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>" + "<foo>baz</foo></env:Body></env:Envelope>";
 
         template.sendBodyAndHeader("direct:in", expectedBody2, "foo", "baz");
 

@@ -27,8 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * This class tests an issue where an input file is not picked up due to a dynamic
- * doneFileName containing two dots.
+ * This class tests an issue where an input file is not picked up due to a
+ * dynamic doneFileName containing two dots.
  */
 public class FileConsumeDynamicDoneFileNameWithTwoDotsTest extends ContextTestSupport {
 

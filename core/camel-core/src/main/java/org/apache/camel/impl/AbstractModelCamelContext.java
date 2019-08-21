@@ -272,9 +272,7 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     }
 
     private TransformerKey createKey(TransformerDefinition def) {
-        return ObjectHelper.isNotEmpty(def.getScheme())
-                ? new TransformerKey(def.getScheme())
-                : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
+        return ObjectHelper.isNotEmpty(def.getScheme()) ? new TransformerKey(def.getScheme()) : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
     }
 
     protected abstract HealthCheckRegistry createHealthCheckRegistry();
@@ -310,7 +308,7 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     @Override
     protected synchronized void shutdownRouteService(BaseRouteService routeService) throws Exception {
         if (routeService instanceof RouteService) {
-            model.getRouteDefinitions().remove(((RouteService) routeService).getRouteDefinition());
+            model.getRouteDefinitions().remove(((RouteService)routeService).getRouteDefinition());
         }
         super.shutdownRouteService(routeService);
     }

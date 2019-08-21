@@ -34,17 +34,18 @@ import org.apache.camel.util.ObjectHelper;
 public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
 
     ResequenceReifier(ProcessorDefinition<?> definition) {
-        super((ResequenceDefinition) definition);
+        super((ResequenceDefinition)definition);
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // if configured from XML then streamConfig has been set with the configuration
+        // if configured from XML then streamConfig has been set with the
+        // configuration
         if (definition.getResequencerConfig() != null) {
             if (definition.getResequencerConfig() instanceof StreamResequencerConfig) {
-                definition.setStreamConfig((StreamResequencerConfig) definition.getResequencerConfig());
+                definition.setStreamConfig((StreamResequencerConfig)definition.getResequencerConfig());
             } else {
-                definition.setBatchConfig((BatchResequencerConfig) definition.getResequencerConfig());
+                definition.setBatchConfig((BatchResequencerConfig)definition.getResequencerConfig());
             }
         }
 
@@ -60,7 +61,8 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
     }
 
     /**
-     * Creates a batch {@link Resequencer} instance applying the given <code>config</code>.
+     * Creates a batch {@link Resequencer} instance applying the given
+     * <code>config</code>.
      *
      * @param routeContext route context.
      * @param config batch resequencer configuration.
@@ -68,8 +70,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
      * @throws Exception can be thrown
      */
     @SuppressWarnings("deprecation")
-    protected Resequencer createBatchResequencer(RouteContext routeContext,
-                                                 BatchResequencerConfig config) throws Exception {
+    protected Resequencer createBatchResequencer(RouteContext routeContext, BatchResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(routeContext, true);
         Expression expression = definition.getExpression().createExpression(routeContext);
 
@@ -95,15 +96,15 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
     }
 
     /**
-     * Creates a {@link StreamResequencer} instance applying the given <code>config</code>.
+     * Creates a {@link StreamResequencer} instance applying the given
+     * <code>config</code>.
      *
      * @param routeContext route context.
      * @param config stream resequencer configuration.
      * @return the configured stream resequencer.
      * @throws Exception can be thrwon
      */
-    protected StreamResequencer createStreamResequencer(RouteContext routeContext,
-                                                        StreamResequencerConfig config) throws Exception {
+    protected StreamResequencer createStreamResequencer(RouteContext routeContext, StreamResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(routeContext, true);
         Expression expression = definition.getExpression().createExpression(routeContext);
 

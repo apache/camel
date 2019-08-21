@@ -34,7 +34,7 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
         mock.expectedBodiesReceived("A");
 
         template.sendBody("seda:foo", "A");
-        
+
         assertMockEndpointsSatisfied();
 
         log.info("Suspending");

@@ -24,23 +24,23 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class ValidatorDtdAccessOffTest extends ValidatorDtdAccessAbstractTest {
-    
+
     public ValidatorDtdAccessOffTest() {
         super(false);
     }
-     
+
     /** Tests that no external DTD call is executed for StringSource. */
     @Test
     public void testInvalidMessageWithExternalDTDStringSource() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",  ssrfPayloud);
+        template.sendBody("direct:start", ssrfPayloud);
 
         MockEndpoint.assertIsSatisfied(validEndpoint, unknownHostExceptionEndpoint, finallyEndpoint);
     }
 
-    /** Tests that external DTD call is not executed  for StreamSource. */
+    /** Tests that external DTD call is not executed for StreamSource. */
     @Test
     public void testInvalidMessageWithExternalDTDStreamSource() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
@@ -50,7 +50,7 @@ public class ValidatorDtdAccessOffTest extends ValidatorDtdAccessAbstractTest {
 
         MockEndpoint.assertIsSatisfied(validEndpoint, unknownHostExceptionEndpoint, finallyEndpoint);
     }
-    
+
     /** Tests that XXE is not possible for StreamSource. */
     @Test
     public void testInvalidMessageXXESourceStream() throws Exception {

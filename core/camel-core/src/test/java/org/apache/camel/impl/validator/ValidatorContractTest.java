@@ -37,18 +37,13 @@ public class ValidatorContractTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                validator()
-                    .type(A.class)
-                    .withUri("direct:validator");
-                from("direct:a")
-                    .inputTypeWithValidate(A.class)
-                    .to("mock:a");
-                from("direct:validator")
-                    .to("mock:validator");
+                validator().type(A.class).withUri("direct:validator");
+                from("direct:a").inputTypeWithValidate(A.class).to("mock:a");
+                from("direct:validator").to("mock:validator");
             }
         });
         context.start();
-        
+
         MockEndpoint mocka = context.getEndpoint("mock:a", MockEndpoint.class);
         MockEndpoint mockv = context.getEndpoint("mock:validator", MockEndpoint.class);
         mocka.setExpectedCount(1);
@@ -69,18 +64,13 @@ public class ValidatorContractTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                validator()
-                    .type(A.class)
-                    .withUri("direct:validator");
-                from("direct:a")
-                    .outputTypeWithValidate(A.class)
-                    .to("mock:a");
-                from("direct:validator")
-                    .to("mock:validator");
+                validator().type(A.class).withUri("direct:validator");
+                from("direct:a").outputTypeWithValidate(A.class).to("mock:a");
+                from("direct:validator").to("mock:validator");
             }
         });
         context.start();
-        
+
         MockEndpoint mocka = context.getEndpoint("mock:a", MockEndpoint.class);
         MockEndpoint mockv = context.getEndpoint("mock:validator", MockEndpoint.class);
         mocka.setExpectedCount(1);
@@ -102,5 +92,6 @@ public class ValidatorContractTest extends ContextTestSupport {
         }
     }
 
-    public static class A { }
+    public static class A {
+    }
 }

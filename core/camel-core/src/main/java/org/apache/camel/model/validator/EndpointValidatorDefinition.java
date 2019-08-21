@@ -25,13 +25,13 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Validator;
 
 /**
- * Represents an endpoint {@link Validator} which leverages camel validator component such as
- * <a href="http://camel.apache.org/validation.html">Validator Component</a> and 
- * <a href="http://camel.apache.org/bean-validation.html">Bean Validator Component</a> to
- * perform content validation. A {@link org.apache.camel.impl.validator.ProcessorValidator} will be created internally
- * with a {@link org.apache.camel.processor.SendProcessor} which forwards the message to the validator Endpoint.
- * 
- * {@see ValidatorDefinition}
+ * Represents an endpoint {@link Validator} which leverages camel validator
+ * component such as <a href="http://camel.apache.org/validation.html">Validator
+ * Component</a> and <a href="http://camel.apache.org/bean-validation.html">Bean
+ * Validator Component</a> to perform content validation. A
+ * {@link org.apache.camel.impl.validator.ProcessorValidator} will be created
+ * internally with a {@link org.apache.camel.processor.SendProcessor} which
+ * forwards the message to the validator Endpoint. {@see ValidatorDefinition}
  * {@see Validator}
  */
 @Metadata(label = "validation")
@@ -71,4 +71,3 @@ public class EndpointValidatorDefinition extends ValidatorDefinition {
     }
 
 }
-

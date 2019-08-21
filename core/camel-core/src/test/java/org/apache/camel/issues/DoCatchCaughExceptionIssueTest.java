@@ -40,18 +40,13 @@ public class DoCatchCaughExceptionIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from("direct:test")
-                    .doTry()
-                        .throwException(new IllegalArgumentException("Forced by me"))
-                    .doCatch(Exception.class)
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                Exception error = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-                                assertEquals("Forced by me", error.getMessage());
-                                exchange.getMessage().setBody(error.getMessage() + " but I fixed it");
-                            }
-                        })
-                    .end();
+                from("direct:test").doTry().throwException(new IllegalArgumentException("Forced by me")).doCatch(Exception.class).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Exception error = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                        assertEquals("Forced by me", error.getMessage());
+                        exchange.getMessage().setBody(error.getMessage() + " but I fixed it");
+                    }
+                }).end();
             }
         };
     }

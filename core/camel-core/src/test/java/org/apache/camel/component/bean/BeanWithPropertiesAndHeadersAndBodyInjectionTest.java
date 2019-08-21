@@ -93,9 +93,9 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
             this.foo = foo;
             this.bar = bar;
             this.body = body;
-            
+
             assertNotNull(toString());
         }
     }
-    
+
 }

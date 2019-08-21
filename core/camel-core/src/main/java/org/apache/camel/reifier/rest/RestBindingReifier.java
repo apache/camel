@@ -65,9 +65,9 @@ public class RestBindingReifier {
 
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestBindingAdvice(context, null, null, null, null, definition.getConsumes(), definition.getProduces(), mode, skip, validation,
-                    cors, corsHeaders, definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
-                    definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
+            return new RestBindingAdvice(context, null, null, null, null, definition.getConsumes(), definition.getProduces(), mode, skip, validation, cors, corsHeaders,
+                                         definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
+                                         definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
         }
 
         // setup json data format
@@ -84,7 +84,8 @@ public class RestBindingReifier {
             } else {
                 name = "json-jackson";
             }
-            // this will create a new instance as the name was not already pre-created
+            // this will create a new instance as the name was not already
+            // pre-created
             json = context.resolveDataFormat(name);
             outJson = context.resolveDataFormat(name);
 
@@ -129,7 +130,8 @@ public class RestBindingReifier {
             } else {
                 name = "jaxb";
             }
-            // this will create a new instance as the name was not already pre-created
+            // this will create a new instance as the name was not already
+            // pre-created
             jaxb = context.resolveDataFormat(name);
             outJaxb = context.resolveDataFormat(name);
 
@@ -169,15 +171,15 @@ public class RestBindingReifier {
             }
         }
 
-        return new RestBindingAdvice(context, json, jaxb, outJson, outJaxb, definition.getConsumes(), definition.getProduces(), mode, skip, validation,
-                cors, corsHeaders, definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
-                definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
+        return new RestBindingAdvice(context, json, jaxb, outJson, outJaxb, definition.getConsumes(), definition.getProduces(), mode, skip, validation, cors, corsHeaders,
+                                     definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
+                                     definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, CamelContext context,
-                                            DataFormat dataFormat, String prefix) throws Exception {
+    private void setAdditionalConfiguration(RestConfiguration config, CamelContext context, DataFormat dataFormat, String prefix) throws Exception {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
-            // must use a copy as otherwise the options gets removed during introspection setProperties
+            // must use a copy as otherwise the options gets removed during
+            // introspection setProperties
             Map<String, Object> copy = new HashMap<>();
 
             // filter keys on prefix

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -53,8 +54,7 @@ public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/move?recursive=true&move=.done&initialDelay=0&delay=10")
-                        .convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/move?recursive=true&move=.done&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

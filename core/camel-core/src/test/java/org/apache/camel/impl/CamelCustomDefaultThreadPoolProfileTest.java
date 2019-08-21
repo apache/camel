@@ -61,9 +61,7 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .threads(25, 45)
-                    .to("mock:result");
+                from("direct:start").threads(25, 45).to("mock:result");
             }
         };
     }

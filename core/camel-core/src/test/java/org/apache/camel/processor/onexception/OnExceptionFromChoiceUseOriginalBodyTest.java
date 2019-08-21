@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.onexception;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -98,23 +99,13 @@ public class OnExceptionFromChoiceUseOriginalBodyTest extends ContextTestSupport
                 onException(MyTechnicalException.class).useOriginalMessage().maximumRedeliveries(0).handled(true).to("mock:tech");
                 onException(MyFunctionalException.class).useOriginalMessage().maximumRedeliveries(0).handled(true).to("mock:func");
 
-                from("direct:tech")
-                    .setBody(constant("<order><type>myType</type><user>Tech</user></order>"))
-                    .to("direct:route");
+                from("direct:tech").setBody(constant("<order><type>myType</type><user>Tech</user></order>")).to("direct:route");
 
-                from("direct:func")
-                    .setBody(constant("<order><type>myType</type><user>Func</user></order>"))
-                    .to("direct:route");
+                from("direct:func").setBody(constant("<order><type>myType</type><user>Func</user></order>")).to("direct:route");
 
-
-                from("direct:route")
-                    .choice()
-                        .when(method("myServiceBean").isEqualTo("James")).to("mock:when")
-                    .otherwise()
-                        .to("mock:otherwise");
+                from("direct:route").choice().when(method("myServiceBean").isEqualTo("James")).to("mock:when").otherwise().to("mock:otherwise");
             }
         };
     }
-
 
 }

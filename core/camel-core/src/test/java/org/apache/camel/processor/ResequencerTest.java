@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,12 +48,12 @@ public class ResequencerTest extends ContextTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
-    @Override 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
-    
+
     @Override
     protected boolean useJmx() {
         // use jmx only when running the following test(s)
@@ -64,9 +65,7 @@ public class ResequencerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start")
-                    .resequence().body().timeout(50)
-                    .to("mock:result");
+                from("direct:start").resequence().body().timeout(50).to("mock:result");
                 // END SNIPPET: example
             }
         };

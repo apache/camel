@@ -100,5 +100,4 @@ public class BeanRegistryBeanTest extends ContextTestSupport {
 
     }
 
-    
 }

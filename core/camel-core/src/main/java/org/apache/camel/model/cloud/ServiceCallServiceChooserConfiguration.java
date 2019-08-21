@@ -50,7 +50,8 @@ public class ServiceCallServiceChooserConfiguration extends IdentifiedType imple
     private final ServiceCallDefinition parent;
     @XmlTransient
     private final String factoryKey;
-    @XmlElement(name = "properties") @Metadata(label = "advanced")
+    @XmlElement(name = "properties")
+    @Metadata(label = "advanced")
     private List<PropertyDefinition> properties;
 
     public ServiceCallServiceChooserConfiguration() {
@@ -153,10 +154,10 @@ public class ServiceCallServiceChooserConfiguration extends IdentifiedType imple
 
             if (type != null) {
                 if (ServiceChooserFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceChooserFactory) camelContext.getInjector().newInstance(type, false);
+                    factory = (ServiceChooserFactory)camelContext.getInjector().newInstance(type, false);
                 } else {
-                    throw new NoFactoryAvailableException(
-                        "Resolving ServiceChooser: " + factoryKey + " detected type conflict: Not a ServiceChooserFactory implementation. Found: " + type.getName());
+                    throw new NoFactoryAvailableException("Resolving ServiceChooser: " + factoryKey + " detected type conflict: Not a ServiceChooserFactory implementation. Found: "
+                                                          + type.getName());
                 }
             }
 
@@ -164,22 +165,17 @@ public class ServiceCallServiceChooserConfiguration extends IdentifiedType imple
                 Map<String, Object> parameters = new HashMap<>();
                 IntrospectionSupport.getProperties(this, parameters, null, false);
 
-                parameters.replaceAll(
-                    (k, v) -> {
-                        if (v instanceof String) {
-                            try {
-                                v = camelContext.resolvePropertyPlaceholders((String) v);
-                            } catch (Exception e) {
-                                throw new IllegalArgumentException(
-                                    String.format("Exception while resolving %s (%s)", k, v.toString()),
-                                    e
-                                );
-                            }
+                parameters.replaceAll((k, v) -> {
+                    if (v instanceof String) {
+                        try {
+                            v = camelContext.resolvePropertyPlaceholders((String)v);
+                        } catch (Exception e) {
+                            throw new IllegalArgumentException(String.format("Exception while resolving %s (%s)", k, v.toString()), e);
                         }
-
-                        return v;
                     }
-                );
+
+                    return v;
+                });
 
                 // Convert properties to Map<String, String>
                 parameters.put("properties", getPropertiesAsMap(camelContext));
@@ -201,6 +197,6 @@ public class ServiceCallServiceChooserConfiguration extends IdentifiedType imple
     // Utilities
     // *************************************************************************
 
-    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception  {
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception {
     }
 }

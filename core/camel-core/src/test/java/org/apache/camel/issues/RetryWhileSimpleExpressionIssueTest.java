@@ -43,14 +43,9 @@ public class RetryWhileSimpleExpressionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                    .retryWhile(simple("${body.areWeCool} == 'no'"))
-                    .redeliveryDelay(0)
-                    .handled(true)
-                    .to("mock:error");
+                onException(IllegalArgumentException.class).retryWhile(simple("${body.areWeCool} == 'no'")).redeliveryDelay(0).handled(true).to("mock:error");
 
-                from("direct:start")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

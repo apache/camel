@@ -67,21 +67,13 @@ public class RecipientListSubUnitOfWorkTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage()
-                        .maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start")
-                    .to("mock:start")
-                    .process(new MyPreProcessor())
-                    .recipientList(header("foo")).shareUnitOfWork()
-                    .to("mock:result");
+                from("direct:start").to("mock:start").process(new MyPreProcessor()).recipientList(header("foo")).shareUnitOfWork().to("mock:result");
 
-                from("direct:a")
-                    .to("mock:a");
+                from("direct:a").to("mock:a");
 
-                from("direct:b")
-                    .process(new MyProcessor())
-                    .to("mock:b");
+                from("direct:b").process(new MyProcessor()).to("mock:b");
             }
         };
     }
@@ -111,6 +103,5 @@ public class RecipientListSubUnitOfWorkTest extends ContextTestSupport {
             }
         }
     }
-
 
 }

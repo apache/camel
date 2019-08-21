@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 public class MimeMultipartDataFormatReifier extends DataFormatReifier<MimeMultipartDataFormat> {
 
     public MimeMultipartDataFormatReifier(DataFormatDefinition definition) {
-        super((MimeMultipartDataFormat) definition);
+        super((MimeMultipartDataFormat)definition);
     }
 
     @Override

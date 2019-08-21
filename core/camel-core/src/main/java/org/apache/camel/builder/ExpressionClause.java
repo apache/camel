@@ -52,10 +52,9 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Specify the constant expression value.
-     *
-     * <b>Important:</b> this is a fixed constant value that is only set once during starting up the route,
-     * do not use this if you want dynamic values during routing.
+     * Specify the constant expression value. <b>Important:</b> this is a fixed
+     * constant value that is only set once during starting up the route, do not
+     * use this if you want dynamic values during routing.
      */
     public T constant(Object value) {
         return delegate.constant(value);
@@ -146,9 +145,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public T body(final BiFunction<Object, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return function.apply(
-                    exchange.getIn().getBody(),
-                    exchange.getIn().getHeaders());
+                return function.apply(exchange.getIn().getBody(), exchange.getIn().getHeaders());
             }
         });
     }
@@ -161,7 +158,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * A functional expression of an inbound message body converted to the expected type
+     * A functional expression of an inbound message body converted to the
+     * expected type
      */
     public <B> T body(Class<B> expectedType, final Function<B, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -172,14 +170,13 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * A functional expression of an inbound message body converted to the expected type and headers
+     * A functional expression of an inbound message body converted to the
+     * expected type and headers
      */
     public <B> T body(Class<B> expectedType, final BiFunction<B, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return function.apply(
-                    exchange.getIn().getBody(expectedType),
-                    exchange.getIn().getHeaders());
+                return function.apply(exchange.getIn().getBody(expectedType), exchange.getIn().getHeaders());
             }
         });
     }
@@ -216,8 +213,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
     // -------------------------------------------------------------------------
 
     /**
-     * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html">bean language</a>
+     * Evaluates an expression using the
+     * <a href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
@@ -227,10 +224,10 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public T method(String bean) {
         return delegate.method(bean);
     }
-    
+
     /**
-     * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html">bean language</a>
+     * Evaluates an expression using the
+     * <a href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      *
@@ -242,8 +239,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html">bean language</a>
+     * Evaluates an expression using the
+     * <a href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
@@ -255,8 +252,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html">bean language</a>
+     * Evaluates an expression using the
+     * <a href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
@@ -267,10 +264,10 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public T method(String bean, String method) {
         return delegate.method(bean, method);
     }
-    
+
     /**
-     * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html">bean language</a>
+     * Evaluates an expression using the
+     * <a href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      *
@@ -283,8 +280,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html">bean language</a>
+     * Evaluates an expression using the
+     * <a href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
@@ -308,8 +305,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates a <a
-     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
      * expression</a>
      *
      * @param text the expression to be evaluated
@@ -320,12 +316,12 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates a <a
-     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
      * expression</a>
      *
      * @param text the expression to be evaluated
-     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param suppressExceptions whether to suppress exceptions such as
+     *            PathNotFoundException
      * @return the builder to continue processing the DSL
      */
     public T jsonpath(String text, boolean suppressExceptions) {
@@ -333,8 +329,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates a <a
-     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
      * expression</a>
      *
      * @param text the expression to be evaluated
@@ -346,12 +341,12 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates a <a
-     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
      * expression</a>
      *
      * @param text the expression to be evaluated
-     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param suppressExceptions whether to suppress exceptions such as
+     *            PathNotFoundException
      * @param resultType the return type expected by the expression
      * @return the builder to continue processing the DSL
      */
@@ -360,12 +355,12 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates a <a
-     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
      * expression</a>
      *
      * @param text the expression to be evaluated
-     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param suppressExceptions whether to suppress exceptions such as
+     *            PathNotFoundException
      * @param resultType the return type expected by the expression
      * @param headerName the name of the header to apply the expression to
      * @return the builder to continue processing the DSL
@@ -375,8 +370,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates a <a
-     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
      * expression</a> with writeAsString enabled.
      *
      * @param text the expression to be evaluated
@@ -387,12 +381,12 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates a <a
-     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
      * expression</a> with writeAsString enabled.
      *
      * @param text the expression to be evaluated
-     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param suppressExceptions whether to suppress exceptions such as
+     *            PathNotFoundException
      * @return the builder to continue processing the DSL
      */
     public T jsonpathWriteAsString(String text, boolean suppressExceptions) {
@@ -400,12 +394,12 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates a <a
-     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
      * expression</a> with writeAsString enabled.
      *
      * @param text the expression to be evaluated
-     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param suppressExceptions whether to suppress exceptions such as
+     *            PathNotFoundException
      * @param headerName the name of the header to apply the expression to
      * @return the builder to continue processing the DSL
      */
@@ -456,7 +450,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public T spel(String text) {
         return delegate.spel(text);
     }
-    
+
     /**
      * Evaluates a <a href="http://camel.apache.org/simple.html">Simple
      * expression</a>
@@ -628,7 +622,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * Tokens is not included.
      *
      * @param startToken the start token
-     * @param endToken   the end token
+     * @param endToken the end token
      * @return the builder to continue processing the DSL
      */
     public T tokenizePair(String startToken, String endToken) {
@@ -639,7 +633,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * Evaluates a token pair expression on the message body
      *
      * @param startToken the start token
-     * @param endToken   the end token
+     * @param endToken the end token
      * @param includeTokens whether to include tokens
      * @return the builder to continue processing the DSL
      */
@@ -672,7 +666,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * Evaluates a token pair expression on the message body with XML content
      *
      * @param tagName the tag name of the child nodes to tokenize
-     * @param inheritNamespaceTagName  parent or root tag name that contains namespace(s) to inherit
+     * @param inheritNamespaceTagName parent or root tag name that contains
+     *            namespace(s) to inherit
      * @return the builder to continue processing the DSL
      */
     public T tokenizeXML(String tagName, String inheritNamespaceTagName) {
@@ -683,7 +678,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * Evaluates a token pair expression on the message body with XML content
      *
      * @param tagName the tag name of the child nodes to tokenize
-     * @param inheritNamespaceTagName  parent or root tag name that contains namespace(s) to inherit
+     * @param inheritNamespaceTagName parent or root tag name that contains
+     *            namespace(s) to inherit
      * @param group to group by the given number
      * @return the builder to continue processing the DSL
      */
@@ -713,7 +709,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public T xpath(String text) {
         return delegate.xpath(text);
     }
-    
 
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
@@ -738,11 +733,11 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public T xpath(String text, Class<?> resultType) {
         return delegate.xpath(text, resultType);
     }
-    
+
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
-     * expression</a> with the specified result type on the supplied
-     * header name's contents
+     * expression</a> with the specified result type on the supplied header
+     * name's contents
      * 
      * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
@@ -752,7 +747,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public T xpath(String text, Class<?> resultType, String headerName) {
         return delegate.xpath(text, resultType, headerName);
     }
-    
+
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a> with the specified result type and set of namespace
@@ -776,13 +771,12 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * @param resultType the return type expected by the expression
      * @param headerName the name of the header to apply the expression to
      * @param namespaces the namespace prefix and URIs to use
-     * 
      * @return the builder to continue processing the DSL
      */
     public T xpath(String text, Class<?> resultType, Namespaces namespaces, String headerName) {
         return delegate.xpath(text, resultType, namespaces, headerName);
     }
-    
+
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a> with the specified result type and set of namespace
@@ -822,8 +816,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates an <a
-     * href="http://camel.apache.org/xquery.html">XQuery expression</a>
+     * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery
+     * expression</a>
      * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
@@ -831,7 +825,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public T xquery(String text) {
         return delegate.xquery(text);
     }
-    
+
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a> on the supplied header name's contents
@@ -844,11 +838,9 @@ public class ExpressionClause<T> implements Expression, Predicate {
         return delegate.xquery(text, headerName);
     }
 
-
     /**
-     * Evaluates an <a
-     * href="http://camel.apache.org/xquery.html">XQuery expression</a>
-     * with the specified result type
+     * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery
+     * expression</a> with the specified result type
      * 
      * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
@@ -857,11 +849,10 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public T xquery(String text, Class<?> resultType) {
         return delegate.xquery(text, resultType);
     }
-    
+
     /**
-     * Evaluates an <a
-     * href="http://camel.apache.org/xquery.html">XQuery expression</a>
-     * with the specified result type
+     * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery
+     * expression</a> with the specified result type
      * 
      * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
@@ -871,11 +862,11 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public T xquery(String text, Class<?> resultType, String headerName) {
         return delegate.xquery(text, resultType, headerName);
     }
-    
+
     /**
-     * Evaluates an <a
-     * href="http://camel.apache.org/xquery.html">XQuery expression</a>
-     * with the specified result type and set of namespace prefixes and URIs
+     * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery
+     * expression</a> with the specified result type and set of namespace
+     * prefixes and URIs
      * 
      * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
@@ -885,26 +876,25 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public T xquery(String text, Class<?> resultType, Namespaces namespaces) {
         return delegate.xquery(text, resultType, namespaces);
     }
-    
+
     /**
-     * Evaluates an <a
-     * href="http://camel.apache.org/xquery.html">XQuery expression</a>
-     * with the specified result type
+     * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery
+     * expression</a> with the specified result type
      * 
      * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
      * @param headerName the name of the header to apply the expression to
      * @param namespaces the namespace prefix and URIs to use
-     * 
      * @return the builder to continue processing the DSL
      */
     public T xquery(String text, Class<?> resultType, Namespaces namespaces, String headerName) {
         return delegate.xquery(text, resultType, namespaces, headerName);
     }
+
     /**
-     * Evaluates an <a
-     * href="http://camel.apache.org/xquery.html">XQuery expression</a>
-     * with the specified result type and set of namespace prefixes and URIs
+     * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery
+     * expression</a> with the specified result type and set of namespace
+     * prefixes and URIs
      * 
      * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
@@ -916,9 +906,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates an <a
-     * href="http://camel.apache.org/xquery.html">XQuery expression</a>
-     * with the specified set of namespace prefixes and URIs
+     * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery
+     * expression</a> with the specified set of namespace prefixes and URIs
      * 
      * @param text the expression to be evaluated
      * @param namespaces the namespace prefix and URIs to use
@@ -929,9 +918,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates an <a
-     * href="http://camel.apache.org/xquery.html">XQuery expression</a>
-     * with the specified set of namespace prefixes and URIs
+     * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery
+     * expression</a> with the specified set of namespace prefixes and URIs
      * 
      * @param text the expression to be evaluated
      * @param namespaces the namespace prefix and URIs to use

@@ -29,7 +29,6 @@ import org.w3c.dom.Document;
 
 import org.xml.sax.InputSource;
 
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
@@ -94,7 +93,7 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
-    
+
     @Test
     public void testXsltTransformerFile() throws Exception {
         File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");

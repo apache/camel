@@ -62,22 +62,9 @@ public class MessageHistoryCopyMessageTest extends ContextTestSupport {
                 context.getMessageHistoryFactory().setNodePattern("step");
                 context.getMessageHistoryFactory().setCopyMessage(true);
 
-                from("direct:start")
-                        .step("a")
-                            .transform().constant("Bye World")
-                            .to("mock:a")
-                        .end()
-                        .step("b")
-                            .transform().constant("Hi World")
-                            .to("direct:bar")
-                            .to("mock:b")
-                        .end();
+                from("direct:start").step("a").transform().constant("Bye World").to("mock:a").end().step("b").transform().constant("Hi World").to("direct:bar").to("mock:b").end();
 
-                from("direct:bar")
-                    .step("bar")
-                        .to("log:bar")
-                        .to("mock:bar")
-                    .end();
+                from("direct:bar").step("bar").to("log:bar").to("mock:bar").end();
             }
         };
     }

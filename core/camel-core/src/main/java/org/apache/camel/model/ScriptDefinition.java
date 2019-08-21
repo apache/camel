@@ -55,7 +55,8 @@ public class ScriptDefinition extends ExpressionNode {
     }
 
     /**
-     * Expression to return the transformed message body (the new message body to use)
+     * Expression to return the transformed message body (the new message body
+     * to use)
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {

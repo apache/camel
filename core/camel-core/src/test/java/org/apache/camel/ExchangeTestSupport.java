@@ -19,8 +19,8 @@ package org.apache.camel;
 import org.apache.camel.support.DefaultExchange;
 
 /**
- * A base class for a test which requires a {@link CamelContext} and
- * a populated {@link Exchange}
+ * A base class for a test which requires a {@link CamelContext} and a populated
+ * {@link Exchange}
  */
 public abstract class ExchangeTestSupport extends ContextTestSupport {
     protected Exchange exchange;
@@ -33,15 +33,15 @@ public abstract class ExchangeTestSupport extends ContextTestSupport {
     }
 
     /**
-     * A strategy method to populate an exchange with some example values for use
-     * by language plugins
+     * A strategy method to populate an exchange with some example values for
+     * use by language plugins
      */
     protected void populateExchange(Exchange exchange) {
         Message in = exchange.getIn();
         in.setHeader("foo", "abc");
         in.setHeader("bar", 123);
         in.setBody("<hello id='m123'>world!</hello>");
-        
+
         exchange.setProperty("foobar", "cba");
     }
 

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -104,17 +105,11 @@ public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // Valid chmod values
-                from("direct:write666")
-                        .to("file://" + TEST_DIRECTORY + "?chmodDirectory=777&chmod=666")
-                        .to("mock:chmod666");
+                from("direct:write666").to("file://" + TEST_DIRECTORY + "?chmodDirectory=777&chmod=666").to("mock:chmod666");
 
-                from("direct:write0755")
-                        .to("file://" + TEST_DIRECTORY + "?chmodDirectory=777&chmod=0755")
-                        .to("mock:chmod0755");
+                from("direct:write0755").to("file://" + TEST_DIRECTORY + "?chmodDirectory=777&chmod=0755").to("mock:chmod0755");
 
-                from("direct:writeNoDir")
-                        .to("file://" + TEST_DIRECTORY + "?chmod=0755")
-                        .to("mock:chmodNoDir");
+                from("direct:writeNoDir").to("file://" + TEST_DIRECTORY + "?chmod=0755").to("mock:chmodNoDir");
 
             }
         };

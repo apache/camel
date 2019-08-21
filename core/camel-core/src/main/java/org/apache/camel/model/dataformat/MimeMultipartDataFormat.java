@@ -25,8 +25,9 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The MIME Multipart data format can marshal a Camel message with attachments into a Camel message
- * having a MIME-Multipart message as message body (and no attachments), and vise-versa when unmarshalling.
+ * The MIME Multipart data format can marshal a Camel message with attachments
+ * into a Camel message having a MIME-Multipart message as message body (and no
+ * attachments), and vise-versa when unmarshalling.
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "MIME Multipart")
 @XmlRootElement(name = "mime-multipart")
@@ -95,8 +96,9 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * A regex that defines which Camel headers are also included as MIME headers
-     * into the MIME multipart. This will only work if headersInline is set to true.
+     * A regex that defines which Camel headers are also included as MIME
+     * headers into the MIME multipart. This will only work if headersInline is
+     * set to true.
      * <p>
      * Default is to include no headers
      */

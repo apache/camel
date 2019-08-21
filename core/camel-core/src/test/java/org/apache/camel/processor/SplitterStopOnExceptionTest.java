@@ -40,7 +40,8 @@ public class SplitterStopOnExceptionTest extends ContextTestSupport {
     @Test
     public void testSplitStopOnExceptionStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        // we do stop so we stop splitting when the exception occurs and thus we only receive 1 message
+        // we do stop so we stop splitting when the exception occurs and thus we
+        // only receive 1 message
         mock.expectedBodiesReceived("Hello World");
 
         try {
@@ -60,10 +61,7 @@ public class SplitterStopOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body().tokenize(",")).stopOnException()
-                        .process(new MyProcessor())
-                        .to("mock:split");
+                from("direct:start").split(body().tokenize(",")).stopOnException().process(new MyProcessor()).to("mock:split");
             }
         };
     }

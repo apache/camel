@@ -67,10 +67,7 @@ public class CBRCustomPredicateAsFilterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(filter).to("mock:good")
-                        .otherwise().to("mock:secret");
+                from("direct:start").choice().when(filter).to("mock:good").otherwise().to("mock:secret");
             }
         };
     }

@@ -48,9 +48,7 @@ public class BeanPipelineTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:input").
-                    pipeline("bean:foo", "bean:bar?method=usingExchange", "bean:baz").
-                    to("mock:result");
+                from("direct:input").pipeline("bean:foo", "bean:bar?method=usingExchange", "bean:baz").to("mock:result");
             }
         };
     }

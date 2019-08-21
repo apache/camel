@@ -25,9 +25,9 @@ import org.apache.camel.converter.stream.InputStreamCache;
 import org.junit.Test;
 
 public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
-    
+
     private static final String HELLO_WORLD = "Hello World";
-    
+
     private static final String TEST_STRING = "<firstName>James</firstName>";
 
     @Test
@@ -36,26 +36,26 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
         getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:end").expectedBodiesReceived(HELLO_WORLD);
         getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
-        
+
         template.sendBody("direct:a", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testOnExceptionStreamReset() throws Exception {
-        
+
         getMockEndpoint("mock:middle").expectedMessageCount(1);
         getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:end").expectedMessageCount(1);
         getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
-    
+
         InputStreamCache cache = new InputStreamCache(TEST_STRING.getBytes());
-        
+
         template.sendBody("direct:a", cache);
 
         assertMockEndpointsSatisfied();
-        
+
         // To make sure we can read something from the InputStream
         String result = getMockEndpoint("mock:end").getExchanges().get(0).getIn().getBody(String.class);
         assertTrue(result.contains("<firstName>James</firstName>"));
@@ -66,21 +66,17 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
+
                 onException(IllegalArgumentException.class).useOriginalMessage().handled(true).to("seda:test");
 
-                from("direct:a").setExchangePattern(ExchangePattern.InOut)
-                    .process(new MyProcessor());
-                    
-                from("seda:test")
-                    .to("mock:middle")
-                    .to("mock:end");
-                
-                
+                from("direct:a").setExchangePattern(ExchangePattern.InOut).process(new MyProcessor());
+
+                from("seda:test").to("mock:middle").to("mock:end");
+
             }
         };
     }
-    
+
     public static class MyProcessor implements Processor {
 
         @Override

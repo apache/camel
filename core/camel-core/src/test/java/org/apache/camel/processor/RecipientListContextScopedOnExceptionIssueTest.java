@@ -35,37 +35,35 @@ public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestS
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).handled(true)
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
-                                assertEquals("fail", routeId);
-                            }
-                            @Override
-                            public String toString() {
-                                return "AssertRouteId";
-                            }
-                        }).to("mock:error");
+                onException(Exception.class).handled(true).process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
+                        assertEquals("fail", routeId);
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "AssertRouteId";
+                    }
+                }).to("mock:error");
 
                 interceptSendToEndpoint("direct*").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String target = exchange.getIn().getHeader(Exchange.INTERCEPTED_ENDPOINT, String.class);
                         exchange.getIn().setHeader("target", target);
                     }
+
                     public String toString() {
                         return "SetTargetHeader";
                     }
                 });
 
-                from("direct:start").routeId("start")
-                    .recipientList(header("foo"));
+                from("direct:start").routeId("start").recipientList(header("foo"));
 
-                from("direct:foo").routeId("foo")
-                    .setBody(constant("Bye World")).to("mock:foo");
+                from("direct:foo").routeId("foo").setBody(constant("Bye World")).to("mock:foo");
 
-                from("direct:fail").routeId("fail")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:fail").routeId("fail").throwException(new IllegalArgumentException("Forced"));
             }
         });
         context.start();
@@ -90,23 +88,19 @@ public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestS
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).handled(true)
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
-                                assertEquals("fail", routeId);
-                            }
-                        }).to("mock:error");
+                onException(Exception.class).handled(true).process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
+                        assertEquals("fail", routeId);
+                    }
+                }).to("mock:error");
 
-                from("direct:start").routeId("start")
-                        .recipientList(header("foo"));
+                from("direct:start").routeId("start").recipientList(header("foo"));
 
-                from("direct:foo").routeId("foo")
-                        .setBody(constant("Bye World")).to("mock:foo");
+                from("direct:foo").routeId("foo").setBody(constant("Bye World")).to("mock:foo");
 
-                from("direct:fail").routeId("fail")
-                        .throwException(new IllegalArgumentException("Forced"));
+                from("direct:fail").routeId("fail").throwException(new IllegalArgumentException("Forced"));
             }
         });
         context.start();

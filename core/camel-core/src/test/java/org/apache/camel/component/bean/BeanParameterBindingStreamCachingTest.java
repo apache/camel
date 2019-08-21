@@ -39,17 +39,14 @@ public class BeanParameterBindingStreamCachingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").streamCaching()
-                    .bean(Foo.class)
-                    .to("mock:result");
+                from("direct:start").streamCaching().bean(Foo.class).to("mock:result");
             }
         };
     }
 
     public static class Foo {
 
-        public static String hello(@Simple("${body}") String body,
-                                   @Simple("${body}") String body2) {
+        public static String hello(@Simple("${body}") String body, @Simple("${body}") String body2) {
             // we should be able to read the stream multiple times
             return body.toLowerCase() + body2.toUpperCase();
         }

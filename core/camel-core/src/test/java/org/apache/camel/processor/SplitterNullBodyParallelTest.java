@@ -28,17 +28,9 @@ public class SplitterNullBodyParallelTest extends SplitterNullBodyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body()).parallelProcessing()
-                        .to("mock:split")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").split(body()).parallelProcessing().to("mock:split").end().to("mock:result");
 
-                from("direct:streaming")
-                    .split(body()).streaming().parallelProcessing()
-                        .to("mock:split")
-                    .end()
-                    .to("mock:result");
+                from("direct:streaming").split(body()).streaming().parallelProcessing().to("mock:split").end().to("mock:result");
             }
         };
     }

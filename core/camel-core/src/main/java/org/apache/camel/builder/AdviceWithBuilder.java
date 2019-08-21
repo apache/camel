@@ -21,7 +21,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 
 /**
- * A builder when using the <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
+ * A builder when using the
+ * <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
  */
 public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
 
@@ -107,11 +108,13 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
     /**
      * Will only apply for nodes maximum levels deep.
      * <p/>
-     * The first level is <tt>1</tt>, and level <tt>2</tt> is the children of the first level nodes, and so on.
+     * The first level is <tt>1</tt>, and level <tt>2</tt> is the children of
+     * the first level nodes, and so on.
      * <p/>
      * Use zero or negative value for unbounded level.
      *
-     * @param maxDeep the maximum levels to traverse deep in the Camel route tree.
+     * @param maxDeep the maximum levels to traverse deep in the Camel route
+     *            tree.
      * @return the builder to build the nodes.
      */
     public AdviceWithBuilder<T> maxDeep(int maxDeep) {

@@ -25,7 +25,7 @@ import org.junit.Test;
  *
  */
 public class ThrottlerAsyncDelayedCallerRunsTest extends ContextTestSupport {
-    
+
     @Test
     public void testThrottler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(6);
@@ -49,11 +49,8 @@ public class ThrottlerAsyncDelayedCallerRunsTest extends ContextTestSupport {
                 ThreadPoolProfileBuilder builder = new ThreadPoolProfileBuilder("myThrottler");
                 builder.maxQueueSize(2);
                 context.getExecutorServiceManager().registerThreadPoolProfile(builder.build());
-                
-                from("seda:start")
-                    .throttle(1).timePeriodMillis(100)
-                        .asyncDelayed().executorServiceRef("myThrottler").callerRunsWhenRejected(true)
-                    .to("mock:result");
+
+                from("seda:start").throttle(1).timePeriodMillis(100).asyncDelayed().executorServiceRef("myThrottler").callerRunsWhenRejected(true).to("mock:result");
             }
         };
     }

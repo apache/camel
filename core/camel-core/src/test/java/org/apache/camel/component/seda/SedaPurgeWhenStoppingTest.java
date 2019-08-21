@@ -54,15 +54,13 @@ public class SedaPurgeWhenStoppingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?purgeWhenStopping=true").routeId("myRoute").noAutoStartup()
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            latch.countDown();
-                            latch2.await(2, TimeUnit.SECONDS);
-                        }
-                    })
-                    .to("mock:result");
+                from("seda:foo?purgeWhenStopping=true").routeId("myRoute").noAutoStartup().process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        latch.countDown();
+                        latch2.await(2, TimeUnit.SECONDS);
+                    }
+                }).to("mock:result");
             }
         };
     }

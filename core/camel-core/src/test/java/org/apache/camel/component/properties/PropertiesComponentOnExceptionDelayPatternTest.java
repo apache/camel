@@ -37,14 +37,9 @@ public class PropertiesComponentOnExceptionDelayPatternTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .delayPattern("{{myDelayPattern}}")
-                    .maximumRedeliveries(1)
-                    .handled(true)
-                    .to("mock:dead");
+                onException(Exception.class).delayPattern("{{myDelayPattern}}").maximumRedeliveries(1).handled(true).to("mock:dead");
 
-                from("direct:start")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }
@@ -54,7 +49,7 @@ public class PropertiesComponentOnExceptionDelayPatternTest extends ContextTestS
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocations(new String[]{"classpath:org/apache/camel/component/properties/myproperties.properties"});
+        pc.setLocations(new String[] {"classpath:org/apache/camel/component/properties/myproperties.properties"});
         context.addComponent("properties", pc);
 
         return context;

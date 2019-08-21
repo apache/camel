@@ -83,15 +83,11 @@ public class AdviceWithOnCompletionRemoveTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion().id("myCompletion")
-                    .transform(constant("Bye World")).to("mock:done");
+                onCompletion().id("myCompletion").transform(constant("Bye World")).to("mock:done");
 
-                from("direct:bar").routeId("bar")
-                        .to("mock:c").to("mock:d");
+                from("direct:bar").routeId("bar").to("mock:c").to("mock:d");
 
-                from("direct:foo").routeId("foo")
-                        .to("mock:a")
-                        .to("mock:b");
+                from("direct:foo").routeId("foo").to("mock:a").to("mock:b");
 
             }
         };

@@ -35,9 +35,7 @@ public class PropertiesComponentEndpointMandatoryTest extends ContextTestSupport
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("{{cool.start}}")
-                        .to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}")
-                        .to("mock:{{cool.result}}");
+                    from("{{cool.start}}").to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}").to("mock:{{cool.result}}");
                 }
             });
             context.start();

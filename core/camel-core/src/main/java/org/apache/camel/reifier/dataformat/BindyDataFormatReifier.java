@@ -26,7 +26,7 @@ import org.apache.camel.spi.DataFormat;
 public class BindyDataFormatReifier extends DataFormatReifier<BindyDataFormat> {
 
     public BindyDataFormatReifier(DataFormatDefinition definition) {
-        super((BindyDataFormat) definition);
+        super((BindyDataFormat)definition);
     }
 
     @Override

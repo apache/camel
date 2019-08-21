@@ -46,13 +46,9 @@ public class RecipientListInterceptSendToEndpointException extends ContextTestSu
                 context.addComponent("ftp", new MockComponent());
                 context.addComponent("http", new MockComponent());
 
-                interceptSendToEndpoint("(ftp|http):.*")
-                    .to("log:intercept")
-                    .to("mock:intercept");
+                interceptSendToEndpoint("(ftp|http):.*").to("log:intercept").to("mock:intercept");
 
-                from("direct:start")
-                    .recipientList(header("foo")).parallelProcessing()
-                    .to("mock:end");
+                from("direct:start").recipientList(header("foo")).parallelProcessing().to("mock:end");
             }
         };
     }

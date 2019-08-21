@@ -48,10 +48,7 @@ public class AggregateExpressionSizeOverrideFixedTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionSize(2).completionSize(header("mySize"))
-                        .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).completionSize(header("mySize")).to("mock:aggregated");
             }
         };
     }

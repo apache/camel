@@ -31,9 +31,10 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.junit.Test;
 
 /**
- * Using a custom interceptor which is not a {@link org.apache.camel.AsyncProcessor} which Camel
- * detects and uses a bridge to adapt to so the asynchronous engine can still run. Albeit not
- * the most optimal solution but it runs. Camel will log a WARN so user can see the issue
+ * Using a custom interceptor which is not a
+ * {@link org.apache.camel.AsyncProcessor} which Camel detects and uses a bridge
+ * to adapt to so the asynchronous engine can still run. Albeit not the most
+ * optimal solution but it runs. Camel will log a WARN so user can see the issue
  * and change his interceptor to comply.
  */
 public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
@@ -66,23 +67,15 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(interceptor);
 
-                from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("async:bye:camel")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                from("direct:start").to("mock:before").to("log:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                }).to("async:bye:camel").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadName = Thread.currentThread().getName();
+                    }
+                }).to("log:after").to("mock:after").to("mock:result");
             }
         };
     }
@@ -92,8 +85,7 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
         private AtomicInteger counter = new AtomicInteger();
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
-                                                     final Processor target, final Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
 
             return new DelegateAsyncProcessor(target) {
                 public boolean process(final Exchange exchange, final AsyncCallback callback) {

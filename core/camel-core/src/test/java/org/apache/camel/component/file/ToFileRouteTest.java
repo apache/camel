@@ -54,7 +54,8 @@ public class ToFileRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // the reports from the seda queue is processed by our processor
-                // before they are written to files in the target/data/reports directory
+                // before they are written to files in the target/data/reports
+                // directory
                 from("direct:reports").process("processReport").to("file://target/data/test-reports", "mock:result");
             }
         };
@@ -70,7 +71,8 @@ public class ToFileRouteTest extends ContextTestSupport {
             // set the output to the file
             exchange.getMessage().setBody(body);
 
-            // set the output filename using java code logic, notice that this is done by setting
+            // set the output filename using java code logic, notice that this
+            // is done by setting
             // a special header property of the out exchange
             exchange.getMessage().setHeader(Exchange.FILE_NAME, "report.txt");
         }

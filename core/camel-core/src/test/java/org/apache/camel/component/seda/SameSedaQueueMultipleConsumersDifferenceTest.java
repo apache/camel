@@ -57,7 +57,8 @@ public class SameSedaQueueMultipleConsumersDifferenceTest extends ContextTestSup
         } catch (Exception e) {
             FailedToStartRouteException failed = assertIsInstanceOf(FailedToStartRouteException.class, e);
             assertEquals("fail", failed.getRouteId());
-            assertEquals("Cannot use existing queue seda://foo as the existing queue multiple consumers true does not match given multiple consumers false", e.getCause().getMessage());
+            assertEquals("Cannot use existing queue seda://foo as the existing queue multiple consumers true does not match given multiple consumers false",
+                         e.getCause().getMessage());
         }
     }
 

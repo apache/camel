@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -60,9 +61,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/begin?initialDelay=0&delay=10&processStrategy=#myStrategy")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file://target/data/begin?initialDelay=0&delay=10&processStrategy=#myStrategy").convertBodyTo(String.class).to("mock:result");
             }
         };
     }
@@ -76,8 +75,9 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         }
 
         @Override
-        public boolean begin(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
-                             Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
+        public boolean begin(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint, Exchange exchange,
+                             GenericFile<File> fileGenericFile)
+            throws Exception {
             invoked++;
             if (invoked <= 1) {
                 throw new IllegalArgumentException("Damn I cannot do this");
@@ -86,19 +86,22 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         }
 
         @Override
-        public void abort(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
-                          Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
+        public void abort(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint, Exchange exchange,
+                          GenericFile<File> fileGenericFile)
+            throws Exception {
             // noop
         }
 
         @Override
-        public void commit(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
-                           Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
+        public void commit(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint, Exchange exchange,
+                           GenericFile<File> fileGenericFile)
+            throws Exception {
         }
 
         @Override
-        public void rollback(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
-                             Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
+        public void rollback(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint, Exchange exchange,
+                             GenericFile<File> fileGenericFile)
+            throws Exception {
         }
 
         public int getInvoked() {

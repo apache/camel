@@ -65,15 +65,11 @@ public class SimpleResultTypeRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:foo")
                     // set using builder support
-                    .setHeader("cool", simple("true", Boolean.class))
-                    .setHeader("fail", simple("true"))
-                    .to("mock:foo");
+                    .setHeader("cool", simple("true", Boolean.class)).setHeader("fail", simple("true")).to("mock:foo");
 
                 from("direct:bar")
                     // set using expression clause
-                    .setHeader("cool").simple("true", Boolean.class)
-                    .setHeader("fail", simple("true"))
-                    .to("mock:bar");
+                    .setHeader("cool").simple("true", Boolean.class).setHeader("fail", simple("true")).to("mock:bar");
             }
         };
     }

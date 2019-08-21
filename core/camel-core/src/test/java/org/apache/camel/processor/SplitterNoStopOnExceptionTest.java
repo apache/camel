@@ -39,7 +39,8 @@ public class SplitterNoStopOnExceptionTest extends ContextTestSupport {
     @Test
     public void testSplitNoStopOnExceptionStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        // we do not stop so we split to completion and thus we receive 3 messages
+        // we do not stop so we split to completion and thus we receive 3
+        // messages
         mock.expectedBodiesReceived("Hello World", "Bye World", "Hi World");
 
         try {
@@ -58,10 +59,7 @@ public class SplitterNoStopOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body().tokenize(","))
-                        .process(new MyProcessor())
-                        .to("mock:split");
+                from("direct:start").split(body().tokenize(",")).process(new MyProcessor()).to("mock:split");
             }
         };
     }

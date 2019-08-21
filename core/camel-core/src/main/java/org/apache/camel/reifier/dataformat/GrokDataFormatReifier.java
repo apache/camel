@@ -25,7 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 public class GrokDataFormatReifier extends DataFormatReifier<GrokDataFormat> {
 
     public GrokDataFormatReifier(DataFormatDefinition definition) {
-        super((GrokDataFormat) definition);
+        super((GrokDataFormat)definition);
     }
 
     @Override

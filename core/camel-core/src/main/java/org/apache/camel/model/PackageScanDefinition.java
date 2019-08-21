@@ -27,7 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Scans for Java {@link org.apache.camel.builder.RouteBuilder} classes in java packages
+ * Scans for Java {@link org.apache.camel.builder.RouteBuilder} classes in java
+ * packages
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "packageScan")

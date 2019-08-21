@@ -49,7 +49,7 @@ public class AggregatorWithBatchConsumingIssueTest extends ContextTestSupport {
                 exchange.getIn().setBody(index);
                 exchange.getIn().setHeader("aggregateGroup", "group1");
 
-                //simulate Batch as in JpaConsumer
+                // simulate Batch as in JpaConsumer
                 exchange.setProperty(Exchange.BATCH_SIZE, 3);
                 exchange.setProperty(Exchange.BATCH_INDEX, index % 3);
                 exchange.setProperty(Exchange.BATCH_COMPLETE, (index % 3) == 3 - 1);
@@ -62,10 +62,7 @@ public class AggregatorWithBatchConsumingIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("aggregateGroup"), new BodyInAggregatingStrategy()).completionFromBatchConsumer()
-                        .to("log:aggregated")
-                        .to("mock:result");
+                from("direct:start").aggregate(header("aggregateGroup"), new BodyInAggregatingStrategy()).completionFromBatchConsumer().to("log:aggregated").to("mock:result");
             }
         };
     }

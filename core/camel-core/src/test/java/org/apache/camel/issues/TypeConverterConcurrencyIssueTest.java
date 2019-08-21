@@ -33,7 +33,7 @@ import org.junit.Test;
 public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
 
     private int size = 100 * 1000;
-    
+
     @Test
     public void testTypeConverter() throws Exception {
         // add as type converter
@@ -53,17 +53,18 @@ public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
                         context.getTypeConverter().mandatoryConvertTo(MyCamelBean.class, "1;MyCamel");
                         latch.countDown();
                     } catch (NoTypeConversionAvailableException e) {
-                        // ignore, as the latch will not be decremented anymore so that the assert below
+                        // ignore, as the latch will not be decremented anymore
+                        // so that the assert below
                         // will fail after the one minute timeout anyway
                     }
                 }
             });
         }
-        
+
         assertTrue("The expected mandatory conversions failed!", latch.await(1, TimeUnit.MINUTES));
         log.info("Took {} millis to convert {} objects", watch.taken(), size);
     }
-    
+
     public static MyCamelBean toMyCamelBean(String body) {
         MyCamelBean bean = new MyCamelBean();
         String[] data = body.split(";");

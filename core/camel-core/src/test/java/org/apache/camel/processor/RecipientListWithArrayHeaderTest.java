@@ -39,8 +39,7 @@ public class RecipientListWithArrayHeaderTest extends ContextTestSupport {
     }
 
     protected void sendBody() {
-        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader",
-                new String[] {"mock:x", "mock:y", "mock:z"});
+        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader", new String[] {"mock:x", "mock:y", "mock:z"});
     }
 
     @Override

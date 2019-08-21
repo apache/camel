@@ -25,7 +25,7 @@ import org.apache.camel.spi.DataFormat;
 public class CBORDataFormatReifier extends DataFormatReifier<CBORDataFormat> {
 
     public CBORDataFormatReifier(DataFormatDefinition definition) {
-        super((CBORDataFormat) definition);
+        super((CBORDataFormat)definition);
     }
 
     @Override

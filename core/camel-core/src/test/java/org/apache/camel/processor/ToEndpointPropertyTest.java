@@ -245,6 +245,4 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
-
 }

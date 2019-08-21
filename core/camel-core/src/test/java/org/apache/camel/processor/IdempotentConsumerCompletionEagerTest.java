@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -48,20 +49,14 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo).completionEager(true)
-                        .to("log:a", "mock:a")
-                        .to("log:b", "mock:b")
-                    .end()
-                    .filter(simple("${header.messageId} == '2'"))
-                        .throwException(new IllegalArgumentException("Forced"))
-                    .end()
-                    .to("log:result", "mock:result");
+                from("direct:start").idempotentConsumer(header("messageId"), repo).completionEager(true).to("log:a", "mock:a").to("log:b", "mock:b").end()
+                    .filter(simple("${header.messageId} == '2'")).throwException(new IllegalArgumentException("Forced")).end().to("log:result", "mock:result");
             }
         });
         context.start();
 
-        // we are on block only scope as "two" was success in the block, and then "two" failed afterwards does not matter
+        // we are on block only scope as "two" was success in the block, and
+        // then "two" failed afterwards does not matter
         // the idempotent consumer will not receive "two" again
         a.expectedBodiesReceived("one", "two", "three");
         b.expectedBodiesReceived("one", "two", "three");
@@ -86,20 +81,14 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo).completionEager(false)
-                        .to("log:a", "mock:a")
-                        .to("log:b", "mock:b")
-                    .end()
-                    .filter(simple("${header.messageId} == '2'"))
-                        .throwException(new IllegalArgumentException("Forced"))
-                    .end()
-                    .to("log:result", "mock:result");
+                from("direct:start").idempotentConsumer(header("messageId"), repo).completionEager(false).to("log:a", "mock:a").to("log:b", "mock:b").end()
+                    .filter(simple("${header.messageId} == '2'")).throwException(new IllegalArgumentException("Forced")).end().to("log:result", "mock:result");
             }
         });
         context.start();
 
-        // we are on completion scope so the "two" will rollback and therefore the idempotent consumer receives those again
+        // we are on completion scope so the "two" will rollback and therefore
+        // the idempotent consumer receives those again
         a.expectedBodiesReceived("one", "two", "two", "three");
         b.expectedBodiesReceived("one", "two", "two", "three");
         dead.expectedBodiesReceived("two", "two");

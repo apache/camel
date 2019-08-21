@@ -26,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 public class RemoveHeaderReifier extends ProcessorReifier<RemoveHeaderDefinition> {
 
     RemoveHeaderReifier(ProcessorDefinition<?> definition) {
-        super((RemoveHeaderDefinition) definition);
+        super((RemoveHeaderDefinition)definition);
     }
 
     @Override

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -60,9 +61,7 @@ public class FilerConsumerMoveFailedDoneFileNameTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?doneFileName=done&initialDelay=0&delay=10&moveFailed=failed")
-                        .to("mock:input")
-                        .throwException(new IllegalArgumentException("Forced"));
+                from("file:target/data/done?doneFileName=done&initialDelay=0&delay=10&moveFailed=failed").to("mock:input").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

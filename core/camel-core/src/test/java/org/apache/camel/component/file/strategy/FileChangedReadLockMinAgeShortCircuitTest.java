@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.strategy;
+
 import java.io.FileOutputStream;
 import java.util.Date;
 
@@ -69,7 +70,7 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
             @Override
             public void configure() throws Exception {
                 from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockMinAge=10&readLockCheckInterval=30000&readLockTimeout=90000")
-                        .to("file:target/data/changed/out", "mock:result");
+                    .to("file:target/data/changed/out", "mock:result");
             }
         };
     }

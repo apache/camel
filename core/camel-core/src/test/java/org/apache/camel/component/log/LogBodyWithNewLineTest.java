@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.log;
+
 import java.io.StringWriter;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,16 +40,11 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
         super.setUp();
         writer = new StringWriter();
 
-        final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        final LoggerContext ctx = (LoggerContext)LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
 
-        Appender appender = WriterAppender.newBuilder()
-            .setLayout(PatternLayout.newBuilder()
-                .withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN)
-                .build())
-            .setTarget(writer)
-            .setName("Writer")
-            .build();
+        Appender appender = WriterAppender.newBuilder().setLayout(PatternLayout.newBuilder().withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN).build()).setTarget(writer)
+            .setName("Writer").build();
 
         appender.start();
 
@@ -86,10 +82,8 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("log:logger_name?level=INFO&showAll=true&skipBodyLineSeparator=false");
-                from("direct:skip")
-                    .to("log:logger_name?level=INFO&showAll=true&skipBodyLineSeparator=true");
+                from("direct:start").to("log:logger_name?level=INFO&showAll=true&skipBodyLineSeparator=false");
+                from("direct:skip").to("log:logger_name?level=INFO&showAll=true&skipBodyLineSeparator=true");
             }
         };
     }

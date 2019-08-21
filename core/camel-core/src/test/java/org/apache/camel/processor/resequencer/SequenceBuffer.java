@@ -23,23 +23,23 @@ import java.util.concurrent.TimeUnit;
 public class SequenceBuffer<E> implements SequenceSender<E> {
 
     private BlockingQueue<E> queue;
-    
+
     public SequenceBuffer() {
         this.queue = new LinkedBlockingQueue<>();
     }
-    
+
     public int size() {
         return queue.size();
     }
-    
+
     public E take() throws InterruptedException {
         return queue.take();
     }
-    
+
     public E poll(long timeout) throws InterruptedException {
         return queue.poll(timeout, TimeUnit.MILLISECONDS);
     }
-    
+
     @Override
     public void sendElement(E o) throws Exception {
         queue.put(o);

@@ -37,7 +37,7 @@ public class RouteStartupOrderWithDefaultTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // assert correct order
-        DefaultCamelContext dcc = (DefaultCamelContext) context;
+        DefaultCamelContext dcc = (DefaultCamelContext)context;
         List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
 
         assertEquals(5, order.size());

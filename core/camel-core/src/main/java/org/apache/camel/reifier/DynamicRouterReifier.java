@@ -47,13 +47,13 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
 
         // and wrap this in an error handler
         ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
-        // create error handler (create error handler directly to keep it light weight,
+        // create error handler (create error handler directly to keep it light
+        // weight,
         // instead of using ProcessorReifier.wrapInErrorHandler)
-        AsyncProcessor errorHandler = (AsyncProcessor) ErrorHandlerReifier.reifier(builder).createErrorHandler(routeContext, dynamicRouter.newRoutingSlipProcessorForErrorHandler());
+        AsyncProcessor errorHandler = (AsyncProcessor)ErrorHandlerReifier.reifier(builder).createErrorHandler(routeContext, dynamicRouter.newRoutingSlipProcessorForErrorHandler());
         dynamicRouter.setErrorHandler(errorHandler);
 
         return dynamicRouter;
     }
-
 
 }

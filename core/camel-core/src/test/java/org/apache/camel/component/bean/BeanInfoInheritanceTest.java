@@ -120,5 +120,3 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
     }
 
 }
-
-

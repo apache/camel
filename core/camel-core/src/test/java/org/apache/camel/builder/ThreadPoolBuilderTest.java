@@ -105,10 +105,8 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
     @Test
     public void testThreadPoolBuilderAll() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
-        ExecutorService executor = builder.poolSize(50).maxPoolSize(100).maxQueueSize(2000)
-                .keepAliveTime(20000, TimeUnit.MILLISECONDS)
-                .rejectedPolicy(ThreadPoolRejectedPolicy.DiscardOldest)
-                .build(this, "myPool");
+        ExecutorService executor = builder.poolSize(50).maxPoolSize(100).maxQueueSize(2000).keepAliveTime(20000, TimeUnit.MILLISECONDS)
+            .rejectedPolicy(ThreadPoolRejectedPolicy.DiscardOldest).build(this, "myPool");
         assertNotNull(executor);
 
         assertEquals(false, executor.isShutdown());
@@ -135,8 +133,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
     @Test
     public void testThreadPoolBuilderScheduled() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
-        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000)
-                .buildScheduled();
+        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000).buildScheduled();
         assertNotNull(executor);
 
         assertEquals(false, executor.isShutdown());
@@ -147,27 +144,23 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
     @Test
     public void testThreadPoolBuilderScheduledName() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
-        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000)
-                .buildScheduled("myScheduledPool");
+        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000).buildScheduled("myScheduledPool");
         assertNotNull(executor);
 
         assertEquals(false, executor.isShutdown());
         context.stop();
         assertEquals(true, executor.isShutdown());
     }
-
 
     @Test
     public void testThreadPoolBuilderScheduledSourceName() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
-        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000)
-                .buildScheduled(this, "myScheduledPool");
+        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000).buildScheduled(this, "myScheduledPool");
         assertNotNull(executor);
 
         assertEquals(false, executor.isShutdown());
         context.stop();
         assertEquals(true, executor.isShutdown());
     }
-
 
 }

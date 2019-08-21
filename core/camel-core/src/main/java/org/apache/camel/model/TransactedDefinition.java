@@ -34,7 +34,8 @@ import org.apache.camel.spi.TransactedPolicy;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransactedDefinition extends OutputDefinition<TransactedDefinition> {
 
-    // JAXB does not support changing the ref attribute from required to optional
+    // JAXB does not support changing the ref attribute from required to
+    // optional
     // if we extend PolicyDefinition so we must make a copy of the class
     @XmlTransient
     public static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
@@ -62,7 +63,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
             return "Transacted[" + desc + "]";
         }
     }
-    
+
     protected String description() {
         if (ref != null) {
             return "ref:" + ref;
@@ -95,7 +96,8 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
 
     @Override
     public boolean isTopLevelOnly() {
-        // transacted is top level as we only allow have it configured once per route
+        // transacted is top level as we only allow have it configured once per
+        // route
         return true;
     }
 
@@ -124,8 +126,8 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
      * Sets a policy type that this definition should scope within.
      * <p/>
      * Is used for convention over configuration situations where the policy
-     * should be automatic looked up in the registry and it should be based
-     * on this type. For instance a {@link org.apache.camel.spi.TransactedPolicy}
+     * should be automatic looked up in the registry and it should be based on
+     * this type. For instance a {@link org.apache.camel.spi.TransactedPolicy}
      * can be set as type for easy transaction configuration.
      * <p/>
      * Will by default scope to the wide {@link Policy}

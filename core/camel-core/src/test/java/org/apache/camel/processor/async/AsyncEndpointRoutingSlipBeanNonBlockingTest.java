@@ -74,10 +74,8 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                    .to("bean:myBean");
-                from("direct:asyncRoute")
-                    .process(new MyAsyncProcessor());
+                from("direct:start").to("bean:myBean");
+                from("direct:asyncRoute").process(new MyAsyncProcessor());
             }
         };
     }

@@ -47,7 +47,7 @@ public class InOnlyDefinition extends SendDefinition<InOnlyDefinition> {
     public String toString() {
         return "InOnly[" + getLabel() + "]";
     }
-    
+
     @Override
     public String getShortName() {
         return "inOnly";

@@ -51,8 +51,7 @@ public class OnCompletionShutdownProcessorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onCompletion().process(processor);
 
-                from("direct:start")
-                    .to("mock:result");
+                from("direct:start").to("mock:result");
             }
         };
     }

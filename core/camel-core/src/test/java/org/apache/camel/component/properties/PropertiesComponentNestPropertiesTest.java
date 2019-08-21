@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.properties;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class PropertiesComponentNestPropertiesTest extends ContextTestSupport {
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
@@ -32,31 +33,29 @@ public class PropertiesComponentNestPropertiesTest extends ContextTestSupport {
         context.addComponent("properties", pc);
         return context;
     }
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
         System.setProperty("environment", "junit");
         super.setUp();
     }
-    
+
     @Override
     @After
     public void tearDown() throws Exception {
         System.clearProperty("environment");
         super.tearDown();
     }
-    
+
     @Test
     public void testPropertiesComponentDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setBody(simple("${properties:someproperty}${body}"))
-                .to("mock:result");
-                
-                from("direct:start2").setBody(simple("{json:{value:${properties:someproperty}}}"))
-                .to("mock:result2");
+                from("direct:start").setBody(simple("${properties:someproperty}${body}")).to("mock:result");
+
+                from("direct:start2").setBody(simple("{json:{value:${properties:someproperty}}}")).to("mock:result2");
             }
         });
         context.start();

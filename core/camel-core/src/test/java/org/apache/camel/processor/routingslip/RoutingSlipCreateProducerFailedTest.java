@@ -51,8 +51,7 @@ public class RoutingSlipCreateProducerFailedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .routingSlip(header("foo"));
+                from("direct:start").routingSlip(header("foo"));
             }
         };
     }

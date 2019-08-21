@@ -45,18 +45,19 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // as its based on a unit test we do not have any delays between and do not log the stack trace
+                // as its based on a unit test we do not have any delays between
+                // and do not log the stack trace
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0).logStackTrace(false));
 
                 // START SNIPPET: e1
-                // we want to use a predicate for retries so we can determine in our bean
-                // when retry should stop, notice it will overrule the global error handler
-                // where we defined at most 1 redelivery attempt. Here we will continue until
+                // we want to use a predicate for retries so we can determine in
+                // our bean
+                // when retry should stop, notice it will overrule the global
+                // error handler
+                // where we defined at most 1 redelivery attempt. Here we will
+                // continue until
                 // the predicate returns false
-                onException(MyFunctionalException.class)
-                        .retryWhile(method("myRetryHandler"))
-                        .handled(true)
-                        .transform().constant("Sorry");
+                onException(MyFunctionalException.class).retryWhile(method("myRetryHandler")).handled(true).transform().constant("Sorry");
                 // END SNIPPET: e1
 
                 from("direct:start").process(new Processor() {
@@ -75,7 +76,8 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
     // START SNIPPET: e2
     public class MyRetryBean {
 
-        // using bean binding we can bind the information from the exchange to the types we have in our method signature
+        // using bean binding we can bind the information from the exchange to
+        // the types we have in our method signature
         public boolean retry(@Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
             invoked++;
@@ -83,7 +85,8 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
             assertEquals("Hello World", body);
             assertTrue(causedBy instanceof MyFunctionalException);
 
-            // we can of course do what ever we want to determine the result but this is a unit test so we end after 3 attempts
+            // we can of course do what ever we want to determine the result but
+            // this is a unit test so we end after 3 attempts
             return counter < 3;
         }
     }

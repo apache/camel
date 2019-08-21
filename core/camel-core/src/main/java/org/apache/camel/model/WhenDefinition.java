@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Triggers a route when an expression evaluates to <tt>true</tt>
  */
-@Metadata(label = "eip,routing") @AsPredicate
+@Metadata(label = "eip,routing")
+@AsPredicate
 @XmlRootElement(name = "when")
 public class WhenDefinition extends OutputExpressionNode {
 
@@ -72,7 +73,8 @@ public class WhenDefinition extends OutputExpressionNode {
     }
 
     /**
-     * Expression used as the predicate to evaluate whether this when should trigger and route the message or not.
+     * Expression used as the predicate to evaluate whether this when should
+     * trigger and route the message or not.
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {
@@ -82,7 +84,8 @@ public class WhenDefinition extends OutputExpressionNode {
 
     @Override
     public ProcessorDefinition<?> endParent() {
-        // when using when in the DSL we don't want to end back to this when, but instead
+        // when using when in the DSL we don't want to end back to this when,
+        // but instead
         // the parent of this, so return the parent
         return this.getParent();
     }

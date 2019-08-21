@@ -51,9 +51,7 @@ public class FilterNotTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .filter(not(header("foo")))
-                        .to("mock:result");
+                from("direct:start").filter(not(header("foo"))).to("mock:result");
 
             }
         };

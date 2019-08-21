@@ -33,11 +33,11 @@ import org.apache.camel.spi.Metadata;
 public class XmlRpcDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean request;
-    
+
     public XmlRpcDataFormat() {
         super("xmlrpc");
     }
-    
+
     public Boolean getRequest() {
         return request;
     }

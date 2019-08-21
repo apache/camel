@@ -60,14 +60,8 @@ public class CBRWithWireTapTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(body().contains("Camel"))
-                            .wireTap("mock:camel").end()
-                        .when(body().contains("Donkey"))
-                            .wireTap("mock:donkey").end()
-                        .otherwise()
-                            .to("mock:other");
+                from("direct:start").choice().when(body().contains("Camel")).wireTap("mock:camel").end().when(body().contains("Donkey")).wireTap("mock:donkey").end().otherwise()
+                    .to("mock:other");
             }
         };
     }

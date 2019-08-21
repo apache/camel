@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -59,20 +60,17 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/deletefile?delete=true&initialDelay=0&delay=10").noAutoStartup().routeId("FromFilePollThirdTimeOkTest")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            counter++;
-                            if (counter < 3) {
-                                // file should exists
-                                File file = new File("target/data/deletefile/hello.txt");
-                                assertTrue("The file should NOT have been deleted", file.exists());
-                                throw new IllegalArgumentException("Forced by unittest");
-                            }
+                from("file://target/data/deletefile?delete=true&initialDelay=0&delay=10").noAutoStartup().routeId("FromFilePollThirdTimeOkTest").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        counter++;
+                        if (counter < 3) {
+                            // file should exists
+                            File file = new File("target/data/deletefile/hello.txt");
+                            assertTrue("The file should NOT have been deleted", file.exists());
+                            throw new IllegalArgumentException("Forced by unittest");
                         }
-                    })
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                    }
+                }).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 public class InterceptReifier<T extends InterceptDefinition> extends ProcessorReifier<T> {
 
     InterceptReifier(ProcessorDefinition<?> definition) {
-        super((T) definition);
+        super((T)definition);
     }
 
     @Override
@@ -37,12 +37,12 @@ public class InterceptReifier<T extends InterceptDefinition> extends ProcessorRe
         // create the output processor
         Processor output = this.createChildProcessor(routeContext, true);
 
-        // add the output as a intercept strategy to the route context so its invoked on each processing step
+        // add the output as a intercept strategy to the route context so its
+        // invoked on each processing step
         routeContext.getInterceptStrategies().add(new InterceptStrategy() {
             private Processor interceptedTarget;
 
-            public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition,
-                                                         Processor target, Processor nextTarget) throws Exception {
+            public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, Processor target, Processor nextTarget) throws Exception {
                 // store the target we are intercepting
                 this.interceptedTarget = target;
 
@@ -64,7 +64,7 @@ public class InterceptReifier<T extends InterceptDefinition> extends ProcessorRe
         });
 
         // remove me from the route so I am not invoked in a regular route path
-        ((RouteDefinition) routeContext.getRoute()).getOutputs().remove(this);
+        ((RouteDefinition)routeContext.getRoute()).getOutputs().remove(this);
         // and return no processor to invoke next from me
         return null;
     }

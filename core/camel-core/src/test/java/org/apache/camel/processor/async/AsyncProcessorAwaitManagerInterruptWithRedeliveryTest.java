@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.async;
+
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
@@ -111,15 +112,9 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error")
-                    .maximumRedeliveries(5)
-                    .redeliveryDelay(100)
-                    .asyncDelayedRedelivery());
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5).redeliveryDelay(100).asyncDelayedRedelivery());
 
-                from("direct:start").routeId("myRoute")
-                    .to("mock:before")
-                    .bean("myBean", "callMe")
-                    .to("mock:result");
+                from("direct:start").routeId("myRoute").to("mock:before").bean("myBean", "callMe").to("mock:result");
             }
         };
     }

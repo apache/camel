@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -67,12 +68,10 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
                 // we configure our Dead Letter Channel to invoke
                 // MyRedeliveryProcessor before a redelivery is
                 // attempted. This allows us to alter the message before
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5)
-                        .onRedelivery(new MyRedeliverProcessor())
-                        // setting delay to zero is just to make unit testing faster
-                        .redeliveryDelay(0L));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5).onRedelivery(new MyRedeliverProcessor())
+                    // setting delay to zero is just to make unit testing faster
+                    .redeliveryDelay(0L));
                 // END SNIPPET: e1
-
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -89,7 +88,8 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
 
     // START SNIPPET: e2
     // This is our processor that is executed before every redelivery attempt
-    // here we can do what we want in the java code, such as altering the message
+    // here we can do what we want in the java code, such as altering the
+    // message
     public class MyRedeliverProcessor implements Processor {
 
         @Override
@@ -109,6 +109,5 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
         }
     }
     // END SNIPPET: e2
-
 
 }

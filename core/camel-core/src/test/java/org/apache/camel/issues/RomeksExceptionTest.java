@@ -80,19 +80,11 @@ public class RomeksExceptionTest extends ContextTestSupport {
 
                 onException(IllegalArgumentException.class).to("mock:exception");
 
-                from("direct:start").
-                        recipientList().simple("direct:${header.route}").
-                        to("mock:result");
+                from("direct:start").recipientList().simple("direct:${header.route}").to("mock:result");
 
-                from("direct:a").
-                        setBody(constant("<some-value/>")).
-                        process(exceptionThrower).
-                        to("mock:result");
+                from("direct:a").setBody(constant("<some-value/>")).process(exceptionThrower).to("mock:result");
 
-                from("direct:b").
-                        process(exceptionThrower).
-                        setBody(constant("<some-value/>")).
-                        to("mock:result");
+                from("direct:b").process(exceptionThrower).setBody(constant("<some-value/>")).to("mock:result");
             }
         };
     }

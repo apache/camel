@@ -51,14 +51,9 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body().tokenize(","), new MyAggregationStrategy())
-                        .parallelProcessing().timeout(100)
-                        .choice()
-                            .when(body().isEqualTo("A")).to("direct:a")
-                            .when(body().isEqualTo("B")).to("direct:b")
-                            .when(body().isEqualTo("C")).to("direct:c")
-                        .end() // end choice
+                from("direct:start").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().timeout(100).choice().when(body().isEqualTo("A")).to("direct:a")
+                    .when(body().isEqualTo("B")).to("direct:b").when(body().isEqualTo("C")).to("direct:c").end() // end
+                                                                                                                 // choice
                     .end() // end split
                     .to("mock:result");
 
@@ -75,10 +70,14 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
 
         @Override
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
-            // we can't assert on the expected values here as the contract of this method doesn't
-            // allow to throw any Throwable (including AssertionError) so that we assert
-            // about the expected values directly inside the test method itself. other than that
-            // asserting inside a thread other than the main thread dosen't make much sense as
+            // we can't assert on the expected values here as the contract of
+            // this method doesn't
+            // allow to throw any Throwable (including AssertionError) so that
+            // we assert
+            // about the expected values directly inside the test method itself.
+            // other than that
+            // asserting inside a thread other than the main thread dosen't make
+            // much sense as
             // junit would not realize the failed assertion!
             receivedExchange = oldExchange;
             receivedIndex = index;

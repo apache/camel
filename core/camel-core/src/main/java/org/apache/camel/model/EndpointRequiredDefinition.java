@@ -17,8 +17,9 @@
 package org.apache.camel.model;
 
 /**
- * A {@link org.apache.camel.model.ProcessorDefinition} that requires to be configured with an {@link org.apache.camel.Endpoint} such
- * as {@link org.apache.camel.model.SendDefinition}.
+ * A {@link org.apache.camel.model.ProcessorDefinition} that requires to be
+ * configured with an {@link org.apache.camel.Endpoint} such as
+ * {@link org.apache.camel.model.SendDefinition}.
  */
 public interface EndpointRequiredDefinition {
 

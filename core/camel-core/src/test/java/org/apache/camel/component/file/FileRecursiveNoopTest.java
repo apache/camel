@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -58,9 +59,7 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/noop?initialDelay=0&delay=10&recursive=true&noop=true")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file:target/data/noop?initialDelay=0&delay=10&recursive=true&noop=true").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

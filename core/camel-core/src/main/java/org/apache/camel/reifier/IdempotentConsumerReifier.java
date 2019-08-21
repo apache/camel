@@ -52,7 +52,8 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
     }
 
     /**
-     * Strategy method to resolve the {@link org.apache.camel.spi.IdempotentRepository} to use
+     * Strategy method to resolve the
+     * {@link org.apache.camel.spi.IdempotentRepository} to use
      *
      * @param routeContext route context
      * @return the repository

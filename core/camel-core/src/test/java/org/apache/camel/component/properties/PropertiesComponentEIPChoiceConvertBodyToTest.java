@@ -52,13 +52,7 @@ public class PropertiesComponentEIPChoiceConvertBodyToTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(body().isNotNull())
-                            .convertBodyTo(byte[].class, "{{myCoolCharset}}")
-                            .to("mock:result")
-                        .otherwise()
-                            .to("mock:null");
+                from("direct:start").choice().when(body().isNotNull()).convertBodyTo(byte[].class, "{{myCoolCharset}}").to("mock:result").otherwise().to("mock:null");
             }
         };
     }
@@ -68,7 +62,7 @@ public class PropertiesComponentEIPChoiceConvertBodyToTest extends ContextTestSu
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocations(new String[]{"classpath:org/apache/camel/component/properties/myproperties.properties"});
+        pc.setLocations(new String[] {"classpath:org/apache/camel/component/properties/myproperties.properties"});
         context.addComponent("properties", pc);
 
         return context;

@@ -80,15 +80,8 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .choice()
-                        .when().method("cbrBean", "checkHeader")
-                            .to("mock:foo")
-                        .when().method("cbrBean", "checkHeader2")
-                            .to("mock:foo2")
-                        .otherwise()
-                            .to("mock:bar")
-                    .end();
+                from("direct:start").choice().when().method("cbrBean", "checkHeader").to("mock:foo").when().method("cbrBean", "checkHeader2").to("mock:foo2").otherwise()
+                    .to("mock:bar").end();
             }
         };
     }
@@ -99,7 +92,7 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
             check.set(true);
 
             Message inMsg = exchange.getIn();
-            String foo = (String) inMsg.getHeader("foo");
+            String foo = (String)inMsg.getHeader("foo");
 
             if ("Kaboom".equalsIgnoreCase(foo)) {
                 throw new IllegalArgumentException("Forced");
@@ -112,7 +105,7 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
             check2.set(true);
 
             Message inMsg = exchange.getIn();
-            String foo = (String) inMsg.getHeader("foo");
+            String foo = (String)inMsg.getHeader("foo");
 
             if ("Kaboom".equalsIgnoreCase(foo)) {
                 throw new IllegalArgumentException("Forced");
@@ -122,4 +115,3 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
         }
     }
 }
-

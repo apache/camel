@@ -37,26 +37,26 @@ import static org.awaitility.Awaitility.await;
 
 public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTestSupport {
     private static Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerTest.class);
-    
+
     private String url = "direct:start?block=false";
     private MockEndpoint result;
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         this.setUseRouteBuilder(true);
         result = getMockEndpoint("mock:result");
-        
+
         context.getShutdownStrategy().setTimeout(1);
     }
-    
+
     @Test
     public void testHalfOpenCircuit() throws Exception {
         result.expectedMessageCount(2);
         List<String> bodies = Arrays.asList("Message One", "Message Two");
         result.expectedBodiesReceivedInAnyOrder(bodies);
-        
+
         result.whenAnyExchangeReceived(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -64,24 +64,24 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTe
                 exchange.setException(new ThrottlingException(msg));
             }
         });
-        
+
         // send two messages which will fail
         sendMessage("Message One");
         sendMessage("Message Two");
 
-        final ServiceSupport consumer = (ServiceSupport) context.getRoute("foo").getConsumer();
+        final ServiceSupport consumer = (ServiceSupport)context.getRoute("foo").getConsumer();
 
         // wait long enough to have the consumer suspended
         await().atMost(2, TimeUnit.SECONDS).until(consumer::isSuspended);
-        
-        // send more messages 
+
+        // send more messages
         // but never should get there
         // due to open circuit
         log.debug("sending message three");
         sendMessage("Message Three");
 
         assertMockEndpointsSatisfied();
-        
+
         result.reset();
         result.expectedMessageCount(1);
         bodies = Arrays.asList("Message Four");
@@ -89,12 +89,12 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTe
 
         // wait long enough to have the consumer resumed
         await().atMost(2, TimeUnit.SECONDS).until(consumer::isStarted);
-        
+
         // send message
         // should get through
         log.debug("sending message four");
         sendMessage("Message Four");
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -108,25 +108,21 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTe
                 long halfOpenAfter = 250;
                 ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
                 policy.setHalfOpenHandler(new AlwaysCloseHandler());
-                
-                from(url).routeId("foo")
-                    .routePolicy(policy)
-                    .log("${body}")
-                    .to("log:foo?groupSize=10")
-                    .to("mock:result");
+
+                from(url).routeId("foo").routePolicy(policy).log("${body}").to("log:foo?groupSize=10").to("mock:result");
             }
         };
     }
-    
+
     public class AlwaysCloseHandler implements ThrottlingExceptionHalfOpenHandler {
 
         @Override
         public boolean isReadyToBeClosed() {
             return true;
         }
-        
+
     }
-    
+
     protected void sendMessage(String bodyText) {
         try {
             template.sendBody(url, bodyText);

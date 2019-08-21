@@ -53,8 +53,7 @@ public class FromRestGetContentTypeTest extends ContextTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
 
-                rest("/say/hello").produces("application/json")
-                    .get().to("direct:hello");
+                rest("/say/hello").produces("application/json").get().to("direct:hello");
 
                 from("direct:hello").setBody(constant("{ \"name\" : \"Donald\" }"));
 

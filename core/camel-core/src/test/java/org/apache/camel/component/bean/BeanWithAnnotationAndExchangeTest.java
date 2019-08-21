@@ -54,10 +54,7 @@ public class BeanWithAnnotationAndExchangeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in")
-                    .setHeader("user", constant("admin"))
-                    .to("bean:myBean")
-                    .to("mock:result");
+                from("direct:in").setHeader("user", constant("admin")).to("bean:myBean").to("mock:result");
             }
         };
     }

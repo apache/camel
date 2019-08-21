@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
 
     PollEnrichReifier(ProcessorDefinition<?> definition) {
-        super((PollEnrichDefinition) definition);
+        super((PollEnrichDefinition)definition);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
             Object aggStrategy = routeContext.lookup(definition.getAggregationStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
+                strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
@@ -78,7 +78,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
         }
 
         return strategy;

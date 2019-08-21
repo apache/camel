@@ -46,7 +46,7 @@ public class InterceptFromEndpointRefUriTest extends ContextTestSupport {
                 interceptFrom("direct*").to("mock:intercepted");
 
                 from("ref:start").to("mock:first").to("ref:bar");
-                
+
                 from("ref:bar").to("mock:result");
             }
         };

@@ -183,7 +183,8 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     }
 
     /**
-     * Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size
+     * Whether idle core threads is allowed to timeout and therefore can shrink
+     * the pool size below the core pool size
      * <p/>
      * Is by default <tt>false</tt>
      */
@@ -196,8 +197,7 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     }
 
     /**
-     * Sets the time unit to use for keep alive time
-     * By default SECONDS is used.
+     * Sets the time unit to use for keep alive time By default SECONDS is used.
      */
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;

@@ -57,14 +57,7 @@ public class AdviceWithTryCatchTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("mock:before")
-                    .doTry()
-                        .to("mock:foo").id("foo")
-                    .doCatch(Exception.class)
-                        .to("mock:error")
-                    .end()
-                    .to("mock:after");
+                from("direct:start").to("mock:before").doTry().to("mock:foo").id("foo").doCatch(Exception.class).to("mock:error").end().to("mock:after");
             }
         };
     }

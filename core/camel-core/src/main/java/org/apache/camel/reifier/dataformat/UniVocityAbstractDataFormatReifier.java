@@ -28,7 +28,7 @@ import org.apache.camel.spi.DataFormat;
 public class UniVocityAbstractDataFormatReifier<T extends UniVocityAbstractDataFormat> extends DataFormatReifier<T> {
 
     public UniVocityAbstractDataFormatReifier(DataFormatDefinition definition) {
-        super((T) definition);
+        super((T)definition);
     }
 
     @Override
@@ -88,7 +88,8 @@ public class UniVocityAbstractDataFormatReifier<T extends UniVocityAbstractDataF
     }
 
     /**
-     * Gets only the headers with non-null and non-empty names. It returns {@code null} if there's no such headers.
+     * Gets only the headers with non-null and non-empty names. It returns
+     * {@code null} if there's no such headers.
      *
      * @return The headers with non-null and non-empty names
      */

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -40,15 +41,15 @@ public class RandomLoadBalanceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://start").loadBalance().
-                random().to("mock://x", "mock://y", "mock://z");
+                from("direct://start").loadBalance().random().to("mock://x", "mock://y", "mock://z");
             }
         };
     }
 
     @Test
     public void testRandom() throws Exception {
-        // it should be safe to assume that they should at least each get > 5 messages
+        // it should be safe to assume that they should at least each get > 5
+        // messages
         x.expectedMinimumMessageCount(5);
         y.expectedMinimumMessageCount(5);
         z.expectedMinimumMessageCount(5);

@@ -29,16 +29,8 @@ public class ValidationWithMultipleHandlesTest extends ValidationTest {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:start")
-                    .doTry()
-                        .process(validator)
-                    .doCatch(ValidationException.class)
-                        .setHeader("xxx", constant("yyy"))
-                    .end()
-                    .doTry()
-                        .process(validator).to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .pipeline("seda:a", "mock:invalid");
+                from("direct:start").doTry().process(validator).doCatch(ValidationException.class).setHeader("xxx", constant("yyy")).end().doTry().process(validator)
+                    .to("mock:valid").doCatch(ValidationException.class).pipeline("seda:a", "mock:invalid");
             }
         };
     }

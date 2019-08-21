@@ -287,7 +287,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         ap.stop();
     }
-    
+
     @Test
     public void testAggregateIgnoreInvalidCorrelationKey() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -354,7 +354,6 @@ public class AggregateProcessorTest extends ContextTestSupport {
         Exchange e3 = new DefaultExchange(context);
         e3.getIn().setBody("C");
         e3.getIn().setHeader("id", 123);
-
 
         Exchange e4 = new DefaultExchange(context);
         e4.getIn().setBody("END");
@@ -532,7 +531,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
                 return false;
             }
         };
-                
+
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 

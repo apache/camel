@@ -22,7 +22,7 @@ import org.apache.camel.model.dataformat.GzipDataFormat;
 public class GzipDataFormatReifier extends DataFormatReifier<GzipDataFormat> {
 
     public GzipDataFormatReifier(DataFormatDefinition definition) {
-        super((GzipDataFormat) definition);
+        super((GzipDataFormat)definition);
     }
 
 }

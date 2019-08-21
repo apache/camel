@@ -49,10 +49,14 @@ public class ValidationTest extends ContextTestSupport {
         try {
             template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
         } catch (RuntimeCamelException e) {
-            // the expected empty catch block here is not intended for this class itself but the subclasses
-            // e.g. ValidationWithErrorInHandleAndFinallyBlockTest where noErrorHandler() is being installed.
-            // this's also why there's no fail("Should have thrown an exception") call here right after
-            // template.sendBodyAndHeader() call as RuntimeCamelException will be not thrown by *all* subclasses
+            // the expected empty catch block here is not intended for this
+            // class itself but the subclasses
+            // e.g. ValidationWithErrorInHandleAndFinallyBlockTest where
+            // noErrorHandler() is being installed.
+            // this's also why there's no fail("Should have thrown an
+            // exception") call here right after
+            // template.sendBodyAndHeader() call as RuntimeCamelException will
+            // be not thrown by *all* subclasses
             // but only by some of them.
         }
 
@@ -65,15 +69,15 @@ public class ValidationTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(1);
 
         try {
-            template.sendBodyAndHeader("direct:start", "<invalid/>", "foo",  "notMatchedHeaderValue");
+            template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
         } catch (RuntimeCamelException e) {
             // the same as above
         }
 
-        Object result = template.requestBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
+        Object result = template.requestBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
         assertEquals("validResult", result);
 
-        result = template.requestBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
+        result = template.requestBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
         assertEquals("validResult", result);
 
         assertMockEndpointsSatisfied();
@@ -95,11 +99,7 @@ public class ValidationTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .doTry()
-                        .process(validator).to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .to("mock:invalid");
+                from("direct:start").doTry().process(validator).to("mock:valid").doCatch(ValidationException.class).to("mock:invalid");
             }
         };
     }

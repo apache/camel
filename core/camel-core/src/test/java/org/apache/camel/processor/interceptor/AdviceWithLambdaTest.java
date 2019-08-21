@@ -37,10 +37,7 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
     @Test
     public void testAdvised() throws Exception {
         AdviceWithRouteBuilder.adviceWith(context, null, a -> {
-            a.interceptSendToEndpoint("mock:foo")
-                    .skipSendToOriginalEndpoint()
-                    .to("log:foo")
-                    .to("mock:advised");
+            a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(0);
@@ -59,10 +56,7 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
             AdviceWithRouteBuilder.adviceWith(context, 0, a -> {
                 a.from("direct:bar").to("mock:bar");
 
-                a.interceptSendToEndpoint("mock:foo")
-                        .skipSendToOriginalEndpoint()
-                        .to("log:foo")
-                        .to("mock:advised");
+                a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
             });
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
@@ -73,9 +67,7 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
     @Test
     public void testAdvisedThrowException() throws Exception {
         AdviceWithRouteBuilder.adviceWith(context, "myRoute", a -> {
-            a.interceptSendToEndpoint("mock:foo")
-                    .to("mock:advised")
-                    .throwException(new IllegalArgumentException("Damn"));
+            a.interceptSendToEndpoint("mock:foo").to("mock:advised").throwException(new IllegalArgumentException("Damn"));
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(0);

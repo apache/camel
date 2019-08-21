@@ -75,15 +75,11 @@ public class RecipientListReturnValueTest extends ContextTestSupport {
 
         @org.apache.camel.RecipientList
         public String[] route() {
-            return new String[] {
-                "direct:a", "direct:b"      
-            };
+            return new String[] {"direct:a", "direct:b"};
         }
 
         public String[] recipientList() {
-            return new String[] {
-                "direct:a", "direct:b"
-            };
+            return new String[] {"direct:a", "direct:b"};
         }
     }
 }

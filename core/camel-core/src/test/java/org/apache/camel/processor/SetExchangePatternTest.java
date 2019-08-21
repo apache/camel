@@ -105,7 +105,6 @@ public class SetExchangePatternTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     protected void assertMessageReceivedWithPattern(String sendUri, ExchangePattern expectedPattern) throws InterruptedException {
         ExchangePattern sendPattern;
         switch (expectedPattern) {
@@ -130,34 +129,29 @@ public class SetExchangePatternTest extends ContextTestSupport {
         assertEquals("received exchange pattern", actualPattern, expectedPattern);
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-             // START SNIPPET: example
+                // START SNIPPET: example
                 // Send to an endpoint using InOut
                 from("direct:testInOut").inOut("mock:result");
 
                 // Send to an endpoint using InOut
                 from("direct:testInOnly").inOnly("mock:result");
 
-                // Set the exchange pattern to InOut, then send it from direct:inOnly to mock:result endpoint
-                from("direct:testSetToInOnlyThenTo")
-                    .setExchangePattern(ExchangePattern.InOnly)
-                    .to("mock:result");
-                from("direct:testSetToInOutThenTo")
-                    .setExchangePattern(ExchangePattern.InOut)
-                    .to("mock:result");
+                // Set the exchange pattern to InOut, then send it from
+                // direct:inOnly to mock:result endpoint
+                from("direct:testSetToInOnlyThenTo").setExchangePattern(ExchangePattern.InOnly).to("mock:result");
+                from("direct:testSetToInOutThenTo").setExchangePattern(ExchangePattern.InOut).to("mock:result");
 
                 // Or we can pass the pattern as a parameter to the to() method
                 from("direct:testToWithInOnlyParam").to(ExchangePattern.InOnly, "mock:result");
                 from("direct:testToWithInOutParam").to(ExchangePattern.InOut, "mock:result");
 
                 // Set the exchange pattern to InOut, then send it on
-                from("direct:testSetExchangePatternInOnly")
-                    .setExchangePattern(ExchangePattern.InOnly).to("mock:result");
-             // END SNIPPET: example
+                from("direct:testSetExchangePatternInOnly").setExchangePattern(ExchangePattern.InOnly).to("mock:result");
+                // END SNIPPET: example
             }
         };
     }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -50,14 +51,9 @@ public class WireTapBeanTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .to("log:foo")
-                    .wireTap("seda:tap")
-                    .bean(MyBean.class)
-                    .to("mock:result");
+                from("direct:start").to("log:foo").wireTap("seda:tap").bean(MyBean.class).to("mock:result");
 
-                from("seda:tap")
-                    .to("mock:tap");
+                from("seda:tap").to("mock:tap");
             }
         };
     }

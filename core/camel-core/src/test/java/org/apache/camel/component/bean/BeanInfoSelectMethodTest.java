@@ -69,8 +69,6 @@ public class BeanInfoSelectMethodTest extends ContextTestSupport {
         };
     }
 
-
-
     public static class MyFooBean {
 
         public String handleException(Exception e) {

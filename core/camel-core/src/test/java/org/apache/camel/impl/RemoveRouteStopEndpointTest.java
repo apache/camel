@@ -30,8 +30,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertNotNull(seda);
         Endpoint log = context.hasEndpoint("log://bar");
         assertNotNull(log);
-        assertTrue("Should be started", ((ServiceSupport) seda).isStarted());
-        assertTrue("Should be started", ((ServiceSupport) log).isStarted());
+        assertTrue("Should be started", ((ServiceSupport)seda).isStarted());
+        assertTrue("Should be started", ((ServiceSupport)log).isStarted());
 
         assertTrue(context.hasEndpoint("seda:foo") != null);
         assertTrue(context.hasEndpoint("seda:bar") != null);
@@ -53,8 +53,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue(context.hasEndpoint("seda://stop") != null);
         assertTrue(context.hasEndpoint("mock://stop") != null);
 
-        assertTrue("Should be started", ((ServiceSupport) seda).isStarted());
-        assertTrue("Should be stopped", ((ServiceSupport) log).isStopped());
+        assertTrue("Should be started", ((ServiceSupport)seda).isStarted());
+        assertTrue("Should be stopped", ((ServiceSupport)log).isStopped());
 
         // stop and remove baz route
         context.getRouteController().stopRoute("baz");
@@ -79,8 +79,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertFalse(context.hasEndpoint("seda://stop") != null);
         assertFalse(context.hasEndpoint("mock://stop") != null);
 
-        assertFalse("Should not be started", ((ServiceSupport) seda).isStarted());
-        assertFalse("Should not be started", ((ServiceSupport) log).isStarted());
+        assertFalse("Should not be started", ((ServiceSupport)seda).isStarted());
+        assertFalse("Should not be started", ((ServiceSupport)log).isStarted());
     }
 
     @Test
@@ -89,8 +89,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertNotNull(seda);
         Endpoint log = context.hasEndpoint("log://bar");
         assertNotNull(log);
-        assertTrue("Should be started", ((ServiceSupport) seda).isStarted());
-        assertTrue("Should be started", ((ServiceSupport) log).isStarted());
+        assertTrue("Should be started", ((ServiceSupport)seda).isStarted());
+        assertTrue("Should be started", ((ServiceSupport)log).isStarted());
 
         assertTrue(context.hasEndpoint("seda://foo") != null);
         assertTrue(context.hasEndpoint("log://foo") != null);
@@ -104,8 +104,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         context.getRouteController().stopRoute("bar");
         context.removeRoute("bar");
 
-        assertTrue("Should be started", ((ServiceSupport) seda).isStarted());
-        assertTrue("Should be stopped", ((ServiceSupport) log).isStopped());
+        assertTrue("Should be started", ((ServiceSupport)seda).isStarted());
+        assertTrue("Should be stopped", ((ServiceSupport)log).isStopped());
 
         assertTrue(context.hasEndpoint("seda:foo") != null);
         assertTrue(context.hasEndpoint("log://foo") != null);
@@ -131,8 +131,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
 
         context.stop();
 
-        assertFalse("Should not be started", ((ServiceSupport) seda).isStarted());
-        assertFalse("Should not be started", ((ServiceSupport) log).isStarted());
+        assertFalse("Should not be started", ((ServiceSupport)seda).isStarted());
+        assertFalse("Should not be started", ((ServiceSupport)log).isStarted());
     }
 
     @Override
@@ -140,14 +140,11 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("foo")
-                        .to("log:foo").to("mock:result");
+                from("seda:foo").routeId("foo").to("log:foo").to("mock:result");
 
-                from("seda:bar").routeId("bar")
-                        .to("log:bar").to("log:bar").to("mock:result");
+                from("seda:bar").routeId("bar").to("log:bar").to("log:bar").to("mock:result");
 
-                from("seda:stop").routeId("baz")
-                        .to("mock:stop");
+                from("seda:stop").routeId("baz").to("mock:stop");
             }
         };
     }

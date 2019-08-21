@@ -45,8 +45,7 @@ public class RestComponentTest {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("host", "#host-ref");
 
-        final RestEndpoint endpoint = (RestEndpoint) rest.createEndpoint("rest://GET:/path:?host=#host-ref",
-            "GET:/path", parameters);
+        final RestEndpoint endpoint = (RestEndpoint)rest.createEndpoint("rest://GET:/path:?host=#host-ref", "GET:/path", parameters);
 
         Assert.assertEquals("http://localhost:8080", endpoint.getHost());
     }
@@ -56,8 +55,7 @@ public class RestComponentTest {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("host", "http://localhost:8080");
 
-        final RestEndpoint endpoint = (RestEndpoint) rest
-            .createEndpoint("rest://GET:/path:?host=http%3A%2F%2Flocalhost%3A8080", "GET:/path", parameters);
+        final RestEndpoint endpoint = (RestEndpoint)rest.createEndpoint("rest://GET:/path:?host=http%3A%2F%2Flocalhost%3A8080", "GET:/path", parameters);
 
         Assert.assertEquals("http://localhost:8080", endpoint.getHost());
     }

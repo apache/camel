@@ -52,13 +52,9 @@ public class ValidatorLazyStartProducerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:fail")
-                    .to("validator:org/apache/camel/component/validator/unknown.xsd?lazyStartProducer=true")
-                    .to("mock:result");
+                from("direct:fail").to("validator:org/apache/camel/component/validator/unknown.xsd?lazyStartProducer=true").to("mock:result");
 
-                from("direct:ok")
-                    .to("validator:org/apache/camel/component/validator/schema.xsd?lazyStartProducer=true")
-                    .to("mock:result");
+                from("direct:ok").to("validator:org/apache/camel/component/validator/schema.xsd?lazyStartProducer=true").to("mock:result");
             }
         };
     }

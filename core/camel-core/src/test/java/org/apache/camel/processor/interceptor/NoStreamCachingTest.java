@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 

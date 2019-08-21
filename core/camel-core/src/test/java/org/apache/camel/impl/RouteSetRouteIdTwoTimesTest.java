@@ -32,9 +32,7 @@ public class RouteSetRouteIdTwoTimesTest extends TestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:hello").routeId("foo")
-                            .to("mock:result")
-                            .to("mock:bar").routeId("bar");
+                    from("direct:hello").routeId("foo").to("mock:result").to("mock:bar").routeId("bar");
                 }
             });
             fail("Should have thrown exception");

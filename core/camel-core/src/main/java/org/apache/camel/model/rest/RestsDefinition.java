@@ -60,7 +60,7 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     @Override
     public List<RestDefinition> getRests() {
@@ -84,7 +84,7 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     }
 
     // Fluent API
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Creates a rest DSL
@@ -114,7 +114,7 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected RestDefinition createRest() {
         RestDefinition rest = new RestDefinition();
         return rest;

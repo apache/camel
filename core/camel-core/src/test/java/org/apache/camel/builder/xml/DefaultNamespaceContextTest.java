@@ -117,7 +117,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
     @Test
     public void testDefaultNamespaceContextCtr() throws Exception {
         DefaultNamespaceContext context = new DefaultNamespaceContext();
-        
+
         // should not have any namespaces
         String uri = context.getNamespaceURI("in");
         assertEquals(null, uri);

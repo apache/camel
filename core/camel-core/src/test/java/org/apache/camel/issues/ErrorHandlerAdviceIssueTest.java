@@ -33,9 +33,7 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
         RouteReifier.adviceWith(foo, context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("seda:*")
-                        .skipSendToOriginalEndpoint()
-                        .throwException(new IllegalAccessException("Forced"));
+                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().throwException(new IllegalAccessException("Forced"));
             }
         });
 
@@ -43,9 +41,7 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
         RouteReifier.adviceWith(error, context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("file:*")
-                        .skipSendToOriginalEndpoint()
-                        .to("mock:file");
+                interceptSendToEndpoint("file:*").skipSendToOriginalEndpoint().to("mock:file");
             }
         });
 
@@ -65,26 +61,15 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("direct:error")
-                        .maximumRedeliveries(2)
-                        .redeliveryDelay(0));
+                errorHandler(deadLetterChannel("direct:error").maximumRedeliveries(2).redeliveryDelay(0));
 
-                from("direct:error")
-                        .routeId("error")
-                        .errorHandler(deadLetterChannel("log:dead?level=ERROR"))
-                        .to("mock:error")
-                        .to("file:error");
+                from("direct:error").routeId("error").errorHandler(deadLetterChannel("log:dead?level=ERROR")).to("mock:error").to("file:error");
 
-                from("timer://someTimer?delay=15000&fixedRate=true&period=5000")
-                        .routeId("timer")
-                        .to("log:level=INFO");
+                from("timer://someTimer?delay=15000&fixedRate=true&period=5000").routeId("timer").to("log:level=INFO");
 
-                from("direct:start")
-                        .routeId("foo")
-                        .to("seda:foo");
+                from("direct:start").routeId("foo").to("seda:foo");
 
-                from("seda:foo")
-                        .to("mock:foo");
+                from("seda:foo").to("mock:foo");
 
             }
         };

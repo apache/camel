@@ -39,8 +39,7 @@ public class RecipientListTest extends ContextTestSupport {
     }
 
     protected void sendBody() {
-        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader",
-                "mock:x,mock:y,mock:z");
+        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader", "mock:x,mock:y,mock:z");
     }
 
     @Override
@@ -48,8 +47,7 @@ public class RecipientListTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").recipientList(
-                        header("recipientListHeader").tokenize(","));
+                from("direct:a").recipientList(header("recipientListHeader").tokenize(","));
                 // END SNIPPET: example
             }
         };

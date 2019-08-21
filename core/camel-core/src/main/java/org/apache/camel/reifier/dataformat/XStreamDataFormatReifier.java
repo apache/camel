@@ -26,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 public class XStreamDataFormatReifier extends DataFormatReifier<XStreamDataFormat> {
 
     public XStreamDataFormatReifier(DataFormatDefinition definition) {
-        super((XStreamDataFormat) definition);
+        super((XStreamDataFormat)definition);
     }
 
     @Override

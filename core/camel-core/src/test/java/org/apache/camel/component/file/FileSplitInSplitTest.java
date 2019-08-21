@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -56,27 +57,23 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
 
         context.getRouteController().startRoute("foo");
-        
+
         assertMockEndpointsSatisfied();
 
         // check one file has expected number of lines +1 saying split is
         // complete.
-        String txt = context.getTypeConverter().convertTo(String.class,
-                                                          new File("target/data/split/outbox/result0.txt"));
+        String txt = context.getTypeConverter().convertTo(String.class, new File("target/data/split/outbox/result0.txt"));
         assertNotNull(txt);
 
         String[] lines = txt.split(LS);
         assertEquals("Should be " + (size + 1) + " lines", size + 1, lines.length);
-        
-        
-        txt = context.getTypeConverter().convertTo(String.class,
-                                                          new File("target/data/split/outbox/result1.txt"));
+
+        txt = context.getTypeConverter().convertTo(String.class, new File("target/data/split/outbox/result1.txt"));
         assertNotNull(txt);
 
         lines = txt.split(LS);
         assertEquals("Should be " + (size + 1) + " lines", size + 1, lines.length);
 
-        
     }
 
     @Override
@@ -84,20 +81,11 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
-                    .split(body().tokenize(comma))
-                        .parallelProcessing()
-                        .streaming()
-                        .setProperty("split", new SimpleExpression("${exchangeProperty.CamelSplitIndex}"))
-                        .split(body().tokenize(LS))
-                            .parallelProcessing()
-                            .streaming()
-                            .setBody(body().append(":Status=OK").append(LS))
-                            .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt")
-                       .end()
-                       .setBody(new SimpleExpression("${exchangeProperty.split} complete"))
-                       .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt")
-                    .end().to("mock:result");
+                from("file:target/data/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup().split(body().tokenize(comma)).parallelProcessing().streaming()
+                    .setProperty("split", new SimpleExpression("${exchangeProperty.CamelSplitIndex}")).split(body().tokenize(LS)).parallelProcessing().streaming()
+                    .setBody(body().append(":Status=OK").append(LS)).to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end()
+                    .setBody(new SimpleExpression("${exchangeProperty.split} complete"))
+                    .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end().to("mock:result");
 
             }
         };

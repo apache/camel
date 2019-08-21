@@ -42,29 +42,27 @@ public class LoopWithAggregatorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // instruct loop to use copy mode, which mean it will use a copy of the input exchange
-                    // for each loop iteration, instead of keep using the same exchange all over
-                    .loop(3).copy()
-                        .enrich("direct:getTimeStamp", new ExampleAggregationStrategy())
-                        .inOnly("mock:loop")
-                    .end()
-                    .to("mock:result");
+                    // instruct loop to use copy mode, which mean it will use a
+                    // copy of the input exchange
+                    // for each loop iteration, instead of keep using the same
+                    // exchange all over
+                    .loop(3).copy().enrich("direct:getTimeStamp", new ExampleAggregationStrategy()).inOnly("mock:loop").end().to("mock:result");
                 // END SNIPPET: e1
-                
+
                 from("direct:getTimeStamp").process(new Processor() {
 
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         // set the response directly
                         exchange.getIn().setBody("B");
-                        
+
                     }
-                    
+
                 });
             }
         };
     }
-    
+
     public static class ExampleAggregationStrategy implements AggregationStrategy {
 
         @Override
@@ -82,7 +80,7 @@ public class LoopWithAggregatorTest extends ContextTestSupport {
             }
             return original;
         }
-        
+
     }
 
 }

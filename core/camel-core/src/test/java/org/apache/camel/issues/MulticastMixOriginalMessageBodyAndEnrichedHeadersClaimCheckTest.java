@@ -33,31 +33,25 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersClaimCheckTest ext
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                        .handled(true)
-                        // merge the message with the original message body but keep any existing headers
-                        // (we could also use Push/Pop operation instead, then without using the "myOriginalBody" key)
-                        .claimCheck(ClaimCheckOperation.Get, "myOriginalBody", "body")
-                        .to("mock:b");
+                onException(Exception.class).handled(true)
+                    // merge the message with the original message body but keep
+                    // any existing headers
+                    // (we could also use Push/Pop operation instead, then
+                    // without using the "myOriginalBody" key)
+                    .claimCheck(ClaimCheckOperation.Get, "myOriginalBody", "body").to("mock:b");
 
                 from("direct:start")
-                        // we want to preserve the real original message body and then include other headers that have been
-                        // set later during routing
-                        // (we could also use Push/Pop operation instead, then without using the "myOriginalBody" key)
-                        .claimCheck(ClaimCheckOperation.Set, "myOriginalBody")
-                        .setBody(constant("Changed body"))
-                        .setHeader("foo", constant("bar"))
-                        .multicast().stopOnException()
-                            .to("direct:a")
-                            .to("direct:b")
-                        .end();
+                    // we want to preserve the real original message body and
+                    // then include other headers that have been
+                    // set later during routing
+                    // (we could also use Push/Pop operation instead, then
+                    // without using the "myOriginalBody" key)
+                    .claimCheck(ClaimCheckOperation.Set, "myOriginalBody").setBody(constant("Changed body")).setHeader("foo", constant("bar")).multicast().stopOnException()
+                    .to("direct:a").to("direct:b").end();
 
-                from("direct:a")
-                        .to("mock:a");
+                from("direct:a").to("mock:a");
 
-                from("direct:b")
-                        .to("mock:c")
-                        .throwException(new IllegalArgumentException("Forced"));
+                from("direct:b").to("mock:c").throwException(new IllegalArgumentException("Forced"));
             }
         });
         context.start();

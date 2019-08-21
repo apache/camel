@@ -34,12 +34,10 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "combinedServiceFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
-    @XmlElements({
-        @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
-        @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
-        @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
-        @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class) }
-    )
+    @XmlElements({@XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
+                  @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
+                  @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
+                  @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class)})
     private List<ServiceCallServiceFilterConfiguration> serviceFilterConfigurations;
 
     public CombinedServiceCallServiceFilterConfiguration() {
@@ -60,6 +58,7 @@ public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallSe
 
     /**
      * List of ServiceFilter configuration to use
+     * 
      * @param serviceFilterConfigurations
      */
     public void setServiceFilterConfigurations(List<ServiceCallServiceFilterConfiguration> serviceFilterConfigurations) {
@@ -67,7 +66,7 @@ public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallSe
     }
 
     /**
-     *  Add a ServiceFilter configuration
+     * Add a ServiceFilter configuration
      */
     public void addServiceFilterConfiguration(ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
         if (serviceFilterConfigurations == null) {
@@ -82,7 +81,7 @@ public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallSe
     // *************************************************************************
 
     /**
-     *  List of ServiceFilter configuration to use
+     * List of ServiceFilter configuration to use
      */
     public CombinedServiceCallServiceFilterConfiguration serviceFilterConfigurations(List<ServiceCallServiceFilterConfiguration> serviceFilterConfigurations) {
         setServiceFilterConfigurations(serviceFilterConfigurations);
@@ -90,7 +89,7 @@ public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallSe
     }
 
     /**
-     *  Add a ServiceFilter configuration
+     * Add a ServiceFilter configuration
      */
     public CombinedServiceCallServiceFilterConfiguration serviceFilterConfiguration(ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
         addServiceFilterConfiguration(serviceFilterConfiguration);

@@ -29,47 +29,48 @@ import org.junit.Test;
 public class LogCustomFormatterTest extends ContextTestSupport {
 
     private TestExchangeFormatter exchangeFormatter;
-    
-    @Before @Override
+
+    @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
     }
-    
+
     @Test
     public void testCustomFormatterInComponent() throws Exception {
         context.stop();
-        
+
         LogComponent log = new LogComponent();
         exchangeFormatter = new TestExchangeFormatter();
         log.setExchangeFormatter(exchangeFormatter);
         context.addComponent("log", log);
-        
+
         context.start();
-        
+
         String endpointUri = "log:" + LogCustomFormatterTest.class.getCanonicalName();
         template.requestBody(endpointUri, "Hello World");
         template.requestBody(endpointUri, "Hello World");
         template.requestBody(endpointUri + "2", "Hello World");
         template.requestBody(endpointUri + "2", "Hello World");
-        
+
         assertEquals(4, exchangeFormatter.getCounter());
     }
-    
+
     @Test
     public void testCustomFormatterInRegistry() throws Exception {
         context.stop();
-        
+
         exchangeFormatter = new TestExchangeFormatter();
         context.getRegistry().bind("logFormatter", exchangeFormatter);
-        
+
         context.start();
-        
+
         String endpointUri = "log:" + LogCustomFormatterTest.class.getCanonicalName();
         template.requestBody(endpointUri, "Hello World");
         template.requestBody(endpointUri, "Hello World");
         template.requestBody(endpointUri + "2", "Hello World");
         template.requestBody(endpointUri + "2", "Hello World");
-        
+
         assertEquals(4, exchangeFormatter.getCounter());
     }
 
@@ -115,18 +116,18 @@ public class LogCustomFormatterTest extends ContextTestSupport {
     @Test
     public void testFormatterNotPickedUpWithDifferentKey() throws Exception {
         context.stop();
-        
+
         exchangeFormatter = new TestExchangeFormatter();
         context.getRegistry().bind("anotherFormatter", exchangeFormatter);
-        
+
         context.start();
-        
+
         String endpointUri = "log:" + LogCustomFormatterTest.class.getCanonicalName();
         template.requestBody(endpointUri, "Hello World");
         template.requestBody(endpointUri, "Hello World");
         template.requestBody(endpointUri + "2", "Hello World");
         template.requestBody(endpointUri + "2", "Hello World");
-        
+
         assertEquals(0, exchangeFormatter.getCounter());
     }
 
@@ -134,13 +135,13 @@ public class LogCustomFormatterTest extends ContextTestSupport {
         private int counter;
         private boolean addTen;
         private String prefix = "";
-        
+
         @Override
         public String format(Exchange exchange) {
             counter += addTen ? 10 : 1;
             return prefix + exchange.toString();
         }
-        
+
         public int getCounter() {
             return counter;
         }
@@ -161,5 +162,5 @@ public class LogCustomFormatterTest extends ContextTestSupport {
             this.prefix = prefix;
         }
     }
-    
+
 }

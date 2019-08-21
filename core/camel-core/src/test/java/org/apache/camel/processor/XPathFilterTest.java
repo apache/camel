@@ -47,9 +47,7 @@ public class XPathFilterTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").
-                        filter().xpath("/person[@name='James']").
-                        to("mock:result");
+                from("direct:start").filter().xpath("/person[@name='James']").to("mock:result");
                 // END SNIPPET: example
             }
         };

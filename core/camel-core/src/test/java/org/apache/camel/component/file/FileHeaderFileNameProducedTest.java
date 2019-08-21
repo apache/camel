@@ -23,7 +23,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 /**
- * Unit test that tests that the header contains the absolute path to the filename it used.
+ * Unit test that tests that the header contains the absolute path to the
+ * filename it used.
  */
 public class FileHeaderFileNameProducedTest extends ContextTestSupport {
 
@@ -31,23 +32,20 @@ public class FileHeaderFileNameProducedTest extends ContextTestSupport {
     public void testHeaderFileNameProduced() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        // the absolute path to the file written should contain the target folder
+        // the absolute path to the file written should contain the target
+        // folder
         mock.message(0).header(Exchange.FILE_NAME_PRODUCED).contains("target");
 
-        template.requestBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME,
-            "FileHeaderFileNameProducedTest.txt");
+        template.requestBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME, "FileHeaderFileNameProducedTest.txt");
 
         mock.assertIsSatisfied();
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in")
-                    .to("file://target/data/?fileExist=Override")
-                    .to("mock:result");
+                from("direct:in").to("file://target/data/?fileExist=Override").to("mock:result");
             }
         };
     }

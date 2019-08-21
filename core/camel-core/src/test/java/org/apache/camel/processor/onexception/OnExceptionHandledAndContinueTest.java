@@ -35,10 +35,7 @@ public class OnExceptionHandledAndContinueTest extends ContextTestSupport {
                 // should not be allowed
                 onException(IllegalArgumentException.class).continued(true).handled(true);
 
-                from("direct:start")
-                    .to("mock:start")
-                    .throwException(new IllegalArgumentException("Forced"))
-                    .to("mock:result");
+                from("direct:start").to("mock:start").throwException(new IllegalArgumentException("Forced")).to("mock:result");
             }
         });
         try {

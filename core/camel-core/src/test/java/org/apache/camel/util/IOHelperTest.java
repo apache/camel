@@ -67,7 +67,7 @@ public class IOHelperTest extends Assert {
         OutputStream os = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(is, os, 256);
     }
-    
+
     @Test
     public void testCharsetNormalize() throws Exception {
         assertEquals("UTF-8", IOHelper.normalizeCharset("'UTF-8'"));
@@ -78,7 +78,7 @@ public class IOHelperTest extends Assert {
 
     @Test
     public void testLine1() throws Exception {
-        assertReadAsWritten("line1",   "line1", "line1\n");
+        assertReadAsWritten("line1", "line1", "line1\n");
     }
 
     @Test
@@ -88,7 +88,7 @@ public class IOHelperTest extends Assert {
 
     @Test
     public void testLine2() throws Exception {
-        assertReadAsWritten("line2",   "line1\nline2", "line1\nline2\n");
+        assertReadAsWritten("line2", "line1\nline2", "line1\nline2\n");
     }
 
     @Test
@@ -106,7 +106,7 @@ public class IOHelperTest extends Assert {
     private File tempFile(String testname) throws Exception {
         return File.createTempFile(testname, "");
     }
- 
+
     private void write(File file, String text) throws Exception {
         PrintWriter out = new PrintWriter(file);
         out.print(text);
@@ -125,14 +125,14 @@ public class IOHelperTest extends Assert {
         exchange.getIn().removeHeader(Exchange.CHARSET_NAME);
         exchange.setProperty(Exchange.CHARSET_NAME, "iso-8859-1");
         assertEquals("iso-8859-1", ExchangeHelper.getCharsetName(exchange, false));
-        
+
     }
-    
+
     @Test
     public void testGetCharsetNameFromContentType() throws Exception {
         String charsetName = IOHelper.getCharsetNameFromContentType("text/html; charset=iso-8859-1");
         assertEquals("iso-8859-1", charsetName);
-        
+
         charsetName = IOHelper.getCharsetNameFromContentType("text/html");
         assertEquals("UTF-8", charsetName);
     }

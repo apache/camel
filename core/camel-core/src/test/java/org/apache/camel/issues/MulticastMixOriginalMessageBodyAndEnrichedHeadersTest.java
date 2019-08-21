@@ -34,27 +34,18 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersTest extends Conte
             public void configure() throws Exception {
                 context.setAllowUseOriginalMessage(true);
 
-                onException(Exception.class)
-                        .handled(true)
-                        // we want to preserve the real original message body and then include other headers that have been
-                        // set later during routing
-                        .transform(simple("${exchangeProperty[CamelParentUnitOfWork].getOriginalInMessage().getBody()}"))
-                        .to("mock:b");
+                onException(Exception.class).handled(true)
+                    // we want to preserve the real original message body and
+                    // then include other headers that have been
+                    // set later during routing
+                    .transform(simple("${exchangeProperty[CamelParentUnitOfWork].getOriginalInMessage().getBody()}")).to("mock:b");
 
-                from("direct:start")
-                        .setBody(constant("Changed body"))
-                        .setHeader("foo", constant("bar"))
-                        .multicast().shareUnitOfWork().stopOnException()
-                            .to("direct:a")
-                            .to("direct:b")
-                        .end();
+                from("direct:start").setBody(constant("Changed body")).setHeader("foo", constant("bar")).multicast().shareUnitOfWork().stopOnException().to("direct:a")
+                    .to("direct:b").end();
 
-                from("direct:a")
-                        .to("mock:a");
+                from("direct:a").to("mock:a");
 
-                from("direct:b")
-                        .to("mock:c")
-                        .throwException(new IllegalArgumentException("Forced"));
+                from("direct:b").to("mock:c").throwException(new IllegalArgumentException("Forced"));
             }
         });
         context.start();

@@ -44,9 +44,7 @@ public class AggregatePreCompleteAwareStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new BodyInPreCompleteAggregatingStrategy())
-                        .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new BodyInPreCompleteAggregatingStrategy()).to("mock:aggregated");
             }
         };
     }

@@ -53,23 +53,17 @@ public class MulticastUnitOfWorkTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setTracing(true);
 
-                from("direct:start")
-                        .process(new MyUOWProcessor("A"))
-                        .multicast().to("direct:foo", "direct:bar");
+                from("direct:start").process(new MyUOWProcessor("A")).multicast().to("direct:foo", "direct:bar");
 
-                from("direct:foo")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertNull("First exchange is not complete yet", sync);
-                            }
-                        })
-                        .process(new MyUOWProcessor("B"))
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                lastOne = "processor";
-                            }
-                        })
-                        .to("mock:result");
+                from("direct:foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertNull("First exchange is not complete yet", sync);
+                    }
+                }).process(new MyUOWProcessor("B")).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        lastOne = "processor";
+                    }
+                }).to("mock:result");
 
                 from("direct:bar").to("mock:result");
             }

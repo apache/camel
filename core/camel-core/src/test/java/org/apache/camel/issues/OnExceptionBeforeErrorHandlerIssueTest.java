@@ -68,27 +68,23 @@ public class OnExceptionBeforeErrorHandlerIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                        .handled(true)
-                        .setBody().constant("Handled")
-                        .to("mock:error")
-                        .end();
+                onException(IllegalArgumentException.class).handled(true).setBody().constant("Handled").to("mock:error").end();
 
-                // usually error handler should be defined first (before onException),
+                // usually error handler should be defined first (before
+                // onException),
                 // but its not enforced
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage());
 
-                from("direct:start").routeId("foo").noAutoStartup()
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                if ("illegal".equals(body)) {
-                                    throw new IllegalArgumentException("I cannot do this");
-                                } else if ("kabom".equals(body)) {
-                                    throw new RuntimeException("Kabom");
-                                }
-                            }
-                        }).to("mock:result");
+                from("direct:start").routeId("foo").noAutoStartup().process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if ("illegal".equals(body)) {
+                            throw new IllegalArgumentException("I cannot do this");
+                        } else if ("kabom".equals(body)) {
+                            throw new RuntimeException("Kabom");
+                        }
+                    }
+                }).to("mock:result");
             }
         };
     }

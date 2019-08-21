@@ -66,9 +66,9 @@ public class XPathSplitStreamTest extends ContextTestSupport {
 
                 // START SNIPPET: e1
                 from("file://target/data/file/xpathsplit?initialDelay=0&delay=10")
-                    // set documentType to org.xml.sax.InputSource then Camel will use SAX to split the file
-                    .split(personXPath).streaming()
-                    .to("mock:splitted");
+                    // set documentType to org.xml.sax.InputSource then Camel
+                    // will use SAX to split the file
+                    .split(personXPath).streaming().to("mock:splitted");
                 // END SNIPPET: e1
             }
         };

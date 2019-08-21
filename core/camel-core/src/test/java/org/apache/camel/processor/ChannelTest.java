@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -46,14 +47,13 @@ public class ChannelTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
-                from("direct:start")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            if (counter++ < 1) {
-                                throw new IllegalArgumentException("Damn");
-                            }
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        if (counter++ < 1) {
+                            throw new IllegalArgumentException("Damn");
                         }
-                    }).delay(10).to("mock:result");
+                    }
+                }).delay(10).to("mock:result");
             }
         };
     }

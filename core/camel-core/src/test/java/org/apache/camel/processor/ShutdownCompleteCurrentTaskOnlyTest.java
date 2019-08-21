@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
@@ -64,8 +65,7 @@ public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from(url)
                     // let it complete only current task so we shutdown faster
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
-                    .delay(1000).syncDelayed().to("seda:foo");
+                    .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly).delay(1000).syncDelayed().to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }

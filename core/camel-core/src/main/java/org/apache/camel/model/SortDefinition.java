@@ -56,7 +56,7 @@ public class SortDefinition<T> extends ExpressionNode {
     public String toString() {
         return "sort[" + getExpression() + " by: " + (comparatorRef != null ? "ref:" + comparatorRef : comparator) + "]";
     }
-    
+
     @Override
     public String getShortName() {
         return "sort";
@@ -95,7 +95,7 @@ public class SortDefinition<T> extends ExpressionNode {
     /**
      * Sets the comparator to use for sorting
      *
-     * @param comparator  the comparator to use for sorting
+     * @param comparator the comparator to use for sorting
      * @return the builder
      */
     public SortDefinition<T> comparator(Comparator<T> comparator) {

@@ -91,15 +91,13 @@ public class OnCompletionMoreGlobalRouteCompletionTest extends ContextTestSuppor
                 onCompletion().onFailureOnly().to("log:global").to("mock:failure");
 
                 from("direct:start")
-                    // no route on completion so this one uses all the global ones
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                    // no route on completion so this one uses all the global
+                    // ones
+                    .process(new MyProcessor()).to("mock:result");
 
                 from("direct:other")
                     // this route completion should override the global
-                    .onCompletion().to("mock:route").end()
-                    .process(new MyProcessor())
-                    .to("mock:other");
+                    .onCompletion().to("mock:route").end().process(new MyProcessor()).to("mock:other");
             }
         };
     }

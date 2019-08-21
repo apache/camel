@@ -77,29 +77,17 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
 
                 from("direct:start")
                     // wraps the entire route in the same policy
-                    .policy("foo")
-                        .to("mock:foo")
-                        .to("async:bye:camel")
-                        .to("mock:bar")
-                        .to("mock:result");
+                    .policy("foo").to("mock:foo").to("async:bye:camel").to("mock:bar").to("mock:result");
 
-                from("direct:send")
-                    .to("mock:before")
-                    .to("log:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    .to("direct:start")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    .to("log:after")
-                    .to("mock:after")
-                    .to("mock:response");
+                from("direct:send").to("mock:before").to("log:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                }).to("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadName = Thread.currentThread().getName();
+                    }
+                }).to("log:after").to("mock:after").to("mock:response");
             }
         };
     }
@@ -114,8 +102,7 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
         }
 
         @Override
-        public void beforeWrap(RouteContext routeContext,
-                               NamedNode definition) {
+        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
             // no need to modify the route
         }
 
@@ -151,6 +138,5 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
             return invoked;
         }
     }
-
 
 }

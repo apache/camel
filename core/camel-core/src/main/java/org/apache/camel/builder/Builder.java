@@ -26,14 +26,15 @@ import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A helper class for including portions of the <a
- * href="http://camel.apache.org/expression.html">expression</a> and
- * <a href="http://camel.apache.org/predicate.html">predicate</a> <a
- * href="http://camel.apache.org/dsl.html">Java DSL</a>
+ * A helper class for including portions of the
+ * <a href="http://camel.apache.org/expression.html">expression</a> and
+ * <a href="http://camel.apache.org/predicate.html">predicate</a>
+ * <a href="http://camel.apache.org/dsl.html">Java DSL</a>
  * <p/>
- * Implementation of this builder should favor build expressions using the definition classes
- * from the <tt>org.apache.camel.model.language</tt> package, to build the routes using the same
- * types as it would happen when using XML DSL.
+ * Implementation of this builder should favor build expressions using the
+ * definition classes from the <tt>org.apache.camel.model.language</tt> package,
+ * to build the routes using the same types as it would happen when using XML
+ * DSL.
  */
 public final class Builder {
 
@@ -44,12 +45,14 @@ public final class Builder {
     }
 
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
-     * value builder.
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean
+     * expression</a> value builder.
      * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     * This method accepts dual parameters. Either an bean instance or a
+     * reference to a bean (String).
      *
-     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @param beanOrBeanRef either an instanceof a bean or a reference to bean
+     *            to lookup in the Registry
      * @return the builder
      */
     public static ValueBuilder bean(final Object beanOrBeanRef) {
@@ -57,31 +60,33 @@ public final class Builder {
     }
 
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
-     * value builder.
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean
+     * expression</a> value builder.
      * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     * This method accepts dual parameters. Either an bean instance or a
+     * reference to a bean (String).
      *
-     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @param beanOrBeanRef either an instanceof a bean or a reference to bean
+     *            to lookup in the Registry
      * @param method the method name
      * @return the builder
      */
     public static ValueBuilder bean(Object beanOrBeanRef, String method) {
         Expression exp;
         if (beanOrBeanRef instanceof String) {
-            exp = new MethodCallExpression((String) beanOrBeanRef, method);
+            exp = new MethodCallExpression((String)beanOrBeanRef, method);
         } else {
             exp = new MethodCallExpression(beanOrBeanRef, method);
         }
         return new ValueBuilder(exp);
     }
-    
+
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
-     * value builder
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean
+     * expression</a> value builder
      *
      * @param beanType the bean class which will be invoked
-     * @param method   name of method to invoke
+     * @param method name of method to invoke
      * @return the builder
      */
     public static ValueBuilder bean(Class<?> beanType, String method) {
@@ -95,13 +100,13 @@ public final class Builder {
     public static ValueBuilder constant(Object value) {
         Expression exp;
         if (value instanceof String) {
-            exp = new ConstantExpression((String) value);
+            exp = new ConstantExpression((String)value);
         } else {
             exp = ExpressionBuilder.constantExpression(value);
         }
         return new ValueBuilder(exp);
     }
-    
+
     /**
      * Returns a constant expression
      */
@@ -111,13 +116,13 @@ public final class Builder {
     }
 
     /**
-     * Returns a simple expression  
+     * Returns a simple expression
      */
     public static ValueBuilder simple(String value) {
         Expression exp = new SimpleExpression(value);
         return new ValueBuilder(exp);
     }
-    
+
     /**
      * Returns a simple expression
      */
@@ -177,15 +182,17 @@ public final class Builder {
     }
 
     /**
-     * Returns a predicate and value builder for the exception message on an exchange
+     * Returns a predicate and value builder for the exception message on an
+     * exchange
      */
     public static ValueBuilder exceptionMessage() {
         Expression exp = new SimpleExpression("${exception.message}");
         return new ValueBuilder(exp);
     }
-    
+
     /**
-     * Returns a predicate and value builder for the exception stacktrace on an exchange
+     * Returns a predicate and value builder for the exception stacktrace on an
+     * exchange
      */
     public static ValueBuilder exceptionStackTrace() {
         Expression exp = new SimpleExpression("${exception.stacktrace}");
@@ -193,7 +200,7 @@ public final class Builder {
     }
 
     /**
-     * Returns an expression that replaces all occurrences of the regular 
+     * Returns an expression that replaces all occurrences of the regular
      * expression with the given replacement
      */
     public static ValueBuilder regexReplaceAll(Expression content, String regex, String replacement) {
@@ -202,7 +209,7 @@ public final class Builder {
     }
 
     /**
-     * Returns an expression that replaces all occurrences of the regular 
+     * Returns an expression that replaces all occurrences of the regular
      * expression with the given replacement
      */
     public static ValueBuilder regexReplaceAll(Expression content, String regex, Expression replacement) {

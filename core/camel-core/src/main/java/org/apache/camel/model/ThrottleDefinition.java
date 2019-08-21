@@ -46,11 +46,13 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute @Metadata(defaultValue = "1000")
+    @XmlAttribute
+    @Metadata(defaultValue = "1000")
     private Long timePeriodMillis;
     @XmlAttribute
     private Boolean asyncDelayed;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean callerRunsWhenRejected;
     @XmlAttribute
     private Boolean rejectExecution;
@@ -78,7 +80,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     public String toString() {
         return "Throttle[" + description() + "]";
     }
-    
+
     protected String description() {
         return getExpression() + " request per " + getTimePeriodMillis() + " millis";
     }
@@ -98,18 +100,19 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     /**
      * Sets the time period during which the maximum request count is valid for
      *
-     * @param timePeriodMillis  period in millis
+     * @param timePeriodMillis period in millis
      * @return the builder
      */
     public ThrottleDefinition timePeriodMillis(long timePeriodMillis) {
         setTimePeriodMillis(timePeriodMillis);
         return this;
     }
-    
+
     /**
      * Sets the time period during which the maximum request count per period
      *
-     * @param maximumRequestsPerPeriod  the maximum request count number per time period
+     * @param maximumRequestsPerPeriod the maximum request count number per time
+     *            period
      * @return the builder
      */
     public ThrottleDefinition maximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
@@ -118,7 +121,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     /**
-     * Whether or not the caller should run the task when it was rejected by the thread pool.
+     * Whether or not the caller should run the task when it was rejected by the
+     * thread pool.
      * <p/>
      * Is by default <tt>true</tt>
      *
@@ -131,7 +135,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     /**
-     * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
+     * Enables asynchronous delay which means the thread will <b>not</b> block
+     * while delaying.
      *
      * @return the builder
      */
@@ -139,13 +144,15 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         setAsyncDelayed(true);
         return this;
     }
-    
+
     /**
-     * Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit
+     * Whether or not throttler throws the ThrottlerRejectedExecutionException
+     * when the exchange exceeds the request limit
      * <p/>
      * Is by default <tt>false</tt>
      *
-     * @param rejectExecution throw the RejectExecutionException if the exchange exceeds the request limit 
+     * @param rejectExecution throw the RejectExecutionException if the exchange
+     *            exceeds the request limit
      * @return the builder
      */
     public ThrottleDefinition rejectExecution(boolean rejectExecution) {
@@ -156,7 +163,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     /**
      * To use a custom thread pool (ScheduledExecutorService) by the throttler.
      *
-     * @param executorService  the custom thread pool (must be scheduled)
+     * @param executorService the custom thread pool (must be scheduled)
      * @return the builder
      */
     @Override
@@ -168,7 +175,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     /**
      * To use a custom thread pool (ScheduledExecutorService) by the throttler.
      *
-     * @param executorServiceRef the reference id of the thread pool (must be scheduled)
+     * @param executorServiceRef the reference id of the thread pool (must be
+     *            scheduled)
      * @return the builder
      */
     @Override
@@ -181,7 +189,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     // -------------------------------------------------------------------------
 
     /**
-     * Expression to configure the maximum number of messages to throttle per request
+     * Expression to configure the maximum number of messages to throttle per
+     * request
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {
@@ -232,7 +241,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }
-    
+
     public Boolean getRejectExecution() {
         return rejectExecution;
     }
@@ -242,8 +251,9 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     /**
-     * The expression used to calculate the correlation key to use for throttle grouping.
-     * The Exchange which has the same correlation key is throttled together.
+     * The expression used to calculate the correlation key to use for throttle
+     * grouping. The Exchange which has the same correlation key is throttled
+     * together.
      */
     public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
         this.correlationExpression = correlationExpression;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -52,9 +53,7 @@ public class FromFileMoveDoneCustomHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/inbox?initialDelay=0&delay=10&move=${header.bar}")
-                    .setHeader("bar", constant("dones/mydone.txt"))
-                    .transform(constant("Bye World"))
+                from("file:target/data/inbox?initialDelay=0&delay=10&move=${header.bar}").setHeader("bar", constant("dones/mydone.txt")).transform(constant("Bye World"))
                     .to("mock:result", "file:target/data/outbox");
             }
         };

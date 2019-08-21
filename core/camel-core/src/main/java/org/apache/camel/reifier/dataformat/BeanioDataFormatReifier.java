@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 public class BeanioDataFormatReifier extends DataFormatReifier<BeanioDataFormat> {
 
     public BeanioDataFormatReifier(DataFormatDefinition definition) {
-        super((BeanioDataFormat) definition);
+        super((BeanioDataFormat)definition);
     }
 
     @Override

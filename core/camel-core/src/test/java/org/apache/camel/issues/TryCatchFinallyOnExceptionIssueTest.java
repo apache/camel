@@ -24,7 +24,8 @@ public class TryCatchFinallyOnExceptionIssueTest extends ContextTestSupport {
 
     @Test
     public void testTryCatchFinallyOnExceptionIssue() throws Exception {
-        // doTry .. doCatch .. doFinally uses its own error handling so we wont get one here
+        // doTry .. doCatch .. doFinally uses its own error handling so we wont
+        // get one here
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
         getMockEndpoint("mock:finally").expectedMessageCount(1);
@@ -40,19 +41,8 @@ public class TryCatchFinallyOnExceptionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start")
-                    .onException(Exception.class)
-                        .handled(true)
-                        .redeliveryDelay(0)
-                        .maximumRedeliveries(2)
-                        .to("mock:error")
-                    .end()
-                    .doTry()
-                        .throwException(new IllegalArgumentException("Damn"))
-                    .doFinally()
-                        .to("mock:finally")
-                    .end()
-                    .to("mock:end");
+                from("seda:start").onException(Exception.class).handled(true).redeliveryDelay(0).maximumRedeliveries(2).to("mock:error").end().doTry()
+                    .throwException(new IllegalArgumentException("Damn")).doFinally().to("mock:finally").end().to("mock:end");
             }
         };
     }

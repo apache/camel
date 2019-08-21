@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 public class AvroDataFormatReifier extends DataFormatReifier<AvroDataFormat> {
 
     public AvroDataFormatReifier(DataFormatDefinition definition) {
-        super((AvroDataFormat) definition);
+        super((AvroDataFormat)definition);
     }
 
     @Override

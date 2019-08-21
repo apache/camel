@@ -38,8 +38,7 @@ public class ToDynamicRawAndXPathTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .toD("mock:RAW(se+ret)+language:xpath:/order/@uri");
+                from("direct:start").toD("mock:RAW(se+ret)+language:xpath:/order/@uri");
             }
         };
     }

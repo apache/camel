@@ -80,8 +80,7 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
         }
 
         @Override
-        public void beforeWrap(RouteContext routeContext,
-                               NamedNode definition) {
+        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
             // no need to modify the route
         }
 

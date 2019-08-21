@@ -42,16 +42,9 @@ public class SplitterThrowExceptionInExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(ExpressionEvaluationException.class)
-                        .handled(true).to("mock://error");
+                onException(ExpressionEvaluationException.class).handled(true).to("mock://error");
 
-                from("direct://start")
-                    .onException(ExpressionEvaluationException.class)
-                        .handled(true).to("mock://error2")
-                    .end()
-                    .split(new MyExpression())
-                        .to("mock://split")
-                    .end()
+                from("direct://start").onException(ExpressionEvaluationException.class).handled(true).to("mock://error2").end().split(new MyExpression()).to("mock://split").end()
                     .to("log:result");
             }
         };
@@ -61,7 +54,8 @@ public class SplitterThrowExceptionInExpressionTest extends ContextTestSupport {
 
         @Override
         public <T> T evaluate(Exchange exchange, Class<T> type) {
-            // force an exception early, to test that the onException error handlers
+            // force an exception early, to test that the onException error
+            // handlers
             // can kick in anyway
             throw new ExpressionEvaluationException(null, exchange, null);
         }

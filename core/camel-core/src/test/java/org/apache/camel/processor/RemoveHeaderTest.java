@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -34,7 +35,7 @@ public class RemoveHeaderTest extends ContextTestSupport {
     public void testSetHeaderMidRouteThenRemove() throws Exception {
         mid.expectedMessageCount(1);
         end.expectedMessageCount(1);
-        
+
         template.sendBody("direct:start", "<blah/>");
 
         // make sure we got the message
@@ -45,12 +46,12 @@ public class RemoveHeaderTest extends ContextTestSupport {
         String actualHeaderValue = midExchange.getIn().getHeader(headerName, String.class);
 
         assertEquals(expectedHeaderValue, actualHeaderValue);
-        
+
         List<Exchange> endExchanges = end.getExchanges();
         Exchange endExchange = endExchanges.get(0);
-        
+
         // header should be removed
-        assertNull(endExchange.getIn().getHeader(headerName, String.class));        
+        assertNull(endExchange.getIn().getHeader(headerName, String.class));
     }
 
     @Override
@@ -65,9 +66,7 @@ public class RemoveHeaderTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                    setHeader(headerName).constant(expectedHeaderValue).to("mock:mid").
-                    removeHeader(headerName).to("mock:end");
+                from("direct:start").setHeader(headerName).constant(expectedHeaderValue).to("mock:mid").removeHeader(headerName).to("mock:end");
             }
         };
     }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -50,18 +51,11 @@ public class FileConsumerExtendedAttributesTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                fromF("file://%s/basic?initialDelay=0&delay=10&extendedAttributes=basic:*", ROOT)
-                    .convertBodyTo(String.class)
-                    .to("mock:basic");
-                fromF("file://%s/basic-as-default?initialDelay=0&delay=10&extendedAttributes=*", ROOT)
-                    .convertBodyTo(String.class)
-                    .to("mock:basic-as-default");
-                fromF("file://%s/basic-as-default-with-filter?initialDelay=0&delay=10&extendedAttributes=size,lastModifiedTime,lastAccessTime", ROOT)
-                    .convertBodyTo(String.class)
+                fromF("file://%s/basic?initialDelay=0&delay=10&extendedAttributes=basic:*", ROOT).convertBodyTo(String.class).to("mock:basic");
+                fromF("file://%s/basic-as-default?initialDelay=0&delay=10&extendedAttributes=*", ROOT).convertBodyTo(String.class).to("mock:basic-as-default");
+                fromF("file://%s/basic-as-default-with-filter?initialDelay=0&delay=10&extendedAttributes=size,lastModifiedTime,lastAccessTime", ROOT).convertBodyTo(String.class)
                     .to("mock:basic-as-default-with-filter");
-                fromF("file://%s/posix?initialDelay=0&delay=10&extendedAttributes=posix:*", ROOT)
-                    .convertBodyTo(String.class)
-                    .to("mock:posix");
+                fromF("file://%s/posix?initialDelay=0&delay=10&extendedAttributes=posix:*", ROOT).convertBodyTo(String.class).to("mock:posix");
             }
         };
     }

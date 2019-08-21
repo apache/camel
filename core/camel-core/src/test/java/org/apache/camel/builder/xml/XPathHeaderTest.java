@@ -63,15 +63,11 @@ public class XPathHeaderTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:in").choice()
-                    // using $headerName is special notation in Camel to get the header key
-                    .when().xpath("$type = 'Camel'")
-                        .to("mock:camel")
+                    // using $headerName is special notation in Camel to get the
+                    // header key
+                    .when().xpath("$type = 'Camel'").to("mock:camel")
                     // here we test for the body name tag
-                    .when().xpath("//name = 'Kong'")
-                        .to("mock:donkey")
-                    .otherwise()
-                        .to("mock:other")
-                    .end();
+                    .when().xpath("//name = 'Kong'").to("mock:donkey").otherwise().to("mock:other").end();
                 // END SNIPPET: e1
             }
         };

@@ -25,7 +25,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Grok data format is used for unmarshalling unstructured data to objects using Logstash based Grok patterns.
+ * The Grok data format is used for unmarshalling unstructured data to objects
+ * using Logstash based Grok patterns.
  */
 @Metadata(label = "dataformat,transformation", title = "Grok", firstVersion = "3.0.0")
 @XmlRootElement(name = "grok")
@@ -67,7 +68,8 @@ public class GrokDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Turns on flattened mode. In flattened mode the exception is thrown when there are multiple pattern matches with same key.
+     * Turns on flattened mode. In flattened mode the exception is thrown when
+     * there are multiple pattern matches with same key.
      */
     public void setFlattened(boolean flattened) {
         this.flattened = flattened;
@@ -77,10 +79,9 @@ public class GrokDataFormat extends DataFormatDefinition {
         return allowMultipleMatchesPerLine;
     }
 
-
     /**
-     * If false, every line of input is matched for pattern only once.
-     * Otherwise the line can be scanned multiple times when non-terminal pattern is used.
+     * If false, every line of input is matched for pattern only once. Otherwise
+     * the line can be scanned multiple times when non-terminal pattern is used.
      */
     public void setAllowMultipleMatchesPerLine(boolean allowMultipleMatchesPerLine) {
         this.allowMultipleMatchesPerLine = allowMultipleMatchesPerLine;
@@ -91,7 +92,8 @@ public class GrokDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
+     * Whether to capture named expressions only or not (i.e. %{IP:ip} but not
+     * ${IP})
      */
     public void setNamedOnly(boolean namedOnly) {
         this.namedOnly = namedOnly;
