@@ -116,7 +116,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         if (!contentCache || cacheCleared) {
-            loadResource(resourceUri);
+            loadResource(resourceUri, xslt);
         }
         super.onExchange(exchange);
     }
@@ -382,7 +382,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
      * @throws TransformerException is thrown if error loading resource
      * @throws IOException is thrown if error loading resource
      */
-    protected void loadResource(String resourceUri) throws TransformerException, IOException {
+    protected void loadResource(String resourceUri, XsltBuilder xslt) throws TransformerException, IOException {
         log.trace("{} loading schema resource: {}", this, resourceUri);
         Source source = xslt.getUriResolver().resolve(resourceUri, null);
         if (source == null) {
@@ -398,13 +398,19 @@ public class XsltEndpoint extends ProcessorEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
+        // the processor is the xslt builder
+        setXslt(createXsltBuilder());
+        setProcessor(getXslt());
+    }
+
+    protected XsltBuilder createXsltBuilder() throws Exception {
         final CamelContext ctx = getCamelContext();
         final ClassResolver resolver = ctx.getClassResolver();
         final Injector injector = ctx.getInjector();
 
         log.debug("{} using schema resource: {}", this, resourceUri);
 
-        this.xslt = injector.newInstance(XsltBuilder.class);
+        final XsltBuilder xslt = injector.newInstance(XsltBuilder.class);
 
         boolean useSaxon = false;
         if (transformerFactoryClass == null && (saxon || saxonExtensionFunctions != null)) {
@@ -452,10 +458,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         }
 
         // must load resource first which sets a template and do a stylesheet compilation to catch errors early
-        loadResource(resourceUri);
+        loadResource(resourceUri, xslt);
 
-        // the processor is the xslt builder
-        setProcessor(xslt);
+        return xslt;
     }
 
     protected void configureOutput(XsltBuilder xslt, String output) throws Exception {
@@ -479,6 +484,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ServiceHelper.stopService(xslt);
+        ServiceHelper.stopService(getXslt());
     }
 }
