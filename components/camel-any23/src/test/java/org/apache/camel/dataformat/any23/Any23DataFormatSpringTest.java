@@ -26,32 +26,31 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Any23DataFormatSpringTest extends CamelSpringTestSupport {
 
-  private final String BASEURI = "http://mock.foo/bar";
+    private final String baseURI = "http://mock.foo/bar";
 
-  @Test
-  public void test() throws Exception {
-    MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-    template.sendBody("direct:start", "bar");
-    List<Exchange> list = resultEndpoint.getReceivedExchanges();
-    for (Exchange exchange : list) {
-      Message in = exchange.getIn();
-      String resultingRDF = in.getBody(String.class);
-      InputStream toInputStream = IOUtils.toInputStream(resultingRDF);
-      Model parse = Rio.parse(toInputStream, BASEURI, RDFFormat.TURTLE);
-      assertEquals(parse.size(), 1);
+    @Test
+    public void test() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        template.sendBody("direct:start", "bar");
+        List<Exchange> list = resultEndpoint.getReceivedExchanges();
+        for (Exchange exchange : list) {
+            Message in = exchange.getIn();
+            String resultingRDF = in.getBody(String.class);
+            InputStream toInputStream = IOUtils.toInputStream(resultingRDF);
+            Model parse = Rio.parse(toInputStream, baseURI, RDFFormat.TURTLE);
+            assertEquals(parse.size(), 1);
+        }
     }
-  }
 
-  @Override
-  protected AbstractApplicationContext createApplicationContext() {
-    return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/any23/spring/SpringAny23DataFormatTest.xml");
-  }
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/any23/spring/SpringAny23DataFormatTest.xml");
+    }
 
 }

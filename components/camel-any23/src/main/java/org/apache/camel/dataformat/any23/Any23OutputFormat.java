@@ -17,5 +17,5 @@
 package org.apache.camel.dataformat.any23;
 
 public enum Any23OutputFormat {
-  NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL
+    NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL
 }

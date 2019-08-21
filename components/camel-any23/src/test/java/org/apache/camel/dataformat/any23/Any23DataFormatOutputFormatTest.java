@@ -33,30 +33,30 @@ import org.junit.Test;
 
 public class Any23DataFormatOutputFormatTest extends CamelTestSupport {
 
-  private final String BASEURI = "http://mock.foo/bar";
+    private final String baseURI = "http://mock.foo/bar";
 
-  @Test
-  public void test() throws Exception {
-    MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-    String contenhtml = Any23TestSupport.loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
-    template.sendBody("direct:start", contenhtml);
-    List<Exchange> list = resultEndpoint.getReceivedExchanges();
-    for (Exchange exchange : list) {
-      Message in = exchange.getIn();
-      String resultingRDF = in.getBody(String.class);
-      InputStream toInputStream = IOUtils.toInputStream(resultingRDF);
-      Model parse = Rio.parse(toInputStream, BASEURI, RDFFormat.TURTLE);
-      assertEquals(parse.size(), 28);
+    @Test
+    public void test() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        String contenhtml = Any23TestSupport.loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
+        template.sendBody("direct:start", contenhtml);
+        List<Exchange> list = resultEndpoint.getReceivedExchanges();
+        for (Exchange exchange : list) {
+            Message in = exchange.getIn();
+            String resultingRDF = in.getBody(String.class);
+            InputStream toInputStream = IOUtils.toInputStream(resultingRDF);
+            Model parse = Rio.parse(toInputStream, baseURI, RDFFormat.TURTLE);
+            assertEquals(parse.size(), 28);
+        }
     }
-  }
 
-  @Override
-  protected RouteBuilder createRouteBuilder() {
-    return new RouteBuilder() {
-      public void configure() {
-        from("direct:start").unmarshal().any23(BASEURI, Any23Type.TURTLE).to("mock:result");
-      }
-    };
-  }
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:start").unmarshal().any23(baseURI, Any23Type.TURTLE).to("mock:result");
+            }
+        };
+    }
 
 }

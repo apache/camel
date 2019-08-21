@@ -50,159 +50,159 @@ import org.slf4j.LoggerFactory;
 @Dataformat("any23")
 public class Any23DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
-  /*
+    /*
      * Our Logger
-   */
-  private static final Logger LOG = LoggerFactory.getLogger(Any23DataFormat.class);
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(Any23DataFormat.class);
 
-  private Any23 any23;
+    private Any23 any23;
 
-  private Map<String, String> configurations;
-  private List<String> extractors;
-  private Any23OutputFormat outputFormat;
-  private String baseURI;
+    private Map<String, String> configurations;
+    private List<String> extractors;
+    private Any23OutputFormat outputFormat;
+    private String baseURI;
 
-  public Any23DataFormat() {
-  }
-
-  public Any23DataFormat(String baseURI) {
-    this.baseURI = baseURI;
-  }
-
-  public Any23DataFormat(Any23OutputFormat outputFormat, String baseURI) {
-    this.outputFormat = outputFormat;
-    this.baseURI = baseURI;
-  }
-
-  public Any23DataFormat(Map<String, String> configurations, Any23OutputFormat outputFormat, String baseURI) {
-    this.configurations = configurations;
-    this.outputFormat = outputFormat;
-    this.baseURI = baseURI;
-  }
-
-  public Any23DataFormat(Map<String, String> configurations, List<String> extractors, Any23OutputFormat outputFormat, String baseURI) {
-    this.configurations = configurations;
-    this.extractors = extractors;
-    this.outputFormat = outputFormat;
-    this.baseURI = baseURI;
-  }
-
-  @Override
-  public String getDataFormatName() {
-    return "any23";
-  }
-
-  /**
-   * Marshal data. Generate RDF.
-   */
-  public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-    outputStreamWriter.write("<html><script type=\"application/ld+json\">\n");
-    outputStreamWriter.flush();
-    Model mdl = (Model) object;
-    Rio.write(mdl, outputStream, RDFFormat.JSONLD);
-    outputStreamWriter.write("\n</script></html>");
-    outputStreamWriter.flush();
-    outputStreamWriter.close();
-    outputStream.close();
-  }
-
-  /**
-   * Unmarshal the data
-   */
-  public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-    ByteArrayDocumentSource source = new ByteArrayDocumentSource(inputStream, this.baseURI, null);
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    TripleHandler handler = Any23Utils.obtainHandler(outputFormat, out);
-    any23.extract(source, handler);
-    handler.close();
-    Object respon;
-    if (outputFormat == Any23OutputFormat.RDF4JMODEL) {
-      respon = ((RDF4JModelWriter) handler).getModel();
-    } else {
-      respon = IOUtils.toString(out.toByteArray());
+    public Any23DataFormat() {
     }
-    return respon;
 
-  }
-
-  @Override
-  protected void doStart() throws Exception {
-    ModifiableConfiguration conf = null;
-    String[] extrArray = null;
-    if (extractors != null && !extractors.isEmpty()) {
-      extrArray = new String[extractors.size()];
-      extrArray = extractors.toArray(extrArray);
+    public Any23DataFormat(String baseURI) {
+        this.baseURI = baseURI;
     }
-    if (configurations != null && !configurations.isEmpty()) {
-      conf = DefaultConfiguration.copy();
-      for (Entry<String, String> entry : configurations.entrySet()) {
-        conf.setProperty(entry.getKey(), entry.getValue());
-      }
+
+    public Any23DataFormat(Any23OutputFormat outputFormat, String baseURI) {
+        this.outputFormat = outputFormat;
+        this.baseURI = baseURI;
     }
-    if (outputFormat == null) {
-      //Default output format
-      outputFormat = Any23OutputFormat.RDF4JMODEL;
+
+    public Any23DataFormat(Map<String, String> configurations, Any23OutputFormat outputFormat, String baseURI) {
+        this.configurations = configurations;
+        this.outputFormat = outputFormat;
+        this.baseURI = baseURI;
     }
-    if (conf == null && extrArray == null) {
-      any23 = new Any23();
-    } else if (conf != null && extrArray == null) {
-      any23 = new Any23(conf);
-    } else if (conf == null && extrArray != null) {
-      any23 = new Any23(extrArray);
-    } else if (conf != null && extrArray != null) {
-      any23 = new Any23(conf, extrArray);
+
+    public Any23DataFormat(Map<String, String> configurations, List<String> extractors, Any23OutputFormat outputFormat, String baseURI) {
+        this.configurations = configurations;
+        this.extractors = extractors;
+        this.outputFormat = outputFormat;
+        this.baseURI = baseURI;
     }
-  }
 
-  @Override
-  protected void doStop() throws Exception {
-    // noop
-  }
+    @Override
+    public String getDataFormatName() {
+        return "any23";
+    }
 
-  public Any23 getAny23() {
-    return any23;
-  }
+    /**
+     * Marshal data. Generate RDF.
+     */
+    public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
+        outputStreamWriter.write("<html><script type=\"application/ld+json\">\n");
+        outputStreamWriter.flush();
+        Model mdl = (Model)object;
+        Rio.write(mdl, outputStream, RDFFormat.JSONLD);
+        outputStreamWriter.write("\n</script></html>");
+        outputStreamWriter.flush();
+        outputStreamWriter.close();
+        outputStream.close();
+    }
 
-  public Any23DataFormat setAny23(Any23 any23) {
-    this.any23 = any23;
-    return this;
-  }
+    /**
+     * Unmarshal the data
+     */
+    public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
+        ByteArrayDocumentSource source = new ByteArrayDocumentSource(inputStream, this.baseURI, null);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TripleHandler handler = Any23Utils.obtainHandler(outputFormat, out);
+        any23.extract(source, handler);
+        handler.close();
+        Object respon;
+        if (outputFormat == Any23OutputFormat.RDF4JMODEL) {
+            respon = ((RDF4JModelWriter)handler).getModel();
+        } else {
+            respon = IOUtils.toString(out.toByteArray());
+        }
+        return respon;
 
-  public Map<String, String> getConfigurations() {
-    return configurations;
-  }
+    }
 
-  public Any23DataFormat setConfigurations(Map<String, String> configurations) {
-    this.configurations = configurations;
-    return this;
-  }
+    @Override
+    protected void doStart() throws Exception {
+        ModifiableConfiguration conf = null;
+        String[] extrArray = null;
+        if (extractors != null && !extractors.isEmpty()) {
+            extrArray = new String[extractors.size()];
+            extrArray = extractors.toArray(extrArray);
+        }
+        if (configurations != null && !configurations.isEmpty()) {
+            conf = DefaultConfiguration.copy();
+            for (Entry<String, String> entry : configurations.entrySet()) {
+                conf.setProperty(entry.getKey(), entry.getValue());
+            }
+        }
+        if (outputFormat == null) {
+            // Default output format
+            outputFormat = Any23OutputFormat.RDF4JMODEL;
+        }
+        if (conf == null && extrArray == null) {
+            any23 = new Any23();
+        } else if (conf != null && extrArray == null) {
+            any23 = new Any23(conf);
+        } else if (conf == null && extrArray != null) {
+            any23 = new Any23(extrArray);
+        } else if (conf != null && extrArray != null) {
+            any23 = new Any23(conf, extrArray);
+        }
+    }
 
-  public List<String> getExtractors() {
-    return extractors;
-  }
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 
-  public Any23DataFormat setExtractors(List<String> extractors) {
-    this.extractors = extractors;
-    return this;
-  }
+    public Any23 getAny23() {
+        return any23;
+    }
 
-  public Any23OutputFormat getOutputFormat() {
-    return outputFormat;
-  }
+    public Any23DataFormat setAny23(Any23 any23) {
+        this.any23 = any23;
+        return this;
+    }
 
-  public Any23DataFormat setOutputFormat(Any23OutputFormat outputFormat) {
-    this.outputFormat = outputFormat;
-    return this;
-  }
+    public Map<String, String> getConfigurations() {
+        return configurations;
+    }
 
-  public String getBaseURI() {
-    return baseURI;
-  }
+    public Any23DataFormat setConfigurations(Map<String, String> configurations) {
+        this.configurations = configurations;
+        return this;
+    }
 
-  public Any23DataFormat setBaseURI(String baseURI) {
-    this.baseURI = baseURI;
-    return this;
-  }
+    public List<String> getExtractors() {
+        return extractors;
+    }
+
+    public Any23DataFormat setExtractors(List<String> extractors) {
+        this.extractors = extractors;
+        return this;
+    }
+
+    public Any23OutputFormat getOutputFormat() {
+        return outputFormat;
+    }
+
+    public Any23DataFormat setOutputFormat(Any23OutputFormat outputFormat) {
+        this.outputFormat = outputFormat;
+        return this;
+    }
+
+    public String getBaseURI() {
+        return baseURI;
+    }
+
+    public Any23DataFormat setBaseURI(String baseURI) {
+        this.baseURI = baseURI;
+        return this;
+    }
 
 }

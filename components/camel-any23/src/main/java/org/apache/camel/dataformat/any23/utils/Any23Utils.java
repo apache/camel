@@ -28,36 +28,39 @@ import org.apache.camel.dataformat.any23.Any23OutputFormat;
 import org.apache.camel.dataformat.any23.writer.RDF4JModelWriter;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 
-public class Any23Utils {
-
-  public static TripleHandler obtainHandler(Any23OutputFormat format, OutputStream outputStream) {
-    TripleHandler handler;
-    switch (format) {
-      case NTRIPLES:
-        handler = new NTriplesWriter(outputStream);
-        break;
-      case TURTLE:
-        handler = new TurtleWriter(outputStream);
-        break;
-      case NQUADS:
-        handler = new NQuadsWriter(outputStream);
-        break;
-      case RDFXML:
-        handler = new RDFXMLWriter(outputStream);
-        break;
-      case JSONLD:
-        handler = new JSONLDWriter(outputStream);
-        break;
-      case RDFJSON:
-        handler = new JSONWriter(outputStream);
-        break;
-      case RDF4JMODEL:
-        handler = new RDF4JModelWriter(new LinkedHashModel());
-        break;
-      default:
-        throw new AssertionError(format.name());
+public final class Any23Utils {
+    
+    private Any23Utils() {
     }
-    return handler;
-  }
+
+    public static TripleHandler obtainHandler(Any23OutputFormat format, OutputStream outputStream) {
+        TripleHandler handler;
+        switch (format) {
+        case NTRIPLES:
+            handler = new NTriplesWriter(outputStream);
+            break;
+        case TURTLE:
+            handler = new TurtleWriter(outputStream);
+            break;
+        case NQUADS:
+            handler = new NQuadsWriter(outputStream);
+            break;
+        case RDFXML:
+            handler = new RDFXMLWriter(outputStream);
+            break;
+        case JSONLD:
+            handler = new JSONLDWriter(outputStream);
+            break;
+        case RDFJSON:
+            handler = new JSONWriter(outputStream);
+            break;
+        case RDF4JMODEL:
+            handler = new RDF4JModelWriter(new LinkedHashModel());
+            break;
+        default:
+            throw new AssertionError(format.name());
+        }
+        return handler;
+    }
 
 }
