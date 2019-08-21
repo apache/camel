@@ -218,6 +218,7 @@
         <include>org.apache.camel:camel-metrics</include>
         <include>org.apache.camel:camel-micrometer</include>
         <include>org.apache.camel:camel-microprofile-config</include>
+        <include>org.apache.camel:camel-microprofile-metrics</include>
         <include>org.apache.camel:camel-milo</include>
         <include>org.apache.camel:camel-mina</include>
         <include>org.apache.camel:camel-mllp</include>
