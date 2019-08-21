@@ -16,20 +16,23 @@
  */
 package org.apache.camel.dataformat.xstream;
 import com.thoughtworks.xstream.XStream;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XStreamDataFormatPermissionsSystemPropertyTest extends XStreamDataFormatPermissionsTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         // clear the default permissions system property
         // see AbstractXStreamWrapper.PERMISSIONS_PROPERTY_DEFAULT
         XStreamTestUtils.setPermissionSystemProperty("*");
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() {
         XStreamTestUtils.revertPermissionSystemProperty();
     }
