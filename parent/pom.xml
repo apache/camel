@@ -459,7 +459,7 @@
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.0.17</mockwebserver-version>
         <mockito-version>2.28.2</mockito-version>
-        <mongo-java-driver-version>3.10.2</mongo-java-driver-version>
+        <mongo-java-driver-version>3.11.0</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <mqtt-client-version>1.15</mqtt-client-version>
         <msv-version>2013.6.1</msv-version>
