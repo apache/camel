@@ -25,7 +25,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Barcode data format is used for creating barccode images (such as QR-Code)
+ * The Barcode data format is used for creating barccode images (such as
+ * QR-Code)
  */
 @Metadata(firstVersion = "2.14.0", label = "dataformat,transformation", title = "Barcode")
 @XmlRootElement(name = "barcode")
@@ -39,11 +40,11 @@ public class BarcodeDataFormat extends DataFormatDefinition {
     private String imageType;
     @XmlAttribute
     private String barcodeFormat;
-    
+
     public BarcodeDataFormat() {
         super("barcode");
     }
-    
+
     public Integer getWidth() {
         return width;
     }

@@ -24,46 +24,46 @@ import org.apache.camel.CamelContext;
 import org.junit.Test;
 
 public class SecureRandomParametersTest extends AbstractJsseParametersTest {
-    
+
     @Test
     public void testPropertyPlaceholders() throws Exception {
         if (canTest()) {
             CamelContext context = this.createPropertiesPlaceholderAwareContext();
-            
+
             SecureRandomParameters srp = new SecureRandomParameters();
             srp.setCamelContext(context);
-            
+
             srp.setAlgorithm("{{secureRandomParameters.algorithm}}");
             srp.setProvider("{{secureRandomParameters.provider}}");
-            
+
             srp.createSecureRandom();
         }
     }
-    
+
     @Test
     public void testCreateSecureRandom() throws Exception {
-        
+
         if (this.canTest()) {
             SecureRandomParameters srp = new SecureRandomParameters();
             srp.setAlgorithm("SHA1PRNG");
-            
+
             SecureRandom sr = srp.createSecureRandom();
             assertEquals("SHA1PRNG", sr.getAlgorithm());
-            
+
             String providerName = sr.getProvider().getName();
             srp.setProvider(providerName);
-            
+
             sr = srp.createSecureRandom();
             assertEquals("SHA1PRNG", sr.getAlgorithm());
             assertEquals(providerName, sr.getProvider().getName());
         }
     }
-    
+
     @Test
     public void testExplicitInvalidAlgorithm() throws Exception {
         SecureRandomParameters srp = new SecureRandomParameters();
         srp.setAlgorithm("fsafsadfasdfasdf");
-        
+
         try {
             srp.createSecureRandom();
             fail();
@@ -71,14 +71,14 @@ public class SecureRandomParametersTest extends AbstractJsseParametersTest {
             // expected
         }
     }
-    
+
     @Test
     public void testExplicitInvalidProvider() throws Exception {
         if (this.canTest()) {
             SecureRandomParameters srp = new SecureRandomParameters();
             srp.setAlgorithm("SHA1PRNG");
             srp.setProvider("asdfsadfasdfasdf");
-            
+
             try {
                 srp.createSecureRandom();
                 fail();
@@ -87,7 +87,7 @@ public class SecureRandomParametersTest extends AbstractJsseParametersTest {
             }
         }
     }
-    
+
     protected boolean canTest() {
         try {
             SecureRandom.getInstance("SHA1PRNG");

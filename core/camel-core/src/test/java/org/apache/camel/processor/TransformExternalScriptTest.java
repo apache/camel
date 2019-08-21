@@ -25,9 +25,7 @@ public class TransformExternalScriptTest extends TransformViaDSLTest {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start")
-                        .transform().simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt")
-                        .to("mock:result");
+                from("direct:start").transform().simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt").to("mock:result");
                 // END SNIPPET: example
             }
         };

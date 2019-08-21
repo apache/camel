@@ -33,14 +33,14 @@ import org.junit.Test;
  * Test cases for {@link CollectionConverter}
  */
 public class CollectionConverterTest extends Assert {
-    
+
     private static final List<String> SMURFS = Arrays.asList("Papa smurf", "Smurfette", "Hefty smurf", "Jokey smurf");
 
     @Test
     public void testIteratorToList() throws Exception {
         assertSmurfs(CollectionConverter.toArrayList(SMURFS.iterator()));
     }
-    
+
     @Test
     public void testIterableToList() throws Exception {
         assertSmurfs(CollectionConverter.toList(new Iterable<String>() {
@@ -49,7 +49,7 @@ public class CollectionConverterTest extends Assert {
             }
         }));
         // no conversion should occur for the list itself
-        assertSame(SMURFS, CollectionConverter.toList((Iterable<String>) SMURFS));
+        assertSame(SMURFS, CollectionConverter.toList((Iterable<String>)SMURFS));
     }
 
     private void assertSmurfs(Collection<String> result) {

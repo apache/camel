@@ -40,7 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A ValidatorRouteTest demonstrates contract based declarative validation via Java DSL.
+ * A ValidatorRouteTest demonstrates contract based declarative validation via
+ * Java DSL.
  */
 public class ValidatorRouteTest extends ContextTestSupport {
 
@@ -88,35 +89,18 @@ public class ValidatorRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                validator()
-                    .type("json")
-                    .withExpression(bodyAs(String.class).contains("{name:XOrder}"));
-                from("direct:predicate")
-                    .inputTypeWithValidate("json:JsonXOrder")
-                    .outputType("json:JsonXOrderResponse")
-                    .setBody(simple("{name:XOrderResponse}"));
-                
+                validator().type("json").withExpression(bodyAs(String.class).contains("{name:XOrder}"));
+                from("direct:predicate").inputTypeWithValidate("json:JsonXOrder").outputType("json:JsonXOrderResponse").setBody(simple("{name:XOrderResponse}"));
+
                 context.addComponent("myxml", new MyXmlComponent());
-                validator()
-                    .type("xml:XmlXOrderResponse")
-                    .withUri("myxml:endpoint");
-                from("direct:endpoint")
-                    .inputType("xml:XmlXOrder")
-                    .outputTypeWithValidate("xml:XmlXOrderResponse")
-                    .validate(exchangeProperty(VALIDATOR_INVOKED).isNull())
+                validator().type("xml:XmlXOrderResponse").withUri("myxml:endpoint");
+                from("direct:endpoint").inputType("xml:XmlXOrder").outputTypeWithValidate("xml:XmlXOrderResponse").validate(exchangeProperty(VALIDATOR_INVOKED).isNull())
                     .setBody(simple("<XOrderResponse/>"));
-                
-                validator()
-                    .type("other:OtherXOrder")
-                    .withJava(OtherXOrderValidator.class);
-                validator()
-                    .type("other:OtherXOrderResponse")
-                    .withJava(OtherXOrderResponseValidator.class);
-                from("direct:custom")
-                    .inputTypeWithValidate("other:OtherXOrder")
-                    .outputTypeWithValidate("other:OtherXOrderResponse")
-                    .validate(exchangeProperty(VALIDATOR_INVOKED).isEqualTo(OtherXOrderValidator.class))
-                    .setBody(simple("name=XOrderResponse"));
+
+                validator().type("other:OtherXOrder").withJava(OtherXOrderValidator.class);
+                validator().type("other:OtherXOrderResponse").withJava(OtherXOrderResponseValidator.class);
+                from("direct:custom").inputTypeWithValidate("other:OtherXOrder").outputTypeWithValidate("other:OtherXOrderResponse")
+                    .validate(exchangeProperty(VALIDATOR_INVOKED).isEqualTo(OtherXOrderValidator.class)).setBody(simple("name=XOrderResponse"));
             }
         };
     }
@@ -126,9 +110,9 @@ public class ValidatorRouteTest extends ContextTestSupport {
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             return new MyXmlEndpoint();
         }
-        
+
     }
-    
+
     public static class MyXmlEndpoint extends DefaultEndpoint {
         @Override
         public Producer createProducer() throws Exception {
@@ -142,20 +126,23 @@ public class ValidatorRouteTest extends ContextTestSupport {
                 }
             };
         }
+
         @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             return null;
         }
+
         @Override
         public boolean isSingleton() {
             return false;
         }
+
         @Override
         protected String createEndpointUri() {
             return "myxml:endpoint";
         }
     }
-    
+
     public static class OtherXOrderValidator extends Validator {
         @Override
         public void validate(Message message, DataType type) throws ValidationException {
@@ -164,7 +151,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
             log.info("Java validation: other XOrder");
         }
     }
-    
+
     public static class OtherXOrderResponseValidator extends Validator {
         @Override
         public void validate(Message message, DataType type) throws ValidationException {
@@ -173,5 +160,5 @@ public class ValidatorRouteTest extends ContextTestSupport {
             log.info("Java validation: other XOrderResponse");
         }
     }
-    
+
 }

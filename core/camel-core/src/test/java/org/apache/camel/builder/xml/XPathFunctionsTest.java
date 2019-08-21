@@ -74,17 +74,14 @@ public class XPathFunctionsTest extends ContextTestSupport {
 
                 from("direct:in").choice()
                     // $type is a variable for the header with key type
-                    // here we use the properties function to lookup foo from the properties files
+                    // here we use the properties function to lookup foo from
+                    // the properties files
                     // which at runtime will be evaluted to 'Camel'
-                    .when().xpath("$type = function:properties('foo')")
-                        .to("mock:camel")
-                    // here we use the simple language to evaluate the expression
+                    .when().xpath("$type = function:properties('foo')").to("mock:camel")
+                    // here we use the simple language to evaluate the
+                    // expression
                     // which at runtime will be evaluated to 'Donkey Kong'
-                    .when().xpath("//name = function:simple('Donkey ${properties:bar}')")
-                        .to("mock:donkey")
-                    .otherwise()
-                        .to("mock:other")
-                    .end();
+                    .when().xpath("//name = function:simple('Donkey ${properties:bar}')").to("mock:donkey").otherwise().to("mock:other").end();
                 // END SNIPPET: ex
             }
         };

@@ -36,14 +36,15 @@ import org.apache.camel.support.CamelContextHelper;
 public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
 
     MulticastReifier(ProcessorDefinition<?> definition) {
-        super((MulticastDefinition) definition);
+        super((MulticastDefinition)definition);
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor answer = this.createChildProcessor(routeContext, true);
 
-        // force the answer as a multicast processor even if there is only one child processor in the multicast
+        // force the answer as a multicast processor even if there is only one
+        // child processor in the multicast
         if (!(answer instanceof MulticastProcessor)) {
             List<Processor> list = new ArrayList<>(1);
             list.add(answer);
@@ -74,8 +75,9 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
             definition.setOnPrepare(CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), definition.getOnPrepareRef(), Processor.class));
         }
 
-        MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing,
-                threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate, isStopOnAggregateException);
+        MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing, threadPool, shutdownThreadPool, isStreaming,
+                                                           isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
+                                                           isStopOnAggregateException);
         return answer;
     }
 
@@ -84,7 +86,7 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
         if (strategy == null && definition.getStrategyRef() != null) {
             Object aggStrategy = routeContext.lookup(definition.getStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
+                strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
@@ -103,7 +105,7 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
         }
 
         if (definition.getShareUnitOfWork() != null && definition.getShareUnitOfWork()) {

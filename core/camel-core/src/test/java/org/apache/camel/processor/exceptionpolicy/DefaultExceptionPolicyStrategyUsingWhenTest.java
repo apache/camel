@@ -78,22 +78,18 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
 
                 // here we define our onException to catch MyUserException when
                 // there is a header[user] on the exchange that is not null
-                onException(MyUserException.class).onWhen(header("user").isNotNull())
-                    .maximumRedeliveries(1)
+                onException(MyUserException.class).onWhen(header("user").isNotNull()).maximumRedeliveries(1)
                     // setting delay to zero is just to make unit testing faster
-                    .redeliveryDelay(0)
-                    .to(ERROR_USER_QUEUE);
+                    .redeliveryDelay(0).to(ERROR_USER_QUEUE);
 
                 // here we define onException to catch MyUserException as a kind
                 // of fallback when the above did not match.
                 // Notice: The order how we have defined these onException is
                 // important as Camel will resolve in the same order as they
                 // have been defined
-                onException(MyUserException.class)
-                    .maximumRedeliveries(2)
+                onException(MyUserException.class).maximumRedeliveries(2)
                     // setting delay to zero is just to make unit testing faster
-                    .redeliveryDelay(0)
-                    .to(ERROR_QUEUE);
+                    .redeliveryDelay(0).to(ERROR_QUEUE);
                 // END SNIPPET e1
 
                 from("direct:a").process(new Processor() {

@@ -68,9 +68,7 @@ public class SplitterSkipTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(simple("${skip(2)}"))
-                        .to("mock:line");
+                from("direct:start").split(simple("${skip(2)}")).to("mock:line");
             }
         };
     }

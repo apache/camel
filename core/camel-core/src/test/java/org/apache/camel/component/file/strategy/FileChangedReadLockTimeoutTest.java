@@ -25,8 +25,8 @@ public class FileChangedReadLockTimeoutTest extends FileChangedReadLockTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockTimeout=2000")
-                    .to("file:target/data/changed/out", "mock:result");
+                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockTimeout=2000").to("file:target/data/changed/out",
+                                                                                                                                               "mock:result");
             }
         };
     }

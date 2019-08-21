@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 public class SetPropertyDefinition extends ExpressionNode {
     @XmlAttribute(required = true)
     private String name;
-    
+
     public SetPropertyDefinition() {
     }
 
@@ -52,13 +52,13 @@ public class SetPropertyDefinition extends ExpressionNode {
     public SetPropertyDefinition(String name, String value) {
         super(ExpressionBuilder.constantExpression(value));
         setName(name);
-    }   
-    
+    }
+
     @Override
     public String toString() {
         return "SetProperty[" + getName() + ", " + getExpression() + "]";
     }
-    
+
     @Override
     public String getShortName() {
         return "setProperty";
@@ -81,8 +81,9 @@ public class SetPropertyDefinition extends ExpressionNode {
     /**
      * Name of exchange property to set a new value.
      * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated exchange property name to be used.
-     * Otherwise a constant name will be used.
+     * The <tt>simple</tt> language can be used to define a dynamic evaluated
+     * exchange property name to be used. Otherwise a constant name will be
+     * used.
      */
     public void setName(String name) {
         this.name = name;
@@ -91,5 +92,5 @@ public class SetPropertyDefinition extends ExpressionNode {
     public String getName() {
         return name;
     }
-    
+
 }

@@ -32,25 +32,21 @@ public class MDCWithBreadcrumbTest extends MDCTest {
                 context.setUseMDCLogging(true);
                 context.setUseBreadcrumb(true);
 
-                from("direct:a").routeId("route-a")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-a", MDC.get("camel.routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("camel.breadcrumbId"));
-                            }
-                        })
-                        .to("log:foo").to("direct:b");
+                from("direct:a").routeId("route-a").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals("route-a", MDC.get("camel.routeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.breadcrumbId"));
+                    }
+                }).to("log:foo").to("direct:b");
 
-                from("direct:b").routeId("route-b")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-b", MDC.get("camel.routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("camel.breadcrumbId"));
-                            }
-                        })
-                        .to("log:bar").to("mock:result");
+                from("direct:b").routeId("route-b").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals("route-b", MDC.get("camel.routeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.breadcrumbId"));
+                    }
+                }).to("log:bar").to("mock:result");
             }
         };
     }

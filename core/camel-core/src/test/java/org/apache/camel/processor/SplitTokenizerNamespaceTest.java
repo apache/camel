@@ -26,14 +26,15 @@ public class SplitTokenizerNamespaceTest extends ContextTestSupport {
     @Test
     public void testSplitTokenizerWithImplicitNamespaces() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        
-        // we expect to receive results that have namespace definitions on each token
-        // we could receive nodes from multiple namespaces since we did not specify a namespace prefix, 
-        mock.expectedBodiesReceived(
-            "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Claus</ns1:person>", 
-            "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">James</ns1:person>", 
-            "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Willem</ns1:person>",
-            "<ns2:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Rich</ns2:person>");
+
+        // we expect to receive results that have namespace definitions on each
+        // token
+        // we could receive nodes from multiple namespaces since we did not
+        // specify a namespace prefix,
+        mock.expectedBodiesReceived("<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Claus</ns1:person>",
+                                    "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">James</ns1:person>",
+                                    "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Willem</ns1:person>",
+                                    "<ns2:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Rich</ns2:person>");
 
         template.sendBody("direct:noPrefix", getXmlBody());
 
@@ -43,13 +44,14 @@ public class SplitTokenizerNamespaceTest extends ContextTestSupport {
     @Test
     public void testSplitTokenizerWithExplicitNamespaces() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        
-        // we expect to receive results that have namespace definitions on each token
-        // we provided an explicit namespace prefix value in the route, so we will only receive nodes that have a matching prefix value
-        mock.expectedBodiesReceived(
-            "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Claus</ns1:person>", 
-            "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">James</ns1:person>", 
-            "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Willem</ns1:person>");
+
+        // we expect to receive results that have namespace definitions on each
+        // token
+        // we provided an explicit namespace prefix value in the route, so we
+        // will only receive nodes that have a matching prefix value
+        mock.expectedBodiesReceived("<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Claus</ns1:person>",
+                                    "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">James</ns1:person>",
+                                    "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Willem</ns1:person>");
 
         template.sendBody("direct:explicitPrefix", getXmlBody());
 
@@ -72,14 +74,10 @@ public class SplitTokenizerNamespaceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
-                from("direct:noPrefix")
-                    .split().tokenizeXML("person", "persons")
-                    .to("mock:split");
-                
-                from("direct:explicitPrefix")
-                    .split().tokenizeXML("ns1:person", "ns1:persons")
-                    .to("mock:split");
+
+                from("direct:noPrefix").split().tokenizeXML("person", "persons").to("mock:split");
+
+                from("direct:explicitPrefix").split().tokenizeXML("ns1:person", "ns1:persons").to("mock:split");
             }
         };
     }

@@ -36,13 +36,13 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         exchange.getIn().setBody("Hello Big World");
         assertPredicate("${in.body} == 'Hello Big World'", true);
     }
-    
+
     @Test
     public void testNullValue() throws Exception {
         exchange.getIn().setBody("Value");
         assertPredicate("${in.body} != null", true);
         assertPredicate("${body} == null", false);
-        
+
         exchange.getIn().setBody(null);
         assertPredicate("${in.body} == null", true);
         assertPredicate("${body} != null", false);
@@ -311,7 +311,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} < 123", false);
         assertPredicate("${in.header.bar} < '200'", true);
     }
-    
+
     @Test
     public void testAgainstNegativeValue() throws Exception {
         assertPredicate("${in.header.bar} == 123", true);
@@ -334,7 +334,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.strNum} !contains '-123'", true);
         assertPredicate("${in.header.strNum} ~~ '123'", true);
         assertPredicate("${in.header.strNum} ~~ '-123'", false);
-    
+
         exchange.getIn().setHeader("num", -123);
         assertPredicate("${in.header.num} == -123", true);
         assertPredicate("${in.header.num} == 123", false);
@@ -348,7 +348,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.num} <= -123", true);
         assertPredicate("${in.header.num} < 123", true);
         assertPredicate("${in.header.num} <= 123", true);
-    
+
         exchange.getIn().setHeader("strNumNegative", "-123");
         assertPredicate("${in.header.strNumNegative} contains '123'", true);
         assertPredicate("${in.header.strNumNegative} !contains '123'", false);
@@ -409,7 +409,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} contains 'abc'", true);
         assertPredicate("${in.header.foo} contains 'def'", false);
     }
-  
+
     @Test
     public void testNotContains() throws Exception {
         assertPredicate("${in.header.foo} not contains 'a'", false);
@@ -421,7 +421,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} !contains 'abc'", false);
         assertPredicate("${in.header.foo} !contains 'def'", true);
     }
-    
+
     @Test
     public void testContainsIgnoreCase() throws Exception {
         assertPredicate("${in.header.foo} ~~ 'A'", true);
@@ -677,7 +677,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.body} startsWith 'ello there'", false);
         assertPredicate("${in.body} startsWith 'Hi'", false);
     }
-    
+
     @Test
     public void testEndsWith() throws Exception {
         exchange.getIn().setBody("Hello there");

@@ -24,23 +24,29 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class ValidatorDtdAccessOnTest extends ValidatorDtdAccessAbstractTest {
-    
+
     public ValidatorDtdAccessOnTest() {
         super(true);
     }
-     
-    /** Tests that external DTD call is executed for StringSource by expecting an UnkonwHostException. */
+
+    /**
+     * Tests that external DTD call is executed for StringSource by expecting an
+     * UnkonwHostException.
+     */
     @Test
     public void testInvalidMessageWithExternalDTDStringSource() throws Exception {
         unknownHostExceptionEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",  ssrfPayloud);
+        template.sendBody("direct:start", ssrfPayloud);
 
         MockEndpoint.assertIsSatisfied(validEndpoint, unknownHostExceptionEndpoint, finallyEndpoint);
     }
 
-    /** Tests that external DTD call is executed  for StreamSourceby expecting an UnkonwHostException. */
+    /**
+     * Tests that external DTD call is executed for StreamSourceby expecting an
+     * UnkonwHostException.
+     */
     @Test
     public void testInvalidMessageWithExternalDTDStreamSource() throws Exception {
         unknownHostExceptionEndpoint.expectedMessageCount(1);
@@ -50,8 +56,11 @@ public class ValidatorDtdAccessOnTest extends ValidatorDtdAccessAbstractTest {
 
         MockEndpoint.assertIsSatisfied(validEndpoint, unknownHostExceptionEndpoint, finallyEndpoint);
     }
-    
-    /** Tests that XXE is possible for StreamSource by expecting an UnkonwHostException. */
+
+    /**
+     * Tests that XXE is possible for StreamSource by expecting an
+     * UnkonwHostException.
+     */
     @Test
     public void testInvalidMessageXXESourceStream() throws Exception {
         unknownHostExceptionEndpoint.expectedMessageCount(1);

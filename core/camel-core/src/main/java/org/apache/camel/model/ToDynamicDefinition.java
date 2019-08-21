@@ -29,11 +29,14 @@ import org.apache.camel.spi.Metadata;
 /**
  * Sends the message to a dynamic endpoint
  * <p/>
- * You can specify multiple languages in the uri separated by the plus sign, such as <tt>mock:+language:xpath:/order/@uri</tt>
- * where <tt>mock:</tt> would be a prefix to a xpath expression.
+ * You can specify multiple languages in the uri separated by the plus sign,
+ * such as <tt>mock:+language:xpath:/order/@uri</tt> where <tt>mock:</tt> would
+ * be a prefix to a xpath expression.
  * <p/>
- * For more dynamic behavior use <a href="http://camel.apache.org/recipient-list.html">Recipient List</a> or
- * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router</a> EIP instead.
+ * For more dynamic behavior use
+ * <a href="http://camel.apache.org/recipient-list.html">Recipient List</a> or
+ * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router</a> EIP
+ * instead.
  */
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "toD")
@@ -42,7 +45,8 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     @XmlTransient
     protected EndpointProducerBuilder endpointProducerBuilder;
-    @XmlAttribute @Metadata(required = true)
+    @XmlAttribute
+    @Metadata(required = true)
     private String uri;
     @XmlAttribute
     private ExchangePattern pattern;
@@ -50,7 +54,8 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     private Integer cacheSize;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoint;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean allowOptimisedComponents;
 
     public ToDynamicDefinition() {
@@ -87,9 +92,12 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     }
 
     /**
-     * Sets the maximum size used by the {@link org.apache.camel.spi.ConsumerCache} which is used to cache and reuse producers.
+     * Sets the maximum size used by the
+     * {@link org.apache.camel.spi.ConsumerCache} which is used to cache and
+     * reuse producers.
      *
-     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
+     *            or <tt>-1</tt> to turn cache off.
      * @return the builder
      */
     public ToDynamicDefinition cacheSize(int cacheSize) {
@@ -98,7 +106,8 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     }
 
     /**
-     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     * Ignore the invalidate endpoint exception when try to create a producer
+     * with that endpoint
      *
      * @return the builder
      */
@@ -108,7 +117,8 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     }
 
     /**
-     * Whether to allow components to optimise toD if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     * Whether to allow components to optimise toD if they are
+     * {@link org.apache.camel.spi.SendDynamicAware}.
      *
      * @return the builder
      */
@@ -125,7 +135,8 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     }
 
     /**
-     * The uri of the endpoint to send to. The uri can be dynamic computed using the {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+     * The uri of the endpoint to send to. The uri can be dynamic computed using
+     * the {@link org.apache.camel.language.simple.SimpleLanguage} expression.
      */
     public void setUri(String uri) {
         this.uri = uri;

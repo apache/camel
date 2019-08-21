@@ -60,37 +60,30 @@ public class ThreadsCorePoolTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setTracing(true);
 
-                from("direct:start")
-                    .to("log:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    // will use a a custom thread pool with 5 in core and 5 as max
-                    .threads(5)
-                    .process(new Processor() {
+                from("direct:start").to("log:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                })
+                    // will use a a custom thread pool with 5 in core and 5 as
+                    // max
+                    .threads(5).process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             afterThreadName = Thread.currentThread().getName();
                         }
-                    })
-                    .to("log:after")
-                    .to("mock:result");
+                    }).to("log:after").to("mock:result");
 
-                from("direct:foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    })
+                from("direct:foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                })
                     // using the builder style
-                    .threads().poolSize(5)
-                    .process(new Processor() {
+                    .threads().poolSize(5).process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             afterThreadName = Thread.currentThread().getName();
                         }
-                    })
-                    .to("mock:result");
+                    }).to("mock:result");
             }
         };
     }

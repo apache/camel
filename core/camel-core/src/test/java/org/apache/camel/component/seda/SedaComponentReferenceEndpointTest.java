@@ -26,7 +26,7 @@ import org.junit.Test;
  *
  */
 public class SedaComponentReferenceEndpointTest extends ContextTestSupport {
-    
+
     @Test
     public void testSedaComponentReference() throws Exception {
         SedaComponent seda = context.getComponent("seda", SedaComponent.class);
@@ -77,7 +77,7 @@ public class SedaComponentReferenceEndpointTest extends ContextTestSupport {
             }
         };
     }
-    
+
     private int numberOfReferences(SedaComponent seda) {
         int num = 0;
         Iterator<QueueReference> it = seda.getQueues().values().iterator();

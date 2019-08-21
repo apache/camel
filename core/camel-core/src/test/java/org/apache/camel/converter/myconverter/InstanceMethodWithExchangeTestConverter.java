@@ -25,7 +25,6 @@ public class InstanceMethodWithExchangeTestConverter {
 
     @Converter
     public MyBean fromArray(String[] values, Exchange exchange) {
-        return new MyBean(Integer.parseInt(values[0]), 
-            exchange.getProperty("prefix", String.class) + values[1]);
+        return new MyBean(Integer.parseInt(values[0]), exchange.getProperty("prefix", String.class) + values[1]);
     }
 }

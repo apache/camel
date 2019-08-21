@@ -28,12 +28,13 @@ import org.apache.camel.spi.RouteContext;
 public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> {
 
     LoadBalanceReifier(ProcessorDefinition<?> definition) {
-        super((LoadBalanceDefinition) definition);
+        super((LoadBalanceDefinition)definition);
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // the load balancer is stateful so we should only create it once in case its used from a context scoped error handler
+        // the load balancer is stateful so we should only create it once in
+        // case its used from a context scoped error handler
 
         LoadBalancer loadBalancer = definition.getLoadBalancerType().getLoadBalancer();
         if (loadBalancer == null) {
@@ -50,7 +51,8 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
 
             for (ProcessorDefinition<?> processorType : definition.getOutputs()) {
                 // output must not be another load balancer
-                // check for instanceof as the code below as there is compilation errors on earlier versions of JDK6
+                // check for instanceof as the code below as there is
+                // compilation errors on earlier versions of JDK6
                 // on Windows boxes or with IBM JDKs etc.
                 if (LoadBalanceDefinition.class.isInstance(processorType)) {
                     throw new IllegalArgumentException("Loadbalancer already configured to: " + definition.getLoadBalancerType() + ". Cannot set it to: " + processorType);
@@ -63,13 +65,14 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
 
         Boolean inherit = definition.isInheritErrorHandler();
         if (definition.getLoadBalancerType() instanceof FailoverLoadBalancerDefinition) {
-            // special for failover load balancer where you can configure it to not inherit error handler for its children
-            // but the load balancer itself should inherit so Camels error handler can react afterwards
+            // special for failover load balancer where you can configure it to
+            // not inherit error handler for its children
+            // but the load balancer itself should inherit so Camels error
+            // handler can react afterwards
             inherit = true;
         }
         Processor target = wrapChannel(routeContext, loadBalancer, definition, inherit);
         return target;
     }
-
 
 }

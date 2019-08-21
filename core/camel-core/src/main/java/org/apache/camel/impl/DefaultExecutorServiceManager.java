@@ -53,10 +53,9 @@ public class DefaultExecutorServiceManager extends BaseExecutorServiceManager {
     protected Object forceId(Object source) {
         if (source instanceof OptionalIdentifiedDefinition) {
             NodeIdFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory();
-            ((OptionalIdentifiedDefinition) source).idOrCreate(factory);
+            ((OptionalIdentifiedDefinition)source).idOrCreate(factory);
         }
         return source;
     }
 
 }
-

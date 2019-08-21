@@ -35,9 +35,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "hello(${body})")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(${body})").to("mock:result");
 
             }
         });
@@ -55,9 +53,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "hello(*)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(*)").to("mock:result");
 
             }
         });
@@ -76,9 +72,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e2
-                from("direct:start")
-                    .bean(MyBean.class, "hello(${body}, ${header.country})")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(${body}, ${header.country})").to("mock:result");
                 // END SNIPPET: e2
             }
         });
@@ -96,9 +90,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "hello(*, ${header.country})")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(*, ${header.country})").to("mock:result");
 
             }
         });
@@ -116,9 +108,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "times(${body},3)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "times(${body},3)").to("mock:result");
 
             }
         });
@@ -136,9 +126,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "times(${body},${header.times})")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "times(${body},${header.times})").to("mock:result");
 
             }
         });
@@ -156,9 +144,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "times(byte[], ${header.times})")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "times(byte[], ${header.times})").to("mock:result");
 
             }
         });
@@ -170,16 +156,13 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 
     @Test
     public void testTimesOverloadedBytesIntLanguageTokens() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "times(byte[],${header.times})")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "times(byte[],${header.times})").to("mock:result");
 
             }
         });
@@ -191,7 +174,6 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 
     // START SNIPPET: e1
     public static final class MyBean {

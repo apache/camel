@@ -52,9 +52,7 @@ public class LanguageNoCacheScriptTest extends ContextTestSupport {
                 String script = URLEncoder.encode("Hello ${body}", "UTF-8");
                 endpoint = context.getEndpoint("language:simple:" + script + "?transform=false&cacheScript=false", LanguageEndpoint.class);
 
-                from("direct:start")
-                    .to(endpoint)
-                    .to("mock:result");
+                from("direct:start").to(endpoint).to("mock:result");
             }
         };
     }

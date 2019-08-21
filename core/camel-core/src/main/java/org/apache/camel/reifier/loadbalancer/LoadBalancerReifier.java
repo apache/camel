@@ -47,9 +47,9 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> {
         map.put(WeightedLoadBalancerDefinition.class, WeightedLoadBalancerReifier::new);
         LOAD_BALANCERS = map;
     }
-    
+
     protected final T definition;
-    
+
     LoadBalancerReifier(T definition) {
         this.definition = definition;
     }
@@ -75,12 +75,11 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> {
             if (type == null) {
                 throw new IllegalArgumentException("Cannot find class: " + loadBalancerTypeName + " in the classpath");
             }
-            answer = (LoadBalancer) routeContext.getCamelContext().getInjector().newInstance(type, false);
+            answer = (LoadBalancer)routeContext.getCamelContext().getInjector().newInstance(type, false);
             definition.configureLoadBalancer(answer);
         }
 
         return answer;
     }
-
 
 }

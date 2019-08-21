@@ -168,12 +168,13 @@ public class FileUtilTest extends Assert {
             assertEquals("foo\\bar\\baz", FileUtil.compactPath("foo\\bar\\.\\baz"));
             assertEquals("foo\\bar\\baz", FileUtil.compactPath("foo\\bar\\\\baz"));
             assertEquals("\\foo\\bar\\baz", FileUtil.compactPath("\\foo\\bar\\baz"));
-            // Test that multiple back-slashes at the beginning are preserved, this is necessary for network UNC paths.
+            // Test that multiple back-slashes at the beginning are preserved,
+            // this is necessary for network UNC paths.
             assertEquals("\\\\foo\\bar\\baz", FileUtil.compactPath("\\\\foo\\bar\\baz"));
             assertEquals("\\", FileUtil.compactPath("\\"));
             assertEquals("\\", FileUtil.compactPath("/"));
             assertEquals("/", FileUtil.compactPath("\\", '/'));
-            assertEquals("/", FileUtil.compactPath("/", '/'));            
+            assertEquals("/", FileUtil.compactPath("/", '/'));
         } else {
             assertEquals("../foo", FileUtil.compactPath("../foo"));
             assertEquals("../../foo", FileUtil.compactPath("../../foo"));
@@ -189,7 +190,8 @@ public class FileUtilTest extends Assert {
             assertEquals("foo/bar/baz", FileUtil.compactPath("foo/bar/./baz"));
             assertEquals("foo/bar/baz", FileUtil.compactPath("foo/bar//baz"));
             assertEquals("/foo/bar/baz", FileUtil.compactPath("/foo/bar/baz"));
-            // Do not preserve multiple slashes at the beginning if not on Windows.
+            // Do not preserve multiple slashes at the beginning if not on
+            // Windows.
             assertEquals("/foo/bar/baz", FileUtil.compactPath("//foo/bar/baz"));
             assertEquals("/", FileUtil.compactPath("/"));
             assertEquals("/", FileUtil.compactPath("\\"));
@@ -253,7 +255,7 @@ public class FileUtilTest extends Assert {
         if (!file.exists()) {
             FileUtil.createNewFile(file);
         }
-        
+
         File target = new File("target/bar.txt");
         FileUtil.renameFileUsingCopy(file, target);
         assertTrue("File not copied", target.exists());

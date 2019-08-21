@@ -39,15 +39,7 @@ public class AsyncEndpointSingleTopicLoadBalanceTest extends ContextTestSupport 
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .loadBalance()
-                            .topic()
-                            .to("async:bye:camel")
-                        .end()
-                        .to("log:after")
-                        .to("mock:result");
+                from("direct:start").to("mock:before").to("log:before").loadBalance().topic().to("async:bye:camel").end().to("log:after").to("mock:result");
             }
         };
     }

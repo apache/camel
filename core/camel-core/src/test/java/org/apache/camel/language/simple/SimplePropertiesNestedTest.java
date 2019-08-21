@@ -45,9 +45,7 @@ public class SimplePropertiesNestedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setHeader("myHeader").simple("${properties:${header.beer}}")
-                    .to("mock:result");
+                from("direct:start").setHeader("myHeader").simple("${properties:${header.beer}}").to("mock:result");
             }
         };
     }
@@ -57,7 +55,7 @@ public class SimplePropertiesNestedTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocations(new String[]{"org/apache/camel/component/properties/bar.properties"});
+        pc.setLocations(new String[] {"org/apache/camel/component/properties/bar.properties"});
         context.addComponent("properties", pc);
 
         return context;

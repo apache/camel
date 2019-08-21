@@ -37,9 +37,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "hello(String)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(String)").to("mock:result");
 
             }
         });
@@ -57,9 +55,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "hello(*)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(*)").to("mock:result");
 
             }
         });
@@ -78,9 +74,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e2
-                from("direct:start")
-                    .bean(MyBean.class, "hello(String,String)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(String,String)").to("mock:result");
                 // END SNIPPET: e2
             }
         });
@@ -98,9 +92,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "hello(*,String)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(*,String)").to("mock:result");
 
             }
         });
@@ -119,9 +111,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e3
-                from("direct:start")
-                    .bean(MyBean.class, "hello(*,*)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(*,*)").to("mock:result");
                 // END SNIPPET: e3
             }
         });
@@ -139,9 +129,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "hello")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello").to("mock:result");
 
             }
         });
@@ -159,9 +147,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "hello(String,String,String)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(String,String,String)").to("mock:result");
 
             }
         });
@@ -181,9 +167,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "hello(String,int)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(String,int)").to("mock:result");
 
             }
         });
@@ -203,9 +187,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "hello(int,String)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "hello(int,String)").to("mock:result");
 
             }
         });
@@ -225,9 +207,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "times(String,int)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "times(String,int)").to("mock:result");
 
             }
         });
@@ -245,9 +225,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyBean.class, "times(byte[],int)")
-                    .to("mock:result");
+                from("direct:start").bean(MyBean.class, "times(byte[],int)").to("mock:result");
 
             }
         });
@@ -259,7 +237,6 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 
     // START SNIPPET: e1
     public static final class MyBean {

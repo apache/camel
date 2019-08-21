@@ -105,7 +105,6 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
     // end::e2[]
     // END SNIPPET: e2
 
-
     // START SNIPPET: route
     // tag::route[]
     @Override

@@ -30,7 +30,7 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testThreadsCoreBeZero() throws Exception {
         try {
@@ -38,7 +38,8 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                    // will use a a custom thread pool with -1 in core and 2 max
+                        // will use a a custom thread pool with -1 in core and 2
+                        // max
                         .threads(-1, 2).to("mock:result");
                 }
             });
@@ -48,7 +49,6 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
         }
     }
 
-     
     @Test
     public void testThreadsCoreAndMaxPoolBuilder() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -63,11 +63,11 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
+
                 from("direct:foo")
-                    // only change thread name and max, but rely on default settings
-                    .threads().maxPoolSize(20).threadName("myPool")
-                    .to("mock:result");
+                    // only change thread name and max, but rely on default
+                    // settings
+                    .threads().maxPoolSize(20).threadName("myPool").to("mock:result");
             }
         };
     }

@@ -66,10 +66,9 @@ public class AggregateGroupedExchangeSizePredicateTest extends ContextTestSuppor
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    // must use eagerCheckCompletion so we can check the groupSize header on the incoming exchange 
-                    .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).eagerCheckCompletion().completionSize(header("groupSize"))
-                        .to("mock:result")
-                    .end();
+                    // must use eagerCheckCompletion so we can check the
+                    // groupSize header on the incoming exchange
+                    .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).eagerCheckCompletion().completionSize(header("groupSize")).to("mock:result").end();
             }
         };
     }

@@ -32,11 +32,9 @@ import static org.apache.camel.language.xpath.XPathBuilder.xpath;
 
 public class XPathFeatureTest extends ContextTestSupport {
     public static final String DOM_BUILDER_FACTORY_FEATURE = XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE;
-    
-    public static final String XML_DATA = " <!DOCTYPE foo [ " 
-        + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test>";
-    public static final String XML_DATA_INVALID = " <!DOCTYPE foo [ " 
-            + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
+
+    public static final String XML_DATA = " <!DOCTYPE foo [ " + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test>";
+    public static final String XML_DATA_INVALID = " <!DOCTYPE foo [ " + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
 
     @Override
     public void setUp() throws Exception {
@@ -46,15 +44,15 @@ public class XPathFeatureTest extends ContextTestSupport {
 
     private void resetCoreConverters() throws Exception {
         /*
-        Field field = CoreStaticTypeConverterLoader.class.getDeclaredField("INSTANCE");
-        field.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        Constructor<?> cns = CoreStaticTypeConverterLoader.class.getDeclaredConstructor();
-        cns.setAccessible(true);
-        field.set(null, cns.newInstance());
-        */
+         * Field field =
+         * CoreStaticTypeConverterLoader.class.getDeclaredField("INSTANCE");
+         * field.setAccessible(true); Field modifiersField =
+         * Field.class.getDeclaredField("modifiers");
+         * modifiersField.setAccessible(true); modifiersField.setInt(field,
+         * field.getModifiers() & ~Modifier.FINAL); Constructor<?> cns =
+         * CoreStaticTypeConverterLoader.class.getDeclaredConstructor();
+         * cns.setAccessible(true); field.set(null, cns.newInstance());
+         */
     }
 
     @Override
@@ -71,16 +69,14 @@ public class XPathFeatureTest extends ContextTestSupport {
     @Test
     public void testXPath() throws Exception {
         // Set this feature will enable the external general entities
-        System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":"
-            + "http://xml.org/sax/features/external-general-entities", "true");
+        System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities", "true");
         try {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA));
             fail("Expect an Exception here");
         } catch (TypeConversionException ex) {
             assertTrue("Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + FileNotFoundException.class, ex.getCause() instanceof FileNotFoundException);
         } finally {
-            System.clearProperty(DOM_BUILDER_FACTORY_FEATURE + ":"
-                + "http://xml.org/sax/features/external-general-entities");
+            System.clearProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities");
         }
     }
 
@@ -91,8 +87,8 @@ public class XPathFeatureTest extends ContextTestSupport {
             xpath("/").documentType(Exchange.class).stringResult().evaluate(createExchange(XML_DATA));
             fail("Expect an Exception here");
         } catch (RuntimeCamelException ex) {
-            assertTrue("Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " 
-                           + NoTypeConversionAvailableException.class, ex.getCause() instanceof NoTypeConversionAvailableException);
+            assertTrue("Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + NoTypeConversionAvailableException.class,
+                       ex.getCause() instanceof NoTypeConversionAvailableException);
         }
     }
 

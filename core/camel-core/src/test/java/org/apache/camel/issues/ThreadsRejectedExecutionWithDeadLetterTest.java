@@ -40,22 +40,17 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start").errorHandler(deadLetterChannel("mock:failed"))
-                        .to("log:before")
-                        // will use our custom pool
-                        .threads()
-                        .maxPoolSize(1).poolSize(1) // 1 thread max
-                        .maxQueueSize(1)            // 1 queued task
-                        //(Test fails whatever the chosen policy below)
-                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                latch.await(5, TimeUnit.SECONDS);
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:result");
+                from("seda:start").errorHandler(deadLetterChannel("mock:failed")).to("log:before")
+                    // will use our custom pool
+                    .threads().maxPoolSize(1).poolSize(1) // 1 thread max
+                    .maxQueueSize(1) // 1 queued task
+                    // (Test fails whatever the chosen policy below)
+                    .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            latch.await(5, TimeUnit.SECONDS);
+                        }
+                    }).to("log:after").to("mock:result");
             }
         });
         context.start();
@@ -64,8 +59,8 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
         getMockEndpoint("mock:failed").expectedMessageCount(1);
 
         template.sendBody("seda:start", "Hello World"); // will block
-        template.sendBody("seda:start", "Hi World");    // will be queued
-        template.sendBody("seda:start", "Bye World");   // will be rejected
+        template.sendBody("seda:start", "Hi World"); // will be queued
+        template.sendBody("seda:start", "Bye World"); // will be rejected
 
         Thread.sleep(100);
 
@@ -83,22 +78,17 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start").errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(10).redeliveryDelay(100L))
-                        .to("log:before")
-                        // will use our custom pool
-                        .threads()
-                        .maxPoolSize(1).poolSize(1) // 1 thread max
-                        .maxQueueSize(1)            // 1 queued task
-                        //(Test fails whatever the chosen policy below)
-                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                latch.await(500, TimeUnit.MILLISECONDS);
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:result");
+                from("seda:start").errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(10).redeliveryDelay(100L)).to("log:before")
+                    // will use our custom pool
+                    .threads().maxPoolSize(1).poolSize(1) // 1 thread max
+                    .maxQueueSize(1) // 1 queued task
+                    // (Test fails whatever the chosen policy below)
+                    .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            latch.await(500, TimeUnit.MILLISECONDS);
+                        }
+                    }).to("log:after").to("mock:result");
             }
         });
         context.start();
@@ -107,8 +97,10 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
         getMockEndpoint("mock:failed").expectedMessageCount(0);
 
         template.sendBody("seda:start", "Hello World"); // will block
-        template.sendBody("seda:start", "Hi World");    // will be queued
-        template.sendBody("seda:start", "Bye World");   // will be rejected and queued on redelivery later
+        template.sendBody("seda:start", "Hi World"); // will be queued
+        template.sendBody("seda:start", "Bye World"); // will be rejected and
+                                                      // queued on redelivery
+                                                      // later
 
         latch.countDown();
         latch.countDown();

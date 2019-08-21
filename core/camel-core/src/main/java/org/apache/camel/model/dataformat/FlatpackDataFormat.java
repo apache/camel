@@ -25,7 +25,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
+ * The Flatpack data format is used for working with flat payloads (such as CSV,
+ * delimited, or fixed length formats).
  */
 @Metadata(firstVersion = "2.1.0", label = "dataformat,transformation,csv", title = "Flatpack")
 @XmlRootElement(name = "flatpack")
@@ -35,17 +36,20 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     private String definition;
     @XmlAttribute
     private Boolean fixed;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean ignoreFirstRecord;
     @XmlAttribute
     private String textQualifier;
-    @XmlAttribute @Metadata(defaultValue = ",")
+    @XmlAttribute
+    @Metadata(defaultValue = ",")
     private String delimiter;
     @XmlAttribute
     private Boolean allowShortLines;
     @XmlAttribute
     private Boolean ignoreExtraColumns;
-    @XmlAttribute @Metadata(label = "advanced")
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private String parserFactoryRef;
 
     public FlatpackDataFormat() {
@@ -57,7 +61,8 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap.
+     * The flatpack pzmap configuration file. Can be omitted in simpler
+     * situations, but its preferred to use the pzmap.
      */
     public void setDefinition(String definition) {
         this.definition = definition;
@@ -68,8 +73,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Delimited or fixed.
-     * Is by default false = delimited
+     * Delimited or fixed. Is by default false = delimited
      */
     public void setFixed(Boolean fixed) {
         this.fixed = fixed;
@@ -80,7 +84,8 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether the first line is ignored for delimited files (for the column headers).
+     * Whether the first line is ignored for delimited files (for the column
+     * headers).
      * <p/>
      * Is by default true.
      */
@@ -117,7 +122,8 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Allows for lines to be shorter than expected and ignores the extra characters
+     * Allows for lines to be shorter than expected and ignores the extra
+     * characters
      */
     public void setAllowShortLines(Boolean allowShortLines) {
         this.allowShortLines = allowShortLines;
@@ -128,7 +134,8 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Allows for lines to be longer than expected and ignores the extra characters.
+     * Allows for lines to be longer than expected and ignores the extra
+     * characters.
      */
     public void setIgnoreExtraColumns(Boolean ignoreExtraColumns) {
         this.ignoreExtraColumns = ignoreExtraColumns;

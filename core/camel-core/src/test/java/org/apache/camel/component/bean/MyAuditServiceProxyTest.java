@@ -40,8 +40,7 @@ public class MyAuditServiceProxyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:proxy")
-                    .to("mock:result");
+                from("direct:proxy").to("mock:result");
             }
         };
     }

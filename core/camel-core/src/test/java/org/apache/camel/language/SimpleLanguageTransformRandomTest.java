@@ -21,7 +21,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * Unit test routing with simple language using random function which will reuse cached expressions.
+ * Unit test routing with simple language using random function which will reuse
+ * cached expressions.
  */
 public class SimpleLanguageTransformRandomTest extends ContextTestSupport {
 
@@ -41,8 +42,7 @@ public class SimpleLanguageTransformRandomTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
-                    .transform().simple("${random(1,${header.max})}");
+                from("direct:start").transform().simple("${random(1,${header.max})}");
             }
         };
     }

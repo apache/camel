@@ -49,37 +49,30 @@ public class ConverterBenchmarkTest {
     public void launchBenchmark() throws Exception {
 
         Options opt = new OptionsBuilder()
-                // Specify which benchmarks to run.
-                // You can be more specific if you'd like to run only one benchmark per test.
-                .include(this.getClass().getName() + ".*")
-                // Set the following options as needed
-                .mode(Mode.AverageTime)
-                .timeUnit(TimeUnit.MICROSECONDS)
-                .warmupTime(TimeValue.seconds(2))
-                .warmupIterations(5)
-                .measurementTime(TimeValue.seconds(1))
-                .measurementIterations(5)
-                .threads(2)
-                .forks(1)
-                .shouldFailOnError(true)
-                .shouldDoGC(true)
-                //.jvmArgs("-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintInlining")
-                //.addProfiler(WinPerfAsmProfiler.class)
-                .build();
+            // Specify which benchmarks to run.
+            // You can be more specific if you'd like to run only one benchmark
+            // per test.
+            .include(this.getClass().getName() + ".*")
+            // Set the following options as needed
+            .mode(Mode.AverageTime).timeUnit(TimeUnit.MICROSECONDS).warmupTime(TimeValue.seconds(2)).warmupIterations(5).measurementTime(TimeValue.seconds(1))
+            .measurementIterations(5).threads(2).forks(1).shouldFailOnError(true).shouldDoGC(true)
+            // .jvmArgs("-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintInlining")
+            // .addProfiler(WinPerfAsmProfiler.class)
+            .build();
 
         new Runner(opt).run();
     }
 
     // The JMH samples are the best documentation for how to use it
     // http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/
-    @State (Scope.Thread)
+    @State(Scope.Thread)
     public static class BenchmarkState {
         DefaultPackageScanClassResolver packageScanClassResolver;
         Injector injector;
         FactoryFinder factoryFinder;
         DefaultTypeConverter converter;
 
-        @Setup (Level.Trial)
+        @Setup(Level.Trial)
         public void initialize() throws Exception {
             packageScanClassResolver = new DefaultPackageScanClassResolver();
             injector = new ReflectionInjector();

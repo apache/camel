@@ -35,9 +35,11 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CsvDataFormat extends DataFormatDefinition {
     // Format options
-    @XmlAttribute @Metadata(label = "advanced")
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private String formatRef;
-    @XmlAttribute @Metadata(enums = "DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MYSQL,RFC4180")
+    @XmlAttribute
+    @Metadata(enums = "DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MYSQL,RFC4180")
     private String formatName;
     @XmlAttribute
     private Boolean commentMarkerDisabled;
@@ -81,7 +83,8 @@ public class CsvDataFormat extends DataFormatDefinition {
     private Boolean trim;
     @XmlAttribute
     private Boolean trailingDelimiter;
-    @XmlAttribute @Metadata(label = "advanced")
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private String marshallerFactoryRef;
 
     // Unmarshall options
@@ -109,10 +112,12 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Sets the implementation of the CsvMarshallerFactory interface which is able to customize marshalling/unmarshalling 
-     * behavior by extending CsvMarshaller or creating it from scratch.
+     * Sets the implementation of the CsvMarshallerFactory interface which is
+     * able to customize marshalling/unmarshalling behavior by extending
+     * CsvMarshaller or creating it from scratch.
      *
-     * @param marshallerFactoryRef the <code>CsvMarshallerFactory</code> reference.
+     * @param marshallerFactoryRef the <code>CsvMarshallerFactory</code>
+     *            reference.
      */
     public void setMarshallerFactoryRef(String marshallerFactoryRef) {
         this.marshallerFactoryRef = marshallerFactoryRef;
@@ -121,7 +126,8 @@ public class CsvDataFormat extends DataFormatDefinition {
     /**
      * Returns the <code>CsvMarshallerFactory</code> reference.
      *
-     * @return the <code>CsvMarshallerFactory</code> or <code>null</code> if none has been specified.
+     * @return the <code>CsvMarshallerFactory</code> or <code>null</code> if
+     *         none has been specified.
      */
     public String getMarshallerFactoryRef() {
         return marshallerFactoryRef;
@@ -132,7 +138,8 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT
+     * The reference format to use, it will be updated with the other format
+     * options, the default value is CSVFormat.DEFAULT
      */
     public void setFormatRef(String formatRef) {
         this.formatRef = formatRef;
@@ -321,7 +328,8 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Sets the record separator (aka new line) which by default is new line characters (CRLF)
+     * Sets the record separator (aka new line) which by default is new line
+     * characters (CRLF)
      */
     public void setRecordSeparator(String recordSeparator) {
         this.recordSeparator = recordSeparator;
@@ -354,7 +362,8 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.
+     * Whether the unmarshalling should produce an iterator that reads the lines
+     * on the fly or if all the lines must be read at one.
      */
     public void setLazyLoad(Boolean lazyLoad) {
         this.lazyLoad = lazyLoad;
@@ -365,7 +374,9 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to have header (either defined or collected).
+     * Whether the unmarshalling should produce maps (HashMap)for the lines
+     * values instead of lists. It requires to have header (either defined or
+     * collected).
      */
     public void setUseMaps(Boolean useMaps) {
         this.useMaps = useMaps;
@@ -376,7 +387,9 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected).
+     * Whether the unmarshalling should produce ordered maps (LinkedHashMap) for
+     * the lines values instead of lists. It requires to have header (either
+     * defined or collected).
      */
     public void setUseOrderedMaps(Boolean useOrderedMaps) {
         this.useOrderedMaps = useOrderedMaps;
@@ -387,7 +400,8 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Refers to a custom <tt>CsvRecordConverter</tt> to lookup from the registry to use.
+     * Refers to a custom <tt>CsvRecordConverter</tt> to lookup from the
+     * registry to use.
      */
     public void setRecordConverterRef(String recordConverterRef) {
         this.recordConverterRef = recordConverterRef;
@@ -403,25 +417,25 @@ public class CsvDataFormat extends DataFormatDefinition {
     public Boolean getTrim() {
         return trim;
     }
-    
+
     /**
      * Sets whether or not to ignore case when accessing header names.
      */
     public void setIgnoreHeaderCase(Boolean ignoreHeaderCase) {
         this.ignoreHeaderCase = ignoreHeaderCase;
     }
-    
+
     public Boolean getIgnoreHeaderCase() {
         return ignoreHeaderCase;
     }
-    
+
     /**
      * Sets whether or not to add a trailing delimiter.
      */
     public void setTrailingDelimiter(Boolean trailingDelimiter) {
         this.trailingDelimiter = trailingDelimiter;
     }
-    
+
     public Boolean getTrailingDelimiter() {
         return trailingDelimiter;
     }

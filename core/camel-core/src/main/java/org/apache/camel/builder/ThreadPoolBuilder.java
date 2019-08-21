@@ -37,7 +37,7 @@ public final class ThreadPoolBuilder {
         this.context = context;
         this.profile = new ThreadPoolProfile();
     }
-    
+
     public ThreadPoolBuilder poolSize(int poolSize) {
         profile.setPoolSize(poolSize);
         return this;
@@ -47,7 +47,7 @@ public final class ThreadPoolBuilder {
         profile.setMaxPoolSize(maxPoolSize);
         return this;
     }
-    
+
     public ThreadPoolBuilder keepAliveTime(long keepAliveTime, TimeUnit timeUnit) {
         profile.setKeepAliveTime(keepAliveTime);
         profile.setTimeUnit(timeUnit);
@@ -68,7 +68,7 @@ public final class ThreadPoolBuilder {
         profile.setRejectedPolicy(rejectedPolicy);
         return this;
     }
-    
+
     /**
      * Builds the new thread pool
      *
@@ -93,8 +93,9 @@ public final class ThreadPoolBuilder {
     /**
      * Builds the new thread pool
      *
-     * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
-     * @param name   name which is appended to the thread name
+     * @param source the source object, usually it should be <tt>this</tt>
+     *            passed in as parameter
+     * @param name name which is appended to the thread name
      * @return the created thread pool
      * @throws Exception is thrown if error building the thread pool
      */
@@ -126,8 +127,9 @@ public final class ThreadPoolBuilder {
     /**
      * Builds the new scheduled thread pool
      *
-     * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
-     * @param name   name which is appended to the thread name
+     * @param source the source object, usually it should be <tt>this</tt>
+     *            passed in as parameter
+     * @param name name which is appended to the thread name
      * @return the created scheduled thread pool
      * @throws Exception is thrown if error building the scheduled thread pool
      */

@@ -46,15 +46,13 @@ import org.apache.camel.util.CollectionStringBuffer;
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefinition> implements OutputNode {
-    @XmlElements({
-            @XmlElement(required = false, name = "failover", type = FailoverLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "customLoadBalancer", type = CustomLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "sticky", type = StickyLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "weighted", type = WeightedLoadBalancerDefinition.class)}
-        )
+    @XmlElements({@XmlElement(required = false, name = "failover", type = FailoverLoadBalancerDefinition.class),
+                  @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
+                  @XmlElement(required = false, name = "customLoadBalancer", type = CustomLoadBalancerDefinition.class),
+                  @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalancerDefinition.class),
+                  @XmlElement(required = false, name = "sticky", type = StickyLoadBalancerDefinition.class),
+                  @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class),
+                  @XmlElement(required = false, name = "weighted", type = WeightedLoadBalancerDefinition.class)})
     private LoadBalancerDefinition loadBalancerType;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
@@ -96,7 +94,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     /**
      * Uses a custom load balancer
      *
-     * @param loadBalancer  the load balancer
+     * @param loadBalancer the load balancer
      * @return the builder
      */
     @Override
@@ -106,7 +104,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         setLoadBalancerType(def);
         return this;
     }
-    
+
     /**
      * Uses fail over load balancer
      * <p/>
@@ -117,13 +115,14 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     public LoadBalanceDefinition failover() {
         return failover(-1, true, false);
     }
-    
+
     /**
      * Uses fail over load balancer
      * <p/>
      * Will not round robin and inherit the error handler.
      *
-     * @param exceptions exception classes which we want to failover if one of them was thrown
+     * @param exceptions exception classes which we want to failover if one of
+     *            them was thrown
      * @return the builder
      */
     public LoadBalanceDefinition failover(Class<?>... exceptions) {
@@ -133,13 +132,16 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     /**
      * Uses fail over load balancer
      *
-     * @param maximumFailoverAttempts  maximum number of failover attempts before exhausting.
-     *                                 Use -1 to newer exhaust when round robin is also enabled.
-     *                                 If round robin is disabled then it will exhaust when there are no more endpoints to failover
-     * @param inheritErrorHandler      whether or not to inherit error handler.
-     *                                 If <tt>false</tt> then it will failover immediately in case of an exception
-     * @param roundRobin               whether or not to use round robin (which keeps state)
-     * @param exceptions               exception classes which we want to failover if one of them was thrown
+     * @param maximumFailoverAttempts maximum number of failover attempts before
+     *            exhausting. Use -1 to newer exhaust when round robin is also
+     *            enabled. If round robin is disabled then it will exhaust when
+     *            there are no more endpoints to failover
+     * @param inheritErrorHandler whether or not to inherit error handler. If
+     *            <tt>false</tt> then it will failover immediately in case of an
+     *            exception
+     * @param roundRobin whether or not to use round robin (which keeps state)
+     * @param exceptions exception classes which we want to failover if one of
+     *            them was thrown
      * @return the builder
      */
     public LoadBalanceDefinition failover(int maximumFailoverAttempts, boolean inheritErrorHandler, boolean roundRobin, Class<?>... exceptions) {
@@ -149,14 +151,17 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     /**
      * Uses fail over load balancer
      *
-     * @param maximumFailoverAttempts  maximum number of failover attempts before exhausting.
-     *                                 Use -1 to newer exhaust when round robin is also enabled.
-     *                                 If round robin is disabled then it will exhaust when there are no more endpoints to failover
-     * @param inheritErrorHandler      whether or not to inherit error handler.
-     *                                 If <tt>false</tt> then it will failover immediately in case of an exception
-     * @param roundRobin               whether or not to use round robin (which keeps state)
-     * @param sticky                   whether or not to use sticky (which keeps state)
-     * @param exceptions               exception classes which we want to failover if one of them was thrown
+     * @param maximumFailoverAttempts maximum number of failover attempts before
+     *            exhausting. Use -1 to newer exhaust when round robin is also
+     *            enabled. If round robin is disabled then it will exhaust when
+     *            there are no more endpoints to failover
+     * @param inheritErrorHandler whether or not to inherit error handler. If
+     *            <tt>false</tt> then it will failover immediately in case of an
+     *            exception
+     * @param roundRobin whether or not to use round robin (which keeps state)
+     * @param sticky whether or not to use sticky (which keeps state)
+     * @param exceptions exception classes which we want to failover if one of
+     *            them was thrown
      * @return the builder
      */
     public LoadBalanceDefinition failover(int maximumFailoverAttempts, boolean inheritErrorHandler, boolean roundRobin, boolean sticky, Class<?>... exceptions) {
@@ -173,8 +178,9 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     /**
      * Uses weighted load balancer
      *
-     * @param roundRobin                   used to set the processor selection algorithm.
-     * @param distributionRatio            String of weighted ratios for distribution of messages.
+     * @param roundRobin used to set the processor selection algorithm.
+     * @param distributionRatio String of weighted ratios for distribution of
+     *            messages.
      * @return the builder
      */
     public LoadBalanceDefinition weighted(boolean roundRobin, String distributionRatio) {
@@ -184,9 +190,11 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     /**
      * Uses weighted load balancer
      *
-     * @param roundRobin                   used to set the processor selection algorithm.
-     * @param distributionRatio            String of weighted ratios for distribution of messages.
-     * @param distributionRatioDelimiter   String containing delimiter to be used for ratios
+     * @param roundRobin used to set the processor selection algorithm.
+     * @param distributionRatio String of weighted ratios for distribution of
+     *            messages.
+     * @param distributionRatioDelimiter String containing delimiter to be used
+     *            for ratios
      * @return the builder
      */
     public LoadBalanceDefinition weighted(boolean roundRobin, String distributionRatio, String distributionRatioDelimiter) {
@@ -197,7 +205,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         setLoadBalancerType(def);
         return this;
     }
-    
+
     /**
      * Uses round robin load balancer
      *
@@ -221,7 +229,8 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     /**
      * Uses the custom load balancer
      *
-     * @param ref reference to lookup a custom load balancer from the {@link org.apache.camel.spi.Registry} to be used.
+     * @param ref reference to lookup a custom load balancer from the
+     *            {@link org.apache.camel.spi.Registry} to be used.
      * @return the builder
      */
     public LoadBalanceDefinition custom(String ref) {
@@ -234,8 +243,8 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     /**
      * Uses sticky load balancer
      *
-     * @param correlationExpression  the expression for correlation
-     * @return  the builder
+     * @param correlationExpression the expression for correlation
+     * @return the builder
      */
     public LoadBalanceDefinition sticky(Expression correlationExpression) {
         StickyLoadBalancerDefinition def = new StickyLoadBalancerDefinition();

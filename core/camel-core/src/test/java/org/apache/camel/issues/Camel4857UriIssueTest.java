@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -33,10 +34,10 @@ import org.junit.Test;
 public class Camel4857UriIssueTest extends ContextTestSupport {
 
     /**
-     * An URI of Camel Beanstalk component consists of a hostname, port and a list
-     * of tube names. Tube names are separated by "+" character (which is more or less
-     * usually used on the Web to make lists), but every tube name may contain URI special
-     * characters like ? or +
+     * An URI of Camel Beanstalk component consists of a hostname, port and a
+     * list of tube names. Tube names are separated by "+" character (which is
+     * more or less usually used on the Web to make lists), but every tube name
+     * may contain URI special characters like ? or +
      */
     class MyEndpoint extends DefaultEndpoint {
         String uri;
@@ -76,7 +77,8 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
 
         @Override
         public boolean useRawUri() {
-            // we want the raw uri, so our component can understand the endpoint configuration as it was typed
+            // we want the raw uri, so our component can understand the endpoint
+            // configuration as it was typed
             return true;
         }
     }
@@ -98,8 +100,9 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
 
     @Test
     public void testPath() {
-         // Here a tube name is "tube+" and written in URI as "tube%2B", but it gets
-         // normalized, so that an endpoint sees "tube1+tube+"
+        // Here a tube name is "tube+" and written in URI as "tube%2B", but it
+        // gets
+        // normalized, so that an endpoint sees "tube1+tube+"
         MyEndpoint endpoint = context.getEndpoint("my:host:11303/tube1+tube%2B", MyEndpoint.class);
         assertEquals("Path contains several tube names, every tube name may have + or ? characters", "host:11303/tube1+tube%2B", endpoint.remaining);
     }

@@ -28,7 +28,6 @@ import org.junit.Test;
  */
 public class SameVmQueueSizeAndNoSizeTest extends ContextTestSupport {
 
-
     @Test
     public void testSameQueue() throws Exception {
         for (int i = 0; i < 100; i++) {
@@ -73,11 +72,9 @@ public class SameVmQueueSizeAndNoSizeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:foo?size=100").routeId("foo").noAutoStartup()
-                    .to("mock:foo");
+                from("vm:foo?size=100").routeId("foo").noAutoStartup().to("mock:foo");
 
-                from("vm:bar").routeId("bar").noAutoStartup()
-                    .to("mock:bar");
+                from("vm:bar").routeId("bar").noAutoStartup().to("mock:bar");
             }
         };
     }

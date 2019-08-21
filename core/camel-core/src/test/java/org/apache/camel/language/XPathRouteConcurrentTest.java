@@ -84,13 +84,7 @@ public class XPathRouteConcurrentTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?concurrentConsumers=10")
-                    .choice()
-                        .when().xpath("/person/name = 'Claus'")
-                            .to("mock:result")
-                        .otherwise()
-                            .to("mock:other")
-                    .end();
+                from("seda:foo?concurrentConsumers=10").choice().when().xpath("/person/name = 'Claus'").to("mock:result").otherwise().to("mock:other").end();
 
             }
         };

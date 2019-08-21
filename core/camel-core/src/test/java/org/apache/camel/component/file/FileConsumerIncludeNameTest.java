@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -59,8 +60,7 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/include/?initialDelay=0&delay=10&include=^report.*txt$")
-                    .convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/include/?initialDelay=0&delay=10&include=^report.*txt$").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

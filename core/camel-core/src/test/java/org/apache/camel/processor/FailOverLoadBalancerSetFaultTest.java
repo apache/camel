@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  */
 public class FailOverLoadBalancerSetFaultTest extends ContextTestSupport {
-    
+
     @Test
     public void testFailOverSetFault() throws Exception {
         getMockEndpoint("mock:failover1").expectedBodiesReceived("Hello World");
@@ -45,28 +45,21 @@ public class FailOverLoadBalancerSetFaultTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .loadBalance().failover(1, false, false, IOException.class)
-                        .to("seda:failover1", "seda:failover2")
-                    .end();
+                from("direct:start").loadBalance().failover(1, false, false, IOException.class).to("seda:failover1", "seda:failover2").end();
 
-                from("seda:failover1")
-                        .to("mock:failover1")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // mutate the message
-                                exchange.getMessage().setBody("Hi Camel");
-                                exchange.setException(new IOException("Forced exception for test"));
-                            }
-                        });
+                from("seda:failover1").to("mock:failover1").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // mutate the message
+                        exchange.getMessage().setBody("Hi Camel");
+                        exchange.setException(new IOException("Forced exception for test"));
+                    }
+                });
 
-                from("seda:failover2")
-                        .to("mock:failover2")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getMessage().setBody("Bye Camel");
-                            }
-                        });
+                from("seda:failover2").to("mock:failover2").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getMessage().setBody("Bye Camel");
+                    }
+                });
             }
         };
     }

@@ -30,19 +30,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.spi.Metadata;
 
-
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "combinedServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
-    @XmlElements({
-        @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class)}
-    )
+    @XmlElements({@XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
+                  @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
+                  @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
+                  @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
+                  @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
+                  @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class)})
     private List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations;
 
     public CombinedServiceCallServiceDiscoveryConfiguration() {
@@ -63,6 +60,7 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
 
     /**
      * List of ServiceDiscovery configuration to use
+     * 
      * @param serviceDiscoveryConfigurations
      */
     public void setServiceDiscoveryConfigurations(List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations) {
@@ -70,7 +68,7 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
     }
 
     /**
-     *  Add a ServiceDiscovery configuration
+     * Add a ServiceDiscovery configuration
      */
     public void addServiceDiscoveryConfigurations(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         if (serviceDiscoveryConfigurations == null) {
@@ -85,7 +83,7 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
     // *************************************************************************
 
     /**
-     *  List of ServiceDiscovery configuration to use
+     * List of ServiceDiscovery configuration to use
      */
     public CombinedServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfigurations(List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations) {
         setServiceDiscoveryConfigurations(serviceDiscoveryConfigurations);
@@ -93,7 +91,7 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
     }
 
     /**
-     *  Add a ServiceDiscovery configuration
+     * Add a ServiceDiscovery configuration
      */
     public CombinedServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         addServiceDiscoveryConfigurations(serviceDiscoveryConfiguration);

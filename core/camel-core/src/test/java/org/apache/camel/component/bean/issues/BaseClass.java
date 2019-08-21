@@ -22,6 +22,5 @@ public class BaseClass implements MyMessageListener {
     public void onMessage(MyMessage message) {
         // noop
     }
-    
-}
 
+}

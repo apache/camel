@@ -32,8 +32,8 @@ import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.support.CamelContextHelper;
 
 /**
- * Represents the runtime objects for a given {@link RouteDefinition} so that it can be stopped independently
- * of other routes
+ * Represents the runtime objects for a given {@link RouteDefinition} so that it
+ * can be stopped independently of other routes
  */
 public class RouteService extends BaseRouteService {
 
@@ -41,7 +41,7 @@ public class RouteService extends BaseRouteService {
 
     public RouteService(Route route) {
         super(route);
-        this.routeDefinition = (RouteDefinition) route.getRouteContext().getRoute();
+        this.routeDefinition = (RouteDefinition)route.getRouteContext().getRoute();
     }
 
     public RouteDefinition getRouteDefinition() {
@@ -79,8 +79,10 @@ public class RouteService extends BaseRouteService {
         if (!routeDefinition.isContextScopedErrorHandler()) {
             return false;
         }
-        // if error handler ref is configured it may refer to a context scoped, so we need to check this first
-        // the XML DSL will configure error handlers using refs, so we need this additional test
+        // if error handler ref is configured it may refer to a context scoped,
+        // so we need to check this first
+        // the XML DSL will configure error handlers using refs, so we need this
+        // additional test
         if (routeDefinition.getErrorHandlerRef() != null) {
             ErrorHandlerFactory routeScoped = getRouteContext().getErrorHandlerFactory();
             ErrorHandlerFactory contextScoped = getCamelContext().adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
@@ -91,26 +93,27 @@ public class RouteService extends BaseRouteService {
     }
 
     /**
-     * Gather all other kind of route scoped services from the given route, except error handler
+     * Gather all other kind of route scoped services from the given route,
+     * except error handler
      */
     @Override
     protected void doGetRouteScopedServices(List<Service> services) {
 
         for (ProcessorDefinition<?> output : routeDefinition.getOutputs()) {
             if (output instanceof OnExceptionDefinition) {
-                OnExceptionDefinition onExceptionDefinition = (OnExceptionDefinition) output;
+                OnExceptionDefinition onExceptionDefinition = (OnExceptionDefinition)output;
                 if (onExceptionDefinition.isRouteScoped()) {
                     Processor errorHandler = getRouteContext().getOnException(onExceptionDefinition.getId());
                     if (errorHandler instanceof Service) {
-                        services.add((Service) errorHandler);
+                        services.add((Service)errorHandler);
                     }
                 }
             } else if (output instanceof OnCompletionDefinition) {
-                OnCompletionDefinition onCompletionDefinition = (OnCompletionDefinition) output;
+                OnCompletionDefinition onCompletionDefinition = (OnCompletionDefinition)output;
                 if (onCompletionDefinition.isRouteScoped()) {
                     Processor onCompletionProcessor = getRouteContext().getOnCompletion(onCompletionDefinition.getId());
                     if (onCompletionProcessor instanceof Service) {
-                        services.add((Service) onCompletionProcessor);
+                        services.add((Service)onCompletionProcessor);
                     }
                 }
             }

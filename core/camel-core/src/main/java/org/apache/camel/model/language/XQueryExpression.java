@@ -91,7 +91,7 @@ public class XQueryExpression extends NamespaceAwareExpression {
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
-    
+
     @Override
     public Expression createExpression(CamelContext camelContext) {
         if (resultType == null && type != null) {

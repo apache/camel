@@ -33,10 +33,7 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
         RouteReifier.adviceWith(testRoute, context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("seda:*")
-                    .skipSendToOriginalEndpoint()
-                    .to("log:seda")
-                    .throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().to("log:seda").throwException(new IllegalArgumentException("Forced"));
             }
         });
 
@@ -44,10 +41,7 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
         RouteReifier.adviceWith(smtpRoute, context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("smtp*")
-                    .to("log:smtp")
-                    .skipSendToOriginalEndpoint()
-                    .to("mock:smtp");
+                interceptSendToEndpoint("smtp*").to("log:smtp").skipSendToOriginalEndpoint().to("mock:smtp");
             }
         });
 
@@ -69,25 +63,15 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("smtp", context.getComponent("mock"));
 
-                errorHandler(deadLetterChannel("direct:emailSupport")
-                        .maximumRedeliveries(2)
-                        .redeliveryDelay(0));
+                errorHandler(deadLetterChannel("direct:emailSupport").maximumRedeliveries(2).redeliveryDelay(0));
 
-                from("direct:emailSupport")
-                        .routeId("smtpRoute")
-                        .errorHandler(deadLetterChannel("log:dead?level=ERROR"))
-                        .to("smtp://smtpServer");
+                from("direct:emailSupport").routeId("smtpRoute").errorHandler(deadLetterChannel("log:dead?level=ERROR")).to("smtp://smtpServer");
 
-                from("timer://someTimer?delay=15000&fixedRate=true&period=5000")
-                        .routeId("pollRoute")
-                        .to("log:level=INFO");
+                from("timer://someTimer?delay=15000&fixedRate=true&period=5000").routeId("pollRoute").to("log:level=INFO");
 
-                from("direct:start")
-                        .routeId("TestRoute")
-                        .to("seda:foo");
+                from("direct:start").routeId("TestRoute").to("seda:foo");
             }
         };
     }
 
 }
-

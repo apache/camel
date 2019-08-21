@@ -19,14 +19,12 @@ package org.apache.camel.processor;
 import org.apache.camel.builder.RouteBuilder;
 
 public class ValidateSimpleRegExpTest extends ValidateRegExpTest {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .validate().simple("${bodyAs(java.lang.String)} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'")
-                    .to("mock:result");
+                from("direct:start").validate().simple("${bodyAs(java.lang.String)} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'").to("mock:result");
             }
         };
     }

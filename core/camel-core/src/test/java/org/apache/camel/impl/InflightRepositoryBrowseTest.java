@@ -41,24 +41,21 @@ public class InflightRepositoryBrowseTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("foo")
-                        .to("mock:a")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                Collection<InflightRepository.InflightExchange> list = context.getInflightRepository().browse();
-                                assertEquals(1, list.size());
+                from("direct:start").routeId("foo").to("mock:a").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        Collection<InflightRepository.InflightExchange> list = context.getInflightRepository().browse();
+                        assertEquals(1, list.size());
 
-                                InflightRepository.InflightExchange inflight = list.iterator().next();
-                                assertNotNull(inflight);
+                        InflightRepository.InflightExchange inflight = list.iterator().next();
+                        assertNotNull(inflight);
 
-                                assertEquals(exchange, inflight.getExchange());
-                                assertEquals("foo", inflight.getFromRouteId());
-                                assertEquals("foo", inflight.getAtRouteId());
-                                assertEquals("myProcessor", inflight.getNodeId());
-                            }
-                        }).id("myProcessor")
-                        .to("mock:result");
+                        assertEquals(exchange, inflight.getExchange());
+                        assertEquals("foo", inflight.getFromRouteId());
+                        assertEquals("foo", inflight.getAtRouteId());
+                        assertEquals("myProcessor", inflight.getNodeId());
+                    }
+                }).id("myProcessor").to("mock:result");
             }
         };
     }

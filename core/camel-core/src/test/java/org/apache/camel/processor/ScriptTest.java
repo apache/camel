@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -47,8 +48,7 @@ public class ScriptTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                     // should not affect the body
-                    .script(body().append(" World!"))
-                    .to("mock:result");
+                    .script(body().append(" World!")).to("mock:result");
             }
         };
     }

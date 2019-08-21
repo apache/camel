@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -56,11 +57,7 @@ public class FileMoveAndMoveFailedIssueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:./target/data/input?move=${file:parent}.bak/somedate/${file:onlyname}&moveFailed=${file:parent}.err/somedate/${file:onlyname}&initialDelay=0&delay=10")
-                    .convertBodyTo(String.class)
-                    .filter(body().contains("Kaboom"))
-                        .throwException(new IllegalArgumentException("Forced"))
-                    .end()
-                    .to("mock:result");
+                    .convertBodyTo(String.class).filter(body().contains("Kaboom")).throwException(new IllegalArgumentException("Forced")).end().to("mock:result");
             }
         };
     }

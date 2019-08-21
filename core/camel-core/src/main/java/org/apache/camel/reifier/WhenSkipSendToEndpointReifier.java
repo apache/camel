@@ -26,7 +26,7 @@ import org.apache.camel.spi.RouteContext;
 public class WhenSkipSendToEndpointReifier extends ExpressionReifier<WhenSkipSendToEndpointDefinition> {
 
     WhenSkipSendToEndpointReifier(ProcessorDefinition<?> definition) {
-        super((WhenSkipSendToEndpointDefinition) definition);
+        super((WhenSkipSendToEndpointDefinition)definition);
     }
 
     @Override
@@ -37,7 +37,8 @@ public class WhenSkipSendToEndpointReifier extends ExpressionReifier<WhenSkipSen
     @Override
     protected Predicate createPredicate(RouteContext routeContext) {
         // we need to keep track whether the when matches or not, so delegate
-        // the predicate and add the matches result as a property on the exchange
+        // the predicate and add the matches result as a property on the
+        // exchange
         final Predicate delegate = super.createPredicate(routeContext);
         return new Predicate() {
             @Override

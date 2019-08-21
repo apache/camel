@@ -65,9 +65,11 @@ public class PolicyPerProcessorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // only wrap policy foo around the to(mock:foo) - notice the end()
+                    // only wrap policy foo around the to(mock:foo) - notice the
+                    // end()
                     .policy("foo").to("mock:foo").end()
-                    // only wrap policy bar around the to(mock:bar) - notice the end()
+                    // only wrap policy bar around the to(mock:bar) - notice the
+                    // end()
                     .policy("bar").to("mock:bar").end()
                     // and this has no policy
                     .to("mock:result");
@@ -86,8 +88,7 @@ public class PolicyPerProcessorTest extends ContextTestSupport {
         }
 
         @Override
-        public void beforeWrap(RouteContext routeContext,
-                               NamedNode definition) {
+        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
             // no need to modify the route
         }
 
@@ -96,7 +97,7 @@ public class PolicyPerProcessorTest extends ContextTestSupport {
             return new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     invoked++;
-                    
+
                     exchange.getIn().setHeader(name, "was wrapped");
                     // let the original processor continue routing
                     processor.process(exchange);

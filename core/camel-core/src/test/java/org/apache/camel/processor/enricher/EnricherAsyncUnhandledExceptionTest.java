@@ -41,12 +41,16 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
         // this direct endpoint should receive an exception
         try {
             Future<Object> obj = template.asyncRequestBody("direct:in", "Hello World");
-            // wait five seconds at most; else, let's assume something went wrong
+            // wait five seconds at most; else, let's assume something went
+            // wrong
             obj.get(5000, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
-            // if we receive an exception, the async routing engine is working correctly
-            // before the Enricher was fixed for cases where routing was async and the AggregationStrategy 
-            // threw an exception, the call to requestBody would stall indefinitely
+            // if we receive an exception, the async routing engine is working
+            // correctly
+            // before the Enricher was fixed for cases where routing was async
+            // and the AggregationStrategy
+            // threw an exception, the call to requestBody would stall
+            // indefinitely
             // unwrap the exception chain
             assertTrue(e instanceof ExecutionException);
             assertTrue(e.getCause() instanceof CamelExecutionException);
@@ -58,7 +62,6 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
         }
         fail("Expected an RuntimeException");
     }
-
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -76,16 +79,16 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in")
-                    .to("mock:pickedUp")
-                    // using the async utility component to ensure that the async routing engine kicks in
+                from("direct:in").to("mock:pickedUp")
+                    // using the async utility component to ensure that the
+                    // async routing engine kicks in
                     .enrich("async:out?reply=Reply", new AggregationStrategy() {
                         @Override
                         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                             throw new RuntimeException("Bang! Unhandled exception");
                         }
                     });
-                
+
             }
         };
     }

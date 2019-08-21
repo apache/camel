@@ -34,12 +34,12 @@ public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListT
         answer.bind("myBean", new MyBean());
         return answer;
     }
-    
+
     interface Route {
         @org.apache.camel.RecipientList
         String[] route(String body);
     }
-    
+
     public static class MyBean implements Route {
         private static AtomicInteger counter = new AtomicInteger(0);
         private int id;
@@ -52,12 +52,11 @@ public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListT
         public String toString() {
             return "MyBean:" + id;
         }
-        
+
         @Override
         public String[] route(String body) {
             return new String[] {"mock:a", "mock:b"};
         }
     }
-    
 
 }

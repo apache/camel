@@ -40,9 +40,7 @@ public class FilterBeanLanguageNonRegistryTest extends ContextTestSupport {
             public void configure() throws Exception {
                 MyBean myBean = new MyBean();
 
-                from("direct:start")
-                    .filter(method(myBean, "isGoldCustomer"))
-                    .to("mock:result");
+                from("direct:start").filter(method(myBean, "isGoldCustomer")).to("mock:result");
             }
         };
     }

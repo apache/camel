@@ -31,7 +31,8 @@ public class BeanWithExchangeExceptionAnnotationWrappedExceptionTest extends Bea
             throw io;
         }
 
-        // to unit test that we can set a type to the @ExchangeException that we want this caused by exception
+        // to unit test that we can set a type to the @ExchangeException that we
+        // want this caused by exception
         // in the exception hieracy
         public void handleException(@ExchangeException MyCustomException custom) {
             assertNotNull(custom);

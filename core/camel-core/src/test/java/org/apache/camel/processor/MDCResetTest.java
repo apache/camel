@@ -25,8 +25,8 @@ import org.junit.Test;
 import org.slf4j.MDC;
 
 /**
- * Tests that MDC works as a stack remembering old values
- * when using a producer template to send in new messages during routing.
+ * Tests that MDC works as a stack remembering old values when using a producer
+ * template to send in new messages during routing.
  */
 public class MDCResetTest extends ContextTestSupport {
 
@@ -59,40 +59,34 @@ public class MDCResetTest extends ContextTestSupport {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
-                from("direct:a").routeId("route-a")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-a", MDC.get("camel.routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                            }
-                        })
-                        .to("log:foo").to("direct:b")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                // use a producer template to send to b, instead of in the route DSL
-                                body = template.requestBody("direct:b", body, String.class);
-                                exchange.getMessage().setBody(body);
-                            }
-                        })
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-a", MDC.get("camel.routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                            }
-                        })
-                        .to("log:result").to("mock:result");
+                from("direct:a").routeId("route-a").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals("route-a", MDC.get("camel.routeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                    }
+                }).to("log:foo").to("direct:b").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        // use a producer template to send to b, instead of in
+                        // the route DSL
+                        body = template.requestBody("direct:b", body, String.class);
+                        exchange.getMessage().setBody(body);
+                    }
+                }).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals("route-a", MDC.get("camel.routeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                    }
+                }).to("log:result").to("mock:result");
 
-                from("direct:b").routeId("route-b")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-b", MDC.get("camel.routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                from("direct:b").routeId("route-b").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals("route-b", MDC.get("camel.routeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
 
-                                exchange.getMessage().setBody("Good Afternoon World");
-                            }
-                        })
-                        .to("log:bar");
+                        exchange.getMessage().setBody("Good Afternoon World");
+                    }
+                }).to("log:bar");
             }
         };
     }

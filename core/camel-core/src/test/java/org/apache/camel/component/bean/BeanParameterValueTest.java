@@ -118,37 +118,21 @@ public class BeanParameterValueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:foo?method=bar(*,true)")
-                    .to("mock:result");
+                from("direct:start").to("bean:foo?method=bar(*,true)").to("mock:result");
 
-                from("direct:start2")
-                    .to("bean:foo?method=bar(${body},true)")
-                    .to("mock:result");
+                from("direct:start2").to("bean:foo?method=bar(${body},true)").to("mock:result");
 
-                from("direct:start3")
-                    .to("bean:foo?method=bar(${body}, true)")
-                    .to("mock:result");
+                from("direct:start3").to("bean:foo?method=bar(${body}, true)").to("mock:result");
 
-                from("direct:start4")
-                    .to("bean:foo?method=bar('Camel', true)")
-                    .to("mock:result");
+                from("direct:start4").to("bean:foo?method=bar('Camel', true)").to("mock:result");
 
-                from("direct:echo")
-                    .to("bean:foo?method=echo(*, 3)")
-                    .to("mock:result");
+                from("direct:echo").to("bean:foo?method=echo(*, 3)").to("mock:result");
 
-                from("direct:echo2")
-                    .to("bean:foo?method=echo(*, ${in.header.times})")
-                    .to("mock:result");
+                from("direct:echo2").to("bean:foo?method=echo(*, ${in.header.times})").to("mock:result");
 
-                from("direct:heads")
-                    .to("bean:foo?method=heads(${body}, ${headers})")
-                    .to("mock:result");
+                from("direct:heads").to("bean:foo?method=heads(${body}, ${headers})").to("mock:result");
 
-                from("direct:nobody")
-                    .to("bean:foo?method=nobody(${header.SomeAge}, ${header.SomeName}, ${header.SomeTest})")
-                    .to("mock:result");
+                from("direct:nobody").to("bean:foo?method=nobody(${header.SomeAge}, ${header.SomeName}, ${header.SomeTest})").to("mock:result");
             }
         };
     }

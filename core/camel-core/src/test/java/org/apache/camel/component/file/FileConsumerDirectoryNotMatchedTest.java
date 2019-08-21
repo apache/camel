@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,17 +36,13 @@ public class FileConsumerDirectoryNotMatchedTest extends ContextTestSupport {
         deleteDirectory("target/data/dirnotmatched");
         super.setUp();
 
-        template.sendBodyAndHeader("file:target/data/dirnotmatched/", "This is a dot file",
-            Exchange.FILE_NAME, ".skipme");
+        template.sendBodyAndHeader("file:target/data/dirnotmatched/", "This is a dot file", Exchange.FILE_NAME, ".skipme");
 
-        template.sendBodyAndHeader("file:target/data/dirnotmatched/", "This is a web file",
-            Exchange.FILE_NAME, "index.html");
+        template.sendBodyAndHeader("file:target/data/dirnotmatched/", "This is a web file", Exchange.FILE_NAME, "index.html");
 
-        template.sendBodyAndHeader("file:target/data/dirnotmatched/2007", "2007 report",
-            Exchange.FILE_NAME, "report2007.txt");
+        template.sendBodyAndHeader("file:target/data/dirnotmatched/2007", "2007 report", Exchange.FILE_NAME, "report2007.txt");
 
-        template.sendBodyAndHeader("file:target/data/dirnotmatched/2008", "2008 report",
-            Exchange.FILE_NAME, "report2008.txt");
+        template.sendBodyAndHeader("file:target/data/dirnotmatched/2008", "2008 report", Exchange.FILE_NAME, "report2008.txt");
     }
 
     @Test

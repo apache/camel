@@ -32,7 +32,7 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
 
     ThreadsReifier(ProcessorDefinition<?> definition) {
-        super((ThreadsDefinition) definition);
+        super((ThreadsDefinition)definition);
     }
 
     @Override
@@ -59,14 +59,9 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         if (threadPool == null) {
             ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
             // create the thread pool using a builder
-            ThreadPoolProfile profile = new ThreadPoolProfileBuilder(name)
-                    .poolSize(definition.getPoolSize())
-                    .maxPoolSize(definition.getMaxPoolSize())
-                    .keepAliveTime(definition.getKeepAliveTime(), definition.getTimeUnit())
-                    .maxQueueSize(definition.getMaxQueueSize())
-                    .rejectedPolicy(policy)
-                    .allowCoreThreadTimeOut(definition.getAllowCoreThreadTimeOut())
-                    .build();
+            ThreadPoolProfile profile = new ThreadPoolProfileBuilder(name).poolSize(definition.getPoolSize()).maxPoolSize(definition.getMaxPoolSize())
+                .keepAliveTime(definition.getKeepAliveTime(), definition.getTimeUnit()).maxQueueSize(definition.getMaxQueueSize()).rejectedPolicy(policy)
+                .allowCoreThreadTimeOut(definition.getAllowCoreThreadTimeOut()).build();
             threadPool = manager.newThreadPool(definition, name, profile);
             shutdownThreadPool = true;
         } else {

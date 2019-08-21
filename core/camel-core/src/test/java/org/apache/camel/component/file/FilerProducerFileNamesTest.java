@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,7 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit test for the how FileProducer behaves a bit strangely when generating filenames
+ * Unit test for the how FileProducer behaves a bit strangely when generating
+ * filenames
  */
 public class FilerProducerFileNamesTest extends ContextTestSupport {
 

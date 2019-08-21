@@ -67,9 +67,7 @@ public class MockValueBuilderIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setProperty("foo", constant(123))
-                    .to("mock:result");
+                from("direct:start").setProperty("foo", constant(123)).to("mock:result");
             }
         };
     }

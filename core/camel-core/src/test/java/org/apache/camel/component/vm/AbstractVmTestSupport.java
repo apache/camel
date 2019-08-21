@@ -26,17 +26,17 @@ import org.junit.After;
 import org.junit.Before;
 
 public abstract class AbstractVmTestSupport extends ContextTestSupport {
-    
+
     protected CamelContext context2;
     protected ProducerTemplate template2;
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         context2 = new DefaultCamelContext();
         template2 = context2.createProducerTemplate();
-        
+
         ServiceHelper.startService(template2, context2);
 
         // add routes after CamelContext has been started
@@ -45,7 +45,7 @@ public abstract class AbstractVmTestSupport extends ContextTestSupport {
             context2.addRoutes(routeBuilder);
         }
     }
-    
+
     @Override
     @After
     public void tearDown() throws Exception {
@@ -54,7 +54,7 @@ public abstract class AbstractVmTestSupport extends ContextTestSupport {
         VmComponent.QUEUES.clear();
         super.tearDown();
     }
-    
+
     protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
         return null;
     }

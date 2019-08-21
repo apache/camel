@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,7 +39,8 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
     @Test
     public void testDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
-        // wait a bit and it should not pickup the written file as there are no done file
+        // wait a bit and it should not pickup the written file as there are no
+        // done file
         getMockEndpoint("mock:result").setResultMinimumWaitTime(50);
 
         template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");

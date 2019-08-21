@@ -22,46 +22,30 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class ValidatorIncludeRelativeRouteTest extends ValidatorIncludeRouteTest {
-    
+
     @Override
     @Test
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
-        
+
         String body = "<p:person user=\"james\" xmlns:p=\"org.person\" xmlns:h=\"org.health.check.person\" xmlns:c=\"org.health.check.common\">\n"
-                + "  <p:firstName>James</p:firstName>\n"
-                + "  <p:lastName>Strachan</p:lastName>\n"
-                + "  <p:city>London</p:city>\n"
-                + "  <h:health>\n"
-                + "      <h:lastCheck>2011-12-23</h:lastCheck>\n"
-                + "      <h:status>OK</h:status>\n"
-                + "      <c:commonElement>" 
-                + "          <c:element1/>"
-                + "          <c:element2/>"
-                + "      </c:commonElement>"
-                + "  </h:health>\n"
-                + "</p:person>";
+                      + "  <p:firstName>James</p:firstName>\n" + "  <p:lastName>Strachan</p:lastName>\n" + "  <p:city>London</p:city>\n" + "  <h:health>\n"
+                      + "      <h:lastCheck>2011-12-23</h:lastCheck>\n" + "      <h:status>OK</h:status>\n" + "      <c:commonElement>" + "          <c:element1/>"
+                      + "          <c:element2/>" + "      </c:commonElement>" + "  </h:health>\n" + "</p:person>";
 
         template.sendBody("direct:start", body);
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .doTry()
-                        .to("validator:org/apache/camel/component/validator/xsds/person.xsd")
-                        .to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .to("mock:invalid")
-                    .doFinally()
-                        .to("mock:finally")
-                    .end();
+                from("direct:start").doTry().to("validator:org/apache/camel/component/validator/xsds/person.xsd").to("mock:valid").doCatch(ValidationException.class)
+                    .to("mock:invalid").doFinally().to("mock:finally").end();
             }
         };
     }

@@ -36,7 +36,8 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PollEnrichDefinition extends ExpressionNode {
-    @XmlAttribute @Metadata(defaultValue = "-1")
+    @XmlAttribute
+    @Metadata(defaultValue = "-1")
     private Long timeout;
     @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;
@@ -65,7 +66,7 @@ public class PollEnrichDefinition extends ExpressionNode {
     public String toString() {
         return "PollEnrich[" + getExpression() + "]";
     }
-    
+
     @Override
     public String getShortName() {
         return "pollEnrich";
@@ -82,13 +83,21 @@ public class PollEnrichDefinition extends ExpressionNode {
     /**
      * Timeout in millis when polling from the external service.
      * <p/>
-     * The timeout has influence about the poll enrich behavior. It basically operations in three different modes:
+     * The timeout has influence about the poll enrich behavior. It basically
+     * operations in three different modes:
      * <ul>
-     *     <li>negative value - Waits until a message is available and then returns it. Warning that this method could block indefinitely if no messages are available.</li>
-     *     <li>0 - Attempts to receive a message exchange immediately without waiting and returning <tt>null</tt> if a message exchange is not available yet.</li>
-     *     <li>positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns <tt>null</tt> if timed out</li>
+     * <li>negative value - Waits until a message is available and then returns
+     * it. Warning that this method could block indefinitely if no messages are
+     * available.</li>
+     * <li>0 - Attempts to receive a message exchange immediately without
+     * waiting and returning <tt>null</tt> if a message exchange is not
+     * available yet.</li>
+     * <li>positive value - Attempts to receive a message exchange, waiting up
+     * to the given timeout to expire if a message is not yet available. Returns
+     * <tt>null</tt> if timed out</li>
      * </ul>
-     * The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a timeout value
+     * The default value is -1 and therefore the method could block
+     * indefinitely, and therefore its recommended to use a timeout value
      */
     public PollEnrichDefinition timeout(long timeout) {
         setTimeout(timeout);
@@ -96,8 +105,9 @@ public class PollEnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message.
-     * By default Camel will use the reply from the external service as outgoing message.
+     * Sets the AggregationStrategy to be used to merge the reply from the
+     * external service, into a single outgoing message. By default Camel will
+     * use the reply from the external service as outgoing message.
      */
     public PollEnrichDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
@@ -105,8 +115,9 @@ public class PollEnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message.
-     * By default Camel will use the reply from the external service as outgoing message.
+     * Sets the AggregationStrategy to be used to merge the reply from the
+     * external service, into a single outgoing message. By default Camel will
+     * use the reply from the external service as outgoing message.
      */
     public PollEnrichDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy.get());
@@ -114,8 +125,9 @@ public class PollEnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message.
-     * By default Camel will use the reply from the external service as outgoing message.
+     * Refers to an AggregationStrategy to be used to merge the reply from the
+     * external service, into a single outgoing message. By default Camel will
+     * use the reply from the external service as outgoing message.
      */
     public PollEnrichDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setAggregationStrategyRef(aggregationStrategyRef);
@@ -123,7 +135,8 @@ public class PollEnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     * This option can be used to explicit declare the method name to use, when
+     * using POJOs as the AggregationStrategy.
      */
     public PollEnrichDefinition aggregationStrategyMethodName(String aggregationStrategyMethodName) {
         setAggregationStrategyMethodName(aggregationStrategyMethodName);
@@ -131,9 +144,10 @@ public class PollEnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * If this option is false then the aggregate method is not used if there was no data to enrich.
-     * If this option is true then null values is used as the oldExchange (when no data to enrich),
-     * when using POJOs as the AggregationStrategy.
+     * If this option is false then the aggregate method is not used if there
+     * was no data to enrich. If this option is true then null values is used as
+     * the oldExchange (when no data to enrich), when using POJOs as the
+     * AggregationStrategy.
      */
     public PollEnrichDefinition aggregationStrategyMethodAllowNull(boolean aggregationStrategyMethodAllowNull) {
         setAggregationStrategyMethodAllowNull(aggregationStrategyMethodAllowNull);
@@ -141,10 +155,11 @@ public class PollEnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * If this option is false then the aggregate method is not used if there was an exception thrown while trying
-     * to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what
-     * to do if there was an exception in the aggregate method. For example to suppress the exception
-     * or set a custom message body etc.
+     * If this option is false then the aggregate method is not used if there
+     * was an exception thrown while trying to retrieve the data to enrich from
+     * the resource. Setting this option to true allows end users to control
+     * what to do if there was an exception in the aggregate method. For example
+     * to suppress the exception or set a custom message body etc.
      */
     public PollEnrichDefinition aggregateOnException(boolean aggregateOnException) {
         setAggregateOnException(aggregateOnException);
@@ -152,10 +167,12 @@ public class PollEnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Sets the maximum size used by the {@link org.apache.camel.spi.ConsumerCache} which is used
-     * to cache and reuse consumers when uris are reused.
+     * Sets the maximum size used by the
+     * {@link org.apache.camel.spi.ConsumerCache} which is used to cache and
+     * reuse consumers when uris are reused.
      *
-     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
+     *            or <tt>-1</tt> to turn cache off.
      * @return the builder
      */
     public PollEnrichDefinition cacheSize(int cacheSize) {
@@ -164,7 +181,8 @@ public class PollEnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     * Ignore the invalidate endpoint exception when try to create a producer
+     * with that endpoint
      *
      * @return the builder
      */
@@ -177,7 +195,8 @@ public class PollEnrichDefinition extends ExpressionNode {
     // -------------------------------------------------------------------------
 
     /**
-     * Expression that computes the endpoint uri to use as the resource endpoint to enrich from
+     * Expression that computes the endpoint uri to use as the resource endpoint
+     * to enrich from
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {

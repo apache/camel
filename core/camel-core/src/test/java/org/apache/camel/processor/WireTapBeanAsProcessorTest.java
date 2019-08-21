@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -68,11 +69,7 @@ public class WireTapBeanAsProcessorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .to("log:foo")
-                    .wireTap("bean:tap")
-                    .transform(body().prepend("Bye "))
-                    .to("mock:result");
+                from("direct:start").to("log:foo").wireTap("bean:tap").transform(body().prepend("Bye ")).to("mock:result");
             }
         };
     }

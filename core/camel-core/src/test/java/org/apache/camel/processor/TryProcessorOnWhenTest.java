@@ -103,23 +103,21 @@ public class TryProcessorOnWhenTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // here is our try where we try processing the exchange in the route below if it fails
-                    // we can catch it below, just like regular try .. catch .. finally in Java
-                    .doTry()
-                        .process(new ProcessorFail())
-                        .to("mock:result")
+                    // here is our try where we try processing the exchange in
+                    // the route below if it fails
+                    // we can catch it below, just like regular try .. catch ..
+                    // finally in Java
+                    .doTry().process(new ProcessorFail()).to("mock:result")
                     // here we catch the following 2 exceptions but only if
-                    // the onWhen predicate matches, eg if the exception messsage
+                    // the onWhen predicate matches, eg if the exception
+                    // messsage
                     // conatins the string word Damn
-                    .doCatch(IOException.class, IllegalStateException.class)
-                        .onWhen(exceptionMessage().contains("Damn"))
-                        .to("mock:catch")
-                    // another catch for CamelExchangeException that does not have any onWhen predicate
-                    .doCatch(CamelExchangeException.class)
-                        .to("mock:catchCamel")
+                    .doCatch(IOException.class, IllegalStateException.class).onWhen(exceptionMessage().contains("Damn")).to("mock:catch")
+                    // another catch for CamelExchangeException that does not
+                    // have any onWhen predicate
+                    .doCatch(CamelExchangeException.class).to("mock:catchCamel")
                     // and the finally that is always processed
-                    .doFinally()
-                        .to("mock:finally")
+                    .doFinally().to("mock:finally")
                     // here the try block ends
                     .end();
                 // END SNIPPET: e1

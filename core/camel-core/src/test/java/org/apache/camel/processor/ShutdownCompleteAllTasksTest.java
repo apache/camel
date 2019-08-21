@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,9 +81,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from(url).routeId("foo").noAutoStartup()
                     // let it complete all tasks during shutdown
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
-                    .process(new MyProcessor())
-                    .to("mock:bar");
+                    .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).process(new MyProcessor()).to("mock:bar");
             }
             // END SNIPPET: e1
         };

@@ -143,10 +143,8 @@ public class AggregateControllerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .aggregate(header("id"), new MyAggregationStrategy()).aggregateController(getAggregateController())
-                        .completionSize(10)
-                        .to("log:aggregated", "mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).aggregateController(getAggregateController()).completionSize(10).to("log:aggregated",
+                                                                                                                                                              "mock:aggregated");
             }
         };
     }

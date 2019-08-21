@@ -49,8 +49,7 @@ public class DataSetTestEndpointTest extends ContextTestSupport {
                 MyEndpoint my = new MyEndpoint("my:foo", context);
                 context.addEndpoint("my:foo", my);
 
-                from("seda:foo")
-                    .to("dataset-test:my:foo?timeout=0");
+                from("seda:foo").to("dataset-test:my:foo?timeout=0");
             }
         };
     }

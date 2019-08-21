@@ -28,21 +28,18 @@ import org.apache.camel.util.StringHelper;
 public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelBuilder> {
 
     public DeadLetterChannelReifier(ErrorHandlerFactory definition) {
-        super((DeadLetterChannelBuilder) definition);
+        super((DeadLetterChannelBuilder)definition);
     }
 
     @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         validateDeadLetterUri(routeContext);
 
-        DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor,
-                definition.getLogger(), definition.getOnRedelivery(),
-                definition.getRedeliveryPolicy(), definition.getExceptionPolicyStrategy(),
-                definition.getFailureProcessor(), definition.getDeadLetterUri(),
-                definition.isDeadLetterHandleNewException(), definition.isUseOriginalMessage(), definition.isUseOriginalBody(),
-                definition.getRetryWhilePolicy(routeContext.getCamelContext()),
-                getExecutorService(routeContext.getCamelContext()),
-                definition.getOnPrepareFailure(), definition.getOnExceptionOccurred());
+        DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, definition.getLogger(), definition.getOnRedelivery(),
+                                                         definition.getRedeliveryPolicy(), definition.getExceptionPolicyStrategy(), definition.getFailureProcessor(),
+                                                         definition.getDeadLetterUri(), definition.isDeadLetterHandleNewException(), definition.isUseOriginalMessage(),
+                                                         definition.isUseOriginalBody(), definition.getRetryWhilePolicy(routeContext.getCamelContext()),
+                                                         getExecutorService(routeContext.getCamelContext()), definition.getOnPrepareFailure(), definition.getOnExceptionOccurred());
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;

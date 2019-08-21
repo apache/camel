@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -62,7 +63,7 @@ public class NeilSplitterTest extends ContextTestSupport {
                 Message in = exchange.getIn();
                 CatFight catFight = new CatFight();
                 catFight.setName("blueydart");
-                catFight.setCats(new String[]{"Ginger", "Mr Boots"});
+                catFight.setCats(new String[] {"Ginger", "Mr Boots"});
                 in.setBody(catFight);
                 in.setHeader("foo", "bar");
             }
@@ -74,9 +75,7 @@ public class NeilSplitterTest extends ContextTestSupport {
     @Test
     public void testXPathExpression() throws Exception {
 
-        resultEndpoint.expectedBodiesReceived(
-                "<b>Ginger</b>",
-                "<b>Mr Boots</b>");
+        resultEndpoint.expectedBodiesReceived("<b>Ginger</b>", "<b>Mr Boots</b>");
 
         template.send("direct:xpath", new Processor() {
             public void process(Exchange exchange) {
@@ -103,8 +102,7 @@ public class NeilSplitterTest extends ContextTestSupport {
             public void configure() {
                 Expression catFightCats = new ExpressionAdapter() {
                     public Object evaluate(Exchange exchange) {
-                        CatFight catFight = (CatFight)
-                                exchange.getIn().getBody();
+                        CatFight catFight = (CatFight)exchange.getIn().getBody();
                         String[] cats = catFight.getCats();
                         return cats;
                     }

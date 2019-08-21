@@ -41,9 +41,7 @@ public class SedaInOutWithErrorDeadLetterChannelTest extends ContextTestSupport 
 
                 from("direct:start").to("seda:foo");
 
-                from("seda:foo").transform(constant("Bye World"))
-                    .throwException(new IllegalArgumentException("Damn I cannot do this"))
-                    .to("mock:result");
+                from("seda:foo").transform(constant("Bye World")).throwException(new IllegalArgumentException("Damn I cannot do this")).to("mock:result");
             }
         };
     }

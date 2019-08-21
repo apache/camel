@@ -69,7 +69,8 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
                 from(my).to("mock:b");
             }
         });
-        // this one is allowing multiple consumers on the same endpoint so no problem starting
+        // this one is allowing multiple consumers on the same endpoint so no
+        // problem starting
         context.start();
         context.stop();
     }

@@ -53,7 +53,8 @@ import org.apache.camel.spi.Metadata;
 public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements OutputNode, ExecutorServiceAwareDefinition<AggregateDefinition> {
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
-    @XmlElement(name = "completionPredicate") @AsPredicate
+    @XmlElement(name = "completionPredicate")
+    @AsPredicate
     private ExpressionSubElementDefinition completionPredicate;
     @XmlElement(name = "completionTimeoutExpression")
     private ExpressionSubElementDefinition completionTimeoutExpression;
@@ -95,7 +96,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Long completionInterval;
     @XmlAttribute
     private Long completionTimeout;
-    @XmlAttribute @Metadata(defaultValue = "1000")
+    @XmlAttribute
+    @Metadata(defaultValue = "1000")
     private Long completionTimeoutCheckerInterval = 1000L;
     @XmlAttribute
     private Boolean completionFromBatchConsumer;
@@ -128,7 +130,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public AggregateDefinition(@AsPredicate Predicate predicate) {
         this(ExpressionNodeHelper.toExpressionDefinition(predicate));
     }
-    
+
     public AggregateDefinition(Expression expression) {
         this(ExpressionNodeHelper.toExpressionDefinition(expression));
     }
@@ -150,7 +152,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public String toString() {
         return "Aggregate[" + description() + " -> " + getOutputs() + "]";
     }
-    
+
     protected String description() {
         return getExpression() != null ? getExpression().getLabel() : "";
     }
@@ -173,16 +175,20 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
 
         if (exp instanceof ExpressionClause) {
-            ExpressionClause<?> clause = (ExpressionClause<?>) exp;
+            ExpressionClause<?> clause = (ExpressionClause<?>)exp;
             if (clause.getExpressionType() != null) {
-                // if using the Java DSL then the expression may have been set using the
-                // ExpressionClause which is a fancy builder to define expressions and predicates
-                // using fluent builders in the DSL. However we need afterwards a callback to
-                // reset the expression to the expression type the ExpressionClause did build for us
+                // if using the Java DSL then the expression may have been set
+                // using the
+                // ExpressionClause which is a fancy builder to define
+                // expressions and predicates
+                // using fluent builders in the DSL. However we need afterwards
+                // a callback to
+                // reset the expression to the expression type the
+                // ExpressionClause did build for us
                 ExpressionFactory model = clause.getExpressionType();
                 if (model instanceof ExpressionDefinition) {
                     correlationExpression = new ExpressionSubElementDefinition();
-                    correlationExpression.setExpressionType((ExpressionDefinition) model);
+                    correlationExpression.setExpressionType((ExpressionDefinition)model);
                 }
             }
         }
@@ -195,9 +201,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * The AggregationStrategy to use.
      * <p/>
-     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing already merged exchanges.
-     * At first call the oldExchange parameter is null.
-     * On subsequent invocations the oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
+     * Configuring an AggregationStrategy is required, and is used to merge the
+     * incoming Exchange with the existing already merged exchanges. At first
+     * call the oldExchange parameter is null. On subsequent invocations the
+     * oldExchange contains the merged exchanges and newExchange is of course
+     * the new incoming Exchange.
      */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
@@ -210,9 +218,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * A reference to lookup the AggregationStrategy in the Registry.
      * <p/>
-     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing already merged exchanges.
-     * At first call the oldExchange parameter is null.
-     * On subsequent invocations the oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
+     * Configuring an AggregationStrategy is required, and is used to merge the
+     * incoming Exchange with the existing already merged exchanges. At first
+     * call the oldExchange parameter is null. On subsequent invocations the
+     * oldExchange contains the merged exchanges and newExchange is of course
+     * the new incoming Exchange.
      */
     public void setAggregationStrategyRef(String aggregationStrategyRef) {
         this.strategyRef = aggregationStrategyRef;
@@ -225,9 +235,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * A reference to lookup the AggregationStrategy in the Registry.
      * <p/>
-     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing already merged exchanges.
-     * At first call the oldExchange parameter is null.
-     * On subsequent invocations the oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
+     * Configuring an AggregationStrategy is required, and is used to merge the
+     * incoming Exchange with the existing already merged exchanges. At first
+     * call the oldExchange parameter is null. On subsequent invocations the
+     * oldExchange contains the merged exchanges and newExchange is of course
+     * the new incoming Exchange.
      */
     public void setStrategyRef(String strategyRef) {
         this.strategyRef = strategyRef;
@@ -238,7 +250,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     * This option can be used to explicit declare the method name to use, when
+     * using POJOs as the AggregationStrategy.
      */
     public void setAggregationStrategyMethodName(String strategyMethodName) {
         this.strategyMethodName = strategyMethodName;
@@ -253,26 +266,29 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     * This option can be used to explicit declare the method name to use, when
+     * using POJOs as the AggregationStrategy.
      */
     public void setStrategyMethodName(String strategyMethodName) {
         this.strategyMethodName = strategyMethodName;
     }
 
     /**
-     * If this option is false then the aggregate method is not used for the very first aggregation.
-     * If this option is true then null values is used as the oldExchange (at the very first aggregation),
-     * when using POJOs as the AggregationStrategy.
+     * If this option is false then the aggregate method is not used for the
+     * very first aggregation. If this option is true then null values is used
+     * as the oldExchange (at the very first aggregation), when using POJOs as
+     * the AggregationStrategy.
      */
     public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
         this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
     /**
-     * The expression used to calculate the correlation key to use for aggregation.
-     * The Exchange which has the same correlation key is aggregated together.
-     * If the correlation key could not be evaluated an Exception is thrown.
-     * You can disable this by using the ignoreBadCorrelationKeys option.
+     * The expression used to calculate the correlation key to use for
+     * aggregation. The Exchange which has the same correlation key is
+     * aggregated together. If the correlation key could not be evaluated an
+     * Exception is thrown. You can disable this by using the
+     * ignoreBadCorrelationKeys option.
      */
     public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
         this.correlationExpression = correlationExpression;
@@ -343,18 +359,22 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Time in millis that an aggregated exchange should be inactive before its complete (timeout).
-     * This option can be set as either a fixed value or using an Expression which allows you to evaluate
-     * a timeout dynamically - will use Long as result.
-     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
-     * You cannot use this option together with completionInterval, only one of the two can be used.
+     * Time in millis that an aggregated exchange should be inactive before its
+     * complete (timeout). This option can be set as either a fixed value or
+     * using an Expression which allows you to evaluate a timeout dynamically -
+     * will use Long as result. If both are set Camel will fallback to use the
+     * fixed value if the Expression result was null or 0. You cannot use this
+     * option together with completionInterval, only one of the two can be used.
      * <p/>
-     * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option
-     * to configure how frequently to run the checker.
-     * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
-     * It is not recommended to use very low timeout values or checker intervals.
+     * By default the timeout checker runs every second, you can use the
+     * completionTimeoutCheckerInterval option to configure how frequently to
+     * run the checker. The timeout is an approximation and there is no
+     * guarantee that the a timeout is triggered exactly after the timeout
+     * value. It is not recommended to use very low timeout values or checker
+     * intervals.
      *
-     * @param completionTimeoutExpression  the timeout as an {@link Expression} which is evaluated as a {@link Long} type
+     * @param completionTimeoutExpression the timeout as an {@link Expression}
+     *            which is evaluated as a {@link Long} type
      */
     public void setCompletionTimeoutExpression(ExpressionSubElementDefinition completionTimeoutExpression) {
         this.completionTimeoutExpression = completionTimeoutExpression;
@@ -365,11 +385,15 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Number of messages aggregated before the aggregation is complete. This option can be set as either
-     * a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result.
-     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
+     * Number of messages aggregated before the aggregation is complete. This
+     * option can be set as either a fixed value or using an Expression which
+     * allows you to evaluate a size dynamically - will use Integer as result.
+     * If both are set Camel will fallback to use the fixed value if the
+     * Expression result was null or 0.
      *
-     * @param completionSizeExpression  the completion size as an {@link org.apache.camel.Expression} which is evaluated as a {@link Integer} type
+     * @param completionSizeExpression the completion size as an
+     *            {@link org.apache.camel.Expression} which is evaluated as a
+     *            {@link Integer} type
      */
     public void setCompletionSizeExpression(ExpressionSubElementDefinition completionSizeExpression) {
         this.completionSizeExpression = completionSizeExpression;
@@ -528,19 +552,20 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
-     * this aggregator.
+     * To use a {@link org.apache.camel.processor.aggregate.AggregateController}
+     * to allow external sources to control this aggregator.
      */
     public void setAggregateControllerRef(String aggregateControllerRef) {
         this.aggregateControllerRef = aggregateControllerRef;
     }
 
     // Fluent API
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
-     * Use eager completion checking which means that the completionPredicate will use the incoming Exchange.
-     * As opposed to without eager completion checking the completionPredicate will use the aggregated Exchange.
+     * Use eager completion checking which means that the completionPredicate
+     * will use the incoming Exchange. As opposed to without eager completion
+     * checking the completionPredicate will use the aggregated Exchange.
      *
      * @return builder
      */
@@ -550,8 +575,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * If a correlation key cannot be successfully evaluated it will be ignored by logging a DEBUG and then just
-     * ignore the incoming Exchange.
+     * If a correlation key cannot be successfully evaluated it will be ignored
+     * by logging a DEBUG and then just ignore the incoming Exchange.
      *
      * @return builder
      */
@@ -561,12 +586,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Closes a correlation key when its complete. Any <i>late</i> received exchanges which has a correlation key
-     * that has been closed, it will be defined and a ClosedCorrelationKeyException
-     * is thrown.
+     * Closes a correlation key when its complete. Any <i>late</i> received
+     * exchanges which has a correlation key that has been closed, it will be
+     * defined and a ClosedCorrelationKeyException is thrown.
      *
      * @param capacity the maximum capacity of the closed correlation key cache.
-     *                 Use <tt>0</tt> or negative value for unbounded capacity.
+     *            Use <tt>0</tt> or negative value for unbounded capacity.
      * @return builder
      */
     public AggregateDefinition closeCorrelationKeyOnCompletion(int capacity) {
@@ -577,7 +602,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Discards the aggregated message on completion timeout.
      * <p/>
-     * This means on timeout the aggregated message is dropped and not sent out of the aggregator.
+     * This means on timeout the aggregated message is dropped and not sent out
+     * of the aggregator.
      *
      * @return builder
      */
@@ -587,8 +613,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Discards the aggregated message when aggregation failed (an exception was thrown from {@link AggregationStrategy}.
-     * This means the partly aggregated message is dropped and not sent out of the aggregator.
+     * Discards the aggregated message when aggregation failed (an exception was
+     * thrown from {@link AggregationStrategy}. This means the partly aggregated
+     * message is dropped and not sent out of the aggregator.
      * <p/>
      * This option cannot be used together with completionFromBatchConsumer.
      *
@@ -600,9 +627,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Enables the batch completion mode where we aggregate from a {@link org.apache.camel.BatchConsumer}
-     * and aggregate the total number of exchanges the {@link org.apache.camel.BatchConsumer} has reported
-     * as total by checking the exchange property {@link org.apache.camel.Exchange#BATCH_COMPLETE} when its complete.
+     * Enables the batch completion mode where we aggregate from a
+     * {@link org.apache.camel.BatchConsumer} and aggregate the total number of
+     * exchanges the {@link org.apache.camel.BatchConsumer} has reported as
+     * total by checking the exchange property
+     * {@link org.apache.camel.Exchange#BATCH_COMPLETE} when its complete.
      * <p/>
      * This option cannot be used together with discardOnAggregationFailure.
      *
@@ -614,10 +643,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Enables completion on all previous groups when a new incoming correlation group. This can for example be used
-     * to complete groups with same correlation keys when they are in consecutive order.
-     * Notice when this is enabled then only 1 correlation group can be in progress as when a new correlation group
-     * starts, then the previous groups is forced completed.
+     * Enables completion on all previous groups when a new incoming correlation
+     * group. This can for example be used to complete groups with same
+     * correlation keys when they are in consecutive order. Notice when this is
+     * enabled then only 1 correlation group can be in progress as when a new
+     * correlation group starts, then the previous groups is forced completed.
      *
      * @return builder
      */
@@ -627,11 +657,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Number of messages aggregated before the aggregation is complete. This option can be set as either
-     * a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result.
-     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
+     * Number of messages aggregated before the aggregation is complete. This
+     * option can be set as either a fixed value or using an Expression which
+     * allows you to evaluate a size dynamically - will use Integer as result.
+     * If both are set Camel will fallback to use the fixed value if the
+     * Expression result was null or 0.
      *
-     * @param completionSize  the completion size, must be a positive number
+     * @param completionSize the completion size, must be a positive number
      * @return builder
      */
     public AggregateDefinition completionSize(int completionSize) {
@@ -640,11 +672,15 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Number of messages aggregated before the aggregation is complete. This option can be set as either
-     * a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result.
-     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
+     * Number of messages aggregated before the aggregation is complete. This
+     * option can be set as either a fixed value or using an Expression which
+     * allows you to evaluate a size dynamically - will use Integer as result.
+     * If both are set Camel will fallback to use the fixed value if the
+     * Expression result was null or 0.
      *
-     * @param completionSize  the completion size as an {@link org.apache.camel.Expression} which is evaluated as a {@link Integer} type
+     * @param completionSize the completion size as an
+     *            {@link org.apache.camel.Expression} which is evaluated as a
+     *            {@link Integer} type
      * @return builder
      */
     public AggregateDefinition completionSize(Expression completionSize) {
@@ -653,11 +689,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * A repeating period in millis by which the aggregator will complete all current aggregated exchanges.
-     * Camel has a background task which is triggered every period. You cannot use this option together
-     * with completionTimeout, only one of them can be used.
+     * A repeating period in millis by which the aggregator will complete all
+     * current aggregated exchanges. Camel has a background task which is
+     * triggered every period. You cannot use this option together with
+     * completionTimeout, only one of them can be used.
      *
-     * @param completionInterval  the interval in millis, must be a positive value
+     * @param completionInterval the interval in millis, must be a positive
+     *            value
      * @return the builder
      */
     public AggregateDefinition completionInterval(long completionInterval) {
@@ -666,18 +704,21 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Time in millis that an aggregated exchange should be inactive before its complete (timeout).
-     * This option can be set as either a fixed value or using an Expression which allows you to evaluate
-     * a timeout dynamically - will use Long as result.
-     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
-     * You cannot use this option together with completionInterval, only one of the two can be used.
+     * Time in millis that an aggregated exchange should be inactive before its
+     * complete (timeout). This option can be set as either a fixed value or
+     * using an Expression which allows you to evaluate a timeout dynamically -
+     * will use Long as result. If both are set Camel will fallback to use the
+     * fixed value if the Expression result was null or 0. You cannot use this
+     * option together with completionInterval, only one of the two can be used.
      * <p/>
-     * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option
-     * to configure how frequently to run the checker.
-     * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
-     * It is not recommended to use very low timeout values or checker intervals.
+     * By default the timeout checker runs every second, you can use the
+     * completionTimeoutCheckerInterval option to configure how frequently to
+     * run the checker. The timeout is an approximation and there is no
+     * guarantee that the a timeout is triggered exactly after the timeout
+     * value. It is not recommended to use very low timeout values or checker
+     * intervals.
      *
-     * @param completionTimeout  the timeout in millis, must be a positive value
+     * @param completionTimeout the timeout in millis, must be a positive value
      * @return the builder
      */
     public AggregateDefinition completionTimeout(long completionTimeout) {
@@ -686,18 +727,22 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Time in millis that an aggregated exchange should be inactive before its complete (timeout).
-     * This option can be set as either a fixed value or using an Expression which allows you to evaluate
-     * a timeout dynamically - will use Long as result.
-     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
-     * You cannot use this option together with completionInterval, only one of the two can be used.
+     * Time in millis that an aggregated exchange should be inactive before its
+     * complete (timeout). This option can be set as either a fixed value or
+     * using an Expression which allows you to evaluate a timeout dynamically -
+     * will use Long as result. If both are set Camel will fallback to use the
+     * fixed value if the Expression result was null or 0. You cannot use this
+     * option together with completionInterval, only one of the two can be used.
      * <p/>
-     * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option
-     * to configure how frequently to run the checker.
-     * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
-     * It is not recommended to use very low timeout values or checker intervals.
+     * By default the timeout checker runs every second, you can use the
+     * completionTimeoutCheckerInterval option to configure how frequently to
+     * run the checker. The timeout is an approximation and there is no
+     * guarantee that the a timeout is triggered exactly after the timeout
+     * value. It is not recommended to use very low timeout values or checker
+     * intervals.
      *
-     * @param completionTimeout  the timeout as an {@link Expression} which is evaluated as a {@link Long} type
+     * @param completionTimeout the timeout as an {@link Expression} which is
+     *            evaluated as a {@link Long} type
      * @return the builder
      */
     public AggregateDefinition completionTimeout(Expression completionTimeout) {
@@ -706,13 +751,16 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Interval in millis that is used by the background task that checks for timeouts ({@link org.apache.camel.TimeoutMap}).
+     * Interval in millis that is used by the background task that checks for
+     * timeouts ({@link org.apache.camel.TimeoutMap}).
      * <p/>
-     * By default the timeout checker runs every second.
-     * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
-     * It is not recommended to use very low timeout values or checker intervals.
+     * By default the timeout checker runs every second. The timeout is an
+     * approximation and there is no guarantee that the a timeout is triggered
+     * exactly after the timeout value. It is not recommended to use very low
+     * timeout values or checker intervals.
      *
-     * @param completionTimeoutCheckerInterval  the interval in millis, must be a positive value
+     * @param completionTimeoutCheckerInterval the interval in millis, must be a
+     *            positive value
      * @return the builder
      */
     public AggregateDefinition completionTimeoutCheckerInterval(long completionTimeoutCheckerInterval) {
@@ -742,7 +790,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Sets the aggregate strategy to use
      *
-     * @param aggregationStrategy  the aggregate strategy to use
+     * @param aggregationStrategy the aggregate strategy to use
      * @return the builder
      * @deprecated use {@link #aggregationStrategy(AggregationStrategy)}
      */
@@ -754,7 +802,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Sets the aggregate strategy to use
      *
-     * @param aggregationStrategy  the aggregate strategy to use
+     * @param aggregationStrategy the aggregate strategy to use
      * @return the builder
      */
     public AggregateDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
@@ -765,7 +813,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Sets the aggregate strategy to use
      *
-     * @param aggregationStrategy  the aggregate strategy to use
+     * @param aggregationStrategy the aggregate strategy to use
      * @return the builder
      */
     public AggregateDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
@@ -776,7 +824,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Sets the aggregate strategy to use
      *
-     * @param aggregationStrategyRef  reference to the strategy to lookup in the registry
+     * @param aggregationStrategyRef reference to the strategy to lookup in the
+     *            registry
      * @return the builder
      */
     public AggregateDefinition aggregationStrategyRef(String aggregationStrategyRef) {
@@ -785,9 +834,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the method name to use when using a POJO as {@link AggregationStrategy}.
+     * Sets the method name to use when using a POJO as
+     * {@link AggregationStrategy}.
      *
-     * @param  methodName the method name to call
+     * @param methodName the method name to call
      * @return the builder
      */
     public AggregateDefinition aggregationStrategyMethodName(String methodName) {
@@ -808,9 +858,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Sets the custom aggregate repository to use.
      * <p/>
-     * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
+     * Will by default use
+     * {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
      *
-     * @param aggregationRepository  the aggregate repository to use
+     * @param aggregationRepository the aggregate repository to use
      * @return the builder
      */
     public AggregateDefinition aggregationRepository(AggregationRepository aggregationRepository) {
@@ -821,9 +872,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Sets the custom aggregate repository to use.
      * <p/>
-     * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
+     * Will by default use
+     * {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
      *
-     * @param aggregationRepository  the aggregate repository to use
+     * @param aggregationRepository the aggregate repository to use
      * @return the builder
      */
     public AggregateDefinition aggregationRepository(Supplier<AggregationRepository> aggregationRepository) {
@@ -834,9 +886,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Sets the custom aggregate repository to use
      * <p/>
-     * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
+     * Will by default use
+     * {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
      *
-     * @param aggregationRepositoryRef  reference to the repository to lookup in the registry
+     * @param aggregationRepositoryRef reference to the repository to lookup in
+     *            the registry
      * @return the builder
      */
     public AggregateDefinition aggregationRepositoryRef(String aggregationRepositoryRef) {
@@ -845,8 +899,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * A Predicate to indicate when an aggregated exchange is complete.
-     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * A Predicate to indicate when an aggregated exchange is complete. If this
+     * is not specified and the AggregationStrategy object implements Predicate,
      * the aggregationStrategy object will be used as the completionPredicate.
      */
     public AggregateDefinition completionPredicate(@AsPredicate Predicate predicate) {
@@ -856,8 +910,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * A Predicate to indicate when an aggregated exchange is complete.
-     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * A Predicate to indicate when an aggregated exchange is complete. If this
+     * is not specified and the AggregationStrategy object implements Predicate,
      * the aggregationStrategy object will be used as the completionPredicate.
      */
     @AsPredicate
@@ -868,8 +922,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * A Predicate to indicate when an aggregated exchange is complete.
-     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * A Predicate to indicate when an aggregated exchange is complete. If this
+     * is not specified and the AggregationStrategy object implements Predicate,
      * the aggregationStrategy object will be used as the completionPredicate.
      */
     @AsPredicate
@@ -878,8 +932,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * A Predicate to indicate when an aggregated exchange is complete.
-     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * A Predicate to indicate when an aggregated exchange is complete. If this
+     * is not specified and the AggregationStrategy object implements Predicate,
      * the aggregationStrategy object will be used as the completionPredicate.
      */
     public AggregateDefinition completion(@AsPredicate Predicate predicate) {
@@ -887,7 +941,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Indicates to complete all current aggregated exchanges when the context is stopped
+     * Indicates to complete all current aggregated exchanges when the context
+     * is stopped
      */
     public AggregateDefinition forceCompletionOnStop() {
         setForceCompletionOnStop(true);
@@ -895,14 +950,18 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped.
+     * Indicates to wait to complete all current and partial (pending)
+     * aggregated exchanges when the context is stopped.
      * <p/>
-     * This also means that we will wait for all pending exchanges which are stored in the aggregation repository
-     * to complete so the repository is empty before we can stop.
+     * This also means that we will wait for all pending exchanges which are
+     * stored in the aggregation repository to complete so the repository is
+     * empty before we can stop.
      * <p/>
-     * You may want to enable this when using the memory based aggregation repository that is memory based only,
-     * and do not store data on disk. When this option is enabled, then the aggregator is waiting to complete
-     * all those exchanges before its stopped, when stopping CamelContext or the route using it.
+     * You may want to enable this when using the memory based aggregation
+     * repository that is memory based only, and do not store data on disk. When
+     * this option is enabled, then the aggregator is waiting to complete all
+     * those exchanges before its stopped, when stopping CamelContext or the
+     * route using it.
      */
     public AggregateDefinition completeAllOnStop() {
         setCompleteAllOnStop(true);
@@ -911,8 +970,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     /**
      * When aggregated are completed they are being send out of the aggregator.
-     * This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency.
-     * If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads.
+     * This option indicates whether or not Camel should use a thread pool with
+     * multiple threads for concurrency. If no custom thread pool has been
+     * specified then Camel creates a default pool with 10 concurrent threads.
      */
     public AggregateDefinition parallelProcessing() {
         setParallelProcessing(true);
@@ -921,8 +981,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     /**
      * When aggregated are completed they are being send out of the aggregator.
-     * This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency.
-     * If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads.
+     * This option indicates whether or not Camel should use a thread pool with
+     * multiple threads for concurrency. If no custom thread pool has been
+     * specified then Camel creates a default pool with 10 concurrent threads.
      */
     public AggregateDefinition parallelProcessing(boolean parallelProcessing) {
         setParallelProcessing(parallelProcessing);
@@ -930,8 +991,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Turns on using optimistic locking, which requires the aggregationRepository being used,
-     * is supporting this by implementing {@link org.apache.camel.spi.OptimisticLockingAggregationRepository}.
+     * Turns on using optimistic locking, which requires the
+     * aggregationRepository being used, is supporting this by implementing
+     * {@link org.apache.camel.spi.OptimisticLockingAggregationRepository}.
      */
     public AggregateDefinition optimisticLocking() {
         setOptimisticLocking(true);
@@ -947,8 +1009,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * If using parallelProcessing you can specify a custom thread pool to be used.
-     * In fact also if you are not using parallelProcessing this custom thread pool is used to send out aggregated exchanges as well.
+     * If using parallelProcessing you can specify a custom thread pool to be
+     * used. In fact also if you are not using parallelProcessing this custom
+     * thread pool is used to send out aggregated exchanges as well.
      */
     @Override
     public AggregateDefinition executorService(ExecutorService executorService) {
@@ -957,8 +1020,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * If using parallelProcessing you can specify a custom thread pool to be used.
-     * In fact also if you are not using parallelProcessing this custom thread pool is used to send out aggregated exchanges as well.
+     * If using parallelProcessing you can specify a custom thread pool to be
+     * used. In fact also if you are not using parallelProcessing this custom
+     * thread pool is used to send out aggregated exchanges as well.
      */
     @Override
     public AggregateDefinition executorServiceRef(String executorServiceRef) {
@@ -967,9 +1031,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * If using either of the completionTimeout, completionTimeoutExpression, or completionInterval options a
-     * background thread is created to check for the completion for every aggregator.
-     * Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator.
+     * If using either of the completionTimeout, completionTimeoutExpression, or
+     * completionInterval options a background thread is created to check for
+     * the completion for every aggregator. Set this option to provide a custom
+     * thread pool to be used rather than creating a new thread for every
+     * aggregator.
      */
     public AggregateDefinition timeoutCheckerExecutorService(ScheduledExecutorService executorService) {
         setTimeoutCheckerExecutorService(executorService);
@@ -977,9 +1043,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * If using either of the completionTimeout, completionTimeoutExpression, or completionInterval options a
-     * background thread is created to check for the completion for every aggregator.
-     * Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator.
+     * If using either of the completionTimeout, completionTimeoutExpression, or
+     * completionInterval options a background thread is created to check for
+     * the completion for every aggregator. Set this option to provide a custom
+     * thread pool to be used rather than creating a new thread for every
+     * aggregator.
      */
     public AggregateDefinition timeoutCheckerExecutorService(Supplier<ScheduledExecutorService> executorService) {
         setTimeoutCheckerExecutorService(executorService.get());
@@ -987,9 +1055,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * If using either of the completionTimeout, completionTimeoutExpression, or completionInterval options a
-     * background thread is created to check for the completion for every aggregator.
-     * Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator.
+     * If using either of the completionTimeout, completionTimeoutExpression, or
+     * completionInterval options a background thread is created to check for
+     * the completion for every aggregator. Set this option to provide a custom
+     * thread pool to be used rather than creating a new thread for every
+     * aggregator.
      */
     public AggregateDefinition timeoutCheckerExecutorServiceRef(String executorServiceRef) {
         setTimeoutCheckerExecutorServiceRef(executorServiceRef);
@@ -997,8 +1067,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
-     * this aggregator.
+     * To use a {@link org.apache.camel.processor.aggregate.AggregateController}
+     * to allow external sources to control this aggregator.
      */
     public AggregateDefinition aggregateController(AggregateController aggregateController) {
         setAggregateController(aggregateController);
@@ -1006,8 +1076,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
-     * this aggregator.
+     * To use a {@link org.apache.camel.processor.aggregate.AggregateController}
+     * to allow external sources to control this aggregator.
      */
     public AggregateDefinition aggregateController(Supplier<AggregateController> aggregateController) {
         setAggregateController(aggregateController.get());
@@ -1015,12 +1085,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     // Section - Methods from ExpressionNode
-    // Needed to copy methods from ExpressionNode here so that I could specify the
+    // Needed to copy methods from ExpressionNode here so that I could specify
+    // the
     // correlation expression as optional in JAXB
 
     public ExpressionDefinition getExpression() {
         if (expression == null && correlationExpression != null) {
-            expression = correlationExpression.getExpressionType();            
+            expression = correlationExpression.getExpressionType();
         }
         return expression;
     }

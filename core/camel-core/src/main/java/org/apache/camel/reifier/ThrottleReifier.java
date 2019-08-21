@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
 
     ThrottleReifier(ProcessorDefinition<?> definition) {
-        super((ThrottleDefinition) definition);
+        super((ThrottleDefinition)definition);
     }
 
     @Override

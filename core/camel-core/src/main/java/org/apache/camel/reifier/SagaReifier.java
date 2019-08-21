@@ -40,18 +40,14 @@ import org.apache.camel.support.CamelContextHelper;
 public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
     SagaReifier(ProcessorDefinition<?> definition) {
-        super((SagaDefinition) definition);
+        super((SagaDefinition)definition);
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Optional<Endpoint> compensationEndpoint = Optional.ofNullable(definition.getCompensation())
-                .map(SagaActionUriDefinition::getUri)
-                .map(routeContext::resolveEndpoint);
+        Optional<Endpoint> compensationEndpoint = Optional.ofNullable(definition.getCompensation()).map(SagaActionUriDefinition::getUri).map(routeContext::resolveEndpoint);
 
-        Optional<Endpoint> completionEndpoint = Optional.ofNullable(definition.getCompletion())
-                .map(SagaActionUriDefinition::getUri)
-                .map(routeContext::resolveEndpoint);
+        Optional<Endpoint> completionEndpoint = Optional.ofNullable(definition.getCompletion()).map(SagaActionUriDefinition::getUri).map(routeContext::resolveEndpoint);
 
         Map<String, Expression> optionsMap = new TreeMap<>();
         if (definition.getOptions() != null) {
@@ -81,14 +77,8 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
         camelSagaService.registerStep(step);
 
-        return new SagaProcessorBuilder()
-                .camelContext(routeContext.getCamelContext())
-                .childProcessor(childProcessor)
-                .sagaService(camelSagaService)
-                .step(step)
-                .propagation(propagation(propagation))
-                .completionMode(completionMode(completionMode))
-                .build();
+        return new SagaProcessorBuilder().camelContext(routeContext.getCamelContext()).childProcessor(childProcessor).sagaService(camelSagaService).step(step)
+            .propagation(propagation(propagation)).completionMode(completionMode(completionMode)).build();
     }
 
     private org.apache.camel.processor.saga.SagaCompletionMode completionMode(SagaCompletionMode completionMode) {

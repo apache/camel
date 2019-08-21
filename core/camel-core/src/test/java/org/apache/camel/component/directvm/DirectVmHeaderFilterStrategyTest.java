@@ -35,46 +35,44 @@ public class DirectVmHeaderFilterStrategyTest extends ContextTestSupport {
             public boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange) {
                 return headerName.equals("Header2");
             }
-            
+
             @Override
             public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
                 return headerName.equals("Header1");
             }
         });
-        
+
         Exchange response = template.request("direct-vm:start.filter?headerFilterStrategy=#headerFilterStrategy&block=false", exchange -> {
             exchange.getIn().setBody("Hello World");
             exchange.getIn().setHeader("Header1", "Value1");
         });
-        
+
         assertNull(response.getException());
         assertNull(response.getMessage().getHeader("Header2"));
-        
+
         response = template.request("direct-vm:start.nofilter", exchange -> {
             exchange.getIn().setBody("Hello World");
             exchange.getIn().setHeader("Header1", "Value1");
         });
-        
+
         assertNull(response.getException());
         assertEquals("Value2", response.getMessage().getHeader("Header2", String.class));
-        
+
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct-vm:start.filter")
-                    .process(exchange -> {
-                        assertNull(exchange.getIn().getHeader("Header1"));
-                        exchange.getIn().setHeader("Header2", "Value2");
-                    });
-                
-                from("direct-vm:start.nofilter")
-                    .process(exchange -> {
-                        assertEquals("Value1", exchange.getIn().getHeader("Header1"));
-                        exchange.getIn().setHeader("Header2", "Value2");
-                    });
+                from("direct-vm:start.filter").process(exchange -> {
+                    assertNull(exchange.getIn().getHeader("Header1"));
+                    exchange.getIn().setHeader("Header2", "Value2");
+                });
+
+                from("direct-vm:start.nofilter").process(exchange -> {
+                    assertEquals("Value1", exchange.getIn().getHeader("Header1"));
+                    exchange.getIn().setHeader("Header2", "Value2");
+                });
             }
         };
     }

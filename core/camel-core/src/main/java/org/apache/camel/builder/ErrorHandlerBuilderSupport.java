@@ -56,15 +56,15 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
      */
     public void configure(RouteContext routeContext, ErrorHandler handler) {
         if (handler instanceof ErrorHandlerSupport) {
-            ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport) handler;
+            ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport)handler;
 
             Set<NamedNode> list = routeContext.getErrorHandlers(this);
             for (NamedNode exception : list) {
-                addExceptionPolicy(handlerSupport, routeContext, (OnExceptionDefinition) exception);
+                addExceptionPolicy(handlerSupport, routeContext, (OnExceptionDefinition)exception);
             }
         }
         if (handler instanceof RedeliveryErrorHandler) {
-            RedeliveryErrorHandler reh = (RedeliveryErrorHandler) handler;
+            RedeliveryErrorHandler reh = (RedeliveryErrorHandler)handler;
             boolean original = reh.isUseOriginalMessagePolicy() || reh.isUseOriginalBodyPolicy();
             if (original) {
                 if (reh.isUseOriginalMessagePolicy() && reh.isUseOriginalBodyPolicy()) {
@@ -88,7 +88,8 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
                 list = createExceptionClasses(exceptionType, routeContext.getCamelContext().getClassResolver());
                 for (Class<? extends Throwable> clazz : list) {
                     String routeId = null;
-                    // only get the route id, if the exception type is route scoped
+                    // only get the route id, if the exception type is route
+                    // scoped
                     if (exceptionType.isRouteScoped()) {
                         RouteDefinition route = ProcessorDefinitionHelper.getRoute(exceptionType);
                         if (route != null) {
@@ -138,14 +139,15 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
     }
 
     /**
-     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
-     * to use for a given thrown exception
+     * Sets the exception policy strategy to use for resolving the
+     * {@link org.apache.camel.model.OnExceptionDefinition} to use for a given
+     * thrown exception
      *
-     * @param exceptionPolicyStrategy  the exception policy strategy
+     * @param exceptionPolicyStrategy the exception policy strategy
      */
     public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
         ObjectHelper.notNull(exceptionPolicyStrategy, "ExceptionPolicyStrategy");
         this.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
-    
+
 }

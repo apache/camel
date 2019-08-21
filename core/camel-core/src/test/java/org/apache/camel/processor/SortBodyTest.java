@@ -30,7 +30,7 @@ public class SortBodyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", new String[]{"Hadrian", "William", "Claus"});
+        template.sendBody("direct:start", new String[] {"Hadrian", "William", "Claus"});
 
         assertMockEndpointsSatisfied();
 

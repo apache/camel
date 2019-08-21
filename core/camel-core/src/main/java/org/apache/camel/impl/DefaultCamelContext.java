@@ -100,7 +100,8 @@ import org.apache.camel.support.DefaultRegistry;
 public class DefaultCamelContext extends AbstractModelCamelContext {
 
     /**
-     * Creates the {@link CamelContext} using {@link DefaultRegistry} as registry.
+     * Creates the {@link CamelContext} using {@link DefaultRegistry} as
+     * registry.
      * <p/>
      * Use one of the other constructors to force use an explicit registry.
      */
@@ -110,8 +111,9 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     /**
      * Creates the {@link CamelContext} using the given {@link BeanRepository}
-     * as first-choice repository, and the {@link org.apache.camel.support.SimpleRegistry} as fallback, via
-     * the {@link DefaultRegistry} implementation.
+     * as first-choice repository, and the
+     * {@link org.apache.camel.support.SimpleRegistry} as fallback, via the
+     * {@link DefaultRegistry} implementation.
      *
      * @param repository the bean repository.
      */
@@ -120,10 +122,12 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     }
 
     /**
-     * Creates the {@link CamelContext} using the given JNDI context as the registry
+     * Creates the {@link CamelContext} using the given JNDI context as the
+     * registry
      *
      * @param jndiContext the JNDI context
-     * @deprecated create a new {@link JndiRegistry} and use the constructor that accepts this registry.
+     * @deprecated create a new {@link JndiRegistry} and use the constructor
+     *             that accepts this registry.
      */
     @Deprecated
     public DefaultCamelContext(Context jndiContext) {
@@ -140,11 +144,12 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     }
 
     /**
-     * Creates the {@link CamelContext} and allows to control whether the context
-     * should automatic initialize or not.
+     * Creates the {@link CamelContext} and allows to control whether the
+     * context should automatic initialize or not.
      * <p/>
-     * This is used by some Camel components such as camel-cdi and camel-blueprint, however
-     * this constructor is not intended for regular Camel end users.
+     * This is used by some Camel components such as camel-cdi and
+     * camel-blueprint, however this constructor is not intended for regular
+     * Camel end users.
      *
      * @param init whether to automatic initialize.
      */
@@ -154,16 +159,14 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     @Override
     protected TypeConverter createTypeConverter() {
-        return new DefaultTypeConverter(
-                this, getPackageScanClassResolver(),
-                getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
+        return new DefaultTypeConverter(this, getPackageScanClassResolver(), getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
     }
 
     @Override
     protected TypeConverterRegistry createTypeConverterRegistry() {
         TypeConverter typeConverter = getTypeConverter();
         if (typeConverter instanceof TypeConverterRegistry) {
-            return (TypeConverterRegistry) typeConverter;
+            return (TypeConverterRegistry)typeConverter;
         }
         return null;
     }

@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 public class CryptoDataFormatReifier extends DataFormatReifier<CryptoDataFormat> {
 
     public CryptoDataFormatReifier(DataFormatDefinition definition) {
-        super((CryptoDataFormat) definition);
+        super((CryptoDataFormat)definition);
     }
 
     @Override
@@ -41,8 +41,7 @@ public class CryptoDataFormatReifier extends DataFormatReifier<CryptoDataFormat>
             setProperty(camelContext, cryptoFormat, "key", key);
         }
         if (ObjectHelper.isNotEmpty(definition.getAlgorithmParameterRef())) {
-            AlgorithmParameterSpec spec = CamelContextHelper.mandatoryLookup(camelContext,
-                    definition.getAlgorithmParameterRef(), AlgorithmParameterSpec.class);
+            AlgorithmParameterSpec spec = CamelContextHelper.mandatoryLookup(camelContext, definition.getAlgorithmParameterRef(), AlgorithmParameterSpec.class);
             setProperty(camelContext, cryptoFormat, "AlgorithmParameterSpec", spec);
         }
         if (ObjectHelper.isNotEmpty(definition.getInitVectorRef())) {
@@ -79,6 +78,5 @@ public class CryptoDataFormatReifier extends DataFormatReifier<CryptoDataFormat>
             setProperty(camelContext, dataFormat, "buffersize", definition.getBuffersize());
         }
     }
-
 
 }

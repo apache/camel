@@ -27,7 +27,7 @@ import org.apache.camel.support.processor.MarshalProcessor;
 public class MarshalReifier extends ProcessorReifier<MarshalDefinition> {
 
     MarshalReifier(ProcessorDefinition<?> definition) {
-        super((MarshalDefinition) definition);
+        super((MarshalDefinition)definition);
     }
 
     @Override

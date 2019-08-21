@@ -23,48 +23,46 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class RoutingSlipIgnoreInvalidEndpointsTest extends ContextTestSupport {
-    
+
     @Test
     public void testEndpointResolvedFailedWithIgnoreInvalidEndpoints() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedBodiesReceived("Hello World");
-        
-        template.sendBodyAndHeader("direct:a", "Hello", "myHeader", "direct:start ,fail:endpoint, mock:result");        
+
+        template.sendBodyAndHeader("direct:a", "Hello", "myHeader", "direct:start ,fail:endpoint, mock:result");
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testEndpointResolvedFailedWithoutIgnoreInvalidEndpoints() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(0);
-        try {        
-            template.sendBodyAndHeader("direct:b", "Hello", "myHeader", "direct:start,fail:endpoint,mock:result");        
+        try {
+            template.sendBodyAndHeader("direct:b", "Hello", "myHeader", "direct:start,fail:endpoint,mock:result");
             fail("Expect the exception here.");
         } catch (Exception ex) {
             assertTrue("Get a wrong cause of the exception", ex.getCause() instanceof ResolveEndpointFailedException);
         }
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() {                
-                from("direct:a").routingSlip(header("myHeader"))
-                    .ignoreInvalidEndpoints().to("mock:end");
-                
+            public void configure() {
+                from("direct:a").routingSlip(header("myHeader")).ignoreInvalidEndpoints().to("mock:end");
+
                 from("direct:b").routingSlip(header("myHeader")).to("mock:end");
-                
+
                 from("direct:start").transform(constant("Hello World"));
             }
-                
+
         };
     }
 
 }
-

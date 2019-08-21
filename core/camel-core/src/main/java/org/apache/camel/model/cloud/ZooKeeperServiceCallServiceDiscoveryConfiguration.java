@@ -44,7 +44,6 @@ public class ZooKeeperServiceCallServiceDiscoveryConfiguration extends ServiceCa
     @XmlAttribute(required = true)
     private String basePath;
 
-
     public ZooKeeperServiceCallServiceDiscoveryConfiguration() {
         this(null);
     }
@@ -73,9 +72,9 @@ public class ZooKeeperServiceCallServiceDiscoveryConfiguration extends ServiceCa
     }
 
     /**
-     * As ZooKeeper is a shared space, users of a given cluster should stay within
-     * a pre-defined namespace. If a namespace is set here, all paths will get pre-pended
-     * with the namespace
+     * As ZooKeeper is a shared space, users of a given cluster should stay
+     * within a pre-defined namespace. If a namespace is set here, all paths
+     * will get pre-pended with the namespace
      */
     public void setNamespace(String namespace) {
         this.namespace = namespace;

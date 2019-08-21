@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 public class ThriftDataFormatReifier extends DataFormatReifier<ThriftDataFormat> {
 
     public ThriftDataFormatReifier(DataFormatDefinition definition) {
-        super((ThriftDataFormat) definition);
+        super((ThriftDataFormat)definition);
     }
 
     @Override

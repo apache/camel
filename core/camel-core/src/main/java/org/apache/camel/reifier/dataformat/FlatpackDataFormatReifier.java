@@ -26,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 public class FlatpackDataFormatReifier extends DataFormatReifier<FlatpackDataFormat> {
 
     public FlatpackDataFormatReifier(DataFormatDefinition definition) {
-        super((FlatpackDataFormat) definition);
+        super((FlatpackDataFormat)definition);
     }
 
     @Override

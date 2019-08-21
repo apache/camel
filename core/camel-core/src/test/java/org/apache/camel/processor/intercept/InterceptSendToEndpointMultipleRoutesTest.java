@@ -39,9 +39,7 @@ public class InterceptSendToEndpointMultipleRoutesTest extends ContextTestSuppor
             public void configure() throws Exception {
                 super.configure();
 
-                from("direct:a")
-                    .to("seda:a")
-                    .to("mock:result");
+                from("direct:a").to("seda:a").to("mock:result");
             }
         });
         context.addRoutes(new MyBaseRoute() {
@@ -49,9 +47,7 @@ public class InterceptSendToEndpointMultipleRoutesTest extends ContextTestSuppor
             public void configure() throws Exception {
                 super.configure();
 
-                from("direct:b")
-                    .to("seda:b")
-                    .to("mock:result");
+                from("direct:b").to("seda:b").to("mock:result");
             }
         });
         context.addRoutes(new MyBaseRoute() {
@@ -59,10 +55,7 @@ public class InterceptSendToEndpointMultipleRoutesTest extends ContextTestSuppor
             public void configure() throws Exception {
                 super.configure();
 
-                from("direct:c")
-                    .to("seda:c")
-                    .to("mock:c")
-                    .to("mock:result");
+                from("direct:c").to("seda:c").to("mock:c").to("mock:result");
             }
         });
 
@@ -84,8 +77,7 @@ public class InterceptSendToEndpointMultipleRoutesTest extends ContextTestSuppor
         public void configure() throws Exception {
             // base route with common interceptors
 
-            interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint()
-                .to("mock:detour");
+            interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().to("mock:detour");
         }
     }
 

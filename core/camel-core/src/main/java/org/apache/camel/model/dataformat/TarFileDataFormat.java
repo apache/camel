@@ -25,7 +25,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Tar File data format is a message compression and de-compression format of tar files.
+ * The Tar File data format is a message compression and de-compression format
+ * of tar files.
  */
 @Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,file", title = "Tar File")
 @XmlRootElement(name = "tarfile")
@@ -45,7 +46,7 @@ public class TarFileDataFormat extends DataFormatDefinition {
     public Boolean getUsingIterator() {
         return usingIterator;
     }
-    
+
     public Boolean getAllowEmptyDirectory() {
         return allowEmptyDirectory;
     }
@@ -55,24 +56,25 @@ public class TarFileDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If the tar file has more then one entry, the setting this option to true, allows to work with the splitter EIP,
-     * to split the data using an iterator in a streaming mode.
+     * If the tar file has more then one entry, the setting this option to true,
+     * allows to work with the splitter EIP, to split the data using an iterator
+     * in a streaming mode.
      */
     public void setUsingIterator(Boolean usingIterator) {
         this.usingIterator = usingIterator;
     }
-    
+
     /**
-     * If the tar file has more then one entry, setting this option to true, allows to get the iterator
-     * even if the directory is empty
+     * If the tar file has more then one entry, setting this option to true,
+     * allows to get the iterator even if the directory is empty
      */
     public void setAllowEmptyDirectory(Boolean allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
     /**
-     * If the file name contains path elements, setting this option to true, allows the path to be maintained
-     * in the tar file.
+     * If the file name contains path elements, setting this option to true,
+     * allows the path to be maintained in the tar file.
      */
     public void setPreservePathElements(Boolean preservePathElements) {
         this.preservePathElements = preservePathElements;

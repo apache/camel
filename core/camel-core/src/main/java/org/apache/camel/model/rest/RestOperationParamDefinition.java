@@ -163,8 +163,8 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter array type.
-     * Required if data type is "array". Describes the type of items in the array.
+     * Sets the Swagger Parameter array type. Required if data type is "array".
+     * Describes the type of items in the array.
      */
     public void setArrayType(String arrayType) {
         this.arrayType = arrayType;
@@ -269,7 +269,8 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * The data type of the parameter such as <tt>string</tt>, <tt>integer</tt>, <tt>boolean</tt>
+     * The data type of the parameter such as <tt>string</tt>, <tt>integer</tt>,
+     * <tt>boolean</tt>
      */
     public RestOperationParamDefinition dataType(String type) {
         setDataType(type);
@@ -277,9 +278,10 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * The data format of the parameter such as <tt>binary</tt>, <tt>date</tt>, <tt>date-time</tt>, <tt>password</tt>.
-     * The format is usually derived from the dataType alone. However you can set this option for more fine grained control
-     * of the format in use.
+     * The data format of the parameter such as <tt>binary</tt>, <tt>date</tt>,
+     * <tt>date-time</tt>, <tt>password</tt>. The format is usually derived from
+     * the dataType alone. However you can set this option for more fine grained
+     * control of the format in use.
      */
     public RestOperationParamDefinition dataFormat(String type) {
         setDataFormat(type);

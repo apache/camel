@@ -104,6 +104,6 @@ public class SimpleExpression extends ExpressionDefinition {
     @Override
     public Predicate createPredicate(CamelContext camelContext) {
         // SimpleBuilder is also a Predicate
-        return (Predicate) createExpression(camelContext);
+        return (Predicate)createExpression(camelContext);
     }
 }

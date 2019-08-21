@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class MyProcessor implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(MyProcessor.class);
-    
+
     @Override
     public void process(Exchange exchange) {
         LOG.debug("Called with exchange: " + exchange);

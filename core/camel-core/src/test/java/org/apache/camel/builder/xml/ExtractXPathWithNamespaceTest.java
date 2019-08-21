@@ -66,9 +66,7 @@ public class ExtractXPathWithNamespaceTest extends ContextTestSupport {
             public void configure() throws Exception {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
 
-                from("direct:in")
-                    .setHeader("foo").xpath("/c:number", Integer.class, ns)
-                    .to("mock:result");
+                from("direct:in").setHeader("foo").xpath("/c:number", Integer.class, ns).to("mock:result");
             }
         };
     }

@@ -49,20 +49,13 @@ public class AsyncEndpointSplitFineGrainedErrorHandlingTest extends ContextTestS
 
                 onException(Exception.class).maximumRedeliveries(2).redeliveryDelay(0);
 
-                from("direct:start")
-                    .split(body())
-                        .to("mock:before")
-                        .to("async:bye:camel")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                if (counter++ == 1) {
-                                    throw new IllegalArgumentException("Cannot do this");
-                                }
-                            }
-                        })
-                        .to("mock:after")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").split(body()).to("mock:before").to("async:bye:camel").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        if (counter++ == 1) {
+                            throw new IllegalArgumentException("Cannot do this");
+                        }
+                    }
+                }).to("mock:after").end().to("mock:result");
             }
         };
     }

@@ -53,9 +53,7 @@ public class TransformXpathTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .transform().xpath("//students/student")
-                    .to("mock:result");
+                from("direct:start").transform().xpath("//students/student").to("mock:result");
             }
         };
     }

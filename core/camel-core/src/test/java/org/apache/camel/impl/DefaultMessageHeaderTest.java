@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class DefaultMessageHeaderTest extends Assert {
-    
+
     private CamelContext camelContext = new DefaultCamelContext();
 
     @Test

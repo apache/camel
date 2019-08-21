@@ -53,20 +53,11 @@ public class OnExceptionGlobalAndDLCErrorHandlerIssueReverseTest extends Context
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                onException(Exception.class)
-                    .handled(true)
-                    .to("mock:global");
+                onException(Exception.class).handled(true).to("mock:global");
 
-                from("direct:foo").routeId("foo")
-                    .to("mock:foo")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:bar").routeId("bar")
-                    .onException(IllegalArgumentException.class)
-                        .handled(true)
-                        .to("mock:local")
-                    .end()
-                    .to("mock:bar")
+                from("direct:bar").routeId("bar").onException(IllegalArgumentException.class).handled(true).to("mock:local").end().to("mock:bar")
                     .throwException(new IllegalArgumentException("Damn"));
             }
         };

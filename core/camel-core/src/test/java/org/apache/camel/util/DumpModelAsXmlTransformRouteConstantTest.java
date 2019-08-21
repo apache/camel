@@ -58,9 +58,7 @@ public class DumpModelAsXmlTransformRouteConstantTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                   .transform(constant("Hello World"))
-                   .to("mock:result").id("myMock");
+                from("direct:start").routeId("myRoute").transform(constant("Hello World")).to("mock:result").id("myMock");
             }
         };
     }

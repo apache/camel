@@ -37,15 +37,13 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedHeaderReceived("orderId", "myorderid");
-                
-        List<OrderItem> order = Arrays.asList(new OrderItem[] {
-            new OrderItem("widget", 5), 
-            new OrderItem("gadget", 10)});
+
+        List<OrderItem> order = Arrays.asList(new OrderItem[] {new OrderItem("widget", 5), new OrderItem("gadget", 10)});
 
         template.sendBodyAndHeader("direct:start", order, "orderId", "myorderid");
-                
+
         assertMockEndpointsSatisfied();
-        
+
         List<OrderItem> validatedOrder = resultEndpoint.getExchanges().get(0).getIn().getBody(List.class);
         assertTrue(validatedOrder.get(0).valid);
         assertTrue(validatedOrder.get(1).valid);
@@ -58,21 +56,19 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedHeaderReceived("orderId", "myorderid");
 
-        // START SNIPPET: e1        
-        List<OrderItem> order = Arrays.asList(new OrderItem[] {
-            new OrderItem("widget", 500), 
-            new OrderItem("gadget", 200)});
+        // START SNIPPET: e1
+        List<OrderItem> order = Arrays.asList(new OrderItem[] {new OrderItem("widget", 500), new OrderItem("gadget", 200)});
 
         template.sendBodyAndHeader("direct:start", order, "orderId", "myorderid");
-        // END SNIPPET: e1                
-        
+        // END SNIPPET: e1
+
         assertMockEndpointsSatisfied();
-        
+
         List<OrderItem> validatedOrder = resultEndpoint.getExchanges().get(0).getIn().getBody(List.class);
         assertFalse(validatedOrder.get(0).valid);
         assertFalse(validatedOrder.get(1).valid);
-    }   
-    
+    }
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -80,61 +76,54 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
         jndi.bind("widgetInventory", new WidgetInventory());
         jndi.bind("gadgetInventory", new GadgetInventory());
         return jndi;
-    }    
-    
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e2
-                // split up the order so individual OrderItems can be validated by the appropriate bean
-                from("direct:start")
-                    .split().body()
-                    .choice() 
-                        .when().method("orderItemHelper", "isWidget")
-                            .to("bean:widgetInventory")
-                        .otherwise()
-                            .to("bean:gadgetInventory")
-                    .end()
+                // split up the order so individual OrderItems can be validated
+                // by the appropriate bean
+                from("direct:start").split().body().choice().when().method("orderItemHelper", "isWidget").to("bean:widgetInventory").otherwise().to("bean:gadgetInventory").end()
                     .to("seda:aggregate");
-                
-                // collect and re-assemble the validated OrderItems into an order again
-                from("seda:aggregate")
-                    .aggregate(new MyOrderAggregationStrategy()).header("orderId").completionTimeout(100).completionTimeoutCheckerInterval(10)
-                        .to("mock:result");
+
+                // collect and re-assemble the validated OrderItems into an
+                // order again
+                from("seda:aggregate").aggregate(new MyOrderAggregationStrategy()).header("orderId").completionTimeout(100).completionTimeoutCheckerInterval(10).to("mock:result");
                 // END SNIPPET: e2
             }
         };
     }
-    
-    // START SNIPPET: e3    
+
+    // START SNIPPET: e3
     public static final class OrderItem {
         String type; // type of the item
         int quantity; // how many we want
-        boolean valid; // whether that many items can be ordered             
-        
+        boolean valid; // whether that many items can be ordered
+
         public OrderItem(String type, int quantity) {
             this.type = type;
-            this.quantity = quantity;        
+            this.quantity = quantity;
         }
     }
-    // END SNIPPET: e3    
-    
+    // END SNIPPET: e3
+
     public static final class OrderItemHelper {
         private OrderItemHelper() {
         }
-        
-        // START SNIPPET: e4  
+
+        // START SNIPPET: e4
         public static boolean isWidget(@Body OrderItem orderItem) {
             return orderItem.type.equals("widget");
         }
-        // END SNIPPET: e4  
+        // END SNIPPET: e4
     }
 
     /**
      * Bean that checks whether the specified number of widgets can be ordered
      */
-    // START SNIPPET: e5  
+    // START SNIPPET: e5
     public static final class WidgetInventory {
         public void checkInventory(@Body OrderItem orderItem) {
             assertEquals("widget", orderItem.type);
@@ -142,9 +131,9 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
                 orderItem.valid = true;
             }
         }
-    }    
-    // END SNIPPET: e5  
-    
+    }
+    // END SNIPPET: e5
+
     /**
      * Bean that checks whether the specified number of gadgets can be ordered
      */
@@ -157,13 +146,13 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
             }
         }
     }
-    // END SNIPPET: e6  
-    
+    // END SNIPPET: e6
+
     /**
-     * Aggregation strategy that re-assembles the validated OrderItems 
-     * into an order, which is just a List.
+     * Aggregation strategy that re-assembles the validated OrderItems into an
+     * order, which is just a List.
      */
-    // START SNIPPET: e7  
+    // START SNIPPET: e7
     public static final class MyOrderAggregationStrategy implements AggregationStrategy {
 
         @Override
@@ -180,5 +169,5 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
             return oldExchange;
         }
     }
-    // END SNIPPET: e7  
+    // END SNIPPET: e7
 }

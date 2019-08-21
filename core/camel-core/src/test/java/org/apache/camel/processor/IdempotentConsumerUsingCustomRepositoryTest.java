@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,9 +40,7 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .idempotentConsumer(header("messageId"), customRepo)
-                    .to("mock:result");
+                from("direct:start").idempotentConsumer(header("messageId"), customRepo).to("mock:result");
             }
         };
     }
@@ -53,7 +52,8 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
         sendMessage("1", "one");
         sendMessage("2", "two");
         sendMessage("1", "one");
-        // 4 is already pre added in custom repo so it will be regarded as duplicate
+        // 4 is already pre added in custom repo so it will be regarded as
+        // duplicate
         sendMessage("4", "four");
         sendMessage("2", "two");
         sendMessage("1", "one");
@@ -67,9 +67,9 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
         assertTrue(customRepo.contains("3"));
         assertTrue(customRepo.contains("4"));
         assertFalse(customRepo.contains("5"));
-        
+
         customRepo.clear();
-        
+
         assertFalse(customRepo.contains("1"));
         assertFalse(customRepo.contains("2"));
         assertFalse(customRepo.contains("3"));
@@ -113,7 +113,7 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
                 return true;
             }
         }
-        
+
         @Override
         public void clear() {
             cache.clear();

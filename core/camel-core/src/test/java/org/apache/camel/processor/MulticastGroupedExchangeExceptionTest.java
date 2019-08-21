@@ -88,11 +88,7 @@ public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .multicast(new GroupedExchangeAggregationStrategy())
-                        .to("mock:endpointA", "mock:endpointB")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").multicast(new GroupedExchangeAggregationStrategy()).to("mock:endpointA", "mock:endpointB").end().to("mock:result");
 
             }
         };

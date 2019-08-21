@@ -132,4 +132,3 @@ public class PropertyBindingSupportAutowireNestedTest extends ContextTestSupport
     }
 
 }
-

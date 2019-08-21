@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FileChangedReadLockZeroTimeoutTest  extends ContextTestSupport {
+public class FileChangedReadLockZeroTimeoutTest extends ContextTestSupport {
 
     @Override
     @Before
@@ -34,21 +34,20 @@ public class FileChangedReadLockZeroTimeoutTest  extends ContextTestSupport {
         createDirectory("target/data/changed/out");
         super.setUp();
     }
-    
+
     @Test
     public void testChangedReadLockZeroTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/data/changed/out/hello1.txt");
-        
-        
+
         template.sendBodyAndHeader("file://target/data/changed/in", "Hello World", Exchange.FILE_NAME, "hello1.txt");
-        
+
         Thread.sleep(100);
-        
+
         File file = new File("target/data/changed/in/hello1.txt");
         assertTrue(file.delete());
-        
+
         mock.reset();
         oneExchangeDone.reset();
         mock.expectedMessageCount(1);
@@ -65,8 +64,8 @@ public class FileChangedReadLockZeroTimeoutTest  extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=5000&readLockTimeout=0")
-                    .to("file:target/data/changed/out", "mock:result");
+                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=5000&readLockTimeout=0").to("file:target/data/changed/out",
+                                                                                                                                             "mock:result");
             }
         };
     }

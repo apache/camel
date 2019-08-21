@@ -50,13 +50,9 @@ public class PropertiesComponentOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .redeliveryDelay("{{delay}}")
-                    .maximumRedeliveries("{{max}}")
-                    .to("mock:dead");
+                onException(Exception.class).redeliveryDelay("{{delay}}").maximumRedeliveries("{{max}}").to("mock:dead");
 
-                from("direct:start")
-                    .throwException(new IllegalAccessException("Damn"));
+                from("direct:start").throwException(new IllegalAccessException("Damn"));
             }
         };
     }
@@ -78,7 +74,7 @@ public class PropertiesComponentOnExceptionTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocations(new String[]{"ref:myprop"});
+        pc.setLocations(new String[] {"ref:myprop"});
         context.addComponent("properties", pc);
 
         return context;

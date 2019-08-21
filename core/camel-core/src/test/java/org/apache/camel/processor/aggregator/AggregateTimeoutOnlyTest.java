@@ -30,7 +30,8 @@ public class AggregateTimeoutOnlyTest extends ContextTestSupport {
     @Test
     public void testAggregateTimeoutOnly() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        // by default the use latest aggregation strategy is used so we get message 9
+        // by default the use latest aggregation strategy is used so we get
+        // message 9
         result.expectedBodiesReceived("Message 9");
         // should take 0.1 seconds to complete this one
         result.setResultMinimumWaitTime(90);
@@ -50,8 +51,7 @@ public class AggregateTimeoutOnlyTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                     // aggregate timeout after 0.1 second
-                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
-                    .to("mock:result");
+                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10).to("mock:result");
                 // END SNIPPET: e1
             }
         };

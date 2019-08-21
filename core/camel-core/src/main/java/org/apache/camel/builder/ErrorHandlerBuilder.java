@@ -23,7 +23,8 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * A builder of a <a href="http://camel.apache.org/error-handler.html">Error Handler</a>
+ * A builder of a <a href="http://camel.apache.org/error-handler.html">Error
+ * Handler</a>
  */
 public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
 
@@ -42,5 +43,5 @@ public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
      * @return a clone of this {@link ErrorHandlerBuilder}
      */
     ErrorHandlerBuilder cloneBuilder();
-    
+
 }

@@ -96,13 +96,9 @@ public class PollEnricherAggregateOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .pollEnrich("seda:foo", 5000, new MyAggregationStrategy(), true)
-                    .to("mock:result");
+                from("direct:start").pollEnrich("seda:foo", 5000, new MyAggregationStrategy(), true).to("mock:result");
 
-                from("direct:start2")
-                    .pollEnrich("seda:foo", 5000, new MyAggregationStrategy(), false)
-                    .to("mock:result");
+                from("direct:start2").pollEnrich("seda:foo", 5000, new MyAggregationStrategy(), false).to("mock:result");
             }
         };
     }

@@ -75,9 +75,7 @@ public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("foo")
-                    .convertBodyTo(int.class)
-                    .to("mock:a");
+                from("direct:start").routeId("foo").convertBodyTo(int.class).to("mock:a");
             }
         };
     }

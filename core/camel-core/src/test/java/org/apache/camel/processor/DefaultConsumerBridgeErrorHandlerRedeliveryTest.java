@@ -40,7 +40,8 @@ public class DefaultConsumerBridgeErrorHandlerRedeliveryTest extends DefaultCons
 
         assertMockEndpointsSatisfied();
 
-        // should not attempt redelivery as we must be exhausted when bridging the error handler
+        // should not attempt redelivery as we must be exhausted when bridging
+        // the error handler
         assertEquals(0, redeliverCounter.get());
 
         Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
@@ -57,25 +58,20 @@ public class DefaultConsumerBridgeErrorHandlerRedeliveryTest extends DefaultCons
                 getContext().addComponent("my", new MyComponent());
 
                 // configure exception clause
-                onException(Exception.class)
-                        .maximumRedeliveries(3)
-                        .onRedelivery(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                redeliverCounter.incrementAndGet();
-                            }
-                        })
-                        // setting delay to zero is just to make unit testing faster
-                        .redeliveryDelay(0)
-                        .handled(true)
-                        .to("mock:dead");
+                onException(Exception.class).maximumRedeliveries(3).onRedelivery(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        redeliverCounter.incrementAndGet();
+                    }
+                })
+                    // setting delay to zero is just to make unit testing faster
+                    .redeliveryDelay(0).handled(true).to("mock:dead");
 
-                // configure the consumer to bridge with the Camel error handler,
+                // configure the consumer to bridge with the Camel error
+                // handler,
                 // so the above error handler will trigger if exceptions also
                 // occurs inside the consumer
-                from("my:foo?consumer.bridgeErrorHandler=true")
-                    .to("log:foo")
-                    .to("mock:result");
+                from("my:foo?consumer.bridgeErrorHandler=true").to("log:foo").to("mock:result");
             }
         };
     }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,34 +27,34 @@ import org.junit.Test;
 public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     protected String body = "<person name='James' city='London'/>";
     protected MockEndpoint expected;
-    
+
     public final class MyValueClass {
-        
+
         private String value1;
         private String value2;
-        
+
         public MyValueClass(String v1, String v2) {
             value1 = v1;
             value2 = v2;
         }
-        
+
         @Override
         public int hashCode() {
             return value1.hashCode() * 10 + value2.hashCode();
         }
-        
+
         @Override
         public boolean equals(Object obj) {
-            boolean result = false;        
+            boolean result = false;
             if (obj instanceof MyValueClass) {
                 MyValueClass value = (MyValueClass)obj;
                 if (this.value1.equals(value.value1) && this.value2.equals(value.value2)) {
                     result = true;
                 }
-            } 
+            }
             return result;
         }
-        
+
     }
 
     @Test
@@ -62,13 +63,10 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 MyValueClass insteadValue = new MyValueClass("value1", "value2");
-                from("direct:start").
-                        setHeader("foo").constant("ABC").
-                        setHeader("value").constant(insteadValue).
-                        to("mock:result");
+                from("direct:start").setHeader("foo").constant("ABC").setHeader("value").constant(insteadValue).to("mock:result");
             }
         });
-        
+
         expected.message(0).header("value").isEqualTo(value);
 
         template.sendBodyAndHeader("direct:start", body, "bar", "ABC");
@@ -80,9 +78,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     public void testUseConstantParameter() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").
-                        setHeader("foo", constant("ABC")).
-                        to("mock:result");
+                from("direct:start").setHeader("foo", constant("ABC")).to("mock:result");
             }
         });
 
@@ -112,9 +108,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     public void testUseHeaderExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").
-                        setHeader("foo").header("bar").
-                        to("mock:result");
+                from("direct:start").setHeader("foo").header("bar").to("mock:result");
             }
         });
 
@@ -127,9 +121,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     public void testUseHeaderXpathExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").
-                    setHeader("foo").xpath("/personFile/text()").
-                    to("mock:result");
+                from("direct:start").setHeader("foo").xpath("/personFile/text()").to("mock:result");
             }
         });
 
@@ -142,9 +134,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     public void testUseBodyExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").
-                        setHeader("foo").body().
-                        to("mock:result");
+                from("direct:start").setHeader("foo").body().to("mock:result");
             }
         });
 
@@ -157,9 +147,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     public void testUseBodyAsTypeExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").
-                        setHeader("foo").body(String.class).
-                        to("mock:result");
+                from("direct:start").setHeader("foo").body(String.class).to("mock:result");
             }
         });
 

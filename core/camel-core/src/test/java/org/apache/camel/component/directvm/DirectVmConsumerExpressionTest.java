@@ -58,7 +58,7 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
         if (routeBuilder != null) {
             context3.addRoutes(routeBuilder);
         }
-        
+
         routeBuilder = createRouteBuilderCamelContext4();
         if (routeBuilder != null) {
             context4.addRoutes(routeBuilder);
@@ -79,7 +79,7 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
 
         MockEndpoint result3 = context3.getEndpoint("mock:result3", MockEndpoint.class);
         result3.expectedBodiesReceived("Hello World");
-        
+
         MockEndpoint result4 = context4.getEndpoint("mock:result4", MockEndpoint.class);
         result4.expectedMessageCount(0);
 
@@ -95,8 +95,7 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .recipientList(new DirectVmConsumerExpression("direct-vm://parent/**/context*"));
+                from("direct:start").recipientList(new DirectVmConsumerExpression("direct-vm://parent/**/context*"));
             }
         };
     }
@@ -105,8 +104,7 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct-vm:parent/child/context2")
-                    .to("mock:result2");
+                from("direct-vm:parent/child/context2").to("mock:result2");
             }
         };
     }
@@ -115,8 +113,7 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct-vm:parent/child/grandchild/context3")
-                    .to("mock:result3");
+                from("direct-vm:parent/child/grandchild/context3").to("mock:result3");
             }
         };
     }
@@ -125,8 +122,7 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct-vm:parent/child/ctx4")
-                    .to("mock:result4");
+                from("direct-vm:parent/child/ctx4").to("mock:result4");
             }
         };
     }

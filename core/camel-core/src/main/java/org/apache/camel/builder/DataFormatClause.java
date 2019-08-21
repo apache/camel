@@ -24,8 +24,8 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
+import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.Any23Type;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -66,8 +66,8 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
- * options.
+ * An expression for constructing the different possible
+ * {@link org.apache.camel.spi.DataFormat} options.
  */
 public class DataFormatClause<T extends ProcessorDefinition<?>> {
     private final T processorType;
@@ -85,27 +85,24 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         this.operation = operation;
     }
 
-
-
-
     /**
      * Uses the Any23 data format
      */
-  public T any23(String baseuri) {
-    return dataFormat(new Any23DataFormat(baseuri));
-  }
+    public T any23(String baseuri) {
+        return dataFormat(new Any23DataFormat(baseuri));
+    }
 
-  public T any23(String baseuri, Any23Type outputformat) {
-    return dataFormat(new Any23DataFormat(baseuri, outputformat));
-  }
+    public T any23(String baseuri, Any23Type outputformat) {
+        return dataFormat(new Any23DataFormat(baseuri, outputformat));
+    }
 
-  public T any23(String baseuri, Any23Type outputformat, Map<String, String> configurations) {
-    return dataFormat(new Any23DataFormat(baseuri, outputformat, configurations));
-  }
+    public T any23(String baseuri, Any23Type outputformat, Map<String, String> configurations) {
+        return dataFormat(new Any23DataFormat(baseuri, outputformat, configurations));
+    }
 
-  public T any23(String baseuri, Any23Type outputformat, Map<String, String> configurations, List<String> extractors) {
-    return dataFormat(new Any23DataFormat(baseuri, outputformat, configurations, extractors));
-  }
+    public T any23(String baseuri, Any23Type outputformat, Map<String, String> configurations, List<String> extractors) {
+        return dataFormat(new Any23DataFormat(baseuri, outputformat, configurations, extractors));
+    }
 
     /**
      * Uses the Avro data format
@@ -167,8 +164,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the beanio data format
      */
-    public T beanio(String mapping, String streamName, String encoding,
-                    boolean ignoreUnidentifiedRecords, boolean ignoreUnexpectedRecords, boolean ignoreInvalidRecords) {
+    public T beanio(String mapping, String streamName, String encoding, boolean ignoreUnidentifiedRecords, boolean ignoreUnexpectedRecords, boolean ignoreInvalidRecords) {
         BeanioDataFormat dataFormat = new BeanioDataFormat();
         dataFormat.setMapping(mapping);
         dataFormat.setStreamName(streamName);
@@ -194,7 +190,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Bindy data format
      *
-     * @param type      the type of bindy data format to use
+     * @param type the type of bindy data format to use
      * @param classType the POJO class type
      */
     public T bindy(BindyType type, Class<?> classType) {
@@ -207,9 +203,10 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Bindy data format
      *
-     * @param type      the type of bindy data format to use
+     * @param type the type of bindy data format to use
      * @param classType the POJO class type
-     * @param unwrapSingleInstance whether unmarshal should unwrap if there is a single instance in the result
+     * @param unwrapSingleInstance whether unmarshal should unwrap if there is a
+     *            single instance in the result
      */
     public T bindy(BindyType type, Class<?> classType, boolean unwrapSingleInstance) {
         BindyDataFormat bindy = new BindyDataFormat();
@@ -218,7 +215,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         bindy.setUnwrapSingleInstance(unwrapSingleInstance);
         return dataFormat(bindy);
     }
-    
+
     /**
      * Uses the CBOR data format
      */
@@ -229,8 +226,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the CBOR data format
      *
-     * @param unmarshalType
-     *            unmarshal type for cbor type
+     * @param unmarshalType unmarshal type for cbor type
      */
     public T cbor(Class<?> unmarshalType) {
         CBORDataFormat cborDataFormat = new CBORDataFormat();
@@ -246,8 +242,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the CSV data format for a huge file.
-     * Sequential access through an iterator.
+     * Uses the CSV data format for a huge file. Sequential access through an
+     * iterator.
      */
     public T csvLazyLoad() {
         return dataFormat(new CsvDataFormat(true));
@@ -341,16 +337,16 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the MIME Multipart data format
      *
-     * @param multipartSubType           the subtype of the MIME Multipart
-     * @param multipartWithoutAttachment defines whether a message without attachment is also marshaled
-     *                                   into a MIME Multipart (with only one body part).
-     * @param headersInline              define the MIME Multipart headers as part of the message body
-     *                                   or as Camel headers
-     * @param binaryContent              have binary encoding for binary content (true) or use Base-64
-     *                                   encoding for binary content (false)
+     * @param multipartSubType the subtype of the MIME Multipart
+     * @param multipartWithoutAttachment defines whether a message without
+     *            attachment is also marshaled into a MIME Multipart (with only
+     *            one body part).
+     * @param headersInline define the MIME Multipart headers as part of the
+     *            message body or as Camel headers
+     * @param binaryContent have binary encoding for binary content (true) or
+     *            use Base-64 encoding for binary content (false)
      */
-    public T mimeMultipart(String multipartSubType, boolean multipartWithoutAttachment, boolean headersInline,
-                           boolean binaryContent) {
+    public T mimeMultipart(String multipartSubType, boolean multipartWithoutAttachment, boolean headersInline, boolean binaryContent) {
         MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
         mm.setMultipartSubType(multipartSubType);
         mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
@@ -362,18 +358,19 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the MIME Multipart data format
      *
-     * @param multipartSubType           the subtype of the MIME Multipart
-     * @param multipartWithoutAttachment defines whether a message without attachment is also marshaled
-     *                                   into a MIME Multipart (with only one body part).
-     * @param headersInline              define the MIME Multipart headers as part of the message body
-     *                                   or as Camel headers
-     * @param includeHeaders            if headersInline is set to true all camel headers matching this
-     *                                   regex are also stored as MIME headers on the Multipart
-     * @param binaryContent              have binary encoding for binary content (true) or use Base-64
-     *                                   encoding for binary content (false)
+     * @param multipartSubType the subtype of the MIME Multipart
+     * @param multipartWithoutAttachment defines whether a message without
+     *            attachment is also marshaled into a MIME Multipart (with only
+     *            one body part).
+     * @param headersInline define the MIME Multipart headers as part of the
+     *            message body or as Camel headers
+     * @param includeHeaders if headersInline is set to true all camel headers
+     *            matching this regex are also stored as MIME headers on the
+     *            Multipart
+     * @param binaryContent have binary encoding for binary content (true) or
+     *            use Base-64 encoding for binary content (false)
      */
-    public T mimeMultipart(String multipartSubType, boolean multipartWithoutAttachment, boolean headersInline,
-                           String includeHeaders, boolean binaryContent) {
+    public T mimeMultipart(String multipartSubType, boolean multipartWithoutAttachment, boolean headersInline, String includeHeaders, boolean binaryContent) {
         MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
         mm.setMultipartSubType(multipartSubType);
         mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
@@ -386,15 +383,15 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the MIME Multipart data format
      *
-     * @param multipartWithoutAttachment defines whether a message without attachment is also marshaled
-     *                                   into a MIME Multipart (with only one body part).
-     * @param headersInline              define the MIME Multipart headers as part of the message body
-     *                                   or as Camel headers
-     * @param binaryContent              have binary encoding for binary content (true) or use Base-64
-     *                                   encoding for binary content (false)
+     * @param multipartWithoutAttachment defines whether a message without
+     *            attachment is also marshaled into a MIME Multipart (with only
+     *            one body part).
+     * @param headersInline define the MIME Multipart headers as part of the
+     *            message body or as Camel headers
+     * @param binaryContent have binary encoding for binary content (true) or
+     *            use Base-64 encoding for binary content (false)
      */
-    public T mimeMultipart(boolean multipartWithoutAttachment, boolean headersInline,
-                           boolean binaryContent) {
+    public T mimeMultipart(boolean multipartWithoutAttachment, boolean headersInline, boolean binaryContent) {
         MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
         mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
         mm.setHeadersInline(headersInline);
@@ -446,8 +443,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Jackson XML data format
      *
-     * @param unmarshalType
-     *            unmarshal type for xml jackson type
+     * @param unmarshalType unmarshal type for xml jackson type
      */
     public T jacksonxml(Class<?> unmarshalType) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
@@ -458,10 +454,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Jackson XML data format
      *
-     * @param unmarshalType
-     *            unmarshal type for xml jackson type
-     * @param jsonView
-     *            the view type for xml jackson type
+     * @param unmarshalType unmarshal type for xml jackson type
+     * @param jsonView the view type for xml jackson type
      */
     public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
@@ -474,8 +468,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the Jackson XML data format using the Jackson library turning pretty
      * printing on or off
      *
-     * @param prettyPrint
-     *            turn pretty printing on or off
+     * @param prettyPrint turn pretty printing on or off
      */
     public T jacksonxml(boolean prettyPrint) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
@@ -486,10 +479,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Jackson XML data format
      *
-     * @param unmarshalType
-     *            unmarshal type for xml jackson type
-     * @param prettyPrint
-     *            turn pretty printing on or off
+     * @param unmarshalType unmarshal type for xml jackson type
+     * @param prettyPrint turn pretty printing on or off
      */
     public T jacksonxml(Class<?> unmarshalType, boolean prettyPrint) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
@@ -501,12 +492,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Jackson XML data format
      *
-     * @param unmarshalType
-     *            unmarshal type for xml jackson type
-     * @param jsonView
-     *            the view type for xml jackson type
-     * @param prettyPrint
-     *            turn pretty printing on or off
+     * @param unmarshalType unmarshal type for xml jackson type
+     * @param jsonView the view type for xml jackson type
+     * @param prettyPrint turn pretty printing on or off
      */
     public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, boolean prettyPrint) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
@@ -519,12 +507,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Jackson XML data format
      *
-     * @param unmarshalType
-     *            unmarshal type for xml jackson type
-     * @param jsonView
-     *            the view type for xml jackson type
-     * @param include
-     *            include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     * @param unmarshalType unmarshal type for xml jackson type
+     * @param jsonView the view type for xml jackson type
+     * @param include include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
      */
     public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, String include) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
@@ -537,14 +522,10 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Jackson XML data format
      *
-     * @param unmarshalType
-     *            unmarshal type for xml jackson type
-     * @param jsonView
-     *            the view type for xml jackson type
-     * @param include
-     *            include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
-     * @param prettyPrint
-     *            turn pretty printing on or off
+     * @param unmarshalType unmarshal type for xml jackson type
+     * @param jsonView the view type for xml jackson type
+     * @param include include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     * @param prettyPrint turn pretty printing on or off
      */
     public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, String include, boolean prettyPrint) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
@@ -586,7 +567,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the JSON data format using the XStream json library turning pretty printing on or off
+     * Uses the JSON data format using the XStream json library turning pretty
+     * printing on or off
      *
      * @param prettyPrint turn pretty printing on or off
      */
@@ -608,7 +590,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the JSON data format
      *
-     * @param library     the json library to use
+     * @param library the json library to use
      * @param prettyPrint turn pretty printing on or off
      */
     public T json(JsonLibrary library, boolean prettyPrint) {
@@ -620,7 +602,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the JSON data format
      *
-     * @param type          the json type to use
+     * @param type the json type to use
      * @param unmarshalType unmarshal type for json jackson type
      */
     public T json(JsonLibrary type, Class<?> unmarshalType) {
@@ -632,9 +614,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the JSON data format
      *
-     * @param type          the json type to use
+     * @param type the json type to use
      * @param unmarshalType unmarshal type for json jackson type
-     * @param prettyPrint   turn pretty printing on or off
+     * @param prettyPrint turn pretty printing on or off
      */
     public T json(JsonLibrary type, Class<?> unmarshalType, boolean prettyPrint) {
         JsonDataFormat json = new JsonDataFormat(type);
@@ -647,7 +629,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the Jackson JSON data format
      *
      * @param unmarshalType unmarshal type for json jackson type
-     * @param jsonView      the view type for json jackson type
+     * @param jsonView the view type for json jackson type
      */
     public T json(Class<?> unmarshalType, Class<?> jsonView) {
         JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
@@ -660,8 +642,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the Jackson JSON data format
      *
      * @param unmarshalType unmarshal type for json jackson type
-     * @param jsonView      the view type for json jackson type
-     * @param prettyPrint   turn pretty printing on or off
+     * @param jsonView the view type for json jackson type
+     * @param prettyPrint turn pretty printing on or off
      */
     public T json(Class<?> unmarshalType, Class<?> jsonView, boolean prettyPrint) {
         JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
@@ -675,8 +657,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the Jackson JSON data format
      *
      * @param unmarshalType unmarshal type for json jackson type
-     * @param jsonView      the view type for json jackson type
-     * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     * @param jsonView the view type for json jackson type
+     * @param include include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
      */
     public T json(Class<?> unmarshalType, Class<?> jsonView, String include) {
         JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
@@ -690,9 +672,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the Jackson JSON data format
      *
      * @param unmarshalType unmarshal type for json jackson type
-     * @param jsonView      the view type for json jackson type
-     * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
-      * @param prettyPrint  turn pretty printing on or off
+     * @param jsonView the view type for json jackson type
+     * @param include include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     * @param prettyPrint turn pretty printing on or off
      */
     public T json(Class<?> unmarshalType, Class<?> jsonView, String include, boolean prettyPrint) {
         JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
@@ -845,16 +827,15 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Return WellFormed HTML (an XML Document) either
-     * {@link java.lang.String} or {@link org.w3c.dom.Node}
+     * Return WellFormed HTML (an XML Document) either {@link java.lang.String}
+     * or {@link org.w3c.dom.Node}
      */
     public T tidyMarkup(Class<?> dataObjectType) {
         return dataFormat(new TidyMarkupDataFormat(dataObjectType));
     }
 
     /**
-     * Return TidyMarkup in the default format
-     * as {@link org.w3c.dom.Node}
+     * Return TidyMarkup in the default format as {@link org.w3c.dom.Node}
      */
     public T tidyMarkup() {
         return dataFormat(new TidyMarkupDataFormat(Node.class));
@@ -877,7 +858,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T xstream(String encodingOrPermission) {
         // is it an encoding? if not we assume its a permission
         if (Charset.isSupported(encodingOrPermission)) {
-            return xstream(encodingOrPermission, (String) null);
+            return xstream(encodingOrPermission, (String)null);
         } else {
             return xstream(null, encodingOrPermission);
         }
@@ -1000,7 +981,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(xsdf);
     }
 
-
     /**
      * Uses the XML Security data format
      */
@@ -1013,7 +993,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         return dataFormat(xsdf);
     }
-
 
     /**
      * Uses the XML Security data format
@@ -1050,7 +1029,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(xsdf);
     }
 
-
     /**
      * Uses the XML Security data format
      */
@@ -1067,8 +1045,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the XML Security data format
      */
-    public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm,
-            String keyCipherAlgorithm, String keyOrTrustStoreParametersId) {
+    public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, String keyCipherAlgorithm,
+                       String keyOrTrustStoreParametersId) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setSecureTagContents(secureTagContents);
@@ -1082,8 +1060,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the XML Security data format
      */
-    public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm,
-            String keyCipherAlgorithm, String keyOrTrustStoreParametersId, String keyPassword) {
+    public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, String keyCipherAlgorithm,
+                       String keyOrTrustStoreParametersId, String keyPassword) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setSecureTagContents(secureTagContents);
@@ -1098,8 +1076,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the XML Security data format
      */
-    public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm,
-            String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
+    public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, String keyCipherAlgorithm,
+                       KeyStoreParameters keyOrTrustStoreParameters) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setSecureTagContents(secureTagContents);
@@ -1113,8 +1091,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the XML Security data format
      */
-    public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm,
-            String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
+    public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, String keyCipherAlgorithm,
+                       KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setSecureTagContents(secureTagContents);
@@ -1129,8 +1107,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the XML Security data format
      */
-    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
-            String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId) {
+    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, String keyCipherAlgorithm,
+                       String keyOrTrustStoreParametersId) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setSecureTagContents(secureTagContents);
@@ -1144,8 +1122,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the XML Security data format
      */
-    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
-            String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId, String keyPassword) {
+    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, String keyCipherAlgorithm,
+                       String keyOrTrustStoreParametersId, String keyPassword) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setSecureTagContents(secureTagContents);
@@ -1160,8 +1138,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the XML Security data format
      */
-    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
-            String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
+    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, String keyCipherAlgorithm,
+                       KeyStoreParameters keyOrTrustStoreParameters) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setNamespaces(namespaces);
@@ -1176,8 +1154,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the XML Security data format
      */
-    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
-            String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
+    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, String keyCipherAlgorithm,
+                       KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setNamespaces(namespaces);
@@ -1193,9 +1171,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the XML Security data format
      */
-    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
-            String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword,
-            String digestAlgorithm) {
+    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, String keyCipherAlgorithm,
+                       KeyStoreParameters keyOrTrustStoreParameters, String keyPassword, String digestAlgorithm) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setNamespaces(namespaces);
@@ -1316,9 +1293,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     private T dataFormat(DataFormatDefinition dataFormatType) {
         switch (operation) {
         case Unmarshal:
-            return (T) processorType.unmarshal(dataFormatType);
+            return (T)processorType.unmarshal(dataFormatType);
         case Marshal:
-            return (T) processorType.marshal(dataFormatType);
+            return (T)processorType.marshal(dataFormatType);
         default:
             throw new IllegalArgumentException("Unknown DataFormat operation: " + operation);
         }

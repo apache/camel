@@ -30,8 +30,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
-    private ExecutorService service; 
-    
+    private ExecutorService service;
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -39,7 +39,7 @@ public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
         service = Executors.newFixedThreadPool(2);
         super.setUp();
     }
-    
+
     @Override
     @After
     public void tearDown() throws Exception {
@@ -88,27 +88,25 @@ public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
-                from("direct:start")
-                    .multicast()
-                        .parallelProcessing().stopOnException().executorService(service).to("direct:foo", "direct:bar", "direct:baz")
-                    .end()
+
+                from("direct:start").multicast().parallelProcessing().stopOnException().executorService(service).to("direct:foo", "direct:bar", "direct:baz").end()
                     .to("mock:result");
 
-                // need a little delay to slow these okays down so we better can test stop when parallel
+                // need a little delay to slow these okays down so we better can
+                // test stop when parallel
                 from("direct:foo").delay(1000).to("mock:foo");
 
-                from("direct:bar")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                if ("Kaboom".equals(body)) {
-                                    throw new IllegalArgumentException("Forced");
-                                }
-                            }
-                        }).to("mock:bar");
+                from("direct:bar").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if ("Kaboom".equals(body)) {
+                            throw new IllegalArgumentException("Forced");
+                        }
+                    }
+                }).to("mock:bar");
 
-                // need a little delay to slow these okays down so we better can test stop when parallel
+                // need a little delay to slow these okays down so we better can
+                // test stop when parallel
                 from("direct:baz").delay(1000).to("mock:baz");
             }
         };

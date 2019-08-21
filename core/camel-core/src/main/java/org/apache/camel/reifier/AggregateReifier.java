@@ -63,13 +63,13 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", definition, parallel);
         if (threadPool == null && !parallel) {
             // executor service is mandatory for the Aggregator
-            // we do not run in parallel mode, but use a synchronous executor, so we run in current thread
+            // we do not run in parallel mode, but use a synchronous executor,
+            // so we run in current thread
             threadPool = new SynchronousExecutorService();
             shutdownThreadPool = true;
         }
 
-        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), internal,
-                correlation, strategy, threadPool, shutdownThreadPool);
+        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), internal, correlation, strategy, threadPool, shutdownThreadPool);
 
         AggregationRepository repository = createAggregationRepository(routeContext);
         if (repository != null) {
@@ -80,19 +80,21 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             definition.setAggregateController(routeContext.mandatoryLookup(definition.getAggregateControllerRef(), AggregateController.class));
         }
 
-        // this EIP supports using a shared timeout checker thread pool or fallback to create a new thread pool
+        // this EIP supports using a shared timeout checker thread pool or
+        // fallback to create a new thread pool
         boolean shutdownTimeoutThreadPool = false;
         ScheduledExecutorService timeoutThreadPool = definition.getTimeoutCheckerExecutorService();
         if (timeoutThreadPool == null && definition.getTimeoutCheckerExecutorServiceRef() != null) {
             // lookup existing thread pool
             timeoutThreadPool = routeContext.lookup(definition.getTimeoutCheckerExecutorServiceRef(), ScheduledExecutorService.class);
             if (timeoutThreadPool == null) {
-                // then create a thread pool assuming the ref is a thread pool profile id
-                timeoutThreadPool = routeContext.getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this,
-                        AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER, definition.getTimeoutCheckerExecutorServiceRef());
+                // then create a thread pool assuming the ref is a thread pool
+                // profile id
+                timeoutThreadPool = routeContext.getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER,
+                                                                                                                      definition.getTimeoutCheckerExecutorServiceRef());
                 if (timeoutThreadPool == null) {
                     throw new IllegalArgumentException("ExecutorServiceRef " + definition.getTimeoutCheckerExecutorServiceRef()
-                            + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
+                                                       + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
                 }
                 shutdownTimeoutThreadPool = true;
             }
@@ -100,8 +102,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         answer.setTimeoutCheckerExecutorService(timeoutThreadPool);
         answer.setShutdownTimeoutCheckerExecutorService(shutdownTimeoutThreadPool);
 
-        if (definition.getCompletionFromBatchConsumer() != null && definition.getCompletionFromBatchConsumer()
-                && definition.getDiscardOnAggregationFailure() != null && definition.getDiscardOnAggregationFailure()) {
+        if (definition.getCompletionFromBatchConsumer() != null && definition.getCompletionFromBatchConsumer() && definition.getDiscardOnAggregationFailure() != null
+            && definition.getDiscardOnAggregationFailure()) {
             throw new IllegalArgumentException("Cannot use both completionFromBatchConsumer and discardOnAggregationFailure on: " + definition);
         }
 
@@ -114,9 +116,10 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             Predicate predicate = definition.getCompletionPredicate().createPredicate(routeContext);
             answer.setCompletionPredicate(predicate);
         } else if (strategy instanceof Predicate) {
-            // if aggregation strategy implements predicate and was not configured then use as fallback
+            // if aggregation strategy implements predicate and was not
+            // configured then use as fallback
             log.debug("Using AggregationStrategy as completion predicate: {}", strategy);
-            answer.setCompletionPredicate((Predicate) strategy);
+            answer.setCompletionPredicate((Predicate)strategy);
         }
         if (definition.getCompletionTimeoutExpression() != null) {
             Expression expression = definition.getCompletionTimeoutExpression().createExpression(routeContext);
@@ -203,7 +206,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         if (strategy == null && definition.getStrategyRef() != null) {
             Object aggStrategy = routeContext.lookup(definition.getStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
+                strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
@@ -221,7 +224,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
         }
 
         return strategy;

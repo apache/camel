@@ -40,7 +40,7 @@ public class VmUseSameQueueTest extends AbstractVmTestSupport {
             }
         };
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
         return new RouteBuilder() {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
-    
+
     private MyStrategy myStrategy = new MyStrategy();
 
     @Override
@@ -41,7 +42,7 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
         deleteDirectory("target/data/file");
         super.setUp();
     }
-    
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -52,38 +53,39 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
     @Test
     public void testExistingFileExists() throws Exception {
         template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
-                "Hello World", Exchange.FILE_NAME, "hello.txt");
+                                   "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
-                "Bye Existing World 1", Exchange.FILE_NAME, "hello.txt");
+                                   "Bye Existing World 1", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
-                "Bye Existing World 2", Exchange.FILE_NAME, "hello.txt");
+                                   "Bye Existing World 2", Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists("target/data/file/hello.txt");
         assertEquals("Bye Existing World 2", context.getTypeConverter().convertTo(String.class, new File("target/data/file/hello.txt")));
-        
+
         assertFileExists("target/data/file/renamed-hello2.txt");
         assertEquals("Bye Existing World 1", context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello2.txt")));
 
         assertFileExists("target/data/file/renamed-hello1.txt");
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello1.txt")));
     }
-    
+
     private static class MyStrategy implements FileMoveExistingStrategy {
-        
+
         private static final Logger LOG = LoggerFactory.getLogger(FileMoveExistingStrategy.class);
         private int counter;
-        
+
         @Override
-        public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName)
-                throws GenericFileOperationFailedException {
-            
-            // need to evaluate using a dummy and simulate the file first, to have access to all the file attributes
-            // create a dummy exchange as Exchange is needed for expression evaluation
+        public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName) throws GenericFileOperationFailedException {
+
+            // need to evaluate using a dummy and simulate the file first, to
+            // have access to all the file attributes
+            // create a dummy exchange as Exchange is needed for expression
+            // evaluation
             // we support only the following 3 tokens.
             Exchange dummy = endpoint.createExchange();
             String parent = FileUtil.onlyPath(fileName);
             String onlyName = FileUtil.stripPath(fileName);
-            
+
             dummy.getIn().setHeader(Exchange.FILE_NAME, fileName);
             dummy.getIn().setHeader(Exchange.FILE_NAME_ONLY, onlyName);
             dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
@@ -92,13 +94,15 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
             counter++;
             String fileNameWithoutExtension = to.substring(0, to.lastIndexOf('.')) + "" + counter;
             to = fileNameWithoutExtension + to.substring(to.lastIndexOf('.'), to.length());
-            // we must normalize it (to avoid having both \ and / in the name which confuses java.io.File)
+            // we must normalize it (to avoid having both \ and / in the name
+            // which confuses java.io.File)
             to = FileUtil.normalizePath(to);
             if (ObjectHelper.isEmpty(to)) {
                 throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + fileName);
             }
 
-            // ensure any paths is created before we rename as the renamed file may be in a different path (which may be non exiting)
+            // ensure any paths is created before we rename as the renamed file
+            // may be in a different path (which may be non exiting)
             // use java.io.File to compute the file path
             File toFile = new File(to);
             String directory = toFile.getParent();
@@ -127,7 +131,7 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
             }
             return true;
         }
-    
+
     }
 
 }

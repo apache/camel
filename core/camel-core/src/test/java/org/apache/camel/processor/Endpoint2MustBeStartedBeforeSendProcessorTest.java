@@ -41,8 +41,7 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
             public void configure() throws Exception {
                 myendpoint = new MyEndpoint("myendpoint", context);
 
-                from("direct:start")
-                    .to(myendpoint);
+                from("direct:start").to(myendpoint);
             }
         });
         context.start();
@@ -57,8 +56,7 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
             public void configure() throws Exception {
                 myendpoint = new MyEndpoint("myendpoint", context);
 
-                from(myendpoint)
-                    .to("mock:result");
+                from(myendpoint).to("mock:result");
             }
         });
         context.start();
@@ -73,9 +71,7 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
             public void configure() throws Exception {
                 myendpoint = new MyEndpoint("myendpoint", context);
 
-                from(myendpoint)
-                    .to("mock:result")
-                    .to(myendpoint);
+                from(myendpoint).to("mock:result").to(myendpoint);
             }
         });
         context.start();
@@ -90,9 +86,7 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
             public void configure() throws Exception {
                 myendpoint = new MyEndpoint("myendpoint", context);
 
-                from(myendpoint).routeId("foo")
-                    .to("mock:result")
-                    .to(myendpoint);
+                from(myendpoint).routeId("foo").to("mock:result").to(myendpoint);
             }
         });
         context.start();
@@ -140,7 +134,8 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
         }
 
         // in this test we use start/stop to implement logic
-        // this is however discouraged, as you should prefer to use doStart/doStop
+        // this is however discouraged, as you should prefer to use
+        // doStart/doStop
 
         @Override
         public void doStart() throws Exception {

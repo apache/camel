@@ -30,7 +30,6 @@ import org.apache.camel.spi.Condition;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
 
     private List<String> logs = new ArrayList<>();
@@ -84,12 +83,7 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
                 // use debugger
                 context.setDebugger(new DefaultDebugger());
 
-                from("direct:start")
-                    .to("log:foo")
-                    .choice()
-                        .when(body().contains("Camel")).throwException(new IllegalArgumentException("Damn"))
-                    .end()
-                    .to("mock:result");
+                from("direct:start").to("log:foo").choice().when(body().contains("Camel")).throwException(new IllegalArgumentException("Damn")).end().to("mock:result");
             }
         };
     }

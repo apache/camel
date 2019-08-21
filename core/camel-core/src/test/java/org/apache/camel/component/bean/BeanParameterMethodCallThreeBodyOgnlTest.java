@@ -55,15 +55,13 @@ public class BeanParameterMethodCallThreeBodyOgnlTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .dynamicRouter().method("router")
-                    .to("mock:result");
+                from("direct:start").dynamicRouter().method("router").to("mock:result");
             }
         };
     }
 
     public static class MyRouter {
-        
+
         public String route(Object body) {
             if (body instanceof List) {
                 return "bean:foo?method=bar('A','B','C')";

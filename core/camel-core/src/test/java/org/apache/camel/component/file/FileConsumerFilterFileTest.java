@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit test for  the filter file option
+ * Unit test for the filter file option
  */
 public class FileConsumerFilterFileTest extends ContextTestSupport {
 

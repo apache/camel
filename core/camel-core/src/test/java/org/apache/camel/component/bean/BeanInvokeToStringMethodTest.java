@@ -39,9 +39,7 @@ public class BeanInvokeToStringMethodTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MyFooBean.class, "toString")
-                    .to("mock:result");
+                from("direct:start").bean(MyFooBean.class, "toString").to("mock:result");
             }
         };
     }

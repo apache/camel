@@ -37,18 +37,18 @@ import static org.awaitility.Awaitility.await;
 
 public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
     private static Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyTest.class);
-    
+
     private String url = "seda:foo?concurrentConsumers=2";
     private MockEndpoint result;
     private int size = 100;
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         this.setUseRouteBuilder(true);
         result = getMockEndpoint("mock:result");
-        
+
         context.getShutdownStrategy().setTimeout(1);
     }
 
@@ -70,7 +70,7 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
         result.expectedMessageCount(2);
         List<String> bodies = Arrays.asList("Message One", "Message Two");
         result.expectedBodiesReceivedInAnyOrder(bodies);
-        
+
         result.whenAnyExchangeReceived(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -78,17 +78,17 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
                 exchange.setException(new ThrottlingException(msg));
             }
         });
-        
+
         // send two messages which will fail
         template.sendBody(url, "Message One");
         template.sendBody(url, "Message Two");
 
-        final ServiceSupport consumer = (ServiceSupport) context.getRoute("foo").getConsumer();
+        final ServiceSupport consumer = (ServiceSupport)context.getRoute("foo").getConsumer();
 
         // wait long enough to have the consumer suspended
         await().atMost(2, TimeUnit.SECONDS).until(consumer::isSuspended);
-        
-        // send more messages 
+
+        // send more messages
         // but never should get there
         // due to open circuit
         log.debug("sending message three");
@@ -99,7 +99,7 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -110,22 +110,18 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
                 long halfOpenAfter = 1000;
                 ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
                 policy.setHalfOpenHandler(new NeverCloseHandler());
-                
-                from(url).routeId("foo")
-                    .routePolicy(policy)
-                    .log("${body}")
-                    .to("log:foo?groupSize=10")
-                    .to("mock:result");
+
+                from(url).routeId("foo").routePolicy(policy).log("${body}").to("log:foo?groupSize=10").to("mock:result");
             }
         };
     }
-    
+
     public class NeverCloseHandler implements ThrottlingExceptionHalfOpenHandler {
 
         @Override
         public boolean isReadyToBeClosed() {
             return false;
         }
-        
+
     }
 }

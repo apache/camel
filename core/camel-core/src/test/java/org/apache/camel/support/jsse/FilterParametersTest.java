@@ -24,96 +24,96 @@ import org.apache.camel.CamelContext;
 import org.junit.Test;
 
 public class FilterParametersTest extends AbstractJsseParametersTest {
-    
+
     @Test
     public void testPropertyPlaceholders() throws Exception {
         CamelContext context = this.createPropertiesPlaceholderAwareContext();
-        
+
         FilterParameters filter = new FilterParameters();
         filter.setCamelContext(context);
         filter.getInclude().add("{{filterParameters.include}}");
         filter.getExclude().add("{{filterParameters.exclude}}");
-        
+
         FilterParameters.Patterns patterns = filter.getPatterns();
-        
+
         List<Pattern> includes = patterns.getIncludes();
         List<Pattern> excludes = patterns.getExcludes();
-        
+
         assertNotNull(includes);
         assertNotNull(excludes);
-        
+
         assertEquals(1, includes.size());
         assertEquals(1, excludes.size());
-        
+
         Matcher includeMatcher = includes.get(0).matcher("include");
         assertTrue(includeMatcher.matches());
-        
+
         Matcher excludeMatcher = excludes.get(0).matcher("exclude");
         assertTrue(excludeMatcher.matches());
     }
-    
+
     @Test
     public void testGetIncludePatterns() {
         FilterParameters filter = new FilterParameters();
         filter.getInclude().add("asdfsadfsadfsadf");
-        
+
         List<Pattern> includes = filter.getIncludePatterns();
         List<Pattern> excludes = filter.getExcludePatterns();
-        
+
         assertNotNull(includes);
         assertEquals(1, includes.size());
-        
+
         assertNotNull(excludes);
         assertEquals(0, excludes.size());
-        
+
         assertNotNull(includes.get(0));
-        
+
         Matcher matcher = includes.get(0).matcher("asdfsadfsadfsadf");
         assertTrue(matcher.matches());
     }
-    
+
     @Test
     public void testGetExcludePatterns() {
         FilterParameters filter = new FilterParameters();
         filter.getExclude().add("asdfsadfsadfsadf");
-        
+
         List<Pattern> includes = filter.getIncludePatterns();
         List<Pattern> excludes = filter.getExcludePatterns();
-        
+
         assertNotNull(excludes);
         assertEquals(1, excludes.size());
-        
+
         assertNotNull(includes);
         assertEquals(0, includes.size());
-        
+
         assertNotNull(excludes.get(0));
-        
+
         Matcher matcher = excludes.get(0).matcher("asdfsadfsadfsadf");
         assertTrue(matcher.matches());
     }
-    
+
     @Test
     public void test() {
         FilterParameters filter = new FilterParameters();
         filter.getInclude().add("asdf.*");
         filter.getExclude().add("aa");
-        
+
         FilterParameters.Patterns patterns = filter.getPatterns();
-        
+
         List<Pattern> includes = patterns.getIncludes();
         List<Pattern> excludes = patterns.getExcludes();
-        
+
         assertNotNull(includes);
         assertNotNull(excludes);
-        
+
         assertEquals(1, includes.size());
         assertEquals(1, excludes.size());
-        
+
         Matcher includeMatcher = includes.get(0).matcher("asdfsadfsadfsadf");
         assertTrue(includeMatcher.matches());
-        
+
         Matcher excludeMatcher = excludes.get(0).matcher("aa");
         assertTrue(excludeMatcher.matches());
-        
+
     }
 }

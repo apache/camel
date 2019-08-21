@@ -51,7 +51,8 @@ public class RouteBuilderTest extends TestSupport {
     protected DelegateProcessor interceptor2;
 
     protected CamelContext createCamelContext() {
-        // disable stream cache otherwise to much hazzle in this unit test to filter the stream cache
+        // disable stream cache otherwise to much hazzle in this unit test to
+        // filter the stream cache
         // in all the assertion codes
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.setStreamCaching(Boolean.FALSE);
@@ -94,9 +95,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .filter(header("foo").isEqualTo("bar"))
-                        .to("direct:b");
+                from("direct:a").filter(header("foo").isEqualTo("bar")).to("direct:b");
             }
         };
         // END SNIPPET: e2
@@ -129,14 +128,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .choice()
-                        .when(header("foo").isEqualTo("bar"))
-                            .to("direct:b")
-                        .when(header("foo").isEqualTo("cheese"))
-                            .to("direct:c")
-                        .otherwise()
-                            .to("direct:d");
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).to("direct:b").when(header("foo").isEqualTo("cheese")).to("direct:c").otherwise().to("direct:d");
             }
         };
         // END SNIPPET: e3
@@ -162,10 +154,10 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("Should be two when clauses", 2, filters.size());
 
             Processor filter1 = filters.get(0);
-            assertSendTo(unwrapChannel(((FilterProcessor) filter1).getProcessor()).getNextProcessor(), "direct://b");
+            assertSendTo(unwrapChannel(((FilterProcessor)filter1).getProcessor()).getNextProcessor(), "direct://b");
 
             Processor filter2 = filters.get(1);
-            assertSendTo(unwrapChannel(((FilterProcessor) filter2).getProcessor()).getNextProcessor(), "direct://c");
+            assertSendTo(unwrapChannel(((FilterProcessor)filter2).getProcessor()).getNextProcessor(), "direct://c");
 
             assertSendTo(unwrapChannel(choiceProcessor.getOtherwise()).getNextProcessor(), "direct://d");
         }
@@ -183,8 +175,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .process(myProcessor);
+                from("direct:a").process(myProcessor);
             }
         };
         // END SNIPPET: e4
@@ -208,9 +199,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .filter(header("foo").isEqualTo("bar"))
-                        .process(myProcessor);
+                from("direct:a").filter(header("foo").isEqualTo("bar")).process(myProcessor);
             }
         };
         // END SNIPPET: e5
@@ -236,8 +225,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .multicast().to("direct:tap", "direct:b");
+                from("direct:a").multicast().to("direct:tap", "direct:b");
             }
         };
         // END SNIPPET: e6
@@ -277,10 +265,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .process(interceptor1)
-                    .process(interceptor2)
-                    .to("direct:d");
+                from("direct:a").process(interceptor1).process(interceptor2).to("direct:d");
             }
         };
         return getRouteList(builder);
@@ -317,9 +302,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .filter(header("foo").isEqualTo(123))
-                        .to("direct:b");
+                from("direct:a").filter(header("foo").isEqualTo(123)).to("direct:b");
             }
         };
         // END SNIPPET: e7
@@ -340,8 +323,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .multicast().to("direct:b", "direct:c", "direct:d");
+                from("direct:a").multicast().to("direct:b", "direct:c", "direct:d");
             }
         };
         // END SNIPPET: multicast
@@ -354,8 +336,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .recipientList(header("foo"));
+                from("direct:a").recipientList(header("foo"));
             }
         };
         // END SNIPPET: e9
@@ -397,9 +378,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .split(bodyAs(String.class).tokenize("\n"))
-                        .to("direct:b");
+                from("direct:a").split(bodyAs(String.class).tokenize("\n")).to("direct:b");
             }
         };
         // END SNIPPET: splitter
@@ -430,10 +409,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .idempotentConsumer(header("myMessageId"),
-                            MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                    .to("direct:b");
+                from("direct:a").idempotentConsumer(header("myMessageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).to("direct:b");
             }
         };
         // END SNIPPET: idempotent
@@ -470,10 +446,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a")
-                    .threads(5, 10)
-                    .to("mock:a")
-                    .to("mock:b");
+                from("direct:a").threads(5, 10).to("mock:a").to("mock:b");
             }
         };
         // END SNIPPET: e10
@@ -546,7 +519,7 @@ public class RouteBuilderTest extends TestSupport {
 
     protected Processor unwrapDelegateProcessor(Processor processor) {
         if (processor instanceof DelegateProcessor) {
-            DelegateProcessor delegate = (DelegateProcessor) processor;
+            DelegateProcessor delegate = (DelegateProcessor)processor;
             return delegate.getProcessor();
         } else {
             return processor;

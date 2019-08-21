@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -64,7 +65,7 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesIncludeTest extends 
             @Override
             public void configure() throws Exception {
                 from("file:target/data/oldlock?initialDelay=0&delay=10&recursive=true&sortBy=file:name&include=.*(hello.txt|bye.txt|gooday.txt)$").routeId("foo").noAutoStartup()
-                        .convertBodyTo(String.class).to("mock:result");
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

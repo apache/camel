@@ -33,10 +33,7 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .filter(method(BeanLanguageMethodMissingParenthesisTest.class, "couldThisBeFoo(${body}, ${header.foo})"))
-                        .to("mock:foo")
-                    .end()
+                from("direct:start").filter(method(BeanLanguageMethodMissingParenthesisTest.class, "couldThisBeFoo(${body}, ${header.foo})")).to("mock:foo").end()
                     .to("mock:result");
             }
         });
@@ -60,11 +57,7 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .filter(method(BeanLanguageMethodMissingParenthesisTest.class, "couldThisBeFoo(${body}, ${header.foo}"))
-                        .to("mock:foo")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").filter(method(BeanLanguageMethodMissingParenthesisTest.class, "couldThisBeFoo(${body}, ${header.foo}")).to("mock:foo").end().to("mock:result");
             }
         });
         context.start();
@@ -83,10 +76,7 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .filter(method(BeanLanguageMethodMissingParenthesisTest.class, "--couldThisBeFoo(${body}, ${header.foo})"))
-                        .to("mock:foo")
-                    .end()
+                from("direct:start").filter(method(BeanLanguageMethodMissingParenthesisTest.class, "--couldThisBeFoo(${body}, ${header.foo})")).to("mock:foo").end()
                     .to("mock:result");
             }
         });

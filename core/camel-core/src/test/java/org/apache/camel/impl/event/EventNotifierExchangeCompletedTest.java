@@ -70,7 +70,7 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
         assertEquals(1, events.size());
 
         // get the event
-        ExchangeCompletedEvent event = (ExchangeCompletedEvent) events.get(0);
+        ExchangeCompletedEvent event = (ExchangeCompletedEvent)events.get(0);
         assertNotNull(event.getExchange());
         assertNotNull(event.getExchange().getFromEndpoint());
         assertEquals("direct://start", event.getExchange().getFromEndpoint().getEndpointUri());

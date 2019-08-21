@@ -26,7 +26,7 @@ public class XMLSecurityDataFormatReifier extends DataFormatReifier<XMLSecurityD
     private static final String TRIPLEDES = "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
 
     public XMLSecurityDataFormatReifier(DataFormatDefinition definition) {
-        super((XMLSecurityDataFormat) definition);
+        super((XMLSecurityDataFormat)definition);
     }
 
     @Override

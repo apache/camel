@@ -42,10 +42,7 @@ public class AdviceWithTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // intercept sending to mock:foo and do something else
-                interceptSendToEndpoint("mock:foo")
-                        .skipSendToOriginalEndpoint()
-                        .to("log:foo")
-                        .to("mock:advised");
+                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
             }
         });
 
@@ -67,10 +64,7 @@ public class AdviceWithTest extends ContextTestSupport {
                 public void configure() throws Exception {
                     from("direct:bar").to("mock:bar");
 
-                    interceptSendToEndpoint("mock:foo")
-                            .skipSendToOriginalEndpoint()
-                            .to("log:foo")
-                            .to("mock:advised");
+                    interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
                 }
             });
             fail("Should have thrown exception");
@@ -84,9 +78,7 @@ public class AdviceWithTest extends ContextTestSupport {
         RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock:foo")
-                    .to("mock:advised")
-                    .throwException(new IllegalArgumentException("Damn"));
+                interceptSendToEndpoint("mock:foo").to("mock:advised").throwException(new IllegalArgumentException("Damn"));
             }
         });
 

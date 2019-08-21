@@ -52,10 +52,7 @@ public class BeanReturnCallableReturnNullTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in")
-                        .setHeader("foo", constant("bar"))
-                        .to("bean:myBean")
-                        .to("mock:result");
+                from("direct:in").setHeader("foo", constant("bar")).to("bean:myBean").to("mock:result");
             }
         };
     }

@@ -37,7 +37,8 @@ public class ErrorHandlerOnExceptionRedeliveryAndHandledTest extends ContextTest
 
         try {
             template.sendBody("direct:start", "Hello World");
-            // we tried to handle that exception but then another exception occurred
+            // we tried to handle that exception but then another exception
+            // occurred
             // so this exchange failed with an exception
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
@@ -57,30 +58,27 @@ public class ErrorHandlerOnExceptionRedeliveryAndHandledTest extends ContextTest
             public void configure() throws Exception {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(0));
 
-                onException(IOException.class).maximumRedeliveries(3).handled(true)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            if (exchange.getIn().getHeader(Exchange.REDELIVERED) != null) {
-                                String s = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
-                                counter += s;
-                            }
-                            // we throw an exception here, but the default error handler should not kick in
-                            throw new ConnectException("Cannot connect to bar server");
+                onException(IOException.class).maximumRedeliveries(3).handled(true).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        if (exchange.getIn().getHeader(Exchange.REDELIVERED) != null) {
+                            String s = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
+                            counter += s;
                         }
-                    })
-                    .to("mock:other");
+                        // we throw an exception here, but the default error
+                        // handler should not kick in
+                        throw new ConnectException("Cannot connect to bar server");
+                    }
+                }).to("mock:other");
 
-                from("direct:start")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                if (exchange.getIn().getHeader(Exchange.REDELIVERED) != null) {
-                                    String s = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
-                                    counter += s;
-                                }
-                                throw new ConnectException("Cannot connect to foo server");
-                            }
-                        })
-                    .to("mock:result");
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        if (exchange.getIn().getHeader(Exchange.REDELIVERED) != null) {
+                            String s = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
+                            counter += s;
+                        }
+                        throw new ConnectException("Cannot connect to foo server");
+                    }
+                }).to("mock:result");
             }
         };
     }

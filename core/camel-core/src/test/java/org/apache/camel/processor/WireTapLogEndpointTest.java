@@ -31,16 +31,14 @@ public class WireTapLogEndpointTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 Endpoint tap = endpoint("log:com.foo.MyApp?level=WARN");
 
-                from("direct:start")
-                    .wireTap(tap)
-                    .to("mock:result");
+                from("direct:start").wireTap(tap).to("mock:result");
             }
         };
     }

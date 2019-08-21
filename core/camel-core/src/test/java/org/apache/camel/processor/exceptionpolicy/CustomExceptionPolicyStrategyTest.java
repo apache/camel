@@ -45,10 +45,9 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     public static class MyPolicy implements ExceptionPolicyStrategy {
 
         @Override
-        public ExceptionPolicyKey getExceptionPolicy(Set<ExceptionPolicyKey> exceptionPolicices,
-                                                     Exchange exchange,
-                                                     Throwable exception) {
-            // This is just an example that always forces the exception type configured
+        public ExceptionPolicyKey getExceptionPolicy(Set<ExceptionPolicyKey> exceptionPolicices, Exchange exchange, Throwable exception) {
+            // This is just an example that always forces the exception type
+            // configured
             // with MyPolicyException to win.
             return new ExceptionPolicyKey(null, MyPolicyException.class, null);
         }
@@ -76,20 +75,13 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             // START SNIPPET e1
             public void configure() throws Exception {
-                // configure the error handler to use my policy instead of the default from Camel
+                // configure the error handler to use my policy instead of the
+                // default from Camel
                 errorHandler(deadLetterChannel("mock:error").exceptionPolicyStrategy(new MyPolicy()));
 
-                onException(MyPolicyException.class)
-                    .maximumRedeliveries(1)
-                    .redeliveryDelay(0)
-                    .setHeader(MESSAGE_INFO, constant("Damm my policy exception"))
-                    .to(ERROR_QUEUE);
+                onException(MyPolicyException.class).maximumRedeliveries(1).redeliveryDelay(0).setHeader(MESSAGE_INFO, constant("Damm my policy exception")).to(ERROR_QUEUE);
 
-                onException(CamelException.class)
-                    .maximumRedeliveries(3)
-                    .redeliveryDelay(0)
-                    .setHeader(MESSAGE_INFO, constant("Damm a Camel exception"))
-                    .to(ERROR_QUEUE);
+                onException(CamelException.class).maximumRedeliveries(3).redeliveryDelay(0).setHeader(MESSAGE_INFO, constant("Damm a Camel exception")).to(ERROR_QUEUE);
                 // END SNIPPET e1
 
                 from("direct:a").process(new Processor() {

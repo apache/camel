@@ -49,7 +49,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
     @Test
     public void testAscendingMessagesFail() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectsAscending(header("counter").convertTo(Number.class));
 
         sendMessages(11, 12, 13, 15, 14);
@@ -59,7 +59,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
     @Test
     public void testDescendingMessagesPass() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectsDescending(header("counter").convertTo(Number.class));
 
         sendMessages(15, 14, 13, 12, 11);
@@ -69,7 +69,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
     @Test
     public void testDescendingMessagesFail() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectsDescending(header("counter").convertTo(Number.class));
 
         sendMessages(15, 14, 13, 11, 12);
@@ -79,23 +79,23 @@ public class MockEndpointTest extends ContextTestSupport {
 
     @Test
     public void testExpectsBodiesInOrder() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived(listOfMessages(11, 12, 13, 14, 15));
 
         sendMessages(11, 12, 13, 14, 15);
 
         resultEndpoint.assertIsSatisfied();
-    }    
+    }
 
     @Test
     public void testExpectsBodiesInAnyOrder() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceivedInAnyOrder(listOfMessages(11, 12, 13, 14, 15));
 
         sendMessages(15, 12, 14, 13, 11);
 
         resultEndpoint.assertIsSatisfied();
-    }       
+    }
 
     @Test
     public void testExpectsBodiesInAnyOrderWithDuplicates() throws Exception {
@@ -179,7 +179,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
     @Test
     public void testNoDuplicateMessagesPass() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectsNoDuplicates(header("counter"));
 
         sendMessages(11, 12, 13, 14, 15);
@@ -189,7 +189,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
     @Test
     public void testDuplicateMessagesFail() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectsNoDuplicates(header("counter"));
 
         sendMessages(11, 12, 13, 14, 12);
@@ -220,7 +220,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
     @Test
     public void testReset() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(2);
 
         sendMessages(11, 12);
@@ -236,36 +236,36 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExpectationOfHeader() throws InterruptedException {        
+    public void testExpectationOfHeader() throws InterruptedException {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.reset();
-        
+
         // assert header & value are same
         resultEndpoint.expectedHeaderReceived("header", "value");
         sendHeader("header", "value");
         resultEndpoint.assertIsSatisfied();
-        
+
         resultEndpoint.reset();
         // assert failure when value is different
         resultEndpoint.expectedHeaderReceived("header", "value1");
         sendHeader("header", "value");
-        resultEndpoint.assertIsNotSatisfied();       
+        resultEndpoint.assertIsNotSatisfied();
 
         resultEndpoint.reset();
 
-        // assert failure when header name is different       
+        // assert failure when header name is different
         resultEndpoint.expectedHeaderReceived("header1", "value");
         sendHeader("header", "value");
-        resultEndpoint.assertIsNotSatisfied();               
-        
+        resultEndpoint.assertIsNotSatisfied();
+
         resultEndpoint.reset();
-        
+
         // assert failure when both header name & value are different
         resultEndpoint.expectedHeaderReceived("header1", "value1");
         sendHeader("header", "value");
-        resultEndpoint.assertIsNotSatisfied();                       
+        resultEndpoint.assertIsNotSatisfied();
     }
-    
+
     @Test
     public void testExpectationOfHeaderWithNumber() throws InterruptedException {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -285,8 +285,8 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.expectedHeaderReceived("number", 123);
         template.sendBodyAndHeader("direct:a", "<foo><id>123</id></foo>", "number", XPathBuilder.xpath("/foo/id", Integer.class));
         resultEndpoint.assertIsSatisfied();
-    }    
-    
+    }
+
     @Test
     public void testExpressionExpectationOfProperty() throws InterruptedException {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -502,7 +502,7 @@ public class MockEndpointTest extends ContextTestSupport {
         MockEndpoint mock = MockEndpoint.resolve(context, "mock:result");
         mock.expectedMessageCount(0);
         mock.setSleepForEmptyTest(100);
-        
+
         mock.assertIsSatisfied();
 
         assertEquals(0, mock.getExpectedCount());
@@ -560,7 +560,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", "cheese");
-        
+
         template.sendBodyAndHeader("direct:a", "Hello World", "foo", 123);
 
         try {
@@ -603,7 +603,7 @@ public class MockEndpointTest extends ContextTestSupport {
             assertEquals("mock://result Header with name bar for message: 0. Expected: <cheese> but was: <beer>", e.getMessage());
         }
     }
-    
+
     @Test
     public void testPropertyMissing() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -620,7 +620,7 @@ public class MockEndpointTest extends ContextTestSupport {
             assertEquals("mock://result No property with name bar found for message: 0", e.getMessage());
         }
     }
-    
+
     @Test
     public void testPropertyExpectedNull() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -872,7 +872,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testSetMultipleExpectedHeaders4() throws Exception {
         // to test the header value with Stream which can only be consumed once
@@ -1101,13 +1101,13 @@ public class MockEndpointTest extends ContextTestSupport {
         // counter should not be changed this time
         assertEquals(1, counter.get());
     }
-    
+
     @Test
     public void testRetainFirst() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.setRetainFirst(5);
         mock.expectedMessageCount(10);
-        
+
         sendMessages(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
         assertMockEndpointsSatisfied();
@@ -1267,8 +1267,8 @@ public class MockEndpointTest extends ContextTestSupport {
             list.add(createTestMessage(counter));
         }
         return list.toArray();
-    }   
-    
+    }
+
     protected void sendHeader(String name, Object value) {
         template.sendBodyAndHeader("direct:a", "body", name, value);
     }

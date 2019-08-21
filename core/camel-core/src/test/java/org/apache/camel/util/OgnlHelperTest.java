@@ -25,7 +25,7 @@ import org.junit.Test;
  *
  */
 public class OgnlHelperTest extends Assert {
-    
+
     @Test
     public void testSplitOgnlSimple() throws Exception {
         List<String> methods = OgnlHelper.splitOgnl(null);

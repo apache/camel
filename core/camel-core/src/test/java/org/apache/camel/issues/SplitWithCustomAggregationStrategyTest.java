@@ -45,33 +45,23 @@ public class SplitWithCustomAggregationStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").
-                        setBody().simple("<search><key>foo-${id}</key><key>bar-${id}</key><key>baz-${id}</key></search>").
-                        to("direct:splitInOut").
-                        to("mock:result");
+                from("direct:start").setBody().simple("<search><key>foo-${id}</key><key>bar-${id}</key><key>baz-${id}</key></search>").to("direct:splitInOut").to("mock:result");
 
-                from("direct:splitInOut").
-                        setHeader("com.example.id").simple("${id}").
-                        split(xpath("/search/key"), new AggregationStrategy() {
-                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                                if (oldExchange == null) {
-                                    return newExchange;
-                                }
+                from("direct:splitInOut").setHeader("com.example.id").simple("${id}").split(xpath("/search/key"), new AggregationStrategy() {
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        if (oldExchange == null) {
+                            return newExchange;
+                        }
 
-                                String oldBody = oldExchange.getIn().getBody(String.class);
-                                String newBody = newExchange.getIn().getBody(String.class);
-                                oldExchange.getIn().setBody(oldBody + newBody);
+                        String oldBody = oldExchange.getIn().getBody(String.class);
+                        String newBody = newExchange.getIn().getBody(String.class);
+                        oldExchange.getIn().setBody(oldBody + newBody);
 
-                                return oldExchange;
-                            }
-                        }).parallelProcessing().streaming().
-                            to("direct:processLine").
-                        end().
-                        transform().simple("<results>${in.body}</results>");
+                        return oldExchange;
+                    }
+                }).parallelProcessing().streaming().to("direct:processLine").end().transform().simple("<results>${in.body}</results>");
 
-                from("direct:processLine").
-                        to("log:line").
-                        transform().simple("<index>${in.header.CamelSplitIndex}</index>${in.body}");
+                from("direct:processLine").to("log:line").transform().simple("<index>${in.header.CamelSplitIndex}</index>${in.body}");
             }
         };
     }

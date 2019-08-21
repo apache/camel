@@ -37,16 +37,11 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setTracing(true);
 
-                interceptSendToEndpoint("mock:foo")
-                    .to("mock:detour").transform(constant("Bye World")).afterUrl("direct:after");
+                interceptSendToEndpoint("mock:foo").to("mock:detour").transform(constant("Bye World")).afterUrl("direct:after");
 
-                from("direct:first")
-                    .to("mock:bar")
-                    .to("mock:foo")
-                    .to("mock:result");
-                
-                from("direct:after")
-                        .to("mock:after");
+                from("direct:first").to("mock:bar").to("mock:foo").to("mock:result");
+
+                from("direct:after").to("mock:after");
 
             }
         });
@@ -68,12 +63,9 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:start")
-                    .to("mock:detour").transform(constant("Bye World"));
+                interceptSendToEndpoint("direct:start").to("mock:detour").transform(constant("Bye World"));
 
-                from("direct:start")
-                    .to("mock:foo")
-                    .to("mock:result");
+                from("direct:start").to("mock:foo").to("mock:result");
             }
         });
         context.start();
@@ -92,12 +84,9 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:start")
-                    .to("mock:detour").afterUrl("mock:after");
+                interceptSendToEndpoint("direct:start").to("mock:detour").afterUrl("mock:after");
 
-                from("direct:start")
-                    .to("mock:foo")
-                    .transform().constant("Bye World");
+                from("direct:start").to("mock:foo").transform().constant("Bye World");
             }
         });
         context.start();

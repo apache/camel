@@ -50,7 +50,7 @@ public class OnExceptionNotHandledErrorHandlerRefIssueTest extends ContextTestSu
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("myDLC", new DeadLetterChannelBuilder("mock:dead"));
-        return  jndi;
+        return jndi;
     }
 
     @Override
@@ -60,12 +60,7 @@ public class OnExceptionNotHandledErrorHandlerRefIssueTest extends ContextTestSu
             public void configure() throws Exception {
                 errorHandler(new ErrorHandlerBuilderRef("myDLC"));
 
-                from("direct:start")
-                    .onException(IllegalArgumentException.class)
-                        .handled(false)
-                        .to("mock:handled")
-                    .end()
-                    .to("mock:a")
+                from("direct:start").onException(IllegalArgumentException.class).handled(false).to("mock:handled").end().to("mock:a")
                     .throwException(new IllegalArgumentException("Damn"));
             }
         };

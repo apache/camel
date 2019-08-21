@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.StringReader;
 
 import javax.xml.transform.stream.StreamSource;
@@ -52,7 +53,6 @@ public class MulticastStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     @Before
     public void setUp() throws Exception {
@@ -81,7 +81,8 @@ public class MulticastStreamCachingTest extends ContextTestSupport {
 
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                //stream caching should fix re-readability issues when multicasting messages
+                // stream caching should fix re-readability issues when
+                // multicasting messages
                 from("direct:a").multicast().to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").process(processor).to("mock:x");

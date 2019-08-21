@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 public class HL7DataFormatReifier extends DataFormatReifier<HL7DataFormat> {
 
     public HL7DataFormatReifier(DataFormatDefinition definition) {
-        super((HL7DataFormat) definition);
+        super((HL7DataFormat)definition);
     }
 
     @Override

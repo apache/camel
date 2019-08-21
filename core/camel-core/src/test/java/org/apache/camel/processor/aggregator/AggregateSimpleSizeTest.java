@@ -42,11 +42,12 @@ public class AggregateSimpleSizeTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                     // aggregate all exchanges correlated by the id header.
-                    // Aggregate them using the BodyInAggregatingStrategy strategy which
-                    // and after 3 messages has been aggregated then complete the aggregation
+                    // Aggregate them using the BodyInAggregatingStrategy
+                    // strategy which
+                    // and after 3 messages has been aggregated then complete
+                    // the aggregation
                     // and send it to mock:aggregated
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3)
-                        .to("mock:aggregated");
+                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3).to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

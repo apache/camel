@@ -96,29 +96,30 @@ public class ChoiceCompoundPredicateTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 // We define 3 predicates based on some user roles
-                // we have static imported and/or from org.apache.camel.builder.PredicateBuilder
+                // we have static imported and/or from
+                // org.apache.camel.builder.PredicateBuilder
 
-                // First we have a regular user that is just identified having a username header
+                // First we have a regular user that is just identified having a
+                // username header
                 Predicate user = header("username").isNotNull();
 
                 // The admin user must be a user AND have a admin header as true
                 Predicate admin = and(user, header("admin").isEqualTo("true"));
 
-                // And God must be an admin and (either have type god or a special message containing Camel Rider)
+                // And God must be an admin and (either have type god or a
+                // special message containing Camel Rider)
                 Predicate god = and(admin, or(body().contains("Camel Rider"), header("type").isEqualTo("god")));
 
-                // As you can see with the predicates above we can stack them to build compound predicates
+                // As you can see with the predicates above we can stack them to
+                // build compound predicates
 
-                // In our route below we can create a nice content based router based on the predicates we
+                // In our route below we can create a nice content based router
+                // based on the predicates we
                 // have defined. Then the route is easy to read and understand.
-                // We encourage you to define complex predicates outside the fluent router builder as
+                // We encourage you to define complex predicates outside the
+                // fluent router builder as
                 // it will just get a bit complex for humans to read
-                from("direct:start").choice()
-                  .when(god).to("mock:god")
-                  .when(admin).to("mock:admin")
-                  .when(user).to("mock:user")
-                  .otherwise().to("mock:guest")
-                .end();
+                from("direct:start").choice().when(god).to("mock:god").when(admin).to("mock:admin").when(user).to("mock:user").otherwise().to("mock:guest").end();
                 // END SNIPPET: e1
             }
         };

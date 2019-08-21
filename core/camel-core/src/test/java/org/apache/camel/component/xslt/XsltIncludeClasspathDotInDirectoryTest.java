@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xslt;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,10 +39,9 @@ public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
 
         // copy templates to this directory
         FileUtil.copyFile(new File("src/test/resources/org/apache/camel/component/xslt/staff_include_classpath2.xsl"),
-                new File("target/classes/com.mycompany/staff_include_classpath2.xsl"));
+                          new File("target/classes/com.mycompany/staff_include_classpath2.xsl"));
 
-        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/component/xslt/staff_template.xsl"),
-                new File("target/classes/com.mycompany/staff_template.xsl"));
+        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/component/xslt/staff_template.xsl"), new File("target/classes/com.mycompany/staff_template.xsl"));
 
         super.setUp();
     }
@@ -68,9 +68,7 @@ public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10")
-                    .to("xslt:com.mycompany/staff_include_classpath2.xsl")
-                    .to("log:foo")
+                from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10").to("xslt:com.mycompany/staff_include_classpath2.xsl").to("log:foo")
                     .to("mock:result");
             }
         };

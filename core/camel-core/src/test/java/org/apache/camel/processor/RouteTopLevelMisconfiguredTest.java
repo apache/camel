@@ -33,13 +33,7 @@ public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .split(body())
-                            .onException(IllegalArgumentException.class)
-                                .to("mock:illegal")
-                            .end()
-                            .to("mock:split")
-                        .end();
+                    from("direct:start").split(body()).onException(IllegalArgumentException.class).to("mock:illegal").end().to("mock:split").end();
                 }
             });
             fail("Should fail");
@@ -54,13 +48,7 @@ public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .split(body())
-                            .onCompletion()
-                                .to("mock:done")
-                            .end()
-                            .to("mock:split")
-                        .end();
+                    from("direct:start").split(body()).onCompletion().to("mock:done").end().to("mock:split").end();
                 }
             });
             fail("Should fail");
@@ -75,11 +63,7 @@ public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .split(body())
-                            .transacted()
-                            .to("mock:split")
-                        .end();
+                    from("direct:start").split(body()).transacted().to("mock:split").end();
                 }
             });
             fail("Should fail");

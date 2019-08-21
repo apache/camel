@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.enricher;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -38,7 +39,7 @@ public class PollEnricherTest extends ContextTestSupport {
     }
 
     // -------------------------------------------------------------
-    //  InOnly routes
+    // InOnly routes
     // -------------------------------------------------------------
 
     @Test
@@ -88,21 +89,22 @@ public class PollEnricherTest extends ContextTestSupport {
         mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo3");
         t.start();
         template.sendBody("direct:enricher-test-3", "test");
-        // should take approx 1 sec to complete as the other thread is sending a bit later and we wait
+        // should take approx 1 sec to complete as the other thread is sending a
+        // bit later and we wait
         mock.assertIsSatisfied();
         long delta = System.currentTimeMillis() - start;
         assertTrue("Should take approx 0.25 sec: was " + delta, delta > 150);
     }
 
     // -------------------------------------------------------------
-    //  InOut routes
+    // InOut routes
     // -------------------------------------------------------------
 
     @Test
     public void testPollEnrichInOut() throws InterruptedException {
         template.sendBody("seda:foo4", "blah");
 
-        String result = (String) template.sendBody("direct:enricher-test-4", ExchangePattern.InOut, "test");
+        String result = (String)template.sendBody("direct:enricher-test-4", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
     }
 
@@ -127,27 +129,20 @@ public class PollEnricherTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // -------------------------------------------------------------
-                //  InOnly routes
+                // InOnly routes
                 // -------------------------------------------------------------
 
-                from("direct:enricher-test-1")
-                    .pollEnrich("seda:foo1", aggregationStrategy)
-                    .to("mock:mock");
+                from("direct:enricher-test-1").pollEnrich("seda:foo1", aggregationStrategy).to("mock:mock");
 
-                from("direct:enricher-test-2")
-                    .pollEnrich("seda:foo2", 1000, aggregationStrategy)
-                    .to("mock:mock");
+                from("direct:enricher-test-2").pollEnrich("seda:foo2", 1000, aggregationStrategy).to("mock:mock");
 
-                from("direct:enricher-test-3")
-                    .pollEnrich("seda:foo3", -1, aggregationStrategy)
-                    .to("mock:mock");
+                from("direct:enricher-test-3").pollEnrich("seda:foo3", -1, aggregationStrategy).to("mock:mock");
 
                 // -------------------------------------------------------------
-                //  InOut routes
+                // InOut routes
                 // -------------------------------------------------------------
 
-                from("direct:enricher-test-4")
-                    .pollEnrich("seda:foo4", aggregationStrategy);
+                from("direct:enricher-test-4").pollEnrich("seda:foo4", aggregationStrategy);
             }
         };
     }

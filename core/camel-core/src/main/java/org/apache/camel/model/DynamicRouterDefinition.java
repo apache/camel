@@ -38,12 +38,13 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public static final String DEFAULT_DELIMITER = ",";
 
-    @XmlAttribute @Metadata(defaultValue = ",")
+    @XmlAttribute
+    @Metadata(defaultValue = ",")
     private String uriDelimiter;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoints;
     @XmlAttribute
-    private Integer cacheSize; 
+    private Integer cacheSize;
 
     public DynamicRouterDefinition() {
     }
@@ -56,7 +57,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     public String toString() {
         return "DynamicRouter[" + getExpression() + "]";
     }
-    
+
     @Override
     public String getShortName() {
         return "dynamicRouter";
@@ -73,10 +74,12 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     /**
-     * Expression to call that returns the endpoint(s) to route to in the dynamic routing.
+     * Expression to call that returns the endpoint(s) to route to in the
+     * dynamic routing.
      * <p/>
-     * <b>Important:</b> The expression will be called in a while loop fashion, until the expression returns <tt>null</tt>
-     * which means the dynamic router is finished.
+     * <b>Important:</b> The expression will be called in a while loop fashion,
+     * until the expression returns <tt>null</tt> which means the dynamic router
+     * is finished.
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {
@@ -115,11 +118,12 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     @SuppressWarnings("unchecked")
     public Type end() {
         // allow end() to return to previous type so you can continue in the DSL
-        return (Type) super.end();
+        return (Type)super.end();
     }
 
     /**
-     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     * Ignore the invalidate endpoint exception when try to create a producer
+     * with that endpoint
      *
      * @return the builder
      */
@@ -138,12 +142,14 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
         setUriDelimiter(uriDelimiter);
         return this;
     }
-    
+
     /**
-     * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used
-     * to cache and reuse producers when using this dynamic router, when uris are reused.
+     * Sets the maximum size used by the
+     * {@link org.apache.camel.spi.ProducerCache} which is used to cache and
+     * reuse producers when using this dynamic router, when uris are reused.
      *
-     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
+     *            or <tt>-1</tt> to turn cache off.
      * @return the builder
      */
     public DynamicRouterDefinition<Type> cacheSize(int cacheSize) {

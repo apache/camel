@@ -42,7 +42,8 @@ public class ExtendedStartupListenerComponentTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // we are invoked 2 times and then 1 extra when we add new routes because the component
+        // we are invoked 2 times and then 1 extra when we add new routes
+        // because the component
         // will trigger again when the new routes are being started
         assertEquals(2 + 1, my.getInvoked());
     }

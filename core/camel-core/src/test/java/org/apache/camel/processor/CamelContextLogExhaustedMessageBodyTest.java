@@ -45,9 +45,7 @@ public class CamelContextLogExhaustedMessageBodyTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .log("Incoming ${body}")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

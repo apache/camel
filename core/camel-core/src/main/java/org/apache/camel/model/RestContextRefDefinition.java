@@ -55,7 +55,7 @@ public class RestContextRefDefinition {
     public void setRef(String ref) {
         this.ref = ref;
     }
-    
+
     public List<RestDefinition> lookupRests(CamelContext camelContext) {
         return RestContextRefDefinitionHelper.lookupRests(camelContext, ref);
     }

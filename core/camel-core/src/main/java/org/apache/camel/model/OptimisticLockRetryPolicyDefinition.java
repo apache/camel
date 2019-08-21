@@ -32,11 +32,14 @@ import org.apache.camel.spi.Metadata;
 public class OptimisticLockRetryPolicyDefinition {
     @XmlAttribute
     private Integer maximumRetries;
-    @XmlAttribute @Metadata(defaultValue = "50")
+    @XmlAttribute
+    @Metadata(defaultValue = "50")
     private Long retryDelay;
-    @XmlAttribute @Metadata(defaultValue = "1000")
+    @XmlAttribute
+    @Metadata(defaultValue = "1000")
     private Long maximumRetryDelay;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean exponentialBackOff;
     @XmlAttribute
     private Boolean randomBackOff;
@@ -77,7 +80,8 @@ public class OptimisticLockRetryPolicyDefinition {
     }
 
     /**
-     * Sets the upper value of retry in millis between retries, when using exponential or random backoff
+     * Sets the upper value of retry in millis between retries, when using
+     * exponential or random backoff
      */
     public OptimisticLockRetryPolicyDefinition maximumRetryDelay(long maximumRetryDelay) {
         setMaximumRetryDelay(maximumRetryDelay);

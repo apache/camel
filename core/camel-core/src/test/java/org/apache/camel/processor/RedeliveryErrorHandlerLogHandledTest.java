@@ -35,14 +35,9 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                    .maximumRedeliveries(3)
-                    .redeliveryDelay(0)
-                    .handled(true)
-                    .to("mock:handled");
+                onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0).handled(true).to("mock:handled");
 
-                from("direct:foo")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:foo").throwException(new IllegalArgumentException("Damn"));
             }
         });
         context.start();
@@ -59,15 +54,9 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                    .maximumRedeliveries(3)
-                    .redeliveryDelay(0)
-                    .logHandled(true)
-                    .handled(true)
-                    .to("mock:handled");
+                onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0).logHandled(true).handled(true).to("mock:handled");
 
-                from("direct:foo")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:foo").throwException(new IllegalArgumentException("Damn"));
             }
         });
         context.start();
@@ -84,16 +73,9 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                    .maximumRedeliveries(3)
-                    .redeliveryDelay(0)
-                    .logHandled(true)
-                    .logRetryAttempted(true)
-                    .handled(true)
-                    .to("mock:handled");
+                onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0).logHandled(true).logRetryAttempted(true).handled(true).to("mock:handled");
 
-                from("direct:foo")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:foo").throwException(new IllegalArgumentException("Damn"));
             }
         });
         context.start();
@@ -112,8 +94,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(defaultErrorHandler().logExhausted(false));
 
-                from("direct:bar")
-                    .throwException(new CamelException("Camel rocks"));
+                from("direct:bar").throwException(new CamelException("Camel rocks"));
             }
         });
         context.start();
@@ -138,8 +119,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(defaultErrorHandler());
 
-                from("direct:bar")
-                    .throwException(new CamelException("Camel rocks"));
+                from("direct:bar").throwException(new CamelException("Camel rocks"));
             }
         });
         context.start();
@@ -162,14 +142,10 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(defaultErrorHandler()
-                        .redeliveryDelay(0)
-                        .maximumRedeliveries(3)
-                        .logExhausted(true).logHandled(true).logRetryStackTrace(true).logStackTrace(true)
-                        .retryAttemptedLogLevel(LoggingLevel.WARN).retriesExhaustedLogLevel(LoggingLevel.ERROR));
+                errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(3).logExhausted(true).logHandled(true).logRetryStackTrace(true).logStackTrace(true)
+                    .retryAttemptedLogLevel(LoggingLevel.WARN).retriesExhaustedLogLevel(LoggingLevel.ERROR));
 
-                from("direct:bar")
-                    .throwException(new CamelException("Camel rocks"));
+                from("direct:bar").throwException(new CamelException("Camel rocks"));
             }
         });
         context.start();
@@ -192,21 +168,10 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                    .redeliveryDelay(0)
-                    .maximumRedeliveries(3)
-                    .logHandled(true)
-                    .logRetryAttempted(true)
-                    .logRetryStackTrace(true)
-                    .logExhausted(true)
-                    .logStackTrace(true)
-                    .handled(true)
-                    .retryAttemptedLogLevel(LoggingLevel.WARN)
-                    .retriesExhaustedLogLevel(LoggingLevel.ERROR)
-                    .to("mock:handled");
+                onException(IllegalArgumentException.class).redeliveryDelay(0).maximumRedeliveries(3).logHandled(true).logRetryAttempted(true).logRetryStackTrace(true)
+                    .logExhausted(true).logStackTrace(true).handled(true).retryAttemptedLogLevel(LoggingLevel.WARN).retriesExhaustedLogLevel(LoggingLevel.ERROR).to("mock:handled");
 
-                from("direct:foo")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:foo").throwException(new IllegalArgumentException("Damn"));
             }
         });
         context.start();

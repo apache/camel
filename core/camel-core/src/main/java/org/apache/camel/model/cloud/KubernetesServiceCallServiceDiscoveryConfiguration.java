@@ -27,43 +27,60 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "kubernetesServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
-    @XmlAttribute @Metadata(defaultValue = "environment", enums = "environment,dns,client")
+    @XmlAttribute
+    @Metadata(defaultValue = "environment", enums = "environment,dns,client")
     private String lookup = "environment";
-    @XmlAttribute @Metadata(label = "dns,dnssrv")
+    @XmlAttribute
+    @Metadata(label = "dns,dnssrv")
     private String dnsDomain;
-    @XmlAttribute @Metadata(label = "dns,dnssrv")
+    @XmlAttribute
+    @Metadata(label = "dns,dnssrv")
     private String portName;
-    @XmlAttribute @Metadata(label = "dns,dnssrv")
+    @XmlAttribute
+    @Metadata(label = "dns,dnssrv")
     private String portProtocol = "tcp";
     @XmlAttribute
     private String namespace;
     @XmlAttribute
     private String apiVersion;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String masterUrl;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String username;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String password;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String oauthToken;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String caCertData;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String caCertFile;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String clientCertData;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String clientCertFile;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String clientKeyAlgo;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String clientKeyData;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String clientKeyFile;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private String clientKeyPassphrase;
-    @XmlAttribute @Metadata(label = "client")
+    @XmlAttribute
+    @Metadata(label = "client")
     private Boolean trustCerts;
 
     public KubernetesServiceCallServiceDiscoveryConfiguration() {
@@ -94,7 +111,8 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * Sets the namespace to use. Will by default use namespace from the ENV variable KUBERNETES_MASTER.
+     * Sets the namespace to use. Will by default use namespace from the ENV
+     * variable KUBERNETES_MASTER.
      */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
@@ -118,14 +136,18 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     /**
      * How to perform service lookup. Possible values: client, dns, environment.
      * <p/>
-     * When using client, then the client queries the kubernetes master to obtain a list
-     * of active pods that provides the service, and then random (or round robin) select a pod.
+     * When using client, then the client queries the kubernetes master to
+     * obtain a list of active pods that provides the service, and then random
+     * (or round robin) select a pod.
      * <p/>
-     * When using dns the service name is resolved as <tt>name.namespace.svc.dnsDomain</tt>.
+     * When using dns the service name is resolved as
+     * <tt>name.namespace.svc.dnsDomain</tt>.
      * <p/>
-     * When using dnssrv the service name is resolved with SRV query for <tt>_<port_name>._<port_proto>.<serviceName>.<namespace>.svc.<zone>.</tt>.
+     * When using dnssrv the service name is resolved with SRV query for
+     * <tt>_<port_name>._<port_proto>.<serviceName>.<namespace>.svc.<zone>.</tt>.
      * <p/>
-     * When using environment then environment variables are used to lookup the service.
+     * When using environment then environment variables are used to lookup the
+     * service.
      * <p/>
      * By default environment is used.
      */
@@ -193,7 +215,8 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * Sets the OAUTH token for authentication (instead of username/password) when using client lookup
+     * Sets the OAUTH token for authentication (instead of username/password)
+     * when using client lookup
      */
     public void setOauthToken(String oauthToken) {
         this.oauthToken = oauthToken;
@@ -215,7 +238,8 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * Sets the Certificate Authority data that are loaded from the file when using client lookup
+     * Sets the Certificate Authority data that are loaded from the file when
+     * using client lookup
      */
     public void setCaCertFile(String caCertFile) {
         this.caCertFile = caCertFile;
@@ -237,7 +261,8 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * Sets the Client Certificate data that are loaded from the file when using client lookup
+     * Sets the Client Certificate data that are loaded from the file when using
+     * client lookup
      */
     public void setClientCertFile(String clientCertFile) {
         this.clientCertFile = clientCertFile;
@@ -270,7 +295,8 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * Sets the Client Keystore data that are loaded from the file when using client lookup
+     * Sets the Client Keystore data that are loaded from the file when using
+     * client lookup
      */
     public void setClientKeyFile(String clientKeyFile) {
         this.clientKeyFile = clientKeyFile;
@@ -311,7 +337,8 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * Sets the namespace to use. Will by default use namespace from the ENV variable KUBERNETES_MASTER.
+     * Sets the namespace to use. Will by default use namespace from the ENV
+     * variable KUBERNETES_MASTER.
      */
     public KubernetesServiceCallServiceDiscoveryConfiguration namespace(String namespace) {
         setNamespace(namespace);
@@ -375,7 +402,8 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * Sets the OAUTH token for authentication (instead of username/password) when using client lookup
+     * Sets the OAUTH token for authentication (instead of username/password)
+     * when using client lookup
      */
     public KubernetesServiceCallServiceDiscoveryConfiguration oauthToken(String oauthToken) {
         setOauthToken(oauthToken);
@@ -391,7 +419,8 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * Sets the Certificate Authority data that are loaded from the file when using client lookup
+     * Sets the Certificate Authority data that are loaded from the file when
+     * using client lookup
      */
     public KubernetesServiceCallServiceDiscoveryConfiguration caCertFile(String caCertFile) {
         setCaCertFile(caCertFile);
@@ -407,7 +436,8 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * Sets the Client Certificate data that are loaded from the file when using client lookup
+     * Sets the Client Certificate data that are loaded from the file when using
+     * client lookup
      */
     public KubernetesServiceCallServiceDiscoveryConfiguration clientCertFile(String clientCertFile) {
         setClientCertFile(clientCertFile);
@@ -431,7 +461,8 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     }
 
     /**
-     * Sets the Client Keystore data that are loaded from the file when using client lookup
+     * Sets the Client Keystore data that are loaded from the file when using
+     * client lookup
      */
     public KubernetesServiceCallServiceDiscoveryConfiguration clientKeyFile(String clientKeyFile) {
         setClientKeyFile(clientKeyFile);

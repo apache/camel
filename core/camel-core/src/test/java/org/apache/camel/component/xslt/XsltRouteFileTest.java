@@ -28,11 +28,7 @@ public class XsltRouteFileTest extends XsltRouteTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("xslt:file:src/test/resources/org/apache/camel/component/xslt/transform.xsl")
-                    .multicast()
-                        .bean("testBean")
-                        .to("mock:result");
+                from("direct:start").to("xslt:file:src/test/resources/org/apache/camel/component/xslt/transform.xsl").multicast().bean("testBean").to("mock:result");
             }
         };
     }

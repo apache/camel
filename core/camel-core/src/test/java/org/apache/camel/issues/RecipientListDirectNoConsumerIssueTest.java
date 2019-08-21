@@ -63,14 +63,12 @@ public class RecipientListDirectNoConsumerIssueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 context.getComponent("direct", DirectComponent.class).setBlock(false);
-                
+
                 onException(Exception.class).handled(true).to("mock:error");
 
-                from("direct:start")
-                    .recipientList().header("foo").delimiter(";");
+                from("direct:start").recipientList().header("foo").delimiter(";");
 
-                from("direct:bar")
-                    .recipientList(";").header("bar");
+                from("direct:bar").recipientList(";").header("bar");
             }
         };
     }

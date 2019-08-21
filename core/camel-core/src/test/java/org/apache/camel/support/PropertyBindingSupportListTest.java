@@ -203,4 +203,3 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
     }
 
 }
-

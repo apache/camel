@@ -51,11 +51,9 @@ public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSu
 
                 onException(RuntimeException.class).handled(true).to("mock:failed");
 
-                from("direct:start")
-                    .process(e -> {
-                        throw RUNTIME_EXCEPTION;
-                    })
-                    .to("mock:success");
+                from("direct:start").process(e -> {
+                    throw RUNTIME_EXCEPTION;
+                }).to("mock:success");
             }
         };
     }

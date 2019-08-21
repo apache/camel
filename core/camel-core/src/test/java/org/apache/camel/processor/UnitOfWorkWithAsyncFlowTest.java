@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.junit.Before;
 
 public class UnitOfWorkWithAsyncFlowTest extends UnitOfWorkTest {

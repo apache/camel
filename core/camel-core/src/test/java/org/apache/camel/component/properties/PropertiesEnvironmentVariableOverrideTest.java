@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class PropertiesEnvironmentVariableOverrideTest extends ContextTestSupport {
-    
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -49,7 +49,7 @@ public class PropertiesEnvironmentVariableOverrideTest extends ContextTestSuppor
 
         System.clearProperty("cool.end");
         System.clearProperty("cool.result");
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -58,7 +58,7 @@ public class PropertiesEnvironmentVariableOverrideTest extends ContextTestSuppor
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocations(new String[]{"classpath:org/apache/camel/component/properties/myproperties.properties"});
+        pc.setLocations(new String[] {"classpath:org/apache/camel/component/properties/myproperties.properties"});
         context.addComponent("properties", pc);
 
         return context;

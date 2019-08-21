@@ -57,8 +57,7 @@ public class LoadRouteFromXmlTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").routeId("foo")
-                    .to("mock:foo");
+                from("direct:foo").routeId("foo").to("mock:foo");
             }
         };
     }

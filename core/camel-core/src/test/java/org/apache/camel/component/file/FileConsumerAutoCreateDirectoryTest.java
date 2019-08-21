@@ -130,5 +130,4 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         assertFalse("Directory should NOT be created", dir.exists());
     }
 
-
 }

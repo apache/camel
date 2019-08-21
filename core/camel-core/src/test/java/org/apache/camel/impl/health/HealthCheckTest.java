@@ -129,7 +129,6 @@ public class HealthCheckTest {
         Assert.assertEquals(HealthCheck.State.DOWN, check.call().getState());
     }
 
-
     // ********************************
     //
     // ********************************

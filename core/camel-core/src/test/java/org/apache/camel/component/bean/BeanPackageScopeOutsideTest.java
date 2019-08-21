@@ -44,9 +44,7 @@ public class BeanPackageScopeOutsideTest extends ContextTestSupport {
                 // this bean is now outside this package
                 bindToRegistry("myBean", new MyPackageScopedBean());
 
-                from("direct:in")
-                    .to("bean:myBean")
-                    .to("mock:result");
+                from("direct:in").to("bean:myBean").to("mock:result");
             }
         };
     }

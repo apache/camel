@@ -33,11 +33,7 @@ public class RoutePropertiesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .routeId("route-id")
-                    .routeProperty("key1", "val1")
-                    .routeProperty("key2", "val2")
-                    .to("mock:output");
+                from("direct:start").routeId("route-id").routeProperty("key1", "val1").routeProperty("key2", "val2").to("mock:output");
             }
         });
 
@@ -60,10 +56,7 @@ public class RoutePropertiesTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .routeId("route-id")
-                        .routeProperty(Route.ID_PROPERTY, "the id")
-                        .to("mock:output");
+                    from("direct:start").routeId("route-id").routeProperty(Route.ID_PROPERTY, "the id").to("mock:output");
                 }
             });
 

@@ -28,12 +28,11 @@ public class RoutingSlipTest extends ContextTestSupport {
     protected static final String ROUTING_SLIP_HEADER = "myHeader";
 
     @Test
-    public void testUpdatingOfRoutingSlipAllDefaults()
-        throws Exception {
+    public void testUpdatingOfRoutingSlipAllDefaults() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
         MockEndpoint z = getMockEndpoint("mock:z");
-        
+
         x.expectedBodiesReceived(ANSWER);
         y.expectedBodiesReceived(ANSWER);
         z.expectedBodiesReceived(ANSWER);
@@ -72,17 +71,17 @@ public class RoutingSlipTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testBodyExpression() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
         MockEndpoint z = getMockEndpoint("mock:z");
-        
+
         x.expectedBodiesReceived("mock:x, mock:y,mock:z");
         y.expectedBodiesReceived("mock:x, mock:y,mock:z");
         z.expectedBodiesReceived("mock:x, mock:y,mock:z");
-        
+
         template.sendBody("direct:d", "mock:x, mock:y,mock:z");
         assertMockEndpointsSatisfied();
 
@@ -119,8 +118,7 @@ public class RoutingSlipTest extends ContextTestSupport {
     }
 
     protected void sendBody(String endpoint, String header, String delimiter) {
-        template.sendBodyAndHeader(endpoint, ANSWER, header,
-               "mock:x" + delimiter + "mock:y" + delimiter + "mock:z");
+        template.sendBodyAndHeader(endpoint, ANSWER, header, "mock:x" + delimiter + "mock:y" + delimiter + "mock:z");
     }
 
     protected void sendBodyWithEmptyRoutingSlip() {
@@ -146,7 +144,7 @@ public class RoutingSlipTest extends ContextTestSupport {
                 // START SNIPPET: e3
                 from("direct:c").routingSlip(header("aRoutingSlipHeader"), "#");
                 // END SNIPPET: e3
-                
+
                 // START SNIPPET: e4
                 from("direct:d").routingSlip(body());
                 // END SNIPPET: e4

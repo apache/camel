@@ -20,23 +20,13 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 
 public class ValidationWithErrorInHandleAndFinallyBlockTest extends ValidationTest {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .errorHandler(noErrorHandler())
-                    .doTry()
-                        .process(validator)
-                    .doCatch(ValidationException.class)
-                        .process(validator)
-                    .doFinally()
-                        .choice()
-                        .when(header("foo").isEqualTo("bar"))
-                        .to("mock:valid")
-                        .otherwise()
-                        .to("mock:invalid");
+                from("direct:start").errorHandler(noErrorHandler()).doTry().process(validator).doCatch(ValidationException.class).process(validator).doFinally().choice()
+                    .when(header("foo").isEqualTo("bar")).to("mock:valid").otherwise().to("mock:invalid");
             }
         };
     }

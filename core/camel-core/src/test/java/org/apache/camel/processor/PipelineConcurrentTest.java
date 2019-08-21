@@ -49,7 +49,8 @@ public class PipelineConcurrentTest extends ContextTestSupport {
                     int start = threadCount * group;
                     for (int i = 0; i < group; i++) {
                         try {
-                            // do some random sleep to simulate spread in user activity
+                            // do some random sleep to simulate spread in user
+                            // activity
                             Thread.sleep(new Random().nextInt(10));
                         } catch (InterruptedException e) {
                             // ignore
@@ -72,16 +73,14 @@ public class PipelineConcurrentTest extends ContextTestSupport {
                 // to force any exceptions coming forward immediately
                 errorHandler(noErrorHandler());
 
-                from(uri)
-                    .pipeline("direct:do", "mock:result");
+                from(uri).pipeline("direct:do", "mock:result");
 
-                from("direct:do")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
-                            exchange.getMessage().setBody("Bye " + body);
-                        }
-                    });
+                from("direct:do").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        exchange.getMessage().setBody("Bye " + body);
+                    }
+                });
             }
         };
     }

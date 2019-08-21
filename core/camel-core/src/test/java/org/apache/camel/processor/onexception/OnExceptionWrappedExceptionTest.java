@@ -63,7 +63,8 @@ public class OnExceptionWrappedExceptionTest extends ContextTestSupport {
 
         @Override
         public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-            // simulate @Converter where we wrap thrown exception in RuntimeCamelException
+            // simulate @Converter where we wrap thrown exception in
+            // RuntimeCamelException
             throw wrapRuntimeCamelException(new IllegalArgumentException("Bad Data"));
         }
 

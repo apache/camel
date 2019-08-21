@@ -32,7 +32,8 @@ public class PredicateAggregatorCollectionTest extends ContextTestSupport {
         // START SNIPPET: e2
         MockEndpoint result = getMockEndpoint("mock:result");
 
-        // we only expect two messages as they have reached the completed predicate
+        // we only expect two messages as they have reached the completed
+        // predicate
         // that we want 3 messages that has the same header id
         result.expectedMessageCount(2);
         result.expectedBodiesReceived("Message 1c", "Message 3c");
@@ -58,12 +59,12 @@ public class PredicateAggregatorCollectionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // our route is aggregating from the direct queue and sending the response to the mock
+                // our route is aggregating from the direct queue and sending
+                // the response to the mock
                 from("direct:start")
-                    // we use the collection based aggregator we already have configured
-                    .aggregate(header("id"), new UseLatestAggregationStrategy())
-                    .completionSize(3)
-                    .to("mock:result");
+                    // we use the collection based aggregator we already have
+                    // configured
+                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionSize(3).to("mock:result");
                 // END SNIPPET: e1
             }
         };

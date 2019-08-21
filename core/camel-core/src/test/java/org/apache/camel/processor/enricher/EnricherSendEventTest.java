@@ -32,41 +32,38 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Test;
 
-
 public class EnricherSendEventTest extends ContextTestSupport {
     private MyEventNotifier en = new MyEventNotifier();
-    
+
     @Test
     public void testAsyncEnricher() throws Exception {
-        
+
         template.sendBody("direct:start1", "test");
         assertEquals("Get a wrong sending event number", 3, en.exchangeSendingEvent.get());
         assertEquals("Get a wrong sent event number", 3, en.exchangeSentEvent.get());
     }
-    
-    
+
     @Test
     public void testSyncEnricher() throws Exception {
         template.sendBody("direct:start2", "test");
         assertEquals("Get a wrong sending event number", 3, en.exchangeSendingEvent.get());
         assertEquals("Get a wrong sent event number", 3, en.exchangeSentEvent.get());
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         camelContext.init();
         ShutdownStrategy shutdownStrategy = camelContext.getShutdownStrategy();
         camelContext.addComponent("async", new MyAsyncComponent());
-        
+
         shutdownStrategy.setTimeout(1000);
         shutdownStrategy.setTimeUnit(TimeUnit.MILLISECONDS);
         shutdownStrategy.setShutdownNowOnTimeout(true);
-       
 
         ManagementStrategy managementStrategy = new DefaultManagementStrategy();
         managementStrategy.addEventNotifier(en);
-        
+
         camelContext.setManagementStrategy(managementStrategy);
         return camelContext;
     }
@@ -76,28 +73,25 @@ public class EnricherSendEventTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start1")
-                    // using the async utility component to ensure that the async routing engine kicks in
-                    .enrich("async:out?reply=Reply")
-                    .to("mock:result");
-                
-                from("direct:start2")
-                    .enrich("direct:result")
-                    .to("mock:result");
-                
+                    // using the async utility component to ensure that the
+                    // async routing engine kicks in
+                    .enrich("async:out?reply=Reply").to("mock:result");
+
+                from("direct:start2").enrich("direct:result").to("mock:result");
+
                 from("direct:result").setBody(constant("result"));
             }
         };
     }
-    
+
     static class MyEventNotifier extends EventNotifierSupport {
-        
+
         AtomicInteger exchangeSendingEvent = new AtomicInteger();
         AtomicInteger exchangeSentEvent = new AtomicInteger();
-      
-        
+
         @Override
         public void notify(CamelEvent event) throws Exception {
-            
+
             if (event instanceof ExchangeSendingEvent) {
                 exchangeSendingEvent.incrementAndGet();
             } else if (event instanceof ExchangeSentEvent) {
@@ -105,6 +99,5 @@ public class EnricherSendEventTest extends ContextTestSupport {
             }
         }
     }
-
 
 }

@@ -40,5 +40,4 @@ public class FilterReifier extends ExpressionReifier<FilterDefinition> {
         return new FilterProcessor(createPredicate(routeContext), childProcessor);
     }
 
-
 }

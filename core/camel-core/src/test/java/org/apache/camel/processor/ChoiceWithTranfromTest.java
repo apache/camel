@@ -22,43 +22,37 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class ChoiceWithTranfromTest extends ContextTestSupport {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:outerRoute").id("out")
-                    .choice().when(header("test-header").isNotNull())
-                        .to("direct:mainProcess")
-                    .otherwise()
-                        .to("log:badMessage").transform()
-                        .method(new MyBean(), "processRejectedMessage")
-                        .end();
-                from("direct:mainProcess")
-                    .bean(new MyBean(), "processMessage");
+                from("direct:outerRoute").id("out").choice().when(header("test-header").isNotNull()).to("direct:mainProcess").otherwise().to("log:badMessage").transform()
+                    .method(new MyBean(), "processRejectedMessage").end();
+                from("direct:mainProcess").bean(new MyBean(), "processMessage");
             }
         };
     }
-    
+
     public static class MyBean {
         public String processRejectedMessage(@Body String message) {
-            return "Rejecting " + message;            
+            return "Rejecting " + message;
         }
+
         public String processMessage(@Body String message) {
-            return "Processing " + message;            
+            return "Processing " + message;
         }
     }
-    
+
     @Test
     public void testRoute() {
         String result = template.requestBodyAndHeader("direct:outerRoute", "body", "test-header", "headerValue", String.class);
         assertEquals("Processing body", result);
-        
+
         result = template.requestBody("direct:outerRoute", "body", String.class);
         assertEquals("Rejecting body", result);
-        
-        //context.getRouteDefinition("out").toString();
+
+        // context.getRouteDefinition("out").toString();
     }
-    
 
 }

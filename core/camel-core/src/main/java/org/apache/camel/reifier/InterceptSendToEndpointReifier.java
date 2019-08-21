@@ -38,7 +38,7 @@ import org.apache.camel.util.URISupport;
 public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSendToEndpointDefinition> {
 
     InterceptSendToEndpointReifier(ProcessorDefinition<?> definition) {
-        super((InterceptSendToEndpointDefinition) definition);
+        super((InterceptSendToEndpointDefinition)definition);
     }
 
     @Override
@@ -51,10 +51,10 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
             ToDefinition to = new ToDefinition(definition.getAfterUri());
             // at first use custom factory
             if (routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-                afterProcessor = routeContext.getCamelContext().adapt(ExtendedCamelContext.class)
-                        .getProcessorFactory().createProcessor(routeContext, to);
+                afterProcessor = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(routeContext, to);
             }
-            // fallback to default implementation if factory did not create the processor
+            // fallback to default implementation if factory did not create the
+            // processor
             if (afterProcessor == null) {
                 afterProcessor = reifier(to).createProcessor(routeContext);
             }
@@ -69,7 +69,8 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
                     // endpoint already decorated
                     return endpoint;
                 } else if (matchURI == null || matchPattern(routeContext.getCamelContext(), uri, matchURI)) {
-                    // only proxy if the uri is matched decorate endpoint with our proxy
+                    // only proxy if the uri is matched decorate endpoint with
+                    // our proxy
                     // should be false by default
                     boolean skip = definition.getSkipSendToOriginalEndpoint() != null && definition.getSkipSendToOriginalEndpoint();
                     DefaultInterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
@@ -83,10 +84,12 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
             }
         });
 
-        // remove the original intercepted route from the outputs as we do not intercept as the regular interceptor
-        // instead we use the proxy endpoints producer do the triggering. That is we trigger when someone sends
+        // remove the original intercepted route from the outputs as we do not
+        // intercept as the regular interceptor
+        // instead we use the proxy endpoints producer do the triggering. That
+        // is we trigger when someone sends
         // an exchange to the endpoint, see InterceptSendToEndpoint for details.
-        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+        RouteDefinition route = (RouteDefinition)routeContext.getRoute();
         List<ProcessorDefinition<?>> outputs = route.getOutputs();
         outputs.remove(this);
 
@@ -99,14 +102,16 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
      * @param camelContext the CamelContext
      * @param uri the uri
      * @param pattern the pattern, which can be an endpoint uri as well
-     * @return <tt>true</tt> if matched and we should intercept, <tt>false</tt> if not matched, and not intercept.
+     * @return <tt>true</tt> if matched and we should intercept, <tt>false</tt>
+     *         if not matched, and not intercept.
      */
     protected boolean matchPattern(CamelContext camelContext, String uri, String pattern) {
         // match using the pattern as-is
         boolean match = EndpointHelper.matchEndpoint(camelContext, uri, pattern);
         if (!match) {
             try {
-                // the pattern could be an uri, so we need to normalize it before matching again
+                // the pattern could be an uri, so we need to normalize it
+                // before matching again
                 pattern = URISupport.normalizeUri(pattern);
                 match = EndpointHelper.matchEndpoint(camelContext, uri, pattern);
             } catch (Exception e) {

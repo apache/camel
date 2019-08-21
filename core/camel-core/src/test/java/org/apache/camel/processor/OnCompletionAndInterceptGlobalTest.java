@@ -66,13 +66,12 @@ public class OnCompletionAndInterceptGlobalTest extends ContextTestSupport {
             public void configure() throws Exception {
                 intercept().to("mock:intercept");
 
-                // define a global on completion that is invoked when the exchage is complete
+                // define a global on completion that is invoked when the
+                // exchage is complete
                 onCompletion().to("log:global").to("mock:sync");
 
                 // START SNIPPET: e1
-                from("direct:start")
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                from("direct:start").process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

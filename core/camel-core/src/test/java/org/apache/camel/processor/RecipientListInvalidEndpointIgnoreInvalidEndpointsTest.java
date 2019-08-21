@@ -31,18 +31,14 @@ public class RecipientListInvalidEndpointIgnoreInvalidEndpointsTest extends Cont
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                onException(Exception.class)
-                        .handled(true)
-                        .to("mock:dead");
+                onException(Exception.class).handled(true).to("mock:dead");
 
-                from("direct:start")
-                    .recipientList(constant("fail:endpoint")).ignoreInvalidEndpoints()
-                    .to("mock:result");
+                from("direct:start").recipientList(constant("fail:endpoint")).ignoreInvalidEndpoints().to("mock:result");
             }
         };
     }

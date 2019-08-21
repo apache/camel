@@ -55,8 +55,7 @@ public class DynamicRouterAnnotationTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .bean(MyBean.class, "dynamicRouter");
+                from("direct:start").bean(MyBean.class, "dynamicRouter");
 
                 from("direct:foo").transform(constant("Bye World")).to("mock:foo");
                 // END SNIPPET: e1

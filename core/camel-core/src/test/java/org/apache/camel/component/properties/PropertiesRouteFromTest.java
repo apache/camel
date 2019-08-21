@@ -32,7 +32,7 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
     @Test
     public void testPropertiesRouteFrom() throws Exception {
         ProcessorDefinition out = context.getRouteDefinition("foo").getOutputs().get(0);
-        assertEquals("{{cool.end}}", ((SendDefinition) out).getUri());
+        assertEquals("{{cool.end}}", ((SendDefinition)out).getUri());
 
         String uri = context.getRouteDefinition("foo").getInput().getUri();
         assertEquals("{{cool.start}}", uri);
@@ -48,8 +48,7 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("{{cool.start}}").routeId("foo")
-                    .to("{{cool.end}}");
+                from("{{cool.start}}").routeId("foo").to("{{cool.end}}");
             }
         };
     }

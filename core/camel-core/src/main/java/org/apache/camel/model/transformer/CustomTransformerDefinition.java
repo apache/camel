@@ -25,11 +25,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Transformer;
 
 /**
- * Represents a CustomTransformer. One of the bean reference (ref) or fully qualified class name (type)
- * of the custom {@link Transformer} needs to be specified.
- * 
- * {@see TransformerDefinition}
- * {@see Transformer}
+ * Represents a CustomTransformer. One of the bean reference (ref) or fully
+ * qualified class name (type) of the custom {@link Transformer} needs to be
+ * specified. {@see TransformerDefinition} {@see Transformer}
  */
 @Metadata(label = "transformation")
 @XmlType(name = "customTransformer")
@@ -68,4 +66,3 @@ public class CustomTransformerDefinition extends TransformerDefinition {
     }
 
 }
-

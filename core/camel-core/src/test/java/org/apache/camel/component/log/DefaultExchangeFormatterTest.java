@@ -88,14 +88,11 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
 
     @Test
     public void testSendMessageToLogMaxChars() throws Exception {
-        template.sendBody("log:org.apache.camel.TEST",
-                "Hello World this is a very long string that is NOT going to be chopped by maxchars");
+        template.sendBody("log:org.apache.camel.TEST", "Hello World this is a very long string that is NOT going to be chopped by maxchars");
 
-        template.sendBody("log:org.apache.camel.TEST?maxChars=50",
-                "Hello World this is a very long string that is going to be chopped by maxchars");
+        template.sendBody("log:org.apache.camel.TEST?maxChars=50", "Hello World this is a very long string that is going to be chopped by maxchars");
 
-        template.sendBody("log:org.apache.camel.TEST?maxChars=50&showAll=true&multiline=true",
-                "Hello World this is a very long string that is going to be chopped by maxchars");
+        template.sendBody("log:org.apache.camel.TEST?maxChars=50&showAll=true&multiline=true", "Hello World this is a very long string that is going to be chopped by maxchars");
     }
 
     @Test

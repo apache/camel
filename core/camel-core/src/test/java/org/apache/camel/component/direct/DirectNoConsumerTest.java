@@ -180,7 +180,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
     @Test
     public void testConfigOnAConsumer() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

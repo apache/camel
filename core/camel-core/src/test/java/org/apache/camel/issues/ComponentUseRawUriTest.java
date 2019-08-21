@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -90,7 +91,8 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
 
         @Override
         public boolean useRawUri() {
-            // we want the raw uri, so our component can understand the endpoint configuration as it was typed
+            // we want the raw uri, so our component can understand the endpoint
+            // configuration as it was typed
             return true;
         }
     }

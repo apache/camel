@@ -30,9 +30,11 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "batch-config")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BatchResequencerConfig extends ResequencerConfig {
-    @XmlAttribute @Metadata(defaultValue = "100")
+    @XmlAttribute
+    @Metadata(defaultValue = "100")
     private Integer batchSize;
-    @XmlAttribute @Metadata(defaultValue = "1000")
+    @XmlAttribute
+    @Metadata(defaultValue = "1000")
     private Long batchTimeout;
     @XmlAttribute
     private Boolean allowDuplicates;
@@ -54,7 +56,7 @@ public class BatchResequencerConfig extends ResequencerConfig {
      * Creates a new {@link BatchResequencerConfig} instance using the given
      * values for <code>batchSize</code> and <code>batchTimeout</code>.
      *
-     * @param batchSize    size of the batch to be re-ordered.
+     * @param batchSize size of the batch to be re-ordered.
      * @param batchTimeout timeout for collecting elements to be re-ordered.
      */
     public BatchResequencerConfig(int batchSize, long batchTimeout) {
@@ -89,7 +91,8 @@ public class BatchResequencerConfig extends ResequencerConfig {
     }
 
     /**
-     * Sets the timeout for collecting elements to be re-ordered. The default timeout is 1000 msec.
+     * Sets the timeout for collecting elements to be re-ordered. The default
+     * timeout is 1000 msec.
      */
     public void setBatchTimeout(long batchTimeout) {
         this.batchTimeout = batchTimeout;

@@ -58,21 +58,19 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
                 // use the DLQ and let the retryBean handle this
                 errorHandler(deadLetterChannel("bean:retryBean").useOriginalMessage());
 
-                // the seda:start could be any other kind of fire and forget endpoint
-                from("seda:start")
-                    .to("log:start", "mock:start")
-                    .transform(body().prepend("Hello "))
-                    .process(new Processor() {
-                        private int counter;
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // fail the first 3 times
-                            if (counter++ <= 3) {
-                                throw new IllegalArgumentException("Damn");
-                            }
+                // the seda:start could be any other kind of fire and forget
+                // endpoint
+                from("seda:start").to("log:start", "mock:start").transform(body().prepend("Hello ")).process(new Processor() {
+                    private int counter;
+
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        // fail the first 3 times
+                        if (counter++ <= 3) {
+                            throw new IllegalArgumentException("Damn");
                         }
-                    })
-                    .to("mock:result");
+                    }
+                }).to("mock:result");
             }
         };
     }
@@ -85,7 +83,8 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
         // use recipient list to decide what to do with the message
         @RecipientList
         public String handleError(Exchange exchange) {
-            // store a property on the exchange with the number of total attempts
+            // store a property on the exchange with the number of total
+            // attempts
             int attempts = exchange.getProperty("attempts", 0, int.class);
             attempts++;
             exchange.setProperty("attempts", attempts);

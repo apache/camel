@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SecurityDefinition {
 
-    @XmlAttribute(required = true) @Metadata(required = true)
+    @XmlAttribute(required = true)
+    @Metadata(required = true)
     private String key;
 
     @XmlAttribute

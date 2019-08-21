@@ -29,11 +29,12 @@ import org.apache.camel.spi.NodeIdFactory;
 /**
  * Factory for generating route ids based on uris.
  * <p>
- * For direct/seda routes it returns route name (direct:start -> start).
- * For rest routes it returns its method and context path formatted as one string.
+ * For direct/seda routes it returns route name (direct:start -> start). For
+ * rest routes it returns its method and context path formatted as one string.
  * <p>
- * When id cannot be generated, falls back to other {@link NodeIdFactory} implementation.
- * If none is passed in the constructor, then {@link DefaultNodeIdFactory} is used.
+ * When id cannot be generated, falls back to other {@link NodeIdFactory}
+ * implementation. If none is passed in the constructor, then
+ * {@link DefaultNodeIdFactory} is used.
  */
 public class RouteIdFactory implements NodeIdFactory {
 
@@ -51,13 +52,13 @@ public class RouteIdFactory implements NodeIdFactory {
     @Override
     public String createId(NamedNode definition) {
         if (definition instanceof RouteDefinition) {
-            Optional<String> id = extractId((RouteDefinition) definition);
+            Optional<String> id = extractId((RouteDefinition)definition);
 
             if (id.isPresent()) {
                 return id.get();
             }
 
-            id = extractIdFromRestDefinition((RouteDefinition) definition);
+            id = extractIdFromRestDefinition((RouteDefinition)definition);
 
             if (id.isPresent()) {
                 return id.get();
@@ -65,7 +66,7 @@ public class RouteIdFactory implements NodeIdFactory {
         }
 
         if (definition instanceof VerbDefinition) {
-            Optional<String> id = extractIdFromVerb((VerbDefinition) definition);
+            Optional<String> id = extractIdFromVerb((VerbDefinition)definition);
 
             if (id.isPresent()) {
                 return id.get();

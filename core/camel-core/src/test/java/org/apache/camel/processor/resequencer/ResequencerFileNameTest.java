@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.resequencer;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,7 +31,7 @@ public class ResequencerFileNameTest extends ContextTestSupport {
         super.setUp();
         resultEndpoint = getMockEndpoint("mock:result");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

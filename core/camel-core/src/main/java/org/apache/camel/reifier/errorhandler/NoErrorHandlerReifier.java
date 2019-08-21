@@ -27,7 +27,7 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerBuilder> {
 
     public NoErrorHandlerReifier(ErrorHandlerFactory definition) {
-        super((NoErrorHandlerBuilder) definition);
+        super((NoErrorHandlerBuilder)definition);
     }
 
     @Override

@@ -25,7 +25,7 @@ import org.apache.camel.spi.RouteContext;
 public class TopicLoadBalancerReifier extends LoadBalancerReifier<TopicLoadBalancerDefinition> {
 
     TopicLoadBalancerReifier(LoadBalancerDefinition definition) {
-        super((TopicLoadBalancerDefinition) definition);
+        super((TopicLoadBalancerDefinition)definition);
     }
 
     @Override

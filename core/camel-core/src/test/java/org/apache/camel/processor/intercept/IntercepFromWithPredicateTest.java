@@ -26,7 +26,7 @@ public class IntercepFromWithPredicateTest extends InterceptFromRouteTestSupport
             public void configure() {
                 // intercept with a predicate test
                 interceptFrom().when(header("foo").isEqualTo("bar")).to("mock:b").stop();
-                
+
                 from("direct:start").to("mock:a");
             }
         };
@@ -43,5 +43,5 @@ public class IntercepFromWithPredicateTest extends InterceptFromRouteTestSupport
         a.expectedMessageCount(1);
         b.expectedMessageCount(0);
     }
-    
+
 }

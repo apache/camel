@@ -34,7 +34,8 @@ public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends Mu
             }
         });
 
-        // we run in parallel so the task could have been submitted so we either get 0 or 1 messages at mock:end2
+        // we run in parallel so the task could have been submitted so we either
+        // get 0 or 1 messages at mock:end2
         getMockEndpoint("mock:end2").expectedMinimumMessageCount(0);
         getMockEndpoint("mock:end3").expectedMessageCount(0);
         getMockEndpoint("mock:end4").expectedMessageCount(1);
@@ -55,7 +56,8 @@ public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends Mu
             }
         });
 
-        // we run in parallel so the task could have been submitted so we either get 0 or 1 messages at mock:end1
+        // we run in parallel so the task could have been submitted so we either
+        // get 0 or 1 messages at mock:end1
         getMockEndpoint("mock:end1").expectedMinimumMessageCount(0);
         getMockEndpoint("mock:end3").expectedMessageCount(0);
         getMockEndpoint("mock:end4").expectedMessageCount(1);
@@ -71,18 +73,9 @@ public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends Mu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(true)
-                    .to("log:onException")
-                    .to("mock:end4")    
-                    .transform(constant("Stop!"));
+                onException(Exception.class).handled(true).to("log:onException").to("mock:end4").transform(constant("Stop!"));
 
-                from("direct:start")
-                    .multicast().parallelProcessing().stopOnException()
-                        .to("mock:end1", "mock:end2")
-                    .end()
-                    .to("mock:end3")
-                    .transform(constant("Hello to you too!"));
+                from("direct:start").multicast().parallelProcessing().stopOnException().to("mock:end1", "mock:end2").end().to("mock:end3").transform(constant("Hello to you too!"));
             }
         };
     }

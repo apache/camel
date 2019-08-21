@@ -70,7 +70,8 @@ public class InterceptFromUriRegexTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // only trigger when incoming from either seda:bar or seda:foo as we use regex
+                // only trigger when incoming from either seda:bar or seda:foo
+                // as we use regex
                 interceptFrom("seda:(bar|foo)").to("mock:intercept");
 
                 from("direct:start").to("mock:result");

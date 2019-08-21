@@ -109,14 +109,10 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:forceCompletionTrue").routeId("foo")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).forceCompletionOnStop().completionSize(10)
-                    .delay(100)
+                from("direct:forceCompletionTrue").routeId("foo").aggregate(header("id"), new BodyInAggregatingStrategy()).forceCompletionOnStop().completionSize(10).delay(100)
                     .process("myCompletionProcessor");
 
-                from("direct:forceCompletionFalse").routeId("bar")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(10)
-                    .delay(100)
+                from("direct:forceCompletionFalse").routeId("bar").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(10).delay(100)
                     .process("myCompletionProcessor");
             }
         };

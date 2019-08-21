@@ -78,21 +78,19 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(uri)
-                    .aggregate(constant(true), new AggregationStrategy() {
-                        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                            Exchange answer = oldExchange != null ? oldExchange : newExchange;
-                            COUNTER.getAndIncrement();
+                from(uri).aggregate(constant(true), new AggregationStrategy() {
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        Exchange answer = oldExchange != null ? oldExchange : newExchange;
+                        COUNTER.getAndIncrement();
 
-                            Integer newIndex = newExchange.getIn().getHeader("index", Integer.class);
-                            int total = SUM.addAndGet(newIndex);
-                            answer.getIn().setHeader("total", total);
+                        Integer newIndex = newExchange.getIn().getHeader("index", Integer.class);
+                        int total = SUM.addAndGet(newIndex);
+                        answer.getIn().setHeader("total", total);
 
-                            LOG.debug("Index: {}. Total so far: {}", newIndex, total);
-                            return answer;
-                        }
-                    }).completionTimeout(60000).completionPredicate(exchangeProperty(Exchange.AGGREGATED_SIZE).isEqualTo(100))
-                    .to("direct:foo");
+                        LOG.debug("Index: {}. Total so far: {}", newIndex, total);
+                        return answer;
+                    }
+                }).completionTimeout(60000).completionPredicate(exchangeProperty(Exchange.AGGREGATED_SIZE).isEqualTo(100)).to("direct:foo");
 
                 from("direct:foo").setBody().header("total").to("mock:result");
             }

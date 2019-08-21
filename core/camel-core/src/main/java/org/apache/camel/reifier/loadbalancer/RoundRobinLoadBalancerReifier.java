@@ -25,7 +25,7 @@ import org.apache.camel.spi.RouteContext;
 public class RoundRobinLoadBalancerReifier extends LoadBalancerReifier<RoundRobinLoadBalancerDefinition> {
 
     RoundRobinLoadBalancerReifier(LoadBalancerDefinition definition) {
-        super((RoundRobinLoadBalancerDefinition) definition);
+        super((RoundRobinLoadBalancerDefinition)definition);
     }
 
     @Override

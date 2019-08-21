@@ -43,7 +43,8 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // interceptors should be invoked in the default order they are added
+                // interceptors should be invoked in the default order they are
+                // added
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new FooInterceptStrategy());
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new BarInterceptStrategy());
 

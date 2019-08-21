@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 public class PGPDataFormatReifier extends DataFormatReifier<PGPDataFormat> {
 
     public PGPDataFormatReifier(DataFormatDefinition definition) {
-        super((PGPDataFormat) definition);
+        super((PGPDataFormat)definition);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class RouteDirectSuspendResumeTest extends ContextTestSupport {
         mock.expectedBodiesReceived("A");
 
         template.sendBody("direct:foo", "A");
-        
+
         assertMockEndpointsSatisfied();
 
         log.info("Suspending");
@@ -70,7 +70,7 @@ public class RouteDirectSuspendResumeTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 context.getComponent("direct", DirectComponent.class).setBlock(false);
-                
+
                 from("direct:foo").routeId("foo").to("log:foo").to("mock:result");
             }
         };

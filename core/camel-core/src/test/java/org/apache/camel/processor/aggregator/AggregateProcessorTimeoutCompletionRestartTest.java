@@ -33,7 +33,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * To test CAMEL-4037 that a restart of aggregator can re-initialize the timeout map
+ * To test CAMEL-4037 that a restart of aggregator can re-initialize the timeout
+ * map
  */
 public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestSupport {
 
@@ -79,7 +80,8 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.process(e2);
 
         // shutdown before the 1/4 sec timeout occurs
-        // however we use stop instead of shutdown as shutdown will clear the in memory aggregation repository,
+        // however we use stop instead of shutdown as shutdown will clear the in
+        // memory aggregation repository,
         ap.stop();
 
         // should be no completed
@@ -88,7 +90,8 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         // start aggregator again
         ap.start();
 
-        // the aggregator should restore the timeout condition and trigger timeout
+        // the aggregator should restore the timeout condition and trigger
+        // timeout
         assertMockEndpointsSatisfied();
         assertEquals(1, mock.getReceivedCounter());
 
@@ -125,7 +128,8 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.process(e2);
 
         // shutdown before the 1/4 sec timeout occurs
-        // however we use stop instead of shutdown as shutdown will clear the in memory aggregation repository,
+        // however we use stop instead of shutdown as shutdown will clear the in
+        // memory aggregation repository,
         ap.stop();
 
         // should be no completed
@@ -134,7 +138,8 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         // start aggregator again
         ap.start();
 
-        // the aggregator should restore the timeout condition and trigger timeout
+        // the aggregator should restore the timeout condition and trigger
+        // timeout
         assertMockEndpointsSatisfied();
         assertEquals(1, mock.getReceivedCounter());
 
@@ -183,7 +188,8 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.process(e4);
 
         // shutdown before the 1/4 sec timeout occurs
-        // however we use stop instead of shutdown as shutdown will clear the in memory aggregation repository,
+        // however we use stop instead of shutdown as shutdown will clear the in
+        // memory aggregation repository,
         ap.stop();
 
         // should be no completed
@@ -192,7 +198,8 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         // start aggregator again
         ap.start();
 
-        // the aggregator should restore the timeout condition and trigger timeout
+        // the aggregator should restore the timeout condition and trigger
+        // timeout
         assertMockEndpointsSatisfied();
         assertEquals(2, mock.getReceivedCounter());
 

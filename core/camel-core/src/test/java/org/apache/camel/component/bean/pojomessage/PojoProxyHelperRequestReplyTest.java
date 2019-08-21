@@ -25,17 +25,17 @@ import org.junit.Test;
 public class PojoProxyHelperRequestReplyTest extends ContextTestSupport {
 
     PersonReceiver receiver = new PersonReceiver();
-    
+
     @Test
     public void testRequestReply() throws Exception {
         Endpoint personEndpoint = context.getEndpoint("direct:person");
         Person person = new Person("Chris");
         PersonHandler sender = PojoProxyHelper.createProxy(personEndpoint, PersonHandler.class);
-        
+
         Person resultPerson = sender.onPerson(person);
         assertEquals(person.getName() + "1", resultPerson.getName());
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -44,7 +44,7 @@ public class PojoProxyHelperRequestReplyTest extends ContextTestSupport {
             }
         };
     }
-    
+
     public final class PersonReceiver implements PersonHandler {
         @Override
         public Person onPerson(Person person) {

@@ -25,11 +25,10 @@ import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Weighted load balancer
- *
- * The weighted load balancing policy allows you to specify a processing load distribution ratio for each server
- * with respect to others. In addition to the weight, endpoint selection is then further refined using
- * random distribution based on weight.
+ * Weighted load balancer The weighted load balancing policy allows you to
+ * specify a processing load distribution ratio for each server with respect to
+ * others. In addition to the weight, endpoint selection is then further refined
+ * using random distribution based on weight.
  */
 @Metadata(label = "eip,routing,loadbalance")
 @XmlRootElement(name = "weighted")
@@ -39,7 +38,8 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     private Boolean roundRobin;
     @XmlAttribute(required = true)
     private String distributionRatio;
-    @XmlAttribute @Metadata(defaultValue = ",")
+    @XmlAttribute
+    @Metadata(defaultValue = ",")
     private String distributionRatioDelimiter;
 
     public WeightedLoadBalancerDefinition() {
@@ -50,7 +50,8 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     }
 
     /**
-     * To enable round robin mode. By default the weighted distribution mode is used.
+     * To enable round robin mode. By default the weighted distribution mode is
+     * used.
      * <p/>
      * The default value is false.
      */
@@ -63,8 +64,10 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     }
 
     /**
-     * The distribution ratio is a delimited String consisting on integer weights separated by delimiters for example "2,3,5".
-     * The distributionRatio must match the number of endpoints and/or processors specified in the load balancer list.
+     * The distribution ratio is a delimited String consisting on integer
+     * weights separated by delimiters for example "2,3,5". The
+     * distributionRatio must match the number of endpoints and/or processors
+     * specified in the load balancer list.
      */
     public void setDistributionRatio(String distributionRatio) {
         this.distributionRatio = distributionRatio;

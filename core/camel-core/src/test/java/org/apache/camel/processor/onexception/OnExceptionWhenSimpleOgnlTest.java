@@ -41,12 +41,9 @@ public class OnExceptionWhenSimpleOgnlTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(MyException.class)
                     // OGNL on the exception function in the simple language
-                    .onWhen(simple("${exception.info.state} == 3"))
-                        .handled(true)
-                        .to("mock:three");
+                    .onWhen(simple("${exception.info.state} == 3")).handled(true).to("mock:three");
 
-                from("direct:start")
-                    .throwException(new MyException(3));
+                from("direct:start").throwException(new MyException(3));
             }
         };
     }

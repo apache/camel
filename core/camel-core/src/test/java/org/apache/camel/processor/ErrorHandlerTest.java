@@ -59,18 +59,15 @@ public class ErrorHandlerTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0))
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
-                            if ("Boom".equals(body)) {
-                                throw new IllegalArgumentException("Forced exception by unit test");
-                            }
-                            exchange.getIn().setBody("Bye World");
+                from("direct:start").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0)).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if ("Boom".equals(body)) {
+                            throw new IllegalArgumentException("Forced exception by unit test");
                         }
-                    })
-                    .to("mock:result");
+                        exchange.getIn().setBody("Bye World");
+                    }
+                }).to("mock:result");
             }
         };
     }

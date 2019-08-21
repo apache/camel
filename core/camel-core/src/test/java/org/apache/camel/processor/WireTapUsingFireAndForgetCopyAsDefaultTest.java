@@ -35,12 +35,11 @@ public class WireTapUsingFireAndForgetCopyAsDefaultTest extends ContextTestSuppo
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .wireTap("direct:foo").copy().newExchange(exchange -> {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getIn().setBody("Bye " + body);
-                        exchange.getIn().setHeader("foo", "bar");
-                    }).to("mock:result");
+                from("direct:start").wireTap("direct:foo").copy().newExchange(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    exchange.getIn().setBody("Bye " + body);
+                    exchange.getIn().setHeader("foo", "bar");
+                }).to("mock:result");
 
                 from("direct:foo").to("mock:foo");
                 // END SNIPPET: e1
@@ -74,12 +73,11 @@ public class WireTapUsingFireAndForgetCopyAsDefaultTest extends ContextTestSuppo
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .wireTap("direct:foo").copy().newExchange(exchange -> {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getIn().setBody("Bye " + body);
-                        exchange.getIn().setHeader("foo", "bar");
-                    }).to("mock:result");
+                from("direct:start").wireTap("direct:foo").copy().newExchange(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    exchange.getIn().setBody("Bye " + body);
+                    exchange.getIn().setHeader("foo", "bar");
+                }).to("mock:result");
 
                 from("direct:foo").to("mock:foo");
             }
@@ -113,9 +111,7 @@ public class WireTapUsingFireAndForgetCopyAsDefaultTest extends ContextTestSuppo
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e2
-                from("direct:start")
-                    .wireTap("direct:foo").copy().newExchangeBody(simple("Bye ${body}"))
-                    .to("mock:result");
+                from("direct:start").wireTap("direct:foo").copy().newExchangeBody(simple("Bye ${body}")).to("mock:result");
 
                 from("direct:foo").to("mock:foo");
                 // END SNIPPET: e2
@@ -148,9 +144,7 @@ public class WireTapUsingFireAndForgetCopyAsDefaultTest extends ContextTestSuppo
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .wireTap("direct:foo").copy().newExchangeBody(simple("Bye ${body}"))
-                    .to("mock:result");
+                from("direct:start").wireTap("direct:foo").copy().newExchangeBody(simple("Bye ${body}")).to("mock:result");
 
                 from("direct:foo").to("mock:foo");
             }

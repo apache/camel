@@ -36,7 +36,8 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
 
     @XmlAttribute(required = true)
     private String message;
-    @XmlAttribute @Metadata(defaultValue = "INFO")
+    @XmlAttribute
+    @Metadata(defaultValue = "INFO")
     private LoggingLevel loggingLevel;
     @XmlAttribute
     private String logName;
@@ -59,7 +60,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     public String toString() {
         return "Log[" + message + "]";
     }
-    
+
     @Override
     public String getShortName() {
         return "log";

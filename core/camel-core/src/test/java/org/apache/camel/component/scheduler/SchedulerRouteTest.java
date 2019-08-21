@@ -46,9 +46,7 @@ public class SchedulerRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("scheduler://foo?delay=100")
-                    .log("Fired scheduler")
-                    .to("bean:myBean", "mock:result");
+                from("scheduler://foo?delay=100").log("Fired scheduler").to("bean:myBean", "mock:result");
             }
         };
     }

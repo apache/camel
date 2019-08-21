@@ -36,7 +36,7 @@ public class PolicyPerRouteTest extends ContextTestSupport {
         getMockEndpoint("mock:bar").expectedHeaderReceived("foo", "was wrapped");
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "was wrapped");
-        
+
         getMockEndpoint("mock:response").expectedMessageCount(1);
         getMockEndpoint("mock:response").expectedHeaderReceived("foo", "policy finished execution");
         template.sendBody("direct:send", "Hello World");
@@ -63,15 +63,10 @@ public class PolicyPerRouteTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                     // wraps the entire route in the same policy
-                    .policy("foo")
-                        .to("mock:foo")
-                        .to("mock:bar")
-                        .to("mock:result");
+                    .policy("foo").to("mock:foo").to("mock:bar").to("mock:result");
                 // END SNIPPET: e1
-                
-                from("direct:send")
-                    .to("direct:start")
-                    .to("mock:response");
+
+                from("direct:send").to("direct:start").to("mock:response");
             }
         };
     }
@@ -86,8 +81,7 @@ public class PolicyPerRouteTest extends ContextTestSupport {
         }
 
         @Override
-        public void beforeWrap(RouteContext routeContext,
-                               NamedNode definition) {
+        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
             // no need to modify the route
         }
 

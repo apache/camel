@@ -38,8 +38,7 @@ public class ComponentResolvePropertyPlaceholdersTest extends ContextTestSupport
                 seda.setQueueSize(propertyInject("myQueueSize", int.class));
                 context.addComponent("seda", seda);
 
-                from("seda:start")
-                    .to("mock:{{cool.result}}");
+                from("seda:start").to("mock:{{cool.result}}");
             }
         });
         context.start();

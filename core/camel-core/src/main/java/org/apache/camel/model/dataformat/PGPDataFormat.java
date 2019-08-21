@@ -25,7 +25,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * PGP data format is used for encrypting and decrypting of messages using Java Cryptographic Extension and PGP.
+ * PGP data format is used for encrypting and decrypting of messages using Java
+ * Cryptographic Extension and PGP.
  */
 @Metadata(firstVersion = "2.9.0", label = "dataformat,transformation,security", title = "PGP")
 @XmlRootElement(name = "pgp")
@@ -47,7 +48,8 @@ public class PGPDataFormat extends DataFormatDefinition {
     private String signatureKeyRing;
     @XmlAttribute
     private Boolean armored;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean integrity;
     @XmlAttribute
     private String provider;
@@ -69,12 +71,15 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * User ID of the key in the PGP keyring used for signing (during encryption) or signature verification (during decryption).
-     * During the signature verification process the specified User ID restricts the public keys from the public
-     * keyring which can be used for the verification. If no User ID is specified for the signature verficiation
-     * then any public key in the public keyring can be used for the verification. Can also be only a part of a user ID.
-     * For example, if the user ID is "Test User <test@camel.com>" then you can use the
-     * part "Test User" or "<test@camel.com>" to address the User ID.
+     * User ID of the key in the PGP keyring used for signing (during
+     * encryption) or signature verification (during decryption). During the
+     * signature verification process the specified User ID restricts the public
+     * keys from the public keyring which can be used for the verification. If
+     * no User ID is specified for the signature verficiation then any public
+     * key in the public keyring can be used for the verification. Can also be
+     * only a part of a user ID. For example, if the user ID is "Test User
+     * <test@camel.com>" then you can use the part "Test User" or
+     * "<test@camel.com>" to address the User ID.
      */
     public void setSignatureKeyUserid(String signatureKeyUserid) {
         this.signatureKeyUserid = signatureKeyUserid;
@@ -85,7 +90,8 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Password used when opening the private key used for signing (during encryption).
+     * Password used when opening the private key used for signing (during
+     * encryption).
      */
     public void setSignaturePassword(String signaturePassword) {
         this.signaturePassword = signaturePassword;
@@ -96,8 +102,10 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Filename of the keyring to use for signing (during encryption) or for signature verification (during decryption);
-     * must be accessible as a classpath resource (but you can specify a location in the file system by using the "file:" prefix).
+     * Filename of the keyring to use for signing (during encryption) or for
+     * signature verification (during decryption); must be accessible as a
+     * classpath resource (but you can specify a location in the file system by
+     * using the "file:" prefix).
      */
     public void setSignatureKeyFileName(String signatureKeyFileName) {
         this.signatureKeyFileName = signatureKeyFileName;
@@ -108,8 +116,8 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Keyring used for signing/verifying as byte array.
-     * You can not set the signatureKeyFileName and signatureKeyRing at the same time.
+     * Keyring used for signing/verifying as byte array. You can not set the
+     * signatureKeyFileName and signatureKeyRing at the same time.
      */
     public void setSignatureKeyRing(String signatureKeyRing) {
         this.signatureKeyRing = signatureKeyRing;
@@ -120,8 +128,10 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags;
-     * for example 2 (= SHA1), 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (=SHA224). Only relevant for signing.
+     * Signature hash algorithm; possible values are defined in
+     * org.bouncycastle.bcpg.HashAlgorithmTags; for example 2 (= SHA1), 8 (=
+     * SHA256), 9 (= SHA384), 10 (= SHA512), 11 (=SHA224). Only relevant for
+     * signing.
      */
     public void setHashAlgorithm(Integer hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
@@ -132,7 +142,8 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * This option will cause PGP to base64 encode the encrypted text, making it available for copy/paste, etc.
+     * This option will cause PGP to base64 encode the encrypted text, making it
+     * available for copy/paste, etc.
      */
     public void setArmored(Boolean armored) {
         this.armored = armored;
@@ -156,7 +167,9 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Filename of the keyring; must be accessible as a classpath resource (but you can specify a location in the file system by using the "file:" prefix).
+     * Filename of the keyring; must be accessible as a classpath resource (but
+     * you can specify a location in the file system by using the "file:"
+     * prefix).
      */
     public void setKeyFileName(String keyFileName) {
         this.keyFileName = keyFileName;
@@ -167,10 +180,10 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * The user ID of the key in the PGP keyring used during encryption.
-     * Can also be only a part of a user ID.
-     * For example, if the user ID is "Test User <test@camel.com>"
-     * then you can use the part "Test User" or "<test@camel.com>" to address the user ID.
+     * The user ID of the key in the PGP keyring used during encryption. Can
+     * also be only a part of a user ID. For example, if the user ID is "Test
+     * User <test@camel.com>" then you can use the part "Test User" or
+     * "<test@camel.com>" to address the user ID.
      */
     public void setKeyUserid(String keyUserid) {
         this.keyUserid = keyUserid;
@@ -185,8 +198,10 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
-     * for example 2 (= TRIPLE DES), 3 (= CAST5), 4 (= BLOWFISH), 6 (= DES), 7 (= AES_128). Only relevant for encrypting.
+     * Symmetric key encryption algorithm; possible values are defined in
+     * org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 2 (= TRIPLE
+     * DES), 3 (= CAST5), 4 (= BLOWFISH), 6 (= DES), 7 (= AES_128). Only
+     * relevant for encrypting.
      */
     public void setAlgorithm(Integer algorithm) {
         this.algorithm = algorithm;
@@ -197,8 +212,10 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Compression algorithm; possible values are defined in org.bouncycastle.bcpg.CompressionAlgorithmTags;
-     * for example 0 (= UNCOMPRESSED), 1 (= ZIP), 2 (= ZLIB), 3 (= BZIP2). Only relevant for encrypting.
+     * Compression algorithm; possible values are defined in
+     * org.bouncycastle.bcpg.CompressionAlgorithmTags; for example 0 (=
+     * UNCOMPRESSED), 1 (= ZIP), 2 (= ZLIB), 3 (= BZIP2). Only relevant for
+     * encrypting.
      */
     public void setCompressionAlgorithm(Integer compressionAlgorithm) {
         this.compressionAlgorithm = compressionAlgorithm;
@@ -231,11 +248,15 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Controls the behavior for verifying the signature during unmarshaling. There are 4 values possible:
-     * "optional": The PGP message may or may not contain signatures; if it does contain signatures, then a signature verification is executed.
-     * "required": The PGP message must contain at least one signature; if this is not the case an exception (PGPException) is thrown. A signature verification is executed.
-     * "ignore": Contained signatures in the PGP message are ignored; no signature verification is executed.
-     * "no_signature_allowed": The PGP message must not contain a signature; otherwise an exception (PGPException) is thrown.
+     * Controls the behavior for verifying the signature during unmarshaling.
+     * There are 4 values possible: "optional": The PGP message may or may not
+     * contain signatures; if it does contain signatures, then a signature
+     * verification is executed. "required": The PGP message must contain at
+     * least one signature; if this is not the case an exception (PGPException)
+     * is thrown. A signature verification is executed. "ignore": Contained
+     * signatures in the PGP message are ignored; no signature verification is
+     * executed. "no_signature_allowed": The PGP message must not contain a
+     * signature; otherwise an exception (PGPException) is thrown.
      */
     public void setSignatureVerificationOption(String signatureVerificationOption) {
         this.signatureVerificationOption = signatureVerificationOption;

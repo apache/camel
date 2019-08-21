@@ -31,11 +31,11 @@ public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport 
     public void testBeanWithAnnotationAndExchangeTest() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         MockEndpoint error = getMockEndpoint("mock:error");
-        
+
         result.expectedMessageCount(0);
         error.expectedMessageCount(1);
         error.expectedBodiesReceived("The Body");
-        
+
         template.requestBody("direct:start", "The Body");
 
         result.assertIsSatisfied();
@@ -54,16 +54,10 @@ public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport 
         return new RouteBuilder() {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error"));
-                
-                onException(MyCustomException.class).
-                    maximumRedeliveries(0).
-                    handled(true).
-                    bean("myBean", "handleException").
-                    to("mock:error");
-                
-                from("direct:start").
-                    bean("myBean", "throwException").
-                    to("mock:result");
+
+                onException(MyCustomException.class).maximumRedeliveries(0).handled(true).bean("myBean", "handleException").to("mock:error");
+
+                from("direct:start").bean("myBean", "throwException").to("mock:result");
             }
         };
     }
@@ -72,8 +66,8 @@ public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport 
 
         public void throwException() throws MyCustomException {
             throw new MyCustomException("I'm being thrown!!");
-        }       
-        
+        }
+
         public void handleException(@ExchangeException Exception exception) {
             assertNotNull(exception);
             assertEquals("I'm being thrown!!", exception.getMessage());

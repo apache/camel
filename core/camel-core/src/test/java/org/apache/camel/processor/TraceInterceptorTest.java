@@ -38,19 +38,16 @@ public class TraceInterceptorTest extends ContextTestSupport {
                 // enable tracing
                 getContext().setTracing(true);
 
-                from("direct:start").routeId("foo").
-                        process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // do nothing
-                            }
+                from("direct:start").routeId("foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // do nothing
+                    }
 
-                            @Override
-                            public String toString() {
-                                return "MyProcessor";
-                            }
-                        }).
-                        to("mock:foo").
-                        to("direct:bar");
+                    @Override
+                    public String toString() {
+                        return "MyProcessor";
+                    }
+                }).to("mock:foo").to("direct:bar");
 
                 from("direct:bar").routeId("bar").to("mock:bar");
             }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -57,7 +58,7 @@ public class FileIdempotentClearTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Camel rocks");
 
         repo.clear();
-        
+
         assertFalse(repo.contains("A"));
         assertFalse(repo.contains("B"));
     }
@@ -66,9 +67,7 @@ public class FileIdempotentClearTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock:result");
+                from("direct:start").idempotentConsumer(header("messageId"), repo).to("mock:result");
             }
         };
     }

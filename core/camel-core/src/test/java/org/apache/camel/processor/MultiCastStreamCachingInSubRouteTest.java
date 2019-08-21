@@ -43,16 +43,15 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
 
                 from("direct:start").multicast(new InternalAggregationStrategy()).to("direct:a", "direct:b").end().to("mock:result");
 
-                from("direct:startNestedMultiCast").multicast(new InternalAggregationStrategy()).to("direct:start").end()
-                        .to("mock:resultNested");
+                from("direct:startNestedMultiCast").multicast(new InternalAggregationStrategy()).to("direct:start").end().to("mock:resultNested");
 
                 from("direct:a") //
-                        .process(new InputProcessorWithStreamCache(1)) //
-                        .to("mock:resulta");
+                    .process(new InputProcessorWithStreamCache(1)) //
+                    .to("mock:resulta");
 
                 from("direct:b") //
-                        .process(new InputProcessorWithStreamCache(2)) //
-                        .to("mock:resultb");
+                    .process(new InputProcessorWithStreamCache(2)) //
+                    .to("mock:resultb");
             }
         };
     }
@@ -90,7 +89,7 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
             String s = "Test Message " + number;
             cos.write(s.getBytes(Charset.forName("UTF-8")));
             cos.close();
-            InputStream is = (InputStream) cos.newStreamCache();
+            InputStream is = (InputStream)cos.newStreamCache();
             exchange.getMessage().setBody(is);
 
         }
@@ -108,7 +107,7 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
                 String oldBody = oldExchange.getIn().getBody(String.class);
                 String newBody = newExchange.getIn().getBody(String.class);
                 String merged = oldBody + newBody;
-                //also do stream caching in the aggregation strategy            
+                // also do stream caching in the aggregation strategy
                 CachedOutputStream cos = new CachedOutputStream(newExchange);
                 cos.write(merged.getBytes("UTF-8"));
                 cos.close();

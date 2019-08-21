@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,7 +35,8 @@ public class ChoiceAsyncTest extends ContextTestSupport {
         String body = "<one/>";
         x.expectedBodiesReceived(body);
         end.expectedBodiesReceived(body);
-        // The SpringChoiceTest.java can't setup the header by Spring configure file
+        // The SpringChoiceTest.java can't setup the header by Spring configure
+        // file
         // x.expectedHeaderReceived("name", "a");
         expectsMessageCount(0, y, z);
 
@@ -86,11 +88,8 @@ public class ChoiceAsyncTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice()
-                  .when().xpath("$foo = 'bar'").delay(10).asyncDelayed().to("mock:x").endChoice()
-                  .when().xpath("$foo = 'cheese'").delay(10).asyncDelayed().to("mock:y").endChoice()
-                  .otherwise().delay(10).asyncDelayed().to("mock:z").endChoice()
-                  .end().to("mock:end");
+                from("direct:start").choice().when().xpath("$foo = 'bar'").delay(10).asyncDelayed().to("mock:x").endChoice().when().xpath("$foo = 'cheese'").delay(10)
+                    .asyncDelayed().to("mock:y").endChoice().otherwise().delay(10).asyncDelayed().to("mock:z").endChoice().end().to("mock:end");
             }
         };
     }

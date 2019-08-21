@@ -29,7 +29,7 @@ public class FileInputStreamCacheTest extends ContextTestSupport {
 
     @Test
     public void testFileInputStreamCache() throws Exception {
-       
+
         File file = new File(TEST_FILE);
         FileInputStreamCache cache = new FileInputStreamCache(file);
 

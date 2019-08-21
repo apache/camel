@@ -28,13 +28,15 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.
+ * TidyMarkup data format is used for parsing HTML and return it as pretty
+ * well-formed HTML.
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "TidyMarkup")
 @XmlRootElement(name = "tidyMarkup")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TidyMarkupDataFormat extends DataFormatDefinition {
-    @XmlAttribute(name = "dataObjectType") @Metadata(defaultValue = "org.w3c.dom.Node")
+    @XmlAttribute(name = "dataObjectType")
+    @Metadata(defaultValue = "org.w3c.dom.Node")
     private String dataObjectTypeName;
     @XmlAttribute
     private Boolean omitXmlDeclaration;
@@ -55,7 +57,8 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String.
+     * What data type to unmarshal as, can either be org.w3c.dom.Node or
+     * java.lang.String.
      * <p/>
      * Is by default org.w3c.dom.Node
      */
@@ -72,7 +75,8 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String.
+     * What data type to unmarshal as, can either be org.w3c.dom.Node or
+     * java.lang.String.
      * <p/>
      * Is by default org.w3c.dom.Node
      */

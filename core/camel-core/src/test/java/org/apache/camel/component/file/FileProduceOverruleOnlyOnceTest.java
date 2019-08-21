@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,9 +62,7 @@ public class FileProduceOverruleOnlyOnceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .to("file://target/data/write")
-                    .to("file://target/data/again", "mock:result");
+                from("direct:start").to("file://target/data/write").to("file://target/data/again", "mock:result");
             }
         };
     }

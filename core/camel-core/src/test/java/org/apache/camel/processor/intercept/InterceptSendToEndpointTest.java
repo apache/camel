@@ -38,17 +38,16 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
                 context.setTracing(true);
 
                 // START SNIPPET: e1
-                // we intercept by endpoint, that means that whenever an exchange is about to be sent to
-                // this endpoint, its intercepted and routed with this detour route beforehand
-                // afterwards its send to the original intended destination. So this is kinda AOP before.
+                // we intercept by endpoint, that means that whenever an
+                // exchange is about to be sent to
+                // this endpoint, its intercepted and routed with this detour
+                // route beforehand
+                // afterwards its send to the original intended destination. So
+                // this is kinda AOP before.
                 // That means mock:foo will receive the message (Bye World).
-                interceptSendToEndpoint("mock:foo")
-                    .to("mock:detour").transform(constant("Bye World"));
+                interceptSendToEndpoint("mock:foo").to("mock:detour").transform(constant("Bye World"));
 
-                from("direct:first")
-                    .to("mock:bar")
-                    .to("mock:foo")
-                    .to("mock:result");
+                from("direct:first").to("mock:bar").to("mock:foo").to("mock:result");
                 // END SNIPPET: e1
 
             }
@@ -71,15 +70,12 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e2
-                // we can also attach a predicate to the endpoint interceptor. So in this example the exchange is
+                // we can also attach a predicate to the endpoint interceptor.
+                // So in this example the exchange is
                 // only intercepted if the body is Hello World
-                interceptSendToEndpoint("mock:foo").when(body().isEqualTo("Hello World"))
-                    .to("mock:detour").transform(constant("Bye World"));
+                interceptSendToEndpoint("mock:foo").when(body().isEqualTo("Hello World")).to("mock:detour").transform(constant("Bye World"));
 
-                from("direct:second")
-                    .to("mock:bar")
-                    .to("mock:foo")
-                    .to("mock:result");
+                from("direct:second").to("mock:bar").to("mock:foo").to("mock:result");
                 // END SNIPPET: e2
 
             }
@@ -106,19 +102,19 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
                 context.setTracing(true);
 
                 // START SNIPPET: e3
-                // since we use the skipSendToOriginalEndpoint() we instruct Camel to skip
-                // sending the exchange to the original intended destination after the intercept
+                // since we use the skipSendToOriginalEndpoint() we instruct
+                // Camel to skip
+                // sending the exchange to the original intended destination
+                // after the intercept
                 // route is complete.
-                // That means that mock:foo will NOT receive the message, but the message
-                // is skipped and continued in the original route, so mock:result will receive
+                // That means that mock:foo will NOT receive the message, but
+                // the message
+                // is skipped and continued in the original route, so
+                // mock:result will receive
                 // the message.
-                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint()
-                    .transform(constant("Bye World")).to("mock:detour");
+                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().transform(constant("Bye World")).to("mock:detour");
 
-                from("direct:third")
-                    .to("mock:bar")
-                    .to("mock:foo")
-                    .to("mock:result");
+                from("direct:third").to("mock:bar").to("mock:foo").to("mock:result");
                 // END SNIPPET: e3
             }
         });
@@ -141,12 +137,9 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:start")
-                    .to("mock:detour").transform(constant("Bye World"));
+                interceptSendToEndpoint("direct:start").to("mock:detour").transform(constant("Bye World"));
 
-                from("direct:start")
-                    .to("mock:foo")
-                    .to("mock:result");
+                from("direct:start").to("mock:foo").to("mock:result");
             }
         });
         context.start();
@@ -165,12 +158,9 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:start")
-                    .to("mock:detour").stop();
+                interceptSendToEndpoint("direct:start").to("mock:detour").stop();
 
-                from("direct:start")
-                    .to("mock:foo")
-                    .to("mock:result");
+                from("direct:start").to("mock:foo").to("mock:result");
             }
         });
         context.start();
@@ -191,7 +181,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
             public void configure() throws Exception {
                 interceptSendToEndpoint("direct:intercept1").to("mock:detour1");
                 interceptSendToEndpoint("direct:intercept2").to("mock:detour2");
-                
+
                 from("direct:input1").to("direct:intercept1");
                 from("direct:input2").to("direct:intercept2");
 
@@ -209,5 +199,5 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
 }

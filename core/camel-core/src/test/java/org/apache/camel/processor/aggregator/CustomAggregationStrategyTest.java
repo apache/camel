@@ -52,13 +52,14 @@ public class CustomAggregationStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // our route is aggregating from the direct queue and sending the response to the mock
+                // our route is aggregating from the direct queue and sending
+                // the response to the mock
                 from("direct:start")
-                    // aggregated by header id and use our own strategy how to aggregate
+                    // aggregated by header id and use our own strategy how to
+                    // aggregate
                     .aggregate(new MyAggregationStrategy()).header("id")
                     // wait for 1 seconds to aggregate
-                    .completionTimeout(1000L)
-                    .to("mock:result");
+                    .completionTimeout(1000L).to("mock:result");
                 // END SNIPPET: e1
             }
         };
@@ -70,7 +71,8 @@ public class CustomAggregationStrategyTest extends ContextTestSupport {
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
-                // the first time we only have the new exchange so it wins the first round
+                // the first time we only have the new exchange so it wins the
+                // first round
                 return newExchange;
             }
             int oldPrice = oldExchange.getIn().getBody(Integer.class);

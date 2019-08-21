@@ -72,8 +72,7 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
         RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                weaveById("myException").replace().onException(Exception.class)
-                        .handled(true).to("mock:dead2");
+                weaveById("myException").replace().onException(Exception.class).handled(true).to("mock:dead2");
             }
         });
 
@@ -89,17 +88,11 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).id("myException")
-                        .handled(true)
-                        .transform(constant("Bye World")).to("mock:dead");
+                onException(Exception.class).id("myException").handled(true).transform(constant("Bye World")).to("mock:dead");
 
-                from("direct:bar").routeId("bar")
-                        .to("mock:c").to("mock:d");
+                from("direct:bar").routeId("bar").to("mock:c").to("mock:d");
 
-                from("direct:foo").routeId("foo")
-                        .to("mock:a")
-                        .throwException(new IllegalArgumentException("Forced"))
-                        .to("mock:b");
+                from("direct:foo").routeId("foo").to("mock:a").throwException(new IllegalArgumentException("Forced")).to("mock:b");
 
             }
         };

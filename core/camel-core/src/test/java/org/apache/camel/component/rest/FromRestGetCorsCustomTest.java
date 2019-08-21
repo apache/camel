@@ -35,7 +35,8 @@ public class FromRestGetCorsCustomTest extends ContextTestSupport {
 
     @Test
     public void testCors() throws Exception {
-        // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
+        // the rest becomes routes and the input is a seda endpoint created by
+        // the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);
 
         Exchange out = template.request("seda:post-say-bye", new Processor() {
@@ -63,18 +64,13 @@ public class FromRestGetCorsCustomTest extends ContextTestSupport {
                 restConfiguration().enableCORS(true).corsHeaderProperty("Access-Control-Allow-Origin", "myserver");
                 restConfiguration().enableCORS(true).corsHeaderProperty("Access-Control-Max-Age", "180");
 
-                rest("/say/hello")
-                    .get().to("direct:hello");
+                rest("/say/hello").get().to("direct:hello");
 
-                rest("/say/bye")
-                    .get().consumes("application/json").to("direct:bye")
-                    .post().to("mock:update");
+                rest("/say/bye").get().consumes("application/json").to("direct:bye").post().to("mock:update");
 
-                from("direct:hello")
-                    .transform().constant("Hello World");
+                from("direct:hello").transform().constant("Hello World");
 
-                from("direct:bye")
-                    .transform().constant("Bye World");
+                from("direct:bye").transform().constant("Bye World");
             }
         };
     }

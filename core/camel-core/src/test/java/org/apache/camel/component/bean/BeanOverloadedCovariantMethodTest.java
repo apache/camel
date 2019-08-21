@@ -32,9 +32,7 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MySuperBean.class, "hello")
-                    .to("mock:result");
+                from("direct:start").bean(MySuperBean.class, "hello").to("mock:result");
             }
         });
         context.start();
@@ -45,64 +43,58 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHelloCovariantOverloadNoNameOrParameters() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MySuperBean.class)
-                    .to("mock:result");
-                
+                from("direct:start").bean(MySuperBean.class).to("mock:result");
+
             }
         });
         context.start();
-        
+
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello null from super class");
-        
+
         template.sendBody("direct:start", null);
-        
+
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHelloCovariantOverloadNoParameters() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MySuperBean.class, "hello")
-                    .to("mock:result");
-                
+                from("direct:start").bean(MySuperBean.class, "hello").to("mock:result");
+
             }
         });
         context.start();
-        
+
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello null from super class");
-        
+
         template.sendBody("direct:start", null);
-        
+
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHelloCovariantOverloadFromParameters() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(MySuperBean.class, "hello(String)")
-                    .to("mock:result");
-                
+                from("direct:start").bean(MySuperBean.class, "hello(String)").to("mock:result");
+
             }
         });
         context.start();
-        
+
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello null from super class");
-        
+
         template.sendBody("direct:start", null);
-        
+
         assertMockEndpointsSatisfied();
     }
 

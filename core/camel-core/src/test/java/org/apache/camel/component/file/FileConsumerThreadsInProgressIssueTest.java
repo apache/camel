@@ -39,11 +39,8 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/manyfiles?sortBy=file:name&delay=10&synchronous=false").routeId("myRoute").noAutoStartup()
-                    .threads(1, 10).maxQueueSize(0)
-                    .convertBodyTo(String.class)
-                    .process(processor)
-                    .to("log:done", "mock:done");
+                from("file:target/data/manyfiles?sortBy=file:name&delay=10&synchronous=false").routeId("myRoute").noAutoStartup().threads(1, 10).maxQueueSize(0)
+                    .convertBodyTo(String.class).process(processor).to("log:done", "mock:done");
             }
         };
     }

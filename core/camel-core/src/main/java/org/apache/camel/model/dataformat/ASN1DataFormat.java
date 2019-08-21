@@ -25,7 +25,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The ASN.1 data format is used for file transfer with telecommunications protocols.
+ * The ASN.1 data format is used for file transfer with telecommunications
+ * protocols.
  */
 @Metadata(firstVersion = "2.20.0", label = "dataformat,transformation,file", title = "ASN.1 File")
 @XmlRootElement(name = "asn1")
@@ -39,25 +40,26 @@ public class ASN1DataFormat extends DataFormatDefinition {
     public ASN1DataFormat() {
         super("asn1");
     }
-    
+
     public ASN1DataFormat(Boolean usingIterator) {
         this();
-        setUsingIterator(usingIterator); 
+        setUsingIterator(usingIterator);
     }
-    
+
     public ASN1DataFormat(String clazzName) {
         this();
         setUsingIterator(Boolean.TRUE);
-        setClazzName(clazzName); 
+        setClazzName(clazzName);
     }
-    
+
     public Boolean getUsingIterator() {
         return usingIterator;
     }
-    
+
     /**
-     * If the asn1 file has more then one entry, the setting this option to true, allows to work with the splitter EIP,
-     * to split the data using an iterator in a streaming mode.
+     * If the asn1 file has more then one entry, the setting this option to
+     * true, allows to work with the splitter EIP, to split the data using an
+     * iterator in a streaming mode.
      */
     public void setUsingIterator(Boolean usingIterator) {
         this.usingIterator = usingIterator;

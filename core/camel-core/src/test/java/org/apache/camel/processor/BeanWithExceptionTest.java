@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -63,7 +64,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
                 exchange.setProperty("cheese", "old");
             }
         });
-        
+
         assertNotNull(exchange.getException());
         ValidationException exception = assertIsInstanceOf(ValidationException.class, exchange.getException());
         assertEquals("Invalid header foo: notMatchedHeaderValue", exception.getMessage());
@@ -101,8 +102,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     public static class ValidationBean {
         private static final Logger LOG = LoggerFactory.getLogger(ValidationBean.class);
 
-        public void someMethod(String body, @Header("foo")
-                               String header, @ExchangeProperty("cheese") String cheese) throws ValidationException {
+        public void someMethod(String body, @Header("foo") String header, @ExchangeProperty("cheese") String cheese) throws ValidationException {
             assertEquals("old", cheese);
 
             if ("bar".equals(header)) {

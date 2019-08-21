@@ -58,12 +58,11 @@ public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextT
                 // configure error handler
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                // configure the consumer to bridge with the Camel error handler,
+                // configure the consumer to bridge with the Camel error
+                // handler,
                 // so the above error handler will trigger if exceptions also
                 // occurs inside the consumer
-                from("my:foo?consumer.bridgeErrorHandler=true")
-                    .to("log:foo")
-                    .to("mock:result");
+                from("my:foo?consumer.bridgeErrorHandler=true").to("log:foo").to("mock:result");
             }
         };
         // END SNIPPET: e1

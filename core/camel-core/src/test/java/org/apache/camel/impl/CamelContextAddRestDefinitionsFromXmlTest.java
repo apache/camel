@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
 import java.net.URL;
 import java.util.List;
 

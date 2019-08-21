@@ -63,12 +63,11 @@ public class OnCompletionGlobalTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // define a global on completion that is invoked when the exchange is complete
+                // define a global on completion that is invoked when the
+                // exchange is complete
                 onCompletion().to("log:global").to("mock:sync");
 
-                from("direct:start")
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                from("direct:start").process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -59,9 +59,7 @@ public class RecipientListExchangePropertyAggregationStrategyTest extends Contex
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .recipientList(header("slip")).aggregationStrategy(strategy)
-                        .to("mock:result");
+                from("direct:start").recipientList(header("slip")).aggregationStrategy(strategy).to("mock:result");
 
                 from("direct:a").to("mock:a").transform(constant("Hello a"));
                 from("direct:b").to("mock:b").transform(constant("Hello b"));

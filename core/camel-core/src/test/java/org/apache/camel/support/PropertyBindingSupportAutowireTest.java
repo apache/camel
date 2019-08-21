@@ -104,4 +104,3 @@ public class PropertyBindingSupportAutowireTest extends ContextTestSupport {
     }
 
 }
-

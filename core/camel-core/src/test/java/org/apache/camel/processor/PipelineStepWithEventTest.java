@@ -37,7 +37,8 @@ import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
 /**
- * Test showing how you can use pipeline to group together statistics and implement your own event listener.
+ * Test showing how you can use pipeline to group together statistics and
+ * implement your own event listener.
  */
 public class PipelineStepWithEventTest extends ContextTestSupport {
 
@@ -57,14 +58,14 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
 
         assertEquals(4, listener.getEvents().size());
 
-        BeforeStepEvent event = (BeforeStepEvent) listener.getEvents().get(0);
+        BeforeStepEvent event = (BeforeStepEvent)listener.getEvents().get(0);
         assertEquals("step-a", event.getId());
-        AfterStepEvent event2 = (AfterStepEvent) listener.getEvents().get(1);
+        AfterStepEvent event2 = (AfterStepEvent)listener.getEvents().get(1);
         assertEquals("step-a", event2.getId());
         assertTrue("Should take a little time", event2.getTimeTaken() > 0);
-        BeforeStepEvent event3 = (BeforeStepEvent) listener.getEvents().get(2);
+        BeforeStepEvent event3 = (BeforeStepEvent)listener.getEvents().get(2);
         assertEquals("step-b", event3.getId());
-        AfterStepEvent event4 = (AfterStepEvent) listener.getEvents().get(3);
+        AfterStepEvent event4 = (AfterStepEvent)listener.getEvents().get(3);
         assertEquals("step-b", event4.getId());
         assertTrue("Should take a little time", event4.getTimeTaken() > 0);
     }
@@ -74,18 +75,23 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .pipeline().id("step-a")
-                        .to("mock:a")
-                        .delay(constant(10)).end() // a bit ugly by need to end delay
-                        .to("mock:a2")
-                    .end()
-                    .pipeline().id("step-b")
-                        .to("mock:b")
-                        .delay(constant(20)).end()  // a bit ugly by need to end delay
-                        .to("mock:b2")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").pipeline().id("step-a").to("mock:a").delay(constant(10)).end() // a
+                                                                                                    // bit
+                                                                                                    // ugly
+                                                                                                    // by
+                                                                                                    // need
+                                                                                                    // to
+                                                                                                    // end
+                                                                                                    // delay
+                    .to("mock:a2").end().pipeline().id("step-b").to("mock:b").delay(constant(20)).end() // a
+                                                                                                        // bit
+                                                                                                        // ugly
+                                                                                                        // by
+                                                                                                        // need
+                                                                                                        // to
+                                                                                                        // end
+                                                                                                        // delay
+                    .to("mock:b2").end().to("mock:result");
             }
         };
     }
@@ -178,6 +184,7 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
         }
 
     }
+
     private class BeforeStepEvent extends AbstractExchangeEvent {
 
         private final String id;

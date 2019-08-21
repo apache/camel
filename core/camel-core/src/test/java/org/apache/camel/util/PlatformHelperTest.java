@@ -39,8 +39,10 @@ public class PlatformHelperTest extends Assert {
         assertTrue(isOsgiContext(new OsgiDefaultCamelContext()));
     }
 
-    private class BlueprintCamelContext extends DefaultCamelContext { }
+    private class BlueprintCamelContext extends DefaultCamelContext {
+    }
 
-    private class OsgiDefaultCamelContext extends DefaultCamelContext { }
+    private class OsgiDefaultCamelContext extends DefaultCamelContext {
+    }
 
 }

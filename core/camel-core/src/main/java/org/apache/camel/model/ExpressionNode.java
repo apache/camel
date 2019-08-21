@@ -33,8 +33,9 @@ import org.apache.camel.model.language.ExpressionDefinition;
 /**
  * A base {@link ExpressionNode} which does <b>not</b> support any outputs.
  * <p/>
- * This node is to be extended by definitions which need to support an expression but the definition should not
- * contain any outputs, such as {@link org.apache.camel.model.TransformDefinition}.
+ * This node is to be extended by definitions which need to support an
+ * expression but the definition should not contain any outputs, such as
+ * {@link org.apache.camel.model.TransformDefinition}.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
@@ -71,7 +72,8 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
     }
 
     public void setExpression(ExpressionDefinition expression) {
-        // favour using the helper to set the expression as it can unwrap some unwanted builders when using Java DSL
+        // favour using the helper to set the expression as it can unwrap some
+        // unwanted builders when using Java DSL
         this.expression = expression;
     }
 
@@ -97,21 +99,26 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
         }
 
         if (exp instanceof ExpressionClause) {
-            ExpressionClause<?> clause = (ExpressionClause<?>) exp;
+            ExpressionClause<?> clause = (ExpressionClause<?>)exp;
             if (clause.getExpressionType() != null) {
-                // if using the Java DSL then the expression may have been set using the
-                // ExpressionClause which is a fancy builder to define expressions and predicates
-                // using fluent builders in the DSL. However we need afterwards a callback to
-                // reset the expression to the expression type the ExpressionClause did build for us
+                // if using the Java DSL then the expression may have been set
+                // using the
+                // ExpressionClause which is a fancy builder to define
+                // expressions and predicates
+                // using fluent builders in the DSL. However we need afterwards
+                // a callback to
+                // reset the expression to the expression type the
+                // ExpressionClause did build for us
                 ExpressionFactory model = clause.getExpressionType();
                 if (model instanceof ExpressionDefinition) {
-                    setExpression((ExpressionDefinition) model);
+                    setExpression((ExpressionDefinition)model);
                 }
             }
         }
 
         if (getExpression() != null && getExpression().getExpression() == null) {
-            // use toString from predicate or expression so we have some information to show in the route model
+            // use toString from predicate or expression so we have some
+            // information to show in the route model
             if (getExpression().getPredicate() != null) {
                 getExpression().setExpression(getExpression().getPredicate().toString());
             } else if (getExpression().getExpressionValue() != null) {
@@ -137,4 +144,3 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
     }
 
 }
-

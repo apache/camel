@@ -34,11 +34,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValidatorsDefinition {
 
-    @XmlElements({
-        @XmlElement(required = false, name = "endpointValidator", type = EndpointValidatorDefinition.class),
-        @XmlElement(required = false, name = "predicateValidator", type = PredicateValidatorDefinition.class),
-        @XmlElement(required = false, name = "customValidator", type = CustomValidatorDefinition.class)}
-        )
+    @XmlElements({@XmlElement(required = false, name = "endpointValidator", type = EndpointValidatorDefinition.class),
+                  @XmlElement(required = false, name = "predicateValidator", type = PredicateValidatorDefinition.class),
+                  @XmlElement(required = false, name = "customValidator", type = CustomValidatorDefinition.class)})
     private List<ValidatorDefinition> validators;
 
     /**

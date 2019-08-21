@@ -53,18 +53,10 @@ public class SplitContinuedLogIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).continued(true).logContinued(false)
-                        .to("log:error", "mock:error");
+                onException(Exception.class).continued(true).logContinued(false).to("log:error", "mock:error");
 
-                from("direct:start")
-                    .split(body(), new SplitAggregationStrategy()).shareUnitOfWork()
-                        .to("mock:line")
-                        .filter(simple("${body} == 'bar'"))
-                            .throwException(new IllegalArgumentException("Forced"))
-                        .end()
-                    .end()
-                    .to("log:result")
-                    .to("mock:result");
+                from("direct:start").split(body(), new SplitAggregationStrategy()).shareUnitOfWork().to("mock:line").filter(simple("${body} == 'bar'"))
+                    .throwException(new IllegalArgumentException("Forced")).end().end().to("log:result").to("mock:result");
             }
         };
     }

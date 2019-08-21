@@ -31,32 +31,22 @@ public class DirectVmNoPropertyPropagationTest extends ContextTestSupport {
         template.sendBody("direct-vm:start.props", "Hello World");
         template.sendBody("direct-vm:start.default", "Hello World");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // Starters.
-                from("direct-vm:start.noprops")
-                    .setProperty("abc", constant("def"))
-                    .to("direct-vm:foo.noprops?propagateProperties=false&block=false");
-                
-                from("direct-vm:start.props")
-                    .setProperty("abc", constant("def"))
-                    .to("direct-vm:foo.props?propagateProperties=true");
+                from("direct-vm:start.noprops").setProperty("abc", constant("def")).to("direct-vm:foo.noprops?propagateProperties=false&block=false");
 
-                from("direct-vm:start.default")
-                    .setProperty("abc", constant("def"))
-                    .to("direct-vm:foo.props");
-                
+                from("direct-vm:start.props").setProperty("abc", constant("def")).to("direct-vm:foo.props?propagateProperties=true");
+
+                from("direct-vm:start.default").setProperty("abc", constant("def")).to("direct-vm:foo.props");
+
                 // Asserters.
-                from("direct-vm:foo.noprops").process(exchange -> 
-                    assertNull(exchange.getProperty("abc"))
-                );
-                
-                from("direct-vm:foo.props").process(exchange -> 
-                    assertEquals("def", exchange.getProperty("abc", String.class))
-                );
+                from("direct-vm:foo.noprops").process(exchange -> assertNull(exchange.getProperty("abc")));
+
+                from("direct-vm:foo.props").process(exchange -> assertEquals("def", exchange.getProperty("abc", String.class)));
             }
         };
     }

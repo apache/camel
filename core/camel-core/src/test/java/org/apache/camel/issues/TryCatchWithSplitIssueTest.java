@@ -52,7 +52,6 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -66,17 +65,8 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:start")
-                    .split(body().tokenize("@"))
-                    .doTry()
-                        .to("bean:error")
-                        .to("mock:result")
-                    .doCatch(Exception.class)
-                        .to("mock:error")
-                    .doFinally()
-                        .to("mock:foo")
-                        .to("mock:bar")
-                    .end();
+                from("direct:start").split(body().tokenize("@")).doTry().to("bean:error").to("mock:result").doCatch(Exception.class).to("mock:error").doFinally().to("mock:foo")
+                    .to("mock:bar").end();
             }
 
         };

@@ -47,9 +47,7 @@ public class RecipientListExchangePropertyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                        .recipientList(constant("mock:x,mock:y,mock:z"))
-                        .to("mock:result");
+                from("direct:a").recipientList(constant("mock:x,mock:y,mock:z")).to("mock:result");
             }
         };
 

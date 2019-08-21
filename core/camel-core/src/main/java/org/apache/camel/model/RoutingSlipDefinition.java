@@ -38,7 +38,8 @@ import org.apache.camel.spi.Metadata;
 public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> extends ExpressionNode {
     public static final String DEFAULT_DELIMITER = ",";
 
-    @XmlAttribute @Metadata(defaultValue = ",")
+    @XmlAttribute
+    @Metadata(defaultValue = ",")
     private String uriDelimiter;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoints;
@@ -57,12 +58,12 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         super(new HeaderExpression(headerName));
         setUriDelimiter(uriDelimiter);
     }
-    
+
     public RoutingSlipDefinition(Expression expression, String uriDelimiter) {
         super(expression);
         setUriDelimiter(uriDelimiter);
     }
-    
+
     public RoutingSlipDefinition(Expression expression) {
         this(expression, DEFAULT_DELIMITER);
     }
@@ -88,8 +89,10 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     }
 
     /**
-     * Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style.
-     * Notice the expression is evaluated once, if you want a more dynamic style, then the dynamic router eip is a better choice.
+     * Expression to define the routing slip, which defines which endpoints to
+     * route the message in a pipeline style. Notice the expression is evaluated
+     * once, if you want a more dynamic style, then the dynamic router eip is a
+     * better choice.
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {
@@ -104,11 +107,11 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     public String getUriDelimiter() {
         return uriDelimiter;
     }
-    
+
     public void setIgnoreInvalidEndpoints(Boolean ignoreInvalidEndpoints) {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
-    
+
     public Boolean getIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
@@ -128,11 +131,12 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     @SuppressWarnings("unchecked")
     public Type end() {
         // allow end() to return to previous type so you can continue in the DSL
-        return (Type) super.end();
+        return (Type)super.end();
     }
-    
+
     /**
-     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     * Ignore the invalidate endpoint exception when try to create a producer
+     * with that endpoint
      *
      * @return the builder
      */
@@ -153,10 +157,12 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     }
 
     /**
-     * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used
-     * to cache and reuse producers when using this routing slip, when uris are reused.
+     * Sets the maximum size used by the
+     * {@link org.apache.camel.spi.ProducerCache} which is used to cache and
+     * reuse producers when using this routing slip, when uris are reused.
      *
-     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
+     *            or <tt>-1</tt> to turn cache off.
      * @return the builder
      */
     public RoutingSlipDefinition<Type> cacheSize(int cacheSize) {

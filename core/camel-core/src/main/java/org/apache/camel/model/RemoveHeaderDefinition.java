@@ -31,15 +31,15 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefinition> {
     @XmlAttribute(required = true)
-    private String headerName;   
-    
+    private String headerName;
+
     public RemoveHeaderDefinition() {
     }
-    
+
     public RemoveHeaderDefinition(String headerName) {
         setHeaderName(headerName);
     }
-    
+
     @Override
     public String toString() {
         return "RemoveHeader[" + getHeaderName() + "]";

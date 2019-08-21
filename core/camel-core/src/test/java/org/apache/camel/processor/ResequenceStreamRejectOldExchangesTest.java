@@ -89,9 +89,13 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:start")
-                    .onException(MessageRejectedException.class).maximumRedeliveries(0).handled(true).to("mock:error").end()
-                    .resequence(header("seqno")).stream().capacity(3).rejectOld().timeout(50).deliveryAttemptInterval(10) // use low timeout to run faster
+                from("direct:start").onException(MessageRejectedException.class).maximumRedeliveries(0).handled(true).to("mock:error").end().resequence(header("seqno")).stream()
+                    .capacity(3).rejectOld().timeout(50).deliveryAttemptInterval(10) // use
+                                                                                     // low
+                                                                                     // timeout
+                                                                                     // to
+                                                                                     // run
+                                                                                     // faster
                     .to("mock:result");
             }
         };

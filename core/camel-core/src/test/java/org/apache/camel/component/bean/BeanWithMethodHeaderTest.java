@@ -35,14 +35,13 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     public void testEcho() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("echo Hello World");
-        
+
         template.sendBody("direct:echo", "Hello World");
 
         assertMockEndpointsSatisfied();
-        assertNull("There should no Bean_METHOD_NAME header",
-                   mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME));
+        assertNull("There should no Bean_METHOD_NAME header", mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME));
     }
-    
+
     @Test
     public void testEchoWithMethodHeaderHi() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -50,12 +49,13 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         // header should be removed after usage
         mock.message(0).header(Exchange.BEAN_METHOD_NAME).isNull();
 
-        // header overrule endpoint configuration, so we should invoke the hi method
+        // header overrule endpoint configuration, so we should invoke the hi
+        // method
         template.sendBodyAndHeader("direct:echo", ExchangePattern.InOut, "Hello World", Exchange.BEAN_METHOD_NAME, "hi");
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testMixedBeanEndpoints() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -63,7 +63,8 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         // header should be removed after usage
         mock.message(0).header(Exchange.BEAN_METHOD_NAME).isNull();
 
-        // header overrule endpoint configuration, so we should invoke the hi method
+        // header overrule endpoint configuration, so we should invoke the hi
+        // method
         template.sendBodyAndHeader("direct:mixed", ExchangePattern.InOut, "Hello World", Exchange.BEAN_METHOD_NAME, "hi");
 
         assertMockEndpointsSatisfied();
@@ -86,7 +87,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(AmbiguousMethodCallException.class, e.getCause());
-            AmbiguousMethodCallException ace = (AmbiguousMethodCallException) e.getCause();
+            AmbiguousMethodCallException ace = (AmbiguousMethodCallException)e.getCause();
             assertEquals(2, ace.getMethods().size());
         }
     }
@@ -142,7 +143,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
                 from("direct:echo").bean("myBean", "echo").to("mock:result");
 
                 from("direct:hi").bean("myBean", "hi").to("mock:result");
-                
+
                 from("direct:mixed").bean("myBean", "echo").bean("myBean", "hi").to("mock:result");
 
                 from("direct:fail").bean("myBean").to("mock:result");

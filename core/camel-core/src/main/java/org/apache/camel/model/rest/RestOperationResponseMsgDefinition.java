@@ -121,8 +121,9 @@ public class RestOperationResponseMsgDefinition {
     }
 
     /**
-     * The response code such as a HTTP status code. Can use <tt>general</tt>, or other words
-     * to indicate general error responses that do not map to a specific HTTP status code
+     * The response code such as a HTTP status code. Can use <tt>general</tt>,
+     * or other words to indicate general error responses that do not map to a
+     * specific HTTP status code
      */
     public RestOperationResponseMsgDefinition code(String code) {
         setCode(code);

@@ -27,9 +27,7 @@ public class SplitTokenizerXmlMultilineTest extends ContextTestSupport {
 
     @Test
     public void testSingleLine() throws Exception {
-        String payload = "<Parent>\n"
-                + "\t<Child A=\"1\" B=\"2\"/>\n"
-                + "</Parent>";
+        String payload = "<Parent>\n" + "\t<Child A=\"1\" B=\"2\"/>\n" + "</Parent>";
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -40,10 +38,7 @@ public class SplitTokenizerXmlMultilineTest extends ContextTestSupport {
 
     @Test
     public void testMultipleLines() throws Exception {
-        String payload = "<Parent>\n"
-                + "\t<Child A=\"1\"\n"
-                + "\tB=\"2\"/>\n"
-                + "</Parent>";
+        String payload = "<Parent>\n" + "\t<Child A=\"1\"\n" + "\tB=\"2\"/>\n" + "</Parent>";
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -57,9 +52,7 @@ public class SplitTokenizerXmlMultilineTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split().tokenizeXML("Child")
-                        .to("mock:result");
+                from("direct:start").split().tokenizeXML("Child").to("mock:result");
             }
         };
     }

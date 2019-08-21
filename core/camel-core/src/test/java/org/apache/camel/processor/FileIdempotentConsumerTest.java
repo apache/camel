@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -93,9 +94,7 @@ public class FileIdempotentConsumerTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock:result");
+                from("direct:start").idempotentConsumer(header("messageId"), repo).to("mock:result");
             }
         };
     }

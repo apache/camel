@@ -76,7 +76,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     /**
      * Applies this interceptor only if the given predicate is true
      *
-     * @param predicate  the predicate
+     * @param predicate the predicate
      * @return the builder
      */
     public InterceptSendToEndpointDefinition when(@AsPredicate Predicate predicate) {
@@ -86,7 +86,8 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     }
 
     /**
-     * Skip sending the {@link org.apache.camel.Exchange} to the original intended endpoint
+     * Skip sending the {@link org.apache.camel.Exchange} to the original
+     * intended endpoint
      *
      * @return the builder
      */
@@ -96,7 +97,8 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     }
 
     /**
-     * After sending to the endpoint then send the message to this url which allows to process its result.
+     * After sending to the endpoint then send the message to this url which
+     * allows to process its result.
      *
      * @return the builder
      */
@@ -106,13 +108,14 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     }
 
     /**
-     * This method is <b>only</b> for handling some post configuration
-     * that is needed since this is an interceptor, and we have to do
-     * a bit of magic logic to fixup to handle predicates
-     * with or without proceed/stop set as well.
+     * This method is <b>only</b> for handling some post configuration that is
+     * needed since this is an interceptor, and we have to do a bit of magic
+     * logic to fixup to handle predicates with or without proceed/stop set as
+     * well.
      */
     public void afterPropertiesSet() {
-        // okay the intercept endpoint works a bit differently than the regular interceptors
+        // okay the intercept endpoint works a bit differently than the regular
+        // interceptors
         // so we must fix the route definition yet again
 
         if (getOutputs().size() == 0) {
@@ -120,10 +123,11 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
             return;
         }
 
-        // if there is a when definition at first, then its a predicate for this interceptor
+        // if there is a when definition at first, then its a predicate for this
+        // interceptor
         ProcessorDefinition<?> first = getOutputs().get(0);
         if (first instanceof WhenDefinition && !(first instanceof WhenSkipSendToEndpointDefinition)) {
-            WhenDefinition when = (WhenDefinition) first;
+            WhenDefinition when = (WhenDefinition)first;
 
             // create a copy of when to use as replacement
             WhenSkipSendToEndpointDefinition newWhen = new WhenSkipSendToEndpointDefinition();
@@ -140,7 +144,8 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
                 ProcessorDefinition<?> out = outputs.get(i);
                 newWhen.addOutput(out);
             }
-            // remove the moved from the original output, by just keeping the first one
+            // remove the moved from the original output, by just keeping the
+            // first one
             clearOutput();
             outputs.add(newWhen);
         }
@@ -151,13 +156,14 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     }
 
     /**
-     * If set to true then the message is not sent to the original endpoint.
-     * By default (false) the message is both intercepted and then sent to the original endpoint.
+     * If set to true then the message is not sent to the original endpoint. By
+     * default (false) the message is both intercepted and then sent to the
+     * original endpoint.
      */
     public void setSkipSendToOriginalEndpoint(Boolean skipSendToOriginalEndpoint) {
         this.skipSendToOriginalEndpoint = skipSendToOriginalEndpoint;
     }
-    
+
     public String getUri() {
         return uri;
     }
@@ -174,7 +180,8 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     }
 
     /**
-     * After sending to the endpoint then send the message to this uri which allows to process its result.
+     * After sending to the endpoint then send the message to this uri which
+     * allows to process its result.
      */
     public void setAfterUri(String afterProcessor) {
         this.afterUri = afterProcessor;

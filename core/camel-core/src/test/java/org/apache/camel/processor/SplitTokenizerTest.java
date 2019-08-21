@@ -76,7 +76,7 @@ public class SplitTokenizerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSplitTokenizerEWithSlash() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
@@ -86,7 +86,7 @@ public class SplitTokenizerTest extends ContextTestSupport {
         mock.assertIsSatisfied();
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSplitTokenizerF() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
@@ -103,34 +103,22 @@ public class SplitTokenizerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
-                from("direct:a")
-                    .split().tokenize(",")
-                        .to("mock:split");
 
-                from("direct:b")
-                    .split().tokenize(",", "myHeader")
-                        .to("mock:split");
+                from("direct:a").split().tokenize(",").to("mock:split");
 
-                from("direct:c")
-                    .split().tokenize("(\\W+)\\s*", null, true)
-                        .to("mock:split");
+                from("direct:b").split().tokenize(",", "myHeader").to("mock:split");
 
-                from("direct:d")
-                    .split().tokenizePair("[", "]", true)
-                        .to("mock:split");
-                
-                from("direct:e")
-                    .split().tokenizeXML("person")
-                    .to("mock:split");
+                from("direct:c").split().tokenize("(\\W+)\\s*", null, true).to("mock:split");
 
-                from("direct:f")
-                    .split().xpath("//person")
-                        // To test the body is not empty 
-                        // it will call the ObjectHelper.evaluateValuePredicate()
-                        .filter().simple("${body}")
-                            .to("mock:split");
-              
+                from("direct:d").split().tokenizePair("[", "]", true).to("mock:split");
+
+                from("direct:e").split().tokenizeXML("person").to("mock:split");
+
+                from("direct:f").split().xpath("//person")
+                    // To test the body is not empty
+                    // it will call the ObjectHelper.evaluateValuePredicate()
+                    .filter().simple("${body}").to("mock:split");
+
             }
         };
     }

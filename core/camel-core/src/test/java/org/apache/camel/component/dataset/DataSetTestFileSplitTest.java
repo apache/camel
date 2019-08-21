@@ -44,8 +44,7 @@ public class DataSetTestFileSplitTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("dataset-test:file:target/data/testme?noop=true&split=true&timeout=1000");
+                from("direct:start").to("dataset-test:file:target/data/testme?noop=true&split=true&timeout=1000");
             }
         });
         context.start();

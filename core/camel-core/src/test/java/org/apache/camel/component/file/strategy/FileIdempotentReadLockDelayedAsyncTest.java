@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.strategy;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -67,7 +68,8 @@ public class FileIdempotentReadLockDelayedAsyncTest extends ContextTestSupport {
         assertTrue(notify.matches(10, TimeUnit.SECONDS));
 
         // the files are kept on commit
-        // if you want to remove them then the idempotent repo need some way to evict idle keys
+        // if you want to remove them then the idempotent repo need some way to
+        // evict idle keys
         assertEquals(2, myRepo.getCacheSize());
     }
 
@@ -84,8 +86,7 @@ public class FileIdempotentReadLockDelayedAsyncTest extends ContextTestSupport {
                             int size = myRepo.getCacheSize();
                             assertTrue(size == 1 || size == 2);
                         }
-                    })
-                    .to("mock:result");
+                    }).to("mock:result");
             }
         };
     }

@@ -27,14 +27,8 @@ public class TryCatchSetHeaderIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .doTry()
-                        .setHeader("foo", constant("try"))
-                        .throwException(new IllegalArgumentException("Damn"))
-                    .doCatch(Exception.class)
-                        .setHeader("foo", constant("error"))
-                    .end()
-                    .to("mock:end");
+                from("direct:start").doTry().setHeader("foo", constant("try")).throwException(new IllegalArgumentException("Damn")).doCatch(Exception.class)
+                    .setHeader("foo", constant("error")).end().to("mock:end");
             }
         });
         context.start();
@@ -52,16 +46,8 @@ public class TryCatchSetHeaderIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .doTry()
-                        .setHeader("foo", constant("try"))
-                        .throwException(new IllegalArgumentException("Damn"))
-                    .doCatch(IllegalArgumentException.class)
-                        .setHeader("foo", constant("error"))
-                    .doCatch(Exception.class)
-                        .setHeader("foo", constant("damn"))
-                    .end()
-                    .to("mock:end");
+                from("direct:start").doTry().setHeader("foo", constant("try")).throwException(new IllegalArgumentException("Damn")).doCatch(IllegalArgumentException.class)
+                    .setHeader("foo", constant("error")).doCatch(Exception.class).setHeader("foo", constant("damn")).end().to("mock:end");
             }
         });
         context.start();

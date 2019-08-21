@@ -51,25 +51,18 @@ public class AsyncFailureProcessorWithRedeliveryTest extends ContextTestSupport 
                 // use redelivery up till 5 times
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5));
 
-                from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        // invoking the async endpoint could also cause a failure so
-                        // test that we can do redelivery
-                        .to("async:bye:camel?failFirstAttempts=2")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                from("direct:start").to("mock:before").to("log:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                })
+                    // invoking the async endpoint could also cause a failure so
+                    // test that we can do redelivery
+                    .to("async:bye:camel?failFirstAttempts=2").process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            afterThreadName = Thread.currentThread().getName();
+                        }
+                    }).to("log:after").to("mock:after").to("mock:result");
             }
         };
     }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -41,7 +42,7 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
 
         MockEndpoint mock2 = getMockEndpoint("mock:skip");
         mock2.expectedMessageCount(2);
-        
+
         sendFiles();
 
         assertMockEndpointsSatisfied();
@@ -61,8 +62,7 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
             public void configure() throws Exception {
                 interceptFrom().when(simple("${file:length} == 0")).to("mock:skip").stop();
 
-                from("file://target/data/exclude/?initialDelay=10&delay=10")
-                    .convertBodyTo(String.class).to("log:test").to("mock:result");
+                from("file://target/data/exclude/?initialDelay=10&delay=10").convertBodyTo(String.class).to("log:test").to("mock:result");
             }
         };
     }

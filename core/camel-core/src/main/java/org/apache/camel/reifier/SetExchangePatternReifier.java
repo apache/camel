@@ -25,7 +25,7 @@ import org.apache.camel.spi.RouteContext;
 public class SetExchangePatternReifier extends ProcessorReifier<SetExchangePatternDefinition> {
 
     SetExchangePatternReifier(ProcessorDefinition<?> definition) {
-        super((SetExchangePatternDefinition) definition);
+        super((SetExchangePatternDefinition)definition);
     }
 
     @Override

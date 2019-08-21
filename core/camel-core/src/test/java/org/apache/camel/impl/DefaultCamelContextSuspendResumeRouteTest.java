@@ -31,7 +31,7 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
         mock.expectedBodiesReceived("A");
 
         template.sendBody("seda:foo", "A");
-        
+
         assertMockEndpointsSatisfied();
 
         log.info("Suspending");

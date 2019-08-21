@@ -42,10 +42,8 @@ public class StreamCachingRoutingSlipTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setStreamCaching(true);
 
-                from("direct:a")
-                    .routingSlip(header("mySlip"));
+                from("direct:a").routingSlip(header("mySlip"));
             }
         };
     }
 }
-

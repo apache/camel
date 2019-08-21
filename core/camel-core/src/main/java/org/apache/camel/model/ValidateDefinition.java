@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Validates a message based on an expression
  */
-@Metadata(label = "eip,transformation") @AsPredicate
+@Metadata(label = "eip,transformation")
+@AsPredicate
 @XmlRootElement(name = "validate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValidateDefinition extends ExpressionNode {
@@ -49,7 +50,7 @@ public class ValidateDefinition extends ExpressionNode {
     public String toString() {
         return "Validate[" + getExpression() + " -> " + getOutputs() + "]";
     }
-    
+
     @Override
     public String getShortName() {
         return "validate";
@@ -61,14 +62,14 @@ public class ValidateDefinition extends ExpressionNode {
     }
 
     /**
-     * Expression to use for validation as a predicate. The expression should return either <tt>true</tt> or <tt>false</tt>.
-     * If returning <tt>false</tt> the message is invalid and an exception is thrown.
+     * Expression to use for validation as a predicate. The expression should
+     * return either <tt>true</tt> or <tt>false</tt>. If returning
+     * <tt>false</tt> the message is invalid and an exception is thrown.
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
     }
-
 
 }

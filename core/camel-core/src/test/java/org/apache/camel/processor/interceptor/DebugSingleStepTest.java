@@ -28,7 +28,6 @@ import org.apache.camel.spi.Breakpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class DebugSingleStepTest extends ContextTestSupport {
 
     private List<String> logs = new ArrayList<>();

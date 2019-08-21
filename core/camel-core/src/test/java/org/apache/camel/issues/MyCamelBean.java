@@ -20,7 +20,7 @@ package org.apache.camel.issues;
  *
  */
 public class MyCamelBean {
-    
+
     private int id;
     private String name;
 

@@ -60,9 +60,7 @@ public class BeanInfoSingleMethodServiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(myService, "doSomething")
-                    .to("mock:result");
+                from("direct:start").bean(myService, "doSomething").to("mock:result");
             }
         };
     }

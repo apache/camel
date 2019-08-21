@@ -34,27 +34,28 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 
         MockEndpoint mockEP = getMockEndpoint("mock:result");
         mockEP.setExpectedMessageCount(10);
-        
-        //send some message through the route
+
+        // send some message through the route
         for (int i = 0; i < 5; i++) {
             template.sendBody("seda:start", "message-" + i);
         }
 
-        // stop route with a 1s timeout and abortAfterTimeout=true (should abort after 1s)
+        // stop route with a 1s timeout and abortAfterTimeout=true (should abort
+        // after 1s)
         boolean stopRouteResponse = context.getRouteController().stopRoute("start", 1, TimeUnit.SECONDS, true);
 
         // confirm that route is still running
         assertFalse("stopRoute response should be False", stopRouteResponse);
         assertEquals("route should still be started", true, context.getRouteController().getRouteStatus("start").isStarted());
 
-        //send some more messages through the route
+        // send some more messages through the route
         for (int i = 5; i < 10; i++) {
             template.sendBody("seda:start", "message-" + i);
         }
-        
+
         mockEP.assertIsSatisfied();
     }
-    
+
     @Test
     public void testStopRouteWithAbortAfterTimeoutFalse() throws Exception {
         // doesnt test to well on all Windows
@@ -64,12 +65,13 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 
         MockEndpoint mockEP = getMockEndpoint("mock:result");
 
-        //send some message through the route
+        // send some message through the route
         for (int i = 0; i < 5; i++) {
             template.sendBody("seda:start", "message-" + i);
         }
-        
-        // stop route with a 1s timeout and abortAfterTimeout=false (normal timeout behavior)
+
+        // stop route with a 1s timeout and abortAfterTimeout=false (normal
+        // timeout behavior)
         boolean stopRouteResponse = context.getRouteController().stopRoute("start", 1, TimeUnit.SECONDS, false);
 
         // the route should have been forced stopped
@@ -86,7 +88,7 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
         int after = mockEP.getExchanges().size();
         assertEquals("Should not route messages", before, after);
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

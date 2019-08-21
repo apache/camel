@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -63,9 +64,9 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filelanguage/bean/"
-                      + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=doNotExistMethod}.txt&delete=true").to("mock:result");
-                    // specify a method name that does not exists
+                from("file://target/data/filelanguage/bean/" + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=doNotExistMethod}.txt&delete=true")
+                    .to("mock:result");
+                // specify a method name that does not exists
             }
         });
 

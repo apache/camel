@@ -48,11 +48,7 @@ public class AdviceWithWeaveByToUriCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(header("foo")).to("direct:branch-1")
-                    .otherwise()
-                         .to("direct:branch-2");
+                from("direct:start").choice().when(header("foo")).to("direct:branch-1").otherwise().to("direct:branch-2");
             }
         };
     }

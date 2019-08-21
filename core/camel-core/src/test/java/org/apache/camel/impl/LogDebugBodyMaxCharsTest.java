@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;

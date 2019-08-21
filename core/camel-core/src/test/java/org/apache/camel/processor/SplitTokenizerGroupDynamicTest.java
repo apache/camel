@@ -48,14 +48,10 @@ public class SplitTokenizerGroupDynamicTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
-                from("direct:a")
-                    .split().tokenize(",", false, "${header.groups}")
-                        .to("mock:split");
 
-                from("direct:b")
-                    .split(bodyAs(String.class).tokenize(",", "${header.groups}", true))
-                        .to("mock:split");
+                from("direct:a").split().tokenize(",", false, "${header.groups}").to("mock:split");
+
+                from("direct:b").split(bodyAs(String.class).tokenize(",", "${header.groups}", true)).to("mock:split");
             }
         };
     }

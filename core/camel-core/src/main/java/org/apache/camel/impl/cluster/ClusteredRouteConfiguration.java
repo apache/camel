@@ -46,7 +46,7 @@ public class ClusteredRouteConfiguration implements Cloneable {
 
     public ClusteredRouteConfiguration copy() {
         try {
-            return (ClusteredRouteConfiguration) super.clone();
+            return (ClusteredRouteConfiguration)super.clone();
         } catch (CloneNotSupportedException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

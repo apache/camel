@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 public class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
 
     PolicyReifier(ProcessorDefinition<?> definition) {
-        super((PolicyDefinition) definition);
+        super((PolicyDefinition)definition);
     }
 
     @Override
@@ -46,7 +46,8 @@ public class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
         Processor target = policy.wrap(routeContext, childProcessor);
 
         if (!(target instanceof Service)) {
-            // wrap the target so it becomes a service and we can manage its lifecycle
+            // wrap the target so it becomes a service and we can manage its
+            // lifecycle
             target = new WrapProcessor(target, childProcessor);
         }
         return target;

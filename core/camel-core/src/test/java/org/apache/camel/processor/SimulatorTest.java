@@ -47,8 +47,7 @@ public class SimulatorTest extends ContextTestSupport {
         assertRespondsWith("bar", "Bye said bar");
     }
 
-    protected void assertRespondsWith(final String value, String containedText)
-        throws InvalidPayloadException {
+    protected void assertRespondsWith(final String value, String containedText) throws InvalidPayloadException {
         Exchange response = template.request("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
@@ -68,8 +67,7 @@ public class SimulatorTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").
-                    recipientList(simple("bean:${in.header.cheese}"));
+                from("direct:a").recipientList(simple("bean:${in.header.cheese}"));
                 // END SNIPPET: example
             }
         };

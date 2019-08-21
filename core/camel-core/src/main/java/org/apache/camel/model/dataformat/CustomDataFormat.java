@@ -25,7 +25,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use a custom data format implementation that does not come out of the box from Apache Camel.
+ * To use a custom data format implementation that does not come out of the box
+ * from Apache Camel.
  */
 @Metadata(label = "dataformat,transformation", title = "Custom")
 @XmlRootElement(name = "customDataFormat")
@@ -42,14 +43,16 @@ public class CustomDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup from the Camel registry.
+     * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup
+     * from the Camel registry.
      */
     public String getRef() {
         return ref;
     }
 
     /**
-     * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup from the Camel registry.
+     * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup
+     * from the Camel registry.
      */
     public void setRef(String ref) {
         this.ref = ref;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.resequencer;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -30,11 +31,11 @@ import static org.awaitility.Awaitility.await;
 public class ResequencerEngineTest extends TestSupport {
 
     private static final boolean IGNORE_LOAD_TESTS = Boolean.parseBoolean(System.getProperty("ignore.load.tests", "true"));
-    
+
     private ResequencerEngineSync<Integer> resequencer;
     private ResequencerRunner<Integer> runner;
     private SequenceBuffer<Integer> buffer;
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -59,7 +60,7 @@ public class ResequencerEngineTest extends TestSupport {
         assertEquals((Integer)4, buffer.take());
         assertEquals((Integer)4, resequencer.getLastDelivered());
     }
-    
+
     @Test
     public void testTimeout2() throws Exception {
         initResequencer(500, 10);
@@ -69,7 +70,7 @@ public class ResequencerEngineTest extends TestSupport {
         assertEquals((Integer)4, buffer.take());
         assertEquals((Integer)4, resequencer.getLastDelivered());
     }
-    
+
     @Test
     public void testTimeout3() throws Exception {
         initResequencer(500, 10);
@@ -78,7 +79,7 @@ public class ResequencerEngineTest extends TestSupport {
         assertEquals((Integer)4, buffer.poll(250));
         assertEquals((Integer)4, resequencer.getLastDelivered());
     }
-    
+
     @Test
     public void testTimeout4() throws Exception {
         initResequencer(500, 10);
@@ -89,7 +90,7 @@ public class ResequencerEngineTest extends TestSupport {
         assertEquals((Integer)4, buffer.poll(250));
         assertEquals((Integer)4, resequencer.getLastDelivered());
     }
-    
+
     @Test
     public void testRandom() throws Exception {
         if (IGNORE_LOAD_TESTS) {
@@ -109,7 +110,7 @@ public class ResequencerEngineTest extends TestSupport {
             int r = random.nextInt(i);
             int next = list.remove(r);
             sb.append(next).append(" ");
-            resequencer.insert(next); 
+            resequencer.insert(next);
         }
         log.info(sb.toString());
 
@@ -124,7 +125,7 @@ public class ResequencerEngineTest extends TestSupport {
         log.info(sb.toString());
         log.info("Duration = " + millis + " ms");
     }
-    
+
     @Test
     public void testReverse1() throws Exception {
         if (IGNORE_LOAD_TESTS) {
@@ -132,7 +133,7 @@ public class ResequencerEngineTest extends TestSupport {
         }
         testReverse(10);
     }
-    
+
     @Test
     public void testReverse2() throws Exception {
         if (IGNORE_LOAD_TESTS) {
@@ -140,7 +141,7 @@ public class ResequencerEngineTest extends TestSupport {
         }
         testReverse(100);
     }
-    
+
     private void testReverse(int capacity) throws Exception {
         initResequencer(1, capacity);
         for (int i = 99; i >= 0; i--) {
@@ -153,7 +154,7 @@ public class ResequencerEngineTest extends TestSupport {
         }
         log.info(sb.toString());
     }
-    
+
     private void initResequencer(long timeout, int capacity) {
         ResequencerEngine<Integer> engine;
         buffer = new SequenceBuffer<>();
@@ -168,5 +169,5 @@ public class ResequencerEngineTest extends TestSupport {
         // wait for runner to run
         await().atMost(1, TimeUnit.SECONDS).until(runner::isRunning);
     }
-    
+
 }

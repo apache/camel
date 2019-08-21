@@ -34,7 +34,8 @@ public class BeanNoTypeConvertionPossibleTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        // we send in a Date object which cannot be converted to XML so it should fail
+        // we send in a Date object which cannot be converted to XML so it
+        // should fail
         try {
             template.requestBody("direct:start", new Date());
             fail("Should have thrown an exception");

@@ -33,8 +33,8 @@ import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Base class for implementation inheritance for different clauses in the <a
- * href="http://camel.apache.org/dsl.html">Java DSL</a>
+ * Base class for implementation inheritance for different clauses in the
+ * <a href="http://camel.apache.org/dsl.html">Java DSL</a>
  */
 public abstract class BuilderSupport {
     private CamelContext context;
@@ -113,8 +113,9 @@ public abstract class BuilderSupport {
     /**
      * Returns a JSonPath expression value builder
      *
-     * @param value      The JSonPath expression
-     * @param resultType The result type that the JSonPath expression will return.
+     * @param value The JSonPath expression
+     * @param resultType The result type that the JSonPath expression will
+     *            return.
      */
     public ValueBuilder jsonpath(String value, Class<?> resultType) {
         JsonPathExpression exp = new JsonPathExpression(value);
@@ -146,14 +147,14 @@ public abstract class BuilderSupport {
     /**
      * Returns a simple expression value builder, using String.format style
      */
-    public SimpleBuilder simpleF(String format, Object...values) {
+    public SimpleBuilder simpleF(String format, Object... values) {
         return SimpleBuilder.simpleF(format, values);
     }
 
     /**
      * Returns a simple expression value builder, using String.format style
      */
-    public SimpleBuilder simpleF(String format, Class<?> resultType, Object...values) {
+    public SimpleBuilder simpleF(String format, Class<?> resultType, Object... values) {
         return SimpleBuilder.simpleF(format, resultType, values);
     }
 
@@ -170,7 +171,7 @@ public abstract class BuilderSupport {
     /**
      * Returns a xpath expression value builder
      *
-     * @param value      the XPath expression
+     * @param value the XPath expression
      * @param resultType the result type that the XPath expression will return.
      * @return the builder
      */
@@ -181,7 +182,7 @@ public abstract class BuilderSupport {
     /**
      * Returns a xpath expression value builder
      *
-     * @param value      the XPath expression
+     * @param value the XPath expression
      * @param namespaces namespace mappings
      * @return the builder
      */
@@ -192,13 +193,14 @@ public abstract class BuilderSupport {
     /**
      * Returns a xpath expression value builder
      *
-     * @param value      the XPath expression
+     * @param value the XPath expression
      * @param resultType the result type that the XPath expression will return.
      * @param namespaces namespace mappings
      * @return the builder
      */
     public ValueBuilder xpath(String value, Class<?> resultType, Namespaces namespaces) {
-        // the value may contain property placeholders as it may be used directly from Java DSL
+        // the value may contain property placeholders as it may be used
+        // directly from Java DSL
         try {
             value = getContext().resolvePropertyPlaceholders(value);
         } catch (Exception e) {
@@ -213,12 +215,14 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
-     * value builder
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method
+     * call expression</a> value builder
      * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     * This method accepts dual parameters. Either an bean instance or a
+     * reference to a bean (String).
      *
-     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @param beanOrBeanRef either an instanceof a bean or a reference to bean
+     *            to lookup in the Registry
      * @return the builder
      */
     public ValueBuilder method(Object beanOrBeanRef) {
@@ -226,13 +230,15 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
-     * value builder
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method
+     * call expression</a> value builder
      * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     * This method accepts dual parameters. Either an bean instance or a
+     * reference to a bean (String).
      *
-     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
-     * @param method   name of method to invoke
+     * @param beanOrBeanRef either an instanceof a bean or a reference to bean
+     *            to lookup in the Registry
+     * @param method name of method to invoke
      * @return the builder
      */
     public ValueBuilder method(Object beanOrBeanRef, String method) {
@@ -240,8 +246,8 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
-     * value builder
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method
+     * call expression</a> value builder
      *
      * @param beanType the Class of the bean which we want to invoke
      * @return the builder
@@ -251,11 +257,11 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
-     * value builder
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method
+     * call expression</a> value builder
      *
      * @param beanType the Class of the bean which we want to invoke
-     * @param method   name of method to invoke
+     * @param method name of method to invoke
      * @return the builder
      */
     public ValueBuilder method(Class<?> beanType, String method) {
@@ -288,7 +294,7 @@ public abstract class BuilderSupport {
     /**
      * Resolves the given URI to an endpoint
      *
-     * @param uri  the uri to resolve
+     * @param uri the uri to resolve
      * @throws NoSuchEndpointException if the endpoint URI could not be resolved
      * @return the endpoint
      */
@@ -304,7 +310,7 @@ public abstract class BuilderSupport {
     /**
      * Resolves the given URI to an endpoint of the specified type
      *
-     * @param uri  the uri to resolve
+     * @param uri the uri to resolve
      * @param type the excepted type of the endpoint
      * @throws NoSuchEndpointException if the endpoint URI could not be resolved
      * @return the endpoint
@@ -321,7 +327,7 @@ public abstract class BuilderSupport {
     /**
      * Resolves the list of URIs into a list of {@link Endpoint} instances
      *
-     * @param uris  list of endpoints to resolve
+     * @param uris list of endpoints to resolve
      * @throws NoSuchEndpointException if an endpoint URI could not be resolved
      * @return list of endpoints
      */
@@ -336,7 +342,7 @@ public abstract class BuilderSupport {
     /**
      * Helper method to create a list of {@link Endpoint} instances
      *
-     * @param endpoints  endpoints
+     * @param endpoints endpoints
      * @return list of the given endpoints
      */
     public List<Endpoint> endpoints(Endpoint... endpoints) {
@@ -346,7 +352,8 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Creates a default <a href="http://camel.apache.org/error-handler.html">error handler</a>.
+     * Creates a default
+     * <a href="http://camel.apache.org/error-handler.html">error handler</a>.
      *
      * @return the builder
      */
@@ -355,7 +362,8 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Creates a disabled <a href="http://camel.apache.org/error-handler.html">error handler</a>
+     * Creates a disabled
+     * <a href="http://camel.apache.org/error-handler.html">error handler</a>
      * for removing the default error handler
      *
      * @return the builder
@@ -365,10 +373,12 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a>
-     * is a error handler for handling messages that could not be delivered to it's intended destination.
+     * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter
+     * Channel EIP:</a> is a error handler for handling messages that could not
+     * be delivered to it's intended destination.
      *
-     * @param deadLetterUri  uri to the dead letter endpoint storing dead messages
+     * @param deadLetterUri uri to the dead letter endpoint storing dead
+     *            messages
      * @return the builder
      */
     public DeadLetterChannelBuilder deadLetterChannel(String deadLetterUri) {
@@ -376,10 +386,11 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a>
-     * is a error handler for handling messages that could not be delivered to it's intended destination.
+     * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter
+     * Channel EIP:</a> is a error handler for handling messages that could not
+     * be delivered to it's intended destination.
      *
-     * @param deadLetterEndpoint  dead letter endpoint storing dead messages
+     * @param deadLetterEndpoint dead letter endpoint storing dead messages
      * @return the builder
      */
     public DeadLetterChannelBuilder deadLetterChannel(Endpoint deadLetterEndpoint) {

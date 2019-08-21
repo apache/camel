@@ -84,7 +84,6 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 
         template.sendBody(directStart, body);
 
-
         // wait until endpoint is resolved
         await().atMost(1, TimeUnit.SECONDS).until(() -> resolveMandatoryEndpoint(endpointUri, ValidatorEndpoint.class) != null);
 

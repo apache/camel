@@ -26,11 +26,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class PipelineTest extends ContextTestSupport {
-    
+
     /**
      * Simple processor the copies the in to the out and increments a counter.
-     * Used to verify that the pipeline actually takes the output of one stage of 
-     * the pipe and feeds it in as input into the next stage.
+     * Used to verify that the pipeline actually takes the output of one stage
+     * of the pipe and feeds it in as input into the next stage.
      */
     private static final class InToOut implements Processor {
         @Override
@@ -64,7 +64,6 @@ public class PipelineTest extends ContextTestSupport {
         assertEquals("Result body", 4, results.getMessage().getBody());
     }
 
-    
     @Test
     public void testResultsReturned() throws Exception {
         Exchange exchange = template.request("direct:b", new Processor() {
@@ -72,7 +71,7 @@ public class PipelineTest extends ContextTestSupport {
                 exchange.getIn().setBody("Hello World");
             }
         });
-        
+
         assertEquals("Hello World", exchange.getMessage().getBody());
         assertEquals(3, exchange.getMessage().getHeader("copy-counter"));
     }
@@ -84,11 +83,11 @@ public class PipelineTest extends ContextTestSupport {
                 exchange.getIn().setHeader("header", "headerValue");
             }
         });
-        
+
         assertEquals("headerValue", exchange.getMessage().getHeader("header"));
         assertEquals(3, exchange.getMessage().getHeader("copy-counter"));
     }
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -118,8 +117,9 @@ public class PipelineTest extends ContextTestSupport {
                 from("direct:x").process(processor);
                 from("direct:y").process(processor);
                 from("direct:z").process(processor);
-                
-                // Create a route that uses the  InToOut processor 3 times. the copy-counter header should be == 3
+
+                // Create a route that uses the InToOut processor 3 times. the
+                // copy-counter header should be == 3
                 from("direct:b").process(new InToOut()).process(new InToOut()).process(new InToOut());
             }
         };

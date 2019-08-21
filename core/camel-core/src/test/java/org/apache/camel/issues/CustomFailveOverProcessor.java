@@ -47,8 +47,7 @@ public class CustomFailveOverProcessor extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .process(new MyFailOverProcessor(template, "direct:a", "direct:b"));
+                from("direct:start").process(new MyFailOverProcessor(template, "direct:a", "direct:b"));
 
                 // always fail
                 from("direct:a").to("mock:a").process(new Processor() {
@@ -90,5 +89,5 @@ public class CustomFailveOverProcessor extends ContextTestSupport {
         }
 
     }
-    
+
 }

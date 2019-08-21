@@ -169,10 +169,7 @@ public class ClusteredRouteController extends DefaultRouteController {
 
     @Override
     public Collection<Route> getControlledRoutes() {
-        return this.routes.stream()
-            .map(getCamelContext()::getRoute)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+        return this.routes.stream().map(getCamelContext()::getRoute).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override
@@ -284,9 +281,7 @@ public class ClusteredRouteController extends DefaultRouteController {
         // Can't perform action on routes managed by this controller as they
         // are clustered and they may be part of the same view.
         if (routes.contains(routeId)) {
-            throw new UnsupportedOperationException(
-                "Operation not supported as route " + routeId + " is clustered"
-            );
+            throw new UnsupportedOperationException("Operation not supported as route " + routeId + " is clustered");
         }
     }
 
@@ -297,7 +292,7 @@ public class ClusteredRouteController extends DefaultRouteController {
     private final class PolicyFactory implements RoutePolicyFactory {
         @Override
         public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode node) {
-            RouteDefinition route = (RouteDefinition) node;
+            RouteDefinition route = (RouteDefinition)node;
             // All the filter have to be match to include the route in the
             // clustering set-up
             if (filters.stream().allMatch(filter -> filter.test(camelContext, routeId, route))) {

@@ -47,7 +47,6 @@ public class RouteWithMistypedComponentNameTest extends TestSupport {
         }
     }
 
-
     @Test
     public void testNoSuchEndpointType() throws Exception {
         CamelContext context = new DefaultCamelContext();

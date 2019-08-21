@@ -45,7 +45,8 @@ public class TypeConverterRegistryTest extends Assert {
         DefaultCamelContext context = new DefaultCamelContext();
 
         // START SNIPPET: e1
-        // add our own type converter manually that converts from String -> MyOrder using MyOrderTypeConverter
+        // add our own type converter manually that converts from String ->
+        // MyOrder using MyOrderTypeConverter
         context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
         // END SNIPPET: e1
 
@@ -93,7 +94,8 @@ public class TypeConverterRegistryTest extends Assert {
     public void testRemoveTypeConverter() {
         DefaultCamelContext context = new DefaultCamelContext();
 
-        // add our own type converter manually that converts from String -> MyOrder using MyOrderTypeConverter
+        // add our own type converter manually that converts from String ->
+        // MyOrder using MyOrderTypeConverter
         context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
 
         MyOrder order = context.getTypeConverter().convertTo(MyOrder.class, "123");
@@ -129,7 +131,7 @@ public class TypeConverterRegistryTest extends Assert {
             // converter from value to the MyOrder bean
             MyOrder order = new MyOrder();
             order.setId(Integer.parseInt(value.toString()));
-            return (T) order;
+            return (T)order;
         }
     }
     // END SNIPPET: e2

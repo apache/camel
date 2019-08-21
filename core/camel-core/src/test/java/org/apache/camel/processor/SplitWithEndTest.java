@@ -37,7 +37,8 @@ public class SplitWithEndTest extends ContextTestSupport {
         // there should be 4 outputs as the end in the otherwise should
         // ensure that the transform and last send is not within the choice
         assertEquals(4, node.size());
-        // the navigate API is a bit simple at this time of writing so it does take a little
+        // the navigate API is a bit simple at this time of writing so it does
+        // take a little
         // bit of ugly code to find the correct processor in the runtime route
         assertIsInstanceOf(SendProcessor.class, unwrapChannel(node.get(0)).getNextProcessor());
         assertIsInstanceOf(Splitter.class, unwrapChannel(node.get(1)).getNextProcessor());
@@ -64,24 +65,17 @@ public class SplitWithEndTest extends ContextTestSupport {
 
                 MySplitBean bean = new MySplitBean();
 
-                from("direct:start")
-                    .to("mock:start")
-                    .split(body().tokenize(","),
-                            new AggregationStrategy() {
-                                public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                                    if (oldExchange == null) {
-                                        return newExchange;
-                                    }
-                                    String body = oldExchange.getIn().getBody(String.class);
-                                    String newBody = newExchange.getIn().getBody(String.class);
-                                    newExchange.getIn().setBody(body + "@" + newBody);
-                                    return newExchange;
-                                }
-                            })
-                        .bean(bean, "hi").to("mock:split").to("log:foo")
-                    .end()
-                    .transform(body().prepend("last "))
-                    .to("mock:last");
+                from("direct:start").to("mock:start").split(body().tokenize(","), new AggregationStrategy() {
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        if (oldExchange == null) {
+                            return newExchange;
+                        }
+                        String body = oldExchange.getIn().getBody(String.class);
+                        String newBody = newExchange.getIn().getBody(String.class);
+                        newExchange.getIn().setBody(body + "@" + newBody);
+                        return newExchange;
+                    }
+                }).bean(bean, "hi").to("mock:split").to("log:foo").end().transform(body().prepend("last ")).to("mock:last");
             }
         };
     }

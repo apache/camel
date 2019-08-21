@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,8 +25,8 @@ import org.junit.Before;
 
 public class OnCompletionGlobalCustomPoolTest extends OnCompletionGlobalTest {
 
-    private ExecutorService pool; 
-    
+    private ExecutorService pool;
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -33,7 +34,7 @@ public class OnCompletionGlobalCustomPoolTest extends OnCompletionGlobalTest {
         pool = Executors.newFixedThreadPool(2);
         super.setUp();
     }
-    
+
     @Override
     @After
     public void tearDown() throws Exception {
@@ -50,9 +51,7 @@ public class OnCompletionGlobalCustomPoolTest extends OnCompletionGlobalTest {
                 // use a custom thread pool
                 onCompletion().executorService(pool).to("log:global").to("mock:sync");
 
-                from("direct:start")
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                from("direct:start").process(new MyProcessor()).to("mock:result");
             }
         };
     }

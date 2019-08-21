@@ -332,7 +332,8 @@ public class SimpleTest extends LanguageTestSupport {
         byte[] body = "hello world".getBytes();
         exchange.getIn().setBody(body);
 
-        // there is no upper case method on byte array, but we can convert to String as below
+        // there is no upper case method on byte array, but we can convert to
+        // String as below
         try {
             assertPredicate("${body.toUpperCase()} == 'HELLO WORLD'", true);
             fail("Should throw exception");
@@ -353,7 +354,8 @@ public class SimpleTest extends LanguageTestSupport {
         byte[] body = "hello world".getBytes();
         exchange.getIn().setBody(body);
 
-        // there is no upper case method on byte array, but we can convert to String as below
+        // there is no upper case method on byte array, but we can convert to
+        // String as below
         try {
             assertPredicate("${body.toUpperCase()} == 'HELLO WORLD'", true);
             fail("Should throw exception");
@@ -1395,7 +1397,7 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
             assertEquals("Failed to invoke method: .getFriend.getFriend.getName on org.apache.camel.language.simple.SimpleTest.Animal"
-                + " due last method returned null and therefore cannot continue to invoke method .getName on a null instance", e.getMessage());
+                         + " due last method returned null and therefore cannot continue to invoke method .getName on a null instance", e.getMessage());
         }
     }
 
@@ -1422,7 +1424,7 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
             assertEquals("Failed to invoke method: .friend.friend.name on org.apache.camel.language.simple.SimpleTest.Animal"
-                + " due last method returned null and therefore cannot continue to invoke method .name on a null instance", e.getMessage());
+                         + " due last method returned null and therefore cannot continue to invoke method .name on a null instance", e.getMessage());
         }
     }
 
@@ -1672,18 +1674,18 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testStringArrayLength() throws Exception {
-        exchange.getIn().setBody(new String[]{"foo", "bar"});
+        exchange.getIn().setBody(new String[] {"foo", "bar"});
         assertExpression("${body[0]}", "foo");
         assertExpression("${body[1]}", "bar");
         assertExpression("${body.length}", 2);
 
-        exchange.getIn().setBody(new String[]{"foo", "bar", "beer"});
+        exchange.getIn().setBody(new String[] {"foo", "bar", "beer"});
         assertExpression("${body.length}", 3);
     }
 
     @Test
     public void testByteArrayLength() throws Exception {
-        exchange.getIn().setBody(new byte[]{65, 66, 67});
+        exchange.getIn().setBody(new byte[] {65, 66, 67});
         assertExpression("${body[0]}", 65);
         assertExpression("${body[1]}", 66);
         assertExpression("${body[2]}", 67);
@@ -1692,7 +1694,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testIntArrayLength() throws Exception {
-        exchange.getIn().setBody(new int[]{1, 20, 300});
+        exchange.getIn().setBody(new int[] {1, 20, 300});
         assertExpression("${body[0]}", 1);
         assertExpression("${body[1]}", 20);
         assertExpression("${body[2]}", 300);
@@ -1750,9 +1752,9 @@ public class SimpleTest extends LanguageTestSupport {
         data.add("F");
         exchange.getIn().setBody(data);
 
-        Iterator it = (Iterator) evaluateExpression("${collate(3)}", null);
-        List chunk = (List) it.next();
-        List chunk2 = (List) it.next();
+        Iterator it = (Iterator)evaluateExpression("${collate(3)}", null);
+        List chunk = (List)it.next();
+        List chunk2 = (List)it.next();
         assertFalse(it.hasNext());
 
         assertEquals(3, chunk.size());
@@ -1778,10 +1780,10 @@ public class SimpleTest extends LanguageTestSupport {
         data.add("G");
         exchange.getIn().setBody(data);
 
-        Iterator it = (Iterator) evaluateExpression("${collate(3)}", null);
-        List chunk = (List) it.next();
-        List chunk2 = (List) it.next();
-        List chunk3 = (List) it.next();
+        Iterator it = (Iterator)evaluateExpression("${collate(3)}", null);
+        List chunk = (List)it.next();
+        List chunk2 = (List)it.next();
+        List chunk3 = (List)it.next();
         assertFalse(it.hasNext());
 
         assertEquals(3, chunk.size());
@@ -1892,8 +1894,10 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testNestedTypeFunction() throws Exception {
-        // when using type: function we need special logic to not lazy evaluate it so its evaluated only once
-        // and won't fool Camel to think its a nested OGNL method call expression instead (CAMEL-10664)
+        // when using type: function we need special logic to not lazy evaluate
+        // it so its evaluated only once
+        // and won't fool Camel to think its a nested OGNL method call
+        // expression instead (CAMEL-10664)
         exchange.setProperty(Exchange.AUTHENTICATION, 123);
         String exp = "${exchangeProperty.${type:org.apache.camel.Exchange.AUTHENTICATION}.toString()}";
         assertExpression(exp, "123");
@@ -2006,7 +2010,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     public static class MyClass {
         public Object[] getMyArray() {
-            return new Object[]{"Hallo", "World", "!"};
+            return new Object[] {"Hallo", "World", "!"};
         }
     }
 }

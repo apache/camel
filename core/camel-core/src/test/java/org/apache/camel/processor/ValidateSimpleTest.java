@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -64,14 +65,11 @@ public class ValidateSimpleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .validate().simple("${body} contains 'Camel'")
-                    .to("mock:result");
+                from("direct:start").validate().simple("${body} contains 'Camel'").to("mock:result");
             }
         };
     }

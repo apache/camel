@@ -37,7 +37,7 @@ public class SimpleRegistryWrapTest extends Assert {
             return "unwrap" + value;
         }
     };
-    
+
     @Before
     public void setUp() throws Exception {
         registry.bind("a", "123");
@@ -61,6 +61,5 @@ public class SimpleRegistryWrapTest extends Assert {
         assertEquals("unwrapwrap123", map.get("a"));
         assertEquals("unwrapwrap456", map.get("b"));
     }
- 
-}
 
+}

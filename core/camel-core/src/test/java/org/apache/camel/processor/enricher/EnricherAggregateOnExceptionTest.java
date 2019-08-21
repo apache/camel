@@ -78,16 +78,11 @@ public class EnricherAggregateOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .enrich("direct:foo", new MyAggregationStrategy(), true)
-                    .to("mock:result");
+                from("direct:start").enrich("direct:foo", new MyAggregationStrategy(), true).to("mock:result");
 
-                from("direct:start2")
-                    .enrich("direct:foo", new MyAggregationStrategy(), false)
-                    .to("mock:result");
+                from("direct:start2").enrich("direct:foo", new MyAggregationStrategy(), false).to("mock:result");
 
-                from("direct:foo")
-                    .process(new MyProcessor());
+                from("direct:foo").process(new MyProcessor());
             }
         };
     }

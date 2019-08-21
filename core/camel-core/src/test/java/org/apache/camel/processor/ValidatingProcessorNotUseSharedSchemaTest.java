@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,11 +51,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedMessageCount(1);
 
-        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>"
-            + "<user xmlns=\"http://foo.com/bar\">"
-            + "  <id>1</id>"
-            + "  <username>davsclaus</username>"
-            + "</user>";
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>" + "  <username>davsclaus</username>" + "</user>";
 
         template.sendBody("direct:start", xml);
 
@@ -66,11 +63,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedMessageCount(2);
 
-        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>"
-            + "<user xmlns=\"http://foo.com/bar\">"
-            + "  <id>1</id>"
-            + "  <username>davsclaus</username>"
-            + "</user>";
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>" + "  <username>davsclaus</username>" + "</user>";
 
         template.sendBody("direct:start", xml);
         template.sendBody("direct:start", xml);
@@ -83,10 +76,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:invalid");
         mock.expectedMessageCount(1);
 
-        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>"
-            + "<user xmlns=\"http://foo.com/bar\">"
-            + "  <username>someone</username>"
-            + "</user>";
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">" + "  <username>someone</username>" + "</user>";
 
         try {
             template.sendBody("direct:start", xml);
@@ -140,9 +130,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
 
                 onException(ValidationException.class).to("mock:invalid");
 
-                from("direct:start").
-                    process(validating).
-                    to("mock:valid");
+                from("direct:start").process(validating).to("mock:valid");
             }
         };
     }

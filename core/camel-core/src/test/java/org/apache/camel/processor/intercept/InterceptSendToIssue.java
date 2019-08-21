@@ -46,9 +46,7 @@ public class InterceptSendToIssue extends ContextTestSupport {
             public void configure() throws Exception {
                 interceptSendToEndpoint("direct:foo").to("mock:foo");
 
-                from("direct:start")
-                    .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                    .to("direct:foo");
+                from("direct:start").setHeader(Exchange.FILE_NAME, constant("hello.txt")).to("direct:foo");
                 from("direct:foo").log("Dummy");
             }
         };

@@ -42,5 +42,4 @@ public class InjectorDefaultsTest extends ContextTestSupport {
         assertNull(foo2.getName());
     }
 
-
 }

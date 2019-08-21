@@ -32,9 +32,7 @@ public class CustomRefLoadBalanceTest extends CustomLoadBalanceTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .loadBalance().custom("myBalancer")
-                    .to("mock:x", "mock:y", "mock:z");
+                from("direct:start").loadBalance().custom("myBalancer").to("mock:x", "mock:y", "mock:z");
             }
         };
     }

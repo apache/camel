@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,8 +32,8 @@ import org.junit.Test;
 
 public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
 
-    private ExecutorService service; 
-    
+    private ExecutorService service;
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -40,7 +41,7 @@ public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
         service = Executors.newFixedThreadPool(2);
         super.setUp();
     }
-    
+
     @Override
     @After
     public void tearDown() throws Exception {
@@ -84,17 +85,15 @@ public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
-                from("direct:start")
-                        .split(body().tokenize(",")).parallelProcessing().stopOnException().executorService(service)
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                if ("Kaboom".equals(body)) {
-                                    throw new IllegalArgumentException("Forced");
-                                }
-                            }
-                        }).to("mock:split");
+
+                from("direct:start").split(body().tokenize(",")).parallelProcessing().stopOnException().executorService(service).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if ("Kaboom".equals(body)) {
+                            throw new IllegalArgumentException("Forced");
+                        }
+                    }
+                }).to("mock:split");
             }
         };
     }

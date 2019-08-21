@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -60,7 +61,8 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        // send a message to seda:start to trigger the creating of the slowfile to poll
+        // send a message to seda:start to trigger the creating of the slowfile
+        // to poll
         template.sendBody("seda:start", "Create the slow file");
 
         mock.assertIsSatisfied();

@@ -48,12 +48,9 @@ public class DeadLetterChannelNotHandleNewExceptionTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("bean:" + BadErrorHandler.class.getName())
-                        .deadLetterHandleNewException(false));
+                errorHandler(deadLetterChannel("bean:" + BadErrorHandler.class.getName()).deadLetterHandleNewException(false));
 
-                from("direct:start")
-                    .log("Incoming ${body}")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

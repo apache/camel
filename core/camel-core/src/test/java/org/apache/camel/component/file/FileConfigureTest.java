@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -49,38 +50,38 @@ public class FileConfigureTest extends ContextTestSupport {
         assertFileEndpoint("file:/", File.separator, true);
         assertFileEndpoint("file:///", File.separator, true);
     }
-    
+
     @Test
     public void testUriWithParameters() throws Exception {
         FileEndpoint endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&consumer.bridgeErrorHandler=true"
-            + "&autoCreate=false&startingDirectoryMustExist=true&directoryMustExist=true&readLock=changed", FileEndpoint.class);
+                                                         + "&autoCreate=false&startingDirectoryMustExist=true&directoryMustExist=true&readLock=changed", FileEndpoint.class);
         assertNotNull("Could not find file endpoint", endpoint);
         assertEquals("Get a wrong option of StartingDirectoryMustExist", true, endpoint.isStartingDirectoryMustExist());
-        
+
         endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&startingDirectoryMustExist=true"
-            + "&consumer.bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
-        
+                                            + "&consumer.bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
+
         assertNotNull("Could not find file endpoint", endpoint);
         assertEquals("Get a wrong option of StartingDirectoryMustExist", true, endpoint.isStartingDirectoryMustExist());
-        
+
         endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&startingDirectoryMustExist=true&useFixedDelay=true&initialDelay=10"
-            + "&consumer.bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
-        
+                                            + "&consumer.bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
+
         assertNotNull("Could not find file endpoint", endpoint);
         assertEquals("Get a wrong option of StartingDirectoryMustExist", true, endpoint.isStartingDirectoryMustExist());
-        
+
         endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10", FileEndpoint.class);
-        
+
         assertNotNull("Could not find file endpoint", endpoint);
         assertEquals("Get a wrong option of StartingDirectoryMustExist", false, endpoint.isStartingDirectoryMustExist());
     }
-    
+
     @Test
     public void testUriWithCharset() throws Exception {
         FileEndpoint endpoint = resolveMandatoryEndpoint("file://target/data/foo/bar?charset=UTF-8", FileEndpoint.class);
         assertNotNull("Could not find endpoint: file://target/data/foo/bar?charset=UTF-8", endpoint);
         assertEquals("Get a wrong charset", "UTF-8", endpoint.getCharset());
-        
+
         try {
             resolveMandatoryEndpoint("file://target/data/foo/bar?charset=ASSI", FileEndpoint.class);
             // The charset is wrong
@@ -106,7 +107,8 @@ public class FileConfigureTest extends ContextTestSupport {
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        // one of the above tests created a /target folder in the root we want to get rid of when testing
+        // one of the above tests created a /target folder in the root we want
+        // to get rid of when testing
         deleteDirectory("/target");
     }
 

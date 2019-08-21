@@ -28,9 +28,7 @@ public class ThreadsCoreAndMaxPoolInvalidTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .threads(5, 2)
-                        .to("mock:result");
+                    from("direct:start").threads(5, 2).to("mock:result");
                 }
             });
 

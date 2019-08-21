@@ -49,9 +49,8 @@ public class VmMultipleConsumersMultipleContextTest extends ContextTestSupport {
 
         camelContext.start();
 
-
-        MockEndpoint mock1 = (MockEndpoint) camelContext.getEndpoint("mock:route1");
-        MockEndpoint mock2 = (MockEndpoint) camelContext.getEndpoint("mock:route2");
+        MockEndpoint mock1 = (MockEndpoint)camelContext.getEndpoint("mock:route1");
+        MockEndpoint mock2 = (MockEndpoint)camelContext.getEndpoint("mock:route2");
         mock1.expectedMessageCount(100);
         mock2.expectedMessageCount(100);
 
@@ -76,7 +75,7 @@ public class VmMultipleConsumersMultipleContextTest extends ContextTestSupport {
             }
         });
         consumerContext1.start();
-        MockEndpoint route1Mock = (MockEndpoint) consumerContext1.getEndpoint("mock:route1");
+        MockEndpoint route1Mock = (MockEndpoint)consumerContext1.getEndpoint("mock:route1");
         route1Mock.expectedMessageCount(100);
 
         // start up context 2
@@ -88,7 +87,7 @@ public class VmMultipleConsumersMultipleContextTest extends ContextTestSupport {
             }
         });
         consumerContext2.start();
-        MockEndpoint route2Mock = (MockEndpoint) consumerContext2.getEndpoint("mock:route2");
+        MockEndpoint route2Mock = (MockEndpoint)consumerContext2.getEndpoint("mock:route2");
         route2Mock.expectedMessageCount(100);
 
         // use context part of contextTestSupport to send in messages
@@ -126,7 +125,7 @@ public class VmMultipleConsumersMultipleContextTest extends ContextTestSupport {
             }
         });
         consumerContext1.start();
-        MockEndpoint route1Mock = (MockEndpoint) consumerContext1.getEndpoint("mock:route1");
+        MockEndpoint route1Mock = (MockEndpoint)consumerContext1.getEndpoint("mock:route1");
         route1Mock.expectedMessageCount(100);
 
         // start up context 2
@@ -138,7 +137,7 @@ public class VmMultipleConsumersMultipleContextTest extends ContextTestSupport {
             }
         });
         consumerContext2.start();
-        MockEndpoint route2Mock = (MockEndpoint) consumerContext2.getEndpoint("mock:route2");
+        MockEndpoint route2Mock = (MockEndpoint)consumerContext2.getEndpoint("mock:route2");
         route2Mock.expectedMessageCount(0);
 
         // use context part of contextTestSupport to send in messages

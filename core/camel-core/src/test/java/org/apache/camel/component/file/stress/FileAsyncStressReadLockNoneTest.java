@@ -32,18 +32,17 @@ public class FileAsyncStressReadLockNoneTest extends FileAsyncStressTest {
             @Override
             public void configure() throws Exception {
                 // leverage the fact that we can limit to max 50 files per poll
-                // this will result in polling again and potentially picking up files
+                // this will result in polling again and potentially picking up
+                // files
                 // that already are in progress
-                from("file:target/data/filestress?maxMessagesPerPoll=50&readLock=none").routeId("foo").noAutoStartup()
-                    .threads(10)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // simulate some work with random time to complete
-                            Random ran = new Random();
-                            int delay = ran.nextInt(250) + 10;
-                            Thread.sleep(delay);
-                        }
-                    }).to("mock:result");
+                from("file:target/data/filestress?maxMessagesPerPoll=50&readLock=none").routeId("foo").noAutoStartup().threads(10).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // simulate some work with random time to complete
+                        Random ran = new Random();
+                        int delay = ran.nextInt(250) + 10;
+                        Thread.sleep(delay);
+                    }
+                }).to("mock:result");
             }
         };
     }

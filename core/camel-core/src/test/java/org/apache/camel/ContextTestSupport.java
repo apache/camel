@@ -36,19 +36,20 @@ import org.junit.Before;
  * along with a {@link ProducerTemplate} for use in the test case
  */
 public abstract class ContextTestSupport extends TestSupport {
-    
+
     protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
     protected volatile NotifyBuilder oneExchangeDone;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
-    
+
     /**
      * Use the RouteBuilder or not
-     * @return 
-     *  If the return value is true, the camel context will be started in the setup method.
-     *  If the return value is false, the camel context will not be started in the setup method.
+     * 
+     * @return If the return value is true, the camel context will be started in
+     *         the setup method. If the return value is false, the camel context
+     *         will not be started in the setup method.
      */
     public boolean isUseRouteBuilder() {
         return useRouteBuilder;
@@ -72,12 +73,13 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Convenient api to create a NotifyBuilder to be notified of a specific event
+     * Convenient api to create a NotifyBuilder to be notified of a specific
+     * event
      */
     protected NotifyBuilder event() {
         return new NotifyBuilder(context);
     }
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -103,7 +105,8 @@ public abstract class ContextTestSupport extends TestSupport {
         consumer = context.createConsumerTemplate();
         consumer.start();
 
-        // create a default notifier when 1 exchange is done which is the most common case
+        // create a default notifier when 1 exchange is done which is the most
+        // common case
         oneExchangeDone = event().whenDone(1).create();
 
         if (isUseRouteBuilder()) {
@@ -116,7 +119,7 @@ public abstract class ContextTestSupport extends TestSupport {
         } else {
             log.debug("isUseRouteBuilder() is false");
         }
-        
+
     }
 
     @Override
@@ -158,7 +161,7 @@ public abstract class ContextTestSupport extends TestSupport {
         } else {
             if (context != null) {
                 context.stop();
-            }    
+            }
         }
     }
 
@@ -196,8 +199,8 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Factory method which derived classes can use to create a {@link RouteBuilder}
-     * to define the routes for testing
+     * Factory method which derived classes can use to create a
+     * {@link RouteBuilder} to define the routes for testing
      */
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -220,7 +223,8 @@ public abstract class ContextTestSupport extends TestSupport {
     /**
      * Resolves a mandatory endpoint for the given URI or an exception is thrown
      *
-     * @param uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
+     * @param uri the Camel <a href="">URI</a> to use to create or resolve an
+     *            endpoint
      * @return the endpoint
      */
     protected Endpoint resolveMandatoryEndpoint(String uri) {
@@ -228,9 +232,11 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Resolves a mandatory endpoint for the given URI and expected type or an exception is thrown
+     * Resolves a mandatory endpoint for the given URI and expected type or an
+     * exception is thrown
      *
-     * @param uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
+     * @param uri the Camel <a href="">URI</a> to use to create or resolve an
+     *            endpoint
      * @return the endpoint
      */
     protected <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
@@ -238,10 +244,12 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Resolves the mandatory Mock endpoint using a URI of the form <code>mock:someName</code>
+     * Resolves the mandatory Mock endpoint using a URI of the form
+     * <code>mock:someName</code>
      *
      * @param uri the URI which typically starts with "mock:" and has some name
-     * @return the mandatory mock endpoint or an exception is thrown if it could not be resolved
+     * @return the mandatory mock endpoint or an exception is thrown if it could
+     *         not be resolved
      */
     protected MockEndpoint getMockEndpoint(String uri) {
         return resolveMandatoryEndpoint(uri, MockEndpoint.class);
@@ -251,7 +259,7 @@ public abstract class ContextTestSupport extends TestSupport {
      * Sends a message to the given endpoint URI with the body value
      *
      * @param endpointUri the URI of the endpoint to send to
-     * @param body        the body for the message
+     * @param body the body for the message
      */
     protected void sendBody(String endpointUri, final Object body) {
         template.send(endpointUri, new Processor() {
@@ -264,11 +272,12 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Sends a message to the given endpoint URI with the body value and specified headers
+     * Sends a message to the given endpoint URI with the body value and
+     * specified headers
      *
      * @param endpointUri the URI of the endpoint to send to
-     * @param body        the body for the message
-     * @param headers     any headers to set on the message
+     * @param body the body for the message
+     * @param headers any headers to set on the message
      */
     protected void sendBody(String endpointUri, final Object body, final Map<String, Object> headers) {
         template.send(endpointUri, new Processor() {
@@ -287,7 +296,7 @@ public abstract class ContextTestSupport extends TestSupport {
      * Sends messages to the given endpoint for each of the specified bodies
      *
      * @param endpointUri the endpoint URI to send to
-     * @param bodies      the bodies to send, one per message
+     * @param bodies the bodies to send, one per message
      */
     protected void sendBodies(String endpointUri, Object... bodies) {
         for (Object body : bodies) {

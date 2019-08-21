@@ -62,8 +62,7 @@ public class ControlBusLanguageSimpleStartRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("foo").noAutoStartup()
-                    .to("mock:foo");
+                from("seda:foo").routeId("foo").noAutoStartup().to("mock:foo");
             }
         };
     }

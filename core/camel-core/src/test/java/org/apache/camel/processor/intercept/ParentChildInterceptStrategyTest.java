@@ -67,18 +67,9 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new MyParentChildInterceptStrategy());
 
-                from("direct:start").routeId("route")
-                    .to("mock:a").id("task-a")
-                    .choice().id("choice")
-                        .when(simple("${body} contains 'Camel'")).id("when")
-                            .to("mock:b").id("task-b")
-                            .to("mock:c").id("task-c")
-                        .when(simple("${body} contains 'Donkey'")).id("when2")
-                            .to("mock:d").id("task-d")
-                        .otherwise().id("otherwise")
-                            .to("mock:e").id("task-e")
-                    .end()
-                    .to("mock:done");
+                from("direct:start").routeId("route").to("mock:a").id("task-a").choice().id("choice").when(simple("${body} contains 'Camel'")).id("when").to("mock:b").id("task-b")
+                    .to("mock:c").id("task-c").when(simple("${body} contains 'Donkey'")).id("when2").to("mock:d").id("task-d").otherwise().id("otherwise").to("mock:e").id("task-e")
+                    .end().to("mock:done");
             }
         };
     }
@@ -86,9 +77,8 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
     public static final class MyParentChildInterceptStrategy implements InterceptStrategy {
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode node,
-                                                     final Processor target, final Processor nextTarget) throws Exception {
-            ProcessorDefinition<?> definition = (ProcessorDefinition<?>) node;
+        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode node, final Processor target, final Processor nextTarget) throws Exception {
+            ProcessorDefinition<?> definition = (ProcessorDefinition<?>)node;
             String targetId = definition.hasCustomIdAssigned() ? definition.getId() : definition.getLabel();
             ProcessorDefinition<?> parent = definition.getParent();
             String parentId = "";

@@ -40,8 +40,7 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
         private static int doneCount;
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
-                                                     final Processor target, final Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
             if (definition instanceof SplitDefinition) {
                 final DelegateAsyncProcessor delegateAsyncProcessor = new DelegateAsyncProcessor() {
 
@@ -101,12 +100,7 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
             public void configure() {
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(interceptStrategy);
 
-                from("direct:start")
-                    .split(body().tokenize(","))
-                        .to("log:line")
-                        .to("mock:line")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").split(body().tokenize(",")).to("log:line").to("mock:line").end().to("mock:result");
             }
         };
     }

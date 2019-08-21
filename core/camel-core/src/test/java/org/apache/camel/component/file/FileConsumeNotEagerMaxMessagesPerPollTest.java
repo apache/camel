@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,8 +29,7 @@ import org.junit.Test;
 public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSupport {
 
     // sort by name and not eager, then we should pickup the files in order
-    private String fileUrl = "file://target/data/poll/?initialDelay=0&delay=10&"
-            + "maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false&sortBy=file:name";
+    private String fileUrl = "file://target/data/poll/?initialDelay=0&delay=10&" + "maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false&sortBy=file:name";
 
     @Override
     @Before
@@ -65,8 +65,7 @@ public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSuppor
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).routeId("foo").noAutoStartup()
-                    .convertBodyTo(String.class).to("mock:result");
+                from(fileUrl).routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
             }
         };
     }

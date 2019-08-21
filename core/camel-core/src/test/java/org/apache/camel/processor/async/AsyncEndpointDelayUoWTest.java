@@ -55,25 +55,16 @@ public class AsyncEndpointDelayUoWTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                                exchange.addOnCompletion(sync);
-                            }
-                        })
-                        .to("mock:before")
-                        .to("log:before")
-                        .delay(500).asyncDelayed()
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .transform().constant("Bye Camel")
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                        exchange.addOnCompletion(sync);
+                    }
+                }).to("mock:before").to("log:before").delay(500).asyncDelayed().process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadName = Thread.currentThread().getName();
+                    }
+                }).transform().constant("Bye Camel").to("log:after").to("mock:after").to("mock:result");
             }
         };
     }

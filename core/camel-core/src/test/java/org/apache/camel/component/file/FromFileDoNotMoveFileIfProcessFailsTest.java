@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,7 +42,8 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
         template.sendBodyAndHeader("file://target/data/movefile", body, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:error");
-        // it could potentially retry the file on the 2nd poll and then fail again
+        // it could potentially retry the file on the 2nd poll and then fail
+        // again
         // so it should be minimum message count
         mock.expectedMinimumMessageCount(1);
 
@@ -57,8 +59,7 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                    .to("mock:error");
+                onException(IllegalArgumentException.class).to("mock:error");
 
                 from("file://target/data/movefile?initialDelay=0&delay=10&move=done").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -68,6 +69,5 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
             }
         };
     }
-
 
 }

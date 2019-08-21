@@ -40,9 +40,7 @@ public class ExpressionClauseSupplierTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:supplier1")
-                    .transform().body(() -> BODY_SUPPLIER_MSG)
-                    .to("mock:output1");
+                from("direct:supplier1").transform().body(() -> BODY_SUPPLIER_MSG).to("mock:output1");
             }
         };
     }

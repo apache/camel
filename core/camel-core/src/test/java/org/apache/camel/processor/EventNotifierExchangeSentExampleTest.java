@@ -26,7 +26,7 @@ public class EventNotifierExchangeSentExampleTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
+        DefaultCamelContext context = (DefaultCamelContext)super.createCamelContext();
         context.init();
 
         // START SNIPPET: e1

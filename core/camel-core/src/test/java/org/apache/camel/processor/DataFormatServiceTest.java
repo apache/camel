@@ -75,7 +75,8 @@ public class DataFormatServiceTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // marshal using our custom data format. (my is an instance of MyDataFormat)
+                // marshal using our custom data format. (my is an instance of
+                // MyDataFormat)
                 from("direct:a").marshal(my).to("mock:a");
 
                 // unmarshal using our custom data format.

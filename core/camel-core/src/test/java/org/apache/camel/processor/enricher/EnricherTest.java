@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.enricher;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -38,7 +39,7 @@ public class EnricherTest extends ContextTestSupport {
     }
 
     // -------------------------------------------------------------
-    //  InOnly routes
+    // InOnly routes
     // -------------------------------------------------------------
 
     @Test
@@ -64,12 +65,12 @@ public class EnricherTest extends ContextTestSupport {
     }
 
     // -------------------------------------------------------------
-    //  InOut routes
+    // InOut routes
     // -------------------------------------------------------------
 
     @Test
     public void testEnrichInOut() throws InterruptedException {
-        String result = (String) template.sendBody("direct:enricher-test-5", ExchangePattern.InOut, "test");
+        String result = (String)template.sendBody("direct:enricher-test-5", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
     }
 
@@ -104,35 +105,31 @@ public class EnricherTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // -------------------------------------------------------------
-                //  InOnly routes
+                // InOnly routes
                 // -------------------------------------------------------------
 
-                from("direct:enricher-test-1")
-                    .enrich("direct:enricher-constant-resource", aggregationStrategy)
-                    .to("mock:mock");
+                from("direct:enricher-test-1").enrich("direct:enricher-constant-resource", aggregationStrategy).to("mock:mock");
 
-                from("direct:enricher-test-3")
-                    .enrich("direct:enricher-fault-resource", aggregationStrategy)
-                    .to("mock:mock");
+                from("direct:enricher-test-3").enrich("direct:enricher-fault-resource", aggregationStrategy).to("mock:mock");
 
-                from("direct:enricher-test-4").errorHandler(noErrorHandler()) // avoid re-deliveries
+                from("direct:enricher-test-4").errorHandler(noErrorHandler()) // avoid
+                                                                              // re-deliveries
                     .enrich("direct:enricher-error-resource", aggregationStrategy).to("mock:mock");
 
                 // -------------------------------------------------------------
-                //  InOut routes
+                // InOut routes
                 // -------------------------------------------------------------
 
-                from("direct:enricher-test-5")
-                    .enrich("direct:enricher-constant-resource", aggregationStrategy);
+                from("direct:enricher-test-5").enrich("direct:enricher-constant-resource", aggregationStrategy);
 
-                from("direct:enricher-test-7")
-                    .enrich("direct:enricher-fault-resource", aggregationStrategy);
+                from("direct:enricher-test-7").enrich("direct:enricher-fault-resource", aggregationStrategy);
 
-                from("direct:enricher-test-8").errorHandler(noErrorHandler()) // avoid re-deliveries
+                from("direct:enricher-test-8").errorHandler(noErrorHandler()) // avoid
+                                                                              // re-deliveries
                     .enrich("direct:enricher-error-resource", aggregationStrategy);
 
                 // -------------------------------------------------------------
-                //  Enricher resources
+                // Enricher resources
                 // -------------------------------------------------------------
 
                 from("direct:enricher-constant-resource").transform().constant("blah");

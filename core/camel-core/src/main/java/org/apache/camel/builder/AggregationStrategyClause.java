@@ -60,8 +60,10 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
 
     /**
      * Define an aggregation strategy which targets Exchanges In Message.
-     *
-     * <blockquote><pre>{@code
+     * <blockquote>
+     * 
+     * <pre>
+     * {@code
      * from("direct:aggregate")
      *     .aggregate()
      *         .message((old, new) -> {
@@ -76,7 +78,10 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
      *
      *             return old;
      *         });
-     * }</pre></blockquote>
+     * }
+     * </pre>
+     * 
+     * </blockquote>
      */
     public T message(final BiFunction<Message, Message, Message> function) {
         return exchange((Exchange oldExchange, Exchange newExchange) -> {
@@ -100,8 +105,10 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
 
     /**
      * Define an aggregation strategy which targets Exchanges In Body.
-     *
-     * <blockquote><pre>{@code
+     * <blockquote>
+     * 
+     * <pre>
+     * {@code
      * from("direct:aggregate")
      *     .aggregate()
      *         .body((old, new) -> {
@@ -111,7 +118,10 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
      *
      *             return old.toString() + new.toString();
      *         });
-     * }</pre></blockquote>
+     * }
+     * </pre>
+     * 
+     * </blockquote>
      */
     public T body(final BiFunction<Object, Object, Object> function) {
         return body(Object.class, function);
@@ -119,8 +129,10 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
 
     /**
      * Define an aggregation strategy which targets Exchanges In Body.
-     *
-     * <blockquote><pre>{@code
+     * <blockquote>
+     * 
+     * <pre>
+     * {@code
      * from("direct:aggregate")
      *     .aggregate()
      *         .body(String.class, (old, new) -> {
@@ -130,7 +142,10 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
      *
      *             return old + new;
      *         });
-     * }</pre></blockquote>
+     * }
+     * </pre>
+     * 
+     * </blockquote>
      */
     public <B> T body(final Class<B> type, final BiFunction<B, B, Object> function) {
         return body(type, type, function);
@@ -144,9 +159,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
             Message oldMessage = oldExchange != null ? oldExchange.getIn() : null;
             Message newMessage = ObjectHelper.notNull(newExchange, "NewExchange").getIn();
 
-            Object result = function.apply(
-                oldMessage != null ? oldMessage.getBody(oldType) : null,
-                newMessage != null ? newMessage.getBody(newType) : null);
+            Object result = function.apply(oldMessage != null ? oldMessage.getBody(oldType) : null, newMessage != null ? newMessage.getBody(newType) : null);
 
             if (oldExchange != null) {
                 oldExchange.getIn().setBody(result);

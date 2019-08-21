@@ -46,7 +46,7 @@ public class FileDataSetConsumerWithSplitTest extends ContextTestSupport {
     @Test
     public void testDefaultListDataSet() throws Exception {
         MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMinimumMessageCount((int) dataSet.getSize());
+        result.expectedMinimumMessageCount((int)dataSet.getSize());
 
         result.assertIsSatisfied();
     }
@@ -55,7 +55,7 @@ public class FileDataSetConsumerWithSplitTest extends ContextTestSupport {
     public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
         MockEndpoint result = getMockEndpoint(resultUri);
         dataSet.setSize(20);
-        result.expectedMinimumMessageCount((int) dataSet.getSize());
+        result.expectedMinimumMessageCount((int)dataSet.getSize());
 
         result.assertIsSatisfied();
     }
@@ -72,8 +72,7 @@ public class FileDataSetConsumerWithSplitTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(dataSetUri)
-                        .to("mock://result");
+                from(dataSetUri).to("mock://result");
             }
         };
     }

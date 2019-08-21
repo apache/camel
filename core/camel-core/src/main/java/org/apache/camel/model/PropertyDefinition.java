@@ -34,7 +34,7 @@ public class PropertyDefinition {
     String key;
     @XmlAttribute(required = true)
     String value;
-    
+
     public PropertyDefinition() {
     }
 
@@ -44,7 +44,7 @@ public class PropertyDefinition {
     public void setKey(String key) {
         this.key = key;
     }
-    
+
     public String getKey() {
         return key;
     }
@@ -55,7 +55,7 @@ public class PropertyDefinition {
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     public String getValue() {
         return value;
     }

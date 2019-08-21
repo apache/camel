@@ -41,7 +41,8 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait about 0.2 second so that the timeout kicks in but it was discarded
+        // wait about 0.2 second so that the timeout kicks in but it was
+        // discarded
         mock.assertIsSatisfied(200);
 
         // should invoke the timeout method
@@ -73,13 +74,9 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
-                        .discardOnCompletionTimeout()
-                        .completionSize(3)
-                        // use a 0.1 second timeout
-                        .completionTimeout(100).completionTimeoutCheckerInterval(10)
-                        .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).discardOnCompletionTimeout().completionSize(3)
+                    // use a 0.1 second timeout
+                    .completionTimeout(100).completionTimeoutCheckerInterval(10).to("mock:aggregated");
             }
         };
     }
@@ -90,10 +87,14 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
             invoked.incrementAndGet();
 
-            // we can't assert on the expected values here as the contract of this method doesn't
-            // allow to throw any Throwable (including AssertionError) so that we assert
-            // about the expected values directly inside the test method itself. other than that
-            // asserting inside a thread other than the main thread dosen't make much sense as
+            // we can't assert on the expected values here as the contract of
+            // this method doesn't
+            // allow to throw any Throwable (including AssertionError) so that
+            // we assert
+            // about the expected values directly inside the test method itself.
+            // other than that
+            // asserting inside a thread other than the main thread dosen't make
+            // much sense as
             // junit would not realize the failed assertion!
             receivedExchange = oldExchange;
             receivedIndex = index;

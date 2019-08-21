@@ -44,7 +44,7 @@ public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
         assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
 
         // suspend bar consumer (not the route)
-        SedaConsumer consumer = (SedaConsumer) context.getRoute("bar").getConsumer();
+        SedaConsumer consumer = (SedaConsumer)context.getRoute("bar").getConsumer();
 
         ServiceHelper.suspendService(consumer);
         assertEquals("Suspended", consumer.getStatus().name());
@@ -54,14 +54,16 @@ public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
         resetMocks();
         mock.expectedMessageCount(0);
 
-        // wait a bit to ensure consumer is suspended, as it could be in a poll mode where
-        // it would poll and route (there is a little slack (up till 1 sec) before suspension is empowered)
-        await().atMost(1, TimeUnit.SECONDS).until(() ->
-            context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0
-            && context.getEndpoint("seda:bar", SedaEndpoint.class).getQueue().size() == 0);
+        // wait a bit to ensure consumer is suspended, as it could be in a poll
+        // mode where
+        // it would poll and route (there is a little slack (up till 1 sec)
+        // before suspension is empowered)
+        await().atMost(1, TimeUnit.SECONDS)
+            .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0 && context.getEndpoint("seda:bar", SedaEndpoint.class).getQueue().size() == 0);
 
         template.sendBody("seda:foo", "B");
-        // wait a little to ensure seda consumer thread would have tried to poll otherwise
+        // wait a little to ensure seda consumer thread would have tried to poll
+        // otherwise
         mock.assertIsSatisfied(50);
 
         // resume consumer

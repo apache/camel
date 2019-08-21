@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -335,7 +336,8 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
 
-        // test that we cache at most 500 consumers to avoid it eating to much memory
+        // test that we cache at most 500 consumers to avoid it eating to much
+        // memory
         for (int i = 0; i < 503; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
             template.receiveNoWait(e);
@@ -357,7 +359,8 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
 
-        // test that we cache at most 500 consumers to avoid it eating to much memory
+        // test that we cache at most 500 consumers to avoid it eating to much
+        // memory
         for (int i = 0; i < 503; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
             template.receiveNoWait(e);

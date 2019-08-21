@@ -38,7 +38,8 @@ public class RuntimeEndpointRegistryTest extends ContextTestSupport {
         RuntimeEndpointRegistry registry = context.getRuntimeEndpointRegistry();
 
         assertEquals(0, registry.getAllEndpoints(false).size());
-        // we have 2 at the start as we have all endpoints for the route consumers
+        // we have 2 at the start as we have all endpoints for the route
+        // consumers
         assertEquals(2, registry.getAllEndpoints(true).size());
 
         MockEndpoint mock = getMockEndpoint("mock:foo2");
@@ -65,13 +66,9 @@ public class RuntimeEndpointRegistryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("foo")
-                    .to("mock:foo")
-                    .recipientList(header("slip"));
+                from("seda:foo").routeId("foo").to("mock:foo").recipientList(header("slip"));
 
-                from("seda:bar").routeId("bar")
-                    .to("mock:bar")
-                    .recipientList(header("slip"));
+                from("seda:bar").routeId("bar").to("mock:bar").recipientList(header("slip"));
             }
         };
     }

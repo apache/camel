@@ -83,11 +83,9 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .resequence(header("seqno")).stream().timeout(50).deliveryAttemptInterval(10)
-                        // ignore invalid exchanges (they are discarded)
-                        .ignoreInvalidExchanges()
-                    .to("mock:result");
+                from("direct:start").resequence(header("seqno")).stream().timeout(50).deliveryAttemptInterval(10)
+                    // ignore invalid exchanges (they are discarded)
+                    .ignoreInvalidExchanges().to("mock:result");
                 // END SNIPPET: e1
             }
         };

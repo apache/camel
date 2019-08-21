@@ -41,7 +41,8 @@ public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertNotNull(receivedExchange);
-        // Just make sure the MyAggregationStrategy is called for all the exchange
+        // Just make sure the MyAggregationStrategy is called for all the
+        // exchange
         assertEquals(2, receivedIndex);
         assertEquals(3, receivedTotal);
         assertEquals(500, receivedTimeout);
@@ -52,12 +53,9 @@ public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .multicast(new MyAggregationStrategy())
-                        .parallelProcessing().timeout(500).to("direct:a", "direct:b", "direct:c")
-                        // use end to indicate end of multicast route
-                        .end()
-                        .to("mock:result");
+                from("direct:start").multicast(new MyAggregationStrategy()).parallelProcessing().timeout(500).to("direct:a", "direct:b", "direct:c")
+                    // use end to indicate end of multicast route
+                    .end().to("mock:result");
 
                 from("direct:a").delay(1000).setBody(constant("A"));
 
@@ -72,10 +70,14 @@ public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
 
         @Override
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
-            // we can't assert on the expected values here as the contract of this method doesn't
-            // allow to throw any Throwable (including AssertionError) so that we assert
-            // about the expected values directly inside the test method itself. other than that
-            // asserting inside a thread other than the main thread dosen't make much sense as
+            // we can't assert on the expected values here as the contract of
+            // this method doesn't
+            // allow to throw any Throwable (including AssertionError) so that
+            // we assert
+            // about the expected values directly inside the test method itself.
+            // other than that
+            // asserting inside a thread other than the main thread dosen't make
+            // much sense as
             // junit would not realize the failed assertion!
             receivedExchange = oldExchange;
             receivedIndex = index;

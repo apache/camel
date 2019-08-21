@@ -72,7 +72,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     private String errorHandlerRef;
     private ErrorHandlerFactory errorHandlerFactory;
     // keep state whether the error handler is context scoped or not
-    // (will by default be context scoped of no explicit error handler configured)
+    // (will by default be context scoped of no explicit error handler
+    // configured)
     private boolean contextScopedErrorHandler = true;
     private Boolean rest;
     private RestDefinition restDefinition;
@@ -104,7 +105,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * Check if the route has been prepared
      *
      * @return wether the route has been prepared or not
-     * @see RouteDefinitionHelper#prepareRoute(ModelCamelContext, RouteDefinition)
+     * @see RouteDefinitionHelper#prepareRoute(ModelCamelContext,
+     *      RouteDefinition)
      */
     public boolean isPrepared() {
         return prepared.get();
@@ -114,8 +116,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * Marks the route definition as prepared.
      * <p/>
      * This is needed if routes have been created by components such as
-     * <tt>camel-spring</tt> or <tt>camel-blueprint</tt>.
-     * Usually they share logic in the <tt>camel-core-xml</tt> module which prepares the routes.
+     * <tt>camel-spring</tt> or <tt>camel-blueprint</tt>. Usually they share
+     * logic in the <tt>camel-core-xml</tt> module which prepares the routes.
      */
     public void markPrepared() {
         prepared.set(true);
@@ -272,7 +274,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Enable stream caching for this route.
      *
-     * @param streamCache whether to use stream caching (true or false), the value can be a property placeholder
+     * @param streamCache whether to use stream caching (true or false), the
+     *            value can be a property placeholder
      * @return the builder
      */
     public RouteDefinition streamCaching(String streamCache) {
@@ -303,7 +306,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Enable tracing for this route.
      *
-     * @param tracing whether to use tracing (true or false), the value can be a property placeholder
+     * @param tracing whether to use tracing (true or false), the value can be a
+     *            property placeholder
      * @return the builder
      */
     public RouteDefinition tracing(String tracing) {
@@ -324,7 +328,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Enable message history for this route.
      *
-     * @param messageHistory whether to use message history (true or false), the value can be a property placeholder
+     * @param messageHistory whether to use message history (true or false), the
+     *            value can be a property placeholder
      * @return the builder
      */
     public RouteDefinition messageHistory(String messageHistory) {
@@ -345,7 +350,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Sets whether security mask for logging is enabled on this route.
      *
-     * @param logMask whether to enable security mask for Logging (true or false), the value can be a property placeholder
+     * @param logMask whether to enable security mask for Logging (true or
+     *            false), the value can be a property placeholder
      * @return the builder
      */
     public RouteDefinition logMask(String logMask) {
@@ -385,9 +391,12 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder.
+     * Installs the given
+     * <a href="http://camel.apache.org/error-handler.html">error handler</a>
+     * builder.
      *
-     * @param errorHandlerBuilder the error handler to be used by default for all child routes
+     * @param errorHandlerBuilder the error handler to be used by default for
+     *            all child routes
      * @return the current builder with the error handler configured
      */
     public RouteDefinition errorHandler(ErrorHandlerFactory errorHandlerBuilder) {
@@ -410,7 +419,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Sets the auto startup property on this route.
      *
-     * @param autoStartup whether to auto startup (true or false), the value can be a property placeholder
+     * @param autoStartup whether to auto startup (true or false), the value can
+     *            be a property placeholder
      * @return the builder
      */
     public RouteDefinition autoStartup(String autoStartup) {
@@ -432,8 +442,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Configures the startup order for this route
      * <p/>
-     * Camel will reorder routes and star them ordered by 0..N where 0 is the lowest number and N the highest number.
-     * Camel will stop routes in reverse order when its stopping.
+     * Camel will reorder routes and star them ordered by 0..N where 0 is the
+     * lowest number and N the highest number. Camel will stop routes in reverse
+     * order when its stopping.
      *
      * @param order the order represented as a number
      * @return the builder
@@ -471,8 +482,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Configures a route policy for this route
      *
-     * @param routePolicyRef reference to a {@link RoutePolicy} to lookup and use.
-     *                       You can specify multiple references by separating using comma.
+     * @param routePolicyRef reference to a {@link RoutePolicy} to lookup and
+     *            use. You can specify multiple references by separating using
+     *            comma.
      * @return the builder
      */
     public RouteDefinition routePolicyRef(String routePolicyRef) {
@@ -494,7 +506,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Configures a shutdown running task option.
      *
-     * @param shutdownRunningTask the option to use when shutting down and how to act upon running tasks.
+     * @param shutdownRunningTask the option to use when shutting down and how
+     *            to act upon running tasks.
      * @return the builder
      */
     public RouteDefinition shutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
@@ -503,13 +516,14 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Declare the expected data type of the input message. If the actual message type is different
-     * at runtime, camel look for a required {@link org.apache.camel.spi.Transformer} and apply if exists.
-     * The type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
-     * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.
+     * Declare the expected data type of the input message. If the actual
+     * message type is different at runtime, camel look for a required
+     * {@link org.apache.camel.spi.Transformer} and apply if exists. The type
+     * name consists of two parts, 'scheme' and 'name' connected with ':'. For
+     * Java type 'name' is a fully qualified class name. For example
+     * {@code java:java.lang.String}, {@code json:ABCOrder}.
      *
      * @see org.apache.camel.spi.Transformer
-     *
      * @param urn input type URN
      * @return the builder
      */
@@ -521,16 +535,16 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Declare the expected data type of the input message with content validation enabled.
-     * If the actual message type is different at runtime, camel look for a required
-     * {@link org.apache.camel.spi.Transformer} and apply if exists, and then applies
-     * {@link org.apache.camel.spi.Validator} as well.
-     * The type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
-     * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.
+     * Declare the expected data type of the input message with content
+     * validation enabled. If the actual message type is different at runtime,
+     * camel look for a required {@link org.apache.camel.spi.Transformer} and
+     * apply if exists, and then applies {@link org.apache.camel.spi.Validator}
+     * as well. The type name consists of two parts, 'scheme' and 'name'
+     * connected with ':'. For Java type 'name' is a fully qualified class name.
+     * For example {@code java:java.lang.String}, {@code json:ABCOrder}.
      *
      * @see org.apache.camel.spi.Transformer
      * @see org.apache.camel.spi.Validator
-     *
      * @param urn input type URN
      * @return the builder
      */
@@ -542,12 +556,11 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Declare the expected data type of the input message by Java class.
-     * If the actual message type is different at runtime, camel look for a required
+     * Declare the expected data type of the input message by Java class. If the
+     * actual message type is different at runtime, camel look for a required
      * {@link org.apache.camel.spi.Transformer} and apply if exists.
      *
      * @see org.apache.camel.spi.Transformer
-     *
      * @param clazz Class object of the input type
      * @return the builder
      */
@@ -559,14 +572,14 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Declare the expected data type of the input message by Java class with content validation enabled.
-     * If the actual message type is different at runtime, camel look for a required
-     * {@link org.apache.camel.spi.Transformer} and apply if exists, and then applies
-     * {@link org.apache.camel.spi.Validator} as well.
+     * Declare the expected data type of the input message by Java class with
+     * content validation enabled. If the actual message type is different at
+     * runtime, camel look for a required
+     * {@link org.apache.camel.spi.Transformer} and apply if exists, and then
+     * applies {@link org.apache.camel.spi.Validator} as well.
      *
      * @see org.apache.camel.spi.Transformer
      * @see org.apache.camel.spi.Validator
-     *
      * @param clazz Class object of the input type
      * @return the builder
      */
@@ -578,13 +591,14 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Declare the expected data type of the output message. If the actual message type is different
-     * at runtime, camel look for a required {@link org.apache.camel.spi.Transformer} and apply if exists.
-     * The type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
-     * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.
+     * Declare the expected data type of the output message. If the actual
+     * message type is different at runtime, camel look for a required
+     * {@link org.apache.camel.spi.Transformer} and apply if exists. The type
+     * name consists of two parts, 'scheme' and 'name' connected with ':'. For
+     * Java type 'name' is a fully qualified class name. For example
+     * {@code java:java.lang.String}, {@code json:ABCOrder}.
      *
      * @see org.apache.camel.spi.Transformer
-     *
      * @param urn output type URN
      * @return the builder
      */
@@ -596,16 +610,16 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Declare the expected data type of the output message with content validation enabled.
-     * If the actual message type is different at runtime, Camel look for a required
-     * {@link org.apache.camel.spi.Transformer} and apply if exists, and then applies
-     * {@link org.apache.camel.spi.Validator} as well.
-     * The type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
-     * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.
+     * Declare the expected data type of the output message with content
+     * validation enabled. If the actual message type is different at runtime,
+     * Camel look for a required {@link org.apache.camel.spi.Transformer} and
+     * apply if exists, and then applies {@link org.apache.camel.spi.Validator}
+     * as well. The type name consists of two parts, 'scheme' and 'name'
+     * connected with ':'. For Java type 'name' is a fully qualified class name.
+     * For example {@code java:java.lang.String}, {@code json:ABCOrder}.
      * 
      * @see org.apache.camel.spi.Transformer
      * @see org.apache.camel.spi.Validator
-     *
      * @param urn output type URN
      * @return the builder
      */
@@ -617,12 +631,11 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Declare the expected data type of the output message by Java class.
-     * If the actual message type is different at runtime, camel look for a required
-     * {@link org.apache.camel.spi.Transformer} and apply if exists.
+     * Declare the expected data type of the output message by Java class. If
+     * the actual message type is different at runtime, camel look for a
+     * required {@link org.apache.camel.spi.Transformer} and apply if exists.
      *
      * @see org.apache.camel.spi.Transformer
-     *
      * @param clazz Class object of the output type
      * @return the builder
      */
@@ -634,10 +647,11 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Declare the expected data type of the ouput message by Java class with content validation enabled.
-     * If the actual message type is different at runtime, camel look for a required
-     * {@link org.apache.camel.spi.Transformer} and apply if exists, and then applies
-     * {@link org.apache.camel.spi.Validator} as well.
+     * Declare the expected data type of the ouput message by Java class with
+     * content validation enabled. If the actual message type is different at
+     * runtime, camel look for a required
+     * {@link org.apache.camel.spi.Transformer} and apply if exists, and then
+     * applies {@link org.apache.camel.spi.Validator} as well.
      * 
      * @see org.apache.camel.spi.Transformer
      * @see org.apache.camel.spi.Validator
@@ -691,7 +705,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Outputs are processors that determines how messages are processed by this route.
+     * Outputs are processors that determines how messages are processed by this
+     * route.
      */
     @XmlElementRef
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
@@ -705,8 +720,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * The group that this route belongs to; could be the name of the RouteBuilder class
-     * or be explicitly configured in the XML.
+     * The group that this route belongs to; could be the name of the
+     * RouteBuilder class or be explicitly configured in the XML.
      * <p/>
      * May be null.
      */
@@ -715,8 +730,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * The group that this route belongs to; could be the name of the RouteBuilder class
-     * or be explicitly configured in the XML.
+     * The group that this route belongs to; could be the name of the
+     * RouteBuilder class or be explicitly configured in the XML.
      * <p/>
      * May be null.
      */
@@ -765,7 +780,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Whether message history is enabled on this route.
      */
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
@@ -810,7 +826,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Whether to auto start this route
      */
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
     }
@@ -837,7 +854,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     public void setErrorHandlerRef(String errorHandlerRef) {
         this.errorHandlerRef = errorHandlerRef;
         // we use an specific error handler ref (from Spring DSL) then wrap that
-        // with a error handler build ref so Camel knows its not just the default one
+        // with a error handler build ref so Camel knows its not just the
+        // default one
         setErrorHandlerFactory(new ErrorHandlerBuilderRef(errorHandlerRef));
     }
 
@@ -858,8 +876,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Reference to custom {@link org.apache.camel.spi.RoutePolicy} to use by the route.
-     * Multiple policies can be configured by separating values using comma.
+     * Reference to custom {@link org.apache.camel.spi.RoutePolicy} to use by
+     * the route. Multiple policies can be configured by separating values using
+     * comma.
      */
     @XmlAttribute
     public void setRoutePolicyRef(String routePolicyRef) {
@@ -867,8 +886,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     }
 
     /**
-     * Reference to custom {@link org.apache.camel.spi.RoutePolicy} to use by the route.
-     * Multiple policies can be configured by separating values using comma.
+     * Reference to custom {@link org.apache.camel.spi.RoutePolicy} to use by
+     * the route. Multiple policies can be configured by separating values using
+     * comma.
      */
     public String getRoutePolicyRef() {
         return routePolicyRef;
@@ -890,7 +910,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * To control how to shutdown the route.
      */
-    @XmlAttribute @Metadata(defaultValue = "Default")
+    @XmlAttribute
+    @Metadata(defaultValue = "Default")
     public void setShutdownRoute(ShutdownRoute shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
@@ -905,7 +926,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * To control how to shutdown the route.
      */
-    @XmlAttribute @Metadata(defaultValue = "CompleteCurrentTaskOnly")
+    @XmlAttribute
+    @Metadata(defaultValue = "CompleteCurrentTaskOnly")
     public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }

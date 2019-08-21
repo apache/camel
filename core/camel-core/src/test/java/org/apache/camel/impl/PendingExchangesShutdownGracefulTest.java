@@ -46,7 +46,8 @@ public class PendingExchangesShutdownGracefulTest extends ContextTestSupport {
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         context.stop();
 
-        // it should wait as there was 1 inflight exchange and 4 pending messages left
+        // it should wait as there was 1 inflight exchange and 4 pending
+        // messages left
         assertEquals("Should graceful shutdown", "ABCDE", foo);
     }
 

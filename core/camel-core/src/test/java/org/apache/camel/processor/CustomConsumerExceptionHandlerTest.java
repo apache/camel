@@ -55,14 +55,9 @@ public class CustomConsumerExceptionHandlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?synchronous=true&consumer.exceptionHandler=#myHandler").routeId("foo")
-                    .to("mock:foo")
-                    .to("direct:bar")
-                    .to("mock:result");
+                from("seda:foo?synchronous=true&consumer.exceptionHandler=#myHandler").routeId("foo").to("mock:foo").to("direct:bar").to("mock:result");
 
-                from("direct:bar").routeId("bar")
-                    .onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0).end()
-                    .to("mock:bar")
+                from("direct:bar").routeId("bar").onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0).end().to("mock:bar")
                     .throwException(new IllegalArgumentException("Forced"));
             }
         };

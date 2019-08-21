@@ -51,7 +51,8 @@ public class OnExceptionProcessorInspectCausedExceptionTest extends ContextTestS
 
                 // START SNIPPET: e1
                 // here we register exception cause for MyFunctionException
-                // when this exception occur we want it to be processed by our processor
+                // when this exception occur we want it to be processed by our
+                // processor
                 onException(MyFunctionalException.class).process(new MyFunctionFailureHandler()).stop();
                 // END SNIPPET: e1
 
@@ -72,9 +73,12 @@ public class OnExceptionProcessorInspectCausedExceptionTest extends ContextTestS
             // the caused by exception is stored in a property on the exchange
             Throwable caused = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
             assertNotNull(caused);
-            // here you can do what you want, but Camel regard this exception as handled, and
-            // this processor as a failurehandler, so it wont do redeliveries. So this is the
-            // end of this route. But if we want to route it somewhere we can just get a
+            // here you can do what you want, but Camel regard this exception as
+            // handled, and
+            // this processor as a failurehandler, so it wont do redeliveries.
+            // So this is the
+            // end of this route. But if we want to route it somewhere we can
+            // just get a
             // producer template and send it.
 
             // send it to our mock endpoint

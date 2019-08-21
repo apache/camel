@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.Context;

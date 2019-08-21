@@ -45,10 +45,10 @@ public class AbstractCamelCatalogTest {
     @Test
     public void shouldConstructEndpointUris() throws URISyntaxException {
         when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
-            + "  \"component\": {\n"//
-            + "    \"syntax\": \"comp:param1:param2\"\n"//
-            + "  }\n"//
-            + "}");
+                                                                 + "  \"component\": {\n"//
+                                                                 + "    \"syntax\": \"comp:param1:param2\"\n"//
+                                                                 + "  }\n"//
+                                                                 + "}");
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("param1", "value1");
@@ -63,10 +63,10 @@ public class AbstractCamelCatalogTest {
     @Test
     public void shouldConstructEndpointUrisWithPropertyPlaceholders() throws URISyntaxException {
         when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
-            + "  \"component\": {\n"//
-            + "    \"syntax\": \"comp:param1:param2\"\n"//
-            + "  }\n"//
-            + "}");
+                                                                 + "  \"component\": {\n"//
+                                                                 + "    \"syntax\": \"comp:param1:param2\"\n"//
+                                                                 + "  }\n"//
+                                                                 + "}");
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("param1", "{{prop1}}");
@@ -81,10 +81,10 @@ public class AbstractCamelCatalogTest {
     @Test
     public void shouldConstructEndpointUrisWhenValuesContainTokens() throws URISyntaxException {
         when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
-            + "  \"component\": {\n"//
-            + "    \"syntax\": \"comp:param1:param2\"\n"//
-            + "  }\n"//
-            + "}");
+                                                                 + "  \"component\": {\n"//
+                                                                 + "    \"syntax\": \"comp:param1:param2\"\n"//
+                                                                 + "  }\n"//
+                                                                 + "}");
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("param1", "{value1}");
@@ -99,10 +99,10 @@ public class AbstractCamelCatalogTest {
     @Test
     public void shouldContextPathAndQuery() throws URISyntaxException {
         when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
-            + "  \"component\": {\n"//
-            + "    \"syntax\": \"comp:value1\"\n"//
-            + "  }\n"//
-            + "}");
+                                                                 + "  \"component\": {\n"//
+                                                                 + "    \"syntax\": \"comp:value1\"\n"//
+                                                                 + "  }\n"//
+                                                                 + "}");
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("value1", "camel");
@@ -116,10 +116,10 @@ public class AbstractCamelCatalogTest {
     @Test
     public void shouldEmptyContextPath() throws URISyntaxException {
         when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
-            + "  \"component\": {\n"//
-            + "    \"syntax\": \"comp\"\n"//
-            + "  }\n"//
-            + "}");
+                                                                 + "  \"component\": {\n"//
+                                                                 + "    \"syntax\": \"comp\"\n"//
+                                                                 + "  }\n"//
+                                                                 + "}");
 
         final Map<String, String> properties = new HashMap<>();
 
@@ -131,10 +131,10 @@ public class AbstractCamelCatalogTest {
     @Test
     public void shouldEmptyContextPathWithQuery() throws URISyntaxException {
         when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
-            + "  \"component\": {\n"//
-            + "    \"syntax\": \"comp\"\n"//
-            + "  }\n"//
-            + "}");
+                                                                 + "  \"component\": {\n"//
+                                                                 + "    \"syntax\": \"comp\"\n"//
+                                                                 + "  }\n"//
+                                                                 + "}");
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("foo", "123");

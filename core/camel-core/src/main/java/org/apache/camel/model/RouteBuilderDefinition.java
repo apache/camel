@@ -29,7 +29,8 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To refer to a Java {@link org.apache.camel.builder.RouteBuilder} instance to use.
+ * To refer to a Java {@link org.apache.camel.builder.RouteBuilder} instance to
+ * use.
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routeBuilder")
@@ -64,9 +65,9 @@ public class RouteBuilderDefinition extends IdentifiedType {
     public RouteBuilder createRouteBuilder(CamelContext camelContext) {
         ObjectHelper.notNull(camelContext, "camelContext", this);
         ObjectHelper.notNull(ref, "ref", this);
-        return CamelContextHelper.lookup(camelContext, ref, RouteBuilder.class);        
+        return CamelContextHelper.lookup(camelContext, ref, RouteBuilder.class);
     }
-    
+
     public RoutesBuilder createRoutes(CamelContext camelContext) {
         ObjectHelper.notNull(camelContext, "camelContext", this);
         ObjectHelper.notNull(ref, "ref", this);

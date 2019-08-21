@@ -26,12 +26,11 @@ public class VmDifferentOptionsOnConsumerAndProducerTest extends AbstractVmTestS
     public void testSendToVm() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
-        
 
         template2.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-        
+
         // check the camel context of the exchange
         assertEquals("Get a wrong context. ", context, result.getExchanges().get(0).getContext());
     }
@@ -41,19 +40,17 @@ public class VmDifferentOptionsOnConsumerAndProducerTest extends AbstractVmTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:foo?concurrentConsumers=5")
-                    .to("mock:result");
+                from("vm:foo?concurrentConsumers=5").to("mock:result");
             }
         };
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("vm:foo");
+                from("direct:start").to("vm:foo");
             }
         };
     }

@@ -24,7 +24,8 @@ import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
 /**
- * Tests that the redelivery error handler will break out if CamelContext is shutting down.
+ * Tests that the redelivery error handler will break out if CamelContext is
+ * shutting down.
  */
 public class RedeliveryErrorHandlerBreakoutDuringShutdownTest extends ContextTestSupport {
 
@@ -57,14 +58,11 @@ public class RedeliveryErrorHandlerBreakoutDuringShutdownTest extends ContextTes
                 // just keep on redelivering
                 errorHandler(defaultErrorHandler().maximumRedeliveries(-1).redeliveryDelay(1000));
 
-                from("seda:start")
-                    .to("mock:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    })
-                    .to("mock:after");
+                from("seda:start").to("mock:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced");
+                    }
+                }).to("mock:after");
             }
         };
     }

@@ -50,11 +50,7 @@ public class FromRestGetInterceptTest extends ContextTestSupport {
                 restConfiguration().host("localhost");
                 intercept().to("mock:intercept");
 
-                rest("/say/hello")
-                    .get().route()
-                        .to("mock:hello")
-                        .to("mock:bar")
-                        .transform().constant("Bye World");
+                rest("/say/hello").get().route().to("mock:hello").to("mock:bar").transform().constant("Bye World");
             }
         };
     }

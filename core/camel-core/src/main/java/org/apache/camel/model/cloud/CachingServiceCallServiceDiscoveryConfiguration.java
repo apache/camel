@@ -35,19 +35,19 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "cachingServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
-    @XmlAttribute @Metadata(defaultValue = "60")
+    @XmlAttribute
+    @Metadata(defaultValue = "60")
     private Integer timeout = 60;
     @XmlAttribute
-    @XmlJavaTypeAdapter(TimeUnitAdapter.class) @Metadata(defaultValue = "SECONDS")
+    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
+    @Metadata(defaultValue = "SECONDS")
     private TimeUnit units = TimeUnit.SECONDS;
-    @XmlElements({
-        @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)}
-    )
+    @XmlElements({@XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
+                  @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
+                  @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
+                  @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
+                  @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
+                  @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)})
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
 
     public CachingServiceCallServiceDiscoveryConfiguration() {
@@ -95,7 +95,6 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
         this.serviceDiscoveryConfiguration = serviceDiscoveryConfiguration;
     }
 
-
     // *************************************************************************
     // Fluent API
     // *************************************************************************
@@ -109,7 +108,7 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     }
 
     /**
-     *  Set the time unit for the timeout.
+     * Set the time unit for the timeout.
      */
     public CachingServiceCallServiceDiscoveryConfiguration units(TimeUnit units) {
         setUnits(units);
@@ -117,7 +116,7 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     }
 
     /**
-     *  Set the service-call configuration to use
+     * Set the service-call configuration to use
      */
     public CachingServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         setServiceDiscoveryConfiguration(serviceDiscoveryConfiguration);

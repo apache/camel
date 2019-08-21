@@ -27,7 +27,8 @@ public class MockExpectedHeadersIssueTest extends ContextTestSupport {
     public void testHeaders() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
 
-        // this one does NOT add by only SET so what happens is that header1 value1 is the only tested
+        // this one does NOT add by only SET so what happens is that header1
+        // value1 is the only tested
         resultEndpoint.expectedHeaderReceived("header2", "value2");
         resultEndpoint.expectedHeaderReceived("header1", "value1");
 
@@ -52,9 +53,7 @@ public class MockExpectedHeadersIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:test")
-                    .setHeader("header2", constant("value2"))
-                    .to("mock:result");
+                from("direct:test").setHeader("header2", constant("value2")).to("mock:result");
             }
         };
     }

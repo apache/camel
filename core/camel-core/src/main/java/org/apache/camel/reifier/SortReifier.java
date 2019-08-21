@@ -32,7 +32,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 public class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifier<U> {
 
     SortReifier(ProcessorDefinition<?> definition) {
-        super((U) definition);
+        super((U)definition);
     }
 
     @Override

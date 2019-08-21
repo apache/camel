@@ -30,7 +30,8 @@ import org.junit.Test;
 
 /**
  * A route for simple performance testing that can be used when we suspect
- * something is wrong. Inspired by end user on forum doing this as proof of concept.
+ * something is wrong. Inspired by end user on forum doing this as proof of
+ * concept.
  */
 public class RoutePerformanceTest extends ContextTestSupport {
 
@@ -52,7 +53,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
         StopWatch watch = new StopWatch();
 
         MockEndpoint endpoint = getMockEndpoint(uri);
-        endpoint.expectedMessageCount((int) dataSet.getSize());
+        endpoint.expectedMessageCount((int)dataSet.getSize());
         endpoint.expectedHeaderReceived("foo", 123);
 
         // wait 30 sec for slow servers
@@ -73,11 +74,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
                 from("dataset:foo").to("direct:start");
 
                 from("direct:start").to("log:a?level=OFF", "log:b?level=OFF", "direct:c");
-                from("direct:c")
-                    .choice()
-                        .when().header("foo").to(uri, "dataset:foo")
-                        .otherwise().to(uri, "dataset:foo")
-                    .end();
+                from("direct:c").choice().when().header("foo").to(uri, "dataset:foo").otherwise().to(uri, "dataset:foo").end();
             }
         };
     }

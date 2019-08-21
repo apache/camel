@@ -41,7 +41,8 @@ public class SplitStopOnExceptionIssueTest extends ContextTestSupport {
         assertTrue(out.isFailed());
         assertFalse(out.hasOut());
 
-        // when we use stopOnException the exchange should not be affected during the splitter
+        // when we use stopOnException the exchange should not be affected
+        // during the splitter
         // eg the foo property should have the before value
         assertEquals("before", out.getProperty("foo"));
         assertEquals("Hello,World,Kaboom", out.getIn().getBody());
@@ -58,16 +59,8 @@ public class SplitStopOnExceptionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setProperty("foo", constant("before"))
-                    .split().tokenize(",")
-                        .setProperty("foo", constant("changed"))
-                        .to("mock:line")
-                        .filter(body().contains("Kaboom"))
-                            .throwException(new IllegalArgumentException("Forced exception"))
-                        .end()
-                    .end()
-                    .to("mock:result");
+                from("direct:start").setProperty("foo", constant("before")).split().tokenize(",").setProperty("foo", constant("changed")).to("mock:line")
+                    .filter(body().contains("Kaboom")).throwException(new IllegalArgumentException("Forced exception")).end().end().to("mock:result");
             }
         };
     }

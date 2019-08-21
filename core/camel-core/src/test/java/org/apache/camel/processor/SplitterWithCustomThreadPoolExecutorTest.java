@@ -34,11 +34,12 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
 
     @Test
     public void testSplitterWithCustomThreadPoolExecutor() throws Exception {
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) getSplitter().getExecutorService();
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor)getSplitter().getExecutorService();
         if (threadPoolExecutor == null) {
             threadPoolExecutor = context.getRegistry().lookupByNameAndType(getSplitter().getExecutorServiceRef(), ThreadPoolExecutor.class);
         }
-        // this should be sufficient as core pool size is the only thing I changed from the default
+        // this should be sufficient as core pool size is the only thing I
+        // changed from the default
         assertTrue(threadPoolExecutor.getCorePoolSize() == getThreadPoolExecutor().getCorePoolSize());
         assertTrue(threadPoolExecutor.getMaximumPoolSize() == getThreadPoolExecutor().getMaximumPoolSize());
     }
@@ -46,10 +47,10 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
     protected ThreadPoolExecutor getThreadPoolExecutor() {
         return customThreadPoolExecutor;
     }
-    
+
     protected SplitDefinition getSplitter() {
         SplitDefinition result = null;
-        List<RouteDefinition> routeDefinitions = context.getRouteDefinitions();          
+        List<RouteDefinition> routeDefinitions = context.getRouteDefinitions();
         for (RouteDefinition routeType : routeDefinitions) {
             result = firstSplitterType(routeType.getOutputs());
             if (result != null) {
@@ -57,21 +58,21 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
             }
         }
         return result;
-    }    
+    }
 
     protected SplitDefinition firstSplitterType(List<ProcessorDefinition<?>> outputs) {
         SplitDefinition result = null;
-        
+
         for (ProcessorDefinition<?> processorType : outputs) {
             if (processorType instanceof SplitDefinition) {
-                result = (SplitDefinition) processorType;
+                result = (SplitDefinition)processorType;
             } else {
                 result = firstSplitterType(processorType.getOutputs());
             }
             if (result != null) {
                 break;
             }
-        }        
+        }
         return result;
     }
 
@@ -79,9 +80,7 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:parallel-custom-pool")
-                    .split(body().tokenize(",")).parallelProcessing()
-                    .executorService(customThreadPoolExecutor).to("mock:result");
+                from("direct:parallel-custom-pool").split(body().tokenize(",")).parallelProcessing().executorService(customThreadPoolExecutor).to("mock:result");
             }
         };
     }

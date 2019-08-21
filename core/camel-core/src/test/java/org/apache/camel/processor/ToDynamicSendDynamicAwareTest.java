@@ -47,9 +47,7 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("bar", new BarComponent());
 
-                from("direct:start")
-                    .toD("bar:order?drink=${header.drink}")
-                    .to("mock:bar");
+                from("direct:start").toD("bar:order?drink=${header.drink}").to("mock:bar");
             }
         };
     }

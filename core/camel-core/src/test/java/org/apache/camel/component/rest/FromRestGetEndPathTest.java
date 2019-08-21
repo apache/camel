@@ -44,7 +44,8 @@ public class FromRestGetEndPathTest extends FromRestGetTest {
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(0));
         assertEquals("direct:bye", to.getUri());
 
-        // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
+        // the rest becomes routes and the input is a seda endpoint created by
+        // the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);
         template.sendBody("seda:post-say-bye", "I was here");
         assertMockEndpointsSatisfied();
@@ -61,18 +62,13 @@ public class FromRestGetEndPathTest extends FromRestGetTest {
             @Override
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
-                rest("/say/hello")
-                        .get().to("direct:hello");
+                rest("/say/hello").get().to("direct:hello");
 
-                rest("/say/bye")
-                        .get().consumes("application/json").route().to("direct:bye").endRest()
-                        .post().to("mock:update");
+                rest("/say/bye").get().consumes("application/json").route().to("direct:bye").endRest().post().to("mock:update");
 
-                from("direct:hello")
-                    .transform().constant("Hello World");
+                from("direct:hello").transform().constant("Hello World");
 
-                from("direct:bye")
-                    .transform().constant("Bye World");
+                from("direct:bye").transform().constant("Bye World");
             }
         };
     }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -47,16 +48,13 @@ public class FromFileMoveFileIfProcessFailsTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/movefile?initialDelay=0&delay=10&moveFailed=error")
-                        .convertBodyTo(String.class).to("mock:foo").process(
-                            new Processor() {
-                                public void process(Exchange exchange) throws Exception {
-                                    throw new IllegalArgumentException("Forced by unittest");
-                                }
-                            });
+                from("file://target/data/movefile?initialDelay=0&delay=10&moveFailed=error").convertBodyTo(String.class).to("mock:foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced by unittest");
+                    }
+                });
             }
         };
     }
-
 
 }

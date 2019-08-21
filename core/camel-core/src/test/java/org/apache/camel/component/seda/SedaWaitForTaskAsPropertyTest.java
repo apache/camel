@@ -53,7 +53,8 @@ public class SedaWaitForTaskAsPropertyTest extends ContextTestSupport {
                 exchange.setProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.IfReplyExpected);
             }
         });
-        // we do not expecy a reply and thus do no wait so we just get our own input back
+        // we do not expecy a reply and thus do no wait so we just get our own
+        // input back
         assertEquals("Hello World", out.getIn().getBody());
         assertEquals(null, out.getOut().getBody());
 

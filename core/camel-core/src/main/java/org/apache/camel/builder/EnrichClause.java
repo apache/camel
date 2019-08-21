@@ -18,7 +18,6 @@ package org.apache.camel.builder;
 
 import org.apache.camel.model.ProcessorDefinition;
 
-
 public class EnrichClause<T extends ProcessorDefinition<?>> extends AggregationStrategyClause<T> {
 
     public EnrichClause(T parent) {

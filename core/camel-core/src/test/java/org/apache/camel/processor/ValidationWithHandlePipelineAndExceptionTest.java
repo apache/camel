@@ -31,13 +31,7 @@ public class ValidationWithHandlePipelineAndExceptionTest extends ValidationTest
 
                 onException(ValidationException.class).to("mock:outer");
 
-                from("direct:start")
-                    .doTry()
-                        .process(validator)
-                        .to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .to("mock:invalid")
-                        .process(validator);
+                from("direct:start").doTry().process(validator).to("mock:valid").doCatch(ValidationException.class).to("mock:invalid").process(validator);
             }
         };
     }

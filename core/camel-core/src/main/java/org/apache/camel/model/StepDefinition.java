@@ -23,7 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Routes the message to a sequence of processors which is grouped together as one logical name
+ * Routes the message to a sequence of processors which is grouped together as
+ * one logical name
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "step")

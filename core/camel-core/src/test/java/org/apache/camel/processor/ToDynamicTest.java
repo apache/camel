@@ -50,8 +50,7 @@ public class ToDynamicTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .toD("mock:${header.foo}");
+                from("direct:start").toD("mock:${header.foo}");
             }
         };
     }

@@ -110,7 +110,7 @@ public class EndpointHelperTest extends ContextTestSupport {
         // The registry value is a java.lang.String
         Integer number = EndpointHelper.resolveReferenceParameter(context, "numbar", Integer.class);
         assertNotNull(number);
-        assertEquals(12345, (int) number);
+        assertEquals(12345, (int)number);
     }
 
     @Test

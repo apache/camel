@@ -31,7 +31,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecurityApiKey extends RestSecurityDefinition {
 
-    @XmlAttribute(name = "name", required = true) @Metadata(required = true)
+    @XmlAttribute(name = "name", required = true)
+    @Metadata(required = true)
     private String name;
 
     @XmlAttribute(name = "inHeader")

@@ -30,8 +30,9 @@ import org.apache.camel.spi.PropertyPlaceholderConfigurer;
 public interface DefinitionPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
 
     /**
-     * Gets the options on the model definition which supports property placeholders and can be resolved.
-     * This will be all the string based options.
+     * Gets the options on the model definition which supports property
+     * placeholders and can be resolved. This will be all the string based
+     * options.
      *
      * @return key/values of options
      */
@@ -41,8 +42,8 @@ public interface DefinitionPropertyPlaceholderConfigurer extends PropertyPlaceho
     }
 
     /**
-     * To update an existing property using the function with the key/value and returning the changed value
-     * This will be all the string based options.
+     * To update an existing property using the function with the key/value and
+     * returning the changed value This will be all the string based options.
      */
     default Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext) {
         PropertyPlaceholderConfigurer aware = DefinitionPropertiesPlaceholderProviderHelper.provider(this).orElse(null);

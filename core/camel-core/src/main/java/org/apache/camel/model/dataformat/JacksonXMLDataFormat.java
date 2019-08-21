@@ -26,7 +26,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
+ * JacksonXML data format is used for unmarshal a XML payload to POJO or to
+ * marshal POJO back to XML payload.
  */
 @Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "JacksonXML")
 @XmlRootElement(name = "jacksonxml")
@@ -260,13 +261,14 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
     }
-    
+
     public Boolean getAllowUnmarshallType() {
         return allowUnmarshallType;
     }
 
     /**
-     * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling.
+     * If enabled then Jackson is allowed to attempt to use the
+     * CamelJacksonUnmarshalType header during the unmarshalling.
      * <p/>
      * This should only be enabled when desired to be used.
      */

@@ -43,9 +43,7 @@ public class AggregationStrategyBeanAdapterPollEnrichAllowNullNewExchangeTest ex
                 myStrategy = new AggregationStrategyBeanAdapter(appender, "append");
                 myStrategy.setAllowNullNewExchange(true);
 
-                from("direct:start")
-                    .pollEnrich("seda:foo", 10, myStrategy)
-                        .to("mock:result");
+                from("direct:start").pollEnrich("seda:foo", 10, myStrategy).to("mock:result");
             }
         };
     }

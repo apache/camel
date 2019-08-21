@@ -38,14 +38,11 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:in")
-                    .threads(2)
-                    .to("mock:foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new Exception("Forced exception by unit test");
-                        }
-                    });
+                from("direct:in").threads(2).to("mock:foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new Exception("Forced exception by unit test");
+                    }
+                });
             }
         });
         context.start();

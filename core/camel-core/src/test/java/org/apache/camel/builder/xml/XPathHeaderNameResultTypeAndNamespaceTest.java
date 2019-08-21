@@ -43,12 +43,7 @@ public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSuppor
             public void configure() throws Exception {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
 
-                from("direct:in").choice()
-                    .when().xpath("/c:number = 55", Integer.class, ns, "cheeseDetails")
-                        .to("mock:55")
-                    .otherwise()
-                        .to("mock:other")
-                    .end();
+                from("direct:in").choice().when().xpath("/c:number = 55", Integer.class, ns, "cheeseDetails").to("mock:55").otherwise().to("mock:other").end();
             }
         };
     }

@@ -80,10 +80,10 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     }
 
     /**
-     * This method is <b>only</b> for handling some post configuration
-     * that is needed since this is an interceptor, and we have to do
-     * a bit of magic logic to fixup to handle predicates
-     * with or without proceed/stop set as well.
+     * This method is <b>only</b> for handling some post configuration that is
+     * needed since this is an interceptor, and we have to do a bit of magic
+     * logic to fixup to handle predicates with or without proceed/stop set as
+     * well.
      */
     public void afterPropertiesSet() {
         if (getOutputs().size() == 0) {
@@ -93,14 +93,15 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
         ProcessorDefinition<?> first = getOutputs().get(0);
         if (first instanceof WhenDefinition) {
-            WhenDefinition when = (WhenDefinition) first;
+            WhenDefinition when = (WhenDefinition)first;
             // move this outputs to the when, expect the first one
             // as the first one is the interceptor itself
             for (int i = 1; i < outputs.size(); i++) {
                 ProcessorDefinition<?> out = outputs.get(i);
                 when.addOutput(out);
             }
-            // remove the moved from the original output, by just keeping the first one
+            // remove the moved from the original output, by just keeping the
+            // first one
             ProcessorDefinition<?> keep = outputs.get(0);
             clearOutput();
             outputs.add(keep);

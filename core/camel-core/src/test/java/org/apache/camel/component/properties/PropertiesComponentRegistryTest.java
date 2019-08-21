@@ -37,7 +37,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
+        DefaultCamelContext context = (DefaultCamelContext)super.createCamelContext();
 
         foo = new MyFooBean();
         bar = new MyDummyBean();

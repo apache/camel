@@ -24,7 +24,7 @@ public interface ClusteredRouteFilter {
     /**
      * Test if the route should be clustered or not.
      *
-     * @param camelContext  the camel context
+     * @param camelContext the camel context
      * @param routeId the route id
      * @param route the route definition
      * @return true if the route should be included

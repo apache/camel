@@ -44,9 +44,8 @@ public class AggregateCompletedByBatchConsumerSendEmptyMessageWhenIdleTest exten
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/batch?initialDelay=0&delay=10&sendEmptyMessageWhenIdle=true")
-                    .aggregate(constant(true), new UseLatestAggregationStrategy()).completionFromBatchConsumer()
-                        .to("mock:result");
+                from("file:target/data/batch?initialDelay=0&delay=10&sendEmptyMessageWhenIdle=true").aggregate(constant(true), new UseLatestAggregationStrategy())
+                    .completionFromBatchConsumer().to("mock:result");
 
             }
         };

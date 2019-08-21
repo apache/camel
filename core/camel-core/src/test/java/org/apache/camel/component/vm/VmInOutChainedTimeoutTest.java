@@ -27,7 +27,7 @@ public class VmInOutChainedTimeoutTest extends AbstractVmTestSupport {
     @Test
     public void testVmInOutChainedTimeout() throws Exception {
         StopWatch watch = new StopWatch();
-        
+
         try {
             template2.requestBody("vm:a?timeout=1000", "Hello World");
             fail("Should have thrown an exception");
@@ -36,7 +36,7 @@ public class VmInOutChainedTimeoutTest extends AbstractVmTestSupport {
             ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
             assertEquals(200, cause.getTimeout());
         }
-        
+
         long delta = watch.taken();
 
         assertTrue("Should be faster than 1 sec, was: " + delta, delta < 1100);
@@ -47,26 +47,21 @@ public class VmInOutChainedTimeoutTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:b")
-                        .to("mock:b")
-                        .delay(500)
-                        .transform().constant("Bye World");
+                from("vm:b").to("mock:b").delay(500).transform().constant("Bye World");
             }
         };
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
-                
-                from("vm:a")
-                    .to("mock:a")
+
+                from("vm:a").to("mock:a")
                     // this timeout will trigger an exception to occur
-                    .to("vm:b?timeout=200")
-                    .to("mock:a2");
+                    .to("vm:b?timeout=200").to("mock:a2");
             }
         };
     }

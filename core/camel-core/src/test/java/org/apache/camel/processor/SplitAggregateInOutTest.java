@@ -60,21 +60,27 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 // this routes starts from the direct:start endpoint
                 // the body is then splitted based on @ separator
-                // the splitter in Camel supports InOut as well and for that we need
-                // to be able to aggregate what response we need to send back, so we provide our
+                // the splitter in Camel supports InOut as well and for that we
+                // need
+                // to be able to aggregate what response we need to send back,
+                // so we provide our
                 // own strategy with the class MyOrderStrategy.
-                from("direct:start")
-                    .split(body().tokenize("@"), new MyOrderStrategy())
-                        // each splitted message is then send to this bean where we can process it
-                        .to("bean:MyOrderService?method=handleOrder")
-                        // this is important to end the splitter route as we do not want to do more routing
-                        // on each splitted message
+                from("direct:start").split(body().tokenize("@"), new MyOrderStrategy())
+                    // each splitted message is then send to this bean where we
+                    // can process it
+                    .to("bean:MyOrderService?method=handleOrder")
+                    // this is important to end the splitter route as we do not
+                    // want to do more routing
+                    // on each splitted message
                     .end()
-                    // after we have splitted and handled each message we want to send a single combined
-                    // response back to the original caller, so we let this bean build it for us
-                    // this bean will receive the result of the aggregate strategy: MyOrderStrategy
+                    // after we have splitted and handled each message we want
+                    // to send a single combined
+                    // response back to the original caller, so we let this bean
+                    // build it for us
+                    // this bean will receive the result of the aggregate
+                    // strategy: MyOrderStrategy
                     .to("bean:MyOrderService?method=buildCombinedResponse")
-                // END SNIPPET: e1
+                    // END SNIPPET: e1
                     .to("mock:result");
             }
         };
@@ -94,8 +100,8 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
         }
 
         /**
-         * We use the same bean for building the combined response to send
-         * back to the original caller
+         * We use the same bean for building the combined response to send back
+         * to the original caller
          */
         public String buildCombinedResponse(String line) {
             LOG.debug("BuildCombinedResponse: " + line);
@@ -106,16 +112,17 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
 
     // START SNIPPET: e3
     /**
-     * This is our own order aggregation strategy where we can control
-     * how each splitted message should be combined. As we do not want to
-     * loos any message we copy from the new to the old to preserve the
-     * order lines as long we process them
+     * This is our own order aggregation strategy where we can control how each
+     * splitted message should be combined. As we do not want to loos any
+     * message we copy from the new to the old to preserve the order lines as
+     * long we process them
      */
     public static class MyOrderStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            // put order together in old exchange by adding the order from new exchange
+            // put order together in old exchange by adding the order from new
+            // exchange
 
             if (oldExchange == null) {
                 // the first time we aggregate we only have the new exchange,
@@ -134,7 +141,8 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
             // put combined order back on old to preserve it
             oldExchange.getIn().setBody(orders);
 
-            // return old as this is the one that has all the orders gathered until now
+            // return old as this is the one that has all the orders gathered
+            // until now
             return oldExchange;
         }
     }

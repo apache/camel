@@ -82,14 +82,9 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         prop.put("bar.gold-customer", "true");
         prop.put("bar.work.name", "{{companyName}}");
 
-        PropertyBindingSupport.build()
-                .withCamelContext(context)
-                .withTarget(foo)
-                .withProperty("name", "James")
-                .withProperty("bar.work.id", "123")
-                // and add the rest
-                .withProperties(prop)
-                .bind();
+        PropertyBindingSupport.build().withCamelContext(context).withTarget(foo).withProperty("name", "James").withProperty("bar.work.id", "123")
+            // and add the rest
+            .withProperties(prop).bind();
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -375,7 +370,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     public static class Bar {
         private int age;
         private boolean rider;
-        private Company work; // has no default value but Camel can automatic create one if there is a setter
+        private Company work; // has no default value but Camel can automatic
+                              // create one if there is a setter
         private boolean goldCustomer;
 
         public int getAge() {
@@ -395,7 +391,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         }
 
         // this has no setter but only builders
-        // and mix the builders with both styles (with as prefix and no prefix at all)
+        // and mix the builders with both styles (with as prefix and no prefix
+        // at all)
 
         public Bar withAge(int age) {
             this.age = age;
@@ -419,4 +416,3 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
 }
-

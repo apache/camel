@@ -42,9 +42,7 @@ public class PollEnrichExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .pollEnrich().header("source")
-                    .to("mock:result");
+                from("direct:start").pollEnrich().header("source").to("mock:result");
             }
         };
     }

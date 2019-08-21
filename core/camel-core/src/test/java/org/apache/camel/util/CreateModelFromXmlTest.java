@@ -108,9 +108,9 @@ public class CreateModelFromXmlTest extends ContextTestSupport {
                 NamespaceAware na = null;
                 Expression exp = ed.getExpressionValue();
                 if (exp instanceof NamespaceAware) {
-                    na = (NamespaceAware) exp;
+                    na = (NamespaceAware)exp;
                 } else if (ed instanceof NamespaceAware) {
-                    na = (NamespaceAware) ed;
+                    na = (NamespaceAware)ed;
                 }
 
                 assertNotNull(na);

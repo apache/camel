@@ -38,7 +38,6 @@ public class SimpleSingleOutputMockTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

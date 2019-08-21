@@ -24,7 +24,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * RSS data format is used for working with RSS sync feed Java Objects and transforming to XML and vice-versa.
+ * RSS data format is used for working with RSS sync feed Java Objects and
+ * transforming to XML and vice-versa.
  */
 @Metadata(firstVersion = "2.1.0", label = "dataformat,transformation", title = "RSS")
 @XmlRootElement(name = "rss")

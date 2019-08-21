@@ -27,7 +27,7 @@ import org.apache.camel.support.processor.UnmarshalProcessor;
 public class UnmarshalReifier extends ProcessorReifier<UnmarshalDefinition> {
 
     UnmarshalReifier(ProcessorDefinition<?> definition) {
-        super((UnmarshalDefinition) definition);
+        super((UnmarshalDefinition)definition);
     }
 
     @Override

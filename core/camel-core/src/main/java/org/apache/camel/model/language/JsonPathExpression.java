@@ -40,13 +40,17 @@ public class JsonPathExpression extends ExpressionDefinition {
     private String resultTypeName;
     @XmlTransient
     private Class<?> resultType;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private Boolean suppressExceptions;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean allowSimple;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean allowEasyPredicate;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private Boolean writeAsString;
     @XmlAttribute
     private String headerName;
@@ -118,7 +122,8 @@ public class JsonPathExpression extends ExpressionDefinition {
     }
 
     /**
-     * Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
+     * Whether to write the output of each row/element as a JSON String value
+     * instead of a Map/POJO value.
      */
     public void setWriteAsString(Boolean writeAsString) {
         this.writeAsString = writeAsString;

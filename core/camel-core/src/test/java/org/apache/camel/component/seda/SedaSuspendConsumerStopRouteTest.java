@@ -46,8 +46,7 @@ public class SedaSuspendConsumerStopRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start").routeId("foo")
-                    .to("mock:result");
+                from("seda:start").routeId("foo").to("mock:result");
             }
         };
     }

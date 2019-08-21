@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -57,7 +58,8 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        // let it run for a little while and since it fails first time we should never get a message
+        // let it run for a little while and since it fails first time we should
+        // never get a message
         mock.assertIsSatisfied(50);
 
         assertEquals("rollback", event);

@@ -44,9 +44,7 @@ public class SplitCustomExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(new MyCustomExpression())
-                    .to("mock:split");
+                from("direct:start").split(new MyCustomExpression()).to("mock:split");
             }
         };
     }
@@ -65,7 +63,7 @@ public class SplitCustomExpressionTest extends ContextTestSupport {
                 list.add(part);
             }
 
-            return (T) list.iterator();
+            return (T)list.iterator();
         }
     }
 }

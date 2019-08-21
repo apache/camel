@@ -50,12 +50,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A builder to build an expression based on {@link org.apache.camel.spi.EventNotifier} notifications
- * about {@link Exchange} being routed.
+ * A builder to build an expression based on
+ * {@link org.apache.camel.spi.EventNotifier} notifications about
+ * {@link Exchange} being routed.
  * <p/>
- * This builder can be used for testing purposes where you want to know when a test is supposed to be done.
- * The idea is that you can build an expression that explains when the test is done. For example when Camel
- * have finished routing 5 messages. You can then in your test await for this condition to occur.
+ * This builder can be used for testing purposes where you want to know when a
+ * test is supposed to be done. The idea is that you can build an expression
+ * that explains when the test is done. For example when Camel have finished
+ * routing 5 messages. You can then in your test await for this condition to
+ * occur.
  */
 public class NotifyBuilder {
 
@@ -72,7 +75,8 @@ public class NotifyBuilder {
     // latch to be used to signal predicates matches
     private CountDownLatch latch = new CountDownLatch(1);
 
-    // the current state while building an event predicate where we use a stack and the operation
+    // the current state while building an event predicate where we use a stack
+    // and the operation
     private final List<EventPredicate> stack = new ArrayList<>();
     private EventOperation operation;
     private boolean created;
@@ -101,12 +105,15 @@ public class NotifyBuilder {
     }
 
     /**
-     * Optionally a <tt>from</tt> endpoint which means that this expression should only be based
-     * on {@link Exchange} which is originated from the particular endpoint(s).
+     * Optionally a <tt>from</tt> endpoint which means that this expression
+     * should only be based on {@link Exchange} which is originated from the
+     * particular endpoint(s).
      *
-     * @param endpointUri uri of endpoint or pattern (see the EndpointHelper javadoc)
+     * @param endpointUri uri of endpoint or pattern (see the EndpointHelper
+     *            javadoc)
      * @return the builder
-     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String,
+     *      String)
      */
     public NotifyBuilder from(final String endpointUri) {
         stack.add(new EventPredicateSupport() {
@@ -141,12 +148,14 @@ public class NotifyBuilder {
     }
 
     /**
-     * Optionally a <tt>from</tt> route which means that this expression should only be based
-     * on {@link Exchange} which is originated from the particular route(s).
+     * Optionally a <tt>from</tt> route which means that this expression should
+     * only be based on {@link Exchange} which is originated from the particular
+     * route(s).
      *
      * @param routeId id of route or pattern (see the EndpointHelper javadoc)
      * @return the builder
-     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String,
+     *      String)
      */
     public NotifyBuilder fromRoute(final String routeId) {
         stack.add(new EventPredicateSupport() {
@@ -183,12 +192,13 @@ public class NotifyBuilder {
     }
 
     /**
-     * Optionally a <tt>from</tt> current route which means that this expression should only be based
-     * on {@link Exchange} which is the current route(s).
+     * Optionally a <tt>from</tt> current route which means that this expression
+     * should only be based on {@link Exchange} which is the current route(s).
      *
      * @param routeId id of route or pattern (see the EndpointHelper javadoc)
      * @return the builder
-     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String,
+     *      String)
      */
     public NotifyBuilder fromCurrentRoute(final String routeId) {
         stack.add(new EventPredicateSupport() {
@@ -236,10 +246,14 @@ public class NotifyBuilder {
 
             @Override
             public boolean onExchange(Exchange exchange) {
-                // always accept direct endpoints as they are a special case as it will create the UoW beforehand
-                // and just continue to route that on the consumer side, which causes the EventNotifier not to
-                // emit events when the consumer received the exchange, as its already done. For example by
-                // ProducerTemplate which creates the UoW before producing messages.
+                // always accept direct endpoints as they are a special case as
+                // it will create the UoW beforehand
+                // and just continue to route that on the consumer side, which
+                // causes the EventNotifier not to
+                // emit events when the consumer received the exchange, as its
+                // already done. For example by
+                // ProducerTemplate which creates the UoW before producing
+                // messages.
                 if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().getEndpointUri().startsWith("direct:")) {
                     return true;
                 }
@@ -253,7 +267,8 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                // we dont want any to string output as this is an internal predicate to match only from routes
+                // we dont want any to string output as this is an internal
+                // predicate to match only from routes
                 return "";
             }
         });
@@ -261,7 +276,8 @@ public class NotifyBuilder {
     }
 
     /**
-     * Optionally a filter to only allow matching {@link Exchange} to be used for matching.
+     * Optionally a filter to only allow matching {@link Exchange} to be used
+     * for matching.
      *
      * @param predicate the predicate to use for the filter
      * @return the builder
@@ -295,7 +311,8 @@ public class NotifyBuilder {
     }
 
     /**
-     * Optionally a filter to only allow matching {@link Exchange} to be used for matching.
+     * Optionally a filter to only allow matching {@link Exchange} to be used
+     * for matching.
      *
      * @return the builder
      */
@@ -330,15 +347,19 @@ public class NotifyBuilder {
     }
 
     /**
-     * Optionally a <tt>sent to</tt> endpoint which means that this expression should only be based
-     * on {@link Exchange} which has been sent to the given endpoint uri.
+     * Optionally a <tt>sent to</tt> endpoint which means that this expression
+     * should only be based on {@link Exchange} which has been sent to the given
+     * endpoint uri.
      * <p/>
-     * Notice the {@link Exchange} may have been sent to other endpoints as well. This condition will match
-     * if the {@link Exchange} has been sent at least once to the given endpoint.
+     * Notice the {@link Exchange} may have been sent to other endpoints as
+     * well. This condition will match if the {@link Exchange} has been sent at
+     * least once to the given endpoint.
      *
-     * @param endpointUri uri of endpoint or pattern (see the EndpointHelper javadoc)
+     * @param endpointUri uri of endpoint or pattern (see the EndpointHelper
+     *            javadoc)
      * @return the builder
-     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String,
+     *      String)
      */
     public NotifyBuilder wereSentTo(final String endpointUri) {
         // insert in start of stack but after the previous wereSentTo
@@ -385,10 +406,11 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when <tt>number</tt> of {@link Exchange} has been received.
+     * Sets a condition when <tt>number</tt> of {@link Exchange} has been
+     * received.
      * <p/>
-     * The number matching is <i>at least</i> based which means that if more messages received
-     * it will match also.
+     * The number matching is <i>at least</i> based which means that if more
+     * messages received it will match also.
      *
      * @param number at least number of messages
      * @return the builder
@@ -421,13 +443,15 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when <tt>number</tt> of {@link Exchange} is done being processed.
+     * Sets a condition when <tt>number</tt> of {@link Exchange} is done being
+     * processed.
      * <p/>
-     * The number matching is <i>at least</i> based which means that if more messages received
-     * it will match also.
+     * The number matching is <i>at least</i> based which means that if more
+     * messages received it will match also.
      * <p/>
-     * The difference between <i>done</i> and <i>completed</i> is that done can also include failed
-     * messages, where as completed is only successful processed messages.
+     * The difference between <i>done</i> and <i>completed</i> is that done can
+     * also include failed messages, where as completed is only successful
+     * processed messages.
      *
      * @param number at least number of messages
      * @return the builder
@@ -466,10 +490,12 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when tne <tt>n'th</tt> (by index) {@link Exchange} is done being processed.
+     * Sets a condition when tne <tt>n'th</tt> (by index) {@link Exchange} is
+     * done being processed.
      * <p/>
-     * The difference between <i>done</i> and <i>completed</i> is that done can also include failed
-     * messages, where as completed is only successful processed messages.
+     * The difference between <i>done</i> and <i>completed</i> is that done can
+     * also include failed messages, where as completed is only successful
+     * processed messages.
      *
      * @param index the message by index to be done
      * @return the builder
@@ -525,13 +551,15 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when <tt>number</tt> of {@link Exchange} has been completed.
+     * Sets a condition when <tt>number</tt> of {@link Exchange} has been
+     * completed.
      * <p/>
-     * The number matching is <i>at least</i> based which means that if more messages received
-     * it will match also.
+     * The number matching is <i>at least</i> based which means that if more
+     * messages received it will match also.
      * <p/>
-     * The difference between <i>done</i> and <i>completed</i> is that done can also include failed
-     * messages, where as completed is only successful processed messages.
+     * The difference between <i>done</i> and <i>completed</i> is that done can
+     * also include failed messages, where as completed is only successful
+     * processed messages.
      *
      * @param number at least number of messages
      * @return the builder
@@ -566,8 +594,8 @@ public class NotifyBuilder {
     /**
      * Sets a condition when <tt>number</tt> of {@link Exchange} has failed.
      * <p/>
-     * The number matching is <i>at least</i> based which means that if more messages received
-     * it will match also.
+     * The number matching is <i>at least</i> based which means that if more
+     * messages received it will match also.
      *
      * @param number at least number of messages
      * @return the builder
@@ -600,7 +628,8 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when <tt>number</tt> of {@link Exchange} is done being processed.
+     * Sets a condition when <tt>number</tt> of {@link Exchange} is done being
+     * processed.
      * <p/>
      * messages, where as completed is only successful processed messages.
      *
@@ -641,10 +670,12 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when <tt>number</tt> of {@link Exchange} has been completed.
+     * Sets a condition when <tt>number</tt> of {@link Exchange} has been
+     * completed.
      * <p/>
-     * The difference between <i>done</i> and <i>completed</i> is that done can also include failed
-     * messages, where as completed is only successful processed messages.
+     * The difference between <i>done</i> and <i>completed</i> is that done can
+     * also include failed messages, where as completed is only successful
+     * processed messages.
      *
      * @param number exactly number of messages
      * @return the builder
@@ -710,7 +741,8 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition that <b>any received</b> {@link Exchange} should match the {@link Predicate}
+     * Sets a condition that <b>any received</b> {@link Exchange} should match
+     * the {@link Predicate}
      *
      * @param predicate the predicate
      * @return the builder
@@ -720,7 +752,8 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition that <b>any done</b> {@link Exchange} should match the {@link Predicate}
+     * Sets a condition that <b>any done</b> {@link Exchange} should match the
+     * {@link Predicate}
      *
      * @param predicate the predicate
      * @return the builder
@@ -779,7 +812,8 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition that <b>all received</b> {@link Exchange} should match the {@link Predicate}
+     * Sets a condition that <b>all received</b> {@link Exchange} should match
+     * the {@link Predicate}
      *
      * @param predicate the predicate
      * @return the builder
@@ -789,7 +823,8 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition that <b>all done</b> {@link Exchange} should match the {@link Predicate}
+     * Sets a condition that <b>all done</b> {@link Exchange} should match the
+     * {@link Predicate}
      *
      * @param predicate the predicate
      * @return the builder
@@ -848,10 +883,11 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition that the bodies is expected to be <b>received</b> in the order as well.
+     * Sets a condition that the bodies is expected to be <b>received</b> in the
+     * order as well.
      * <p/>
-     * This condition will discard any additional messages. If you need a more strict condition
-     * then use {@link #whenExactBodiesReceived(Object...)}
+     * This condition will discard any additional messages. If you need a more
+     * strict condition then use {@link #whenExactBodiesReceived(Object...)}
      *
      * @param bodies the expected bodies
      * @return the builder
@@ -864,10 +900,11 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition that the bodies is expected to be <b>done</b> in the order as well.
+     * Sets a condition that the bodies is expected to be <b>done</b> in the
+     * order as well.
      * <p/>
-     * This condition will discard any additional messages. If you need a more strict condition
-     * then use {@link #whenExactBodiesDone(Object...)}
+     * This condition will discard any additional messages. If you need a more
+     * strict condition then use {@link #whenExactBodiesDone(Object...)}
      *
      * @param bodies the expected bodies
      * @return the builder
@@ -880,9 +917,11 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition that the bodies is expected to be <b>received</b> in the order as well.
+     * Sets a condition that the bodies is expected to be <b>received</b> in the
+     * order as well.
      * <p/>
-     * This condition is strict which means that it only expect that exact number of bodies
+     * This condition is strict which means that it only expect that exact
+     * number of bodies
      *
      * @param bodies the expected bodies
      * @return the builder
@@ -895,9 +934,11 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition that the bodies is expected to be <b>done</b> in the order as well.
+     * Sets a condition that the bodies is expected to be <b>done</b> in the
+     * order as well.
      * <p/>
-     * This condition is strict which means that it only expect that exact number of bodies
+     * This condition is strict which means that it only expect that exact
+     * number of bodies
      *
      * @param bodies the expected bodies
      * @return the builder
@@ -976,14 +1017,16 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when the provided matcher (such as mock endpoint) is satisfied based on {@link Exchange}
-     * being sent to it when they are <b>done</b>.
+     * Sets a condition when the provided matcher (such as mock endpoint) is
+     * satisfied based on {@link Exchange} being sent to it when they are
+     * <b>done</b>.
      * <p/>
-     * The idea is that you can use mock endpoints (or other matchers) for setting fine grained expectations
-     * and then use that together with this builder. The mock provided does <b>NOT</b>
-     * have to already exist in the route. You can just create a new pseudo mock
-     * and this builder will send the done {@link Exchange} to it. So its like
-     * adding the mock to the end of your route(s).
+     * The idea is that you can use mock endpoints (or other matchers) for
+     * setting fine grained expectations and then use that together with this
+     * builder. The mock provided does <b>NOT</b> have to already exist in the
+     * route. You can just create a new pseudo mock and this builder will send
+     * the done {@link Exchange} to it. So its like adding the mock to the end
+     * of your route(s).
      *
      * @param matcher the matcher such as mock endpoint
      * @return the builder
@@ -993,14 +1036,16 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when the provided matcher (such as mock endpoint) is satisfied based on {@link Exchange}
-     * being sent to it when they are <b>received</b>.
+     * Sets a condition when the provided matcher (such as mock endpoint) is
+     * satisfied based on {@link Exchange} being sent to it when they are
+     * <b>received</b>.
      * <p/>
-     * The idea is that you can use mock endpoints (or other matchers) for setting fine grained expectations
-     * and then use that together with this builder. The mock provided does <b>NOT</b>
-     * have to already exist in the route. You can just create a new pseudo mock
-     * and this builder will send the done {@link Exchange} to it. So its like
-     * adding the mock to the end of your route(s).
+     * The idea is that you can use mock endpoints (or other matchers) for
+     * setting fine grained expectations and then use that together with this
+     * builder. The mock provided does <b>NOT</b> have to already exist in the
+     * route. You can just create a new pseudo mock and this builder will send
+     * the done {@link Exchange} to it. So its like adding the mock to the end
+     * of your route(s).
      *
      * @param matcher the matcher such as mock endpoint
      * @return the builder
@@ -1058,14 +1103,16 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when the provided matcher (such as mock endpoint) is <b>not</b> satisfied based on {@link Exchange}
-     * being sent to it when they are <b>received</b>.
+     * Sets a condition when the provided matcher (such as mock endpoint) is
+     * <b>not</b> satisfied based on {@link Exchange} being sent to it when they
+     * are <b>received</b>.
      * <p/>
-     * The idea is that you can use  mock endpoints (or other matchers) for setting fine grained expectations
-     * and then use that together with this builder. The mock provided does <b>NOT</b>
-     * have to already exist in the route. You can just create a new pseudo mock
-     * and this builder will send the done {@link Exchange} to it. So its like
-     * adding the mock to the end of your route(s).
+     * The idea is that you can use mock endpoints (or other matchers) for
+     * setting fine grained expectations and then use that together with this
+     * builder. The mock provided does <b>NOT</b> have to already exist in the
+     * route. You can just create a new pseudo mock and this builder will send
+     * the done {@link Exchange} to it. So its like adding the mock to the end
+     * of your route(s).
      *
      * @param matcher the matcher such as mock endpoint
      * @return the builder
@@ -1075,14 +1122,16 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when the provided matcher (such as mock endpoint) is <b>not</b> satisfied based on {@link Exchange}
-     * being sent to it when they are <b>done</b>.
+     * Sets a condition when the provided matcher (such as mock endpoint) is
+     * <b>not</b> satisfied based on {@link Exchange} being sent to it when they
+     * are <b>done</b>.
      * <p/>
-     * The idea is that you can use  mock endpoints (or other matchers) for setting fine grained expectations
-     * and then use that together with this builder. The mock provided does <b>NOT</b>
-     * have to already exist in the route. You can just create a new pseudo mock
-     * and this builder will send the done {@link Exchange} to it. So its like
-     * adding the mock to the end of your route(s).
+     * The idea is that you can use mock endpoints (or other matchers) for
+     * setting fine grained expectations and then use that together with this
+     * builder. The mock provided does <b>NOT</b> have to already exist in the
+     * route. You can just create a new pseudo mock and this builder will send
+     * the done {@link Exchange} to it. So its like adding the mock to the end
+     * of your route(s).
      *
      * @param matcher the matcher such as mock endpoint
      * @return the builder
@@ -1140,7 +1189,8 @@ public class NotifyBuilder {
     }
 
     /**
-     * Prepares to append an additional expression using the <i>and</i> operator.
+     * Prepares to append an additional expression using the <i>and</i>
+     * operator.
      *
      * @return the builder
      */
@@ -1160,7 +1210,8 @@ public class NotifyBuilder {
     }
 
     /**
-     * Prepares to append an additional expression using the <i>not</i> operator.
+     * Prepares to append an additional expression using the <i>not</i>
+     * operator.
      *
      * @return the builder
      */
@@ -1170,7 +1221,8 @@ public class NotifyBuilder {
     }
 
     /**
-     * Specifies the wait time in millis to use in the {@link #matchesWaitTime()} method.
+     * Specifies the wait time in millis to use in the
+     * {@link #matchesWaitTime()} method.
      */
     public NotifyBuilder waitTime(long waitTime) {
         this.waitTime = waitTime;
@@ -1211,7 +1263,8 @@ public class NotifyBuilder {
     /**
      * Does all the expression match?
      * <p/>
-     * This operation will return immediately which means it can be used for testing at this very moment.
+     * This operation will return immediately which means it can be used for
+     * testing at this very moment.
      *
      * @return <tt>true</tt> if matching, <tt>false</tt> otherwise
      */
@@ -1225,12 +1278,13 @@ public class NotifyBuilder {
     /**
      * Does all the expression match?
      * <p/>
-     * This operation will wait until the match is <tt>true</tt> or otherwise a timeout occur
-     * which means <tt>false</tt> will be returned.
+     * This operation will wait until the match is <tt>true</tt> or otherwise a
+     * timeout occur which means <tt>false</tt> will be returned.
      *
-     * @param timeout  the timeout value
+     * @param timeout the timeout value
      * @param timeUnit the time unit
-     * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to timeout
+     * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to
+     *         timeout
      */
     public boolean matches(long timeout, TimeUnit timeUnit) {
         if (!created) {
@@ -1247,12 +1301,13 @@ public class NotifyBuilder {
     /**
      * Does all the expressions match?
      * <p/>
-     * This operation will wait until the match is <tt>true</tt> or otherwise a timeout occur
-     * which means <tt>false</tt> will be returned.
+     * This operation will wait until the match is <tt>true</tt> or otherwise a
+     * timeout occur which means <tt>false</tt> will be returned.
      * <p/>
      * The timeout value is by default 10 seconds.
      *
-     * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to timeout
+     * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to
+     *         timeout
      * @deprecated use {@link #matchesWaitTime()} instead
      */
     @Deprecated
@@ -1263,12 +1318,13 @@ public class NotifyBuilder {
     /**
      * Does all the expressions match?
      * <p/>
-     * This operation will wait until the match is <tt>true</tt> or otherwise a timeout occur
-     * which means <tt>false</tt> will be returned.
+     * This operation will wait until the match is <tt>true</tt> or otherwise a
+     * timeout occur which means <tt>false</tt> will be returned.
      * <p/>
      * The timeout value is by default 10 seconds.
      *
-     * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to timeout
+     * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to
+     *         timeout
      */
     public boolean matchesWaitTime() {
         if (!created) {
@@ -1305,7 +1361,8 @@ public class NotifyBuilder {
     private void doCreate(EventOperation newOperation) {
         // init operation depending on the newOperation
         if (operation == null) {
-            // if the first new operation is an or then this operation must be an or as well
+            // if the first new operation is an or then this operation must be
+            // an or as well
             // otherwise it should be and based
             operation = newOperation == EventOperation.or ? EventOperation.or : EventOperation.and;
         }
@@ -1339,20 +1396,21 @@ public class NotifyBuilder {
     }
 
     /**
-     * Notifier which hooks into Camel to listen for {@link Exchange} relevant events for this builder
+     * Notifier which hooks into Camel to listen for {@link Exchange} relevant
+     * events for this builder
      */
     private final class ExchangeNotifier extends EventNotifierSupport {
 
         @Override
         public void notify(CamelEvent event) throws Exception {
             if (event instanceof ExchangeCreatedEvent) {
-                onExchangeCreated((ExchangeCreatedEvent) event);
+                onExchangeCreated((ExchangeCreatedEvent)event);
             } else if (event instanceof ExchangeCompletedEvent) {
-                onExchangeCompleted((ExchangeCompletedEvent) event);
+                onExchangeCompleted((ExchangeCompletedEvent)event);
             } else if (event instanceof ExchangeFailedEvent) {
-                onExchangeFailed((ExchangeFailedEvent) event);
+                onExchangeFailed((ExchangeFailedEvent)event);
             } else if (event instanceof ExchangeSentEvent) {
-                onExchangeSent((ExchangeSentEvent) event);
+                onExchangeSent((ExchangeSentEvent)event);
             }
 
             // now compute whether we matched
@@ -1463,7 +1521,8 @@ public class NotifyBuilder {
          * Callback for {@link Exchange} lifecycle
          *
          * @param exchange the exchange
-         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to stop immediately
+         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to
+         *         stop immediately
          */
         boolean onExchangeCreated(Exchange exchange);
 
@@ -1471,7 +1530,8 @@ public class NotifyBuilder {
          * Callback for {@link Exchange} lifecycle
          *
          * @param exchange the exchange
-         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to stop immediately
+         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to
+         *         stop immediately
          */
         boolean onExchangeCompleted(Exchange exchange);
 
@@ -1479,7 +1539,8 @@ public class NotifyBuilder {
          * Callback for {@link Exchange} lifecycle
          *
          * @param exchange the exchange
-         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to stop immediately
+         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to
+         *         stop immediately
          */
         boolean onExchangeFailed(Exchange exchange);
 
@@ -1489,7 +1550,8 @@ public class NotifyBuilder {
          * @param exchange the exchange
          * @param endpoint the endpoint sent to
          * @param timeTaken time taken in millis to send the to endpoint
-         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to stop immediately
+         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to
+         *         stop immediately
          */
         boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken);
     }
@@ -1523,7 +1585,8 @@ public class NotifyBuilder {
 
         @Override
         public boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken) {
-            // no need to invoke onExchange as this is a special case when the Exchange
+            // no need to invoke onExchange as this is a special case when the
+            // Exchange
             // was sent to a specific endpoint
             return true;
         }

@@ -42,28 +42,24 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body().tokenize(","), new AggregationStrategy() {
-                        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                            if (oldExchange == null) {
-                                return newExchange;
-                            }
-                            // should always be in
-                            String body = newExchange.getIn().getBody(String.class);
-                            assertNotNull(body);
+                from("direct:start").split(body().tokenize(","), new AggregationStrategy() {
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        if (oldExchange == null) {
                             return newExchange;
                         }
-                    })
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertFalse("Should not have out", failed.get());
-                                String s = exchange.getIn().getBody(String.class);
-                                exchange.getIn().setBody("Hi " + s);
-                                context.createProducerTemplate().send("mock:foo", exchange);
-                            }
-                        })
-                        .end()
-                    .to("mock:result");
+                        // should always be in
+                        String body = newExchange.getIn().getBody(String.class);
+                        assertNotNull(body);
+                        return newExchange;
+                    }
+                }).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertFalse("Should not have out", failed.get());
+                        String s = exchange.getIn().getBody(String.class);
+                        exchange.getIn().setBody("Hi " + s);
+                        context.createProducerTemplate().send("mock:foo", exchange);
+                    }
+                }).end().to("mock:result");
             }
         });
         context.start();
@@ -85,31 +81,24 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body().tokenize(","), new AggregationStrategy() {
-                        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                            if (oldExchange == null) {
-                                return newExchange;
-                            }
-                            // should always be in
-                            String body = newExchange.getIn().getBody(String.class);
-                            assertNotNull(body);
+                from("direct:start").split(body().tokenize(","), new AggregationStrategy() {
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        if (oldExchange == null) {
                             return newExchange;
                         }
-                    })
-                        .pipeline("log:a", "log:b")
-                        .to("log:foo")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertFalse("Should not have out", failed.get());
-                                String s = exchange.getIn().getBody(String.class);
-                                exchange.getIn().setBody("Hi " + s);
-                                context.createProducerTemplate().send("mock:foo", exchange);
-                            }
-                        })
-                        .to("mock:split")
-                    .end()
-                    .to("mock:result");
+                        // should always be in
+                        String body = newExchange.getIn().getBody(String.class);
+                        assertNotNull(body);
+                        return newExchange;
+                    }
+                }).pipeline("log:a", "log:b").to("log:foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertFalse("Should not have out", failed.get());
+                        String s = exchange.getIn().getBody(String.class);
+                        exchange.getIn().setBody("Hi " + s);
+                        context.createProducerTemplate().send("mock:foo", exchange);
+                    }
+                }).to("mock:split").end().to("mock:result");
             }
         });
         context.start();

@@ -29,36 +29,31 @@ public class DirectVmNoPropertyPropagationComponentTest extends ContextTestSuppo
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        
+
         DirectVmComponent directvm = new DirectVmComponent();
         directvm.setPropagateProperties(false);
         directvm.setBlock(false);
         context.addComponent("direct-vm", directvm);
-        
+
         return context;
     }
 
     @Test
     public void testPropertiesPropagatedOrNot() throws Exception {
 
-            
         template.sendBody("direct-vm:start.default", "Hello World");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // Starters.
-                from("direct-vm:start.default")
-                    .setProperty("abc", constant("def"))
-                    .to("direct-vm:foo.noprops");
-                
+                from("direct-vm:start.default").setProperty("abc", constant("def")).to("direct-vm:foo.noprops");
+
                 // Asserters.
-                from("direct-vm:foo.noprops").process(exchange -> 
-                    assertNull(exchange.getProperty("abc"))
-                );
-                
+                from("direct-vm:foo.noprops").process(exchange -> assertNull(exchange.getProperty("abc")));
+
             }
         };
     }

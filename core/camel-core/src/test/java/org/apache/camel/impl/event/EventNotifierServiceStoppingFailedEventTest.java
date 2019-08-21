@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.impl.event;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,5 +103,5 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
             return name;
         }
     }
-    
+
 }

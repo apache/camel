@@ -24,9 +24,8 @@ import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Topic load balancer
- *
- * The topic load balancer sends to all destinations (rather like JMS Topics)
+ * Topic load balancer The topic load balancer sends to all destinations (rather
+ * like JMS Topics)
  */
 @Metadata(label = "eip,routing,loadbalance")
 @XmlRootElement(name = "topic")

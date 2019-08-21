@@ -28,7 +28,8 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents a proxy to an error handler builder which is resolved by named reference
+ * Represents a proxy to an error handler builder which is resolved by named
+ * reference
  */
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     private final String ref;
@@ -69,7 +70,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     }
 
     private ErrorHandlerBuilder lookupErrorHandler(RouteContext routeContext) {
-        ErrorHandlerBuilder handler = (ErrorHandlerBuilder) ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, getRef());
+        ErrorHandlerBuilder handler = (ErrorHandlerBuilder)ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, getRef());
         ObjectHelper.notNull(handler, "error handler '" + ref + "'");
 
         // configure if the handler support transacted

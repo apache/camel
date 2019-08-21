@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -57,9 +58,7 @@ public class SetPropertyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                    setProperty(propertyName).constant(expectedPropertyValue).
-                    to("mock:end");
+                from("direct:start").setProperty(propertyName).constant(expectedPropertyValue).to("mock:end");
             }
         };
     }

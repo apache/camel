@@ -63,11 +63,7 @@ public class CustomListAggregationStrategySplitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body(), new MyListOfNumbersStrategy())
-                        .to("mock:line")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").split(body(), new MyListOfNumbersStrategy()).to("mock:line").end().to("mock:result");
             }
         };
     }

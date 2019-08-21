@@ -52,12 +52,12 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
                 from("direct:start").multicast().parallelProcessing().stopOnException().to("direct:a", "direct:b").end().to("mock:result");
 
                 from("direct:a") //
-                        // read stream
-                        .process(new SimpleProcessor(false)).to("mock:resulta");
+                    // read stream
+                    .process(new SimpleProcessor(false)).to("mock:resulta");
 
                 from("direct:b") //
-                        // read stream concurrently, because of parallel processing
-                        .process(new SimpleProcessor(true)).to("mock:resultb");
+                    // read stream concurrently, because of parallel processing
+                    .process(new SimpleProcessor(true)).to("mock:resultb");
 
             }
         };
@@ -75,24 +75,25 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         public void process(Exchange exchange) throws Exception {
 
             if (withSleepTime) {
-                // simulate some processing in order to get easier concurrency effects
+                // simulate some processing in order to get easier concurrency
+                // effects
                 Thread.sleep(50);
             }
             Object body = exchange.getIn().getBody();
             if (body instanceof InputStream) {
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
-                IOHelper.copy((InputStream) body, output);
+                IOHelper.copy((InputStream)body, output);
                 exchange.getMessage().setBody(output.toByteArray());
             } else if (body instanceof Reader) {
-                Reader reader = (Reader) body;
+                Reader reader = (Reader)body;
                 StringBuilder sb = new StringBuilder();
                 for (int i = reader.read(); i > -1; i = reader.read()) {
-                    sb.append((char) i);
+                    sb.append((char)i);
                 }
                 reader.close();
                 exchange.getMessage().setBody(sb.toString());
             } else if (body instanceof StreamSource) {
-                StreamSource ss = (StreamSource) body;
+                StreamSource ss = (StreamSource)body;
                 if (ss.getInputStream() != null) {
                     ByteArrayOutputStream output = new ByteArrayOutputStream();
                     IOHelper.copy(ss.getInputStream(), output);
@@ -101,7 +102,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
                     Reader reader = ss.getReader();
                     StringBuilder sb = new StringBuilder();
                     for (int i = reader.read(); i > -1; i = reader.read()) {
-                        sb.append((char) i);
+                        sb.append((char)i);
                     }
                     reader.close();
                     exchange.getMessage().setBody(sb.toString());
@@ -134,10 +135,8 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
     }
 
     /**
-     * Tests the FileInputStreamCache.
-     * 
-     * The sent input stream is transformed to FileInputStreamCache before the
-     * multi-cast processor is called.
+     * Tests the FileInputStreamCache. The sent input stream is transformed to
+     * FileInputStreamCache before the multi-cast processor is called.
      * 
      * @throws Exception
      */
@@ -148,18 +147,15 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         mock = getMockEndpoint("mock:resultb");
         mock.expectedBodiesReceived("James,Guillaume,Hiram,Rob,Roman");
 
-        InputStream in = MultiCastParallelAndStreamCachingTest.class.getClassLoader().getResourceAsStream(
-                "org/apache/camel/processor/simple.txt");
+        InputStream in = MultiCastParallelAndStreamCachingTest.class.getClassLoader().getResourceAsStream("org/apache/camel/processor/simple.txt");
         template.sendBody("direct:start", in);
 
         assertMockEndpointsSatisfied();
     }
 
     /**
-     * Tests the FileInputStreamCache.
-     * 
-     * The sent input stream is transformed to InputStreamCache before the
-     * multi-cast processor is called.
+     * Tests the FileInputStreamCache. The sent input stream is transformed to
+     * InputStreamCache before the multi-cast processor is called.
      * 
      * @throws Exception
      */
@@ -171,19 +167,17 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         MockEndpoint mockb = getMockEndpoint("mock:resultb");
         mockb.expectedBodiesReceived("A");
 
-        InputStream in = MultiCastParallelAndStreamCachingTest.class.getClassLoader().getResourceAsStream(
-                "org/apache/camel/processor/oneCharacter.txt");
-        // The body is only one character. Therefore InputStreamCache is used for stream caching
+        InputStream in = MultiCastParallelAndStreamCachingTest.class.getClassLoader().getResourceAsStream("org/apache/camel/processor/oneCharacter.txt");
+        // The body is only one character. Therefore InputStreamCache is used
+        // for stream caching
         template.sendBody("direct:start", in);
 
         assertMockEndpointsSatisfied();
     }
 
     /**
-     * Tests the ReaderCache.
-     * 
-     * The sent InputStreamReader is transformed to a ReaderCache before the
-     * multi-cast processor is called.
+     * Tests the ReaderCache. The sent InputStreamReader is transformed to a
+     * ReaderCache before the multi-cast processor is called.
      * 
      * @throws Exception
      */
@@ -216,7 +210,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testStreamSourceCacheWithReader() throws Exception {
         String input = "ABC\u00DF"; // sharp-s

@@ -63,8 +63,10 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
     }
 
     protected List<Class<? extends Throwable>> createExceptionClasses(CamelContext context) throws ClassNotFoundException {
-        // must use the class resolver from CamelContext to load classes to ensure it can
-        // be loaded in all kind of environments such as JEE servers and OSGi etc.
+        // must use the class resolver from CamelContext to load classes to
+        // ensure it can
+        // be loaded in all kind of environments such as JEE servers and OSGi
+        // etc.
         List<String> list = definition.getExceptions();
         List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
         for (String name : list) {

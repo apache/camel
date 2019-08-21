@@ -74,21 +74,13 @@ public class BeanMethodValueWithCommaTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:single")
-                        .to("bean:foo?method=bar(${body}, 'a,b')")
-                        .to("mock:result");
+                from("direct:single").to("bean:foo?method=bar(${body}, 'a,b')").to("mock:result");
 
-                from("direct:double")
-                        .to("bean:foo?method=bar(${body}, \"c,d\")")
-                        .to("mock:result");
+                from("direct:double").to("bean:foo?method=bar(${body}, \"c,d\")").to("mock:result");
 
-                from("direct:header")
-                        .to("bean:foo?method=bar(${body}, ${header.myHeader})")
-                        .to("mock:result");
+                from("direct:header").to("bean:foo?method=bar(${body}, ${header.myHeader})").to("mock:result");
 
-                from("direct:cron")
-                        .to("bean:foo?method=bar(${body.id}, ${body.cron})")
-                        .to("mock:result");
+                from("direct:cron").to("bean:foo?method=bar(${body.id}, ${body.cron})").to("mock:result");
             }
         };
     }

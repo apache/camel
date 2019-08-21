@@ -44,15 +44,9 @@ public class RoutingSlipThrowExceptionFromExpressionTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(ExpressionEvaluationException.class)
-                    .handled(true)
-                    .to("mock://error");
+                onException(ExpressionEvaluationException.class).handled(true).to("mock://error");
 
-                from("direct://start")
-                    .to("log:foo")
-                    .routingSlip().method(RoutingSlipThrowExceptionFromExpressionTest.class, "slipTo")
-                        .to("mock://result")
-                    .end();
+                from("direct://start").to("log:foo").routingSlip().method(RoutingSlipThrowExceptionFromExpressionTest.class, "slipTo").to("mock://result").end();
             }
         };
     }

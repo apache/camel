@@ -42,11 +42,7 @@ public class RecipientListThrowExceptionSubRouteTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .onException(Exception.class)
-                        .to("mock:error")
-                    .end()
-                    .recipientList(method(Router.class));
+                from("direct:start").onException(Exception.class).to("mock:error").end().recipientList(method(Router.class));
             }
         });
         context.start();
@@ -64,15 +60,9 @@ public class RecipientListThrowExceptionSubRouteTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .onException(Exception.class)
-                        .to("mock:error")
-                    .end()
-                    .to("direct:child");
+                from("direct:start").onException(Exception.class).to("mock:error").end().to("direct:child");
 
-                from("direct:child")
-                    .errorHandler(noErrorHandler())
-                    .recipientList(method(Router.class));
+                from("direct:child").errorHandler(noErrorHandler()).recipientList(method(Router.class));
             }
         });
         context.start();

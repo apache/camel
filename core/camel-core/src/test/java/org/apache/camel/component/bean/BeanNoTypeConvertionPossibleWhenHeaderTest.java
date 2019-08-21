@@ -32,7 +32,8 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        // we send in a bar string as header which cannot be converted to a number so it should fail
+        // we send in a bar string as header which cannot be converted to a
+        // number so it should fail
         try {
             template.requestBodyAndHeader("direct:start", "Hello World", "foo", 555);
             fail("Should have thrown an exception");
@@ -69,7 +70,7 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
         mock.expectedBodiesReceived("Hello World");
         mock.message(0).header("foo").isNull();
 
-        template.requestBodyAndHeader("direct:start", "Hello World", "foo", (Object) null);
+        template.requestBodyAndHeader("direct:start", "Hello World", "foo", (Object)null);
 
         assertMockEndpointsSatisfied();
     }

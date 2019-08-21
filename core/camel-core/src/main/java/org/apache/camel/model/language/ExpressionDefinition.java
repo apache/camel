@@ -60,9 +60,11 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     @XmlAttribute
     @XmlID
     private String id;
-    @XmlValue @Metadata(required = true)
+    @XmlValue
+    @Metadata(required = true)
     private String expression;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean trim;
     @XmlTransient
     private Predicate predicate;
@@ -174,7 +176,8 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                 if (exp != null && isTrim) {
                     exp = exp.trim();
                 }
-                // resolve the expression as it may be an external script from the classpath/file etc
+                // resolve the expression as it may be an external script from
+                // the classpath/file etc
                 exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
 
                 predicate = language.createPredicate(exp);
@@ -183,7 +186,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
         }
         // inject CamelContext if its aware
         if (predicate instanceof CamelContextAware) {
-            ((CamelContextAware) predicate).setCamelContext(camelContext);
+            ((CamelContextAware)predicate).setCamelContext(camelContext);
         }
         return predicate;
     }
@@ -210,7 +213,8 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                 if (exp != null && isTrim) {
                     exp = exp.trim();
                 }
-                // resolve the expression as it may be an external script from the classpath/file etc
+                // resolve the expression as it may be an external script from
+                // the classpath/file etc
                 exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
 
                 setExpressionValue(language.createExpression(exp));
@@ -219,7 +223,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
         }
         // inject CamelContext if its aware
         if (getExpressionValue() instanceof CamelContextAware) {
-            ((CamelContextAware) getExpressionValue()).setCamelContext(camelContext);
+            ((CamelContextAware)getExpressionValue()).setCamelContext(camelContext);
         }
         return getExpressionValue();
     }
@@ -267,7 +271,8 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     }
 
     /**
-     * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+     * Whether to trim the value to remove leading and trailing whitespaces and
+     * line breaks
      */
     public void setTrim(Boolean trim) {
         this.trim = trim;
@@ -309,18 +314,20 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     }
 
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        // allows to perform additional logic after the properties has been configured which may be needed
+        // allows to perform additional logic after the properties has been
+        // configured which may be needed
         // in the various camel components outside camel-core
         if (predicate instanceof AfterPropertiesConfigured) {
-            ((AfterPropertiesConfigured) predicate).afterPropertiesConfigured(camelContext);
+            ((AfterPropertiesConfigured)predicate).afterPropertiesConfigured(camelContext);
         }
     }
 
     protected void configureExpression(CamelContext camelContext, Expression expression) {
-        // allows to perform additional logic after the properties has been configured which may be needed
+        // allows to perform additional logic after the properties has been
+        // configured which may be needed
         // in the various camel components outside camel-core
         if (expression instanceof AfterPropertiesConfigured) {
-            ((AfterPropertiesConfigured) expression).afterPropertiesConfigured(camelContext);
+            ((AfterPropertiesConfigured)expression).afterPropertiesConfigured(camelContext);
         }
     }
 
@@ -331,8 +338,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
         try {
             IntrospectionSupport.setProperty(camelContext, bean, name, value);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean
-                                               + ". Reason: " + e, e);
+            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
         }
     }
 }

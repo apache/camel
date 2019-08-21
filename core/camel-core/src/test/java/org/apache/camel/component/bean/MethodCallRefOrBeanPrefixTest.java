@@ -46,11 +46,9 @@ public class MethodCallRefOrBeanPrefixTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                        .transform().method("ref:foo").to("mock:a");
+                from("direct:a").transform().method("ref:foo").to("mock:a");
 
-                from("direct:b")
-                        .transform().method("bean:foo").to("mock:b");
+                from("direct:b").transform().method("bean:foo").to("mock:b");
             }
         };
     }

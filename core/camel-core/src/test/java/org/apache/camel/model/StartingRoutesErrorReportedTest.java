@@ -76,9 +76,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start").routeId("route3")
-                        .to("mock:foo")
-                        .bean("");
+                    from("direct:start").routeId("route3").to("mock:foo").bean("");
                 }
             });
             context.start();
@@ -94,9 +92,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start").routeId("route3")
-                        .unmarshal().jaxb()
-                        .log("Will never get here");
+                    from("direct:start").routeId("route3").unmarshal().jaxb().log("Will never get here");
                 }
             });
             context.start();
@@ -105,7 +101,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             assertTrue(e.getMessage().contains("Ensure that the data format is valid and the associated Camel component is present on the classpath"));
         }
     }
-    
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;

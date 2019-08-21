@@ -76,17 +76,11 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:one")
-                    .bean(MyBean.class)
-                    .to("mock:result");
+                from("direct:one").bean(MyBean.class).to("mock:result");
 
-                from("direct:two")
-                    .bean(MyCounterBean.class)
-                    .to("mock:result");
+                from("direct:two").bean(MyCounterBean.class).to("mock:result");
 
-                from("direct:three")
-                    .bean(MyOtherBean.class)
-                    .to("mock:result");
+                from("direct:three").bean(MyOtherBean.class).to("mock:result");
             }
         };
     }

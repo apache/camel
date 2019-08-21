@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -52,8 +53,8 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/idempotent/?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10")
-                        .convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/idempotent/?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10").convertBodyTo(String.class)
+                    .to("mock:result");
             }
         };
     }
@@ -110,10 +111,10 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         public boolean confirm(String key) {
             return true;
         }
-        
+
         @Override
         public void clear() {
-            return;  
+            return;
         }
 
         @Override
@@ -124,5 +125,5 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         public void stop() {
         }
     }
-    
+
 }

@@ -46,10 +46,8 @@ public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start").routeId("foo")
-                        .aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(new MemoryAggregationRepository())
-                        .completionSize(2).completionTimeout(100).completeAllOnStop().completionTimeoutCheckerInterval(10)
-                        .to("mock:aggregated");
+                from("seda:start").routeId("foo").aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(new MemoryAggregationRepository())
+                    .completionSize(2).completionTimeout(100).completeAllOnStop().completionTimeoutCheckerInterval(10).to("mock:aggregated");
             }
         };
     }

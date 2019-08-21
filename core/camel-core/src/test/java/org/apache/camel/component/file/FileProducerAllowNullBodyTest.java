@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.CamelExecutionException;
@@ -23,9 +24,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit tests to ensure that 
- * When the allowNullBody option is set to true it will create an empty file and not throw an exception
- * When the allowNullBody option is set to false it will throw an exception of "Cannot write null body to file."
+ * Unit tests to ensure that When the allowNullBody option is set to true it
+ * will create an empty file and not throw an exception When the allowNullBody
+ * option is set to false it will throw an exception of "Cannot write null body
+ * to file."
  */
 public class FileProducerAllowNullBodyTest extends ContextTestSupport {
 
@@ -41,7 +43,7 @@ public class FileProducerAllowNullBodyTest extends ContextTestSupport {
         template.sendBody("file://target/data/allow?allowNullBody=true&fileName=allowNullBody.txt", null);
         assertFileExists("target/data/allow/allowNullBody.txt");
     }
-    
+
     @Test
     public void testAllowNullBodyFalse() throws Exception {
         try {
@@ -51,7 +53,7 @@ public class FileProducerAllowNullBodyTest extends ContextTestSupport {
             GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
             assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
         }
-        
+
         assertFalse("allowNullBody set to false with null body should not create a new file", new File("target/data/allow/allowNullBody.txt").exists());
     }
 }

@@ -34,7 +34,7 @@ import org.apache.camel.support.CamelContextHelper;
 public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
     SplitReifier(ProcessorDefinition<?> definition) {
-        super((SplitDefinition) definition);
+        super((SplitDefinition)definition);
     }
 
     @Override
@@ -60,9 +60,9 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
         Expression exp = definition.getExpression().createExpression(routeContext);
 
-        Splitter answer = new Splitter(routeContext.getCamelContext(), exp, childProcessor, definition.getAggregationStrategy(),
-                isParallelProcessing, threadPool, shutdownThreadPool, isStreaming, definition.isStopOnException(),
-                timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate, isStopOnAggregateException);
+        Splitter answer = new Splitter(routeContext.getCamelContext(), exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing, threadPool,
+                                       shutdownThreadPool, isStreaming, definition.isStopOnException(), timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
+                                       isStopOnAggregateException);
         return answer;
     }
 
@@ -71,7 +71,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         if (strategy == null && definition.getStrategyRef() != null) {
             Object aggStrategy = routeContext.lookup(definition.getStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
+                strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
@@ -85,7 +85,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
         }
 
         if (strategy != null && definition.getShareUnitOfWork() != null && definition.getShareUnitOfWork()) {

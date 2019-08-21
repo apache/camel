@@ -48,13 +48,12 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer://foo?period=10&delay=0").startupOrder(2)
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getMessage().setBody(messageIndex++);
-                                exchange.getMessage().setHeader("aggregateGroup", "group1");
-                            }
-                        }).to("direct:aggregator");
+                from("timer://foo?period=10&delay=0").startupOrder(2).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getMessage().setBody(messageIndex++);
+                        exchange.getMessage().setHeader("aggregateGroup", "group1");
+                    }
+                }).to("direct:aggregator");
 
                 from("direct:aggregator").startupOrder(1).aggregate(header("aggregateGroup"), new AggregationStrategy() {
                     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
@@ -68,9 +67,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
                         oldExchange.getIn().setBody(oldBody + "," + newBody);
                         return oldExchange;
                     }
-                }).completionSize(10).completionTimeout(200).completionTimeoutCheckerInterval(10)
-                        .to("log:aggregated")
-                        .to("mock:result");
+                }).completionSize(10).completionTimeout(200).completionTimeoutCheckerInterval(10).to("log:aggregated").to("mock:result");
             }
         };
     }

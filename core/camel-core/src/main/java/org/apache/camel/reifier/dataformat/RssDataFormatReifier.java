@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 public class RssDataFormatReifier extends DataFormatReifier<RssDataFormat> {
 
     public RssDataFormatReifier(DataFormatDefinition definition) {
-        super((RssDataFormat) definition);
+        super((RssDataFormat)definition);
     }
 
     @Override

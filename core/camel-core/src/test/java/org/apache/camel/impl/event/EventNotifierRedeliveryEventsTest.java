@@ -129,7 +129,8 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(5));
         assertEquals(4, e.getAttempt());
 
-        // since its async the ordering of the rest can be different depending per OS and timing
+        // since its async the ordering of the rest can be different depending
+        // per OS and timing
     }
 
 }

@@ -28,33 +28,33 @@ public class RecipientListIgnoreInvalidEndpointsTest extends ContextTestSupport 
     public void testRecipientListWithIgnoreInvalidEndpointsOption() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
-        
+
         MockEndpoint endpointA = getMockEndpoint("mock:endpointA");
         endpointA.expectedBodiesReceived("Hello a");
 
-        template.requestBody("direct:startA", "Hello World", String.class);        
+        template.requestBody("direct:startA", "Hello World", String.class);
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRecipientListWithoutIgnoreInvalidEndpointsOption() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);
-        
+
         MockEndpoint endpointA = getMockEndpoint("mock:endpointA");
         endpointA.expectedMessageCount(0);
-        
+
         try {
             template.requestBody("direct:startB", "Hello World", String.class);
             fail("Expect the exception here.");
         } catch (Exception ex) {
-            assertTrue("Get a wrong cause of the exception", ex.getCause() instanceof ResolveEndpointFailedException);                         
+            assertTrue("Get a wrong cause of the exception", ex.getCause() instanceof ResolveEndpointFailedException);
         }
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -62,12 +62,11 @@ public class RecipientListIgnoreInvalidEndpointsTest extends ContextTestSupport 
                 from("direct:startA").recipientList(simple("mock:result,fail:endpoint,direct:a")).ignoreInvalidEndpoints();
 
                 from("direct:startB").recipientList(simple("mock:result,fail:endpoint,direct:a"));
-                
+
                 from("direct:a").transform(constant("Hello a")).to("mock:endpointA");
-               
+
             }
         };
     }
 
-   
 }

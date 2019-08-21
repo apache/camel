@@ -38,7 +38,8 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
 
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
 
-        // test that we cache at most 500 producers to avoid it eating to much memory
+        // test that we cache at most 500 producers to avoid it eating to much
+        // memory
         for (int i = 0; i < 203; i++) {
             Endpoint e = context.getEndpoint("seda:queue:" + i);
             template.sendBody(e, "Hello");

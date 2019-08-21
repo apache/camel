@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 public class TarFileDataFormatReifier extends DataFormatReifier<TarFileDataFormat> {
 
     public TarFileDataFormatReifier(DataFormatDefinition definition) {
-        super((TarFileDataFormat) definition);
+        super((TarFileDataFormat)definition);
     }
 
     @Override

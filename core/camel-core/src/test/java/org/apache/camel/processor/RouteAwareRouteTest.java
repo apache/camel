@@ -41,9 +41,7 @@ public class RouteAwareRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("foo")
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                from("direct:start").routeId("foo").process(new MyProcessor()).to("mock:result");
             }
         };
     }

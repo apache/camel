@@ -27,7 +27,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Allows to declare options on sagas
- *
  */
 @Metadata(label = "eip,routing")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -38,7 +37,6 @@ public class SagaOptionDefinition {
 
     @XmlElementRef
     private ExpressionDefinition expression;
-
 
     public SagaOptionDefinition() {
     }
@@ -54,8 +52,9 @@ public class SagaOptionDefinition {
     }
 
     /**
-     * Name of the option. It identifies the name of the header where the value of the expression will be stored when the
-     * compensation or completion routes will be called.
+     * Name of the option. It identifies the name of the header where the value
+     * of the expression will be stored when the compensation or completion
+     * routes will be called.
      */
     public void setOptionName(String optionName) {
         this.optionName = optionName;

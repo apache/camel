@@ -67,17 +67,9 @@ public class SplitListListIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body())
-                        .to("direct:foo")
-                    .end();
+                from("direct:start").split(body()).to("direct:foo").end();
 
-                from("direct:foo")
-                    .to("mock:a")
-                    .to("mock:b")
-                    .to("mock:c")
-                    .to("mock:d")
-                    .to("mock:e");
+                from("direct:foo").to("mock:a").to("mock:b").to("mock:c").to("mock:d").to("mock:e");
             }
         };
     }

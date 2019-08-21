@@ -42,15 +42,8 @@ public class FailOverLoadBalanceNotInheritedErrorHandlerTest extends ContextTest
                 // after failover is done, then we should be routed to dead
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .loadBalance()
-                        .failover(3, false, true)
-                            .throwException(new IllegalArgumentException())
-                            .throwException(new IOException())
-                            .throwException(new ConnectException())
-                        .end()
-                    .end()
-                    .to("mock:result");
+                from("direct:start").loadBalance().failover(3, false, true).throwException(new IllegalArgumentException()).throwException(new IOException())
+                    .throwException(new ConnectException()).end().end().to("mock:result");
             }
         };
     }

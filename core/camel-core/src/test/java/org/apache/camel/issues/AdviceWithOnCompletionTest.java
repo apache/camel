@@ -49,9 +49,7 @@ public class AdviceWithOnCompletionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onCompletion().to("mock:done");
 
-                from("direct:advice")
-                    .log("Advice ${body}")
-                    .to("mock:result");
+                from("direct:advice").log("Advice ${body}").to("mock:result");
             }
         };
     }

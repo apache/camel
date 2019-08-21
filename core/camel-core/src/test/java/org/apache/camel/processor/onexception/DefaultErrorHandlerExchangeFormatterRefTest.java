@@ -41,7 +41,7 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
             template.requestBody("direct:start", "Hello World");
             fail("Expected the exception");
         } catch (Exception ex) {
-            // expect the exception here; 
+            // expect the exception here;
         }
         assertEquals(1, invoked);
     }

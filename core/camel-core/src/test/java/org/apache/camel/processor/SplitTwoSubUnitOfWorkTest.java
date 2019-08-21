@@ -74,34 +74,21 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage()
-                        .maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start")
-                    .to("mock:a")
-                    .split(simple("${body.foo}")).shareUnitOfWork()
-                        .to("mock:b")
-                        .to("direct:line")
-                    .end()
-                    .split(simple("${body.bar}")).shareUnitOfWork()
-                        .to("mock:c")
-                        .to("direct:line")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").to("mock:a").split(simple("${body.foo}")).shareUnitOfWork().to("mock:b").to("direct:line").end().split(simple("${body.bar}")).shareUnitOfWork()
+                    .to("mock:c").to("direct:line").end().to("mock:result");
 
-                from("direct:line")
-                    .to("log:line")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
-                            if (body.contains("Donkey")) {
-                                counter++;
-                                throw new IllegalArgumentException("Donkey not allowed");
-                            }
+                from("direct:line").to("log:line").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if (body.contains("Donkey")) {
+                            counter++;
+                            throw new IllegalArgumentException("Donkey not allowed");
                         }
-                    })
-                    .to("mock:line");
+                    }
+                }).to("mock:line");
             }
         };
     }

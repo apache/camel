@@ -108,10 +108,10 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         for (int i = 0; i < totalMessages; i++) {
             template.sendBody("direct:sample-messageFrequency", "<message>" + i + "</message>");
         }
-        
+
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testSamplingUsingMessageFrequencyViaDSL() throws Exception {
         long totalMessages = 50;
@@ -122,10 +122,10 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         for (int i = 0; i < totalMessages; i++) {
             template.sendBody("direct:sample-messageFrequency-via-dsl", "<message>" + i + "</message>");
         }
-        
+
         mock.assertIsSatisfied();
     }
-    
+
     private void sendExchangesThroughDroppingThrottler(List<Exchange> sentExchanges, int messages) throws Exception {
         ProducerTemplate myTemplate = context.createProducerTemplate();
 
@@ -159,25 +159,15 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:sample")
-                    .sample()
-                    .to("mock:result");
+                from("direct:sample").sample().to("mock:result");
 
-                from("direct:sample-configured")
-                    .sample(1, TimeUnit.SECONDS)
-                    .to("mock:result");
+                from("direct:sample-configured").sample(1, TimeUnit.SECONDS).to("mock:result");
 
-                from("direct:sample-configured-via-dsl")
-                    .sample().samplePeriod(1).timeUnits(TimeUnit.SECONDS)
-                    .to("mock:result");
-                
-                from("direct:sample-messageFrequency")
-                    .sample(10)
-                    .to("mock:result");
-                
-                from("direct:sample-messageFrequency-via-dsl")
-                    .sample().sampleMessageFrequency(5)
-                    .to("mock:result");
+                from("direct:sample-configured-via-dsl").sample().samplePeriod(1).timeUnits(TimeUnit.SECONDS).to("mock:result");
+
+                from("direct:sample-messageFrequency").sample(10).to("mock:result");
+
+                from("direct:sample-messageFrequency-via-dsl").sample().sampleMessageFrequency(5).to("mock:result");
 
                 // END SNIPPET: e1
             }

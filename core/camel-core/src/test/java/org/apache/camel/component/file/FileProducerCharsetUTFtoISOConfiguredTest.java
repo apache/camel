@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -92,8 +93,7 @@ public class FileProducerCharsetUTFtoISOConfiguredTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/charset/input?initialDelay=0&delay=10&charset=utf-8&noop=true")
-                    .to("file:target/data/charset/?fileName=output.txt&charset=iso-8859-1");
+                from("file:target/data/charset/input?initialDelay=0&delay=10&charset=utf-8&noop=true").to("file:target/data/charset/?fileName=output.txt&charset=iso-8859-1");
             }
         };
     }

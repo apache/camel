@@ -36,14 +36,15 @@ public class ChoiceWithEndTest extends ContextTestSupport {
         // there should be 4 outputs as the end in the otherwise should
         // ensure that the transform and last send is not within the choice
         assertEquals(4, node.size());
-        // the navigate API is a bit simple at this time of writing so it does take a little
+        // the navigate API is a bit simple at this time of writing so it does
+        // take a little
         // bit of ugly code to find the correct processor in the runtime route
         assertIsInstanceOf(SendProcessor.class, unwrapChannel(node.get(0)).getNextProcessor());
         assertIsInstanceOf(ChoiceProcessor.class, unwrapChannel(node.get(1)).getNextProcessor());
         assertIsInstanceOf(TransformProcessor.class, unwrapChannel(node.get(2)).getNextProcessor());
         assertIsInstanceOf(SendProcessor.class, unwrapChannel(node.get(3)).getNextProcessor());
     }
-    
+
     private Route getRoute(String routeEndpointURI) {
         Route answer = null;
         for (Route route : context.getRoutes()) {
@@ -90,32 +91,17 @@ public class ChoiceWithEndTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {            
+        return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 MyChoiceBean bean = new MyChoiceBean();
 
-                from("direct:start")
-                    .to("mock:start")
-                    .choice()
-                        .when(body().contains("Hello"))
-                            .bean(bean, "echo").to("mock:echo")
-                        .when(body().contains("Bye"))
-                            // must use another route as the Java DSL
-                            // will lose its scope so you cannot call otherwise later
-                            .to("direct:bye").to("mock:bye")
-                        .otherwise()
-                            .bean(bean, "other").to("mock:other")
-                        .end()
-                    .transform(body().prepend("last "))
-                    .to("mock:last");
+                from("direct:start").to("mock:start").choice().when(body().contains("Hello")).bean(bean, "echo").to("mock:echo").when(body().contains("Bye"))
+                    // must use another route as the Java DSL
+                    // will lose its scope so you cannot call otherwise later
+                    .to("direct:bye").to("mock:bye").otherwise().bean(bean, "other").to("mock:other").end().transform(body().prepend("last ")).to("mock:last");
 
-                from("direct:bye")
-                    .doTry()
-                        .bean(bean, "bye").to("mock:bye")
-                    .doCatch(Exception.class)
-                        .setBody(constant("We do not care"))
-                    .end();
+                from("direct:bye").doTry().bean(bean, "bye").to("mock:bye").doCatch(Exception.class).setBody(constant("We do not care")).end();
             }
         };
     }
@@ -136,4 +122,3 @@ public class ChoiceWithEndTest extends ContextTestSupport {
     }
 
 }
-

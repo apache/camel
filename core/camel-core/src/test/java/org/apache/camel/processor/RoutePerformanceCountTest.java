@@ -58,11 +58,7 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to("log:a?level=OFF", "log:b?level=OFF", "direct:c");
 
-                from("direct:c")
-                    .choice()
-                        .when().header("foo").process(processor)
-                        .otherwise().process(processor)
-                    .end();
+                from("direct:c").choice().when().header("foo").process(processor).otherwise().process(processor).end();
             }
         };
     }

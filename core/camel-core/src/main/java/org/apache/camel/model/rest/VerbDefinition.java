@@ -84,12 +84,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     // used by XML DSL to either select a <to>, <toD>, or <route>
     // so we need to use the common type OptionalIdentifiedDefinition
-    // must select one of them, and hence why they are all set to required = true, but the XSD is set to only allow one of the element
-    @XmlElements({
-            @XmlElement(required = true, name = "to", type = ToDefinition.class),
-            @XmlElement(required = true, name = "toD", type = ToDynamicDefinition.class),
-            @XmlElement(required = true, name = "route", type = RouteDefinition.class)}
-        )
+    // must select one of them, and hence why they are all set to required =
+    // true, but the XSD is set to only allow one of the element
+    @XmlElements({@XmlElement(required = true, name = "to", type = ToDefinition.class), @XmlElement(required = true, name = "toD", type = ToDynamicDefinition.class),
+                  @XmlElement(required = true, name = "route", type = RouteDefinition.class)})
     private OptionalIdentifiedDefinition<?> toOrRoute;
 
     // the Java DSL uses the to or route definition directory
@@ -183,8 +181,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * To define the content type what the REST service consumes (accept as input), such as application/xml or application/json.
-     * This option will override what may be configured on a parent level
+     * To define the content type what the REST service consumes (accept as
+     * input), such as application/xml or application/json. This option will
+     * override what may be configured on a parent level
      */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
@@ -195,8 +194,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * To define the content type what the REST service produces (uses for output), such as application/xml or application/json
-     * This option will override what may be configured on a parent level
+     * To define the content type what the REST service produces (uses for
+     * output), such as application/xml or application/json This option will
+     * override what may be configured on a parent level
      */
     public void setProduces(String produces) {
         this.produces = produces;
@@ -207,8 +207,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Sets the binding mode to use.
-     * This option will override what may be configured on a parent level
+     * Sets the binding mode to use. This option will override what may be
+     * configured on a parent level
      * <p/>
      * The default value is auto
      */
@@ -221,9 +221,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Whether to skip binding on output if there is a custom HTTP error code header.
-     * This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.
-     * This option will override what may be configured on a parent level
+     * Whether to skip binding on output if there is a custom HTTP error code
+     * header. This allows to build custom error messages that do not bind to
+     * json / xml etc, as success messages otherwise will do. This option will
+     * override what may be configured on a parent level
      */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
@@ -234,10 +235,12 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
-     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * Whether to enable validation of the client request to check whether the
+     * Content-Type and Accept headers from the client is supported by the
+     * Rest-DSL configuration of its consumes/produces settings.
      * <p/>
-     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned.
+     * This can be turned on, to enable this check. In case of validation error,
+     * then HTTP Status codes 415 or 406 is returned.
      * <p/>
      * The default value is false.
      */
@@ -250,8 +253,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Whether to enable CORS headers in the HTTP response.
-     * This option will override what may be configured on a parent level
+     * Whether to enable CORS headers in the HTTP response. This option will
+     * override what may be configured on a parent level
      * <p/>
      * The default value is false.
      */
@@ -264,11 +267,12 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Sets the class name to use for binding from input to POJO for the incoming data
-     * This option will override what may be configured on a parent level.
+     * Sets the class name to use for binding from input to POJO for the
+     * incoming data This option will override what may be configured on a
+     * parent level.
      * <p/>
-     * The canonical name of the class of the input data. Append a [] to the end of the canonical name
-     * if you want the input to be an array type.
+     * The canonical name of the class of the input data. Append a [] to the end
+     * of the canonical name if you want the input to be an array type.
      */
     public void setType(String type) {
         this.type = type;
@@ -279,11 +283,12 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Sets the class name to use for binding from POJO to output for the outgoing data
-     * This option will override what may be configured on a parent level
+     * Sets the class name to use for binding from POJO to output for the
+     * outgoing data This option will override what may be configured on a
+     * parent level
      * <p/>
-     * The canonical name of the class of the input data. Append a [] to the end of the canonical name
-     * if you want the input to be an array type.
+     * The canonical name of the class of the input data. Append a [] to the end
+     * of the canonical name if you want the input to be an array type.
      */
     public void setOutType(String outType) {
         this.outType = outType;
@@ -325,7 +330,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         if (route != null) {
             return route;
         } else if (toOrRoute instanceof RouteDefinition) {
-            return (RouteDefinition) toOrRoute;
+            return (RouteDefinition)toOrRoute;
         } else {
             return null;
         }
@@ -340,7 +345,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         if (to != null) {
             return to;
         } else if (toOrRoute instanceof ToDefinition) {
-            return (ToDefinition) toOrRoute;
+            return (ToDefinition)toOrRoute;
         } else {
             return null;
         }
@@ -350,7 +355,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         if (toD != null) {
             return toD;
         } else if (toOrRoute instanceof ToDynamicDefinition) {
-            return (ToDynamicDefinition) toOrRoute;
+            return (ToDynamicDefinition)toOrRoute;
         } else {
             return null;
         }
@@ -431,7 +436,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     public String asVerb() {
-        // we do not want the jaxb model to repeat itself, by outputting <get method="get">
+        // we do not want the jaxb model to repeat itself, by outputting <get
+        // method="get">
         // so we infer the verb from the instance type
         if (this instanceof GetVerbDefinition) {
             return "get";

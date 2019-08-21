@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 public class JaxbDataFormatReifier extends DataFormatReifier<JaxbDataFormat> {
 
     public JaxbDataFormatReifier(DataFormatDefinition definition) {
-        super((JaxbDataFormat) definition);
+        super((JaxbDataFormat)definition);
     }
 
     @Override

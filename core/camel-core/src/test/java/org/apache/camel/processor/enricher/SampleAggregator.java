@@ -31,5 +31,5 @@ public class SampleAggregator implements AggregationStrategy {
         oldExchange.getIn().setBody(oldBody + ":" + newBody);
         return oldExchange;
     }
-    
+
 }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -54,7 +55,8 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         mock.expectsNoDuplicates(body());
         mock.setResultWaitTime(30000);
 
-        // we need to wait a bit for our slow CI server to make sure the entire file is written on disc
+        // we need to wait a bit for our slow CI server to make sure the entire
+        // file is written on disc
         Thread.sleep(500);
         context.getRouteController().startRoute("foo");
 
@@ -79,12 +81,8 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/concurrent?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
-                    .split(body().tokenize(LS)).parallelProcessing().streaming()
-                        .setBody(body().append(":Status=OK").append(LS))
-                        .to("file:target/data/concurrent/outbox?fileExist=Append&fileName=result.txt")
-                        .to("mock:result")
-                    .end();
+                from("file:target/data/concurrent?initialDelay=0&delay=10").routeId("foo").noAutoStartup().split(body().tokenize(LS)).parallelProcessing().streaming()
+                    .setBody(body().append(":Status=OK").append(LS)).to("file:target/data/concurrent/outbox?fileExist=Append&fileName=result.txt").to("mock:result").end();
             }
         };
     }

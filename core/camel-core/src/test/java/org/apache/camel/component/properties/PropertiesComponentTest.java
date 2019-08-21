@@ -63,7 +63,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testPropertiesComponentTemplate() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -174,7 +174,8 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // properties component can also have {{ }} around but its not needed
+                // properties component can also have {{ }} around but its not
+                // needed
                 from("direct:start").to("properties:{{cool.end}}");
                 from("direct:foo").to("properties:mock:{{cool.result}}");
             }
@@ -205,9 +206,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setBody(simple("${properties:cool.mock}${body}"))
-                    .to("mock:result");
+                from("direct:start").setBody(simple("${properties:cool.mock}${body}")).to("mock:result");
             }
         });
         context.start();
@@ -401,7 +400,8 @@ public class PropertiesComponentTest extends ContextTestSupport {
         pc.setEnvironmentVariableMode(PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK);
         pc.setLocation("org/apache/camel/component/properties/env.properties");
 
-        // lets override the OS environment variable by setting a JVM system property
+        // lets override the OS environment variable by setting a JVM system
+        // property
         System.setProperty("FOO_SERVICE_PORT", "hello");
 
         context.addRoutes(new RouteBuilder() {
@@ -422,7 +422,6 @@ public class PropertiesComponentTest extends ContextTestSupport {
 
         System.clearProperty("FOO_SERVICE_PORT");
     }
-
 
     @Test
     public void testCamelProperties() throws Exception {

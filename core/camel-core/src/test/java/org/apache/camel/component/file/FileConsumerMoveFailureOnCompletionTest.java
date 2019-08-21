@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -65,8 +66,7 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/failed?initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt")
-                    .onCompletion().onFailureOnly().to("mock:failed").end()
+                from("file://target/data/failed?initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt").onCompletion().onFailureOnly().to("mock:failed").end()
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);

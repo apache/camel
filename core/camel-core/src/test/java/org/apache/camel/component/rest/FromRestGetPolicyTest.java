@@ -52,8 +52,7 @@ public class FromRestGetPolicyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
 
-                rest("/say/hello")
-                        .get().route().policy(new MyDummyPolicy()).to("mock:hello");
+                rest("/say/hello").get().route().policy(new MyDummyPolicy()).to("mock:hello");
             }
         };
     }

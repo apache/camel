@@ -35,7 +35,7 @@ import org.apache.camel.util.URISupport;
 public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T> {
 
     ToDynamicReifier(ProcessorDefinition<?> definition) {
-        super((T) definition);
+        super((T)definition);
     }
 
     @Override
@@ -67,7 +67,8 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
 
         String[] parts = safeSplitRaw(uri);
         for (String part : parts) {
-            // the part may have optional language to use, so you can mix languages
+            // the part may have optional language to use, so you can mix
+            // languages
             String value = StringHelper.after(part, "language:");
             if (value != null) {
                 String before = StringHelper.before(value, ":");
@@ -106,7 +107,8 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
     // -------------------------------------------------------------------------
 
     /**
-     * We need to split the string safely for each + sign, but avoid splitting within RAW(...).
+     * We need to split the string safely for each + sign, but avoid splitting
+     * within RAW(...).
      */
     private static String[] safeSplitRaw(String s) {
         List<String> list = new ArrayList<>();

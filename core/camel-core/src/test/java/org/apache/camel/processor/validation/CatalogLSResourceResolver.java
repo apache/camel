@@ -60,15 +60,15 @@ public class CatalogLSResourceResolver implements LSResourceResolver {
             if (publicId == null) {
                 publicId = namespaceURI;
             }
-            
+
             this.publicId = publicId;
             this.systemId = systemId;
             this.baseURI = baseURI;
-            
+
             if (catalogResolver == null) {
                 throw new IllegalStateException("catalogResolver must be provided");
             }
-            
+
             this.inputSource = catalogResolver.resolveEntity(publicId, systemId);
         }
 

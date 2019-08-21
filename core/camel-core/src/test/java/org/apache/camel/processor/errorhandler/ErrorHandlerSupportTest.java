@@ -75,8 +75,7 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
         assertEquals(ParentException.class.getName(), getExceptionPolicyFor(support, new ParentException(), 0));
     }
 
-    private static String getExceptionPolicyFor(ErrorHandlerSupport support, Throwable childException,
-                                               int index) {
+    private static String getExceptionPolicyFor(ErrorHandlerSupport support, Throwable childException, int index) {
         return support.getExceptionPolicy(null, childException).getExceptions().get(index);
     }
 

@@ -33,11 +33,11 @@ public class ClaimCheckTest extends ContextTestSupport {
 
     // in memory data store for testing only!
     public static Map<String, Object> dataStore = new HashMap<>();
-    
+
     @Test
     public void testClaimCheck() throws Exception {
         String body = "<order custId=\"123\"><lotsOfContent/></order>";
-        
+
         // check to make sure the message body gets added back in properly
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
@@ -49,10 +49,10 @@ public class ClaimCheckTest extends ContextTestSupport {
         testCheckpointEndpoint.expectedMessageCount(1);
         testCheckpointEndpoint.expectedHeaderReceived("claimCheck", "123");
         testCheckpointEndpoint.message(0).body().isNull();
-        
+
         template.sendBody("direct:start", body);
-                
-        assertMockEndpointsSatisfied();        
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -61,36 +61,38 @@ public class ClaimCheckTest extends ContextTestSupport {
         jndi.bind("checkLuggage", new CheckLuggageBean());
         jndi.bind("dataEnricher", new DataEnricherBean());
         return jndi;
-    }    
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: e1  
+                // START SNIPPET: e1
                 from("direct:start").to("bean:checkLuggage", "mock:testCheckpoint", "bean:dataEnricher", "mock:result");
-                // END SNIPPET: e1  
+                // END SNIPPET: e1
             }
         };
     }
 
-    // START SNIPPET: e2  
-    public static final class CheckLuggageBean {        
-        public void checkLuggage(Exchange exchange, @Body String body, @XPath("/order/@custId") String custId) {   
-            // store the message body into the data store, using the custId as the claim check
+    // START SNIPPET: e2
+    public static final class CheckLuggageBean {
+        public void checkLuggage(Exchange exchange, @Body String body, @XPath("/order/@custId") String custId) {
+            // store the message body into the data store, using the custId as
+            // the claim check
             dataStore.put(custId, body);
             // add the claim check as a header
             exchange.getIn().setHeader("claimCheck", custId);
             // remove the body from the message
             exchange.getIn().setBody(null);
         }
-    }    
-    // END SNIPPET: e2  
-    
+    }
+    // END SNIPPET: e2
+
     // START SNIPPET: e3
     public static final class DataEnricherBean {
-        public void addDataBackIn(Exchange exchange, @Header("claimCheck") String claimCheck) { 
-            // query the data store using the claim check as the key and add the data
+        public void addDataBackIn(Exchange exchange, @Header("claimCheck") String claimCheck) {
+            // query the data store using the claim check as the key and add the
+            // data
             // back into the message body
             exchange.getIn().setBody(dataStore.get(claimCheck));
             // remove the message data from the data store
@@ -98,6 +100,6 @@ public class ClaimCheckTest extends ContextTestSupport {
             // remove the claim check header
             exchange.getIn().removeHeader("claimCheck");
         }
-    }    
-    // END SNIPPET: e3  
+    }
+    // END SNIPPET: e3
 }

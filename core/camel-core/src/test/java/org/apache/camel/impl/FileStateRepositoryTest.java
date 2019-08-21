@@ -119,7 +119,7 @@ public class FileStateRepositoryTest {
 
         // And content just to this limit (10x10 bytes)
         for (int i = 0; i < 10; i++) {
-            repository.setState("key", "xxxxx".replace('x', (char) ('0' + i)));
+            repository.setState("key", "xxxxx".replace('x', (char)('0' + i)));
         }
         long previousSize = repositoryStore.length();
 

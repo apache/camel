@@ -71,7 +71,6 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Test
     public void testSelectIndexZero() throws Exception {
         RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
@@ -203,12 +202,8 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .log("Got ${body}").id("foo")
-                    .to("mock:foo").id("gold-1")
-                    .to("mock:bar").id("gold-2")
-                    .to("mock:baz").id("gold-3")
-                    .to("mock:result").id("silver-1");
+                from("direct:start").log("Got ${body}").id("foo").to("mock:foo").id("gold-1").to("mock:bar").id("gold-2").to("mock:baz").id("gold-3").to("mock:result")
+                    .id("silver-1");
             }
         };
     }

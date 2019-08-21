@@ -35,10 +35,7 @@ public class AggregateEagerCheckCompletionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionPredicate(body().isEqualTo("END")).eagerCheckCompletion()
-                        .to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionPredicate(body().isEqualTo("END")).eagerCheckCompletion().to("mock:result");
             }
         });
         context.start();
@@ -57,11 +54,7 @@ public class AggregateEagerCheckCompletionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"))
-                        .aggregationStrategy(BodyInAggregatingStrategy::new)
-                        .completionPredicate(body().isEqualTo("A+B+END"))
-                        .to("mock:result");
+                from("direct:start").aggregate(header("id")).aggregationStrategy(BodyInAggregatingStrategy::new).completionPredicate(body().isEqualTo("A+B+END")).to("mock:result");
             }
         });
         context.start();
@@ -74,6 +67,5 @@ public class AggregateEagerCheckCompletionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 
 }

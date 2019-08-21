@@ -57,7 +57,7 @@ public class InOutDefinition extends SendDefinition<InOutDefinition> {
     public String getLabel() {
         return "inOut";
     }
-    
+
     @Override
     public ExchangePattern getPattern() {
         return ExchangePattern.InOut;

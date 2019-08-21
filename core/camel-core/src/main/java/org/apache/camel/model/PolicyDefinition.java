@@ -52,7 +52,7 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
     public String toString() {
         return "Policy[" + description() + "]";
     }
-    
+
     public Policy getPolicy() {
         return policy;
     }
@@ -89,7 +89,8 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
 
     @Override
     public boolean isTopLevelOnly() {
-        // a policy is often top-level but you can have it in lower-levels as well
+        // a policy is often top-level but you can have it in lower-levels as
+        // well
         return false;
     }
 
@@ -110,8 +111,8 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
      * Sets a policy type that this definition should scope within.
      * <p/>
      * Is used for convention over configuration situations where the policy
-     * should be automatic looked up in the registry and it should be based
-     * on this type. For instance a {@link org.apache.camel.spi.TransactedPolicy}
+     * should be automatic looked up in the registry and it should be based on
+     * this type. For instance a {@link org.apache.camel.spi.TransactedPolicy}
      * can be set as type for easy transaction configuration.
      * <p/>
      * Will by default scope to the wide {@link Policy}

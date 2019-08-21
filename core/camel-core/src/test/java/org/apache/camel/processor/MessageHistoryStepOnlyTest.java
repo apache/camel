@@ -59,21 +59,9 @@ public class MessageHistoryStepOnlyTest extends ContextTestSupport {
                 context.setMessageHistory(true);
                 context.getMessageHistoryFactory().setNodePattern("step");
 
-                from("direct:start")
-                        .step("a")
-                            .to("log:foo")
-                            .to("mock:a")
-                        .end()
-                        .step("b")
-                            .to("direct:bar")
-                            .to("mock:b")
-                        .end();
+                from("direct:start").step("a").to("log:foo").to("mock:a").end().step("b").to("direct:bar").to("mock:b").end();
 
-                from("direct:bar")
-                    .step("bar")
-                        .to("log:bar")
-                        .to("mock:bar")
-                    .end();
+                from("direct:bar").step("bar").to("log:bar").to("mock:bar").end();
             }
         };
     }

@@ -38,11 +38,10 @@ public class ExceptionPolicyIssueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(MyUnmarshalException.class).handled(true).to("mock:ue");
-                
+
                 onException(Exception.class).handled(true).to("mock:exception");
 
-                from("direct:start")
-                    .throwException(new MyUnmarshalException("Could not unmarshal", new IllegalArgumentException("Damn")));
+                from("direct:start").throwException(new MyUnmarshalException("Could not unmarshal", new IllegalArgumentException("Damn")));
             }
         };
     }

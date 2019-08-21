@@ -360,7 +360,8 @@ public class CaseInsensitiveMapTest extends Assert {
         Map<String, Object> other = new HashMap<>(map);
         assertEquals(false, other.containsKey("foo"));
         assertEquals(false, other.containsKey("FOO"));
-        // CaseInsensitiveMap preserves the original keys, which would be the 1st key we put
+        // CaseInsensitiveMap preserves the original keys, which would be the
+        // 1st key we put
         assertEquals(true, other.containsKey("Foo"));
         assertEquals(1, other.size());
     }
@@ -369,7 +370,8 @@ public class CaseInsensitiveMapTest extends Assert {
     public void testSerialization() throws Exception {
         CaseInsensitiveMap testMap = new CaseInsensitiveMap();
         testMap.put("key", "value");
-        // force entry set to be created which could cause the map to be non serializable
+        // force entry set to be created which could cause the map to be non
+        // serializable
         testMap.entrySet();
 
         ByteArrayOutputStream bStream = new ByteArrayOutputStream();
@@ -377,7 +379,7 @@ public class CaseInsensitiveMapTest extends Assert {
         objStream.writeObject(testMap);
 
         ObjectInputStream inStream = new ObjectInputStream(new ByteArrayInputStream(bStream.toByteArray()));
-        CaseInsensitiveMap testMapCopy = (CaseInsensitiveMap) inStream.readObject();
+        CaseInsensitiveMap testMapCopy = (CaseInsensitiveMap)inStream.readObject();
 
         assertTrue(testMapCopy.containsKey("key"));
     }
@@ -540,6 +542,5 @@ public class CaseInsensitiveMapTest extends Assert {
         // have chance to capture memory snapshot in profiler
         Thread.sleep(9999999);
     }
-
 
 }

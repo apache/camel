@@ -72,8 +72,11 @@ public final class ModelHelper {
     /**
      * Dumps the definition as XML
      *
-     * @param context    the CamelContext, if <tt>null</tt> then {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in use
-     * @param definition the definition, such as a {@link org.apache.camel.NamedNode}
+     * @param context the CamelContext, if <tt>null</tt> then
+     *            {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in
+     *            use
+     * @param definition the definition, such as a
+     *            {@link org.apache.camel.NamedNode}
      * @return the output in XML (is formatted)
      * @throws JAXBException is throw if error marshalling to XML
      */
@@ -81,14 +84,15 @@ public final class ModelHelper {
         JAXBContext jaxbContext = getJAXBContext(context);
         final Map<String, String> namespaces = new LinkedHashMap<>();
 
-        // gather all namespaces from the routes or route which is stored on the expression nodes
+        // gather all namespaces from the routes or route which is stored on the
+        // expression nodes
         if (definition instanceof RoutesDefinition) {
-            List<RouteDefinition> routes = ((RoutesDefinition) definition).getRoutes();
+            List<RouteDefinition> routes = ((RoutesDefinition)definition).getRoutes();
             for (RouteDefinition route : routes) {
                 extractNamespaces(route, namespaces);
             }
         } else if (definition instanceof RouteDefinition) {
-            RouteDefinition route = (RouteDefinition) definition;
+            RouteDefinition route = (RouteDefinition)definition;
             extractNamespaces(route, namespaces);
         }
 
@@ -114,7 +118,8 @@ public final class ModelHelper {
             documentElement.setAttribute(prefix, namespaces.get(nsPrefix));
         }
 
-        // We invoke the type converter directly because we need to pass some custom XML output options
+        // We invoke the type converter directly because we need to pass some
+        // custom XML output options
         Properties outputProperties = new Properties();
         outputProperties.put(OutputKeys.INDENT, "yes");
         outputProperties.put(OutputKeys.STANDALONE, "yes");
@@ -129,17 +134,24 @@ public final class ModelHelper {
     /**
      * Dumps the definition as XML
      *
-     * @param context    the CamelContext, if <tt>null</tt> then {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in use
-     * @param definition the definition, such as a {@link org.apache.camel.NamedNode}
-     * @param resolvePlaceholders whether to resolve property placeholders in the dumped XML
-     * @param resolveDelegateEndpoints whether to resolve delegate endpoints in the dumped XML (limited to endpoints used in uri attributes in the model)
+     * @param context the CamelContext, if <tt>null</tt> then
+     *            {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in
+     *            use
+     * @param definition the definition, such as a
+     *            {@link org.apache.camel.NamedNode}
+     * @param resolvePlaceholders whether to resolve property placeholders in
+     *            the dumped XML
+     * @param resolveDelegateEndpoints whether to resolve delegate endpoints in
+     *            the dumped XML (limited to endpoints used in uri attributes in
+     *            the model)
      * @return the output in XML (is formatted)
      * @throws Exception is throw if error marshalling to XML
      */
     public static String dumpModelAsXml(CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, definition);
 
-        // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
+        // if resolving placeholders we parse the xml, and resolve the property
+        // placeholders during parsing
         if (resolvePlaceholders || resolveDelegateEndpoints) {
             final AtomicBoolean changed = new AtomicBoolean();
             InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
@@ -152,11 +164,12 @@ public final class ModelHelper {
                     String after = text;
                     if (resolveDelegateEndpoints && "uri".equals(prev)) {
                         try {
-                            // must resolve placeholder as the endpoint may use property placeholders
+                            // must resolve placeholder as the endpoint may use
+                            // property placeholders
                             String uri = context.resolvePropertyPlaceholders(text);
                             Endpoint endpoint = context.hasEndpoint(uri);
                             if (endpoint instanceof DelegateEndpoint) {
-                                endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
+                                endpoint = ((DelegateEndpoint)endpoint).getEndpoint();
                                 after = endpoint.getEndpointUri();
                             }
                         } catch (Exception e) {
@@ -176,14 +189,16 @@ public final class ModelHelper {
                         changed.set(!text.equals(after));
                     }
 
-                    // okay the previous must be the attribute key with uri, so it refers to an endpoint
+                    // okay the previous must be the attribute key with uri, so
+                    // it refers to an endpoint
                     prev = text;
 
                     return after;
                 }
             });
 
-            // okay there were some property placeholder or delegate endpoints replaced so re-create the model
+            // okay there were some property placeholder or delegate endpoints
+            // replaced so re-create the model
             if (changed.get()) {
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
                 NamedNode copy = ModelHelper.createModelFromXml(context, xml, NamedNode.class);
@@ -197,11 +212,15 @@ public final class ModelHelper {
     /**
      * Marshal the xml to the model definition
      *
-     * @param context the CamelContext, if <tt>null</tt> then {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in use
-     * @param xml     the xml
-     * @param type    the definition type to return, will throw a {@link ClassCastException} if not the expected type
+     * @param context the CamelContext, if <tt>null</tt> then
+     *            {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in
+     *            use
+     * @param xml the xml
+     * @param type the definition type to return, will throw a
+     *            {@link ClassCastException} if not the expected type
      * @return the model definition
-     * @throws javax.xml.bind.JAXBException is thrown if error unmarshalling from xml to model
+     * @throws javax.xml.bind.JAXBException is thrown if error unmarshalling
+     *             from xml to model
      */
     public static <T extends NamedNode> T createModelFromXml(CamelContext context, String xml, Class<T> type) throws JAXBException {
         return modelToXml(context, null, xml, type);
@@ -210,11 +229,15 @@ public final class ModelHelper {
     /**
      * Marshal the xml to the model definition
      *
-     * @param context the CamelContext, if <tt>null</tt> then {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in use
-     * @param stream  the xml stream
-     * @param type    the definition type to return, will throw a {@link ClassCastException} if not the expected type
+     * @param context the CamelContext, if <tt>null</tt> then
+     *            {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in
+     *            use
+     * @param stream the xml stream
+     * @param type the definition type to return, will throw a
+     *            {@link ClassCastException} if not the expected type
      * @return the model definition
-     * @throws javax.xml.bind.JAXBException is thrown if error unmarshalling from xml to model
+     * @throws javax.xml.bind.JAXBException is thrown if error unmarshalling
+     *             from xml to model
      */
     public static <T extends NamedNode> T createModelFromXml(CamelContext context, InputStream stream, Class<T> type) throws JAXBException {
         return modelToXml(context, stream, null, type);
@@ -223,9 +246,12 @@ public final class ModelHelper {
     /**
      * Marshal the xml to the model definition
      *
-     * @param context the CamelContext, if <tt>null</tt> then {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in use
+     * @param context the CamelContext, if <tt>null</tt> then
+     *            {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in
+     *            use
      * @param inputStream the xml stream
-     * @throws Exception is thrown if an error is encountered unmarshalling from xml to model
+     * @throws Exception is thrown if an error is encountered unmarshalling from
+     *             xml to model
      */
     public static RoutesDefinition loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception {
         XmlConverter xmlConverter = newXmlConverter(context);
@@ -236,16 +262,19 @@ public final class ModelHelper {
     /**
      * Marshal the xml to the model definition
      *
-     * @param context the CamelContext, if <tt>null</tt> then {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in use
+     * @param context the CamelContext, if <tt>null</tt> then
+     *            {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in
+     *            use
      * @param node the xml node
-     * @throws Exception is thrown if an error is encountered unmarshalling from xml to model
+     * @throws Exception is thrown if an error is encountered unmarshalling from
+     *             xml to model
      */
     public static RoutesDefinition loadRoutesDefinition(CamelContext context, Node node) throws Exception {
         JAXBContext jaxbContext = getJAXBContext(context);
 
         Map<String, String> namespaces = new LinkedHashMap<>();
 
-        Document dom = node instanceof Document ? (Document) node : node.getOwnerDocument();
+        Document dom = node instanceof Document ? (Document)node : node.getOwnerDocument();
         extractNamespaces(dom, namespaces);
 
         Binder<Node> binder = jaxbContext.createBinder();
@@ -258,12 +287,12 @@ public final class ModelHelper {
         // can either be routes or a single route
         RoutesDefinition answer;
         if (result instanceof RouteDefinition) {
-            RouteDefinition route = (RouteDefinition) result;
+            RouteDefinition route = (RouteDefinition)result;
             answer = new RoutesDefinition();
             applyNamespaces(route, namespaces);
             answer.getRoutes().add(route);
         } else if (result instanceof RoutesDefinition) {
-            answer = (RoutesDefinition) result;
+            answer = (RoutesDefinition)result;
             for (RouteDefinition route : answer.getRoutes()) {
                 applyNamespaces(route, namespaces);
             }
@@ -286,11 +315,11 @@ public final class ModelHelper {
         // can either be routes or a single route
         RestsDefinition answer;
         if (result instanceof RestDefinition) {
-            RestDefinition rest = (RestDefinition) result;
+            RestDefinition rest = (RestDefinition)result;
             answer = new RestsDefinition();
             answer.getRests().add(rest);
         } else if (result instanceof RestsDefinition) {
-            answer = (RestsDefinition) result;
+            answer = (RestsDefinition)result;
         } else {
             throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
         }
@@ -328,12 +357,12 @@ public final class ModelHelper {
 
         // Restore namespaces to anything that's NamespaceAware
         if (result instanceof RoutesDefinition) {
-            List<RouteDefinition> routes = ((RoutesDefinition) result).getRoutes();
+            List<RouteDefinition> routes = ((RoutesDefinition)result).getRoutes();
             for (RouteDefinition route : routes) {
                 applyNamespaces(route, namespaces);
             }
         } else if (result instanceof RouteDefinition) {
-            RouteDefinition route = (RouteDefinition) result;
+            RouteDefinition route = (RouteDefinition)result;
             applyNamespaces(route, namespaces);
         }
 
@@ -361,9 +390,9 @@ public final class ModelHelper {
         NamespaceAware na = null;
         Expression exp = ed.getExpressionValue();
         if (exp instanceof NamespaceAware) {
-            na = (NamespaceAware) exp;
+            na = (NamespaceAware)exp;
         } else if (ed instanceof NamespaceAware) {
-            na = (NamespaceAware) ed;
+            na = (NamespaceAware)ed;
         }
 
         return na;
@@ -372,8 +401,9 @@ public final class ModelHelper {
     /**
      * Extract all XML namespaces from the expressions in the route
      *
-     * @param route       the route
-     * @param namespaces  the map of namespaces to add discovered XML namespaces into
+     * @param route the route
+     * @param namespaces the map of namespaces to add discovered XML namespaces
+     *            into
      */
     private static void extractNamespaces(RouteDefinition route, Map<String, String> namespaces) {
         Iterator<ExpressionNode> it = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
@@ -392,8 +422,8 @@ public final class ModelHelper {
     /**
      * Extract all XML namespaces from the root element in a DOM Document
      *
-     * @param document    the DOM document
-     * @param namespaces  the map of namespaces to add new found XML namespaces
+     * @param document the DOM document
+     * @param namespaces the map of namespaces to add new found XML namespaces
      */
     private static void extractNamespaces(Document document, Map<String, String> namespaces) throws JAXBException {
         NamedNodeMap attributes = document.getDocumentElement().getAttributes();

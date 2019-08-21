@@ -49,13 +49,11 @@ public class DelayInterceptorTest extends ContextTestSupport {
 
                 // regular routes here
 
-                from("direct:start").
-                        process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // do nothing
-                            }
-                        }).
-                        to("mock:result");
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // do nothing
+                    }
+                }).to("mock:result");
             }
         };
     }

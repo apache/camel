@@ -34,16 +34,19 @@ import org.apache.camel.util.ObjectHelper;
 public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
 
     OnExceptionReifier(ProcessorDefinition<?> definition) {
-        super((OnExceptionDefinition) definition);
+        super((OnExceptionDefinition)definition);
     }
 
     @Override
     public void addRoutes(RouteContext routeContext) throws Exception {
         // assign whether this was a route scoped onException or not
-        // we need to know this later when setting the parent, as only route scoped should have parent
-        // Note: this logic can possible be removed when the Camel routing engine decides at runtime
+        // we need to know this later when setting the parent, as only route
+        // scoped should have parent
+        // Note: this logic can possible be removed when the Camel routing
+        // engine decides at runtime
         // to apply onException in a more dynamic fashion than current code base
-        // and therefore is in a better position to decide among context/route scoped OnException at runtime
+        // and therefore is in a better position to decide among context/route
+        // scoped OnException at runtime
         if (definition.getRouteScoped() == null) {
             definition.setRouteScoped(definition.getParent() != null);
         }
@@ -65,13 +68,14 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
         // lets attach this on exception to the route error handler
         Processor child = createOutputsProcessor(routeContext);
         if (child != null) {
-            // wrap in our special safe fallback error handler if OnException have child output
+            // wrap in our special safe fallback error handler if OnException
+            // have child output
             Processor errorHandler = new FatalFallbackErrorHandler(child);
             String id = getId(definition, routeContext);
             routeContext.setOnException(id, errorHandler);
         }
         // lookup the error handler builder
-        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) routeContext.getErrorHandlerFactory();
+        ErrorHandlerBuilder builder = (ErrorHandlerBuilder)routeContext.getErrorHandlerFactory();
         // and add this as error handlers
         routeContext.addErrorHandler(builder, definition);
     }
@@ -152,6 +156,5 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
             definition.setOnExceptionOccurred(onExceptionOccurred);
         }
     }
-
 
 }

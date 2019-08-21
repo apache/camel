@@ -26,8 +26,8 @@ import org.apache.camel.spi.Synchronization;
 import org.junit.Test;
 
 /**
- * Unit test to verify unit of work with seda. That the UnitOfWork is able to route using seda
- * but keeping the same UoW.
+ * Unit test to verify unit of work with seda. That the UnitOfWork is able to
+ * route using seda but keeping the same UoW.
  */
 public class SedaUnitOfWorkTest extends ContextTestSupport {
 
@@ -73,30 +73,24 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setTracing(true);
 
-                from("direct:start")
-                        .process(new MyUOWProcessor(SedaUnitOfWorkTest.this, "A"))
-                        .to("seda:foo");
+                from("direct:start").process(new MyUOWProcessor(SedaUnitOfWorkTest.this, "A")).to("seda:foo");
 
-                from("seda:foo")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertEquals(null, sync);
-                            }
-                        })
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                lastOne = "processor";
-                            }
-                        })
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {    
-                                if ("yes".equals(exchange.getIn().getHeader("kaboom"))) {
-                                    throw new IllegalStateException("kaboom done!");
-                                }
-                                lastOne = "processor2";
-                            }
-                        })
-                        .to("mock:result");
+                from("seda:foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals(null, sync);
+                    }
+                }).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        lastOne = "processor";
+                    }
+                }).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        if ("yes".equals(exchange.getIn().getHeader("kaboom"))) {
+                            throw new IllegalStateException("kaboom done!");
+                        }
+                        lastOne = "processor2";
+                    }
+                }).to("mock:result");
             }
         };
     }

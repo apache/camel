@@ -33,8 +33,7 @@ public class TransformProcessorWithHeaderTest extends ContextTestSupport {
         mock.expectedBodiesReceived("London");
         mock.expectedHeaderReceived("foo", "bar");
 
-        template.sendBodyAndHeader("direct:in",
-            "<person name='James' city='London'/>", "foo", "bar");
+        template.sendBodyAndHeader("direct:in", "<person name='James' city='London'/>", "foo", "bar");
 
         assertMockEndpointsSatisfied();
     }
@@ -43,9 +42,7 @@ public class TransformProcessorWithHeaderTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in")
-                    .transform().constant("London")
-                    .to("mock:result");
+                from("direct:in").transform().constant("London").to("mock:result");
             }
         };
     }

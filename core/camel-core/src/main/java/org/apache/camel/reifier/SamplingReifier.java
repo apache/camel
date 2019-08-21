@@ -27,7 +27,7 @@ import org.apache.camel.spi.RouteContext;
 public class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
 
     SamplingReifier(ProcessorDefinition<?> definition) {
-        super((SamplingDefinition) definition);
+        super((SamplingDefinition)definition);
     }
 
     @Override

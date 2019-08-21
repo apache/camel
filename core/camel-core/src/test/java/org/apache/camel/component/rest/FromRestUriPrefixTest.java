@@ -41,7 +41,8 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(1).getTo());
         assertEquals("direct:bye", to.getUri());
 
-        // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
+        // the rest becomes routes and the input is a seda endpoint created by
+        // the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);
         template.sendBody("seda:post-say-hi", "I was here");
         assertMockEndpointsSatisfied();
@@ -58,17 +59,13 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
             @Override
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
-                // we have logic to cleanup those paths so there is only one / between the paths
-                rest("/say/")
-                    .get("/hello").to("direct:hello")
-                    .get("/bye").consumes("application/json").to("direct:bye")
-                    .post("/hi").to("mock:update");
+                // we have logic to cleanup those paths so there is only one /
+                // between the paths
+                rest("/say/").get("/hello").to("direct:hello").get("/bye").consumes("application/json").to("direct:bye").post("/hi").to("mock:update");
 
-                from("direct:hello")
-                    .transform().constant("Hello World");
+                from("direct:hello").transform().constant("Hello World");
 
-                from("direct:bye")
-                    .transform().constant("Bye World");
+                from("direct:bye").transform().constant("Bye World");
             }
         };
     }

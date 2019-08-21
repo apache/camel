@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,12 +27,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Verify the standard file url paths on windows that are interpreted as the window's 
- * url paths without the volume name will work on windows system.
+ * Verify the standard file url paths on windows that are interpreted as the
+ * window's url paths without the volume name will work on windows system.
  */
 public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
     private String path;
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -74,7 +75,7 @@ public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists(path + "/to/out/hello.txt");
-        
+
         template.sendBodyAndHeader("direct:report", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
@@ -86,7 +87,7 @@ public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("file://" + path + "/route/poller?initialDelay=0&delay=10").to("file://" + path + "/route/out", "mock:result");
                 from("file://" + path + "/from/poller?initialDelay=0&delay=10").to("mock:result");
-                from("direct:report").to("file://" + path + "/to/out", "mock:result");    
+                from("direct:report").to("file://" + path + "/to/out", "mock:result");
             }
         };
     }

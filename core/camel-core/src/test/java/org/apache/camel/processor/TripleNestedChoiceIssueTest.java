@@ -75,23 +75,8 @@ public class TripleNestedChoiceIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(header("foo").isGreaterThan(1))
-                            .choice()
-                                .when(header("foo").isGreaterThan(5))
-                                    .choice()
-                                        .when(header("foo").isGreaterThan(10))
-                                            .to("mock:verybig")
-                                        .otherwise()
-                                            .to("mock:big")
-                                    .endChoice()
-                                .otherwise()
-                                    .to("mock:med")
-                            .endChoice()
-                        .otherwise()
-                            .to("mock:low")
-                    .end();
+                from("direct:start").choice().when(header("foo").isGreaterThan(1)).choice().when(header("foo").isGreaterThan(5)).choice().when(header("foo").isGreaterThan(10))
+                    .to("mock:verybig").otherwise().to("mock:big").endChoice().otherwise().to("mock:med").endChoice().otherwise().to("mock:low").end();
             }
         };
     }

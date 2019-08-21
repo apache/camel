@@ -50,12 +50,12 @@ public class ConsumingAppender extends AbstractAppender {
     // Helpers
     // *******************
 
-    public static Appender newAppender(String loggerName, String appenderName, Level level, Consumer<LogEvent> consumer)  {
+    public static Appender newAppender(String loggerName, String appenderName, Level level, Consumer<LogEvent> consumer) {
         return newAppender(loggerName, appenderName, PatternLayout.SIMPLE_CONVERSION_PATTERN, level, consumer);
     }
 
-    public static Appender newAppender(String loggerName, String appenderName, String patter, Level level, Consumer<LogEvent> consumer)  {
-        final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+    public static Appender newAppender(String loggerName, String appenderName, String patter, Level level, Consumer<LogEvent> consumer) {
+        final LoggerContext ctx = (LoggerContext)LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
 
         config.removeLogger(loggerName);
@@ -63,17 +63,8 @@ public class ConsumingAppender extends AbstractAppender {
         ConsumingAppender appender = new ConsumingAppender(appenderName, patter, consumer);
         appender.start();
 
-        LoggerConfig loggerConfig = LoggerConfig.createLogger(
-            true,
-            level,
-            loggerName,
-            "true",
-            new AppenderRef[] {
-                AppenderRef.createAppenderRef(appenderName, null, null)
-            },
-            null,
-            config,
-            null);
+        LoggerConfig loggerConfig = LoggerConfig.createLogger(true, level, loggerName, "true", new AppenderRef[] {AppenderRef.createAppenderRef(appenderName, null, null)}, null,
+                                                              config, null);
 
         loggerConfig.addAppender(appender, null, null);
         config.addLogger(loggerName, loggerConfig);

@@ -50,7 +50,8 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
     private final ServiceCallDefinition parent;
     @XmlTransient
     private final String factoryKey;
-    @XmlElement(name = "properties") @Metadata(label = "advanced")
+    @XmlElement(name = "properties")
+    @Metadata(label = "advanced")
     private List<PropertyDefinition> properties;
 
     public ServiceCallServiceFilterConfiguration() {
@@ -153,10 +154,10 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
 
             if (type != null) {
                 if (ServiceFilterFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceFilterFactory) camelContext.getInjector().newInstance(type, false);
+                    factory = (ServiceFilterFactory)camelContext.getInjector().newInstance(type, false);
                 } else {
-                    throw new NoFactoryAvailableException(
-                        "Resolving ServiceFilter: " + factoryKey + " detected type conflict: Not a ServiceFilterFactory implementation. Found: " + type.getName());
+                    throw new NoFactoryAvailableException("Resolving ServiceFilter: " + factoryKey + " detected type conflict: Not a ServiceFilterFactory implementation. Found: "
+                                                          + type.getName());
                 }
             }
 
@@ -164,22 +165,17 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
                 Map<String, Object> parameters = new HashMap<>();
                 IntrospectionSupport.getProperties(this, parameters, null, false);
 
-                parameters.replaceAll(
-                    (k, v) -> {
-                        if (v instanceof String) {
-                            try {
-                                v = camelContext.resolvePropertyPlaceholders((String) v);
-                            } catch (Exception e) {
-                                throw new IllegalArgumentException(
-                                    String.format("Exception while resolving %s (%s)", k, v.toString()),
-                                    e
-                                );
-                            }
+                parameters.replaceAll((k, v) -> {
+                    if (v instanceof String) {
+                        try {
+                            v = camelContext.resolvePropertyPlaceholders((String)v);
+                        } catch (Exception e) {
+                            throw new IllegalArgumentException(String.format("Exception while resolving %s (%s)", k, v.toString()), e);
                         }
-
-                        return v;
                     }
-                );
+
+                    return v;
+                });
 
                 // Convert properties to Map<String, String>
                 parameters.put("properties", getPropertiesAsMap(camelContext));
@@ -201,6 +197,6 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
     // Utilities
     // *************************************************************************
 
-    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception  {
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception {
     }
 }

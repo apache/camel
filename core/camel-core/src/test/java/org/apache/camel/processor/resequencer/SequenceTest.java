@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.resequencer;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,7 +26,7 @@ public class SequenceTest extends Assert {
     private TestObject e1;
     private TestObject e2;
     private TestObject e3;
-    
+
     private Sequence<TestObject> set;
 
     @Before

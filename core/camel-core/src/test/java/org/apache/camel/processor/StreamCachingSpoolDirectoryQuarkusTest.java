@@ -72,7 +72,8 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
         getMockEndpoint("mock:german").expectedBodiesReceived("<hallo/>");
         getMockEndpoint("mock:french").expectedBodiesReceived("<hellos/>");
 
-        // need to wrap in MyInputStream as ByteArrayInputStream is optimized to just reuse in memory buffer
+        // need to wrap in MyInputStream as ByteArrayInputStream is optimized to
+        // just reuse in memory buffer
         // and not needed to spool to disk
         template.sendBody("direct:a", new MyInputStream(new ByteArrayInputStream("<hello/>".getBytes())));
 
@@ -100,12 +101,7 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setAnySpoolRules(true);
                 context.setStreamCaching(true);
 
-                from("direct:a")
-                    .choice()
-                        .when(xpath("//hello")).to("mock:english")
-                        .when(xpath("//hallo")).to("mock:dutch", "mock:german")
-                        .otherwise().to("mock:french")
-                    .end()
+                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo")).to("mock:dutch", "mock:german").otherwise().to("mock:french").end()
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
@@ -144,4 +140,3 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
         }
     }
 }
-

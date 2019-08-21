@@ -78,13 +78,10 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:test.a").
-                        to("seda:test.b").
-                        to("mock:results");
+                from("direct:test.a").to("seda:test.b").to("mock:results");
             }
         };
 
     }
-
 
 }

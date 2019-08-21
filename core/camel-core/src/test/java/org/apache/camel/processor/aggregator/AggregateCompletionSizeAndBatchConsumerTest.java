@@ -27,7 +27,7 @@ public class AggregateCompletionSizeAndBatchConsumerTest extends ContextTestSupp
 
     @Test
     public void testAggregateExpressionSize() throws Exception {
-        MockEndpoint result =  getMockEndpoint("mock:result");
+        MockEndpoint result = getMockEndpoint("mock:result");
         // A+A+A gets completed by size, the others by consumer
         result.expectedBodiesReceived("A+A+A", "A", "B+B", "Z");
         result.message(0).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("size");
@@ -52,9 +52,7 @@ public class AggregateCompletionSizeAndBatchConsumerTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(body(), new BodyInAggregatingStrategy()).completionSize(3).completionFromBatchConsumer()
-                    .to("log:result", "mock:result");
+                from("direct:start").aggregate(body(), new BodyInAggregatingStrategy()).completionSize(3).completionFromBatchConsumer().to("log:result", "mock:result");
             }
         };
     }

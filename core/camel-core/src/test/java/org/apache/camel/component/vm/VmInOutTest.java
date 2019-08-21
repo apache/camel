@@ -40,7 +40,7 @@ public class VmInOutTest extends AbstractVmTestSupport {
             }
         };
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
         return new RouteBuilder() {

@@ -53,14 +53,9 @@ public class BeanWithHeaderTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in")
-                    .setHeader("foo", constant("bar"))
-                    .to("bean:myBean")
-                    .to("seda:a");
+                from("direct:in").setHeader("foo", constant("bar")).to("bean:myBean").to("seda:a");
 
-                from("seda:a")
-                    .to("bean:myBean")
-                    .to("mock:result");
+                from("seda:a").to("bean:myBean").to("mock:result");
             }
         };
     }

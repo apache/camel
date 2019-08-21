@@ -25,14 +25,13 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class VMSplitterTest extends AbstractVmTestSupport {
-    
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("splitterBean", new SplitWordsBean());
         return jndi;
     }
-    
 
     @Test
     public void testSplitUsingMethodCall() throws Exception {
@@ -43,7 +42,6 @@ public class VMSplitterTest extends AbstractVmTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -54,7 +52,7 @@ public class VMSplitterTest extends AbstractVmTestSupport {
             }
         };
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
         return new RouteBuilder() {
@@ -64,7 +62,7 @@ public class VMSplitterTest extends AbstractVmTestSupport {
             }
         };
     }
-    
+
     public static final class SplitWordsBean {
         private SplitWordsBean() {
             // Helper Class

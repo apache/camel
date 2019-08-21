@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -40,7 +41,8 @@ public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSup
 
         assertMockEndpointsSatisfied();
 
-        // the error is handled and the file is regarded as success and therefore moved to .camel
+        // the error is handled and the file is regarded as success and
+        // therefore moved to .camel
         assertFileNotExists("target/data/messages/input/hello.txt");
         assertFileExists("target/data/messages/input/.camel/hello.txt");
     }
@@ -52,9 +54,7 @@ public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSup
                 onException(Exception.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
-                from("file:target/data/messages/input/?initialDelay=0&delay=10&idempotent=true").
-                    to("mock:input")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("file:target/data/messages/input/?initialDelay=0&delay=10&idempotent=true").to("mock:input").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

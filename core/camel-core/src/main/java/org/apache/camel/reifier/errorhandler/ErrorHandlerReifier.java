@@ -76,7 +76,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         if (reifier != null) {
             return reifier.apply(definition);
         } else if (definition instanceof ErrorHandlerBuilderSupport) {
-            return new ErrorHandlerReifier<ErrorHandlerBuilderSupport>((ErrorHandlerBuilderSupport) definition) {
+            return new ErrorHandlerReifier<ErrorHandlerBuilderSupport>((ErrorHandlerBuilderSupport)definition) {
                 @Override
                 public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
                     return definition.createErrorHandler(routeContext, processor);
@@ -88,20 +88,10 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     }
 
     public static ExceptionPolicy createExceptionPolicy(OnExceptionDefinition def, RouteContext routeContext) {
-        return new ExceptionPolicy(
-                def.getId(),
-                CamelContextHelper.getRouteId(def),
-                def.getUseOriginalMessagePolicy() != null && def.getUseOriginalMessagePolicy(),
-                def.getUseOriginalBodyPolicy() != null && def.getUseOriginalBodyPolicy(),
-                ObjectHelper.isNotEmpty(def.getOutputs()),
-                def.getHandledPolicy(),
-                def.getContinuedPolicy(),
-                def.getRetryWhilePolicy(),
-                def.getOnRedelivery(),
-                def.getOnExceptionOccurred(),
-                def.getRedeliveryPolicyRef(),
-                getRedeliveryPolicy(def.getRedeliveryPolicyType()),
-                def.getExceptions());
+        return new ExceptionPolicy(def.getId(), CamelContextHelper.getRouteId(def), def.getUseOriginalMessagePolicy() != null && def.getUseOriginalMessagePolicy(),
+                                   def.getUseOriginalBodyPolicy() != null && def.getUseOriginalBodyPolicy(), ObjectHelper.isNotEmpty(def.getOutputs()), def.getHandledPolicy(),
+                                   def.getContinuedPolicy(), def.getRetryWhilePolicy(), def.getOnRedelivery(), def.getOnExceptionOccurred(), def.getRedeliveryPolicyRef(),
+                                   getRedeliveryPolicy(def.getRedeliveryPolicyType()), def.getExceptions());
     }
 
     private static Map<RedeliveryOption, String> getRedeliveryPolicy(RedeliveryPolicyDefinition definition) {
@@ -146,7 +136,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
      * Lookup the error handler by the given ref
      *
      * @param routeContext the route context
-     * @param ref          reference id for the error handler
+     * @param ref reference id for the error handler
      * @return the error handler
      */
     public static ErrorHandlerFactory lookupErrorHandlerFactory(RouteContext routeContext, String ref) {
@@ -157,43 +147,54 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
      * Lookup the error handler by the given ref
      *
      * @param routeContext the route context
-     * @param ref          reference id for the error handler
-     * @param mandatory    whether the error handler must exists, if not a {@link org.apache.camel.NoSuchBeanException} is thrown
+     * @param ref reference id for the error handler
+     * @param mandatory whether the error handler must exists, if not a
+     *            {@link org.apache.camel.NoSuchBeanException} is thrown
      * @return the error handler
      */
     public static ErrorHandlerFactory lookupErrorHandlerFactory(RouteContext routeContext, String ref, boolean mandatory) {
         ErrorHandlerFactory answer;
 
-        // if the ref is the default then we do not have any explicit error handler configured
-        // if that is the case then use error handlers configured on the route, as for instance
-        // the transacted error handler could have been configured on the route so we should use that one
+        // if the ref is the default then we do not have any explicit error
+        // handler configured
+        // if that is the case then use error handlers configured on the route,
+        // as for instance
+        // the transacted error handler could have been configured on the route
+        // so we should use that one
         if (!isErrorHandlerFactoryConfigured(ref)) {
             // see if there has been configured a route builder on the route
-            RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+            RouteDefinition route = (RouteDefinition)routeContext.getRoute();
             answer = route.getErrorHandlerFactory();
             if (answer == null && route.getErrorHandlerRef() != null) {
                 answer = routeContext.lookup(route.getErrorHandlerRef(), ErrorHandlerBuilder.class);
             }
             if (answer == null) {
-                // fallback to the default error handler if none configured on the route
+                // fallback to the default error handler if none configured on
+                // the route
                 answer = new DefaultErrorHandlerBuilder();
             }
-            // check if its also a ref with no error handler configuration like me
+            // check if its also a ref with no error handler configuration like
+            // me
             if (answer instanceof ErrorHandlerBuilderRef) {
-                ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
+                ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef)answer;
                 String otherRef = other.getRef();
                 if (!isErrorHandlerFactoryConfigured(otherRef)) {
-                    // the other has also no explicit error handler configured then fallback to the handler
+                    // the other has also no explicit error handler configured
+                    // then fallback to the handler
                     // configured on the parent camel context
                     answer = lookupErrorHandlerFactory(routeContext.getCamelContext());
                 }
                 if (answer == null) {
-                    // the other has also no explicit error handler configured then fallback to the default error handler
-                    // otherwise we could recursive loop forever (triggered by createErrorHandler method)
+                    // the other has also no explicit error handler configured
+                    // then fallback to the default error handler
+                    // otherwise we could recursive loop forever (triggered by
+                    // createErrorHandler method)
                     answer = new DefaultErrorHandlerBuilder();
                 }
-                // inherit the error handlers from the other as they are to be shared
-                // this is needed by camel-spring when none error handler has been explicit configured
+                // inherit the error handlers from the other as they are to be
+                // shared
+                // this is needed by camel-spring when none error handler has
+                // been explicit configured
                 routeContext.addErrorHandlerFactoryReference(other, answer);
             }
         } else {
@@ -211,7 +212,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     protected static ErrorHandlerFactory lookupErrorHandlerFactory(CamelContext camelContext) {
         ErrorHandlerFactory answer = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
         if (answer instanceof ErrorHandlerBuilderRef) {
-            ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
+            ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef)answer;
             String otherRef = other.getRef();
             if (isErrorHandlerFactoryConfigured(otherRef)) {
                 answer = camelContext.getRegistry().lookupByNameAndType(otherRef, ErrorHandlerBuilder.class);
@@ -225,13 +226,14 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     }
 
     /**
-     * Returns whether a specific error handler builder has been configured or not.
+     * Returns whether a specific error handler builder has been configured or
+     * not.
      * <p/>
-     * Can be used to test if none has been configured and then install a custom error handler builder
-     * replacing the default error handler (that would have been used as fallback otherwise).
-     * <br/>
-     * This is for instance used by the transacted policy to setup a TransactedErrorHandlerBuilder
-     * in camel-spring.
+     * Can be used to test if none has been configured and then install a custom
+     * error handler builder replacing the default error handler (that would
+     * have been used as fallback otherwise). <br/>
+     * This is for instance used by the transacted policy to setup a
+     * TransactedErrorHandlerBuilder in camel-spring.
      */
     public static boolean isErrorHandlerFactoryConfigured(String ref) {
         return !DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
@@ -249,14 +251,14 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
 
     public void configure(RouteContext routeContext, ErrorHandler handler) {
         if (handler instanceof ErrorHandlerSupport) {
-            ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport) handler;
+            ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport)handler;
 
             for (NamedNode exception : routeContext.getErrorHandlers(definition)) {
-                ErrorHandlerBuilderSupport.addExceptionPolicy(handlerSupport, routeContext, (OnExceptionDefinition) exception);
+                ErrorHandlerBuilderSupport.addExceptionPolicy(handlerSupport, routeContext, (OnExceptionDefinition)exception);
             }
         }
         if (handler instanceof RedeliveryErrorHandler) {
-            boolean original = ((RedeliveryErrorHandler) handler).isUseOriginalMessagePolicy() || ((RedeliveryErrorHandler) handler).isUseOriginalMessagePolicy();
+            boolean original = ((RedeliveryErrorHandler)handler).isUseOriginalMessagePolicy() || ((RedeliveryErrorHandler)handler).isUseOriginalMessagePolicy();
             if (original) {
                 // ensure allow original is turned on
                 routeContext.setAllowUseOriginalMessage(true);
@@ -265,7 +267,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     }
 
     /**
-     * Note: Not for end users - this method is used internally by camel-blueprint
+     * Note: Not for end users - this method is used internally by
+     * camel-blueprint
      */
     public static RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicyDefinition definition, CamelContext context, RedeliveryPolicy parentPolicy) {
         RedeliveryPolicy answer;

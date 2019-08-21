@@ -25,49 +25,42 @@ import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Test;
 
 public class NormalizerTest extends ContextTestSupport {
-   
+
     @Test
     public void testSendToFirstWhen() throws Exception {
         String employeeBody1 = "<employee><name>Jon</name></employee>";
         String employeeBody2 = "<employee><name>Hadrian</name></employee>";
-        String employeeBody3 = "<employee><name>Claus</name></employee>";        
+        String employeeBody3 = "<employee><name>Claus</name></employee>";
         String customerBody = "<customer name=\"James\"/>";
 
         MockEndpoint result = getMockEndpoint("mock:result");
-        
+
         result.expectedMessageCount(4);
-        result.expectedBodiesReceivedInAnyOrder("<person name=\"Jon\"/>",
-                                                "<person name=\"Hadrian\"/>",
-                                                "<person name=\"Claus\"/>",
-                                                "<person name=\"James\"/>");
+        result.expectedBodiesReceivedInAnyOrder("<person name=\"Jon\"/>", "<person name=\"Hadrian\"/>", "<person name=\"Claus\"/>", "<person name=\"James\"/>");
 
         template.sendBody("direct:start", employeeBody1);
         template.sendBody("direct:start", employeeBody2);
-        template.sendBody("direct:start", employeeBody3);        
-        template.sendBody("direct:start", customerBody);        
-        
+        template.sendBody("direct:start", employeeBody3);
+        template.sendBody("direct:start", customerBody);
+
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         answer.bind("normalizer", new MyNormalizer());
         return answer;
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: example                
+                // START SNIPPET: example
                 // we need to normalize two types of incoming messages
-                from("direct:start")
-                    .choice()
-                        .when().xpath("/employee").to("bean:normalizer?method=employeeToPerson")
-                        .when().xpath("/customer").to("bean:normalizer?method=customerToPerson")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").choice().when().xpath("/employee").to("bean:normalizer?method=employeeToPerson").when().xpath("/customer")
+                    .to("bean:normalizer?method=customerToPerson").end().to("mock:result");
                 // END SNIPPET: example
             }
         };

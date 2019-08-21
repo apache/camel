@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
 
     public YAMLDataFormatReifier(DataFormatDefinition definition) {
-        super((YAMLDataFormat) definition);
+        super((YAMLDataFormat)definition);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
     }
 
     protected void configureSnakeDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        Class<?> yamlUnmarshalType =  definition.getUnmarshalType();
+        Class<?> yamlUnmarshalType = definition.getUnmarshalType();
         if (yamlUnmarshalType == null && definition.getUnmarshalTypeName() != null) {
             try {
                 yamlUnmarshalType = camelContext.getClassResolver().resolveMandatoryClass(definition.getUnmarshalTypeName());

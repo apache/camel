@@ -42,21 +42,11 @@ public class TryCatchContinueToRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                    .to("mock:a")
-                    .to("direct:b")
-                    .to("direct:c");
+                from("direct:a").to("mock:a").to("direct:b").to("direct:c");
 
-                from("direct:b")
-                    .doTry()
-                        .to("mock:b")
-                        .throwException(new IllegalArgumentException("Damn"))
-                    .doCatch(Exception.class)
-                        .to("mock:catch")
-                    .end();
+                from("direct:b").doTry().to("mock:b").throwException(new IllegalArgumentException("Damn")).doCatch(Exception.class).to("mock:catch").end();
 
-                from("direct:c")
-                    .to("mock:c");
+                from("direct:c").to("mock:c");
             }
         };
     }

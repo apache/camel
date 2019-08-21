@@ -36,8 +36,7 @@ public class BeanAbstractMethodIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .filter().simple("${body.doSomething} == 123").to("mock:123");
+                from("direct:start").filter().simple("${body.doSomething} == 123").to("mock:123");
             }
         };
     }

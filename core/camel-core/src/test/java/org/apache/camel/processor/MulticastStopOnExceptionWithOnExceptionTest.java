@@ -42,7 +42,8 @@ public class MulticastStopOnExceptionWithOnExceptionTest extends ContextTestSupp
         getMockEndpoint("mock:foo").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:bar").expectedMessageCount(0);
         getMockEndpoint("mock:handled").expectedMessageCount(1);
-        // we do stop so we should NOT continue and thus baz do not receive any message
+        // we do stop so we should NOT continue and thus baz do not receive any
+        // message
         getMockEndpoint("mock:baz").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
@@ -57,16 +58,9 @@ public class MulticastStopOnExceptionWithOnExceptionTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(true)
-                    .to("mock:handled")
-                    .transform(simple("Damn ${exception.message}"));
+                onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
 
-                from("direct:start")
-                    .multicast()
-                        .stopOnException().to("direct:foo", "direct:bar", "direct:baz")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").multicast().stopOnException().to("direct:foo", "direct:bar", "direct:baz").end().to("mock:result");
 
                 from("direct:foo").to("mock:foo");
 

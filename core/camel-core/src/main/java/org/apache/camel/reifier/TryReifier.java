@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 public class TryReifier extends ProcessorReifier<TryDefinition> {
 
     TryReifier(ProcessorDefinition<?> definition) {
-        super((TryDefinition) definition);
+        super((TryDefinition)definition);
     }
 
     @Override

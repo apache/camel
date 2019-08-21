@@ -114,11 +114,8 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("foo").noAutoStartup()
-                    .to("mock:foo");
-                from("seda:current").routeId("current")
-                    .to("controlbus:route?routeId=current&action=status&loggingLevel=WARN")
-                    .to("mock:current");
+                from("seda:foo").routeId("foo").noAutoStartup().to("mock:foo");
+                from("seda:current").routeId("current").to("controlbus:route?routeId=current&action=status&loggingLevel=WARN").to("mock:current");
             }
         };
     }

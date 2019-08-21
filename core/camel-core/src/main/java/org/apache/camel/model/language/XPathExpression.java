@@ -40,13 +40,16 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @XmlAttribute(name = "documentType")
     private String documentTypeName;
-    @XmlAttribute(name = "resultType") @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE")
+    @XmlAttribute(name = "resultType")
+    @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE")
     private String resultTypeName;
     @XmlAttribute
     private Boolean saxon;
-    @XmlAttribute @Metadata(label = "advanced")
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private String factoryRef;
-    @XmlAttribute @Metadata(label = "advanced")
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private String objectModel;
     @XmlAttribute
     private Boolean logNamespaces;
@@ -58,7 +61,8 @@ public class XPathExpression extends NamespaceAwareExpression {
     private Class<?> resultType;
     @XmlTransient
     private XPathFactory xpathFactory;
-    @XmlAttribute @Metadata(label = "advanced")
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private Boolean threadSafety;
 
     public XPathExpression() {
@@ -189,14 +193,16 @@ public class XPathExpression extends NamespaceAwareExpression {
     }
 
     /**
-     * Whether to enable thread-safety for the returned result of the xpath expression.
-     * This applies to when using NODESET as the result type, and the returned set has
-     * multiple elements. In this situation there can be thread-safety issues if you
-     * process the NODESET concurrently such as from a Camel Splitter EIP in parallel processing mode.
-     * This option prevents concurrency issues by doing defensive copies of the nodes.
+     * Whether to enable thread-safety for the returned result of the xpath
+     * expression. This applies to when using NODESET as the result type, and
+     * the returned set has multiple elements. In this situation there can be
+     * thread-safety issues if you process the NODESET concurrently such as from
+     * a Camel Splitter EIP in parallel processing mode. This option prevents
+     * concurrency issues by doing defensive copies of the nodes.
      * <p/>
-     * It is recommended to turn this option on if you are using camel-saxon or Saxon in your application.
-     * Saxon has thread-safety issues which can be prevented by turning this option on.
+     * It is recommended to turn this option on if you are using camel-saxon or
+     * Saxon in your application. Saxon has thread-safety issues which can be
+     * prevented by turning this option on.
      */
     public void setThreadSafety(Boolean threadSafety) {
         this.threadSafety = threadSafety;
@@ -264,7 +270,8 @@ public class XPathExpression extends NamespaceAwareExpression {
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
             setProperty(camelContext, expression, "headerName", getHeaderName());
         }
-        // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
+        // moved the super configuration to the bottom so that the namespace
+        // init picks up the newly set XPath Factory
         super.configureExpression(camelContext, expression);
     }
 
@@ -297,13 +304,18 @@ public class XPathExpression extends NamespaceAwareExpression {
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
             setProperty(camelContext, predicate, "headerName", getHeaderName());
         }
-        // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
+        // moved the super configuration to the bottom so that the namespace
+        // init picks up the newly set XPath Factory
         super.configurePredicate(camelContext, predicate);
     }
 
     private void resolveXPathFactory(CamelContext camelContext) {
-        // Factory and Object Model can be set simultaneously. The underlying XPathBuilder allows for setting Saxon too, as it is simply a shortcut for
-        // setting the appropriate Object Model, it is not wise to allow this in XML because the order of invocation of the setters by JAXB may cause undeterministic behaviour 
+        // Factory and Object Model can be set simultaneously. The underlying
+        // XPathBuilder allows for setting Saxon too, as it is simply a shortcut
+        // for
+        // setting the appropriate Object Model, it is not wise to allow this in
+        // XML because the order of invocation of the setters by JAXB may cause
+        // undeterministic behaviour
         if ((ObjectHelper.isNotEmpty(factoryRef) || ObjectHelper.isNotEmpty(objectModel)) && (saxon != null)) {
             throw new IllegalArgumentException("The saxon attribute cannot be set on the xpath element if any of the following is also set: factory, objectModel" + this);
         }

@@ -60,23 +60,15 @@ public class AsyncEndpointCustomAsyncInterceptorTest extends ContextTestSupport 
                 context.addComponent("async", new MyAsyncComponent());
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(interceptor);
 
-                from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("async:bye:camel")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                from("direct:start").to("mock:before").to("log:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                }).to("async:bye:camel").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadName = Thread.currentThread().getName();
+                    }
+                }).to("log:after").to("mock:after").to("mock:result");
             }
         };
     }
@@ -86,12 +78,13 @@ public class AsyncEndpointCustomAsyncInterceptorTest extends ContextTestSupport 
         private AtomicInteger counter = new AtomicInteger();
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
-                                                     final Processor target, final Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
 
-            // use DelegateAsyncProcessor to ensure the interceptor works well with the asynchronous routing
+            // use DelegateAsyncProcessor to ensure the interceptor works well
+            // with the asynchronous routing
             // engine in Camel.
-            // The target is the processor to continue routing to, which we must provide
+            // The target is the processor to continue routing to, which we must
+            // provide
             // in the constructor of the DelegateAsyncProcessor
             return new DelegateAsyncProcessor(target) {
                 @Override

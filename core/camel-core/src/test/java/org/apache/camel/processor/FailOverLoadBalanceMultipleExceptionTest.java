@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.IOException;
 
 import org.apache.camel.CamelException;
@@ -47,9 +48,7 @@ public class FailOverLoadBalanceMultipleExceptionTest extends ContextTestSupport
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").loadBalance()
-                    .failover(IllegalArgumentException.class, IOException.class, CamelException.class)
-                        .to("direct:x", "direct:y", "direct:z");
+                from("direct:start").loadBalance().failover(IllegalArgumentException.class, IOException.class, CamelException.class).to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").to("mock:x").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

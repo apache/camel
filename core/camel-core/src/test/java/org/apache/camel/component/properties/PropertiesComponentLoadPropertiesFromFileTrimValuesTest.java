@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.properties;
+
 import java.io.FileOutputStream;
 
 import org.apache.camel.CamelContext;

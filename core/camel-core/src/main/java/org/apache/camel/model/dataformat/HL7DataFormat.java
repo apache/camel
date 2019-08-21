@@ -26,13 +26,15 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.
+ * The HL7 data format can be used to marshal or unmarshal HL7 (Health Care)
+ * model objects.
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,hl7", title = "HL7")
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean validate;
     @XmlTransient
     private Object parser;

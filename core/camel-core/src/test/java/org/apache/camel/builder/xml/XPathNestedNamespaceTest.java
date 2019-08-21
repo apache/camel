@@ -43,14 +43,8 @@ public class XPathNestedNamespaceTest extends ContextTestSupport {
             public void configure() throws Exception {
                 Namespaces ns = new Namespaces("stp", "http://www.barcap.com/gcd/stpengine/1-0");
 
-                from("direct:start")
-                    .choice()
-                        .when().xpath("//stp:termination", ns)
-                            .to("mock:FOO")
-                        .when().xpath("/stp:STPTradeML/stp:FpML/stp:trade", ns)
-                            .to("mock:BAR")
-                        .otherwise()
-                            .to("mock:OTHER");
+                from("direct:start").choice().when().xpath("//stp:termination", ns).to("mock:FOO").when().xpath("/stp:STPTradeML/stp:FpML/stp:trade", ns).to("mock:BAR").otherwise()
+                    .to("mock:OTHER");
             }
         };
     }

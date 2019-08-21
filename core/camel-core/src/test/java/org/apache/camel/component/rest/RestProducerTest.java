@@ -37,8 +37,7 @@ public class RestProducerTest {
     }
 
     @Test
-    public void shouldCreateOptionalPlaceholderQueryParametersForPresentValues()
-        throws UnsupportedEncodingException, URISyntaxException {
+    public void shouldCreateOptionalPlaceholderQueryParametersForPresentValues() throws UnsupportedEncodingException, URISyntaxException {
         final DefaultMessage message = new DefaultMessage(camelContext);
         message.setHeader("paramPlaceholderName", "paramValue");
 
@@ -59,8 +58,7 @@ public class RestProducerTest {
     }
 
     @Test
-    public void shouldNotCreateOptionalPlaceholderQueryParametersForMissingValues()
-        throws UnsupportedEncodingException, URISyntaxException {
+    public void shouldNotCreateOptionalPlaceholderQueryParametersForMissingValues() throws UnsupportedEncodingException, URISyntaxException {
         final DefaultMessage message = new DefaultMessage(camelContext);
 
         assertEquals("", RestProducer.createQueryParameters("param={paramPlaceholderName?}", message));
@@ -72,8 +70,8 @@ public class RestProducerTest {
         message.setHeader("requiredParamPlaceholder", "header_required_value");
         message.setHeader("optionalPresentParamPlaceholder", "header_optional_present_value");
 
-        assertEquals("given=value&required=header_required_value&optional_present=header_optional_present_value",
-            RestProducer.createQueryParameters(
-                "given=value&required={requiredParamPlaceholder}&optional={optionalParamPlaceholder?}&optional_present={optionalPresentParamPlaceholder?}", message));
+        assertEquals("given=value&required=header_required_value&optional_present=header_optional_present_value", RestProducer
+            .createQueryParameters("given=value&required={requiredParamPlaceholder}&optional={optionalParamPlaceholder?}&optional_present={optionalPresentParamPlaceholder?}",
+                                   message));
     }
 }

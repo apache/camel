@@ -44,12 +44,11 @@ public class DefaultErrorHandlerCatchThrowableTest extends ContextTestSupport {
             public void configure() throws Exception {
                 final String exceptionString = "This is an Error not an Exception";
 
-                from("direct:start")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new NoSuchMethodError(exceptionString);
-                        }
-                    });
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new NoSuchMethodError(exceptionString);
+                    }
+                });
             }
         };
     }
