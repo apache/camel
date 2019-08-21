@@ -232,6 +232,7 @@
 * xref:metrics-component.adoc[Metrics Component]
 * xref:micrometer-component.adoc[Micrometer Component]
 * xref:microprofile-config.adoc[MicroProfile Config Component]
+* xref:microprofile-metrics-component.adoc[MicroProfile Metrics Component]
 * xref:milo-client-component.adoc[OPC UA Client Component]
 * xref:milo-server-component.adoc[OPC UA Server Component]
 * xref:mina-component.adoc[Mina Component]
