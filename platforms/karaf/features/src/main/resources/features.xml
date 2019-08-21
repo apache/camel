@@ -878,6 +878,15 @@
     <bundle dependency='true'>wrap:mvn:com.squareup.okhttp3/okhttp/3.5.0</bundle>
     <bundle>mvn:org.apache.camel/camel-dropbox/${project.version}</bundle>
   </feature>
+  <feature name='camel-debezium' version='${project.version}' start-level='50'>
+    <feature version="${project.version}">camel-core</feature>
+    <bundle dependency="true">wrap:mvn:io.debezium/debezium-core/${debezium-version}</bundle>
+    <bundle dependency="true">wrap:mvn:io.debezium/debezium-embedded/${debezium-version}</bundle>
+    <bundle dependency="true">wrap:mvn:io.debezium/debezium-connector-mysql/${debezium-version}</bundle>
+    <bundle dependency="true">wrap:mvn:org.apache.kafka/connect-api/${kafka-version}</bundle>
+    <bundle dependency="true">wrap:mvn:org.apache.kafka/connect-json/${kafka-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-debezium/${project.version}</bundle>
+  </feature>
   <feature name='camel-ehcache' version='${project.version}' start-level='50'>
     <feature version="${project.version}">camel-core</feature>
     <bundle dependency="true">mvn:org.ehcache/ehcache/${ehcache3-version}</bundle>
