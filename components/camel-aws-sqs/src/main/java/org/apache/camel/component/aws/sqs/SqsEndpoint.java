@@ -106,52 +106,53 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         sqsConsumer.setScheduler(scheduler);
         return sqsConsumer;
     }
-
+    
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         client = getConfiguration().getAmazonSQSClient() != null
-            ? getConfiguration().getAmazonSQSClient() : getClient();
+                ? getConfiguration().getAmazonSQSClient() : getClient();
 
-        // check the setting the headerFilterStrategy
-        if (headerFilterStrategy == null) {
-            headerFilterStrategy = new SqsHeaderFilterStrategy();
-        }
+            // check the setting the headerFilterStrategy
+            if (headerFilterStrategy == null) {
+                headerFilterStrategy = new SqsHeaderFilterStrategy();
+            }
 
-        if (configuration.getQueueUrl() != null) {
-            queueUrl = configuration.getQueueUrl();
-        } else {
-            // If both region and Account ID is provided the queue URL can be built manually.
-            // This allows accessing queues where you don't have permission to list queues or query queues
-            if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
-                String host = configuration.getAmazonAWSHost();
-                host = FileUtil.stripTrailingSeparator(host);
-                queueUrl = "https://sqs." + Regions.valueOf(configuration.getRegion()).getName() + "." + host + "/"
-                        + configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
-            } else if (configuration.getQueueOwnerAWSAccountId() != null) {
-                GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
-                getQueueUrlRequest.setQueueName(configuration.getQueueName());
-                getQueueUrlRequest.setQueueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
-                GetQueueUrlResult getQueueUrlResult = client.getQueueUrl(getQueueUrlRequest);
-                queueUrl = getQueueUrlResult.getQueueUrl();
+            if (configuration.getQueueUrl() != null) {
+                queueUrl = configuration.getQueueUrl();
             } else {
-                // check whether the queue already exists
-                ListQueuesResult listQueuesResult = client.listQueues();
-                for (String url : listQueuesResult.getQueueUrls()) {
-                    if (url.endsWith("/" + configuration.getQueueName())) {
-                        queueUrl = url;
-                        log.trace("Queue available at '{}'.", queueUrl);
-                        break;
+                // If both region and Account ID is provided the queue URL can be built manually.
+                // This allows accessing queues where you don't have permission to list queues or query queues
+                if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
+                    String host = configuration.getAmazonAWSHost();
+                    host = FileUtil.stripTrailingSeparator(host);
+                    queueUrl = "https://sqs." + Regions.valueOf(configuration.getRegion()).getName() + "." + host + "/"
+                            + configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
+                } else if (configuration.getQueueOwnerAWSAccountId() != null) {
+                    GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
+                    getQueueUrlRequest.setQueueName(configuration.getQueueName());
+                    getQueueUrlRequest.setQueueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
+                    GetQueueUrlResult getQueueUrlResult = client.getQueueUrl(getQueueUrlRequest);
+                    queueUrl = getQueueUrlResult.getQueueUrl();
+                } else {
+                    // check whether the queue already exists
+                    ListQueuesResult listQueuesResult = client.listQueues();
+                    for (String url : listQueuesResult.getQueueUrls()) {
+                        if (url.endsWith("/" + configuration.getQueueName())) {
+                            queueUrl = url;
+                            log.trace("Queue available at '{}'.", queueUrl);
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        if (queueUrl == null && configuration.isAutoCreateQueue()) {
-            createQueue(client);
-        } else {
-            log.debug("Using Amazon SQS queue url: {}", queueUrl);
-            updateQueueAttributes(client);
-        }
+            if (queueUrl == null && configuration.isAutoCreateQueue()) {
+                createQueue(client);
+            } else {
+                log.debug("Using Amazon SQS queue url: {}", queueUrl);
+                updateQueueAttributes(client);
+            }
     }
 
     protected void createQueue(AmazonSQS client) {

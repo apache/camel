@@ -55,7 +55,7 @@ public class SqsEndpointTest {
         Mockito.when(amazonSQSClient.listQueues())
             .thenReturn(new ListQueuesResult().withQueueUrls("https://sqs.us-east-1.amazonaws.com/ID/dummy-queue", "https://sqs.us-east-1.amazonaws.com/ID/test-queue"));
 
-        endpoint.doStart();
+        endpoint.doInit();
 
         Mockito.verify(amazonSQSClient).listQueues();
     }
@@ -70,7 +70,7 @@ public class SqsEndpointTest {
                            .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
 
         endpoint.getConfiguration().setQueueOwnerAWSAccountId("111222333");
-        endpoint.doStart();
+        endpoint.doInit();
 
         Mockito.verify(amazonSQSClient).getQueueUrl(expectedGetQueueUrlRequest);
 
