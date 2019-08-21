@@ -200,7 +200,7 @@ public final class HttpHelper {
      * @throws IOException is thrown if error reading response body
      */
     public static Object readRequestBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
-        if (is == null) {
+        if (is == null || is.available() <= 0) {
             return null;
         }
         boolean disableStreamCaching = !exchange.getContext().isStreamCaching();
@@ -224,7 +224,7 @@ public final class HttpHelper {
      * @throws IOException is thrown if error reading response body
      */
     public static Object readResponseBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
-        if (is == null) {
+        if (is == null || is.available() <= 0) {
             return null;
         }
         // convert the input stream to StreamCache if the stream cache is not disabled
