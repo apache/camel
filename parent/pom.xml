@@ -4793,8 +4793,8 @@
                 <version>${junit-jupiter-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-vintage</artifactId>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
                 <version>${junit-jupiter-version}</version>
             </dependency>
             <dependency>

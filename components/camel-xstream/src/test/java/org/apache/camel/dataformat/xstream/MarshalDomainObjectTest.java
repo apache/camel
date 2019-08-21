@@ -18,8 +18,10 @@ package org.apache.camel.dataformat.xstream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Marshal tests with domain objects.
@@ -58,7 +60,7 @@ public class MarshalDomainObjectTest extends CamelTestSupport {
 
         String body1 = mock.getExchanges().get(0).getIn().getBody(String.class);
         String body2 = mock.getExchanges().get(1).getIn().getBody(String.class);
-        assertEquals("The body should marshalled to the same", body1, body2);
+        assertEquals(body1, body2, "The body should marshalled to the same");
     }
 
     @Test
