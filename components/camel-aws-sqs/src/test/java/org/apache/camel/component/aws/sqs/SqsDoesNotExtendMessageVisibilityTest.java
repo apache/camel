@@ -65,8 +65,7 @@ public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient")
-                        .to("mock:result");
+                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient").to("mock:result");
             }
         };
     }

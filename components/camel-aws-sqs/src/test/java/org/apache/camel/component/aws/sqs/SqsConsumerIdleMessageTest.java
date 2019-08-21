@@ -30,7 +30,7 @@ public class SqsConsumerIdleMessageTest extends CamelTestSupport {
 
     @BindToRegistry("amazonSQSClient")
     private AmazonSQSClientMock client = new AmazonSQSClientMock();
-    
+
     @Test
     public void testConsumeIdleMessages() throws Exception {
         Thread.sleep(110);
@@ -40,15 +40,13 @@ public class SqsConsumerIdleMessageTest extends CamelTestSupport {
         assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=50&maxMessagesPerPoll=5"
-                        + "&sendEmptyMessageWhenIdle=true")
-                    .to("mock:result");
+                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=50&maxMessagesPerPoll=5" + "&sendEmptyMessageWhenIdle=true").to("mock:result");
             }
         };
     }

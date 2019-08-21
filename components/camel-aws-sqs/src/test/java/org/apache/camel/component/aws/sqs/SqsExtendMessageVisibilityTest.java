@@ -35,7 +35,7 @@ public class SqsExtendMessageVisibilityTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @BindToRegistry("amazonSQSClient")
     private AmazonSQSClientMock client = new AmazonSQSClientMock();
 
@@ -63,7 +63,9 @@ public class SqsExtendMessageVisibilityTest extends CamelTestSupport {
         for (ChangeMessageVisibilityRequest req : this.client.changeMessageVisibilityRequests) {
             assertEquals("https://queue.amazonaws.com/541925086079/MyQueue", req.getQueueUrl());
             assertEquals(RECEIPT_HANDLE, req.getReceiptHandle());
-            Integer expectedTimeout = new Integer(6); // Should be 1.5 x TIMEOUT as takes into account the delay period
+            Integer expectedTimeout = new Integer(6); // Should be 1.5 x TIMEOUT
+                                                      // as takes into account
+                                                      // the delay period
             assertEquals(expectedTimeout, req.getVisibilityTimeout());
         }
     }
@@ -73,8 +75,7 @@ public class SqsExtendMessageVisibilityTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&extendMessageVisibility=true&visibilityTimeout=" + TIMEOUT)
-                    .to("mock:result");
+                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&extendMessageVisibility=true&visibilityTimeout=" + TIMEOUT).to("mock:result");
             }
         };
     }

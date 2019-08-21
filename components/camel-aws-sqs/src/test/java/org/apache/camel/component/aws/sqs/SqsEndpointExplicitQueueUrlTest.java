@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-
 public class SqsEndpointExplicitQueueUrlTest extends Assert {
 
     private static final String QUEUE_URL = "http://localhost:9324/queue/default";
@@ -33,11 +32,11 @@ public class SqsEndpointExplicitQueueUrlTest extends Assert {
     @Before
     public void setUp() {
         amazonSQSClient = Mockito.mock(AmazonSQSClient.class);
-        
+
         SqsConfiguration config = new SqsConfiguration();
         config.setQueueUrl(QUEUE_URL);
         config.setAmazonSQSClient(amazonSQSClient);
-        
+
         endpoint = new SqsEndpoint("aws-sqs://test-queue", new SqsComponent(new DefaultCamelContext()), config);
     }
 

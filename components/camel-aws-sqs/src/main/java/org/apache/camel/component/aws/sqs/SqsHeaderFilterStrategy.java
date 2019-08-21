@@ -20,11 +20,11 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class SqsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     public SqsHeaderFilterStrategy() {
-        initialize();  
+        initialize();
     }
 
     protected void initialize() {
         // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterPattern("(breadcrumbId|Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*"); 
+        setOutFilterPattern("(breadcrumbId|Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
     }
 }

@@ -161,8 +161,8 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 int period = visibilityTimeout.intValue();
                 int repeatSeconds = Double.valueOf(visibilityTimeout.doubleValue() * 1.5).intValue();
                 if (log.isDebugEnabled()) {
-                    log.debug("Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds), to extend exchangeId: {}",
-                              delay, period, repeatSeconds, exchange.getExchangeId());
+                    log.debug("Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds), to extend exchangeId: {}", delay, period,
+                              repeatSeconds, exchange.getExchangeId());
                 }
                 final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(new TimeoutExtender(exchange, repeatSeconds), delay, period,
                                                                                                       TimeUnit.SECONDS);

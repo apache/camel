@@ -32,13 +32,13 @@ public class SqsProducerDeleteTest extends CamelTestSupport {
 
     @BindToRegistry("client")
     AmazonSQSClientMock mock = new AmazonSQSClientMock();
-    
+
     @EndpointInject("direct:start")
     private ProducerTemplate template;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
-    
+
     @Test
     public void deleteMessage() throws Exception {
         result.expectedMessageCount(1);
@@ -60,8 +60,7 @@ public class SqsProducerDeleteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                .to("aws-sqs://camel-1?amazonSQSClient=#client&operation=deleteMessage").to("mock:result");
+                from("direct:start").to("aws-sqs://camel-1?amazonSQSClient=#client&operation=deleteMessage").to("mock:result");
             }
         };
     }

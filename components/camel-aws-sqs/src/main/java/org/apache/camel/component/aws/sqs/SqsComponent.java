@@ -31,23 +31,23 @@ import org.apache.camel.util.ObjectHelper;
 
 @Component("aws-sqs")
 public class SqsComponent extends DefaultComponent {
-    
+
     @Metadata
     private String accessKey;
     @Metadata
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private SqsConfiguration configuration;
-    
+
     public SqsComponent() {
         this(null);
     }
 
     public SqsComponent(CamelContext context) {
         super(context);
-        
+
         this.configuration = new SqsConfiguration();
         registerExtension(new SqsComponentVerifierExtension());
     }
@@ -86,8 +86,9 @@ public class SqsComponent extends DefaultComponent {
         if (configuration.getAmazonSQSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSQSClient or accessKey and secretKey must be specified.");
         }
-        
-        // Verify that visibilityTimeout is set if extendMessageVisibility is set to true.
+
+        // Verify that visibilityTimeout is set if extendMessageVisibility is
+        // set to true.
         if (configuration.isExtendMessageVisibility() && (configuration.getVisibilityTimeout() == null)) {
             throw new IllegalArgumentException("Extending message visibility (extendMessageVisibility) requires visibilityTimeout to be set on the Endpoint.");
         }
@@ -96,7 +97,7 @@ public class SqsComponent extends DefaultComponent {
         sqsEndpoint.setConsumerProperties(parameters);
         return sqsEndpoint;
     }
-    
+
     public SqsConfiguration getConfiguration() {
         return configuration;
     }
@@ -107,7 +108,7 @@ public class SqsComponent extends DefaultComponent {
     public void setConfiguration(SqsConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     public String getAccessKey() {
         return configuration.getAccessKey();
     }
@@ -129,18 +130,19 @@ public class SqsComponent extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         configuration.setSecretKey(secretKey);
     }
-    
+
     public String getRegion() {
         return configuration.getRegion();
     }
 
     /**
-     * Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL.
+     * Specify the queue region which could be used with queueOwnerAWSAccountId
+     * to build the service URL.
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
     }
-    
+
     private void checkAndSetRegistryClient(SqsConfiguration configuration) {
         Set<AmazonSQS> clients = getCamelContext().getRegistry().findByType(AmazonSQS.class);
         if (clients.size() == 1) {

@@ -39,19 +39,19 @@ public class SqsConsumerMessageIntegrationTest extends CamelTestSupport {
     @Test
     public void sendInOnly() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("ignore");
             }
         });
-        
+
         exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("test1");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -65,10 +65,7 @@ public class SqsConsumerMessageIntegrationTest extends CamelTestSupport {
                 from("direct:start").startupOrder(2).to(sqsEndpointUri);
 
                 from("aws-sqs://camel-1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&deleteAfterRead=false&deleteIfFiltered=true").startupOrder(1)
-                  .filter(simple("${body} != 'ignore'"))
-                    .log("${body}")
-                    .log("${header.CamelAwsSqsReceiptHandle}")
-                    .to("mock:result");
+                    .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}").to("mock:result");
             }
         };
     }

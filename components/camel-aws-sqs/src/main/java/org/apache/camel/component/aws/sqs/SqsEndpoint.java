@@ -54,10 +54,10 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
+ * The aws-sqs component is used for sending and receiving messages to Amazon's
+ * SQS service.
  */
-@UriEndpoint(firstVersion = "2.6.0", scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueNameOrArn",
-    label = "cloud,messaging")
+@UriEndpoint(firstVersion = "2.6.0", scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueNameOrArn", label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
     private AmazonSQS client;
@@ -106,53 +106,54 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         sqsConsumer.setScheduler(scheduler);
         return sqsConsumer;
     }
-    
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        client = getConfiguration().getAmazonSQSClient() != null
-                ? getConfiguration().getAmazonSQSClient() : getClient();
+        client = getConfiguration().getAmazonSQSClient() != null ? getConfiguration().getAmazonSQSClient() : getClient();
 
-            // check the setting the headerFilterStrategy
-            if (headerFilterStrategy == null) {
-                headerFilterStrategy = new SqsHeaderFilterStrategy();
-            }
+        // check the setting the headerFilterStrategy
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new SqsHeaderFilterStrategy();
+        }
 
-            if (configuration.getQueueUrl() != null) {
-                queueUrl = configuration.getQueueUrl();
+        if (configuration.getQueueUrl() != null) {
+            queueUrl = configuration.getQueueUrl();
+        } else {
+            // If both region and Account ID is provided the queue URL can be
+            // built manually.
+            // This allows accessing queues where you don't have permission to
+            // list queues or query queues
+            if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
+                String host = configuration.getAmazonAWSHost();
+                host = FileUtil.stripTrailingSeparator(host);
+                queueUrl = "https://sqs." + Regions.valueOf(configuration.getRegion()).getName() + "." + host + "/" + configuration.getQueueOwnerAWSAccountId() + "/"
+                           + configuration.getQueueName();
+            } else if (configuration.getQueueOwnerAWSAccountId() != null) {
+                GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
+                getQueueUrlRequest.setQueueName(configuration.getQueueName());
+                getQueueUrlRequest.setQueueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
+                GetQueueUrlResult getQueueUrlResult = client.getQueueUrl(getQueueUrlRequest);
+                queueUrl = getQueueUrlResult.getQueueUrl();
             } else {
-                // If both region and Account ID is provided the queue URL can be built manually.
-                // This allows accessing queues where you don't have permission to list queues or query queues
-                if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
-                    String host = configuration.getAmazonAWSHost();
-                    host = FileUtil.stripTrailingSeparator(host);
-                    queueUrl = "https://sqs." + Regions.valueOf(configuration.getRegion()).getName() + "." + host + "/"
-                            + configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
-                } else if (configuration.getQueueOwnerAWSAccountId() != null) {
-                    GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
-                    getQueueUrlRequest.setQueueName(configuration.getQueueName());
-                    getQueueUrlRequest.setQueueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
-                    GetQueueUrlResult getQueueUrlResult = client.getQueueUrl(getQueueUrlRequest);
-                    queueUrl = getQueueUrlResult.getQueueUrl();
-                } else {
-                    // check whether the queue already exists
-                    ListQueuesResult listQueuesResult = client.listQueues();
-                    for (String url : listQueuesResult.getQueueUrls()) {
-                        if (url.endsWith("/" + configuration.getQueueName())) {
-                            queueUrl = url;
-                            log.trace("Queue available at '{}'.", queueUrl);
-                            break;
-                        }
+                // check whether the queue already exists
+                ListQueuesResult listQueuesResult = client.listQueues();
+                for (String url : listQueuesResult.getQueueUrls()) {
+                    if (url.endsWith("/" + configuration.getQueueName())) {
+                        queueUrl = url;
+                        log.trace("Queue available at '{}'.", queueUrl);
+                        break;
                     }
                 }
             }
+        }
 
-            if (queueUrl == null && configuration.isAutoCreateQueue()) {
-                createQueue(client);
-            } else {
-                log.debug("Using Amazon SQS queue url: {}", queueUrl);
-                updateQueueAttributes(client);
-            }
+        if (queueUrl == null && configuration.isAutoCreateQueue()) {
+            createQueue(client);
+        } else {
+            log.debug("Using Amazon SQS queue url: {}", queueUrl);
+            updateQueueAttributes(client);
+        }
     }
 
     protected void createQueue(AmazonSQS client) {
@@ -266,10 +267,11 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         message.setHeader(SqsConstants.ATTRIBUTES, msg.getAttributes());
         message.setHeader(SqsConstants.MESSAGE_ATTRIBUTES, msg.getMessageAttributes());
 
-        //Need to apply the SqsHeaderFilterStrategy this time
+        // Need to apply the SqsHeaderFilterStrategy this time
         HeaderFilterStrategy headerFilterStrategy = getHeaderFilterStrategy();
-        //add all sqs message attributes as camel message headers so that knowledge of
-        //the Sqs class MessageAttributeValue will not leak to the client
+        // add all sqs message attributes as camel message headers so that
+        // knowledge of
+        // the Sqs class MessageAttributeValue will not leak to the client
         for (Entry<String, MessageAttributeValue> entry : msg.getMessageAttributes().entrySet()) {
             String header = entry.getKey();
             Object value = translateValue(entry.getValue());
@@ -300,7 +302,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     }
 
     /**
-     * Provide the possibility to override this method for an mock implementation
+     * Provide the possibility to override this method for an mock
+     * implementation
+     * 
      * @return AmazonSQSClient
      */
     AmazonSQS createClient() {
@@ -347,7 +351,8 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     /**
      * Gets the maximum number of messages as a limit to poll at each polling.
      * <p/>
-     * Is default unlimited, but use 0 or negative number to disable it as unlimited.
+     * Is default unlimited, but use 0 or negative number to disable it as
+     * unlimited.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
