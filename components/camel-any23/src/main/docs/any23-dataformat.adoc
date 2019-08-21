@@ -21,7 +21,7 @@ The Any23 dataformat supports 5 options, which are listed below.
 |===
 | Name | Default | Java Type | Description
 | outputFormat | RDF4JMODEL | Any23Type | What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL. It is by default: RDF4JMODEL.
-| configurations |  | Map | Configurations for Apache Any23 as key-value pairs in order to customize the extraction process. The list of supported parameters can be found here. If not provided, a default configuration is used.
+| configurations |  | Map | Configurations for Apache Any23 as key-value pairs in order to customize the extraction process. The list of supported parameters can be found a href= \https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.propertieshere. If not provided, a default configuration is used.
 | extractors |  | List | List of Any23 extractors to be used in the unmarshal operation. A list of the available extractors can be found here here. If not provided, all the available extractors are used.
 | baseURI |  | String | The URI to use as base for building RDF entities if only relative paths are provided.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
