@@ -150,7 +150,17 @@ public class XsltComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, final String remaining, Map<String, Object> parameters) throws Exception {
-        XsltEndpoint endpoint = new XsltEndpoint(uri, this);
+        XsltEndpoint endpoint = createXsltEndpoint(uri);
+        configureEndpoint(endpoint, remaining, parameters);
+
+        return endpoint;
+    }
+
+    protected XsltEndpoint createXsltEndpoint(String uri) {
+        return new XsltEndpoint(uri, this);
+    }
+
+    protected void configureEndpoint(XsltEndpoint endpoint, final String remaining, Map<String, Object> parameters) throws Exception {
         endpoint.setContentCache(isContentCache());
         endpoint.setSaxon(isSaxon());
         endpoint.setSaxonConfiguration(saxonConfiguration);
@@ -162,7 +172,7 @@ public class XsltComponent extends DefaultComponent {
         if (resolver == null) {
             // not in endpoint then use component specific resolver
             resolver = getUriResolver();
-        }       
+        }
         if (resolver == null) {
             // lookup custom resolver factory to use
             XsltUriResolverFactory resolverFactory = resolveAndRemoveReferenceParameter(parameters, "uriResolverFactory", XsltUriResolverFactory.class);
@@ -174,7 +184,7 @@ public class XsltComponent extends DefaultComponent {
                 // fallback to use the Default URI resolver factory
                 resolverFactory = new DefaultXsltUriResolverFactory();
             }
-            
+
             resolver = resolverFactory.createUriResolver(getCamelContext(), remaining);
         }
         endpoint.setUriResolver(resolver);
@@ -193,8 +203,5 @@ public class XsltComponent extends DefaultComponent {
             // additional parameters need to be stored on endpoint as they can be used to configure xslt builder additionally
             endpoint.setParameters(parameters);
         }
-
-        return endpoint;
     }
-
 }

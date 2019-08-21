@@ -16,32 +16,46 @@
  */
 package org.apache.camel.component.xj;
 
+import java.io.ByteArrayOutputStream;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.stax.StAXResult;
+
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.camel.Message;
 import org.apache.camel.component.xslt.ResultHandler;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.stax.StAXResult;
-import java.io.ByteArrayOutputStream;
-
+/**
+ * Result handler impl. to write a json document into a {@ByteArrayOutputStream}
+ */
 public class JsonStreamResultHandler implements ResultHandler {
 
     private final ByteArrayOutputStream byteArrayOutputStream;
     private final Result result;
 
+    /**
+     * Creates a new json to stream result handler instance
+     * @param jsonFactory the {@link JsonFactory} to use to write the json.
+     */
     public JsonStreamResultHandler(JsonFactory jsonFactory) throws Exception {
         this.byteArrayOutputStream = new ByteArrayOutputStream();
         final JsonGenerator jsonGenerator = jsonFactory.createGenerator(this.byteArrayOutputStream, JsonEncoding.UTF8);
         this.result = new StAXResult(new XmlJsonStreamWriter(jsonGenerator));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Result getResult() {
         return this.result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setBody(Message in) {
         in.setBody(this.byteArrayOutputStream.toByteArray());

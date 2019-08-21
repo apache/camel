@@ -14,13 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xj;
-
-import org.apache.camel.Exchange;
+package org.apache.camel.component.xslt;
 
 import javax.xml.transform.Source;
 
+import org.apache.camel.Exchange;
+
+/**
+ * Interface to be implemented by concrete source handlers/converters
+ */
 public interface SourceHandlerFactory {
 
+    /**
+     * Creates a specific {@link Source} depending on the current message exchanged
+     * @param exchange the exchange
+     * @return the source created from the message
+     * @throws Exception if the source couldn't be created
+     */
     Source getSource(Exchange exchange) throws Exception;
 }

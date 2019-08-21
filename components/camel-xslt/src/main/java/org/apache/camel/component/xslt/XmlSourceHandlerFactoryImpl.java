@@ -14,14 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xj;
+package org.apache.camel.component.xslt;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.ExpectedBodyTypeException;
-import org.apache.camel.RuntimeTransformException;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.support.builder.xml.XMLConverterHelper;
-import org.w3c.dom.Node;
+import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
@@ -30,21 +25,61 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
-import java.io.InputStream;
 
+import org.w3c.dom.Node;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.ExpectedBodyTypeException;
+import org.apache.camel.RuntimeTransformException;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.support.builder.xml.XMLConverterHelper;
+
+/**
+ * Handler for xml sources
+ */
 public class XmlSourceHandlerFactoryImpl implements SourceHandlerFactory {
 
     private XMLConverterHelper converter = new XMLConverterHelper();
     private boolean isFailOnNullBody = true;
+    private boolean allowStax = true;
 
-    public void setFailOnNullBody(boolean failOnNullBody) {
-        isFailOnNullBody = failOnNullBody;
-    }
-
+    /**
+     * Returns true if we fail when the body is null.
+     */
     public boolean isFailOnNullBody() {
         return isFailOnNullBody;
     }
 
+    /**
+     * Set if we should fail when the body is null
+     *
+     * @param failOnNullBody
+     */
+    public void setFailOnNullBody(boolean failOnNullBody) {
+        isFailOnNullBody = failOnNullBody;
+    }
+
+    /**
+     * Returns true if Stax is allowed
+     *
+     * @return
+     */
+    public boolean isAllowStax() {
+        return allowStax;
+    }
+
+    /**
+     * Sets if a {@link StAXSource} is allowed to read the document
+     *
+     * @param allowStax
+     */
+    public void setAllowStax(boolean allowStax) {
+        this.allowStax = allowStax;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Source getSource(Exchange exchange) throws Exception {
         // only convert to input stream if really needed
@@ -108,9 +143,10 @@ public class XmlSourceHandlerFactoryImpl implements SourceHandlerFactory {
         }
         Source source = null;
         if (body != null) {
-            // try StAX if enabled
-            source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
-
+            if (isAllowStax()) {
+                // try StAX if enabled
+                source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
+            }
             if (source == null) {
                 // then try SAX
                 source = exchange.getContext().getTypeConverter().tryConvertTo(SAXSource.class, exchange, body);

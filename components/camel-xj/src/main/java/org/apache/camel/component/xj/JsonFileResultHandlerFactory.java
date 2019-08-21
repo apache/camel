@@ -16,21 +16,31 @@
  */
 package org.apache.camel.component.xj;
 
+import java.io.File;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.xslt.ResultHandler;
 import org.apache.camel.component.xslt.ResultHandlerFactory;
 import org.apache.camel.support.ExchangeHelper;
 
-import java.io.File;
-
+/**
+ * {@JsonFileResultHandler} factory
+ */
 public class JsonFileResultHandlerFactory implements ResultHandlerFactory {
     private final JsonFactory jsonFactory;
 
+    /**
+     * Creates a new json to file result handler factory
+     * @param jsonFactory the {@link JsonFactory} to use to write the json.
+     */
     public JsonFileResultHandlerFactory(JsonFactory jsonFactory) {
         this.jsonFactory = jsonFactory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResultHandler createResult(Exchange exchange) throws Exception {
         final String fileName = ExchangeHelper.getMandatoryHeader(exchange, Exchange.XSLT_FILE_NAME, String.class);

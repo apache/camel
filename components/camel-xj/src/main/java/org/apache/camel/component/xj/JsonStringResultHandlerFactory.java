@@ -21,13 +21,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.xslt.ResultHandler;
 import org.apache.camel.component.xslt.ResultHandlerFactory;
 
+/**
+ * {@JsonStringResultHandler} factory
+ */
 public class JsonStringResultHandlerFactory implements ResultHandlerFactory {
+
     private final JsonFactory jsonFactory;
 
+    /**
+     * Creates a new json to string result handler factory
+     * @param jsonFactory the {@link JsonFactory} to use to write the json.
+     */
     public JsonStringResultHandlerFactory(JsonFactory jsonFactory) {
         this.jsonFactory = jsonFactory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResultHandler createResult(Exchange exchange) throws Exception {
         return new JsonStringResultHandler(jsonFactory);

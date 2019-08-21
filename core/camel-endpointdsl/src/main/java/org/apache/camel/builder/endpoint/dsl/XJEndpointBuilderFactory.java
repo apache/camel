@@ -39,6 +39,55 @@ public interface XJEndpointBuilderFactory {
             return (AdvancedXJEndpointBuilder) this;
         }
         /**
+         * Sets the transform direction.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.xj.TransformDirection</code> type.
+         * 
+         * Required: true
+         * Group: producer
+         */
+        default XJEndpointBuilder transformDirection(
+                TransformDirection transformDirection) {
+            setProperty("transformDirection", transformDirection);
+            return this;
+        }
+        /**
+         * Sets the transform direction.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.xj.TransformDirection</code> type.
+         * 
+         * Required: true
+         * Group: producer
+         */
+        default XJEndpointBuilder transformDirection(String transformDirection) {
+            setProperty("transformDirection", transformDirection);
+            return this;
+        }
+        /**
+         * Whether to allow using StAX as the javax.xml.transform.Source.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default XJEndpointBuilder allowStAX(boolean allowStAX) {
+            setProperty("allowStAX", allowStAX);
+            return this;
+        }
+        /**
+         * Whether to allow using StAX as the javax.xml.transform.Source.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default XJEndpointBuilder allowStAX(String allowStAX) {
+            setProperty("allowStAX", allowStAX);
+            return this;
+        }
+        /**
          * Cache for the resource content (the stylesheet file) when it is
          * loaded. If set to false Camel will reload the stylesheet file on each
          * message processing. This is good for development. A cached stylesheet
@@ -178,33 +227,6 @@ public interface XJEndpointBuilderFactory {
          */
         default XJEndpointBuilder saxon(String saxon) {
             setProperty("saxon", saxon);
-            return this;
-        }
-        /**
-         * The transform direction. Either XML2JSON or JSON2XML.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.xj.TransformDirection</code> type.
-         * 
-         * Required: true
-         * Group: producer
-         */
-        default XJEndpointBuilder transformDirection(
-                TransformDirection transformDirection) {
-            setProperty("transformDirection", transformDirection);
-            return this;
-        }
-        /**
-         * The transform direction. Either XML2JSON or JSON2XML.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.xj.TransformDirection</code> type.
-         * 
-         * Required: true
-         * Group: producer
-         */
-        default XJEndpointBuilder transformDirection(String transformDirection) {
-            setProperty("transformDirection", transformDirection);
             return this;
         }
         /**
@@ -502,6 +524,15 @@ public interface XJEndpointBuilderFactory {
     }
 
     /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.xj.TransformDirection</code> enum.
+     */
+    enum TransformDirection {
+        XML2JSON,
+        JSON2XML;
+    }
+
+    /**
      * Proxy enum for <code>org.apache.camel.component.xslt.XsltOutput</code>
      * enum.
      */
@@ -511,21 +542,12 @@ public interface XJEndpointBuilderFactory {
         DOM,
         file;
     }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.xj.TransformDirection</code> enum.
-     */
-    enum TransformDirection {
-        XML2JSON,
-        JSON2XML;
-    }
     /**
      * XJ (camel-xj)
      * Transforms json/xml message back and forth using a XSLT.
      * 
      * Category: transformation
-     * Available as of version: 2.25
+     * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-xj
      * 
      * Syntax: <code>xj:resourceUri</code>

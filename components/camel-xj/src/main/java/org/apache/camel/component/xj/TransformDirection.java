@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.xj;
 
+/**
+ * Enum with the possible transform directions.
+ */
 public enum TransformDirection {
     XML2JSON,
     JSON2XML

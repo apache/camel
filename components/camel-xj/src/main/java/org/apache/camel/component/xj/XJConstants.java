@@ -17,24 +17,47 @@
 
 package org.apache.camel.component.xj;
 
-import com.fasterxml.jackson.core.JsonToken;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonToken;
+
 public class XJConstants {
 
+    /**
+     * The namespace used by xj for typehints
+     */
     public static final String NS_XJ = "http://camel.apache.org/component/xj";
+
+    /**
+     * The namespace prefix used by xj for typehints
+     */
     public static final String NS_PREFIX_XJ = "xj";
 
+    /**
+     * Name typehint. Used to instruct xj to write a field with that name when converting to json. On the otherhand
+     * when converting to xml xj writes the json field name in that attribute.
+     */
     public static final String TYPE_HINT_NAME = "name";
+
+    /**
+     * JSON-Type hint. Used to instruct xj of which type the output is when converting to json. Otherwise when converting
+     * to xml the attribute holds the type that was in the original json document.
+     */
     public static final String TYPE_HINT_TYPE = "type";
 
-    public static final Map<JsonToken, String> JSONTYPE_TYPE_MAP;
-    public static final Map<String, JsonToken> TYPE_JSONTYPE_MAP;
+    /**
+     * Mapping from json-types to typehint names
+     */
+    static final Map<JsonToken, String> JSONTYPE_TYPE_MAP;
 
-    public static final String UNSUPPORTED_OPERATION_EXCEPTION_MESSAGE = "unsupported / not yet implemented";
+    /**
+     * Mapping from typehint names to json-types
+     */
+    static final Map<String, JsonToken> TYPE_JSONTYPE_MAP;
+
+    static final String UNSUPPORTED_OPERATION_EXCEPTION_MESSAGE = "unsupported / not yet implemented";
 
     static {
         final Map<JsonToken, String> jsonTypeTypeMap = new HashMap<>();
