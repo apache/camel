@@ -106,7 +106,7 @@
         <c3p0-version>0.9.5.4</c3p0-version>
         <c3p0-bundle-version>0.9.5.4_1</c3p0-bundle-version>
         <caffeine-version>2.8.0</caffeine-version>
-        <californium-version>2.0.0-M15</californium-version>
+        <californium-version>2.0.0-M16</californium-version>
         <cassandra-driver-version>3.7.2</cassandra-driver-version>
         <cassandra-driver-guava-version>19.0</cassandra-driver-guava-version>
         <cassandra-version>3.7</cassandra-version>
