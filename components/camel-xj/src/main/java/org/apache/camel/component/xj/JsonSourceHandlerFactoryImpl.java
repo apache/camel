@@ -16,35 +16,54 @@
  */
 package org.apache.camel.component.xj;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExpectedBodyTypeException;
-
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.Source;
-import javax.xml.transform.stax.StAXSource;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.Source;
+import javax.xml.transform.stax.StAXSource;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExpectedBodyTypeException;
+import org.apache.camel.component.xslt.SourceHandlerFactory;
+
+/**
+ * Handler for json sources
+ */
 public class JsonSourceHandlerFactoryImpl implements SourceHandlerFactory {
 
     private JsonFactory jsonFactory;
     private boolean isFailOnNullBody = true;
 
+    /**
+     * Creates a new instance
+     * @param jsonFactory the jsonFactory to use to read the json document
+     */
     public JsonSourceHandlerFactoryImpl(JsonFactory jsonFactory) {
         this.jsonFactory = jsonFactory;
     }
 
+    /**
+     * Returns if we fail when the body is null
+     */
     public boolean isFailOnNullBody() {
         return isFailOnNullBody;
     }
 
+    /**
+     * Set if we should fail when the body is null
+     * @param failOnNullBody
+     */
     public void setFailOnNullBody(boolean failOnNullBody) {
         isFailOnNullBody = failOnNullBody;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Source getSource(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();

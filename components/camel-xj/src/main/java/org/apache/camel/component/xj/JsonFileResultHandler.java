@@ -16,32 +16,46 @@
  */
 package org.apache.camel.component.xj;
 
+import java.io.File;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.stax.StAXResult;
+
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.camel.Message;
 import org.apache.camel.component.xslt.ResultHandler;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.stax.StAXResult;
-import java.io.File;
-
+/**
+ * Result handler impl. to write a json document into a {@link File}
+ */
 public class JsonFileResultHandler implements ResultHandler {
 
     private final File file;
     private final Result result;
 
+    /**
+     * Creates a new json to file result handler instance
+     * @param jsonFactory the {@link JsonFactory} to use to write the json.
+     */
     public JsonFileResultHandler(JsonFactory jsonFactory, File file) throws Exception {
         this.file = file;
         final JsonGenerator jsonGenerator = jsonFactory.createGenerator(this.file, JsonEncoding.UTF8);
         this.result = new StAXResult(new XmlJsonStreamWriter(jsonGenerator));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Result getResult() {
         return this.result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setBody(Message in) {
         in.setBody(this.file);

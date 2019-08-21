@@ -25,30 +25,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Node;
 import org.xml.sax.EntityResolver;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeTransformException;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.builder.xml.StAX2SAXSource;
@@ -74,6 +67,7 @@ public class XsltBuilder implements Processor {
     private XMLConverterHelper converter = new XMLConverterHelper();
     private Templates template;
     private volatile BlockingQueue<Transformer> transformers;
+    private SourceHandlerFactory sourceHandlerFactory;
     private ResultHandlerFactory resultHandlerFactory = new StringResultHandlerFactory();
     private boolean failOnNullBody = true;
     private URIResolver uriResolver;
@@ -81,6 +75,8 @@ public class XsltBuilder implements Processor {
     private ErrorListener errorListener;
     private boolean allowStAX = true;
     private EntityResolver entityResolver;
+
+    private volatile Object sourceHandlerFactoryLock = new Object();
 
     public XsltBuilder() {
     }
@@ -116,17 +112,9 @@ public class XsltBuilder implements Processor {
         // the underlying input stream, which we need to close to avoid locking files or other resources
         InputStream is = null;
         try {
-            Source source;
-            // only convert to input stream if really needed
-            if (isInputStreamNeeded(exchange)) {
-                is = exchange.getIn().getBody(InputStream.class);
-                source = getSource(exchange, is);
-            } else {
-                Object body = exchange.getIn().getBody();
-                source = getSource(exchange, body);
-            }
+            Source source = getSourceHandlerFactory().getSource(exchange);
 
-            if (source instanceof StAXSource) {
+            if (!isAllowStAX() && source instanceof StAXSource) {
                 // Always convert StAXSource to SAXSource.
                 // * Xalan and Saxon-B don't support StAXSource.
                 // * The JDK default implementation (XSLTC) doesn't handle CDATA events
@@ -134,6 +122,10 @@ public class XsltBuilder implements Processor {
                 // * Saxon-HE/PE/EE seem to support StAXSource, but don't advertise this
                 //   officially (via TransformerFactory.getFeature(StAXSource.FEATURE))
                 source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
+            }
+
+            if (source instanceof SAXSource) {
+                tryAddEntityResolver((SAXSource) source);
             }
 
             LOG.trace("Using {} as source", source);
@@ -311,6 +303,26 @@ public class XsltBuilder implements Processor {
         this.failOnNullBody = failOnNullBody;
     }
 
+    public SourceHandlerFactory getSourceHandlerFactory() {
+        if (this.sourceHandlerFactory == null) {
+            synchronized (this.sourceHandlerFactoryLock) {
+                if (this.sourceHandlerFactory == null) {
+                    final XmlSourceHandlerFactoryImpl xmlSourceHandlerFactory = new XmlSourceHandlerFactoryImpl();
+                    xmlSourceHandlerFactory.setFailOnNullBody(isFailOnNullBody());
+                    xmlSourceHandlerFactory.setAllowStax(isAllowStAX());
+
+                    this.sourceHandlerFactory = xmlSourceHandlerFactory;
+                }
+            }
+        }
+
+        return this.sourceHandlerFactory;
+    }
+
+    public void setSourceHandlerFactory(SourceHandlerFactory sourceHandlerFactory) {
+        this.sourceHandlerFactory = sourceHandlerFactory;
+    }
+
     public ResultHandlerFactory getResultHandlerFactory() {
         return resultHandlerFactory;
     }
@@ -435,97 +447,6 @@ public class XsltBuilder implements Processor {
 
     protected Transformer createTransformer() throws Exception {
         return getTemplate().newTransformer();
-    }
-
-    /**
-     * Checks whether we need an {@link InputStream} to access the message body.
-     * <p/>
-     * Depending on the content in the message body, we may not need to convert
-     * to {@link InputStream}.
-     *
-     * @param exchange the current exchange
-     * @return <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source} afterwards.
-     */
-    protected boolean isInputStreamNeeded(Exchange exchange) {
-        Object body = exchange.getIn().getBody();
-        if (body == null) {
-            return false;
-        }
-
-        if (body instanceof InputStream) {
-            return true;
-        } else if (body instanceof Source) {
-            return false;
-        } else if (body instanceof String) {
-            return false;
-        } else if (body instanceof byte[]) {
-            return false;
-        } else if (body instanceof Node) {
-            return false;
-        } else if (exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass()) != null) {
-            //there is a direct and hopefully optimized converter to Source 
-            return false;
-        }
-        // yes an input stream is needed
-        return true;
-    }
-
-    /**
-     * Converts the inbound body to a {@link Source}, if the body is <b>not</b> already a {@link Source}.
-     * <p/>
-     * This implementation will prefer to source in the following order:
-     * <ul>
-     *   <li>StAX - If StAX is allowed</li>
-     *   <li>SAX - SAX as 2nd choice</li>
-     *   <li>Stream - Stream as 3rd choice</li>
-     *   <li>DOM - DOM as 4th choice</li>
-     * </ul>
-     */
-    protected Source getSource(Exchange exchange, Object body) {
-        // body may already be a source
-        if (body instanceof Source) {
-            return (Source) body;
-        }
-        Source source = null;
-        if (body != null) {
-            if (isAllowStAX()) {
-                // try StAX if enabled
-                source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
-            }
-            if (source == null) {
-                // then try SAX
-                source = exchange.getContext().getTypeConverter().tryConvertTo(SAXSource.class, exchange, body);
-                tryAddEntityResolver((SAXSource)source);
-            }
-            if (source == null) {
-                // then try stream
-                source = exchange.getContext().getTypeConverter().tryConvertTo(StreamSource.class, exchange, body);
-            }
-            if (source == null) {
-                // and fallback to DOM
-                source = exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, body);
-            }
-            // as the TypeConverterRegistry will look up source the converter differently if the type converter is loaded different
-            // now we just put the call of source converter at last
-            if (source == null) {
-                TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass());
-                if (tc != null) {
-                    source = tc.convertTo(Source.class, exchange, body);
-                }
-            }
-        }
-        if (source == null) {
-            if (isFailOnNullBody()) {
-                throw new ExpectedBodyTypeException(exchange, Source.class);
-            } else {
-                try {
-                    source = converter.toDOMSource(converter.createDocument());
-                } catch (ParserConfigurationException | TransformerException e) {
-                    throw new RuntimeTransformException(e);
-                }
-            }
-        }
-        return source;
     }
 
     private void tryAddEntityResolver(SAXSource source) {
