@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.any23;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +48,7 @@ public class Any23DataFormatExtractorsTest extends CamelTestSupport {
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
             String resultingRDF = in.getBody(String.class);
-            InputStream toInputStream = IOUtils.toInputStream(resultingRDF);
+            InputStream toInputStream = IOUtils.toInputStream(resultingRDF, Charset.defaultCharset());
             Model parse = Rio.parse(toInputStream, baseURI, RDFFormat.TURTLE);
             assertEquals(parse.size(), 1);
         }

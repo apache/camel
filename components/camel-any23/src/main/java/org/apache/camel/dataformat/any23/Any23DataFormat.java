@@ -36,7 +36,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.commons.io.IOUtils;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
@@ -49,11 +48,6 @@ import org.slf4j.LoggerFactory;
  */
 @Dataformat("any23")
 public class Any23DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
-
-    /*
-     * Our Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(Any23DataFormat.class);
 
     private Any23 any23;
 
@@ -120,7 +114,7 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
         if (outputFormat == Any23OutputFormat.RDF4JMODEL) {
             respon = ((RDF4JModelWriter)handler).getModel();
         } else {
-            respon = IOUtils.toString(out.toByteArray());
+            respon = new String(out.toByteArray());
         }
         return respon;
 
