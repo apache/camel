@@ -26,43 +26,43 @@ import org.eclipse.rdf4j.model.Value;
 
 public class RDF4JModelWriter extends TripleWriterHandler implements FormatWriter {
 
-  private Model model;
+    private Model model;
 
-  public RDF4JModelWriter(Model model) {
-    this.model = model;
-  }
+    public RDF4JModelWriter(Model model) {
+        this.model = model;
+    }
 
-  @Override
-  public void close() throws TripleHandlerException {
-    //noop
-  }
+    @Override
+    public void close() throws TripleHandlerException {
+        // noop
+    }
 
-  @Override
-  public void writeTriple(Resource s, IRI p, Value o, Resource g) throws TripleHandlerException {
-    model.add(s, p, o, g);
-  }
+    @Override
+    public void writeTriple(Resource s, IRI p, Value o, Resource g) throws TripleHandlerException {
+        model.add(s, p, o, g);
+    }
 
-  @Override
-  public void writeNamespace(String prefix, String uri) throws TripleHandlerException {
-    //noop
-  }
+    @Override
+    public void writeNamespace(String prefix, String uri) throws TripleHandlerException {
+        // noop
+    }
 
-  @Override
-  public boolean isAnnotated() {
-    return false;
-  }
+    @Override
+    public boolean isAnnotated() {
+        return false;
+    }
 
-  @Override
-  public void setAnnotated(boolean f) {
-    //noop
-  }
+    @Override
+    public void setAnnotated(boolean f) {
+        // noop
+    }
 
-  public Model getModel() {
-    return model;
-  }
+    public Model getModel() {
+        return model;
+    }
 
-  public void setModel(Model model) {
-    this.model = model;
-  }
+    public void setModel(Model model) {
+        this.model = model;
+    }
 
 }

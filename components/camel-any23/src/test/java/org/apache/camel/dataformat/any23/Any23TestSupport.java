@@ -23,22 +23,22 @@ import org.apache.camel.util.IOHelper;
 
 public final class Any23TestSupport {
 
-  private Any23TestSupport() {
-    // Utility class
-  }
-
-  public static String loadFileAsString(File file) throws Exception {
-    StringBuilder fileContent = new StringBuilder();
-    BufferedReader input = IOHelper.buffered(new FileReader(file));
-    try {
-      String line = null;
-      while ((line = input.readLine()) != null) {
-        fileContent.append(line);
-        fileContent.append(System.lineSeparator());
-      }
-    } finally {
-      input.close();
+    private Any23TestSupport() {
+        // Utility class
     }
-    return fileContent.toString();
-  }
+
+    public static String loadFileAsString(File file) throws Exception {
+        StringBuilder fileContent = new StringBuilder();
+        BufferedReader input = IOHelper.buffered(new FileReader(file));
+        try {
+            String line = null;
+            while ((line = input.readLine()) != null) {
+                fileContent.append(line);
+                fileContent.append(System.lineSeparator());
+            }
+        } finally {
+            input.close();
+        }
+        return fileContent.toString();
+    }
 }

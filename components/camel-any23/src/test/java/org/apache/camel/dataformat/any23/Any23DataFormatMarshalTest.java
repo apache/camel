@@ -28,31 +28,31 @@ import org.junit.Test;
 
 public class Any23DataFormatMarshalTest extends CamelTestSupport {
 
-  private final String BASEURI = "http://mock.foo/bar";
+    private final String baseURI = "http://mock.foo/bar";
 
-  @Test
-  public void test() throws Exception {
-    MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-    String contenhtml = Any23TestSupport.loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
-    template.sendBody("direct:start", contenhtml);
-    List<Exchange> list = resultEndpoint.getReceivedExchanges();
-    for (Exchange exchange : list) {
-      Message in = exchange.getIn();
-      Model resultingRDF = in.getBody(Model.class);
-      assertEquals(resultingRDF.size(), 28);
+    @Test
+    public void test() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        String contenhtml = Any23TestSupport.loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
+        template.sendBody("direct:start", contenhtml);
+        List<Exchange> list = resultEndpoint.getReceivedExchanges();
+        for (Exchange exchange : list) {
+            Message in = exchange.getIn();
+            Model resultingRDF = in.getBody(Model.class);
+            assertEquals(resultingRDF.size(), 28);
+        }
     }
-  }
 
-  @Override
-  protected RouteBuilder createRouteBuilder() {
-    return new RouteBuilder() {
-      public void configure() {
-        Any23DataFormat df = new Any23DataFormat().setBaseURI(BASEURI).setOutputFormat(Any23OutputFormat.RDF4JMODEL);
-        from("direct:start").unmarshal(df).to("direct:r1");
-        from("direct:r1").marshal(df).to("direct:r2");
-        from("direct:r2").unmarshal(df).to("mock:result");
-      }
-    };
-  }
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                Any23DataFormat df = new Any23DataFormat().setBaseURI(baseURI).setOutputFormat(Any23OutputFormat.RDF4JMODEL);
+                from("direct:start").unmarshal(df).to("direct:r1");
+                from("direct:r1").marshal(df).to("direct:r2");
+                from("direct:r2").unmarshal(df).to("mock:result");
+            }
+        };
+    }
 
 }

@@ -27,31 +27,27 @@ import org.junit.Test;
 
 public class Any23DataFormatHTTPTest extends CamelTestSupport {
 
-  private final String BASEURI = "http://mock.foo/bar";
+    private final String baseURI = "http://mock.foo/bar";
 
-  @Test
-  public void test() throws Exception {
-    MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-    template.sendBody("direct:start", "bar");
-    List<Exchange> list = resultEndpoint.getReceivedExchanges();
-    for (Exchange exchange : list) {
-      Message in = exchange.getIn();
-      Model resultingRDF = in.getBody(Model.class);
-      assertEquals(resultingRDF.size(), 1762);
+    @Test
+    public void test() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        template.sendBody("direct:start", "bar");
+        List<Exchange> list = resultEndpoint.getReceivedExchanges();
+        for (Exchange exchange : list) {
+            Message in = exchange.getIn();
+            Model resultingRDF = in.getBody(Model.class);
+            assertEquals(resultingRDF.size(), 1762);
+        }
     }
-  }
 
-  @Override
-  protected RouteBuilder createRouteBuilder() {
-    return new RouteBuilder() {
-      public void configure() {
-        from("direct:start")
-            .to("http://dbpedia.org/page/Ecuador")
-            .unmarshal()
-            .any23(BASEURI)
-            .to("mock:result");
-      }
-    };
-  }
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:start").to("http://dbpedia.org/page/Ecuador").unmarshal().any23(baseURI).to("mock:result");
+            }
+        };
+    }
 
 }
