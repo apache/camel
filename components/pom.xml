@@ -236,6 +236,7 @@
         <module>camel-metrics</module>
         <module>camel-micrometer</module>
         <module>camel-microprofile-config</module>
+        <module>camel-microprofile-metrics</module>
         <module>camel-milo</module>
         <module>camel-mina</module>
         <module>camel-mllp</module>

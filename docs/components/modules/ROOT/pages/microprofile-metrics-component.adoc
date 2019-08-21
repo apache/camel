@@ -1,0 +1,413 @@
+[[microprofile-metrics-component]]
+= MicroProfile Metrics Component
+
+*Available as of Camel version 3.0*
+
+The MircoProfile Metrics component provides the capability to expose metrics from Camel routes.
+
+Maven users need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-microprofile-metrics</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+It is expected that the component is running in a MicroProfile environment that provides an appropriate implementation of MicroProfile Metrics 2.0. E.g https://github.com/smallrye/smallrye-metrics[SmallRye Metrics].
+
+== URI format
+
+[source]
+----
+microprofile-metrics:[ concurrent gauge | counter | gauge | histogram | meter | timer ]:metricname[?options]
+----
+
+== Options
+// component options: START
+The MicroProfile Metrics component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *metricRegistry* (advanced) | Use a custom MetricRegistry. |  | MetricRegistry
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The MicroProfile Metrics endpoint is configured using URI syntax:
+
+----
+microprofile-metrics:metricsType:metricsName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *metricType* | *Required* Metric type |  | MetricType
+| *metricName* | *Required* Metric name |  | String
+| *tags* | Comma delimited list of tags associated with the metric in the format tagName=tagValue |  | List
+|===
+
+
+=== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *action* (producer) | The action to use when using the Timer metric type |  | String
+| *counterIncrement* (producer) | The amount to increment to use when using the Counter metric type |  | Long
+| *description* (producer) | Sets a description within the metric metadata |  | String
+| *displayName* (producer) | Sets a display name within the metric metadata |  | String
+| *gaugeDecrement* (producer) | Decrements a counter when using the ConcurrentGauge metric type |  | Boolean
+| *gaugeIncrement* (producer) | Increments a counter when using the ConcurrentGauge metric type |  | Boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *mark* (producer) | The mark value to set when using the Meter metric type |  | Long
+| *metricUnit* (producer) | Sets a metric unit within the metric metadata |  | String
+| *value* (producer) | The value to set when using the Histogram metric type |  | Long
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+== MetricRegistry Configuration
+
+Configure a `MetricRegistry` to use either by passing it to the MicroProfileMetricsComponent.
+
+[source,java]
+----
+MicroProfileMetricsComponent component = new MicroProfileMetricsComponent();
+component.setRegistry(myMetricRegistryImpl);
+----
+
+Or by binding it to the Camel registry using the binding name 'metricRegistry' (See `MicroProfileMetricsConstants.METRIC_REGISTRY_NAME`).
+
+
+== [[MicroProfileMetrics-counter]]Counter
+
+[source]
+----
+microprofile-metrics:counter:name[?options]
+----
+
+=== Options
+
+[width="100%",options="header"]
+|=====================================================
+|Name |Default |Description
+|counterIncrement  |- |Value to add to the counter
+|=====================================================
+
+If `counterIncrement` is not defined then counter value will be incremented by one.
+
+[source,java]
+----
+// Increment counter simple.counter by 7
+from("direct:in")
+    .to("microprofile-metrics:counter:simple.counter?counterIncrement=7")
+    .to("direct:out");
+----
+
+[source,java]
+----
+// Increment counter simple.counter by 1
+from("direct:in")
+    .to("microprofile-metrics:counter:simple.counter")
+    .to("direct:out");
+----
+
+=== Headers
+
+Message headers can be used to override the
+`counterIncrement` values specified on the `microprofile-metrics` endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|====================================================================
+|Name |Description |Expected type
+|CamelMicroProfileMetricsCounterIncrement  |Override increment value from the URI |Long
+|====================================================================
+
+[source,java]
+----
+// Increment counter simple.counter by 417
+from("direct:in")
+    .setHeader(MicroProfileMetricsConstants.HEADER_COUNTER_INCREMENT, constant(417))
+    .to("microprofile-metrics:counter:simple.counter?increment=7")
+    .to("direct:out");
+----
+
+== [[MicroProfileMetrics-concurrentGauge]]Concurrent Gauge
+
+[source]
+----
+microprofile-metrics:concurrent gauge:name[?options]
+----
+
+=== Options
+
+[width="100%",options="header"]
+|=====================================================
+|Name |Default |Description
+|gaugeIncrement  |false |Value to add to the counter
+|gaugeDecrement  |false |Value to add to the counter
+|=====================================================
+
+If neither `gaugeIncrement` or `gaugeDecrement` are defined then no action is performed on the gauge.
+
+[source,java]
+----
+// Increment concurrent gauge simple.gauge by 1
+from("direct:in")
+    .to("microprofile-metrics:concurrent gauge:simple.gauge?gaugeIncrement=true")
+    .to("direct:out");
+----
+
+[source,java]
+----
+// Decrement concurrent gauge simple.gauge by 1
+from("direct:in")
+    .to("microprofile-metrics:concurrent gauge:simple.gauge?gaugeDecrement=true")
+    .to("direct:out");
+----
+
+=== Headers
+
+Message headers can be used to override the
+`gaugeIncrement` and `gaugeDecrement` values specified on the `microprofile-metrics` endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|====================================================================
+|Name |Description |Expected type
+|CamelMicroProfileMetricsGaugeIncrement  |Override gaugeIncrement value from the URI |Boolean
+|CamelMicroProfileMetricsGaugeDecrement  |Override gaugeDecrement value from the URI |Boolean
+|====================================================================
+
+[source,java]
+----
+// Increment concurrent gauge simple.gauge by 1
+from("direct:in")
+    .setHeader(MicroProfileMetricsConstants.HEADER_GAUGE_INCREMENT, constant(true))
+    .to("microprofile-metrics:concurrent gauge:simple.gauge")
+    .to("direct:out");
+----
+
+----
+// Decrement concurrent gauge simple.gauge by 1
+from("direct:in")
+    .setHeader(MicroProfileMetricsConstants.HEADER_GAUGE_DECREMENT, constant(true))
+    .to("microprofile-metrics:concurrent gauge:simple.gauge")
+    .to("direct:out");
+----
+
+== [[MicroProfileMetrics-histogram]]Histogram
+
+[source]
+----
+microprofile-metrics:histogram:name[?options]
+----
+
+=== Options
+
+[width="100%",options="header"]
+|=====================================================
+|Name |Default |Description
+|value  |- |Value to set on the histogram
+|=====================================================
+
+If `value` is not defined then histogram value will not be changed.
+
+[source,java]
+----
+// Set histogram simple.histogram to 7
+from("direct:in")
+    .to("microprofile-metrics:histogram:simple.histogram?value=7")
+    .to("direct:out");
+----
+
+=== Headers
+
+Message headers can be used to override the
+`value` specified on the `microprofile-metrics` endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|====================================================================
+|Name |Description |Expected type
+|CamelMicroProfileMetricsHistogramValue  |Override histogram value from the URI |Long
+|====================================================================
+
+[source,java]
+----
+// Set histogram simple.histogram to 417
+from("direct:in")
+    .setHeader(MicroProfileMetricsConstants.HEADER_HISTOGRAM_VALUE, constant(417))
+    .to("microprofile-metrics:histogram:simple.histogram?value=7")
+    .to("direct:out");
+----
+
+== [[MicroProfileMetrics-meter]]Meter
+
+[source]
+----
+microprofile-metrics:meter:name[?options]
+----
+
+=== Options
+
+[width="100%",options="header"]
+|=====================================================
+|Name |Default |Description
+|mark  |- |Mark value to set on the meter
+|=====================================================
+
+If `mark` is not defined then the meter will be marked with the value '1'.
+
+[source,java]
+----
+// Mark the meter simple.meter with 7
+from("direct:in")
+    .to("microprofile-metrics:meter:simple.meter?mark=7")
+    .to("direct:out");
+----
+
+[source,java]
+----
+// Mark the meter simple.meter with 1
+from("direct:in")
+    .to("microprofile-metrics:meter:simple.meter")
+    .to("direct:out");
+----
+
+=== Headers
+
+Message headers can be used to override the
+`value` specified on the `microprofile-metrics` endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|====================================================================
+|Name |Description |Expected type
+|CamelMicroProfileMetricsMeterMark  |Override meter mark value from the URI |Long
+|====================================================================
+
+[source,java]
+----
+// Mark the meter simple.meter with 417
+from("direct:in")
+    .setHeader(MicroProfileMetricsConstants.HEADER_METER_MARK, constant(417))
+    .to("microprofile-metrics:meter:simple.meter?value=7")
+    .to("direct:out");
+----
+
+== [[MicroProfileMetrics-Timer]]Timer
+
+[source]
+----
+microprofile-metrics:timer:name[?options]
+----
+
+=== Options
+
+[width="100%",options="header"]
+|=====================================================
+|Name |Default |Description
+|action  |- |start or stop
+|=====================================================
+
+If no `action` is specified or it's an invalid value, then no timer update occurs.
+
+If the `start` action is called on an already running timer or `stop` is called on an unknown timer, then
+no timer(s) are updated.
+
+[source,java]
+----
+// Measure time spent in route `direct:calculate`
+from("direct:in")
+    .to("microprofile-metrics:timer:simple.timer?action=start")
+    .to("direct:calculate")
+    .to("microprofile-metrics:timer:simple.timer?action=stop");
+----
+
+=== Headers
+
+Message headers can be used to override the
+`action` specified on the `microprofile-metrics` endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|====================================================================
+|Name |Description |Expected type
+|CamelMicroProfileMetricsTimerAction  |Override time action from the URI |org.apache.camel.component.microprofile.metrics.TimerAction
+|====================================================================
+
+[source,java]
+----
+// Mark the meter simple.meter with 417
+from("direct:in")
+    .setHeader(MicroProfileMetricsConstants.HEADER_TIMER_ACTION, TimerAction.START)
+    .to("microprofile-metrics:timer:simple.timer")
+    .to("direct:out");
+----
+
+
+== MicroProfileMetricsRoutePolicyFactory
+
+This factory allows to add a RoutePolicy for each
+route and exposes route utilization statistics using MicroProfile metrics.
+
+NOTE: Instead of using the MicroProfileMetricsRoutePolicyFactory you can define a
+MicroProfileMetricsRoutePolicy per route you want to instrument, in case you only
+want to instrument a few selected routes.
+
+Add the factory to the `CamelContext` as shown below:
+
+[source,java]
+----
+context.addRoutePolicyFactory(new MicroProfileMetricsRoutePolicyFactory());
+----
+
+
+== MicroProfileMetricsMessageHistoryFactory
+
+This factory captures message history performance statistics while routing messages.
+
+Add the factory to the `CamelContext` as shown below:
+
+[source,java]
+----
+context.setMessageHistoryFactory(new MicroProfileMetricsMessageHistoryFactory());
+----
+
+
+== MicroProfileMetricsExchangeEventNotifier
+
+The exchange event notifer times exchanges from creation through to completion.
+
+EventNotifiers can be added to the `CamelContext`, e.g.:
+
+[source,java]
+----
+camelContext.getManagementStrategy().addEventNotifier(new MicroProfileMetricsExchangeEventNotifier())
+----
+
+
+== MicroProfileMetricsRouteEventNotifier
+
+The route event notifer counts added and running routes within the `CamelContext`.
+
+EventNotifiers can be added to the `CamelContext`, e.g.:
+
+[source,java]
+----
+camelContext.getManagementStrategy().addEventNotifier(new MicroProfileMetricsRouteEventNotifier())
+----
