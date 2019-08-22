@@ -31,7 +31,6 @@ import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.ObjectHelper;
 
 /**
  * Default {@link ProcessorFactory} that supports using 3rd party Camel components to implement the EIP {@link Processor}.

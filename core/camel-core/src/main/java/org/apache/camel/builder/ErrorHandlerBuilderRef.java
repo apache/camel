@@ -16,13 +16,8 @@
  */
 package org.apache.camel.builder;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
-import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;

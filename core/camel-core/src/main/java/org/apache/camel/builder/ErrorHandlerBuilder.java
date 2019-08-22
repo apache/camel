@@ -16,11 +16,7 @@
  */
 package org.apache.camel.builder;
 
-import java.util.List;
-
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * A builder of a <a href="http://camel.apache.org/error-handler.html">Error
