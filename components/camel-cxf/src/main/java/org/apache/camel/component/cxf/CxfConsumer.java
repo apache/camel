@@ -314,6 +314,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             CxfEndpoint endpoint = (CxfEndpoint)getEndpoint();
             CxfBinding binding = endpoint.getCxfBinding();
 
+            ((DefaultCxfBinding)binding).populateCxfHeaderFromCamelExchangeBeforeCheckError(camelExchange, cxfExchange);
             checkFailure(camelExchange, cxfExchange);
 
             binding.populateCxfResponseFromExchange(camelExchange, cxfExchange);
