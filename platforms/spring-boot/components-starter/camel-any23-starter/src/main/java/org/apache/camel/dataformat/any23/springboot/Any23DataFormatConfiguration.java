@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.any23.springboot;
 
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -39,13 +38,6 @@ public class Any23DataFormatConfiguration
      */
     private Boolean enabled;
     /**
-     * Configurations for Apache Any23 as key-value pairs in order to customize
-     * the extraction process. The list of supported parameters can be found a
-     * href=
-     * https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.propertieshere. If not provided, a default configuration is used.
-     */
-    private Map<String, String> configurations;
-    /**
      * List of Any23 extractors to be used in the unmarshal operation. A list of
      * the available extractors can be found here here. If not provided, all the
      * available extractors are used.
@@ -63,14 +55,6 @@ public class Any23DataFormatConfiguration
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;
-
-    public Map<String, String> getConfigurations() {
-        return configurations;
-    }
-
-    public void setConfigurations(Map<String, String> configurations) {
-        this.configurations = configurations;
-    }
 
     public List<String> getExtractors() {
         return extractors;
