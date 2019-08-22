@@ -37,8 +37,8 @@ public class Any23DataFormatReifier extends DataFormatReifier<Any23DataFormat> {
         if (definition.getOutputFormat() != null) {
             setProperty(camelContext, dataFormat, "outputFormat", definition.getOutputFormat());
         }
-        if (definition.getConfigurations() != null) {
-            setProperty(camelContext, dataFormat, "configurations", definition.getConfigurations());
+        if (definition.getConfiguration() != null) {
+            setProperty(camelContext, dataFormat, "configurations", definition.getConfiguration());
         }
         if (definition.getExtractors() != null) {
             setProperty(camelContext, dataFormat, "extractors", definition.getExtractors());
