@@ -172,7 +172,7 @@ URI:
 [source,java]
 -------------------------------------------------
 from("direct:start")
-.to("aws-cw://namepsace?amazonCwClient=#client");
+.to("aws-cw://namespace?amazonCwClient=#client");
 -------------------------------------------------
 
 The `#client` refers to a `AmazonCloudWatch` in the
