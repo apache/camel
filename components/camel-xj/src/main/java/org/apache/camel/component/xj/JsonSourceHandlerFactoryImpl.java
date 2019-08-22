@@ -35,11 +35,12 @@ import org.apache.camel.component.xslt.SourceHandlerFactory;
  */
 public class JsonSourceHandlerFactoryImpl implements SourceHandlerFactory {
 
-    private JsonFactory jsonFactory;
+    private final JsonFactory jsonFactory;
     private boolean isFailOnNullBody = true;
 
     /**
      * Creates a new instance
+     *
      * @param jsonFactory the jsonFactory to use to read the json document
      */
     public JsonSourceHandlerFactoryImpl(JsonFactory jsonFactory) {
@@ -55,7 +56,6 @@ public class JsonSourceHandlerFactoryImpl implements SourceHandlerFactory {
 
     /**
      * Set if we should fail when the body is null
-     * @param failOnNullBody
      */
     public void setFailOnNullBody(boolean failOnNullBody) {
         isFailOnNullBody = failOnNullBody;

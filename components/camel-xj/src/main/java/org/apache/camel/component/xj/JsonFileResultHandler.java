@@ -37,6 +37,7 @@ public class JsonFileResultHandler implements ResultHandler {
 
     /**
      * Creates a new json to file result handler instance
+     *
      * @param jsonFactory the {@link JsonFactory} to use to write the json.
      */
     public JsonFileResultHandler(JsonFactory jsonFactory, File file) throws Exception {
