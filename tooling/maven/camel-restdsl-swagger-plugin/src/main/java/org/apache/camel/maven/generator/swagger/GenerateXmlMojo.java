@@ -18,15 +18,14 @@ package org.apache.camel.maven.generator.swagger;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.generator.swagger.DestinationGenerator;
 import org.apache.camel.generator.swagger.RestDslGenerator;
 import org.apache.camel.generator.swagger.RestDslXmlGenerator;
-import org.apache.camel.generator.swagger.SpringBootProjectSourceCodeGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -39,14 +38,14 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
     requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class GenerateXmlMojo extends AbstractGenerateMojo {
 
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources/restdsl-swagger", required = true)
-    private String outputDirectory;
+    @Parameter(defaultValue = "false")
+    private boolean blueprint;
 
     @Parameter(defaultValue = "camel-rest.xml", required = true)
     private String fileName;
 
-    @Parameter(defaultValue = "false")
-    private boolean blueprint;
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/restdsl-swagger", required = true)
+    private String outputDirectory;
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -96,7 +95,7 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
                 String dep = "\n\t\t<dependency>"
                     + "\n\t\t\t<groupId>org.apache.camel</groupId>"
                     + "\n\t\t\t<artifactId>" + aid + "</artifactId>";
-                String ver = detectCamelVersionFromClasspath();
+                final String ver = detectCamelVersionFromClasspath();
                 if (ver != null) {
                     dep += "\n\t\t\t<version>" + ver + "</version>";
                 }
@@ -110,17 +109,16 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
         }
 
         try {
-            CamelContext camel = new DefaultCamelContext();
-            String xml = generator.generate(camel);
+            final CamelContext camel = new DefaultCamelContext();
+            final String xml = generator.generate(camel);
 
             // ensure output folder is created
             new File(outputDirectory).mkdirs();
-            File out = new File(outputDirectory, fileName);
+            final File out = new File(outputDirectory, fileName);
 
-            FileOutputStream fos = new FileOutputStream(out);
-            fos.write(xml.getBytes());
-            fos.close();
-
+            try (FileOutputStream fos = new FileOutputStream(out)) {
+                fos.write(xml.getBytes());
+            }
         } catch (final Exception e) {
             throw new MojoExecutionException(
                 "Unable to generate REST DSL Swagger sources from specification: " + specificationUri, e);
