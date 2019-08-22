@@ -368,7 +368,7 @@
         <jolt-version>0.1.1</jolt-version>
         <jolt-bundle-version>0.1.1_1</jolt-bundle-version>
         <jool-version>0.9.12</jool-version>
-        <jooq-version>3.11.11</jooq-version>
+        <jooq-version>3.11.12</jooq-version>
         <johnzon-version>1.1.13</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <josql-bundle-version>1.5_5</josql-bundle-version>
