@@ -28,7 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.xslt.ResultHandler;
 
 /**
- * Result handler impl. to write a json document into a {@ByteArrayOutputStream}
+ * Result handler impl. to write a json document into a {@link ByteArrayOutputStream}
  */
 public class JsonStreamResultHandler implements ResultHandler {
 
@@ -37,6 +37,7 @@ public class JsonStreamResultHandler implements ResultHandler {
 
     /**
      * Creates a new json to stream result handler instance
+     *
      * @param jsonFactory the {@link JsonFactory} to use to write the json.
      */
     public JsonStreamResultHandler(JsonFactory jsonFactory) throws Exception {

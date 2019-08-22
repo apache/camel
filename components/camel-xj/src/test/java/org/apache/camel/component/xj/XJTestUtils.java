@@ -17,9 +17,31 @@
 
 package org.apache.camel.component.xj;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stax.StAXResult;
+import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.w3c.dom.Comment;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -27,37 +49,29 @@ import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.*;
-import javax.xml.transform.stax.StAXResult;
-import javax.xml.transform.stax.StAXSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+final class XJTestUtils {
 
-public class XJTestUtils {
+    private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
+    private static final Map<String, Templates> XSL_TEMPLATES = Collections.synchronizedMap(new HashMap<>());
+    private static final JsonFactory JSON_FACTORY = new JsonFactory();
 
     private XJTestUtils() {
     }
 
-    public static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
-    public static final Map<String, Templates> XSL_TEMPLATES = Collections.synchronizedMap(new HashMap<>());
-
-    public static final JsonFactory JSON_FACTORY = new JsonFactory();
-
-    public static Transformer getTransformer() throws Exception {
+    /**
+     * creates an "identity" transformer
+     */
+    private static Transformer getTransformer() throws Exception {
         final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
         setPrettyPrinting(transformer);
 
         return transformer;
     }
 
-    public static Transformer getTransformer(String xsl) throws TransformerException {
+    /**
+     * creates a transformer with the given stylesheet
+     */
+    private static Transformer getTransformer(String xsl) throws TransformerException {
         final Transformer transformer;
 
         if (XSL_TEMPLATES.containsKey(xsl)) {
@@ -75,12 +89,12 @@ public class XJTestUtils {
         return transformer;
     }
 
-    public static void setPrettyPrinting(Transformer transformer) {
+    private static void setPrettyPrinting(Transformer transformer) {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
     }
 
-    public static void transformXml2JsonAndCompare(String xsl, String testName) throws Exception {
+    static void transformXml2JsonAndCompare(String xsl, String testName) throws Exception {
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(byteArrayOutputStream);
 
@@ -106,18 +120,18 @@ public class XJTestUtils {
         try {
             transformer.transform(new StreamSource(inputFile), stAXResult);
         } catch (Exception e) {
-            String result = byteArrayOutputStream.toString("UTF-8");
+            String result = byteArrayOutputStream.toString(StandardCharsets.UTF_8.name());
             System.out.println(result);
             throw e;
         }
 
-        final String expected = IOUtils.toString(referenceFile, "UTF-8");
-        final String result = byteArrayOutputStream.toString("UTF-8");
+        final String expected = IOUtils.toString(referenceFile, StandardCharsets.UTF_8.name());
+        final String result = byteArrayOutputStream.toString(StandardCharsets.UTF_8.name());
 
         JSONAssert.assertEquals(result, expected, result, true);
     }
 
-    public static void transformJson2XmlAndCompare(String xsl, String testName) throws Exception {
+    static void transformJson2XmlAndCompare(String xsl, String testName) throws Exception {
 
         final InputStream inputFile = XJTestUtils.class.getClassLoader().getResourceAsStream(testName + ".json");
         if (inputFile == null) {
@@ -145,13 +159,23 @@ public class XJTestUtils {
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         transformer.transform(stAXSource, new StreamResult(byteArrayOutputStream));
 
-        final String expected = IOUtils.toString(referenceFile, "UTF-8");
-        final String result = byteArrayOutputStream.toString("UTF-8");
+        final String expected = IOUtils.toString(referenceFile, StandardCharsets.UTF_8.name());
+        final String result = byteArrayOutputStream.toString(StandardCharsets.UTF_8.name());
 
         final Diff diff = DiffBuilder
                 .compare(Input.fromString(expected))
                 .withTest(Input.fromString(result))
                 .ignoreElementContentWhitespace()
+                .withNodeFilter(toTest -> {
+                    if (toTest instanceof Comment) {
+                        final Comment comment = (Comment) toTest;
+                        final String text = comment.getNodeValue();
+                        
+                        return text == null || !text.contains("License");
+                    }
+
+                    return true;
+                })
                 .checkForIdentical()
                 .build();
 

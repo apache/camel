@@ -36,6 +36,7 @@ public class JsonStringResultHandler implements ResultHandler {
 
     /**
      * Creates a new json to string result handler instance
+     *
      * @param jsonFactory the {@link JsonFactory} to use to write the json.
      */
     public JsonStringResultHandler(JsonFactory jsonFactory) throws Exception {

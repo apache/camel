@@ -22,13 +22,14 @@ import org.apache.camel.component.xslt.ResultHandler;
 import org.apache.camel.component.xslt.ResultHandlerFactory;
 
 /**
- * {@JsonStreamResultHandler} factory
+ * A {@link JsonStreamResultHandler} factory
  */
 public class JsonStreamResultHandlerFactory implements ResultHandlerFactory {
     private final JsonFactory jsonFactory;
 
     /**
      * Creates a new json to stream result handler factory
+     *
      * @param jsonFactory the {@link JsonFactory} to use to write the json.
      */
     public JsonStreamResultHandlerFactory(JsonFactory jsonFactory) {

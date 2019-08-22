@@ -36,10 +36,10 @@ public class X2JOutputBytesTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("xj:helloxml2json.xsl?transformDirection=XML2JSON&output=bytes")
                         .to("mock:result");

@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xj", title = "XJ", syntax = "xj:resourceUri", producerOnly = true, label = "transformation")
 public class XJEndpoint extends XsltEndpoint {
 
-    private JsonFactory jsonFactory = new JsonFactory();
+    private final JsonFactory jsonFactory = new JsonFactory();
 
     @UriParam
     @Metadata(required = true, description = "Transform direction. Either XML2JSON or JSON2XML")
@@ -59,7 +59,8 @@ public class XJEndpoint extends XsltEndpoint {
     @Override
     protected void doStart() throws Exception {
         if (ObjectHelper.isEmpty(getResourceUri())) {
-            // todo using a stylesheet for "identity" transform is slow. But with transformerFactory we can't get an identity transformer...
+            // Using a stylesheet for "identity" transform is slow. but with a {@link TransformerFactory}
+            // we can't get an identity transformer. But for now we leave it that way.
             setResourceUri("org/apache/camel/component/xj/identity.xsl");
         }
 
@@ -93,14 +94,14 @@ public class XJEndpoint extends XsltEndpoint {
      */
     protected void configureOutput(XsltBuilder xsltBuilder, String output) throws Exception {
         switch (this.transformDirection) {
-            case JSON2XML:
-                super.configureOutput(xsltBuilder, output);
-                break;
-            case XML2JSON:
-                configureJsonOutput(xsltBuilder, output);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown transformation direction: " + this.transformDirection);
+        case JSON2XML:
+            super.configureOutput(xsltBuilder, output);
+            break;
+        case XML2JSON:
+            configureJsonOutput(xsltBuilder, output);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown transformation direction: " + this.transformDirection);
         }
     }
 

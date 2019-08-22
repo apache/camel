@@ -23,7 +23,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonToken;
 
-public class XJConstants {
+public final class XJConstants {
 
     /**
      * The namespace used by xj for typehints
@@ -58,6 +58,11 @@ public class XJConstants {
     static final Map<String, JsonToken> TYPE_JSONTYPE_MAP;
 
     static final String UNSUPPORTED_OPERATION_EXCEPTION_MESSAGE = "unsupported / not yet implemented";
+
+    /**
+     * Field name when xml contains mixed-content
+     */
+    static final String JSON_WRITER_MIXED_CONTENT_TEXT_KEY = "#text";
 
     static {
         final Map<JsonToken, String> jsonTypeTypeMap = new HashMap<>();
