@@ -297,6 +297,13 @@
                         <source>${project.build.directory}/schema-src</source>
                     </sources>
                     <createJavaDocAnnotations>false</createJavaDocAnnotations>
+                    <schemaSourceExcludeFilters>
+                        <filter implementation="org.codehaus.mojo.jaxb2.shared.filters.pattern.PatternFileFilter">
+                            <patterns>
+                                <pattern>Helper.java</pattern>
+                            </patterns>
+                        </filter>
+                    </schemaSourceExcludeFilters>
                 </configuration>
             </plugin>
             <plugin>

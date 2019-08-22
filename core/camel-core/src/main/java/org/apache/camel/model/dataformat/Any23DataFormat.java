@@ -18,13 +18,14 @@ package org.apache.camel.model.dataformat;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.model.ConfigurationOptions;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -39,8 +40,7 @@ public class Any23DataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "RDF4JMODEL")
     private Any23Type outputFormat;
-    @XmlTransient
-    private Map<String, String> configurations;
+    private ConfigurationOptions configuration = new ConfigurationOptions();
     @XmlElement
     private List<String> extractors;
     @XmlAttribute
@@ -63,13 +63,13 @@ public class Any23DataFormat extends DataFormatDefinition {
     public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations) {
         this(baseuri, outputFormat);
         this.outputFormat = outputFormat;
-        this.configurations = configurations;
+        this.configuration = ConfigurationOptions.from(configurations);
     }
 
     public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations, List<String> extractors) {
         this(baseuri, outputFormat, configurations);
         this.outputFormat = outputFormat;
-        this.configurations = configurations;
+        this.configuration = ConfigurationOptions.from(configurations);
         this.extractors = extractors;
     }
 
@@ -85,8 +85,8 @@ public class Any23DataFormat extends DataFormatDefinition {
         this.outputFormat = outputFormat;
     }
 
-    public Map<String, String> getConfigurations() {
-        return configurations;
+    public Map<String, String> getConfiguration() {
+        return configuration.asMap();
     }
 
     /**
@@ -96,8 +96,8 @@ public class Any23DataFormat extends DataFormatDefinition {
      * "https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.properties">here</a>.
      * If not provided, a default configuration is used.
      */
-    public void setConfigurations(Map<String, String> configurations) {
-        this.configurations = configurations;
+    public void setConfiguration(Map<String, String> configurations) {
+        this.configuration = ConfigurationOptions.from(configurations);
     }
 
     public List<String> getExtractors() {
