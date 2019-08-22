@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.slf4j.Logger;
 
 import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;

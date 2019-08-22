@@ -39,8 +39,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Dataformat for any23 .. This dataformat is intended to convert HTML from a

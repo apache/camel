@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.DefaultCamelContext;

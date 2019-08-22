@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 
