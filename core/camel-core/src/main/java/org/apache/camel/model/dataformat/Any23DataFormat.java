@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -37,7 +39,7 @@ public class Any23DataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "RDF4JMODEL")
     private Any23Type outputFormat;
-    @XmlElement
+    @XmlTransient
     private Map<String, String> configurations;
     @XmlElement
     private List<String> extractors;

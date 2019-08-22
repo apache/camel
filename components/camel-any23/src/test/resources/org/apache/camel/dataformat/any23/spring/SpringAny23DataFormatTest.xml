@@ -29,12 +29,6 @@
 
     <dataFormats>
       <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" > 
-        <configurations>
-          <entry>
-            <key>any23.extraction.metadata.nesting</key>
-            <value>off</value>
-          </entry>
-        </configurations>
         <extractors>html-head-title</extractors>
       </any23>
     </dataFormats>
