@@ -65,7 +65,8 @@ Multiple CamelContexts per application not supported
 ----------------------------------------------------
 
 Support for multiple CamelContext's has been removed/deprecated and only 1 CamelContext per deployment is supported.
-The latter was not recommended anyway and was also not 100% implemented (for example in camel-cdi). For Camel 3 only 1 CamelContext per deployment is recommended and supported.
+The latter was not recommended anyway and was also not 100% implemented (for example in camel-cdi). 
+For Camel 3 only 1 CamelContext per deployment is recommended and supported.
 
 The `context` attribute on the various Camel annotations such as `@EndpointInject`, `@Produce`, `@Consume` etc has therefore been removed.
 
