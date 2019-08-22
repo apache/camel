@@ -22,7 +22,7 @@ import org.apache.camel.component.xslt.ResultHandler;
 import org.apache.camel.component.xslt.ResultHandlerFactory;
 
 /**
- * {@JsonStringResultHandler} factory
+ * A {@link JsonStringResultHandler} factory
  */
 public class JsonStringResultHandlerFactory implements ResultHandlerFactory {
 
@@ -30,6 +30,7 @@ public class JsonStringResultHandlerFactory implements ResultHandlerFactory {
 
     /**
      * Creates a new json to string result handler factory
+     *
      * @param jsonFactory the {@link JsonFactory} to use to write the json.
      */
     public JsonStringResultHandlerFactory(JsonFactory jsonFactory) {

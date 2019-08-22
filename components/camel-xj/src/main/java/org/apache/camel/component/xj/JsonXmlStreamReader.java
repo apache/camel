@@ -18,6 +18,7 @@
 package org.apache.camel.component.xj;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +40,10 @@ import com.fasterxml.jackson.core.JsonToken;
  * XML Json bridge. Explicitly using XMLStreamReader and not XMLEventReader because saxon wants that.
  */
 public class JsonXmlStreamReader implements XMLStreamReader {
+
+    private static final String ERROR_MSG_NOT_IN_START_ELEMENT = "Current event is not start element";
+    private static final String ERROR_MSG_NOT_IN_START_END_ELEMENT = "Current event is not start element";
+    private static final String ERROR_MSG_NOT_IN_CHARACTERS = "Current event is not character";
 
     private static final Location LOCATION = new Location() {
         @Override
@@ -68,10 +73,13 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     };
 
     private final JsonParser jsonParser;
+    private final Deque<StackElement> tokenStack = new ArrayDeque<>();
+    private boolean eof;
 
-    private Deque<StackElement> tokenStack = new ArrayDeque<>();
-    private boolean eof = false;
-
+    /**
+     * Creates a new JsonXmlStreamReader instance
+     * @param jsonParser the {@link JsonParser} to use to read the json document.
+     */
     public JsonXmlStreamReader(JsonParser jsonParser) {
         this.jsonParser = jsonParser;
     }
@@ -87,28 +95,29 @@ public class JsonXmlStreamReader implements XMLStreamReader {
             final StackElement previousElement = tokenStack.peek();
             if (previousElement != null) {
                 switch (previousElement.jsonToken) {
-                    case VALUE_STRING:
-                    case VALUE_NUMBER_INT:
-                    case VALUE_NUMBER_FLOAT:
-                    case VALUE_NULL:
-                    case VALUE_TRUE:
-                    case VALUE_FALSE: {
-                        switch (previousElement.xmlEvent) {
-                            case XMLEvent.START_ELEMENT:
-                                previousElement.xmlEvent = XMLEvent.CHARACTERS;
-                                return XMLEvent.CHARACTERS;
+                case VALUE_STRING:
+                case VALUE_NUMBER_INT:
+                case VALUE_NUMBER_FLOAT:
+                case VALUE_NULL:
+                case VALUE_TRUE:
+                case VALUE_FALSE: {
+                    switch (previousElement.xmlEvent) {
+                    case XMLEvent.START_ELEMENT:
+                        previousElement.xmlEvent = XMLEvent.CHARACTERS;
+                        return XMLEvent.CHARACTERS;
+                    case XMLEvent.CHARACTERS:
+                        removeStackElement(previousElement.jsonToken);
+                        removeStackElement(JsonToken.FIELD_NAME);
 
-                            case XMLEvent.CHARACTERS:
-                                removeStackElement(previousElement.jsonToken);
-                                removeStackElement(JsonToken.FIELD_NAME);
-
-                                tokenStack.peek().xmlEvent = XMLEvent.END_ELEMENT;
-                                return XMLEvent.END_ELEMENT;
-
-                            default:
-                                throw new IllegalStateException("illegal state");
-                        }
+                        assert tokenStack.peek() != null;
+                        tokenStack.peek().xmlEvent = XMLEvent.END_ELEMENT;
+                        return XMLEvent.END_ELEMENT;
+                    default:
+                        throw new IllegalStateException("illegal state");
                     }
+                }
+                default:
+                    break;
                 }
             }
 
@@ -132,36 +141,33 @@ public class JsonXmlStreamReader implements XMLStreamReader {
             }
 
             switch (currentToken) {
-                case START_OBJECT:
-                case START_ARRAY:
-                    stackElement.xmlEvent = XMLEvent.START_ELEMENT;
+            case START_OBJECT:
+            case START_ARRAY:
+            case VALUE_STRING:
+            case VALUE_NUMBER_INT:
+            case VALUE_NUMBER_FLOAT:
+            case VALUE_NULL:
+            case VALUE_TRUE:
+            case VALUE_FALSE:
+                stackElement.xmlEvent = XMLEvent.START_ELEMENT;
 
-                    return XMLEvent.START_ELEMENT;
-                case END_OBJECT:
-                    removeStackElement(JsonToken.END_OBJECT);
-                    removeStackElement(JsonToken.START_OBJECT);
-                    removeStackElement(JsonToken.FIELD_NAME);
-                    eof = tokenStack.size() == 0;
+                return XMLEvent.START_ELEMENT;
+            case END_OBJECT:
+                removeStackElement(JsonToken.END_OBJECT);
+                removeStackElement(JsonToken.START_OBJECT);
+                removeStackElement(JsonToken.FIELD_NAME);
+                eof = tokenStack.size() == 0;
 
-                    return XMLEvent.END_ELEMENT;
-                case END_ARRAY:
-                    removeStackElement(JsonToken.END_ARRAY);
-                    removeStackElement(JsonToken.START_ARRAY);
-                    removeStackElement(JsonToken.FIELD_NAME);
-                    eof = tokenStack.size() == 0;
+                return XMLEvent.END_ELEMENT;
+            case END_ARRAY:
+                removeStackElement(JsonToken.END_ARRAY);
+                removeStackElement(JsonToken.START_ARRAY);
+                removeStackElement(JsonToken.FIELD_NAME);
+                eof = tokenStack.size() == 0;
 
-                    return XMLEvent.END_ELEMENT;
-                case VALUE_STRING:
-                case VALUE_NUMBER_INT:
-                case VALUE_NUMBER_FLOAT:
-                case VALUE_NULL:
-                case VALUE_TRUE:
-                case VALUE_FALSE:
-                    stackElement.xmlEvent = XMLEvent.START_ELEMENT;
-
-                    return XMLEvent.START_ELEMENT;
-                default:
-                    throw new IllegalStateException("JsonToken: " + currentToken);
+                return XMLEvent.END_ELEMENT;
+            default:
+                throw new IllegalStateException("JsonToken: " + currentToken);
             }
 
         } catch (IOException e) {
@@ -173,7 +179,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || (stackElement.jsonToken != jsonToken)) {
             if (stackElement != null && jsonToken == JsonToken.FIELD_NAME && (stackElement.jsonToken == JsonToken.START_ARRAY)) {
-                // anonym array
+                // anonymous array
                 return;
             }
 
@@ -190,12 +196,12 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     }
 
     @Override
-    public void require(int type, String namespaceURI, String localName) throws XMLStreamException {
+    public void require(int type, String namespaceURI, String localName) {
         throw new UnsupportedOperationException(XJConstants.UNSUPPORTED_OPERATION_EXCEPTION_MESSAGE);
     }
 
     @Override
-    public String getElementText() throws XMLStreamException {
+    public String getElementText() {
         throw new UnsupportedOperationException(XJConstants.UNSUPPORTED_OPERATION_EXCEPTION_MESSAGE);
     }
 
@@ -210,7 +216,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     }
 
     @Override
-    public boolean hasNext() throws XMLStreamException {
+    public boolean hasNext() {
         return !eof;
     }
 
@@ -272,7 +278,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     public int getAttributeCount() {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || (stackElement.xmlEvent != XMLEvent.START_ELEMENT)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
         return stackElement.getAttributeCount();
@@ -282,7 +288,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     public QName getAttributeName(int index) {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || (stackElement.xmlEvent != XMLEvent.START_ELEMENT)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
         return stackElement.getAttribute(index);
@@ -292,7 +298,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     public String getAttributeNamespace(int index) {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || (stackElement.xmlEvent != XMLEvent.START_ELEMENT)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
         return stackElement.getAttribute(index).getNamespaceURI();
@@ -302,7 +308,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     public String getAttributeLocalName(int index) {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || (stackElement.xmlEvent != XMLEvent.START_ELEMENT)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
         return stackElement.getAttribute(index).getLocalPart();
@@ -312,7 +318,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     public String getAttributePrefix(int index) {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || (stackElement.xmlEvent != XMLEvent.START_ELEMENT)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
         return stackElement.getAttribute(index).getPrefix();
@@ -322,7 +328,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     public String getAttributeType(int index) {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || (stackElement.xmlEvent != XMLEvent.START_ELEMENT)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
         return "CDATA";
@@ -332,7 +338,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     public String getAttributeValue(int index) {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || (stackElement.xmlEvent != XMLEvent.START_ELEMENT)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
         return tokenStack.peek().getAttributeValue(index);
@@ -357,7 +363,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     public String getNamespacePrefix(int index) {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || (stackElement.xmlEvent != XMLEvent.START_ELEMENT && stackElement.xmlEvent != XMLEvent.END_ELEMENT)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(ERROR_MSG_NOT_IN_START_END_ELEMENT);
         }
 
         return XJConstants.NS_PREFIX_XJ;
@@ -367,7 +373,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     public String getNamespaceURI(int index) {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || (stackElement.xmlEvent != XMLEvent.START_ELEMENT && stackElement.xmlEvent != XMLEvent.END_ELEMENT)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(ERROR_MSG_NOT_IN_START_END_ELEMENT);
         }
 
         return XJConstants.NS_XJ;
@@ -400,19 +406,19 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     public char[] getTextCharacters() {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || stackElement.xmlEvent != XMLEvent.CHARACTERS) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(ERROR_MSG_NOT_IN_CHARACTERS);
         }
 
         try {
             setXmlText(stackElement, jsonParser);
             return stackElement.value;
         } catch (IOException e) {
-            throw new IllegalStateException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
     @Override
-    public int getTextCharacters(int sourceStart, char[] target, int targetStart, int length) throws XMLStreamException {
+    public int getTextCharacters(int sourceStart, char[] target, int targetStart, int length) {
         final char[] text = getTextCharacters();
         System.arraycopy(text, sourceStart, target, targetStart, length);
 
@@ -430,10 +436,11 @@ public class JsonXmlStreamReader implements XMLStreamReader {
         final StackElement stackElement = tokenStack.peek();
 
         try {
+            assert stackElement != null;
             setXmlText(stackElement, jsonParser);
             return stackElement.value.length;
         } catch (IOException e) {
-            throw new IllegalStateException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -552,13 +559,16 @@ public class JsonXmlStreamReader implements XMLStreamReader {
         return Arrays.copyOfRange(res, 0, copied);
     }
 
+    /**
+     * Class that represents an element on the stack.
+     */
     private static class StackElement {
 
-        private JsonToken jsonToken;
-        private String name;
+        private final JsonToken jsonToken;
+        private final String name;
+        private final List<QName> attributes;
         private int xmlEvent;
         private char[] value;
-        private List<QName> attributes;
 
         StackElement(JsonToken jsonToken, String name) {
             this.jsonToken = jsonToken;
@@ -571,7 +581,6 @@ public class JsonXmlStreamReader implements XMLStreamReader {
                 attributes.add(nameAttribute);
             }
 
-            // todo configurable if type hints should be emitted?
             final QName typeAttribute = new QName(XJConstants.NS_XJ, XJConstants.TYPE_HINT_TYPE, XJConstants.NS_PREFIX_XJ);
             attributes.add(typeAttribute);
         }
@@ -587,24 +596,24 @@ public class JsonXmlStreamReader implements XMLStreamReader {
         String getAttributeValue(int idx) {
             final QName attribute = getAttribute(idx);
             switch (attribute.getLocalPart()) {
-                case XJConstants.TYPE_HINT_NAME:
-                    return this.name;
-                case XJConstants.TYPE_HINT_TYPE:
-                    return XJConstants.JSONTYPE_TYPE_MAP.get(this.jsonToken);
-                default:
-                    throw new IllegalArgumentException("Unknown attribute");
+            case XJConstants.TYPE_HINT_NAME:
+                return this.name;
+            case XJConstants.TYPE_HINT_TYPE:
+                return XJConstants.JSONTYPE_TYPE_MAP.get(this.jsonToken);
+            default:
+                throw new IllegalArgumentException("Unknown attribute " + attribute.getLocalPart());
             }
         }
 
         @Override
         public String toString() {
-            return "StackElement{" +
-                    "jsonToken=" + jsonToken +
-                    ", name='" + name + '\'' +
-                    ", xmlEvent=" + xmlEvent +
-                    ", value=" + Arrays.toString(value) +
-                    ", attributes=" + attributes +
-                    '}';
+            return "StackElement{"
+                    + "jsonToken=" + jsonToken
+                    + ", name='" + name + '\''
+                    + ", xmlEvent=" + xmlEvent
+                    + ", value=" + Arrays.toString(value)
+                    + ", attributes=" + attributes
+                    + '}';
         }
     }
 }

@@ -17,13 +17,13 @@
 
 package org.apache.camel.component.xj;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 
 public class J2XInputStreamTest extends CamelTestSupport {
 
@@ -39,10 +39,10 @@ public class J2XInputStreamTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("xj:hellojson2xml.xsl?transformDirection=JSON2XML")
                         .to("mock:result");

@@ -17,13 +17,13 @@
 
 package org.apache.camel.component.xj;
 
+import java.io.File;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import java.io.File;
 
 public class X2JOutputFileTest extends CamelTestSupport {
 
@@ -39,10 +39,10 @@ public class X2JOutputFileTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("xj:helloxml2json.xsl?transformDirection=XML2JSON&output=file")
                         .to("mock:result");
