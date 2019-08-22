@@ -155,15 +155,15 @@ public class RestProducer extends DefaultAsyncProducer {
                 String[] arr = resolvedUriTemplate.split("\\/");
                 CollectionStringBuffer csb = new CollectionStringBuffer("/");
                 for (String a : arr) {
-                    if (a.startsWith("{") && a.endsWith("}")) {
-                        String key = a.substring(1, a.length() - 1);
-                        String value = inMessage.getHeader(key, String.class);
-                        if (value != null) {
-                            hasPath = true;
-                            csb.append(value);
-                        } else {
-                            csb.append(a);
-                        }
+                    String resolvedUriParam = resolveHeaderPlaceholders(a, inMessage);
+
+                    // Backward compatibility: if one of the path params is fully resolved,
+                    // then it is assumed that whole uri is resolved.
+                    if (!a.equals(resolvedUriParam)
+                            && !resolvedUriParam.contains("{")
+                            && !resolvedUriParam.contains("}")) {
+                        hasPath = true;
+                        csb.append(resolvedUriParam);
                     } else {
                         csb.append(a);
                     }
@@ -221,6 +221,30 @@ public class RestProducer extends DefaultAsyncProducer {
         if (isEmpty(inMessage.getHeader(ACCEPT)) && isNotEmpty(consumes)) {
             inMessage.setHeader(ACCEPT, consumes);
         }
+    }
+
+    /**
+     * Replaces placeholders "{}" with message header values
+     * @param str string with placeholders
+     * @param msg message with headers
+     * @return filled string
+     */
+    private String resolveHeaderPlaceholders(String str, Message msg) {
+        int startIndex = -1;
+        String res = str;
+        while ((startIndex = res.indexOf("{", startIndex + 1)) >= 0) {
+            int endIndex = res.indexOf("}", startIndex);
+            if (endIndex == -1) {
+                continue;
+            }
+            String key = res.substring(startIndex + 1, endIndex);
+            String headerValue = msg.getHeader(key, String.class);
+            if (headerValue != null) {
+                res = res.substring(0, startIndex) + headerValue + res.substring(endIndex + 1);
+            }
+        }
+
+        return res;
     }
 
     @Override

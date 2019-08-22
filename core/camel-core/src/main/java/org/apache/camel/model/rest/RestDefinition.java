@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -917,9 +919,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     } catch (Exception e) {
                         throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
-                    if (a.startsWith("{") && a.endsWith("}")) {
-                        String key = a.substring(1, a.length() - 1);
-                        // merge if exists
+
+                    Matcher m = Pattern.compile("\\{(.*?)\\}").matcher(a);
+                    while (m.find()) {
+                        String key = m.group(1);
+                        //  merge if exists
                         boolean found = false;
                         for (RestOperationParamDefinition param : verb.getParams()) {
                             // name is mandatory
