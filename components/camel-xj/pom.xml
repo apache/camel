@@ -57,13 +57,13 @@
         <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
-            <version>1.5.0</version>
+            <version>${jsonassert-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
-            <version>2.6.3</version>
+            <version>${xmlunit-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
