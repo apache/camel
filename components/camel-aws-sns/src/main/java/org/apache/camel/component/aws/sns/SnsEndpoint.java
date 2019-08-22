@@ -94,8 +94,8 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @Override
-    public void doStart() throws Exception {
-        super.doStart();
+    public void doInit() throws Exception {
+        super.doInit();
         snsClient = configuration.getAmazonSNSClient() != null
             ? configuration.getAmazonSNSClient() : createSNSClient();
 
