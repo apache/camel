@@ -314,6 +314,47 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             }
         }
     }
+    
+    /**
+     * This method is called by {@link CxfConsumer} to populate a CXF response protocol headers 
+     * from a Camel exchange headers before CheckError.
+     * Ensure can send protocol headers back even error/exception thrown
+     */
+    public void populateCxfHeaderFromCamelExchangeBeforeCheckError(Exchange camelExchange, 
+            org.apache.cxf.message.Exchange cxfExchange) {
+        
+        if (cxfExchange.isOneWay()) {
+            return;
+        }
+        
+        // create response context
+        Map<String, Object> responseContext = new HashMap<String, Object>();
+        
+        org.apache.camel.Message response;
+        if (camelExchange.getPattern().isOutCapable()) {
+            if (camelExchange.hasOut()) {
+                response = camelExchange.getOut();
+                LOG.trace("Get the response from the out message");
+            } else { // Take the in message as a fall back
+                response = camelExchange.getIn();
+                LOG.trace("Get the response from the in message as a fallback");
+            }
+        } else {
+            response = camelExchange.getIn();
+            LOG.trace("Get the response from the in message");
+        }
+        
+        // propagate response context
+        Map<String, Object> camelHeaders = response.getHeaders();
+        extractInvocationContextFromCamel(camelExchange, camelHeaders, 
+                responseContext, Client.RESPONSE_CONTEXT);
+        
+        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange, 
+                responseContext);
+        if (cxfExchange.getOutMessage() != null) {
+            cxfExchange.getOutMessage().put(Message.PROTOCOL_HEADERS, responseContext.get(Message.PROTOCOL_HEADERS));
+        }
+    }
 
     /**
      * This method is called by {@link CxfConsumer} to populate a CXF response exchange 
