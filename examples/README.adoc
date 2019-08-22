@@ -11,13 +11,15 @@ View the individual example READMEs for details.
 == Examples
 
 // examples: START
-Number of Examples: 114 (0 deprecated)
+Number of Examples: 115 (0 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
 | Example | Category | Description
 
 | link:camel-example-as2/README.md[As2] (camel-example-as2) |  | An example which demonstrates the use of the Camel AS2 component
+
+| link:camel-example-any23/README.md[Any23] (camel-example-any23) |  | An example which demonstrates the use of the Camel Any23 dataformat
 
 | link:camel-example-bigxml-split/README.md[Bigxml Split] (camel-example-bigxml-split) |  | How to deal with big XML files in Camel
 
