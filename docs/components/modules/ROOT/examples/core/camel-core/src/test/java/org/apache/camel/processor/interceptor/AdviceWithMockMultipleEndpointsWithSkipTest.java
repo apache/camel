@@ -47,7 +47,8 @@ public class AdviceWithMockMultipleEndpointsWithSkipTest extends ContextTestSupp
 
         assertMockEndpointsSatisfied();
 
-        // the message was not send to the direct:foo route and thus not sent to the seda endpoint
+        // the message was not send to the direct:foo route and thus not sent to
+        // the seda endpoint
         SedaEndpoint seda = context.getEndpoint("seda:foo", SedaEndpoint.class);
         assertEquals(0, seda.getCurrentQueueSize());
     }

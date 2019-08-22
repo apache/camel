@@ -40,7 +40,7 @@ Number of EIPs: 62 (0 deprecated)
 `<enrich>` | Enriches a message with data from a secondary resource
 
 | link:src/main/docs/eips/failover-eip.adoc[Failover] +
-`<failover>` | Failover load balancer
+`<failover>` | Failover load balancer The failover load balancer is capable of trying the next processor in case an Exchange failed with an exception during processing. You can constrain the failover to activate only when one exception of a list you specify occurs. If you do not specify a list any exception will cause fail over to occur. This balancer uses the same strategy for matching exceptions as the Exception Clause does for the onException.
 
 | link:src/main/docs/eips/filter-eip.adoc[Filter] +
 `<filter>` | Filter out messages based using a predicate
@@ -94,7 +94,7 @@ Number of EIPs: 62 (0 deprecated)
 `<process>` | Calls a Camel processor
 
 | link:src/main/docs/eips/random-eip.adoc[Random] +
-`<random>` | Random load balancer
+`<random>` | Random load balancer The random load balancer selects a random endpoint for each exchange.
 
 | link:src/main/docs/eips/recipientList-eip.adoc[Recipient List] +
 `<recipientList>` | Routes messages to a number of dynamically specified recipients (dynamic to)
@@ -118,7 +118,7 @@ Number of EIPs: 62 (0 deprecated)
 `<rollback>` | Forces a rollback by stopping routing the message
 
 | link:src/main/docs/eips/roundRobin-eip.adoc[Round Robin] +
-`<roundRobin>` | Round robin load balancer
+`<roundRobin>` | Round robin load balancer The round robin load balancer will use the next endpoint for each message. This load balancer is not meant to work with failover, for that you should use the dedicated failover load balancer.
 
 | link:src/main/docs/eips/routingSlip-eip.adoc[Routing Slip] +
 `<routingSlip>` | Routes a message through a series of steps that are pre-determined (the slip)
@@ -154,7 +154,7 @@ Number of EIPs: 62 (0 deprecated)
 `<step>` | Routes the message to a sequence of processors which is grouped together as one logical name
 
 | link:src/main/docs/eips/sticky-eip.adoc[Sticky] +
-`<sticky>` | Sticky load balancer
+`<sticky>` | Sticky load balancer Sticky load balancing using an Expression to calculate a correlation key to perform the sticky load balancing; rather like jsessionid in the web or JMSXGroupID in JMS.
 
 | link:src/main/docs/eips/stop-eip.adoc[Stop] +
 `<stop>` | Stops the processing of the current message
@@ -175,7 +175,7 @@ Number of EIPs: 62 (0 deprecated)
 `<toD>` | Sends the message to a dynamic endpoint
 
 | link:src/main/docs/eips/topic-eip.adoc[Topic] +
-`<topic>` | Topic load balancer
+`<topic>` | Topic load balancer The topic load balancer sends to all destinations (rather like JMS Topics)
 
 | link:src/main/docs/eips/transform-eip.adoc[Transform] +
 `<transform>` | Transforms the message body based on an expression
@@ -187,7 +187,7 @@ Number of EIPs: 62 (0 deprecated)
 `<validate>` | Validates a message based on an expression
 
 | link:src/main/docs/eips/weighted-eip.adoc[Weighted] +
-`<weighted>` | Weighted load balancer
+`<weighted>` | Weighted load balancer The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to others. In addition to the weight, endpoint selection is then further refined using random distribution based on weight.
 
 | link:src/main/docs/eips/when-eip.adoc[When] +
 `<when>` | Triggers a route when an expression evaluates to true

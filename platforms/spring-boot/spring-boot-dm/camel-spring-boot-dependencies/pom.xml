@@ -174,7 +174,7 @@
       <dependency>
         <groupId>io.methvin</groupId>
         <artifactId>directory-watcher</artifactId>
-        <version>0.9.5</version>
+        <version>0.9.6</version>
       </dependency>
       <dependency>
         <groupId>io.nessus</groupId>
