@@ -38,6 +38,7 @@
     <modules>
         <module>camel-example-activemq-tomcat</module>
         <module>camel-example-aggregate</module>
+        <module>camel-example-any23</module>
         <module>camel-example-artemis</module>
         <module>camel-example-artemis-amqp-blueprint</module>
         <module>camel-example-artemis-large-messages</module>
