@@ -47,7 +47,7 @@
     </http-conf:conduit>
 
     <!-- setup the CxfEndpointConfigurer bean here -->
-    <bean id="myConfigurer" class="org.apache.camel.component.cxf.CxfTimeoutTest$MyCxfEndpointConfigurer"/>
+    <bean id="myConfigurer" class="org.apache.camel.component.cxf.CxfTimeoutTest$MyCxfConfigurer"/>
 
     <bean id="defaultHostnameVerifier" class="org.apache.cxf.transport.https.httpclient.DefaultHostnameVerifier"/>
 

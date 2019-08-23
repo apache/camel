@@ -85,6 +85,11 @@ public final class DefaultConfigurationConfigurer {
      * @param config       the configuration
      */
     public static void configure(CamelContext camelContext, DefaultConfigurationProperties config) throws Exception {
+        camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
+        if (config.getBeanIntrospectionLoggingLevel() != null) {
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
+        }
+
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
         }

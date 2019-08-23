@@ -39,11 +39,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class DefaultSignedDataVerifierConfiguration extends DefaultCryptoCmsUnMarshallerConfiguration implements SignedDataVerifierConfiguration, Cloneable {
 
-    @UriParam(label = "verify", defaultValue = "false")
-    private Boolean signedDataHeaderBase64 = Boolean.FALSE;
+    @UriParam(label = "verify")
+    private boolean signedDataHeaderBase64;
 
     @UriParam(label = "verify", defaultValue = "true")
-    private Boolean verifySignaturesOfAllSigners = Boolean.TRUE;
+    private boolean verifySignaturesOfAllSigners = true;
 
     /**
      * Indicates whether the value in the header CamelCryptoCmsSignedData is
@@ -52,12 +52,12 @@ public class DefaultSignedDataVerifierConfiguration extends DefaultCryptoCmsUnMa
      * Only relevant for detached signatures. In the detached signature case,
      * the header contains the Signed Data object.
      */
-    public void setSignedDataHeaderBase64(Boolean signedDataHeaderBase64) {
+    public void setSignedDataHeaderBase64(boolean signedDataHeaderBase64) {
         this.signedDataHeaderBase64 = signedDataHeaderBase64;
     }
 
     @Override
-    public Boolean isSignedDataHeaderBase64(Exchange exchange) throws CryptoCmsException {
+    public boolean isSignedDataHeaderBase64() {
         return signedDataHeaderBase64;
     }
 
@@ -67,12 +67,12 @@ public class DefaultSignedDataVerifierConfiguration extends DefaultCryptoCmsUnMa
      * signature whose signer info matches with one of the specified
      * certificates is verified. Default value is <code>true</code>.
      */
-    public void setVerifySignaturesOfAllSigners(Boolean verifySignaturesOfAllSigners) {
+    public void setVerifySignaturesOfAllSigners(boolean verifySignaturesOfAllSigners) {
         this.verifySignaturesOfAllSigners = verifySignaturesOfAllSigners;
     }
 
     @Override
-    public Boolean isVerifySignaturesOfAllSigners(Exchange exchange) throws CryptoCmsException {
+    public boolean isVerifySignaturesOfAllSigners() {
         return verifySignaturesOfAllSigners;
     }
 

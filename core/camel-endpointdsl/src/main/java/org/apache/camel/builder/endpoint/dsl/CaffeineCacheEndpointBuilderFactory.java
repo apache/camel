@@ -200,21 +200,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedCaffeineCacheEndpointConsumerBuilder keyType(
-                Class<Object> keyType) {
-            setProperty("keyType", keyType);
-            return this;
-        }
-        /**
-         * The cache key type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
@@ -252,21 +238,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedCaffeineCacheEndpointConsumerBuilder valueType(
-                Class<Object> valueType) {
-            setProperty("valueType", valueType);
-            return this;
-        }
-        /**
-         * The cache value type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
@@ -681,21 +653,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedCaffeineCacheEndpointProducerBuilder keyType(
-                Class<Object> keyType) {
-            setProperty("keyType", keyType);
-            return this;
-        }
-        /**
-         * The cache key type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
@@ -733,21 +691,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedCaffeineCacheEndpointProducerBuilder valueType(
-                Class<Object> valueType) {
-            setProperty("valueType", valueType);
-            return this;
-        }
-        /**
-         * The cache value type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
@@ -833,21 +777,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedCaffeineCacheEndpointBuilder keyType(
-                Class<Object> keyType) {
-            setProperty("keyType", keyType);
-            return this;
-        }
-        /**
-         * The cache key type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
@@ -884,21 +814,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedCaffeineCacheEndpointBuilder valueType(
-                Class<Object> valueType) {
-            setProperty("valueType", valueType);
-            return this;
-        }
-        /**
-         * The cache value type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */

@@ -23,6 +23,7 @@ import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
 import org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
+import org.apache.camel.component.spring.ws.type.EndpointMappingType;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -33,6 +34,7 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.addressing.messageid.MessageIdStrategy;
 import org.springframework.ws.soap.addressing.server.annotation.Action;
 import org.springframework.ws.transport.WebServiceMessageSender;
+import org.springframework.xml.xpath.XPathExpression;
 
 @UriParams
 public class SpringWebserviceConfiguration {
@@ -75,14 +77,17 @@ public class SpringWebserviceConfiguration {
     private boolean allowResponseAttachmentOverride;
     
     /* Consumer configuration */
-    @UriParam(label = "consumer")
-    private EndpointMappingKey endpointMappingKey;
+    @UriPath(label = "consumer", name = "type")
+    private EndpointMappingType endpointMappingType;
+    @UriPath(label = "consumer", name = "lookupKey")
+    private String endpointMappingLookupKey;
+    @UriPath(label = "consumer")
+    private String expression;
+    private transient XPathExpression xPathExpression;
     @UriParam(label = "consumer")
     private CamelSpringWSEndpointMapping endpointMapping;
     @UriParam(label = "consumer")
     private CamelEndpointDispatcher endpointDispatcher;
-    @UriParam(label = "consumer")
-    private String expression;
 
     public WebServiceTemplate getWebServiceTemplate() {
         return webServiceTemplate;
@@ -119,17 +124,6 @@ public class SpringWebserviceConfiguration {
         this.webServiceEndpointUri = webServiceEndpointUri;
     }
 
-    public String getExpression() {
-        return expression;
-    }
-
-    /**
-     * The XPath expression to use when option type=xpathresult. Then this option is required to be configured.
-     */
-    public void setExpression(String expression) {
-        this.expression = expression;
-    }
-
     public String getSoapAction() {
         return soapAction;
     }
@@ -142,9 +136,9 @@ public class SpringWebserviceConfiguration {
     }
 
     public String getEndpointUri() {
-        if (endpointMappingKey != null) {
+        if (getEndpointMappingKey() != null) {
             // only for consumers, use lookup key as endpoint uri/key
-            return encode(endpointMappingKey.getLookupKey());
+            return encode(getEndpointMappingKey().getLookupKey());
         } else if (webServiceTemplate != null) {
             return webServiceTemplate.getDefaultUri();
         }
@@ -203,11 +197,61 @@ public class SpringWebserviceConfiguration {
     }
 
     public EndpointMappingKey getEndpointMappingKey() {
-        return endpointMappingKey;
+        if (endpointMappingType != null && endpointMappingLookupKey != null) {
+            return new EndpointMappingKey(endpointMappingType, endpointMappingLookupKey, xPathExpression);
+        } else {
+            return null;
+        }
     }
 
-    public void setEndpointMappingKey(EndpointMappingKey endpointMappingKey) {
-        this.endpointMappingKey = endpointMappingKey;
+    public EndpointMappingType getEndpointMappingType() {
+        return endpointMappingType;
+    }
+
+    /**
+     * Endpoint mapping type if endpoint mapping is used.
+     * <ul>
+     *     <li>rootqname - Offers the option to map web service requests based on the qualified name of the root element contained in the message.</li>
+     *     <li>soapaction - Used to map web service requests based on the SOAP action specified in the header of the message.</li>
+     *     <li>uri - In order to map web service requests that target a specific URI.</li>
+     *     <li>xpathresult - Used to map web service requests based on the evaluation of an XPath expression against the incoming message.
+     *                       The result of the evaluation should match the XPath result specified in the endpoint URI.</li>
+     *     <li>beanname - Allows you to reference an org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object in order to integrate with
+     *                    existing (legacy) endpoint mappings like PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc</li>
+     * </ul>
+     */
+    public void setEndpointMappingType(EndpointMappingType endpointMappingType) {
+        this.endpointMappingType = endpointMappingType;
+    }
+
+    public String getEndpointMappingLookupKey() {
+        return endpointMappingLookupKey;
+    }
+
+    /**
+     * Endpoint mapping key if endpoint mapping is used
+     */
+    public void setEndpointMappingLookupKey(String endpointMappingLookupKey) {
+        this.endpointMappingLookupKey = endpointMappingLookupKey;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    /**
+     * The XPath expression to use when option type=xpathresult. Then this option is required to be configured.
+     */
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
+
+    public XPathExpression getxPathExpression() {
+        return xPathExpression;
+    }
+
+    public void setxPathExpression(XPathExpression xPathExpression) {
+        this.xPathExpression = xPathExpression;
     }
 
     public SSLContextParameters getSslContextParameters() {

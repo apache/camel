@@ -82,19 +82,18 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: common
          */
-        default WordpressEndpointConsumerBuilder force(Boolean force) {
+        default WordpressEndpointConsumerBuilder force(boolean force) {
             setProperty("force", force);
             return this;
         }
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: common
          */
@@ -395,19 +394,18 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: common
          */
-        default WordpressEndpointProducerBuilder force(Boolean force) {
+        default WordpressEndpointProducerBuilder force(boolean force) {
             setProperty("force", force);
             return this;
         }
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: common
          */
@@ -654,19 +652,18 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: common
          */
-        default WordpressEndpointBuilder force(Boolean force) {
+        default WordpressEndpointBuilder force(boolean force) {
             setProperty("force", force);
             return this;
         }
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: common
          */

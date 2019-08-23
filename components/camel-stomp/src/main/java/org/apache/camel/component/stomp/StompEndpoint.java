@@ -57,21 +57,25 @@ import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination", label = "messaging")
 public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
+    private CallbackConnection connection;
+    private Stomp stomp;
+    private final List<StompConsumer> consumers = new CopyOnWriteArrayList<>();
+
     @UriPath(description = "Name of the queue") @Metadata(required = true)
     private String destination;
     @UriParam
     private StompConfiguration configuration;
-    private CallbackConnection connection;
-    private Stomp stomp;
     @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
-
-    private final List<StompConsumer> consumers = new CopyOnWriteArrayList<>();
 
     public StompEndpoint(String uri, StompComponent component, StompConfiguration configuration, String destination) {
         super(uri, component);
         this.configuration = configuration;
         this.destination = destination;
+    }
+
+    public StompConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override

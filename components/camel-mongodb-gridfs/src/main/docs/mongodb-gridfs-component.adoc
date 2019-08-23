@@ -59,7 +59,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (19 parameters):
+=== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -69,7 +69,6 @@ with the following path and query parameters:
 | *database* (common) | *Required* Sets the name of the MongoDB database to target |  | String
 | *readPreference* (common) | Sets a MongoDB ReadPreference on the Mongo connection. Read preferences set directly on the connection will be overridden by this setting. The com.mongodb.ReadPreference#valueOf(String) utility method is used to resolve the passed readPreference value. Some examples for the possible values are nearest, primary or secondary etc. |  | ReadPreference
 | *writeConcern* (common) | Set the WriteConcern for write operations on MongoDB using the standard ones. Resolved from the fields of the WriteConcern class by calling the WriteConcern#valueOf(String) method. |  | WriteConcern
-| *writeConcernRef* (common) | Set the WriteConcern for write operations on MongoDB, passing in the bean ref to a custom WriteConcern which exists in the Registry. You can also use standard WriteConcerns by passing in their key. See the {link #setWriteConcern(String) setWriteConcern} method. |  | WriteConcern
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *delay* (consumer) | Sets the delay between polls within the Consumer. Default is 500ms | 500 | long
 | *fileAttributeName* (consumer) | If the QueryType uses a FileAttribute, this sets the name of the attribute that is used. Default is camel-processed. | camel-processed | String

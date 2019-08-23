@@ -192,11 +192,11 @@ public class EhcacheComponentConfiguration
         /**
          * The cache key type, default "java.lang.Object"
          */
-        private Class keyType = java.lang.Object.class;
+        private String keyType;
         /**
          * The cache value type, default "java.lang.Object"
          */
-        private Class valueType = java.lang.Object.class;
+        private String valueType;
 
         public String getConfigurationUri() {
             return configurationUri;
@@ -298,19 +298,19 @@ public class EhcacheComponentConfiguration
             this.configurations = configurations;
         }
 
-        public Class getKeyType() {
+        public String getKeyType() {
             return keyType;
         }
 
-        public void setKeyType(Class keyType) {
+        public void setKeyType(String keyType) {
             this.keyType = keyType;
         }
 
-        public Class getValueType() {
+        public String getValueType() {
             return valueType;
         }
 
-        public void setValueType(Class valueType) {
+        public void setValueType(String valueType) {
             this.valueType = valueType;
         }
     }

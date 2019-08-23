@@ -16,28 +16,30 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import javax.net.ssl.HostnameVerifier;
-
-import org.apache.camel.component.cxf.common.AbstractHostnameVerifierEndpointConfigurer;
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.cxf.common.AbstractSslEndpointConfigurer;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
 
-public final class HostnameVerifierCxfRsEndpointConfigurer extends AbstractHostnameVerifierEndpointConfigurer implements CxfRsEndpointConfigurer {
+public final class SslCxfRsConfigurer extends AbstractSslEndpointConfigurer implements CxfRsConfigurer {
 
-    private HostnameVerifierCxfRsEndpointConfigurer(HostnameVerifier hostnameVerifier) {
-        super(hostnameVerifier);
+    private SslCxfRsConfigurer(SSLContextParameters sslContextParameters,
+                               CamelContext camelContext) {
+        super(sslContextParameters, camelContext);
     }
 
-    public static CxfRsEndpointConfigurer create(HostnameVerifier hostnameVerifier) {
-        if (hostnameVerifier == null) {
-            return new ChainedCxfRsEndpointConfigurer.NullCxfRsEndpointConfigurer();
+    public static CxfRsConfigurer create(SSLContextParameters sslContextParameters, CamelContext camelContext) {
+        if (sslContextParameters == null) {
+            return new ChainedCxfRsConfigurer.NullCxfRsConfigurer();
         } else {
-            return new HostnameVerifierCxfRsEndpointConfigurer(hostnameVerifier);
+            return new SslCxfRsConfigurer(sslContextParameters, camelContext);
         }
     }
+
     @Override
     public void configure(AbstractJAXRSFactoryBean factoryBean) {
     }

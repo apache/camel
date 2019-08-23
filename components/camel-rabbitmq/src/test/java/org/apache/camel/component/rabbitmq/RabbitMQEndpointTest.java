@@ -178,9 +178,9 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     @Test
     public void brokerEndpointAddressesSettings() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?addresses=server1:12345,server2:12345", RabbitMQEndpoint.class);
-        assertEquals("Wrong size of endpoint addresses.", 2, endpoint.getAddresses().length);
-        assertEquals("Get a wrong endpoint address.", new Address("server1", 12345), endpoint.getAddresses()[0]);
-        assertEquals("Get a wrong endpoint address.", new Address("server2", 12345), endpoint.getAddresses()[1]);
+        assertEquals("Wrong size of endpoint addresses.", 2, endpoint.parseAddresses().length);
+        assertEquals("Get a wrong endpoint address.", new Address("server1", 12345), endpoint.parseAddresses()[0]);
+        assertEquals("Get a wrong endpoint address.", new Address("server2", 12345), endpoint.parseAddresses()[1]);
     }
 
     private ConnectionFactory createConnectionFactory(String uri) throws TimeoutException {

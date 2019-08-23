@@ -79,7 +79,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private String snmpContextName;
     @UriParam
     private String snmpContextEngineId;
-    @UriParam(javaType = "java.lang.String")
+    @UriParam
     private OIDList oids = new OIDList();
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean treeList;

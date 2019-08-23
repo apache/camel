@@ -80,7 +80,7 @@ public class SigningProcessor extends DigitalSignatureProcessor {
         if (keystore != null) {
             password = exchange.getIn().getHeader(DigitalSignatureConstants.KEYSTORE_PASSWORD, char[].class);
             if (password == null) {
-                password = config.getPassword();
+                password = config.getPassword() != null ? config.getPassword().toCharArray() : null;
             }
         }
         return password;

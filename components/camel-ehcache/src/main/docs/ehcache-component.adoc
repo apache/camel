@@ -98,9 +98,9 @@ with the following path and query parameters:
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | The default cache configuration to be used to create caches. |  | CacheConfiguration
 | *configurations* (advanced) | A map of cache configuration to be used to create caches. |  | Map
-| *keyType* (advanced) | The cache key type, default java.lang.Object | java.lang.Object | String
+| *keyType* (advanced) | The cache key type, default java.lang.Object |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *valueType* (advanced) | The cache value type, default java.lang.Object | java.lang.Object | String
+| *valueType* (advanced) | The cache value type, default java.lang.Object |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
@@ -143,8 +143,8 @@ The component supports 25 options, which are listed below.
 | *camel.component.ehcache.configuration.event-ordering* | Set the delivery mode (ordered, unordered) |  | EventOrdering
 | *camel.component.ehcache.configuration.event-types* | Set the type of events to listen for |  | Set
 | *camel.component.ehcache.configuration.key* | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
-| *camel.component.ehcache.configuration.key-type* | The cache key type, default "java.lang.Object" |  | Class
-| *camel.component.ehcache.configuration.value-type* | The cache value type, default "java.lang.Object" |  | Class
+| *camel.component.ehcache.configuration.key-type* | The cache key type, default "java.lang.Object" |  | String
+| *camel.component.ehcache.configuration.value-type* | The cache value type, default "java.lang.Object" |  | String
 | *camel.component.ehcache.customizer.cache-configuration.enabled* | Enable or disable the cache-configuration customizer. | true | Boolean
 | *camel.component.ehcache.customizer.cache-configuration.mode* | Configure if the cache configurations have be added or they have to replace those already configured on the component. |  | CacheConfiguration CustomizerConfiguration$ Mode
 | *camel.component.ehcache.customizer.cache-manager.enabled* | Enable or disable the cache-manager customizer. | true | Boolean

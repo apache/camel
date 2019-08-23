@@ -499,6 +499,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         setExpectedMessageCount(expectedCount);
     }
 
+    public long getAssertPeriod() {
+        return assertPeriod;
+    }
+
     /**
      * Sets a grace period after which the mock endpoint will re-assert
      * to ensure the preliminary assertion is still valid.
@@ -1293,6 +1297,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.resultWaitTime = resultWaitTime;
     }
 
+    public long getResultMinimumWaitTime() {
+        return resultMinimumWaitTime;
+    }
+
     /**
      * Sets the minimum expected amount of time (in millis) the {@link #assertIsSatisfied()} will
      * wait on a latch until it is satisfied
@@ -1363,6 +1371,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.reporter = reporter;
     }
 
+    public int getRetainFirst() {
+        return retainFirst;
+    }
+
     /**
      * Specifies to only retain the first n'th number of received {@link Exchange}s.
      * <p/>
@@ -1389,6 +1401,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     public void setRetainFirst(int retainFirst) {
         this.retainFirst = retainFirst;
+    }
+
+    public int getRetainLast() {
+        return retainLast;
     }
 
     /**
@@ -1419,7 +1435,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.retainLast = retainLast;
     }
 
-    public int isReportGroup() {
+    public int getReportGroup() {
         return reportGroup;
     }
 

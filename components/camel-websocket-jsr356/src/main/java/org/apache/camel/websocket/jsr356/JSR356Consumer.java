@@ -21,7 +21,6 @@ import java.util.function.BiConsumer;
 
 import static java.util.Optional.ofNullable;
 
-
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpointConfig;
@@ -30,10 +29,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 
-
 public class JSR356Consumer extends DefaultConsumer {
     private final int sessionCount;
-    private final String context;
     private ClientSessions manager;
     private Runnable closeTask;
 
@@ -48,10 +45,9 @@ public class JSR356Consumer extends DefaultConsumer {
         });
     };;
 
-    JSR356Consumer(final JSR356Endpoint jsr356Endpoint, final Processor processor, final int sessionCount, final String context) {
+    JSR356Consumer(final JSR356Endpoint jsr356Endpoint, final Processor processor, final int sessionCount) {
         super(jsr356Endpoint, processor);
         this.sessionCount = sessionCount;
-        this.context = context;
     }
 
     @Override
@@ -69,7 +65,7 @@ public class JSR356Consumer extends DefaultConsumer {
             manager = new ClientSessions(sessionCount, URI.create(endpointKey), clientConfig.build(), onMessage);
             manager.prepare();
         } else {
-            final JSR356WebSocketComponent.ContextBag bag = JSR356WebSocketComponent.getContext(context);
+            final JSR356WebSocketComponent.ContextBag bag = JSR356WebSocketComponent.getContext(null);
             final CamelServerEndpoint endpoint = bag.getEndpoints().get(endpointKey);
             if (endpoint == null) {
                 // todo: make it customizable (the endpoint config)

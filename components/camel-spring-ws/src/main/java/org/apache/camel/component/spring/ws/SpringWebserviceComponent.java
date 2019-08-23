@@ -93,8 +93,10 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
                 String expression = getAndRemoveParameter(parameters, "expression", String.class);
                 configuration.setExpression(expression);
                 xPathExpression = createXPathExpression(expression);
+                configuration.setxPathExpression(xPathExpression);
             }
-            configuration.setEndpointMappingKey(new EndpointMappingKey(type, lookupKey, xPathExpression));
+            configuration.setEndpointMappingType(type);
+            configuration.setEndpointMappingLookupKey(lookupKey);
         }
     }
 

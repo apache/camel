@@ -100,7 +100,7 @@ public class PubNubConfiguration {
     }
 
     /**
-     * If cipher is passed, all communicatons to/from PubNub will be encrypted.
+     * If cipher is passed, all communications to/from PubNub will be encrypted.
      */
     public String getCipherKey() {
         return cipherKey;
@@ -170,7 +170,7 @@ public class PubNubConfiguration {
         this.withPresence = withPresence;
     }
 
-    public boolean withPresence() {
+    public boolean isWithPresence() {
         return withPresence;
     }
 

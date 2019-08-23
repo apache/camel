@@ -48,21 +48,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * based on the setting of option addresses. The addresses value is a
          * string which looks like server1:12345, server2:12345.
          * 
-         * The option is a: <code>com.rabbitmq.client.Address[]</code> type.
-         * 
-         * Group: common
-         */
-        default RabbitMQEndpointConsumerBuilder addresses(Object[] addresses) {
-            setProperty("addresses", addresses);
-            return this;
-        }
-        /**
-         * If this option is set, camel-rabbitmq will try to create connection
-         * based on the setting of option addresses. The addresses value is a
-         * string which looks like server1:12345, server2:12345.
-         * 
-         * The option will be converted to a
-         * <code>com.rabbitmq.client.Address[]</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -1187,21 +1173,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * based on the setting of option addresses. The addresses value is a
          * string which looks like server1:12345, server2:12345.
          * 
-         * The option is a: <code>com.rabbitmq.client.Address[]</code> type.
-         * 
-         * Group: common
-         */
-        default RabbitMQEndpointProducerBuilder addresses(Object[] addresses) {
-            setProperty("addresses", addresses);
-            return this;
-        }
-        /**
-         * If this option is set, camel-rabbitmq will try to create connection
-         * based on the setting of option addresses. The addresses value is a
-         * string which looks like server1:12345, server2:12345.
-         * 
-         * The option will be converted to a
-         * <code>com.rabbitmq.client.Address[]</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -2306,21 +2278,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * based on the setting of option addresses. The addresses value is a
          * string which looks like server1:12345, server2:12345.
          * 
-         * The option is a: <code>com.rabbitmq.client.Address[]</code> type.
-         * 
-         * Group: common
-         */
-        default RabbitMQEndpointBuilder addresses(Object[] addresses) {
-            setProperty("addresses", addresses);
-            return this;
-        }
-        /**
-         * If this option is set, camel-rabbitmq will try to create connection
-         * based on the setting of option addresses. The addresses value is a
-         * string which looks like server1:12345, server2:12345.
-         * 
-         * The option will be converted to a
-         * <code>com.rabbitmq.client.Address[]</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */

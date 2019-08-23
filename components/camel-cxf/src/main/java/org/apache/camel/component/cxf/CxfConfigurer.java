@@ -14,22 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.jaxrs;
+package org.apache.camel.component.cxf;
 
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
-import org.apache.cxf.jaxrs.client.Client;
+import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 
 /**
- * A pluggable strategy for configuring the cxfRsEndpoint by using java code
+ * A pluggable strategy for configuring the CXF by using java code
  */
-public interface CxfRsEndpointConfigurer {
+public interface CxfConfigurer {
     
     /**
-     * Configure the CXF-RS Server/Client factory bean
-     * @param factoryBean
+     * Configure the CXF Server/Client factory bean
+     *
+     * @param factoryBean the factory bean
      */
-    void configure(AbstractJAXRSFactoryBean factoryBean);
+    void configure(AbstractWSDLBasedEndpointFactory factoryBean);
     
     /**
      * Configure the CXF Client such as setting some parameters on the client conduit 

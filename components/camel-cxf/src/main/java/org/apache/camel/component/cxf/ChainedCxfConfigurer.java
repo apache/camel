@@ -16,38 +16,61 @@
  */
 package org.apache.camel.component.cxf;
 
-import javax.net.ssl.HostnameVerifier;
-
-import org.apache.camel.component.cxf.common.AbstractHostnameVerifierEndpointConfigurer;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
-import org.apache.cxf.transport.http.HTTPConduit;
 
-public final class HostnameVerifierCxfEndpointConfigurer extends AbstractHostnameVerifierEndpointConfigurer implements CxfEndpointConfigurer {
+public final class ChainedCxfConfigurer implements CxfConfigurer {
+    private CxfConfigurer parent;
+    private CxfConfigurer child;
 
-    private HostnameVerifierCxfEndpointConfigurer(HostnameVerifier hostnameVerifier) {
-        super(hostnameVerifier);
+    private ChainedCxfConfigurer() {
     }
 
-    public static CxfEndpointConfigurer create(HostnameVerifier hostnameVerifier) {
-        if (hostnameVerifier == null) {
-            return new ChainedCxfEndpointConfigurer.NullCxfEndpointConfigurer();
-        } else {
-            return new HostnameVerifierCxfEndpointConfigurer(hostnameVerifier);
-        }
+    public static ChainedCxfConfigurer create(CxfConfigurer parent, CxfConfigurer child) {
+        ChainedCxfConfigurer result = new ChainedCxfConfigurer();
+        result.parent = parent;
+        result.child = child;
+        return result;
     }
+
+    public ChainedCxfConfigurer addChild(CxfConfigurer cxfConfigurer) {
+        ChainedCxfConfigurer result = new ChainedCxfConfigurer();
+        result.parent = this;
+        result.child = cxfConfigurer;
+        return result;
+    }
+
     @Override
     public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
+        parent.configure(factoryBean);
+        child.configure(factoryBean);
     }
 
     @Override
     public void configureClient(Client client) {
-        HTTPConduit httpConduit = (HTTPConduit) client.getConduit();
-        setupHttpConduit(httpConduit);
+        parent.configureClient(client);
+        child.configureClient(client);
     }
 
     @Override
     public void configureServer(Server server) {
+        parent.configureServer(server);
+        child.configureServer(server);
+    }
+
+    public static class NullCxfConfigurer implements CxfConfigurer {
+
+        @Override
+        public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
+        }
+
+        @Override
+        public void configureClient(Client client) {
+        }
+
+        @Override
+        public void configureServer(Server server) {
+        }
     }
 }

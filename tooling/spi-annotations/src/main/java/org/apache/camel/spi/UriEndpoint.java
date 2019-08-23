@@ -154,4 +154,11 @@ public @interface UriEndpoint {
      */
     String excludeProperties() default "";
 
+    /**
+     * Generates source code for fast configuring of the endpoint properties which
+     * uses direct method invocation of getter/setters.
+     * Setting this to false will fallback to use reflection based introspection as Camel does in Camel 2.x.
+     */
+    boolean generateConfigurer() default true;
+
 }

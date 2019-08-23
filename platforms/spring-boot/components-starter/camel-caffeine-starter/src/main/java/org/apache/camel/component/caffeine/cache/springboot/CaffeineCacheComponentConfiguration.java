@@ -88,11 +88,11 @@ public class CaffeineCacheComponentConfiguration
         /**
          * The cache key type, default "java.lang.Object"
          */
-        private Class keyType = java.lang.Object.class;
+        private String keyType;
         /**
          * The cache value type, default "java.lang.Object"
          */
-        private Class valueType = java.lang.Object.class;
+        private String valueType;
         /**
          * To configure an already instantiated cache to be used
          */
@@ -160,19 +160,19 @@ public class CaffeineCacheComponentConfiguration
             this.key = key;
         }
 
-        public Class getKeyType() {
+        public String getKeyType() {
             return keyType;
         }
 
-        public void setKeyType(Class keyType) {
+        public void setKeyType(String keyType) {
             this.keyType = keyType;
         }
 
-        public Class getValueType() {
+        public String getValueType() {
             return valueType;
         }
 
-        public void setValueType(Class valueType) {
+        public void setValueType(String valueType) {
             this.valueType = valueType;
         }
 

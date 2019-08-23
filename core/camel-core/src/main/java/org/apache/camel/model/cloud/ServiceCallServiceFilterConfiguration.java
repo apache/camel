@@ -38,7 +38,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -163,7 +162,7 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
 
             try {
                 Map<String, Object> parameters = new HashMap<>();
-                IntrospectionSupport.getProperties(this, parameters, null, false);
+                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null, false);
 
                 parameters.replaceAll((k, v) -> {
                     if (v instanceof String) {

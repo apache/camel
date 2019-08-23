@@ -132,11 +132,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * If true then the CMS message is base 64 encoded and must be decoded
          * during the processing. Default value is false.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: decrypt_verify
          */
-        default CryptoCmsEndpointBuilder fromBase64(Boolean fromBase64) {
+        default CryptoCmsEndpointBuilder fromBase64(boolean fromBase64) {
             setProperty("fromBase64", fromBase64);
             return this;
         }
@@ -144,8 +144,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * If true then the CMS message is base 64 encoded and must be decoded
          * during the processing. Default value is false.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: decrypt_verify
          */
@@ -379,12 +378,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signatures. In the detached signature case, the header contains the
          * Signed Data object.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: verify
          */
         default CryptoCmsEndpointBuilder signedDataHeaderBase64(
-                Boolean signedDataHeaderBase64) {
+                boolean signedDataHeaderBase64) {
             setProperty("signedDataHeaderBase64", signedDataHeaderBase64);
             return this;
         }
@@ -394,8 +393,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signatures. In the detached signature case, the header contains the
          * Signed Data object.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: verify
          */
@@ -410,12 +408,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signer info matches with one of the specified certificates is
          * verified. Default value is true.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: verify
          */
         default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
-                Boolean verifySignaturesOfAllSigners) {
+                boolean verifySignaturesOfAllSigners) {
             setProperty("verifySignaturesOfAllSigners", verifySignaturesOfAllSigners);
             return this;
         }
@@ -425,8 +423,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signer info matches with one of the specified certificates is
          * verified. Default value is true.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: verify
          */

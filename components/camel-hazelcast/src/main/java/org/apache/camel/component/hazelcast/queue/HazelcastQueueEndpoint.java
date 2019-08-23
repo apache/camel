@@ -28,13 +28,15 @@ import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastOperation;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * The hazelcast-queue component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed queue.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-queue", title = "Hazelcast Queue", syntax = "hazelcast-queue:cacheName", label = "cache,datagrid")
 public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
-    
+
+    @UriParam
     private final HazelcastQueueConfiguration configuration;
 
     public HazelcastQueueEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName, final HazelcastQueueConfiguration configuration) {
@@ -42,6 +44,10 @@ public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
         this.configuration = configuration;
         setCommand(HazelcastCommand.queue);
         setDefaultOperation(HazelcastOperation.ADD);
+    }
+
+    public HazelcastQueueConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override

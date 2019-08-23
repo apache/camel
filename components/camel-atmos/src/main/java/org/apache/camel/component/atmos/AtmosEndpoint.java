@@ -27,6 +27,7 @@ import org.apache.camel.component.atmos.integration.producer.AtmosMoveProducer;
 import org.apache.camel.component.atmos.integration.producer.AtmosPutProducer;
 import org.apache.camel.component.atmos.util.AtmosException;
 import org.apache.camel.component.atmos.util.AtmosOperation;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;

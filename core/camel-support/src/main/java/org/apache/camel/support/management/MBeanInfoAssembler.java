@@ -22,7 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
 import javax.management.Descriptor;
 import javax.management.IntrospectionException;
 import javax.management.JMException;
@@ -32,13 +31,15 @@ import javax.management.modelmbean.ModelMBeanInfoSupport;
 import javax.management.modelmbean.ModelMBeanNotificationInfo;
 import javax.management.modelmbean.ModelMBeanOperationInfo;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedNotification;
 import org.apache.camel.api.management.ManagedNotifications;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -96,7 +97,8 @@ public class MBeanInfoAssembler implements Service {
      * @return the model info, or <tt>null</tt> if not possible to create, for example due the managed bean is a proxy class
      * @throws JMException is thrown if error creating the model info
      */
-    public ModelMBeanInfo getMBeanInfo(Object defaultManagedBean, Object customManagedBean, String objectName) throws JMException {
+    public ModelMBeanInfo getMBeanInfo(CamelContext camelContext, Object defaultManagedBean, Object customManagedBean, String objectName) throws JMException {
+
         // skip proxy classes
         if (defaultManagedBean != null && Proxy.isProxyClass(defaultManagedBean.getClass())) {
             LOG.trace("Skip creating ModelMBeanInfo due proxy class {}", defaultManagedBean.getClass());
@@ -112,7 +114,7 @@ public class MBeanInfoAssembler implements Service {
 
         // extract details from default managed bean
         if (defaultManagedBean != null) {
-            extractAttributesAndOperations(defaultManagedBean.getClass(), attributes, operations);
+            extractAttributesAndOperations(camelContext, defaultManagedBean.getClass(), attributes, operations);
             extractMbeanAttributes(defaultManagedBean, attributes, mBeanAttributes, mBeanOperations);
             extractMbeanOperations(defaultManagedBean, operations, mBeanOperations);
             extractMbeanNotifications(defaultManagedBean, mBeanNotifications);
@@ -120,7 +122,7 @@ public class MBeanInfoAssembler implements Service {
 
         // extract details from custom managed bean
         if (customManagedBean != null) {
-            extractAttributesAndOperations(customManagedBean.getClass(), attributes, operations);
+            extractAttributesAndOperations(camelContext, customManagedBean.getClass(), attributes, operations);
             extractMbeanAttributes(customManagedBean, attributes, mBeanAttributes, mBeanOperations);
             extractMbeanOperations(customManagedBean, operations, mBeanOperations);
             extractMbeanNotifications(customManagedBean, mBeanNotifications);
@@ -138,10 +140,10 @@ public class MBeanInfoAssembler implements Service {
         return info;
     }
 
-    private void extractAttributesAndOperations(Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
+    private void extractAttributesAndOperations(CamelContext camelContext, Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
         MBeanAttributesAndOperations cached = cache.get(managedClass);
         if (cached == null) {
-            doExtractAttributesAndOperations(managedClass, attributes, operations);
+            doExtractAttributesAndOperations(camelContext, managedClass, attributes, operations);
             cached = new MBeanAttributesAndOperations();
             cached.attributes = new LinkedHashMap<>(attributes);
             cached.operations = new LinkedHashSet<>(operations);
@@ -158,9 +160,9 @@ public class MBeanInfoAssembler implements Service {
         operations.addAll(cached.operations);
     }
 
-    private void doExtractAttributesAndOperations(Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
+    private void doExtractAttributesAndOperations(CamelContext camelContext, Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
         // extract the class
-        doDoExtractAttributesAndOperations(managedClass, attributes, operations);
+        doDoExtractAttributesAndOperations(camelContext, managedClass, attributes, operations);
 
         // and then any sub classes
         if (managedClass.getSuperclass() != null) {
@@ -168,7 +170,7 @@ public class MBeanInfoAssembler implements Service {
             // skip any JDK classes
             if (!clazz.getName().startsWith("java")) {
                 LOG.trace("Extracting attributes and operations from sub class: {}", clazz);
-                doExtractAttributesAndOperations(clazz, attributes, operations);
+                doExtractAttributesAndOperations(camelContext, clazz, attributes, operations);
             }
         }
 
@@ -181,18 +183,18 @@ public class MBeanInfoAssembler implements Service {
                     continue;
                 }
                 LOG.trace("Extracting attributes and operations from implemented interface: {}", clazz);
-                doExtractAttributesAndOperations(clazz, attributes, operations);
+                doExtractAttributesAndOperations(camelContext, clazz, attributes, operations);
             }
         }
     }
 
-    private void doDoExtractAttributesAndOperations(Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
+    private void doDoExtractAttributesAndOperations(CamelContext camelContext, Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
         LOG.trace("Extracting attributes and operations from class: {}", managedClass);
 
         // introspect the class, and leverage the cache to have better performance
-        IntrospectionSupport.ClassInfo cache = IntrospectionSupport.cacheClass(managedClass);
+        BeanIntrospection.ClassInfo cache = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().cacheClass(managedClass);
 
-        for (IntrospectionSupport.MethodInfo cacheInfo : cache.methods) {
+        for (BeanIntrospection.MethodInfo cacheInfo : cache.methods) {
             // must be from declaring class
             if (cacheInfo.method.getDeclaringClass() != managedClass) {
                 continue;

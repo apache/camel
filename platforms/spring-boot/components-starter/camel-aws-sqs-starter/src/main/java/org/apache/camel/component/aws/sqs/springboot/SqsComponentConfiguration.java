@@ -18,6 +18,8 @@ package org.apache.camel.component.aws.sqs.springboot;
 
 import javax.annotation.Generated;
 import com.amazonaws.services.sqs.AmazonSQS;
+import org.apache.camel.component.aws.sqs.MessageDeduplicationIdStrategy;
+import org.apache.camel.component.aws.sqs.MessageGroupIdStrategy;
 import org.apache.camel.component.aws.sqs.SqsOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -261,7 +263,7 @@ public class SqsComponentConfiguration
          * *useExchangeId*, *usePropertyValue*. For the *usePropertyValue*
          * option, the value of property "CamelAwsMessageGroupId" will be used.
          */
-        private String messageGroupIdStrategy;
+        private MessageGroupIdStrategy messageGroupIdStrategy;
         /**
          * Only for FIFO queues. Strategy for setting the messageDeduplicationId
          * on the message. Can be one of the following options: *useExchangeId*,
@@ -269,7 +271,7 @@ public class SqsComponentConfiguration
          * *useContentBasedDeduplication* option, no messageDeduplicationId will
          * be set on the message.
          */
-        private String messageDeduplicationIdStrategy = "useExchangeId";
+        private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy;
         /**
          * The operation to do in case the user don't want to send only a
          * message
@@ -515,20 +517,21 @@ public class SqsComponentConfiguration
             this.serverSideEncryptionEnabled = serverSideEncryptionEnabled;
         }
 
-        public String getMessageGroupIdStrategy() {
+        public MessageGroupIdStrategy getMessageGroupIdStrategy() {
             return messageGroupIdStrategy;
         }
 
-        public void setMessageGroupIdStrategy(String messageGroupIdStrategy) {
+        public void setMessageGroupIdStrategy(
+                MessageGroupIdStrategy messageGroupIdStrategy) {
             this.messageGroupIdStrategy = messageGroupIdStrategy;
         }
 
-        public String getMessageDeduplicationIdStrategy() {
+        public MessageDeduplicationIdStrategy getMessageDeduplicationIdStrategy() {
             return messageDeduplicationIdStrategy;
         }
 
         public void setMessageDeduplicationIdStrategy(
-                String messageDeduplicationIdStrategy) {
+                MessageDeduplicationIdStrategy messageDeduplicationIdStrategy) {
             this.messageDeduplicationIdStrategy = messageDeduplicationIdStrategy;
         }
 

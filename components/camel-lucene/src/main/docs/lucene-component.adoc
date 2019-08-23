@@ -132,11 +132,11 @@ The component supports 11 options, which are listed below.
 | *camel.component.lucene.config.analyzer* | An Analyzer builds TokenStreams, which analyze text. It thus represents a policy for extracting index terms from text. The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box |  | Analyzer
 | *camel.component.lucene.config.authority* | Operation to do such as insert or query. |  | String
 | *camel.component.lucene.config.host* | The URL to the lucene server |  | String
-| *camel.component.lucene.config.index-directory* | A file system directory in which index files are created upon analysis of the document by the specified analyzer |  | File
+| *camel.component.lucene.config.index-dir* | A file system directory in which index files are created upon analysis of the document by the specified analyzer |  | File
 | *camel.component.lucene.config.lucene-version* | An integer value that limits the result set of the search operation |  | Version
 | *camel.component.lucene.config.max-hits* | An integer value that limits the result set of the search operation |  | Integer
 | *camel.component.lucene.config.operation* | Operation to do such as insert or query. |  | LuceneOperation
-| *camel.component.lucene.config.source-directory* | An optional directory containing files to be used to be analyzed and added to the index at producer startup. |  | File
+| *camel.component.lucene.config.src-dir* | An optional directory containing files to be used to be analyzed and added to the index at producer startup. |  | File
 | *camel.component.lucene.config.uri* |  |  | URI
 | *camel.component.lucene.enabled* | Enable lucene component | true | Boolean
 |===

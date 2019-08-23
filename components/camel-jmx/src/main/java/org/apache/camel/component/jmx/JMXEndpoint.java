@@ -507,7 +507,7 @@ public class JMXEndpoint extends DefaultEndpoint {
         stringToCompare = aStringToCompare;
     }
     
-    public boolean getTestConnectionOnStartup() {
+    public boolean isTestConnectionOnStartup() {
         return this.testConnectionOnStartup;
     }
     
@@ -515,7 +515,7 @@ public class JMXEndpoint extends DefaultEndpoint {
         this.testConnectionOnStartup = testConnectionOnStartup;
     }
     
-    public boolean getReconnectOnConnectionFailure() {
+    public boolean isReconnectOnConnectionFailure() {
         return this.reconnectOnConnectionFailure;
     }
     

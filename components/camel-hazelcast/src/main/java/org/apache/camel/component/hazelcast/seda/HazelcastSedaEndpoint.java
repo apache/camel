@@ -26,6 +26,7 @@ import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -35,6 +36,8 @@ import org.apache.camel.util.ObjectHelper;
 public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
 
     private final BlockingQueue<Object> queue;
+
+    @UriParam
     private final HazelcastSedaConfiguration configuration;
 
     public HazelcastSedaEndpoint(final HazelcastInstance hazelcastInstance, final String uri, final HazelcastDefaultComponent component, final HazelcastSedaConfiguration configuration) {

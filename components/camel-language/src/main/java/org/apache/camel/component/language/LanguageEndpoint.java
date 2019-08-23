@@ -33,6 +33,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -112,10 +114,13 @@ public class LanguageEndpoint extends ResourceEndpoint {
      */
     protected String resolveScript(String script) throws IOException {
         String answer;
+
         if (ResourceHelper.hasScheme(script)) {
             InputStream is = loadResource(script);
             answer = getCamelContext().getTypeConverter().convertTo(String.class, is);
             IOHelper.close(is);
+        } else if (EndpointHelper.isReferenceParameter(script)) {
+            answer = CamelContextHelper.mandatoryLookup(getCamelContext(), script, String.class);
         } else {
             answer = script;
         }

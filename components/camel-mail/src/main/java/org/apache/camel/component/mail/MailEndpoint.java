@@ -55,7 +55,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     private int maxMessagesPerPoll;
     @UriParam(label = "consumer,filter", prefix = "searchTerm.", multiValue = true)
     private SearchTerm searchTerm;
-    @UriParam(label = "consumer,sort", javaType = "java.lang.String")
+    @UriParam(label = "consumer,sort")
     private SortTerm[] sortTerm;
     @UriParam(label = "consumer,advanced")
     private MailBoxPostProcessAction postProcessAction;

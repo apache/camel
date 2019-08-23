@@ -40,7 +40,6 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -179,10 +178,10 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         // 2. then the getter with Endpoint as postfix
         // 3. then if start with on then try step 1 and 2 again, but omit the on prefix
         try {
-            Object value = IntrospectionSupport.getOrElseProperty(bean, propertyName, null);
+            Object value = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(bean, propertyName, null);
             if (value == null) {
                 // try endpoint as postfix
-                value = IntrospectionSupport.getOrElseProperty(bean, propertyName + "Endpoint", null);
+                value = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(bean, propertyName + "Endpoint", null);
             }
             if (value == null && propertyName.startsWith("on")) {
                 // retry but without the on as prefix

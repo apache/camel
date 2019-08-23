@@ -40,13 +40,13 @@ public class EndpointOptionComparatorTest {
         String group4 = EndpointHelper.labelAsGroupName(label4, false, false);
 
         EndpointOption op1 = new EndpointOption("first", "First", "string", true, "", "", "blah", null, null, false,
-            false, null, false, group1, label1, false, null);
+            false, null, false, group1, label1, false, null, null, null);
         EndpointOption op2 = new EndpointOption("synchronous", "Synchronous", "string", true, "", "", "blah", null, null, false,
-            false, null, false, group2, label2, false, null);
+            false, null, false, group2, label2, false, null, null, null);
         EndpointOption op3 = new EndpointOption("second", "Second", "string", true, "", "", "blah", null, null, false,
-            false, null, false, group3, label3, false, null);
+            false, null, false, group3, label3, false, null, null, null);
         EndpointOption op4 = new EndpointOption("country", "Country", "string", true, "", "", "blah", null, null, false,
-            false, null, false, group4, label4, false, null);
+            false, null, false, group4, label4, false, null, null, null);
 
         List<EndpointOption> list = new ArrayList<>();
         list.add(op1);

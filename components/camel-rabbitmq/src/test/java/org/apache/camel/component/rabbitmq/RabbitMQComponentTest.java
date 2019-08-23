@@ -23,19 +23,16 @@ import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+public class RabbitMQComponentTest extends CamelTestSupport {
 
-public class RabbitMQComponentTest {
-
-    private CamelContext context = Mockito.mock(CamelContext.class);
+    @Override
+    public boolean isUseRouteBuilder() {
+        return super.isUseRouteBuilder();
+    }
 
     @Test
     public void testDefaultProperties() throws Exception {
@@ -100,10 +97,9 @@ public class RabbitMQComponentTest {
         String uri = "rabbitmq:special.host:14/queuey";
         String remaining = "special.host:14/queuey";
 
-        RabbitMQComponent comp = new RabbitMQComponent(context);
-        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
+        RabbitMQComponent comp = context.getComponent("rabbitmq", RabbitMQComponent.class);
         comp.setAutoDetectConnectionFactory(false);
-        return comp.createEndpoint(uri, remaining, params);
+        return (RabbitMQEndpoint) comp.createEndpoint(uri, params);
     }
 
     @Test

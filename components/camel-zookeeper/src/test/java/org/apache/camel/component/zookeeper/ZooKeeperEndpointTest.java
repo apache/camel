@@ -22,23 +22,11 @@ import org.junit.Test;
 public class ZooKeeperEndpointTest extends CamelTestSupport {
 
     @Test
-    public void awaitExistenceOptionOnEndpoint() {
-        ZooKeeperEndpoint endpoint = context.getEndpoint("zookeeper:someserver/zoo", ZooKeeperEndpoint.class);
-        assertTrue("The awaitExistence option should default to true", endpoint.getAwaitExistence());
-
-        endpoint = context.getEndpoint("zookeeper:someserver/zoo?awaitExistence=true", ZooKeeperEndpoint.class);
-        assertTrue("The awaitExistence option should be true", endpoint.getAwaitExistence());
-
-        endpoint = context.getEndpoint("zookeeper:someserver/zoo?awaitExistence=false", ZooKeeperEndpoint.class);
-        assertFalse("The awaitExistence option should be false", endpoint.getAwaitExistence());
-    }
-    
     public void multipleZooKeeperServers() {
         ZooKeeperEndpoint endpoint = context.getEndpoint("zookeeper:someserver1,someserver2:1234/zoo", ZooKeeperEndpoint.class);
         assertEquals("Get wrong number of servers", 2, endpoint.getConfiguration().getServers().size());
         assertEquals("The first server address is wrong", "someserver1", endpoint.getConfiguration().getServers().get(0));
-        assertEquals("The second server address is wrong", "someserver2:1234", endpoint.getConfiguration().getServers().get(0));
-        
+        assertEquals("The second server address is wrong", "someserver2:1234", endpoint.getConfiguration().getServers().get(1));
     }
 
 }

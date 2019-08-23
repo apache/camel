@@ -49,7 +49,7 @@ public class RabbitMQComponent extends DefaultComponent {
     @Metadata(label = "common", defaultValue = ConnectionFactory.DEFAULT_VHOST)
     private String vhost = ConnectionFactory.DEFAULT_VHOST;
     @Metadata(label = "common")
-    private Address[] addresses;
+    private String addresses;
     @Metadata(label = "common")
     private ConnectionFactory connectionFactory;
     @Metadata(label = "consumer", defaultValue = "true")
@@ -324,22 +324,10 @@ public class RabbitMQComponent extends DefaultComponent {
      * looks like "server1:12345, server2:12345"
      */
     public void setAddresses(String addresses) {
-        Address[] addressArray = Address.parseAddresses(addresses);
-        if (addressArray.length > 0) {
-            this.addresses = addressArray;
-        }
-    }
-
-    /**
-     * If this option is set, camel-rabbitmq will try to create connection based
-     * on the setting of option addresses. The addresses value is a string which
-     * looks like "server1:12345, server2:12345"
-     */
-    public void setAddresses(Address[] addresses) {
         this.addresses = addresses;
     }
 
-    public Address[] getAddresses() {
+    public String getAddresses() {
         return addresses;
     }
 

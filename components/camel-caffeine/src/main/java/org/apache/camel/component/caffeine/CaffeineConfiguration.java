@@ -32,10 +32,10 @@ public class CaffeineConfiguration implements Cloneable {
     private String action;
     @UriParam(label = "producer")
     private Object key;
-    @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> keyType = Object.class;
-    @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> valueType = Object.class;
+    @UriParam(label = "advanced")
+    private String keyType;
+    @UriParam(label = "advanced")
+    private String valueType;
     @UriParam(label = "producer")
     private Cache cache;
     @UriParam(label = "producer")
@@ -96,25 +96,25 @@ public class CaffeineConfiguration implements Cloneable {
         this.key = key;
     }
 
-    public Class<?> getKeyType() {
+    public String getKeyType() {
         return keyType;
     }
 
     /**
      * The cache key type, default "java.lang.Object"
      */
-    public void setKeyType(Class<?> keyType) {
+    public void setKeyType(String keyType) {
         this.keyType = keyType;
     }
 
-    public Class<?> getValueType() {
+    public String getValueType() {
         return valueType;
     }
 
     /**
      * The cache value type, default "java.lang.Object"
      */
-    public void setValueType(Class<?> valueType) {
+    public void setValueType(String valueType) {
         this.valueType = valueType;
     }
 

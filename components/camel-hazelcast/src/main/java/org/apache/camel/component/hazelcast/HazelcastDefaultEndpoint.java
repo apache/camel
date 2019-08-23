@@ -43,12 +43,6 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     protected String hazelcastInstanceName;
     @UriParam
     private HazelcastOperation defaultOperation;
-    @UriParam
-    private HazelcastSedaConfiguration hazelcastSedaConfiguration; // to include component schema docs
-    @UriParam
-    private HazelcastTopicConfiguration hazelcastTopicConfiguration; 
-    @UriParam
-    private HazelcastQueueConfiguration hazelcastQueueConfiguration; 
 
     public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
         this(hazelcastInstance, endpointUri, component, null);

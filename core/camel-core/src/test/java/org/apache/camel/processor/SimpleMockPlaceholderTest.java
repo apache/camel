@@ -68,7 +68,7 @@ public class SimpleMockPlaceholderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("{{foo}}").to("log:bar").to("mock:{{end}}");
+                from("direct:start?block=true").to("{{foo}}?showAll=true").to("log:bar?groupSize=3").to("mock:{{end}}");
             }
         };
     }

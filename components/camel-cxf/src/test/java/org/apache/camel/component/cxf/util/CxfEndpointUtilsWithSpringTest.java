@@ -82,7 +82,7 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
     @Test
     public void testGetProperties() throws Exception {
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint)createEndpoint(getEndpointURI());
-        QName service = endpoint.getServiceName();
+        QName service = endpoint.getServiceNameAsQName();
         assertEquals("We should get the right service name", SERVICE_NAME, service);
         assertEquals("The cxf endpoint's DataFromat should be RAW", DataFormat.RAW,
                      endpoint.getDataFormat().dealias());

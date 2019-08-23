@@ -39,7 +39,7 @@ public interface TikaEndpointBuilderFactory {
             return (AdvancedTikaEndpointBuilder) this;
         }
         /**
-         * Tika Config.
+         * To use a custom Tika config.
          * 
          * The option is a: <code>org.apache.tika.config.TikaConfig</code> type.
          * 
@@ -50,7 +50,7 @@ public interface TikaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tika Config.
+         * To use a custom Tika config.
          * 
          * The option will be converted to a
          * <code>org.apache.tika.config.TikaConfig</code> type.
@@ -62,7 +62,7 @@ public interface TikaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tika Config Uri: The URI of tika-config.xml.
+         * Tika Config Uri: The URI of tika-config.xml file to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -74,7 +74,7 @@ public interface TikaEndpointBuilderFactory {
         }
         /**
          * Tika Parse Output Encoding - Used to specify the character encoding
-         * of the parsed output. Defaults to Charset.defaultCharset() .
+         * of the parsed output. Defaults to Charset.defaultCharset().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -204,7 +204,7 @@ public interface TikaEndpointBuilderFactory {
      * Syntax: <code>tika:operation</code>
      * 
      * Path parameter: operation (required)
-     * Tika Operation. parse or detect
+     * Tika Operation - parse or detect
      * The value can be one of: parse, detect
      */
     default TikaEndpointBuilder tika(String path) {

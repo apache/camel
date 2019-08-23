@@ -84,9 +84,13 @@ public class SolrEndpoint extends DefaultEndpoint {
     /**
      * Set the ZooKeeper host information which the solrCloud could use, such as "zkhost=localhost:8123".
      */
-    public void setZkHost(String zkHost) throws UnsupportedEncodingException {
-        String decoded = URLDecoder.decode(zkHost, "UTF-8");
-        this.zkHost = decoded;
+    public void setZkHost(String zkHost) {
+        try {
+            String decoded = URLDecoder.decode(zkHost, "UTF-8");
+            this.zkHost = decoded;
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getZkHost() {

@@ -114,7 +114,7 @@ public class ElasticsearchProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        if (configuration.getDisconnect() && client == null) {
+        if (configuration.isDisconnect() && client == null) {
             startClient();
         }
         RestHighLevelClient restHighLevelClient = new HighLevelClient(client);
@@ -189,7 +189,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (operation == ElasticsearchOperation.Search) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
             // is it a scroll request ?
-            boolean useScroll = message.getHeader(PARAM_SCROLL, configuration.getUseScroll(), Boolean.class);
+            boolean useScroll = message.getHeader(PARAM_SCROLL, configuration.isUseScroll(), Boolean.class);
             if (useScroll) {
                 int scrollKeepAliveMs = message.getHeader(PARAM_SCROLL_KEEP_ALIVE_MS, configuration.getScrollKeepAliveMs(), Integer.class);
                 ElasticsearchScrollRequestIterator scrollRequestIterator = new ElasticsearchScrollRequestIterator(searchRequest, restHighLevelClient, scrollKeepAliveMs, exchange);
@@ -222,7 +222,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         if (configWaitForActiveShards) {
             message.removeHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS);
         }
-        if (configuration.getDisconnect()) {
+        if (configuration.isDisconnect()) {
             IOHelper.close(client);
             IOHelper.close(restHighLevelClient);
             client = null;
@@ -238,7 +238,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         super.doStart();
-        if (!configuration.getDisconnect()) {
+        if (!configuration.isDisconnect()) {
             startClient();
         }
     }

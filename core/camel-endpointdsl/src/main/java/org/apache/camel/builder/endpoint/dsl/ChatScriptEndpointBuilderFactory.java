@@ -40,14 +40,26 @@ public interface ChatScriptEndpointBuilderFactory {
             return (AdvancedChatScriptEndpointBuilder) this;
         }
         /**
+         * Username who initializes the CS conversation. To be set when chat is
+         * initialized from camel route.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default ChatScriptEndpointBuilder chatUserName(String chatUserName) {
+            setProperty("chatUserName", chatUserName);
+            return this;
+        }
+        /**
          * Issues :reset command to start a new conversation everytime.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Group: reset
+         * Group: producer
          */
-        default ChatScriptEndpointBuilder resetchat(boolean resetchat) {
-            setProperty("resetchat", resetchat);
+        default ChatScriptEndpointBuilder resetChat(boolean resetChat) {
+            setProperty("resetChat", resetChat);
             return this;
         }
         /**
@@ -55,22 +67,10 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Group: reset
+         * Group: producer
          */
-        default ChatScriptEndpointBuilder resetchat(String resetchat) {
-            setProperty("resetchat", resetchat);
-            return this;
-        }
-        /**
-         * Username who initializes the CS conversation. To be set when chat is
-         * initialized from camel route.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: username
-         */
-        default ChatScriptEndpointBuilder chatUserName(String chatUserName) {
-            setProperty("chatUserName", chatUserName);
+        default ChatScriptEndpointBuilder resetChat(String resetChat) {
+            setProperty("resetChat", resetChat);
             return this;
         }
     }

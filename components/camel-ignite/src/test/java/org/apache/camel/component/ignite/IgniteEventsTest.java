@@ -86,35 +86,6 @@ public class IgniteEventsTest extends AbstractIgniteTest {
     }
 
     @Test
-    public void testConsumeFilteredEventsWithRef() throws Exception {
-        context.getRegistry().bind("filter", Sets.newHashSet(EventType.EVT_CACHE_OBJECT_PUT));
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("ignite-events:" + resourceUid + "?events=#filter").to("mock:test2");
-            }
-        });
-
-        getMockEndpoint("mock:test2").expectedMessageCount(2);
-
-        IgniteCache<String, String> cache = ignite().getOrCreateCache(resourceUid);
-
-        // Generate cache activity.
-        cache.put(resourceUid, "123");
-        cache.get(resourceUid);
-        cache.remove(resourceUid);
-        cache.get(resourceUid);
-        cache.put(resourceUid, "123");
-
-        assertMockEndpointsSatisfied();
-
-        List<Integer> eventTypes = receivedEventTypes("mock:test2");
-
-        assert_().that(eventTypes).containsExactly(EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_PUT).inOrder();
-    }
-
-    @Test
     public void testConsumeFilteredEventsInline() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

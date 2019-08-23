@@ -200,7 +200,7 @@ public class Olingo2Configuration {
     /**
      * Filter flag for filtering out already seen results
      */
-    public boolean getFilterAlreadySeen() {
+    public boolean isFilterAlreadySeen() {
         return filterAlreadySeen;
     }
 

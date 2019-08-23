@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.net.URL;
 import java.util.Set;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
@@ -107,20 +106,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The method definition (see Method ID).
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * 
-         * Group: common
-         */
-        default MiloClientEndpointConsumerBuilder method(Object method) {
-            setProperty("method", method);
-            return this;
-        }
-        /**
-         * The method definition (see Method ID).
-         * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -131,20 +117,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The node definition (see Node ID).
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * 
-         * Group: common
-         */
-        default MiloClientEndpointConsumerBuilder node(Object node) {
-            setProperty("node", node);
-            return this;
-        }
-        /**
-         * The node definition (see Node ID).
-         * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -337,18 +310,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The URL where the key should be loaded from.
          * 
-         * The option is a: <code>java.net.URL</code> type.
-         * 
-         * Group: client
-         */
-        default MiloClientEndpointConsumerBuilder keyStoreUrl(URL keyStoreUrl) {
-            setProperty("keyStoreUrl", keyStoreUrl);
-            return this;
-        }
-        /**
-         * The URL where the key should be loaded from.
-         * 
-         * The option will be converted to a <code>java.net.URL</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: client
          */
@@ -694,20 +656,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The method definition (see Method ID).
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * 
-         * Group: common
-         */
-        default MiloClientEndpointProducerBuilder method(Object method) {
-            setProperty("method", method);
-            return this;
-        }
-        /**
-         * The method definition (see Method ID).
-         * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -718,20 +667,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The node definition (see Node ID).
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * 
-         * Group: common
-         */
-        default MiloClientEndpointProducerBuilder node(Object node) {
-            setProperty("node", node);
-            return this;
-        }
-        /**
-         * The node definition (see Node ID).
-         * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -928,18 +864,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The URL where the key should be loaded from.
          * 
-         * The option is a: <code>java.net.URL</code> type.
-         * 
-         * Group: client
-         */
-        default MiloClientEndpointProducerBuilder keyStoreUrl(URL keyStoreUrl) {
-            setProperty("keyStoreUrl", keyStoreUrl);
-            return this;
-        }
-        /**
-         * The URL where the key should be loaded from.
-         * 
-         * The option will be converted to a <code>java.net.URL</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: client
          */
@@ -1228,20 +1153,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The method definition (see Method ID).
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * 
-         * Group: common
-         */
-        default MiloClientEndpointBuilder method(Object method) {
-            setProperty("method", method);
-            return this;
-        }
-        /**
-         * The method definition (see Method ID).
-         * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -1252,20 +1164,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The node definition (see Node ID).
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * 
-         * Group: common
-         */
-        default MiloClientEndpointBuilder node(Object node) {
-            setProperty("node", node);
-            return this;
-        }
-        /**
-         * The node definition (see Node ID).
-         * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -1417,18 +1316,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The URL where the key should be loaded from.
          * 
-         * The option is a: <code>java.net.URL</code> type.
-         * 
-         * Group: client
-         */
-        default MiloClientEndpointBuilder keyStoreUrl(URL keyStoreUrl) {
-            setProperty("keyStoreUrl", keyStoreUrl);
-            return this;
-        }
-        /**
-         * The URL where the key should be loaded from.
-         * 
-         * The option will be converted to a <code>java.net.URL</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: client
          */

@@ -36,18 +36,18 @@ import org.optaplanner.core.api.solver.SolverFactory;
 public class OptaPlannerEndpoint extends DefaultEndpoint {
     private static final Map<String, Solver<Object>> SOLVERS = new HashMap<>();
 
-    @UriParam
-    private OptaPlannerConfiguration configuration;
     private SolverFactory<Object> solverFactory;
 
-    public OptaPlannerEndpoint() {
-    }
+    @UriParam
+    private OptaPlannerConfiguration configuration;
 
     public OptaPlannerEndpoint(String uri, Component component, OptaPlannerConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
-        solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile(), classLoader);
+    }
+
+    public OptaPlannerConfiguration getConfiguration() {
+        return configuration;
     }
 
     protected Solver<Object> getOrCreateSolver(String solverId) throws Exception {
@@ -79,6 +79,14 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new OptaPlannerConsumer(this, processor, configuration);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
+        solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile(), classLoader);
     }
 
     @Override

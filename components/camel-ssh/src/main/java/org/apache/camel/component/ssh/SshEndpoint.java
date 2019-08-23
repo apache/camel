@@ -35,7 +35,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @UriParam
-    private SshConfiguration sshConfiguration;
+    private SshConfiguration configuration;
 
     public SshEndpoint() {
     }
@@ -46,7 +46,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
     public SshEndpoint(String uri, SshComponent component, SshConfiguration configuration) {
         super(uri, component);
-        this.sshConfiguration = configuration;
+        this.configuration = configuration;
     }
 
     @Override
@@ -68,11 +68,11 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     }
 
     public SshConfiguration getConfiguration() {
-        return sshConfiguration;
+        return configuration;
     }
 
     public void setConfiguration(SshConfiguration configuration) {
-        this.sshConfiguration = configuration;
+        this.configuration = configuration;
     }
 
     public String getHost() {

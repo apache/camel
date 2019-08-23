@@ -281,13 +281,11 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
         Map<String, Object> params = determineEndpointParameters(swagger, operation);
         boolean hasHost = params.containsKey("host");
-        setProperties(endpoint, params);
-
-        // ensure rest configuration is available
-//        final String componentName = determineComponentName();
-//        if (componentName != null) {
-//            RestConfiguration config = camelContext.getRestConfiguration(componentName, true);
-//        }
+        if (endpoint instanceof DefaultEndpoint) {
+            // let the rest endpoint configure itself
+            DefaultEndpoint de = (DefaultEndpoint) endpoint;
+            de.setProperties(endpoint, params);
+        }
 
         // if there is a host then we should use this hardcoded host instead of any Header that may have an existing
         // Host header from some other HTTP input, and if so then lets remove it

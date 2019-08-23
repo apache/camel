@@ -56,7 +56,7 @@ public abstract class CryptoCmsUnmarshaller implements Processor {
             Message out = exchange.getOut();
             out.copyFrom(exchange.getIn());
 
-            if (config.isFromBase64(exchange)) {
+            if (config.isFromBase64()) {
                 stream = new Base64InputStream(stream);
             }
             Object result = unmarshalInternal(stream, exchange);

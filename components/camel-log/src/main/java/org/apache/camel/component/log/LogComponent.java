@@ -56,31 +56,27 @@ public class LogComponent extends DefaultComponent {
                 log.info("More than one {} instance found in the registry. Falling back to creating logger from URI {}.", Logger.class.getName(), uri);
             }
         }
-        
+
+        // first, try to pick up the ExchangeFormatter from the registry
+        ExchangeFormatter logFormatter = getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
+        if (logFormatter != null) {
+            setProperties(logFormatter, parameters);
+        } else if (exchangeFormatter != null) {
+            // do not set properties, the exchangeFormatter is explicitly set, therefore the
+            // user would have set its properties explicitly too
+            logFormatter = exchangeFormatter;
+        }
+
         LogEndpoint endpoint = new LogEndpoint(uri, this);
         endpoint.setLevel(level.name());
-        setProperties(endpoint, parameters);
-      
+        endpoint.setExchangeFormatter(logFormatter);
         if (providedLogger == null) {
             endpoint.setLoggerName(remaining);
         } else {
             endpoint.setProvidedLogger(providedLogger);
         }
+        setProperties(endpoint, parameters);
 
-        // first, try to pick up the ExchangeFormatter from the registry
-        ExchangeFormatter localFormatter = getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
-        if (localFormatter != null) {
-            setProperties(localFormatter, parameters);
-        } else if (localFormatter == null && exchangeFormatter != null) {
-            // do not set properties, the exchangeFormatter is explicitly set, therefore the
-            // user would have set its properties explicitly too
-            localFormatter = exchangeFormatter;
-        } else {
-            // if no formatter is available in the Registry, create a local one of the default type, for a single use
-            localFormatter = new DefaultExchangeFormatter();
-            setProperties(localFormatter, parameters);
-        }
-        endpoint.setLocalFormatter(localFormatter);
         return endpoint;
     }
 

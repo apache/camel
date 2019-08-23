@@ -531,14 +531,13 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointConsumerBuilder cxfEndpointConfigurer(
-                Object cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointConsumerBuilder cxfConfigurer(
+                Object cxfConfigurer) {
+            setProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**
@@ -549,14 +548,13 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointConsumerBuilder cxfEndpointConfigurer(
-                String cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointConsumerBuilder cxfConfigurer(
+                String cxfConfigurer) {
+            setProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**
@@ -1316,14 +1314,13 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointProducerBuilder cxfEndpointConfigurer(
-                Object cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointProducerBuilder cxfConfigurer(
+                Object cxfConfigurer) {
+            setProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**
@@ -1334,14 +1331,13 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointProducerBuilder cxfEndpointConfigurer(
-                String cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointProducerBuilder cxfConfigurer(
+                String cxfConfigurer) {
+            setProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**
@@ -1928,14 +1924,12 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointBuilder cxfEndpointConfigurer(
-                Object cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointBuilder cxfConfigurer(Object cxfConfigurer) {
+            setProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**
@@ -1946,14 +1940,12 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointBuilder cxfEndpointConfigurer(
-                String cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointBuilder cxfConfigurer(String cxfConfigurer) {
+            setProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**

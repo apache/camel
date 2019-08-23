@@ -70,8 +70,8 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         svrBean.setInvoker(new CxfConsumerInvoker(cxfEndpoint));
         Server server = svrBean.create();
         // Apply the server configurer if it is possible
-        if (cxfEndpoint.getCxfEndpointConfigurer() != null) {
-            cxfEndpoint.getCxfEndpointConfigurer().configureServer(server);
+        if (cxfEndpoint.getCxfConfigurer() != null) {
+            cxfEndpoint.getCxfConfigurer().configureServer(server);
         }
         server.getEndpoint().getEndpointInfo().setProperty("serviceClass", cxfEndpoint.getServiceClass());
         if (ObjectHelper.isNotEmpty(cxfEndpoint.getPublishedEndpointUrl())) {
@@ -288,7 +288,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
 
             camelExchange.setProperty(Message.MTOM_ENABLED, String.valueOf(endpoint.isMtomEnabled()));
 
-            if (endpoint.getMergeProtocolHeaders()) {
+            if (endpoint.isMergeProtocolHeaders()) {
                 camelExchange.setProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.TRUE);
             }
             // bind the CXF request into a Camel exchange

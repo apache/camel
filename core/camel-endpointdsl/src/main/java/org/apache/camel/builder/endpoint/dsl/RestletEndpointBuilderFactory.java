@@ -114,25 +114,9 @@ public interface RestletEndpointBuilderFactory {
          * endpoint. If both restletMethod and restletMethods options are
          * specified, the restletMethod setting is ignored. The possible methods
          * are: ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE.
+         * Multiple methods can be separated by comma.
          * 
-         * The option is a: <code>org.restlet.data.Method[]</code> type.
-         * 
-         * Group: consumer
-         */
-        default RestletEndpointConsumerBuilder restletMethods(
-                Object[] restletMethods) {
-            setProperty("restletMethods", restletMethods);
-            return this;
-        }
-        /**
-         * Specify one or more methods separated by commas (e.g.
-         * restletMethods=post,put) to be serviced by a restlet consumer
-         * endpoint. If both restletMethod and restletMethods options are
-         * specified, the restletMethod setting is ignored. The possible methods
-         * are: ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE.
-         * 
-         * The option will be converted to a
-         * <code>org.restlet.data.Method[]</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          */

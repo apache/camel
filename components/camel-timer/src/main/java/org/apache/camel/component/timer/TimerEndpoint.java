@@ -225,12 +225,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         this.pattern = pattern;
     }
 
-    public Timer getTimer(TimerConsumer consumer) {
-        if (timer != null) {
-            // use custom timer
-            return timer;
-        }
-        return getComponent().getTimer(consumer);
+    public Timer getTimer() {
+        return timer;
     }
 
     /**
@@ -238,6 +234,14 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      */
     public void setTimer(Timer timer) {
         this.timer = timer;
+    }
+
+    public Timer getTimer(TimerConsumer consumer) {
+        if (timer != null) {
+            // use custom timer
+            return timer;
+        }
+        return getComponent().getTimer(consumer);
     }
 
     public void removeTimer(TimerConsumer consumer) {

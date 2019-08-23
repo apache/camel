@@ -170,11 +170,11 @@ public class ElasticsearchConfiguration {
     /**
      * Enable SSL
      */
-    public Boolean getEnableSSL() {
+    public boolean isEnableSSL() {
         return enableSSL;
     }
 
-    public void setEnableSSL(Boolean enableSSL) {
+    public void setEnableSSL(boolean enableSSL) {
         this.enableSSL = enableSSL;
     }
 
@@ -192,11 +192,11 @@ public class ElasticsearchConfiguration {
     /**
      * Disconnect after it finish calling the producer
      */
-    public Boolean getDisconnect() {
+    public boolean isDisconnect() {
         return disconnect;
     }
 
-    public void setDisconnect(Boolean disconnect) {
+    public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
     }
 
@@ -237,7 +237,7 @@ public class ElasticsearchConfiguration {
     /**
      * Enable scroll usage
      */
-    public boolean getUseScroll() {
+    public boolean isUseScroll() {
         return useScroll;
     }
 

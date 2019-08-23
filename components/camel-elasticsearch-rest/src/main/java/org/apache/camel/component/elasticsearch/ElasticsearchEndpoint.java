@@ -42,6 +42,10 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
         this.client = client;
     }
 
+    public ElasticsearchConfiguration getConfiguration() {
+        return configuration;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         return new ElasticsearchProducer(this, configuration);

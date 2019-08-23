@@ -26,6 +26,7 @@ import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastOperation;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * The hazelcast-topic component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed topic.
@@ -33,6 +34,7 @@ import org.apache.camel.spi.UriEndpoint;
 @UriEndpoint(firstVersion = "2.15.0", scheme = "hazelcast-topic", title = "Hazelcast Topic", syntax = "hazelcast-topic:cacheName", label = "cache,datagrid")
 public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements MultipleConsumersSupport {
 
+    @UriParam
     private final HazelcastTopicConfiguration configuration;
     
     public HazelcastTopicEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName, final HazelcastTopicConfiguration configuration) {
@@ -40,6 +42,10 @@ public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements 
         this.configuration = configuration;
         setCommand(HazelcastCommand.topic);
         setDefaultOperation(HazelcastOperation.PUBLISH);
+    }
+
+    public HazelcastTopicConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override

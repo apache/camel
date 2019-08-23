@@ -42,7 +42,8 @@ public final class JsonSchemaHelper {
 
     public static String toJson(String name, String displayName, String kind, Boolean required, String type, String defaultValue, String description,
                                 Boolean deprecated, String deprecationNote, Boolean secret, String group, String label, boolean enumType, Set<String> enums,
-                                boolean oneOfType, Set<String> oneOffTypes, boolean asPredicate, String optionalPrefix, String prefix, boolean multiValue) {
+                                boolean oneOfType, Set<String> oneOffTypes, boolean asPredicate, String optionalPrefix, String prefix, boolean multiValue,
+                                String configurationClass, String configurtationField) {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
@@ -153,6 +154,15 @@ public final class JsonSchemaHelper {
             }
         }
 
+        if (!Strings.isNullOrEmpty(configurationClass)) {
+            sb.append(", \"configurationClass\": ");
+            sb.append(Strings.doubleQuote(configurationClass));
+        }
+        if (!Strings.isNullOrEmpty(configurtationField)) {
+            sb.append(", \"configurationField\": ");
+            sb.append(Strings.doubleQuote(configurtationField));
+        }
+
         if (!Strings.isNullOrEmpty(description)) {
             sb.append(", \"description\": ");
             String text = sanitizeDescription(description, false);
@@ -202,7 +212,6 @@ public final class JsonSchemaHelper {
      * @return  the json schema primitive type, or <tt>null</tt> if not a primitive
      */
     public static String getPrimitiveType(String name) {
-
         // special for byte[] or Object[] as its common to use
         if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
             return "string";

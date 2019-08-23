@@ -38,8 +38,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 
 /**
- * The defualt implementation fetches the private key and certificate from a
- * keystore.
+ * The defualt implementation fetches the private key and certificate from a keystore.
  */
 @UriParams
 public class DefaultEnvelopedDataDecryptorConfiguration extends DefaultCryptoCmsUnMarshallerConfiguration implements EnvelopedDataDecryptorConfiguration, Cloneable {
@@ -61,27 +60,25 @@ public class DefaultEnvelopedDataDecryptorConfiguration extends DefaultCryptoCms
         this.password = password;
     }
 
-    protected char[] getPassword(Exchange exchange) throws CryptoCmsException {
+    public char[] getPassword() {
         if (password == null) {
             if (getKeyStoreParameters() != null) {
                 String passwordS = getKeyStoreParameters().getPassword();
                 if (passwordS == null) {
-                    throw new CryptoCmsException("Password for private keys not configured");
+                    throw new RuntimeException("Password for private keys not configured");
                 } else {
                     return passwordS.toCharArray();
                 }
             } else {
-                throw new CryptoCmsException("Password for private keys not configured");
+                throw new RuntimeException("Password for private keys not configured");
             }
         } else {
             return password;
         }
-
     }
 
     @Override
     public Collection<PrivateKeyWithCertificate> getPrivateKeyCertificateCollection(Exchange exchange) throws CryptoCmsException {
-
         KeyStore keystore = getKeyStore();
         try {
             List<PrivateKeyWithCertificate> privateKeys = new ArrayList<>(keystore.size());
@@ -91,10 +88,8 @@ public class DefaultEnvelopedDataDecryptorConfiguration extends DefaultCryptoCms
                     // only key entries are relevant!
                     continue;
                 }
-                Key privateKey = keystore.getKey(alias, getPassword(exchange));
-                if (privateKey instanceof PrivateKey) { // we currently only
-                                                        // support
-                                                        // assymmetric keys
+                Key privateKey = keystore.getKey(alias, getPassword());
+                if (privateKey instanceof PrivateKey) { // we currently only support assymmetric keys
                     Certificate cert = keystore.getCertificate(alias);
                     if (cert instanceof X509Certificate) {
                         privateKeys.add(new PrivateKeyWithCertificate((PrivateKey)privateKey, (X509Certificate)cert));

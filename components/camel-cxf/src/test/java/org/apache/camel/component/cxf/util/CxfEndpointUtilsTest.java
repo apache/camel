@@ -66,7 +66,7 @@ public class CxfEndpointUtilsTest extends Assert {
     @Test
     public void testGetProperties() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI());
-        QName service = endpoint.getServiceName();
+        QName service = endpoint.getServiceNameAsQName();
         assertEquals("We should get the right service name", service, SERVICE_NAME);
     }
 

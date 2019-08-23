@@ -60,8 +60,8 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         assertEquals("Got the wrong continuationTimeout", 60000, routerEndpoint.getContinuationTimeout());
         
         CxfEndpoint myEndpoint = ctx.getBean("myEndpoint", CxfEndpoint.class);
-        assertEquals("Got the wrong endpointName", endpointName, myEndpoint.getPortName());
-        assertEquals("Got the wrong serviceName", serviceName, myEndpoint.getServiceName());
+        assertEquals("Got the wrong endpointName", endpointName, myEndpoint.getPortNameAsQName());
+        assertEquals("Got the wrong serviceName", serviceName, myEndpoint.getServiceNameAsQName());
         assertEquals("loggingFeatureEnabled should be true", true, myEndpoint.isLoggingFeatureEnabled());
         assertEquals("loggingSizeLimit should be set", 200, myEndpoint.getLoggingSizeLimit());
         assertTrue("We should get a soap binding", myEndpoint.getBindingConfig() instanceof SoapBindingConfiguration);

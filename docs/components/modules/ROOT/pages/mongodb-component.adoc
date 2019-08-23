@@ -101,7 +101,7 @@ with the following path and query parameters:
 | *createCollection* (common) | Create collection during initialisation if it doesn't exist. Default is true. | true | boolean
 | *database* (common) | Sets the name of the MongoDB database to target |  | String
 | *mongoConnection* (common) | Sets the Mongo instance that represents the backing connection |  | MongoClient
-| *operation* (common) | Sets the operation this endpoint will execute against MongoDB. For possible values, see MongoDbOperation. |  | MongoDbOperation
+| *operation* (common) | Sets the operation this endpoint will execute against MongoDB. |  | MongoDbOperation
 | *outputType* (common) | Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. DocumentList or MongoIterable applies to findAll and aggregate. Document applies to all other operations. |  | MongoDbOutputType
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *consumerType* (consumer) | Consumer type. |  | String

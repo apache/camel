@@ -73,4 +73,14 @@ public interface FactoryFinder {
      * @return the factory class
      */
     Optional<Class<?>> findClass(String key, String propertyPrefix, Class<?> clazz);
+
+    /**
+     * Finds the optional factory class using the key to lookup.
+     *
+     * @param key is the key to add to the path to find a text file containing the factory name
+     * @param propertyPrefix prefix on key
+     * @return the factory class if found, or <tt>null</tt> if no class existed
+     */
+    Optional<Class<?>> findOptionalClass(String key, String propertyPrefix);
+
 }

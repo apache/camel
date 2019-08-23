@@ -39,8 +39,8 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     @BindToRegistry("ehcache")
     public Component createEhcacheComponent() throws Exception {
         EhcacheComponent component = new EhcacheComponent();
-        component.getConfiguration().setKeyType(String.class);
-        component.getConfiguration().setValueType(String.class);
+        component.getConfiguration().setKeyType("java.lang.String");
+        component.getConfiguration().setValueType("java.lang.String");
         component.getConfiguration().setCacheManager(
             CacheManagerBuilder.newCacheManagerBuilder()
                 .withCache(

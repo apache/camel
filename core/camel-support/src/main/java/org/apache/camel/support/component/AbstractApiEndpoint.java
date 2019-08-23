@@ -32,7 +32,6 @@ import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,9 +125,9 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
         // compute endpoint property names and values
         this.endpointPropertyNames = Collections.unmodifiableSet(
-            getPropertiesHelper().getEndpointPropertyNames(configuration));
+            getPropertiesHelper().getEndpointPropertyNames(getCamelContext(), configuration));
         final HashMap<String, Object> properties = new HashMap<>();
-        getPropertiesHelper().getEndpointProperties(configuration, properties);
+        getPropertiesHelper().getEndpointProperties(getCamelContext(), configuration, properties);
         this.endpointProperties = Collections.unmodifiableMap(properties);
 
         // get endpoint property names

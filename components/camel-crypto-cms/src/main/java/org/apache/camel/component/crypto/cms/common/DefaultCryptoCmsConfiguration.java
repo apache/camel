@@ -39,13 +39,13 @@ public abstract class DefaultCryptoCmsConfiguration {
      * public keys, decryptor private keys depending on the operation. Use
      * either this parameter or the parameter 'keystore'.
      */
-    public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) throws CryptoCmsException {
+    public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) {
         this.keyStoreParameters = keyStoreParameters;
         if (keyStoreParameters != null) {
             try {
                 this.keyStore = keyStoreParameters.createKeyStore();
             } catch (GeneralSecurityException | IOException e) {
-                throw new CryptoCmsException("Problem during generating the keystore", e);
+                throw new RuntimeException("Problem during generating the keystore", e);
             }
         }
     }
@@ -59,14 +59,11 @@ public abstract class DefaultCryptoCmsConfiguration {
         this.keyStore = keyStore;
     }
 
-    protected KeyStore getKeyStore() throws CryptoCmsException {
-        if (keyStore == null) {
-            throw new CryptoCmsException("Keystore not configured");
-        }
+    public KeyStore getKeyStore() {
         return keyStore;
     }
 
-    protected KeyStoreParameters getKeyStoreParameters() {
+    public KeyStoreParameters getKeyStoreParameters() {
         return keyStoreParameters;
     }
 }

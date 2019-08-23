@@ -33,7 +33,7 @@ import static org.apache.camel.component.atomix.client.AtomixClientConstants.RES
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_TTL;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_VALUE;
 
-final class AtomixValueProducer extends AbstractAtomixClientProducer<AtomixValueEndpoint, DistributedValue> {
+public final class AtomixValueProducer extends AbstractAtomixClientProducer<AtomixValueEndpoint, DistributedValue> {
     private final AtomixValueConfiguration configuration;
 
     protected AtomixValueProducer(AtomixValueEndpoint endpoint) {

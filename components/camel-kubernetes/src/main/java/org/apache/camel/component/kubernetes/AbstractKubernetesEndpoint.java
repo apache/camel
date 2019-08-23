@@ -38,6 +38,10 @@ public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint {
         this.configuration = config;
     }
 
+    public KubernetesConfiguration getConfiguration() {
+        return configuration;
+    }
+
     @Override
     public boolean isSingleton() {
         return false;

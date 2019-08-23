@@ -20,24 +20,23 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+public class CouchbaseComponentTest extends CamelTestSupport {
 
-@RunWith(MockitoJUnitRunner.class)
-public class CouchbaseComponentTest {
+    private CouchbaseComponent component;
 
-    @Mock
-    private CamelContext context;
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        component = context.getComponent("couchbase",  CouchbaseComponent.class);
+    }
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     @Test
     public void testEndpointCreated() throws Exception {
@@ -46,14 +45,12 @@ public class CouchbaseComponentTest {
         String uri = "couchbase:http://localhost:9191/bucket";
         String remaining = "http://localhost:9191/bucket";
 
-        Endpoint endpoint = new CouchbaseComponent(context).createEndpoint(uri, remaining, params);
+        CouchbaseEndpoint endpoint = component.createEndpoint(uri, remaining, params);
         assertNotNull(endpoint);
     }
 
     @Test
     public void testPropertiesSet() throws Exception {
-        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
-
         Map<String, Object> params = new HashMap<>();
         params.put("username", "ugol");
         params.put("password", "pwd");
@@ -64,7 +61,7 @@ public class CouchbaseComponentTest {
         String uri = "couchdb:http://localhost:91234/bucket";
         String remaining = "http://localhost:91234/bucket";
 
-        CouchbaseEndpoint endpoint = new CouchbaseComponent(context).createEndpoint(uri, remaining, params);
+        CouchbaseEndpoint endpoint = component.createEndpoint(uri, remaining, params);
 
         assertEquals("http", endpoint.getProtocol());
         assertEquals("localhost", endpoint.getHostname());
@@ -89,8 +86,6 @@ public class CouchbaseComponentTest {
 
     @Test
     public void testCouchbaseAdditionalHosts() throws Exception {
-        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
-
         Map<String, Object> params = new HashMap<>();
         params.put("additionalHosts", "127.0.0.1,example.com,another-host");
         String uri = "couchbase:http://localhost/bucket?param=true";
@@ -108,8 +103,6 @@ public class CouchbaseComponentTest {
 
     @Test
     public void testCouchbaseAdditionalHostsWithSpaces() throws Exception {
-        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
-
         Map<String, Object> params = new HashMap<>();
         params.put("additionalHosts", " 127.0.0.1, example.com, another-host ");
         String uri = "couchbase:http://localhost/bucket?param=true";
@@ -127,8 +120,6 @@ public class CouchbaseComponentTest {
 
     @Test
     public void testCouchbaseDuplicateAdditionalHosts() throws Exception {
-        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
-
         Map<String, Object> params = new HashMap<>();
         params.put("additionalHosts", "127.0.0.1,localhost, localhost");
         String uri = "couchbase:http://localhost/bucket?param=true";
@@ -143,8 +134,6 @@ public class CouchbaseComponentTest {
 
     @Test
     public void testCouchbaseNullAdditionalHosts() throws Exception {
-        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
-
         Map<String, Object> params = new HashMap<>();
         params.put("additionalHosts", null);
         String uri = "couchbase:http://localhost/bucket?param=true";

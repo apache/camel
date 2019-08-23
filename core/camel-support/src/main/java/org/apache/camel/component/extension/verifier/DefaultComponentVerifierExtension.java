@@ -29,8 +29,8 @@ import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.runtimecatalog.EndpointValidationResult;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.util.PropertiesHelper;
 
 import static org.apache.camel.util.StreamUtils.stream;
 
@@ -194,10 +194,7 @@ public class DefaultComponentVerifierExtension implements ComponentVerifierExten
     }
 
     protected <T> T setProperties(T instance, String prefix, Map<String, Object> properties) throws Exception {
-        return setProperties(
-            instance,
-            IntrospectionSupport.extractProperties(properties, prefix, false)
-        );
+        return setProperties(instance, PropertiesHelper.extractProperties(properties, prefix, false));
     }
 
     protected <T> Optional<T> getOption(Map<String, Object> parameters, String key, Class<T> type) {

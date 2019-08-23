@@ -62,11 +62,47 @@ public class LogEndpoint extends ProcessorEndpoint {
     private Boolean groupActiveOnly;
     @UriParam
     private Long groupDelay;
-    // we want to include the uri options of the DefaultExchangeFormatter
-    @UriParam(label = "advanced")
-    private DefaultExchangeFormatter exchangeFormatter;
     @UriParam
     private Boolean logMask;
+    @UriParam(label = "advanced")
+    private ExchangeFormatter exchangeFormatter;
+    @UriParam(label = "formatting", description = "Show the unique exchange ID.")
+    private boolean showExchangeId;
+    @UriParam(label = "formatting", defaultValue = "true", description = "Shows the Message Exchange Pattern (or MEP for short).")
+    private boolean showExchangePattern = true;
+    @UriParam(label = "formatting", description = "Show the exchange properties.")
+    private boolean showProperties;
+    @UriParam(label = "formatting", description = "Show the message headers.")
+    private boolean showHeaders;
+    @UriParam(label = "formatting", defaultValue = "true", description = "Whether to skip line separators when logging the message body."
+            + "This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
+    private boolean skipBodyLineSeparator = true;
+    @UriParam(label = "formatting", defaultValue = "true", description = "Show the message body.")
+    private boolean showBody = true;
+    @UriParam(label = "formatting", defaultValue = "true", description = "Show the body Java type.")
+    private boolean showBodyType = true;
+    @UriParam(label = "formatting", description = "If the exchange has an exception, show the exception message (no stacktrace)")
+    private boolean showException;
+    @UriParam(label = "formatting", description = "f the exchange has a caught exception, show the exception message (no stack trace)."
+            + "A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT and for instance a doCatch can catch exceptions.")
+    private boolean showCaughtException;
+    @UriParam(label = "formatting", description = "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
+    private boolean showStackTrace;
+    @UriParam(label = "formatting", description = "Quick option for turning all options on. (multiline, maxChars has to be manually set if to be used)")
+    private boolean showAll;
+    @UriParam(label = "formatting", description = "If enabled then each information is outputted on a newline.")
+    private boolean multiline;
+    @UriParam(label = "formatting", description = "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
+    private boolean showFuture;
+    @UriParam(label = "formatting", description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then "
+            + "you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
+    private boolean showStreams;
+    @UriParam(label = "formatting", description = "If enabled Camel will output files")
+    private boolean showFiles;
+    @UriParam(label = "formatting", defaultValue = "10000", description = "Limits the number of characters logged per line.")
+    private int maxChars = 10000;
+    @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default", description = "Sets the outputs style to use.")
+    private DefaultExchangeFormatter.OutputStyle style = DefaultExchangeFormatter.OutputStyle.Default;
 
     public LogEndpoint() {
     }
@@ -78,6 +114,33 @@ public class LogEndpoint extends ProcessorEndpoint {
     public LogEndpoint(String endpointUri, Component component, Processor logger) {
         super(endpointUri, component);
         setLogger(logger);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        this.localFormatter = exchangeFormatter;
+        if (this.localFormatter == null) {
+            DefaultExchangeFormatter def = new DefaultExchangeFormatter();
+            def.setShowExchangeId(showExchangeId);
+            def.setShowExchangePattern(showExchangePattern);
+            def.setShowProperties(showProperties);
+            def.setShowHeaders(showHeaders);
+            def.setSkipBodyLineSeparator(skipBodyLineSeparator);
+            def.setShowBody(showBody);
+            def.setShowBodyType(showBodyType);
+            def.setShowException(showException);
+            def.setShowStackTrace(showStackTrace);
+            def.setShowAll(showAll);
+            def.setMultiline(multiline);
+            def.setShowFuture(showFuture);
+            def.setShowStreams(showStreams);
+            def.setShowFiles(showFiles);
+            def.setMaxChars(maxChars);
+            def.setStyle(style);
+            this.localFormatter = def;
+        }
     }
 
     @Override
@@ -288,4 +351,150 @@ public class LogEndpoint extends ProcessorEndpoint {
         this.logMask = logMask;
     }
 
+    public ExchangeFormatter getExchangeFormatter() {
+        return exchangeFormatter;
+    }
+
+    /**
+     * To use a custom exchange formatter
+     */
+    public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
+        this.exchangeFormatter = exchangeFormatter;
+    }
+
+    public boolean isShowExchangeId() {
+        return showExchangeId;
+    }
+
+    public void setShowExchangeId(boolean showExchangeId) {
+        this.showExchangeId = showExchangeId;
+    }
+
+    public boolean isShowExchangePattern() {
+        return showExchangePattern;
+    }
+
+    public void setShowExchangePattern(boolean showExchangePattern) {
+        this.showExchangePattern = showExchangePattern;
+    }
+
+    public boolean isShowProperties() {
+        return showProperties;
+    }
+
+    public void setShowProperties(boolean showProperties) {
+        this.showProperties = showProperties;
+    }
+
+    public boolean isShowHeaders() {
+        return showHeaders;
+    }
+
+    public void setShowHeaders(boolean showHeaders) {
+        this.showHeaders = showHeaders;
+    }
+
+    public boolean isSkipBodyLineSeparator() {
+        return skipBodyLineSeparator;
+    }
+
+    public void setSkipBodyLineSeparator(boolean skipBodyLineSeparator) {
+        this.skipBodyLineSeparator = skipBodyLineSeparator;
+    }
+
+    public boolean isShowBody() {
+        return showBody;
+    }
+
+    public void setShowBody(boolean showBody) {
+        this.showBody = showBody;
+    }
+
+    public boolean isShowBodyType() {
+        return showBodyType;
+    }
+
+    public void setShowBodyType(boolean showBodyType) {
+        this.showBodyType = showBodyType;
+    }
+
+    public boolean isShowException() {
+        return showException;
+    }
+
+    public void setShowException(boolean showException) {
+        this.showException = showException;
+    }
+
+    public boolean isShowCaughtException() {
+        return showCaughtException;
+    }
+
+    public void setShowCaughtException(boolean showCaughtException) {
+        this.showCaughtException = showCaughtException;
+    }
+
+    public boolean isShowStackTrace() {
+        return showStackTrace;
+    }
+
+    public void setShowStackTrace(boolean showStackTrace) {
+        this.showStackTrace = showStackTrace;
+    }
+
+    public boolean isShowAll() {
+        return showAll;
+    }
+
+    public void setShowAll(boolean showAll) {
+        this.showAll = showAll;
+    }
+
+    public boolean isMultiline() {
+        return multiline;
+    }
+
+    public void setMultiline(boolean multiline) {
+        this.multiline = multiline;
+    }
+
+    public boolean isShowFuture() {
+        return showFuture;
+    }
+
+    public void setShowFuture(boolean showFuture) {
+        this.showFuture = showFuture;
+    }
+
+    public boolean isShowStreams() {
+        return showStreams;
+    }
+
+    public void setShowStreams(boolean showStreams) {
+        this.showStreams = showStreams;
+    }
+
+    public boolean isShowFiles() {
+        return showFiles;
+    }
+
+    public void setShowFiles(boolean showFiles) {
+        this.showFiles = showFiles;
+    }
+
+    public int getMaxChars() {
+        return maxChars;
+    }
+
+    public void setMaxChars(int maxChars) {
+        this.maxChars = maxChars;
+    }
+
+    public DefaultExchangeFormatter.OutputStyle getStyle() {
+        return style;
+    }
+
+    public void setStyle(DefaultExchangeFormatter.OutputStyle style) {
+        this.style = style;
+    }
 }

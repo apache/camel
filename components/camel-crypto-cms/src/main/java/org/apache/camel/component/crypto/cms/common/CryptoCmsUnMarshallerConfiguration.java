@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.crypto.cms.common;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.component.crypto.cms.exception.CryptoCmsException;
-
 public interface CryptoCmsUnMarshallerConfiguration {
 
     /** Indicates whether the message in-body is base 64 encocded. */
-    Boolean isFromBase64(Exchange exchange) throws CryptoCmsException;
+    boolean isFromBase64();
 
 }

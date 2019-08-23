@@ -157,7 +157,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
         if (restletMethods != null) {
-            result.setRestletMethods(RestletConverter.toMethods(restletMethods));
+            result.setRestletMethods(restletMethods);
         } else {
             result.setRestletMethod(RestletConverter.toMethod(restletMethod));
         }
@@ -272,7 +272,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
             List<Method> methods = new ArrayList<>();
             Collections.addAll(methods, Method.OPTIONS);
             if (endpoint.getRestletMethods() != null) {
-                Collections.addAll(methods, endpoint.getRestletMethods());
+                Collections.addAll(methods, RestletConverter.toMethods(endpoint.getRestletMethods()));
             } else {
                 Collections.addAll(methods, endpoint.getRestletMethod());
             }
@@ -400,7 +400,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         List<Method> methods = new ArrayList<>();
         Collections.addAll(methods, Method.OPTIONS);
         if (endpoint.getRestletMethods() != null) {
-            Collections.addAll(methods, endpoint.getRestletMethods());
+            Collections.addAll(methods, RestletConverter.toMethods(endpoint.getRestletMethods()));
         } else {
             Collections.addAll(methods, endpoint.getRestletMethod());
         }

@@ -20,7 +20,6 @@ import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 /**
  * The zookeeper component allows interaction with a ZooKeeper cluster.
@@ -88,11 +87,6 @@ public class ZooKeeperComponentConfiguration
          */
         private Boolean repeat = false;
         /**
-         * Not in use
-         */
-        @Deprecated
-        private Boolean awaitExistence = true;
-        /**
          * The time interval to backoff for after an error before retrying.
          */
         private Long backoff = 5000L;
@@ -148,17 +142,6 @@ public class ZooKeeperComponentConfiguration
 
         public void setRepeat(Boolean repeat) {
             this.repeat = repeat;
-        }
-
-        @Deprecated
-        @DeprecatedConfigurationProperty
-        public Boolean getAwaitExistence() {
-            return awaitExistence;
-        }
-
-        @Deprecated
-        public void setAwaitExistence(Boolean awaitExistence) {
-            this.awaitExistence = awaitExistence;
         }
 
         public Long getBackoff() {

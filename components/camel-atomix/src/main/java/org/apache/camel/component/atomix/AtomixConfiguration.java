@@ -26,19 +26,18 @@ import java.util.stream.Stream;
 
 import io.atomix.Atomix;
 import io.atomix.catalyst.transport.Address;
-import io.atomix.catalyst.transport.Transport;
 import io.atomix.catalyst.transport.netty.NettyTransport;
 import io.atomix.resource.ReadConsistency;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 public class AtomixConfiguration<T extends Atomix> implements Cloneable {
-    @UriParam(javaType = "io.atomix.Atomix")
-    private T atomix;
+    @UriParam
+    private Atomix atomix;
     @UriParam(javaType = "java.lang.String")
     private List<Address> nodes = Collections.emptyList();
-    @UriParam(javaType = "io.atomix.catalyst.transport.Transport", defaultValue = "io.atomix.catalyst.transport.netty.NettyTransport")
-    private Class<? extends Transport> transport = NettyTransport.class;
+    @UriParam(defaultValue = "io.atomix.catalyst.transport.netty.NettyTransport")
+    private String transportClassName = NettyTransport.class.getName();
     @UriParam
     private String configurationUri;
     @UriParam(label = "advanced")
@@ -62,14 +61,14 @@ public class AtomixConfiguration<T extends Atomix> implements Cloneable {
     // Properties
     // *****************************************
 
-    public T getAtomix() {
+    public Atomix getAtomix() {
         return atomix;
     }
 
     /**
      * The Atomix instance to use
      */
-    public void setAtomix(T client) {
+    public void setAtomix(Atomix client) {
         this.atomix = client;
     }
 
@@ -90,15 +89,15 @@ public class AtomixConfiguration<T extends Atomix> implements Cloneable {
         }
     }
 
-    public Class<? extends Transport> getTransport() {
-        return transport;
+    public String getTransportClassName() {
+        return transportClassName;
     }
 
     /**
-     * Sets the Atomix transport.
+     * The class name (fqn) of the Atomix transport
      */
-    public void setTransport(Class<? extends Transport> transport) {
-        this.transport = transport;
+    public void setTransportClassName(String transportClassName) {
+        this.transportClassName = transportClassName;
     }
 
     public String getConfigurationUri() {

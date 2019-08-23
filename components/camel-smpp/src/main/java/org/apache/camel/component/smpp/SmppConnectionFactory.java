@@ -85,7 +85,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
         try {
             Socket socket;
             SocketFactory socketFactory;
-            socketFactory = config.getUsingSSL() && config.getHttpProxyHost() == null ? SSLSocketFactory
+            socketFactory = config.isUsingSSL() && config.getHttpProxyHost() == null ? SSLSocketFactory
                 .getDefault() : SocketFactory.getDefault();
             if (config.getHttpProxyHost() != null) {
                 // setup the proxy tunnel
@@ -99,7 +99,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
                 socket.connect(new InetSocketAddress(host, port), config.getEnquireLinkTimer());
             }
 
-            if (config.getUsingSSL() && config.getHttpProxyHost() != null) {
+            if (config.isUsingSSL() && config.getHttpProxyHost() != null) {
                 // Init the SSL socket which is based on the proxy socket
                 SSLSocketFactory sslSocketFactory = (SSLSocketFactory)SSLSocketFactory.getDefault();
                 SSLSocket sslSocket = (SSLSocket)sslSocketFactory.createSocket(socket, host, port, true);

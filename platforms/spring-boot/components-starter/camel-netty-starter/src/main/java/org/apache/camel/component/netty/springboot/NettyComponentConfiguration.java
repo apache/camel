@@ -186,13 +186,11 @@ public class NettyComponentConfiguration
          * A custom ChannelHandler class that can be used to perform special
          * marshalling of outbound payloads.
          */
-        @Deprecated
         private ChannelHandler encoder;
         /**
          * A custom ChannelHandler class that can be used to perform special
          * marshalling of inbound payloads.
          */
-        @Deprecated
         private ChannelHandler decoder;
         /**
          * Whether or not to disconnect(close) from Netty Channel right after
@@ -610,24 +608,18 @@ public class NettyComponentConfiguration
             this.encoders = encoders;
         }
 
-        @Deprecated
-        @DeprecatedConfigurationProperty
         public ChannelHandler getEncoder() {
             return encoder;
         }
 
-        @Deprecated
         public void setEncoder(ChannelHandler encoder) {
             this.encoder = encoder;
         }
 
-        @Deprecated
-        @DeprecatedConfigurationProperty
         public ChannelHandler getDecoder() {
             return decoder;
         }
 
-        @Deprecated
         public void setDecoder(ChannelHandler decoder) {
             this.decoder = decoder;
         }

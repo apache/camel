@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -332,5 +333,15 @@ public interface ExtendedCamelContext extends CamelContext {
      * @param manager the manager
      */
     void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager);
+
+    /**
+     * Gets the {@link BeanIntrospection}
+     */
+    BeanIntrospection getBeanIntrospection();
+
+    /**
+     * Sets a custom {@link BeanIntrospection}.
+     */
+    void setBeanIntrospection(BeanIntrospection beanIntrospection);
 
 }

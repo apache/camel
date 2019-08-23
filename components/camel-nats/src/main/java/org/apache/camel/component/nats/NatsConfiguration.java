@@ -115,7 +115,7 @@ public class NatsConfiguration {
     /**
      * Whether or not using reconnection feature
      */
-    public boolean getReconnect() {
+    public boolean isReconnect() {
         return reconnect;
     }
 
@@ -126,7 +126,7 @@ public class NatsConfiguration {
     /**
      * Whether or not running in pedantic mode (this affects performace)
      */
-    public boolean getPedantic() {
+    public boolean isPedantic() {
         return pedantic;
     }
 
@@ -137,7 +137,7 @@ public class NatsConfiguration {
     /**
      * Whether or not running in verbose mode
      */
-    public boolean getVerbose() {
+    public boolean isVerbose() {
         return verbose;
     }
 
@@ -227,7 +227,7 @@ public class NatsConfiguration {
      * Whether or not randomizing the order of servers for the connection
      * attempts
      */
-    public boolean getNoRandomizeServers() {
+    public boolean isNoRandomizeServers() {
         return noRandomizeServers;
     }
 
@@ -240,7 +240,7 @@ public class NatsConfiguration {
      * this flag will prevent the server from echoing messages back to the
      * connection if it has subscriptions on the subject being published to.
      */
-    public boolean getNoEcho() {
+    public boolean isNoEcho() {
         return noEcho;
     }
 
@@ -329,16 +329,16 @@ public class NatsConfiguration {
     public Builder createOptions() throws NoSuchAlgorithmException, IllegalArgumentException {
         Builder builder = new Options.Builder();
         builder.server(splitServers());
-        if (getVerbose()) {
+        if (isVerbose()) {
             builder.verbose();
         }
-        if (getPedantic()) {
+        if (isPedantic()) {
             builder.pedantic();
         }
         if (isSecure()) {
             builder.secure();
         }
-        if (!getReconnect()) {
+        if (!isReconnect()) {
             builder.noReconnect();
         } else {
             builder.maxReconnects(getMaxReconnectAttempts());
@@ -348,10 +348,10 @@ public class NatsConfiguration {
         builder.connectionTimeout(Duration.ofMillis(getConnectionTimeout()));
         builder.maxPingsOut(getMaxPingsOut());
         builder.requestCleanupInterval(Duration.ofMillis(getRequestCleanupInterval()));
-        if (getNoRandomizeServers()) {
+        if (isNoRandomizeServers()) {
             builder.noRandomize();
         }
-        if (getNoEcho()) {
+        if (isNoEcho()) {
             builder.noEcho();
         }
         return builder;

@@ -17,6 +17,7 @@
 package org.apache.camel.component.ignite.events;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -72,12 +73,11 @@ public class IgniteEventsConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (endpoint.getEvents() != null && endpoint.getEvents().size() > 0) {
-            eventTypes = new int[endpoint.getEvents().size()];
-            int counter = 0;
-            for (Integer i : endpoint.getEvents()) {
-                eventTypes[counter++] = i;
-            }
+        List<Integer> ids = endpoint.getEventsAsIds();
+        eventTypes = new int[ids.size()];
+        int counter = 0;
+        for (Integer i : ids) {
+            eventTypes[counter++] = i;
         }
 
         events.localListen(predicate, eventTypes);

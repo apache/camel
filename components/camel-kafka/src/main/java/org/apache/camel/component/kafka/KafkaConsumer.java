@@ -490,7 +490,7 @@ public class KafkaConsumer extends DefaultConsumer {
     }
 
     private boolean isAutoCommitEnabled() {
-        return endpoint.getConfiguration().isAutoCommitEnable() != null && endpoint.getConfiguration().isAutoCommitEnable();
+        return endpoint.getConfiguration().getAutoCommitEnable() != null && endpoint.getConfiguration().getAutoCommitEnable();
     }
 
     protected String serializeOffsetKey(TopicPartition topicPartition) {

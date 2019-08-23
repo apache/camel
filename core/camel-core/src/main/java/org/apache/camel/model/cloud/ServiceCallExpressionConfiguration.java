@@ -42,7 +42,6 @@ import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 
 @Metadata(label = "routing,cloud")
@@ -252,7 +251,7 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
 
                 try {
                     Map<String, Object> parameters = new HashMap<>();
-                    IntrospectionSupport.getProperties(this, parameters, null, false);
+                    camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null, false);
 
                     parameters.replaceAll((k, v) -> {
                         if (v instanceof String) {

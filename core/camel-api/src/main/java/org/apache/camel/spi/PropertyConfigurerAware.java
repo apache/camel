@@ -14,35 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
-
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
+package org.apache.camel.spi;
 
 /**
- * A pluggable strategy for configuring the cxfEndpoint by using java code
+ * An interface to represent an object which is capable of configuring
+ * via {@link PropertyConfigurer}.
  */
-public interface CxfEndpointConfigurer {
-    
-    /**
-     * Configure the CXF Server/Client factory bean
-     * @param factoryBean
-     */
-    void configure(AbstractWSDLBasedEndpointFactory factoryBean);
-    
-    /**
-     * Configure the CXF Client such as setting some parameters on the client conduit 
-     *
-     * @param client the CXF client
-     */
-    void configureClient(Client client);
+public interface PropertyConfigurerAware {
 
     /**
-     * Configure the CXF Server such as setting some parameters on the server destination 
+     * Gets the configurer.
      *
-     * @param server the CXF server
+     * @param instance  the bean instance
      */
-    void configureServer(Server server);
+    PropertyConfigurer getPropertyConfigurer(Object instance);
 
 }

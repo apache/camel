@@ -137,14 +137,14 @@ The component supports 36 options, which are listed below.
 | *camel.component.web3j.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.web3j.configuration.address* | Contract address. |  | String
 | *camel.component.web3j.configuration.addresses* | Contract address or a list of addresses. |  | List
-| *camel.component.web3j.configuration.at-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. | latest | String
+| *camel.component.web3j.configuration.at-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. |  | DefaultBlockParameter
 | *camel.component.web3j.configuration.block-hash* | Hash of the block where this transaction was in. |  | String
 | *camel.component.web3j.configuration.client-id* | A random hexadecimal(32 bytes) ID identifying the client. |  | String
 | *camel.component.web3j.configuration.data* | The compiled code of a contract OR the hash of the invoked method signature and encoded parameters. |  | String
 | *camel.component.web3j.configuration.database-name* | The local database name. |  | String
 | *camel.component.web3j.configuration.filter-id* | The filter id to use. |  | BigInteger
 | *camel.component.web3j.configuration.from-address* | The address the transaction is send from |  | String
-| *camel.component.web3j.configuration.from-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. | latest | String
+| *camel.component.web3j.configuration.from-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. |  | DefaultBlockParameter
 | *camel.component.web3j.configuration.full-transaction-objects* | If true it returns the full transaction objects, if false only the hashes of the transactions. | false | Boolean
 | *camel.component.web3j.configuration.gas-limit* | The maximum gas allowed in this block. |  | BigInteger
 | *camel.component.web3j.configuration.gas-price* | Gas price used for each paid gas. |  | BigInteger
@@ -163,7 +163,7 @@ The component supports 36 options, which are listed below.
 | *camel.component.web3j.configuration.signed-transaction-data* | The signed transaction data for a new message call transaction or a contract creation for signed transactions. |  | String
 | *camel.component.web3j.configuration.source-code* | The source code to compile. |  | String
 | *camel.component.web3j.configuration.to-address* | The address the transaction is directed to. |  | String
-| *camel.component.web3j.configuration.to-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. | latest | String
+| *camel.component.web3j.configuration.to-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. |  | DefaultBlockParameter
 | *camel.component.web3j.configuration.topics* | Topics are order-dependent. Each topic can also be a list of topics. Specify multiple topics separated by comma. |  | List
 | *camel.component.web3j.configuration.transaction-hash* | The information about a transaction requested by transaction hash. |  | String
 | *camel.component.web3j.configuration.ttl* | The time to live in seconds of a whisper message. |  | BigInteger

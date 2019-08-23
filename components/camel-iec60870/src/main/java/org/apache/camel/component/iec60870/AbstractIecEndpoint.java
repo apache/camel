@@ -78,6 +78,26 @@ public abstract class AbstractIecEndpoint<T extends AbstractConnectionMultiplexo
         this.address = requireNonNull(address);
     }
 
+    public ClientOptions getConnectionOptions() {
+        return connectionOptions;
+    }
+
+    public ProtocolOptions getProtocolOptions() {
+        return protocolOptions;
+    }
+
+    public DataModuleOptions getDataModuleOptions() {
+        return dataModuleOptions;
+    }
+
+    public String getConnectionId() {
+        return connectionId;
+    }
+
+    public void setConnectionId(String connectionId) {
+        this.connectionId = connectionId;
+    }
+
     public ObjectAddress getAddress() {
         return this.address;
     }

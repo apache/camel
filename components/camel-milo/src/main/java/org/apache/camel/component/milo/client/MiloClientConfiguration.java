@@ -86,7 +86,7 @@ public class MiloClientConfiguration implements Cloneable {
     private Long maxResponseMessageSize;
 
     @UriParam(label = "client")
-    private URL keyStoreUrl;
+    private String keyStoreUrl;
 
     @UriParam(label = "client")
     private String keyStoreType = KeyStoreLoader.DEFAULT_KEY_STORE_TYPE;
@@ -277,11 +277,11 @@ public class MiloClientConfiguration implements Cloneable {
     /**
      * The URL where the key should be loaded from
      */
-    public void setKeyStoreUrl(final String keyStoreUrl) throws MalformedURLException {
-        this.keyStoreUrl = keyStoreUrl != null ? new URL(keyStoreUrl) : null;
+    public void setKeyStoreUrl(String keyStoreUrl) {
+        this.keyStoreUrl = keyStoreUrl;
     }
 
-    public URL getKeyStoreUrl() {
+    public String getKeyStoreUrl() {
         return this.keyStoreUrl;
     }
 

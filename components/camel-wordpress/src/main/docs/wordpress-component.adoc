@@ -50,7 +50,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *apiVersion* (common) | The Wordpress REST API version | 2 | String
 | *criteria* (common) | The criteria to use with complex searches. |  | Map
-| *force* (common) | Whether to bypass trash and force deletion. | false | Boolean
+| *force* (common) | Whether to bypass trash and force deletion. | false | boolean
 | *id* (common) | The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post |  | Integer
 | *password* (common) | Password from authorized user |  | String
 | *searchCriteria* (common) | Search criteria |  | SearchCriteria
@@ -80,7 +80,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 9 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -89,6 +89,7 @@ The component supports 9 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.wordpress.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.wordpress.configuration.api-version* | The Wordpress REST API version | 2 | String
+| *camel.component.wordpress.configuration.criteria* | The criteria to use with complex searches. |  | Map
 | *camel.component.wordpress.configuration.force* | Whether to bypass trash and force deletion. | false | Boolean
 | *camel.component.wordpress.configuration.id* | The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post |  | Integer
 | *camel.component.wordpress.configuration.password* | Password from authorized user |  | String

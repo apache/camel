@@ -48,7 +48,7 @@ public class NsqConsumer extends DefaultConsumer {
     public NsqConsumer(NsqEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.processor = processor;
-        this.configuration = getEndpoint().getNsqConfiguration();
+        this.configuration = getEndpoint().getConfiguration();
     }
 
     @Override

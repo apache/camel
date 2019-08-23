@@ -42,17 +42,6 @@ public interface JSR356WebSocketEndpointBuilderFactory {
             return (AdvancedJSR356WebSocketEndpointConsumerBuilder) this;
         }
         /**
-         * the servlet context to use (represented by its path).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JSR356WebSocketEndpointConsumerBuilder context(String context) {
-            setProperty("context", context);
-            return this;
-        }
-        /**
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
          * 
@@ -247,17 +236,6 @@ public interface JSR356WebSocketEndpointBuilderFactory {
             return (AdvancedJSR356WebSocketEndpointProducerBuilder) this;
         }
         /**
-         * the servlet context to use (represented by its path).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JSR356WebSocketEndpointProducerBuilder context(String context) {
-            setProperty("context", context);
-            return this;
-        }
-        /**
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
          * 
@@ -397,17 +375,6 @@ public interface JSR356WebSocketEndpointBuilderFactory {
                 JSR356WebSocketEndpointConsumerBuilder, JSR356WebSocketEndpointProducerBuilder {
         default AdvancedJSR356WebSocketEndpointBuilder advanced() {
             return (AdvancedJSR356WebSocketEndpointBuilder) this;
-        }
-        /**
-         * the servlet context to use (represented by its path).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JSR356WebSocketEndpointBuilder context(String context) {
-            setProperty("context", context);
-            return this;
         }
         /**
          * Used when the endpoint is in client mode to populate a pool of

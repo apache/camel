@@ -291,33 +291,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder decoder(Object decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder decoder(String decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
          * A list of decoders to be used. You can use a String which have values
          * separated by comma, and have the values be looked up in the Registry.
          * Just remember to prefix the value with # so Camel knows it should
@@ -347,33 +320,6 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder decoders(String decoders) {
             setProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder encoder(Object encoder) {
-            setProperty("encoder", encoder);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder encoder(String encoder) {
-            setProperty("encoder", encoder);
             return this;
         }
         /**
@@ -1819,32 +1765,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option is a: <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointConsumerBuilder bootstrapConfiguration(
-                Object bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointConsumerBuilder bootstrapConfiguration(
-                String bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -2182,33 +2102,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder decoder(Object decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder decoder(String decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
          * A list of decoders to be used. You can use a String which have values
          * separated by comma, and have the values be looked up in the Registry.
          * Just remember to prefix the value with # so Camel knows it should
@@ -2238,33 +2131,6 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder decoders(String decoders) {
             setProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder encoder(Object encoder) {
-            setProperty("encoder", encoder);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder encoder(String encoder) {
-            setProperty("encoder", encoder);
             return this;
         }
         /**
@@ -3319,32 +3185,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option is a: <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointProducerBuilder bootstrapConfiguration(
-                Object bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointProducerBuilder bootstrapConfiguration(
-                String bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -3566,33 +3406,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder decoder(Object decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder decoder(String decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
          * A list of decoders to be used. You can use a String which have values
          * separated by comma, and have the values be looked up in the Registry.
          * Just remember to prefix the value with # so Camel knows it should
@@ -3622,33 +3435,6 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointBuilder decoders(String decoders) {
             setProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder encoder(Object encoder) {
-            setProperty("encoder", encoder);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder encoder(String encoder) {
-            setProperty("encoder", encoder);
             return this;
         }
         /**
@@ -4411,32 +4197,6 @@ public interface NettyHttpEndpointBuilderFactory {
         default AdvancedNettyHttpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option is a: <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointBuilder bootstrapConfiguration(
-                Object bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointBuilder bootstrapConfiguration(
-                String bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
             return this;
         }
         /**

@@ -63,8 +63,8 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
     private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
     @UriParam(defaultValue = "GET", enums = "ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE")
     private Method restletMethod = Method.GET;
-    @UriParam(label = "consumer", javaType = "java.lang.String")
-    private Method[] restletMethods;
+    @UriParam(label = "consumer")
+    private String restletMethods;
     @UriParam(label = "security")
     private Map<String, String> restletRealm;
     @UriParam(label = "advanced")
@@ -254,13 +254,14 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
     /**
      * Specify one or more methods separated by commas (e.g. restletMethods=post,put) to be serviced by a restlet consumer endpoint.
      * If both restletMethod and restletMethods options are specified, the restletMethod setting is ignored.
-     * The possible methods are: ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE
+     * The possible methods are: ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE.
+     * Multiple methods can be separated by comma.
      */
-    public void setRestletMethods(Method[] restletMethods) {
+    public void setRestletMethods(String restletMethods) {
         this.restletMethods = restletMethods;
     }
 
-    public Method[] getRestletMethods() {
+    public String getRestletMethods() {
         return restletMethods;
     }
 

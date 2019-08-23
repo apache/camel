@@ -72,7 +72,7 @@ with the following path and query parameters:
 | *key* (consumer) | The key to use if none is set in the header or to listen for events for a specific key. |  | Object
 | *nodes* (consumer) | The address of the nodes composing the cluster. |  | String
 | *resultHeader* (consumer) | The header that wil carry the result. |  | String
-| *transport* (consumer) | Sets the Atomix transport. | io.atomix.catalyst.transport.netty.NettyTransport | Transport
+| *transportClassName* (consumer) | The class name (fqn) of the Atomix transport | io.atomix.catalyst.transport.netty.NettyTransport | String
 | *ttl* (consumer) | The resource ttl. |  | long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern

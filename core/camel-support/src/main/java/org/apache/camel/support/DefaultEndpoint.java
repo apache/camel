@@ -27,14 +27,17 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HasId;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -394,7 +397,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public void configureProperties(Map<String, Object> options) {
-        Map<String, Object> consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
+        Map<String, Object> consumerProperties = PropertiesHelper.extractProperties(options, "consumer.");
         if (consumerProperties != null && !consumerProperties.isEmpty()) {
             setConsumerProperties(consumerProperties);
         }
@@ -408,15 +411,26 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * @param bean        the bean
      * @param parameters  properties to set
      */
-    protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
-        if (basicPropertyBinding) {
+    public void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
+        if (parameters == null || parameters.isEmpty()) {
+            return;
+        }
+
+        boolean basic = basicPropertyBinding || "true".equals(parameters.getOrDefault("basicPropertyBinding", "false"));
+        if (basic) {
             // use basic binding
             PropertyBindingSupport.build()
                     .withPlaceholder(false).withNesting(false).withDeepNesting(false).withReference(false)
                     .bind(camelContext, bean, parameters);
         } else {
+            PropertyConfigurer configurer = null;
+            if (bean instanceof Endpoint) {
+                configurer = getComponent().getEndpointPropertyConfigurer(bean);
+            } else if (bean instanceof PropertyConfigurerAware) {
+                configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
+            }
             // use advanced binding
-            PropertyBindingSupport.build().bind(camelContext, bean, parameters);
+            PropertyBindingSupport.build().withConfigurer(configurer).bind(camelContext, bean, parameters);
         }
     }
 

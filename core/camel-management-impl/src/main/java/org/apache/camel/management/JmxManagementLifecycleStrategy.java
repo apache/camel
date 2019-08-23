@@ -53,6 +53,7 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.management.mbean.ManagedAsyncProcessorAwaitManager;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
+import org.apache.camel.management.mbean.ManagedBeanIntrospection;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedConsumerCache;
 import org.apache.camel.management.mbean.ManagedEndpoint;
@@ -83,6 +84,7 @@ import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EndpointRegistry;
@@ -524,6 +526,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedProducerCache(context, (ProducerCache) service);
         } else if (service instanceof EndpointRegistry) {
             answer = new ManagedEndpointRegistry(context, (EndpointRegistry) service);
+        } else if (service instanceof BeanIntrospection) {
+            answer = new ManagedBeanIntrospection(context, (BeanIntrospection) service);
         } else if (service instanceof TypeConverterRegistry) {
             answer = new ManagedTypeConverterRegistry(context, (TypeConverterRegistry) service);
         } else if (service instanceof RestRegistry) {

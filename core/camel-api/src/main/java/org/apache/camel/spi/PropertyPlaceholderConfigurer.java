@@ -16,26 +16,9 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import org.apache.camel.CamelContext;
-
-public interface PropertyPlaceholderConfigurer {
-
-    /**
-     * Gets the options which supports property placeholders and can be resolved.
-     * This will be all the string based options.
-     *
-     * @return key/values of options
-     */
-    Map<String, Supplier<String>> getReadPropertyPlaceholderOptions(CamelContext camelContext);
-
-    /**
-     * To update an existing property using the function with the key/value and returning the changed value
-     * This will be all the string based options.
-     */
-    Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext);
+/**
+ * A {@link PropertyConfigurer} which is used for property placeholders which are string based values only.
+ */
+public interface PropertyPlaceholderConfigurer extends PropertyConfigurer<String> {
 
 }

@@ -28,7 +28,7 @@ import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class AtomixMapConsumer extends AbstractAtomixClientConsumer<AtomixMapEndpoint> {
+public final class AtomixMapConsumer extends AbstractAtomixClientConsumer<AtomixMapEndpoint> {
 
     private final List<Listener<DistributedMap.EntryEvent<Object, Object>>> listeners;
     private final String resourceName;

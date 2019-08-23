@@ -415,25 +415,11 @@ public interface CxfRsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The service beans which you want to export as REST service. Multiple
-         * beans can be separated by comma.
+         * The service beans (the bean ids to lookup in the registry) which you
+         * want to export as REST service. Multiple beans can be separated by
+         * comma.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedCxfRsEndpointConsumerBuilder serviceBeans(
-                List<Object> serviceBeans) {
-            setProperty("serviceBeans", serviceBeans);
-            return this;
-        }
-        /**
-         * The service beans which you want to export as REST service. Multiple
-         * beans can be separated by comma.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -553,13 +539,14 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer</code> type.
+         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
+         * type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfRsEndpointConsumerBuilder cxfRsEndpointConfigurer(
-                Object cxfRsEndpointConfigurer) {
-            setProperty("cxfRsEndpointConfigurer", cxfRsEndpointConfigurer);
+        default AdvancedCxfRsEndpointConsumerBuilder cxfRsConfigurer(
+                Object cxfRsConfigurer) {
+            setProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**
@@ -570,13 +557,14 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer</code> type.
+         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
+         * type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfRsEndpointConsumerBuilder cxfRsEndpointConfigurer(
-                String cxfRsEndpointConfigurer) {
-            setProperty("cxfRsEndpointConfigurer", cxfRsEndpointConfigurer);
+        default AdvancedCxfRsEndpointConsumerBuilder cxfRsConfigurer(
+                String cxfRsConfigurer) {
+            setProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**
@@ -1276,13 +1264,14 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer</code> type.
+         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
+         * type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfRsEndpointProducerBuilder cxfRsEndpointConfigurer(
-                Object cxfRsEndpointConfigurer) {
-            setProperty("cxfRsEndpointConfigurer", cxfRsEndpointConfigurer);
+        default AdvancedCxfRsEndpointProducerBuilder cxfRsConfigurer(
+                Object cxfRsConfigurer) {
+            setProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**
@@ -1293,13 +1282,14 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer</code> type.
+         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
+         * type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfRsEndpointProducerBuilder cxfRsEndpointConfigurer(
-                String cxfRsEndpointConfigurer) {
-            setProperty("cxfRsEndpointConfigurer", cxfRsEndpointConfigurer);
+        default AdvancedCxfRsEndpointProducerBuilder cxfRsConfigurer(
+                String cxfRsConfigurer) {
+            setProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**
@@ -1766,13 +1756,14 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer</code> type.
+         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
+         * type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfRsEndpointBuilder cxfRsEndpointConfigurer(
-                Object cxfRsEndpointConfigurer) {
-            setProperty("cxfRsEndpointConfigurer", cxfRsEndpointConfigurer);
+        default AdvancedCxfRsEndpointBuilder cxfRsConfigurer(
+                Object cxfRsConfigurer) {
+            setProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**
@@ -1783,13 +1774,14 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer</code> type.
+         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
+         * type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfRsEndpointBuilder cxfRsEndpointConfigurer(
-                String cxfRsEndpointConfigurer) {
-            setProperty("cxfRsEndpointConfigurer", cxfRsEndpointConfigurer);
+        default AdvancedCxfRsEndpointBuilder cxfRsConfigurer(
+                String cxfRsConfigurer) {
+            setProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**

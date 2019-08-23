@@ -393,21 +393,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointConsumerBuilder keyType(
-                Class<Object> keyType) {
-            setProperty("keyType", keyType);
-            return this;
-        }
-        /**
-         * The cache key type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
@@ -444,21 +430,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointConsumerBuilder valueType(
-                Class<Object> valueType) {
-            setProperty("valueType", valueType);
-            return this;
-        }
-        /**
-         * The cache value type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
@@ -736,21 +708,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointProducerBuilder keyType(
-                Class<Object> keyType) {
-            setProperty("keyType", keyType);
-            return this;
-        }
-        /**
-         * The cache key type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
@@ -787,21 +745,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointProducerBuilder valueType(
-                Class<Object> valueType) {
-            setProperty("valueType", valueType);
-            return this;
-        }
-        /**
-         * The cache value type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
@@ -1002,20 +946,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointBuilder keyType(Class<Object> keyType) {
-            setProperty("keyType", keyType);
-            return this;
-        }
-        /**
-         * The cache key type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
@@ -1050,20 +981,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointBuilder valueType(Class<Object> valueType) {
-            setProperty("valueType", valueType);
-            return this;
-        }
-        /**
-         * The cache value type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */

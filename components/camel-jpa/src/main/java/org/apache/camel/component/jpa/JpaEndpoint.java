@@ -135,7 +135,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         producer.setParameters(getParameters());
         producer.setResultClass(getResultClass());
         producer.setFindEntity(isFindEntity());
-        producer.setUseExecuteUpdate(isUseExecuteUpdate());
+        producer.setUseExecuteUpdate(getUseExecuteUpdate());
         return producer;
     }
 
@@ -499,7 +499,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         this.preDeleteHandler = preDeleteHandler;
     }
 
-    public Boolean isUseExecuteUpdate() {
+    public Boolean getUseExecuteUpdate() {
         return useExecuteUpdate;
     }
 

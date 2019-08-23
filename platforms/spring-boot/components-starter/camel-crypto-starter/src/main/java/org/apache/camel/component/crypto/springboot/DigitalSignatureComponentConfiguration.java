@@ -137,7 +137,7 @@ public class DigitalSignatureComponentConfiguration
          * Sets the password used to access an aliased {@link PrivateKey} in the
          * KeyStore.
          */
-        private char[] password;
+        private String password;
         /**
          * Sets the KeyStore that can contain keys and Certficates for use in
          * signing and verifying exchanges based on the given
@@ -272,11 +272,11 @@ public class DigitalSignatureComponentConfiguration
             this.keystoreName = keystoreName;
         }
 
-        public char[] getPassword() {
+        public String getPassword() {
             return password;
         }
 
-        public void setPassword(char[] password) {
+        public void setPassword(String password) {
             this.password = password;
         }
 

@@ -477,6 +477,10 @@ public class SqsConfiguration implements Cloneable {
         }
     }
 
+    public void setMessageGroupIdStrategy(MessageGroupIdStrategy messageGroupIdStrategy) {
+        this.messageGroupIdStrategy = messageGroupIdStrategy;
+    }
+
     public MessageGroupIdStrategy getMessageGroupIdStrategy() {
         return messageGroupIdStrategy;
     }
@@ -499,6 +503,10 @@ public class SqsConfiguration implements Cloneable {
         } else {
             throw new IllegalArgumentException("Unrecognised MessageDeduplicationIdStrategy: " + strategy);
         }
+    }
+
+    public void setMessageDeduplicationIdStrategy(MessageDeduplicationIdStrategy messageDeduplicationIdStrategy) {
+        this.messageDeduplicationIdStrategy = messageDeduplicationIdStrategy;
     }
 
     public SqsOperations getOperation() {

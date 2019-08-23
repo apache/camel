@@ -139,7 +139,7 @@ public class SpringAnnotationProcessorHelper {
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
                                                   entry.isDeprecated(), entry.getDeprecationNote(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(),
-                                                  entry.getOneOfTypes(), entry.isAsPredicate(), null, null, false));
+                                                  entry.getOneOfTypes(), entry.isAsPredicate(), null, null, false, null, null));
         }
         buffer.append("\n  }");
 

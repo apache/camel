@@ -35,7 +35,7 @@ public class NsqProducer extends DefaultProducer {
 
     public NsqProducer(NsqEndpoint endpoint) {
         super(endpoint);
-        this.configuration = endpoint.getNsqConfiguration();
+        this.configuration = endpoint.getConfiguration();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class NsqProducer extends DefaultProducer {
         super.doStart();
         LOG.debug("Starting NSQ Producer");
 
-        NsqConfiguration config = getEndpoint().getNsqConfiguration();
+        NsqConfiguration config = getEndpoint().getConfiguration();
         producer = new NSQProducer();
         for (ServerAddress server : config.getServerAddresses()) {
             producer.addAddress(server.getHost(), server.getPort() == 0 ? config.getPort() : server.getPort());

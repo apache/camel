@@ -51,6 +51,14 @@ public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
         super(uri, component);
     }
 
+    public XmlSignerConfiguration getSignerConfiguration() {
+        return signerConfiguration;
+    }
+
+    public XmlVerifierConfiguration getVerifierConfiguration() {
+        return verifierConfiguration;
+    }
+
     public XmlCommand getCommand() {
         return command;
     }

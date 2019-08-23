@@ -16,29 +16,27 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.common.AbstractSslEndpointConfigurer;
-import org.apache.camel.support.jsse.SSLContextParameters;
+import javax.net.ssl.HostnameVerifier;
+
+import org.apache.camel.component.cxf.common.AbstractHostnameVerifierEndpointConfigurer;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.apache.cxf.transport.http.HTTPConduit;
 
-public final class SslCxfEndpointConfigurer extends AbstractSslEndpointConfigurer implements CxfEndpointConfigurer {
+public final class HostnameVerifierCxfConfigurer extends AbstractHostnameVerifierEndpointConfigurer implements CxfConfigurer {
 
-    private SslCxfEndpointConfigurer(SSLContextParameters sslContextParameters,
-                                     CamelContext camelContext) {
-        super(sslContextParameters, camelContext);
+    private HostnameVerifierCxfConfigurer(HostnameVerifier hostnameVerifier) {
+        super(hostnameVerifier);
     }
 
-    public static CxfEndpointConfigurer create(SSLContextParameters sslContextParameters, CamelContext camelContext) {
-        if (sslContextParameters == null) {
-            return new ChainedCxfEndpointConfigurer.NullCxfEndpointConfigurer();
+    public static CxfConfigurer create(HostnameVerifier hostnameVerifier) {
+        if (hostnameVerifier == null) {
+            return new ChainedCxfConfigurer.NullCxfConfigurer();
         } else {
-            return new SslCxfEndpointConfigurer(sslContextParameters, camelContext);
+            return new HostnameVerifierCxfConfigurer(hostnameVerifier);
         }
     }
-
     @Override
     public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
     }

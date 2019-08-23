@@ -61,15 +61,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private int decoderMaxLineLength = 1024;
     @UriParam(label = "codec")
     private String encoding;
-    @UriParam(label = "codec", description = "To use a single encoder. This options is deprecated use encoders instead.")
-    @Deprecated
-    private ChannelHandler encoder;
-    @UriParam(label = "codec", javaType = "java.lang.String")
+    @UriParam(label = "codec")
     private List<ChannelHandler> encoders = new ArrayList<>();
-    @UriParam(label = "codec", description = "To use a single decoder. This options is deprecated use encoders instead.")
-    @Deprecated
-    private ChannelHandler decoder;
-    @UriParam(label = "codec", javaType = "java.lang.String")
+    @UriParam(label = "codec")
     private List<ChannelHandler> decoders = new ArrayList<>();
     @UriParam
     private boolean disconnect;

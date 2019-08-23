@@ -40,7 +40,7 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
     // *****************************************
 
     public AtomixClient getAtomix() {
-        return getComponentConfiguration().getAtomix();
+        return (AtomixClient) getComponentConfiguration().getAtomix();
     }
 
     /**

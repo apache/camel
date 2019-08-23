@@ -125,7 +125,7 @@ public interface PubNubEndpointBuilderFactory {
             return this;
         }
         /**
-         * If cipher is passed, all communicatons to/from PubNub will be
+         * If cipher is passed, all communications to/from PubNub will be
          * encrypted.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -434,7 +434,7 @@ public interface PubNubEndpointBuilderFactory {
             return this;
         }
         /**
-         * If cipher is passed, all communicatons to/from PubNub will be
+         * If cipher is passed, all communications to/from PubNub will be
          * encrypted.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -624,7 +624,7 @@ public interface PubNubEndpointBuilderFactory {
             return this;
         }
         /**
-         * If cipher is passed, all communicatons to/from PubNub will be
+         * If cipher is passed, all communications to/from PubNub will be
          * encrypted.
          * 
          * The option is a: <code>java.lang.String</code> type.

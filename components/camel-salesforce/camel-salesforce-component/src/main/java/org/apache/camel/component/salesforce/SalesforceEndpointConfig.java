@@ -224,7 +224,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         this.format = format;
     }
 
-    public boolean getRawPayload() {
+    public boolean isRawPayload() {
         return rawPayload;
     }
 

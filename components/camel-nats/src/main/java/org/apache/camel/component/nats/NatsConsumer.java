@@ -55,22 +55,22 @@ public class NatsConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor();
 
         log.debug("Getting Nats Connection");
-        connection = getEndpoint().getNatsConfiguration().getConnection() != null 
-            ? getEndpoint().getNatsConfiguration().getConnection() : getEndpoint().getConnection();
+        connection = getEndpoint().getConfiguration().getConnection() != null
+            ? getEndpoint().getConfiguration().getConnection() : getEndpoint().getConnection();
 
-        executor.submit(new NatsConsumingTask(connection, getEndpoint().getNatsConfiguration()));
+        executor.submit(new NatsConsumingTask(connection, getEndpoint().getConfiguration()));
     }
 
     @Override
     protected void doStop() throws Exception {
 
-        if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
+        if (getEndpoint().getConfiguration().isFlushConnection()) {
             log.debug("Flushing Messages before stopping");
-            connection.flush(Duration.ofMillis(getEndpoint().getNatsConfiguration().getFlushTimeout()));
+            connection.flush(Duration.ofMillis(getEndpoint().getConfiguration().getFlushTimeout()));
         }
 
         try {
-            dispatcher.unsubscribe(getEndpoint().getNatsConfiguration().getTopic());
+            dispatcher.unsubscribe(getEndpoint().getConfiguration().getTopic());
         } catch (Exception e) {
             getExceptionHandler().handleException("Error during unsubscribing", e);
         }
@@ -85,7 +85,7 @@ public class NatsConsumer extends DefaultConsumer {
         }
         executor = null;
 
-        if (ObjectHelper.isEmpty(getEndpoint().getNatsConfiguration().getConnection())) {
+        if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getConnection())) {
             log.debug("Closing Nats Connection");
             if (!connection.getStatus().equals(Status.CLOSED)) {
                 connection.close();
@@ -117,17 +117,17 @@ public class NatsConsumer extends DefaultConsumer {
             try {
                 dispatcher = connection.createDispatcher(new CamelNatsMessageHandler());
                 if (ObjectHelper.isNotEmpty(configuration.getQueueName())) {
-                    dispatcher = dispatcher.subscribe(getEndpoint().getNatsConfiguration().getTopic(), getEndpoint().getNatsConfiguration().getQueueName());
-                    if (ObjectHelper.isNotEmpty(getEndpoint().getNatsConfiguration().getMaxMessages())) {
-                        dispatcher.unsubscribe(getEndpoint().getNatsConfiguration().getTopic(), Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
+                    dispatcher = dispatcher.subscribe(getEndpoint().getConfiguration().getTopic(), getEndpoint().getConfiguration().getQueueName());
+                    if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMaxMessages())) {
+                        dispatcher.unsubscribe(getEndpoint().getConfiguration().getTopic(), Integer.parseInt(getEndpoint().getConfiguration().getMaxMessages()));
                     }
                     if (dispatcher.isActive()) {
                         setActive(true);
                     }
                 } else {
-                    dispatcher = dispatcher.subscribe(getEndpoint().getNatsConfiguration().getTopic());
-                    if (ObjectHelper.isNotEmpty(getEndpoint().getNatsConfiguration().getMaxMessages())) {
-                        dispatcher.unsubscribe(getEndpoint().getNatsConfiguration().getTopic(), Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
+                    dispatcher = dispatcher.subscribe(getEndpoint().getConfiguration().getTopic());
+                    if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMaxMessages())) {
+                        dispatcher.unsubscribe(getEndpoint().getConfiguration().getTopic(), Integer.parseInt(getEndpoint().getConfiguration().getMaxMessages()));
                     }
                     if (dispatcher.isActive()) {
                         setActive(true);

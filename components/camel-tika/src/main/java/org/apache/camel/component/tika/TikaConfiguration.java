@@ -16,18 +16,13 @@
  */
 package org.apache.camel.component.tika;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
-
-import org.xml.sax.SAXException;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.tika.config.TikaConfig;
-import org.apache.tika.exception.TikaException;
-
 
 @UriParams
 public class TikaConfiguration {
@@ -49,9 +44,7 @@ public class TikaConfiguration {
     }
 
     /**
-     * 
-     * Tika Operation.  parse or detect
-     * 
+     * Tika Operation - parse or detect
      */
     public void setOperation(TikaOperation operation) {
         this.operation = operation;
@@ -66,15 +59,13 @@ public class TikaConfiguration {
     }
 
     /**
-     * 
-     * Tika Output Format. Supported output formats. 
+     * Tika Output Format. Supported output formats.
      * <ul>
      *   <li>xml: Returns Parsed Content as XML. </li>
      *   <li>html: Returns Parsed Content as HTML. </li>
      *   <li>text: Returns Parsed Content as Text. </li>
      *   <li>textMain: Uses the <a href="http://code.google.com/p/boilerpipe/">boilerpipe</a> library to automatically extract the main content from a web page. </li>
      * </ul>
-     * 
      */
     public void setTikaParseOutputFormat(TikaParseOutputFormat tikaParseOutputFormat) {
         this.tikaParseOutputFormat = tikaParseOutputFormat;
@@ -86,8 +77,7 @@ public class TikaConfiguration {
     
     /**
      * Tika Parse Output Encoding - Used to specify the character encoding of the parsed output.  
-     * Defaults to Charset.defaultCharset() .
-     * 
+     * Defaults to Charset.defaultCharset().
      */
     public void setTikaParseOutputEncoding(String tikaParseOutputEncoding) {
         this.tikaParseOutputEncoding = tikaParseOutputEncoding;
@@ -98,9 +88,7 @@ public class TikaConfiguration {
     }
 
     /**
-     * 
-     * Tika Config
-     * 
+     * To use a custom Tika config.
      */
     public void setTikaConfig(TikaConfig tikaConfig) {
         this.tikaConfig = tikaConfig;
@@ -111,12 +99,14 @@ public class TikaConfiguration {
     }
 
     /**
-     * 
-     * Tika Config Uri: The URI of  tika-config.xml
-     * 
+     * Tika Config Uri: The URI of tika-config.xml file to use.
      */
-    public void setTikaConfigUri(String tikaConfigUri) throws TikaException, IOException, SAXException {
+    public void setTikaConfigUri(String tikaConfigUri) {
         this.tikaConfigUri = tikaConfigUri;
-        this.tikaConfig = new TikaConfig(tikaConfigUri);
+        try {
+            this.tikaConfig = new TikaConfig(tikaConfigUri);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

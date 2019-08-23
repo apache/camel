@@ -79,7 +79,7 @@ public class CxfProducer extends DefaultAsyncProducer {
         }
 
 
-        endpoint.getChainedCxfEndpointConfigurer().configureClient(client);
+        endpoint.getChainedCxfConfigurer().configureClient(client);
     }
 
     @Override
@@ -190,7 +190,7 @@ public class CxfProducer extends DefaultAsyncProducer {
         camelExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
         log.trace("Set Camel Exchange property: {}={}", DataFormat.class.getName(), dataFormat);
         
-        if (endpoint.getMergeProtocolHeaders()) {
+        if (endpoint.isMergeProtocolHeaders()) {
             camelExchange.setProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.TRUE);
         }
         

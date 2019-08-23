@@ -29,6 +29,7 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.engine.BeanProcessorFactoryResolver;
 import org.apache.camel.impl.engine.BeanProxyFactoryResolver;
 import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
+import org.apache.camel.impl.engine.DefaultBeanIntrospection;
 import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
 import org.apache.camel.impl.engine.DefaultClassResolver;
@@ -60,6 +61,7 @@ import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.runtimecatalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BeanRepository;
@@ -318,6 +320,11 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     @Override
     protected BeanProcessorFactory createBeanProcessorFactory() {
         return new BeanProcessorFactoryResolver().resolve(this);
+    }
+
+    @Override
+    protected BeanIntrospection createBeanIntrospection() {
+        return new DefaultBeanIntrospection();
     }
 
     @Override

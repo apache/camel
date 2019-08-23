@@ -104,11 +104,11 @@ public class ServiceNowConfiguration implements Cloneable {
     private String displayValue = "false";
     @UriParam
     private Boolean inputDisplayValue = false;
-    @UriParam(prefix = "model.", multiValue = true, javaType = "java.lang.String", description = "Defines both request and response models")
+    @UriParam(prefix = "model.", multiValue = true, description = "Defines both request and response models")
     private transient Map<String, Class<?>> models; // field not in use as its a shortcut for both requestModels/responseModels
-    @UriParam(prefix = "request-model.", multiValue = true, javaType = "java.lang.String")
+    @UriParam(prefix = "request-model.", multiValue = true)
     private Map<String, Class<?>> requestModels;
-    @UriParam(prefix = "response-model.", multiValue = true, javaType = "java.lang.String")
+    @UriParam(prefix = "response-model.", multiValue = true)
     private Map<String, Class<?>> responseModels;
     @UriParam(label = "advanced")
     private ObjectMapper mapper;
@@ -666,6 +666,10 @@ public class ServiceNowConfiguration implements Cloneable {
         setResponseModels(models);
     }
 
+    public Map<String, Class<?>> getModels() {
+        return models;
+    }
+
     public void addModel(String name, Class<?> type) {
         addRequestModel(name, type);
         addResponseModel(name, type);
@@ -685,6 +689,10 @@ public class ServiceNowConfiguration implements Cloneable {
 
         this.requestModels.clear();
         this.requestModels.putAll(models);
+    }
+
+    public Map<String, Class<?>> getResponseModels() {
+        return responseModels;
     }
 
     public void addRequestModel(String name, Class<?> type) {

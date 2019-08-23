@@ -318,7 +318,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("myhost", endpoint.getConfiguration().getHost());
 
         assertNotNull("Scheduler not set", endpoint.getScheduler());
-        assertTrue("Wrong scheduler class", endpoint.getScheduler() instanceof QuartzScheduledPollConsumerScheduler);
+        assertEquals("quartz", endpoint.getScheduler());
     }
 }
 

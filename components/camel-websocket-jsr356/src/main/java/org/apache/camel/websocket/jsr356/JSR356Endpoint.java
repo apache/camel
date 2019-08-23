@@ -32,9 +32,6 @@ public class JSR356Endpoint extends DefaultEndpoint {
     @UriParam(description = "Used when the endpoint is in client mode to populate a pool of sessions")
     private int sessionCount = 1;
 
-    @UriParam(description = "the servlet context to use (represented by its path)")
-    private String context;
-
     private final JSR356WebSocketComponent component;
 
     public JSR356Endpoint(final JSR356WebSocketComponent component, final String uri) {
@@ -49,7 +46,7 @@ public class JSR356Endpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(final Processor processor) {
-        return new JSR356Consumer(this, processor, sessionCount, context);
+        return new JSR356Consumer(this, processor, sessionCount);
     }
 
     @Override

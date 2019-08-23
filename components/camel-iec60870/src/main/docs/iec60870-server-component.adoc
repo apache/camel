@@ -97,7 +97,7 @@ with the following path and query parameters:
 | *timeout1* (connection) | Timeout T1 in milliseconds. | 15000 | int
 | *timeout2* (connection) | Timeout T2 in milliseconds. | 10000 | int
 | *timeout3* (connection) | Timeout T3 in milliseconds. | 20000 | int
-| *causeSourceAddress* (data) | Whether to include the source address | true | boolean
+| *causeSourceAddress* (data) | Whether to include the source address |  | byte
 | *ignoreBackgroundScan* (data) | Whether background scan transmissions should be ignored. | true | boolean
 | *ignoreDaylightSavingTime* (data) | Whether to ignore or respect DST | false | boolean
 | *timeZone* (data) | The timezone to use. May be any Java time zone string | UTC | TimeZone

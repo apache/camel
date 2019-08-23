@@ -70,7 +70,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     private ConsistencyLevel consistencyLevel;
     @UriParam
     private String loadBalancingPolicy;
-    @UriParam(javaType = "java.lang.String")
+    @UriParam
     private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
 
     public CassandraEndpoint(String endpointUri, Component component) {

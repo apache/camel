@@ -101,7 +101,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam(label = "common")
     private boolean skipExchangeDeclare;
     @UriParam(label = "common")
-    private Address[] addresses;
+    private String addresses;
     @UriParam(label = "common", defaultValue = "true")
     private Boolean automaticRecoveryEnabled = Boolean.TRUE;
     @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
@@ -220,7 +220,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         if (getAddresses() == null) {
             return getOrCreateConnectionFactory().newConnection(executor);
         } else {
-            return getOrCreateConnectionFactory().newConnection(executor, getAddresses());
+            return getOrCreateConnectionFactory().newConnection(executor, parseAddresses());
         }
     }
 
@@ -452,23 +452,19 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      * looks like "server1:12345, server2:12345"
      */
     public void setAddresses(String addresses) {
-        Address[] addressArray = Address.parseAddresses(addresses);
-        if (addressArray.length > 0) {
-            this.addresses = addressArray;
-        }
-    }
-
-    /**
-     * If this option is set, camel-rabbitmq will try to create connection based
-     * on the setting of option addresses. The addresses value is a string which
-     * looks like "server1:12345, server2:12345"
-     */
-    public void setAddresses(Address[] addresses) {
         this.addresses = addresses;
     }
 
-    public Address[] getAddresses() {
+    public String getAddresses() {
         return addresses;
+    }
+
+    public Address[] parseAddresses() {
+        if (addresses != null) {
+            return Address.parseAddresses(getAddresses());
+        } else {
+            return null;
+        }
     }
 
     public int getConnectionTimeout() {
