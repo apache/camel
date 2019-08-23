@@ -1,11 +1,12 @@
 /*
- * Copyright (C) 2016 Red Hat, Inc.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,8 +16,6 @@
  */
 package org.apache.camel.component.olingo2;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +34,10 @@ import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+// CHECKSTYLE:OFF
 public class AbstractOlingo2AppAPITestSupport {
 
     protected static final String SERVICE_NAME = "MyFormula.svc";
@@ -109,15 +112,15 @@ public class AbstractOlingo2AppAPITestSupport {
             Object value = entry.getValue();
             if (value instanceof Map) {
                 @SuppressWarnings("unchecked")
-                final Map<String, Object> objectMap = (Map<String, Object>) value;
+                final Map<String, Object> objectMap = (Map<String, Object>)value;
                 value = prettyPrint(objectMap, level + 1);
                 b.append(value).append(NEW_LINE);
             } else if (value instanceof Calendar) {
-                Calendar cal = (Calendar) value;
+                Calendar cal = (Calendar)value;
                 value = DateFormat.getInstance().format(cal.getTime());
                 b.append(value).append(NEW_LINE);
             } else if (value instanceof ODataDeltaFeed) {
-                ODataDeltaFeed feed = (ODataDeltaFeed) value;
+                ODataDeltaFeed feed = (ODataDeltaFeed)value;
                 List<ODataEntry> inlineEntries = feed.getEntries();
                 b.append("{");
                 for (ODataEntry oDataEntry : inlineEntries) {
@@ -147,9 +150,9 @@ public class AbstractOlingo2AppAPITestSupport {
             this.response = response;
             if (LOG.isDebugEnabled()) {
                 if (response instanceof ODataFeed) {
-                    LOG.debug("Received response: {}", prettyPrint((ODataFeed) response));
+                    LOG.debug("Received response: {}", prettyPrint((ODataFeed)response));
                 } else if (response instanceof ODataEntry) {
-                    LOG.debug("Received response: {}", prettyPrint((ODataEntry) response));
+                    LOG.debug("Received response: {}", prettyPrint((ODataEntry)response));
                 } else {
                     LOG.debug("Received response: {}", response);
                 }

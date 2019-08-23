@@ -101,8 +101,7 @@ public class UriInfoWithType implements UriInfo {
                                 many = lastProperty.getMultiplicity() == EdmMultiplicity.MANY;
                             } else {
                                 final NavigationSegment lastSegment = segments.get(segments.size() - 1);
-                                many = lastSegment.getKeyPredicates().isEmpty()
-                                    && lastSegment.getNavigationProperty().getMultiplicity() == EdmMultiplicity.MANY;
+                                many = lastSegment.getKeyPredicates().isEmpty() && lastSegment.getNavigationProperty().getMultiplicity() == EdmMultiplicity.MANY;
                             }
                             if (isCount) {
                                 if (many) {
@@ -120,8 +119,7 @@ public class UriInfoWithType implements UriInfo {
                         }
                         break;
                     default:
-                        throw new ODataApplicationException("Unexpected property type " + targetKind,
-                            Locale.ENGLISH);
+                        throw new ODataApplicationException("Unexpected property type " + targetKind, Locale.ENGLISH);
                     }
                 }
             } else {
@@ -140,8 +138,7 @@ public class UriInfoWithType implements UriInfo {
                     uriType = UriType.URI10;
                     break;
                 default:
-                    throw new ODataApplicationException("Invalid function return type " + targetType,
-                        Locale.ENGLISH);
+                    throw new ODataApplicationException("Invalid function return type " + targetType, Locale.ENGLISH);
                 }
             }
         }

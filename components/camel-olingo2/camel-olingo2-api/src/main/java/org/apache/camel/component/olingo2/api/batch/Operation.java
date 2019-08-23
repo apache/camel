@@ -17,8 +17,9 @@
 package org.apache.camel.component.olingo2.api.batch;
 
 /**
-* OData operation used by {@link org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest}.
-*/
+ * OData operation used by
+ * {@link org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest}.
+ */
 public enum Operation {
 
     CREATE("POST"), UPDATE("PUT"), PATCH("PATCH"), MERGE("MERGE"), DELETE("DELETE");

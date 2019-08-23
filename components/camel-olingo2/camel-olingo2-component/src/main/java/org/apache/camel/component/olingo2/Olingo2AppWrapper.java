@@ -87,10 +87,9 @@ public class Olingo2AppWrapper {
                         final Exception ex = error[0];
                         if (ex != null) {
                             if (ex instanceof RuntimeCamelException) {
-                                throw (RuntimeCamelException) ex;
+                                throw (RuntimeCamelException)ex;
                             } else {
-                                final String message = ex.getMessage() != null
-                                    ? ex.getMessage() : ex.getClass().getName();
+                                final String message = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName();
                                 throw new RuntimeCamelException("Error reading EDM: " + message, ex);
                             }
                         }

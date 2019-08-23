@@ -92,8 +92,7 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, Olingo2ApiName apiName,
-                                      Olingo2Configuration endpointConfiguration) {
+    protected Endpoint createEndpoint(String uri, String methodName, Olingo2ApiName apiName, Olingo2Configuration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new Olingo2Endpoint(uri, this, apiName, methodName, endpointConfiguration);
@@ -184,9 +183,9 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
 
         Olingo2AppImpl olingo2App;
         if (clientBuilder == null || clientBuilder instanceof HttpAsyncClientBuilder) {
-            olingo2App = new Olingo2AppImpl(configuration.getServiceUri(), (HttpAsyncClientBuilder) clientBuilder);
+            olingo2App = new Olingo2AppImpl(configuration.getServiceUri(), (HttpAsyncClientBuilder)clientBuilder);
         } else {
-            olingo2App = new Olingo2AppImpl(configuration.getServiceUri(), (HttpClientBuilder) clientBuilder);
+            olingo2App = new Olingo2AppImpl(configuration.getServiceUri(), (HttpClientBuilder)clientBuilder);
         }
         apiProxy = new Olingo2AppWrapper(olingo2App);
         apiProxy.getOlingo2App().setContentType(configuration.getContentType());

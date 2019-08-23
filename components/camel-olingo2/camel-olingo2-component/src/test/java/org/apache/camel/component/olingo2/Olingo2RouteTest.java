@@ -34,7 +34,7 @@ public class Olingo2RouteTest extends CamelTestSupport {
     private static final int PORT = AvailablePortFinder.getNextAvailable();
     private static final String TEST_SERVICE_URL = "http://localhost:" + PORT + "/MyFormula.svc";
     private static final String ID_PROPERTY = "Id";
-    
+
     private static Olingo2App olingoApp;
     private static Olingo2SampleServer server;
 
@@ -54,29 +54,28 @@ public class Olingo2RouteTest extends CamelTestSupport {
             server.destroy();
         }
     }
-    
+
     protected static void startServers(int port) throws Exception {
         server = new Olingo2SampleServer(port, "/olingo2_ref");
         server.start();
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)
-        throws CamelExecutionException {
-        return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws CamelExecutionException {
+        return (T)template().requestBodyAndHeaders(endpointUri, body, headers);
     }
-    
+
     @Test
     public void testRead() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
-        
+
         headers.put(Olingo2Constants.PROPERTY_PREFIX + "keyPredicate", "'1'");
         final ODataEntry manufacturer = requestBodyAndHeaders("direct:READENTRY", null, headers);
         assertNotNull(manufacturer);
         final Map<String, Object> properties = manufacturer.getProperties();
         assertEquals("Manufacturer Id", "1", properties.get(ID_PROPERTY));
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
