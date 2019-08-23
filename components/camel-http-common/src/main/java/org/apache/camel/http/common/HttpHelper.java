@@ -179,25 +179,26 @@ public final class HttpHelper {
     }
 
     /**
-     * Reads the response body from the given http servlet request.
+     * Reads the request body from the given http servlet request.
      *
      * @param request  http servlet request
      * @param exchange the exchange
      * @return the request body, can be <tt>null</tt> if no body
-     * @throws IOException is thrown if error reading response body
+     * @throws IOException is thrown if error reading request body
      */
     public static Object readRequestBodyFromServletRequest(HttpServletRequest request, Exchange exchange) throws IOException {
         InputStream is = HttpConverter.toInputStream(request, exchange);
+        // TODO should readRequestBodyFromInputStream() be invoked instead?
         return readResponseBodyFromInputStream(is, exchange);
     }
     
     /**
-     * Reads the response body from the given input stream.
+     * Reads the request body from the given input stream.
      *
      * @param is       the input stream
      * @param exchange the exchange
-     * @return the response body, can be <tt>null</tt> if no body
-     * @throws IOException is thrown if error reading response body
+     * @return the request body, can be <tt>null</tt> if no body
+     * @throws IOException is thrown if error reading request body
      */
     public static Object readRequestBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
         if (is == null) {
