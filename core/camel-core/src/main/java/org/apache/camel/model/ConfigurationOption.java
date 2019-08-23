@@ -42,12 +42,29 @@ public class ConfigurationOption {
         this.value = value;
     }
 
+    @Deprecated
     String name() {
         return name;
     }
 
+    @Deprecated
     String value() {
         return value;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

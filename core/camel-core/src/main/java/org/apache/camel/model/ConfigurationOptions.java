@@ -48,4 +48,11 @@ public class ConfigurationOptions {
         return ret;
     }
 
+    public List<ConfigurationOption> getGlobalOptions() {
+        return globalOptions;
+    }
+
+    public void setGlobalOptions(List<ConfigurationOption> globalOptions) {
+        this.globalOptions = globalOptions;
+    }
 }
