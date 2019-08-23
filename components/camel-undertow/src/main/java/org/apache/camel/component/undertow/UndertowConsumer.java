@@ -46,7 +46,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -273,7 +275,12 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
     
     private HttpHandler wrapHandler(HttpHandler handler, UndertowEndpoint endpoint) {
         HttpHandler nextHandler = handler;
-        for (CamelUndertowHttpHandler h : endpoint.getHandlers()) {
+        String[] handlders = endpoint.getHandlers().split(",");
+        for (String obj : handlders) {
+            if (EndpointHelper.isReferenceParameter(obj)) {
+                obj = obj.substring(1);
+            }
+            CamelUndertowHttpHandler h = CamelContextHelper.mandatoryLookup(endpoint.getCamelContext(), obj, CamelUndertowHttpHandler.class);
             h.setNext(nextHandler);
             nextHandler = h;
         }

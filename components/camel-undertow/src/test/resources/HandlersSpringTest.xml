@@ -19,12 +19,10 @@
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
     ">
 
     <camel:sslContextParameters id="sslContextParameters">
@@ -47,12 +45,10 @@
         </property>
     </bean>
 
-    <util:list id="handlers" value-type="io.undertow.server.HttpHandler">
-        <bean class="org.apache.camel.component.undertow.UndertowBasicAuthHandler"/>
-    </util:list>
+    <bean id="myHandler" class="org.apache.camel.component.undertow.UndertowBasicAuthHandler"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <endpoint id="input" uri="undertow:http://localhost:#{dynaPort}/spring?handlers=#handlers"/>
+        <endpoint id="input" uri="undertow:http://localhost:#{dynaPort}/spring?handlers=#myHandler"/>
 
         <route>
             <from uri="ref:input"/>
