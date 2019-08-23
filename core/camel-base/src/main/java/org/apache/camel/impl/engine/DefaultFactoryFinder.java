@@ -74,7 +74,7 @@ public class DefaultFactoryFinder implements FactoryFinder {
         Class<?> clazz = addToClassMap(classKey, () -> {
             Properties prop = doFindFactoryProperties(key);
             if (prop != null) {
-                return doNewInstance(prop, prefix).orElse(null);
+                return doNewInstance(prop, prefix, true).orElse(null);
             } else {
                 return null;
             }
@@ -88,15 +88,33 @@ public class DefaultFactoryFinder implements FactoryFinder {
         return findClass(key, propertyPrefix);
     }
 
+    @Override
+    public Optional<Class<?>> findOptionalClass(String key, String propertyPrefix) {
+        final String prefix = propertyPrefix != null ? propertyPrefix : "";
+        final String classKey = prefix + key;
+
+        Class<?> clazz = addToClassMap(classKey, () -> {
+            Properties prop = doFindFactoryProperties(key);
+            if (prop != null) {
+                return doNewInstance(prop, prefix, false).orElse(null);
+            } else {
+                return null;
+            }
+        });
+        return Optional.ofNullable(clazz);
+    }
+
     private Object doNewInstance(String key, String propertyPrefix) {
         Optional<Class<?>> clazz = findClass(key, propertyPrefix);
         return clazz.map(ObjectHelper::newInstance).orElse(null);
     }
 
-    private Optional<Class<?>> doNewInstance(Properties properties, String propertyPrefix) throws IOException {
+    private Optional<Class<?>> doNewInstance(Properties properties, String propertyPrefix, boolean mandatory) throws IOException {
         String className = properties.getProperty(propertyPrefix + "class");
-        if (className == null) {
+        if (className == null && mandatory) {
             throw new IOException("Expected property is missing: " + propertyPrefix + "class");
+        } else if (className == null) {
+            return Optional.empty();
         }
 
         Class<?> clazz = classResolver.resolveClass(className);

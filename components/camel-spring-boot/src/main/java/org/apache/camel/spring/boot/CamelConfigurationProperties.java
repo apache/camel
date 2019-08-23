@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.boot;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.main.DefaultConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -443,6 +444,19 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
      * You can also use #longName# which is the long thread name which can includes endpoint parameters etc.
      */
     private String threadNamePattern;
+
+    /**
+     * Sets whether bean introspection uses extended statistics.
+     * The default is false.
+     */
+    private boolean beanIntrospectionExtendedStatistics;
+
+    /**
+     * Sets the logging level used by bean introspection, logging activity of its usage.
+     * The default is TRACE.
+     */
+    private LoggingLevel beanIntrospectionLoggingLevel;
+
 
     // Getters & setters
     // -----------------

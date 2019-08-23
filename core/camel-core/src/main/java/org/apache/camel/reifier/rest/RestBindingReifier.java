@@ -21,12 +21,12 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 
 public class RestBindingReifier {
@@ -97,8 +97,8 @@ public class RestBindingReifier {
                     clazz = context.getClassResolver().resolveMandatoryClass(typeName);
                 }
                 if (clazz != null) {
-                    IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", clazz);
-                    IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", type.endsWith("[]"));
+                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context.getTypeConverter(), json, "unmarshalType", clazz);
+                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context.getTypeConverter(), json, "useList", type.endsWith("[]"));
                 }
                 setAdditionalConfiguration(config, context, json, "json.in.");
 
@@ -109,8 +109,8 @@ public class RestBindingReifier {
                     outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
                 }
                 if (outClazz != null) {
-                    IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "unmarshalType", outClazz);
-                    IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outType.endsWith("[]"));
+                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context.getTypeConverter(), outJson, "unmarshalType", outClazz);
+                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context.getTypeConverter(), outJson, "useList", outType.endsWith("[]"));
                 }
                 setAdditionalConfiguration(config, context, outJson, "json.out.");
             }
@@ -149,7 +149,7 @@ public class RestBindingReifier {
                 }
                 if (clazz != null) {
                     JAXBContext jc = JAXBContext.newInstance(clazz);
-                    IntrospectionSupport.setProperty(context.getTypeConverter(), jaxb, "context", jc);
+                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context.getTypeConverter(), jaxb, "context", jc);
                 }
                 setAdditionalConfiguration(config, context, jaxb, "xml.in.");
 
@@ -161,11 +161,11 @@ public class RestBindingReifier {
                 }
                 if (outClazz != null) {
                     JAXBContext jc = JAXBContext.newInstance(outClazz);
-                    IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
+                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context.getTypeConverter(), outJaxb, "context", jc);
                 } else if (clazz != null) {
                     // fallback and use the context from the input
                     JAXBContext jc = JAXBContext.newInstance(clazz);
-                    IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
+                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context.getTypeConverter(), outJaxb, "context", jc);
                 }
                 setAdditionalConfiguration(config, context, outJaxb, "xml.out.");
             }

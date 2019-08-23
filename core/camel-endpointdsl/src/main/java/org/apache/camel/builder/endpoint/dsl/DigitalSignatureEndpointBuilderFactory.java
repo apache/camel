@@ -220,19 +220,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the password used to access an aliased PrivateKey in the
          * KeyStore.
          * 
-         * The option is a: <code>char[]</code> type.
-         * 
-         * Group: security
-         */
-        default DigitalSignatureEndpointBuilder password(Character[] password) {
-            setProperty("password", password);
-            return this;
-        }
-        /**
-         * Sets the password used to access an aliased PrivateKey in the
-         * KeyStore.
-         * 
-         * The option will be converted to a <code>char[]</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          */

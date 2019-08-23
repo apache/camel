@@ -20,7 +20,6 @@ import java.util.List;
 
 import io.atomix.AtomixClient;
 import io.atomix.catalyst.transport.Address;
-import io.atomix.catalyst.transport.Transport;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.atomix.client.AtomixClientConfiguration;
 import org.apache.camel.component.atomix.client.AtomixClientHelper;
@@ -68,16 +67,16 @@ public final class AtomixClusterClientService extends AbstractCamelClusterServic
         configuration.setNodes(nodes);
     }
 
-    public Class<? extends Transport> getTransport() {
-        return configuration.getTransport();
+    public String getTransport() {
+        return configuration.getTransportClassName();
     }
 
-    public void setTransport(Class<? extends Transport> transport) {
-        configuration.setTransport(transport);
+    public void setTransportClassName(String transport) {
+        configuration.setTransportClassName(transport);
     }
 
     public AtomixClient getAtomix() {
-        return configuration.getAtomix();
+        return (AtomixClient) configuration.getAtomix();
     }
 
     public void setAtomix(AtomixClient atomix) {

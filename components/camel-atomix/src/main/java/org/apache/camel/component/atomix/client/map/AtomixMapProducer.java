@@ -35,7 +35,7 @@ import static org.apache.camel.component.atomix.client.AtomixClientConstants.RES
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_TTL;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_VALUE;
 
-final class AtomixMapProducer extends AbstractAtomixClientProducer<AtomixMapEndpoint, DistributedMap<Object, Object>> {
+public final class AtomixMapProducer extends AbstractAtomixClientProducer<AtomixMapEndpoint, DistributedMap<Object, Object>> {
     private final AtomixMapConfiguration configuration;
 
     protected AtomixMapProducer(AtomixMapEndpoint endpoint) {

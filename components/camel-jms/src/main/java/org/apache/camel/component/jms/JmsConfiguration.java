@@ -309,7 +309,7 @@ public class JmsConfiguration implements Cloneable {
                     + " Possible values are: Bytes, Map, Object, Stream, Text."
                     + " By default, Camel would determine which JMS message type to use from the In body type. This option allows you to specify it.")
     private JmsMessageType jmsMessageType;
-    @UriParam(label = "advanced", enums = "default,passthrough", javaType = "java.lang.String",
+    @UriParam(label = "advanced", enums = "default,passthrough",
             description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
                     + " Camel provides two implementations out of the box: default and passthrough."
                     + " The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is."
@@ -1211,6 +1211,10 @@ public class JmsConfiguration implements Cloneable {
 
     public boolean isExplicitQosEnabled() {
         return explicitQosEnabled != null ? explicitQosEnabled : false;
+    }
+
+    public Boolean getExplicitQosEnabled() {
+        return explicitQosEnabled;
     }
 
     /**

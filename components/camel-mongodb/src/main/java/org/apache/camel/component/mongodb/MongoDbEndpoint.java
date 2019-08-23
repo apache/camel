@@ -352,11 +352,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the operation this endpoint will execute against MongoDB. For
-     * possible values, see {@link MongoDbOperation}.
-     *
-     * @param operation name of the operation as per catalogued values
-     * @throws CamelMongoDbException
+     * Sets the operation this endpoint will execute against MongoDB.
      */
     public void setOperation(String operation) throws CamelMongoDbException {
         try {
@@ -364,6 +360,13 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         } catch (IllegalArgumentException e) {
             throw new CamelMongoDbException("Operation not supported", e);
         }
+    }
+
+    /**
+     * Sets the operation this endpoint will execute against MongoDB.
+     */
+    public void setOperation(MongoDbOperation operation) {
+        this.operation = operation;
     }
 
     public MongoDbOperation getOperation() {

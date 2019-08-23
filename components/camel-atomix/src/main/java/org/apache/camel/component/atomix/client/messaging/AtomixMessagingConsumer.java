@@ -36,7 +36,7 @@ import static org.apache.camel.component.atomix.client.AtomixClientConstants.CHA
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.MEMBER_NAME;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
 
-final class AtomixMessagingConsumer extends AbstractAtomixClientConsumer<AtomixMessagingEndpoint> {
+public final class AtomixMessagingConsumer extends AbstractAtomixClientConsumer<AtomixMessagingEndpoint> {
 
     private final List<Listener<Message<Object>>> listeners;
     private final String resultHeader;

@@ -177,16 +177,16 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     }
     
     public void setServiceNamespace(String serviceNamespace) {
-        QName qn = getServiceName();
+        QName qn = getServiceNameAsQName();
         if (qn == null) {
-            setServiceName(new QName(serviceNamespace, "local"));
+            setServiceNameAsQName(new QName(serviceNamespace, "local"));
         } else {
-            setServiceName(new QName(serviceNamespace, qn.getLocalPart()));
+            setServiceNameAsQName(new QName(serviceNamespace, qn.getLocalPart()));
         }
     }
 
     public String getServiceNamespace() {
-        QName qn = getServiceName();
+        QName qn = getServiceNameAsQName();
         if (qn == null) {
             return null;
         }
@@ -194,16 +194,16 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     }
 
     public void setServiceLocalName(String serviceLocalName) {
-        QName qn = getServiceName();
+        QName qn = getServiceNameAsQName();
         if (qn == null) {
-            setServiceName(new QName("", serviceLocalName));
+            setServiceNameAsQName(new QName("", serviceLocalName));
         } else {
-            setServiceName(new QName(qn.getNamespaceURI(), serviceLocalName));
+            setServiceNameAsQName(new QName(qn.getNamespaceURI(), serviceLocalName));
         }
     }
 
     public String getServiceLocalName() {
-        QName qn = getServiceName();
+        QName qn = getServiceNameAsQName();
         if (qn == null) {
             return null;
         }
@@ -211,7 +211,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     }
 
     public String getEndpointLocalName() {
-        QName qn = getPortName();
+        QName qn = getPortNameAsQName();
         if (qn == null) {
             return null;
         }
@@ -219,25 +219,25 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     }
 
     public void setEndpointLocalName(String endpointLocalName) {
-        QName qn = getPortName();
+        QName qn = getPortNameAsQName();
         if (qn == null) {
-            setPortName(new QName("", endpointLocalName));
+            setPortNameAsQName(new QName("", endpointLocalName));
         } else {
-            setPortName(new QName(qn.getNamespaceURI(), endpointLocalName));
+            setPortNameAsQName(new QName(qn.getNamespaceURI(), endpointLocalName));
         }
     }
 
     public void setEndpointNamespace(String endpointNamespace) {
-        QName qn = getPortName();
+        QName qn = getPortNameAsQName();
         if (qn == null) {
-            setPortName(new QName(endpointNamespace, "local"));
+            setPortNameAsQName(new QName(endpointNamespace, "local"));
         } else {
-            setPortName(new QName(endpointNamespace, qn.getLocalPart()));
+            setPortNameAsQName(new QName(endpointNamespace, qn.getLocalPart()));
         }
     }
 
     public String getEndpointNamespace() {
-        QName qn = getPortName();
+        QName qn = getPortNameAsQName();
         if (qn == null) {
             return null;
         }

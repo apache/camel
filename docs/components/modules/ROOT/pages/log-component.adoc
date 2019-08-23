@@ -93,7 +93,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (27 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -108,6 +108,7 @@ with the following path and query parameters:
 | *logMask* (producer) | If true, mask sensitive information like password or passphrase in the log. |  | Boolean
 | *marker* (producer) | An optional Marker name to use. |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *exchangeFormatter* (advanced) | To use a custom exchange formatter |  | ExchangeFormatter
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *maxChars* (formatting) | Limits the number of characters logged per line. | 10000 | int
 | *multiline* (formatting) | If enabled then each information is outputted on a newline. | false | boolean

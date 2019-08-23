@@ -40,7 +40,7 @@ public class NatsProducer extends DefaultProducer {
     
     @Override
     public void process(Exchange exchange) throws Exception {
-        NatsConfiguration config = getEndpoint().getNatsConfiguration();
+        NatsConfiguration config = getEndpoint().getConfiguration();
         String body = exchange.getIn().getMandatoryBody(String.class);
 
         log.debug("Publishing to topic: {}", config.getTopic());
@@ -59,19 +59,19 @@ public class NatsProducer extends DefaultProducer {
         log.debug("Starting Nats Producer");
         
         log.debug("Getting Nats Connection");
-        connection = getEndpoint().getNatsConfiguration().getConnection() != null 
-            ? getEndpoint().getNatsConfiguration().getConnection() : getEndpoint().getConnection();
+        connection = getEndpoint().getConfiguration().getConnection() != null
+            ? getEndpoint().getConfiguration().getConnection() : getEndpoint().getConnection();
     }
 
     @Override
     protected void doStop() throws Exception {
         log.debug("Stopping Nats Producer");
-        if (ObjectHelper.isEmpty(getEndpoint().getNatsConfiguration().getConnection())) {
+        if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getConnection())) {
             log.debug("Closing Nats Connection");
             if (connection != null && !connection.getStatus().equals(Status.CLOSED)) {
-                if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
+                if (getEndpoint().getConfiguration().isFlushConnection()) {
                     log.debug("Flushing Nats Connection");
-                    connection.flush(Duration.ofMillis(getEndpoint().getNatsConfiguration().getFlushTimeout()));
+                    connection.flush(Duration.ofMillis(getEndpoint().getConfiguration().getFlushTimeout()));
                 }
                 connection.close();
             }

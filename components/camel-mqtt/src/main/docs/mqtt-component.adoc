@@ -112,7 +112,7 @@ with the following path and query parameters:
 | *version* (common) | Set to 3.1.1 to use MQTT version 3.1.1. Otherwise defaults to the 3.1 protocol version. | 3.1 | String
 | *willMessage* (common) | The Will message to send. Defaults to a zero length message. |  | String
 | *willQos* (common) | Sets the quality of service to use for the Will message. Defaults to AT_MOST_ONCE. | AtMostOnce | QoS
-| *willRetain* (common) | Set to true if you want the Will to be published with the retain option. |  | QoS
+| *willRetain* (common) | Set to true if you want the Will to be published with the retain option. | false | boolean
 | *willTopic* (common) | If set the server will publish the client's Will message to the specified topics if the client has an unexpected disconnection. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler

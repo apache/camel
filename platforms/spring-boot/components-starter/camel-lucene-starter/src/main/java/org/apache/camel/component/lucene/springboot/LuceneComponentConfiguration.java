@@ -86,12 +86,12 @@ public class LuceneComponentConfiguration
          * An optional directory containing files to be used to be analyzed and
          * added to the index at producer startup.
          */
-        private File sourceDirectory;
+        private File srcDir;
         /**
          * A file system directory in which index files are created upon
          * analysis of the document by the specified analyzer
          */
-        private File indexDirectory;
+        private File indexDir;
         /**
          * An Analyzer builds TokenStreams, which analyze text. It thus
          * represents a policy for extracting index terms from text. The value
@@ -141,20 +141,20 @@ public class LuceneComponentConfiguration
             this.authority = authority;
         }
 
-        public File getSourceDirectory() {
-            return sourceDirectory;
+        public File getSrcDir() {
+            return srcDir;
         }
 
-        public void setSourceDirectory(File sourceDirectory) {
-            this.sourceDirectory = sourceDirectory;
+        public void setSrcDir(File srcDir) {
+            this.srcDir = srcDir;
         }
 
-        public File getIndexDirectory() {
-            return indexDirectory;
+        public File getIndexDir() {
+            return indexDir;
         }
 
-        public void setIndexDirectory(File indexDirectory) {
-            this.indexDirectory = indexDirectory;
+        public void setIndexDir(File indexDir) {
+            this.indexDir = indexDir;
         }
 
         public Analyzer getAnalyzer() {

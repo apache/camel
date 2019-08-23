@@ -96,7 +96,7 @@ public class SalesforceConsumer extends DefaultConsumer {
 
         messageKind = MessageKind.fromTopicName(topicName);
 
-        rawPayload = endpoint.getConfiguration().getRawPayload();
+        rawPayload = endpoint.getConfiguration().isRawPayload();
 
         // get sObjectClass to convert to
         final String sObjectName = endpoint.getConfiguration().getSObjectName();

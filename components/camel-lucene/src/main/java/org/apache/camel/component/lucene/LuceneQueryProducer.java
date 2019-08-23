@@ -35,7 +35,7 @@ public class LuceneQueryProducer extends DefaultProducer {
     public LuceneQueryProducer(Endpoint endpoint, LuceneConfiguration config) throws Exception {
         super(endpoint);
         this.config = config;
-        indexDirectory = config.getIndexDirectory();
+        indexDirectory = config.getIndexDir();
         analyzer = config.getAnalyzer();
         maxNumberOfHits = config.getMaxHits();
     }

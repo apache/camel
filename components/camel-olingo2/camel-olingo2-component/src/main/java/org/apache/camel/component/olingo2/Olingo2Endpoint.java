@@ -171,7 +171,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         properties.put(EDM_PROPERTY, apiProxy.getEdm());
 
         // handle filterAlreadySeen property
-        properties.put(FILTER_ALREADY_SEEN, configuration.getFilterAlreadySeen());
+        properties.put(FILTER_ALREADY_SEEN, configuration.isFilterAlreadySeen());
 
         // handle keyPredicate
         final String keyPredicate = (String)properties.get(KEY_PREDICATE_PROPERTY);

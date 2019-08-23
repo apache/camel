@@ -102,8 +102,8 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
             fail("Expected FailedToCreateRouteException");
         } catch (FailedToCreateRouteException e) {
             assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, e.getCause().getCause());
-            assertEquals("chmod", pbe.getPropertyName());
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            assertEquals("chmod option [abc] is not valid", iae.getMessage());
         }
     }
 

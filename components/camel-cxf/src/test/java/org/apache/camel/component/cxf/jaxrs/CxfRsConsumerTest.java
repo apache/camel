@@ -75,11 +75,11 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceDefaultHandlerModel.xml";
     private static final String CXF_RS_ENDPOINT_URI6 =
             "cxfrs://http://localhost:" + CXT + "/rest6?"
-            + "performInvocation=true&serviceBeans=#serviceBean";
+            + "performInvocation=true&serviceBeans=#myServiceBean";
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        registry.bind("serviceBean", new CustomerService());
+        registry.bind("myServiceBean", new CustomerService());
     }
 
     @Override

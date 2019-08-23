@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
     
-    private static final int SERVICES = 12;
+    private static final int SERVICES = 13;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

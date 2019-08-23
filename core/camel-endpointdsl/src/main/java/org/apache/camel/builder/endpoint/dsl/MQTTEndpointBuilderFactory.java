@@ -748,11 +748,11 @@ public interface MQTTEndpointBuilderFactory {
          * Set to true if you want the Will to be published with the retain
          * option.
          * 
-         * The option is a: <code>org.fusesource.mqtt.client.QoS</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: common
          */
-        default MQTTEndpointConsumerBuilder willRetain(QoS willRetain) {
+        default MQTTEndpointConsumerBuilder willRetain(boolean willRetain) {
             setProperty("willRetain", willRetain);
             return this;
         }
@@ -760,8 +760,7 @@ public interface MQTTEndpointBuilderFactory {
          * Set to true if you want the Will to be published with the retain
          * option.
          * 
-         * The option will be converted to a
-         * <code>org.fusesource.mqtt.client.QoS</code> type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: common
          */
@@ -1652,11 +1651,11 @@ public interface MQTTEndpointBuilderFactory {
          * Set to true if you want the Will to be published with the retain
          * option.
          * 
-         * The option is a: <code>org.fusesource.mqtt.client.QoS</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: common
          */
-        default MQTTEndpointProducerBuilder willRetain(QoS willRetain) {
+        default MQTTEndpointProducerBuilder willRetain(boolean willRetain) {
             setProperty("willRetain", willRetain);
             return this;
         }
@@ -1664,8 +1663,7 @@ public interface MQTTEndpointBuilderFactory {
          * Set to true if you want the Will to be published with the retain
          * option.
          * 
-         * The option will be converted to a
-         * <code>org.fusesource.mqtt.client.QoS</code> type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: common
          */
@@ -2514,11 +2512,11 @@ public interface MQTTEndpointBuilderFactory {
          * Set to true if you want the Will to be published with the retain
          * option.
          * 
-         * The option is a: <code>org.fusesource.mqtt.client.QoS</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: common
          */
-        default MQTTEndpointBuilder willRetain(QoS willRetain) {
+        default MQTTEndpointBuilder willRetain(boolean willRetain) {
             setProperty("willRetain", willRetain);
             return this;
         }
@@ -2526,8 +2524,7 @@ public interface MQTTEndpointBuilderFactory {
          * Set to true if you want the Will to be published with the retain
          * option.
          * 
-         * The option will be converted to a
-         * <code>org.fusesource.mqtt.client.QoS</code> type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: common
          */

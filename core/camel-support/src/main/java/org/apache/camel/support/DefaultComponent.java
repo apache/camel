@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,11 +32,19 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.extension.ComponentExtension;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.EndpointPropertyConfigurer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.function.Suppliers;
@@ -49,6 +58,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * Simple RAW() pattern used only for validating URI in this class
      */
     private static final Pattern RAW_PATTERN = Pattern.compile("RAW[({].*&&.*[)}]");
+
+    private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/configurer/";
+
+    private volatile Class endpointPropertyConfigurerClass;
 
     private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
 
@@ -198,7 +211,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             return null;
         }
 
-        // setup whether to use basic property binding or not which must be done before we set properties 
+        // inject camel context
+        endpoint.setCamelContext(getCamelContext());
+
+        // setup whether to use basic property binding or not which must be done before we set properties
         boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding);
         if (endpoint instanceof DefaultEndpoint) {
             ((DefaultEndpoint) endpoint).setBasicPropertyBinding(basic);
@@ -270,7 +286,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
         Map<String, Object> param = parameters;
         if (optionPrefix != null) {
-            param = IntrospectionSupport.extractProperties(parameters, optionPrefix);
+            param = PropertiesHelper.extractProperties(parameters, optionPrefix);
         }
 
         if (param.size() > 0) {
@@ -318,6 +334,25 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     @Override
+    protected void doInit() throws Exception {
+        org.apache.camel.spi.annotations.Component ann = ObjectHelper.getAnnotation(this, org.apache.camel.spi.annotations.Component.class);
+        if (ann != null) {
+            String name = ann.value();
+            // just grab first scheme name if the component has scheme alias (eg http,https)
+            if (name.contains(",")) {
+                name = StringHelper.before(name, ",");
+            }
+            try {
+                Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
+                        .findOptionalClass(name + "-endpoint", null);
+                clazz.ifPresent(aClass -> endpointPropertyConfigurerClass = aClass);
+            } catch (NoFactoryAvailableException e) {
+                // ignore
+            }
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
     }
@@ -360,20 +395,41 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param parameters    properties to set
      */
     protected void setProperties(CamelContext camelContext, Object bean, Map<String, Object> parameters) throws Exception {
-        if (basicPropertyBinding) {
+        if (parameters == null || parameters.isEmpty()) {
+            return;
+        }
+
+        boolean basic = basicPropertyBinding || "true".equals(parameters.getOrDefault("basicPropertyBinding", "false"));
+        if (basic) {
             // use basic binding
             PropertyBindingSupport.build()
                     .withPlaceholder(false).withNesting(false).withDeepNesting(false).withReference(false)
                     .bind(camelContext, bean, parameters);
         } else {
+            PropertyConfigurer configurer = null;
+            if (bean instanceof Endpoint) {
+                configurer = getEndpointPropertyConfigurer(bean);
+            } else if (bean instanceof PropertyConfigurerAware) {
+                configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
+            }
             // use advanced binding
-            PropertyBindingSupport.build().bind(camelContext, bean, parameters);
+            PropertyBindingSupport.build().withConfigurer(configurer).bind(camelContext, bean, parameters);
         }
+    }
+
+    @Override
+    public PropertyConfigurer getEndpointPropertyConfigurer(Object endpoint) {
+        EndpointPropertyConfigurer answer = null;
+        if (endpointPropertyConfigurerClass != null) {
+            answer = org.apache.camel.support.ObjectHelper.newInstance(endpointPropertyConfigurerClass, EndpointPropertyConfigurer.class);
+            answer.configure(endpoint, getCamelContext());
+        }
+        return answer;
     }
 
     /**
      * Derived classes may wish to overload this to prevent the default introspection of URI parameters
-     * on the created Endpoint instance
+     * on the created {@link Endpoint} instance.
      */
     protected boolean useIntrospectionOnEndpoint() {
         return true;

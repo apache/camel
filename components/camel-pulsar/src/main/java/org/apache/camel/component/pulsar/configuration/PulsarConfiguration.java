@@ -18,6 +18,7 @@ package org.apache.camel.component.pulsar.configuration;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.component.pulsar.PulsarMessageReceipt;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -66,7 +67,7 @@ public class PulsarConfiguration {
     private boolean batchingEnabled = true;
     @UriParam(label = "producer", description = "The first message published will have a sequence Id of initialSequenceId  1.", defaultValue = "-1")
     private long initialSequenceId = -1;
-    @UriParam(label = "producer", description = "Compression type to use, defaults to NONE from [NONE, LZ4, ZLIB]", defaultValue = "NONE")
+    @UriParam(label = "producer", description = "Compression type to use", defaultValue = "NONE")
     private CompressionType compressionType = CompressionType.NONE;
 
     public String getSubscriptionName() {
@@ -288,18 +289,17 @@ public class PulsarConfiguration {
     }
 
     /**
-     *
      * Set the compression type for the producer.
-     * Supported compression types are:
-     * <ul>
-     *  <li>NONE: No compression</li>
-     *  <li>LZ4: Compress with LZ4 algorithm. Faster but lower compression than ZLib</li>
-     *  <li>ZLI: Standard ZLib compression</li>
-     * </ul>
-     * Default is NONE
      */
     public void setCompressionType(String compressionType) {
         this.compressionType = CompressionType.valueOf(compressionType.toUpperCase());
+    }
+
+    /**
+     * Set the compression type for the producer.
+     */
+    public void setCompressionType(CompressionType compressionType) {
+        this.compressionType = compressionType;
     }
 
     public CompressionType getCompressionType() {

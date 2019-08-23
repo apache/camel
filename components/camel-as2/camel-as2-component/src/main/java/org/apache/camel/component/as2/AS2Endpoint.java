@@ -67,10 +67,6 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         this.configuration = endpointConfiguration;
     }
 
-    public AS2Configuration getAs2Configuration() {
-        return configuration;
-    }
-
     public AS2ClientConnection getAS2ClientConnection() {
         return as2ClientConnection;
     }

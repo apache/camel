@@ -60,24 +60,19 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "consumer",
             description = "If the option is true, Jetty server will setup the CrossOriginFilter which supports the CORS out of box.")
     private boolean enableCORS;
-    @UriParam(label = "consumer,advanced", javaType = "java.lang.String",
+    @UriParam(label = "consumer,advanced",
             description = "Specifies a comma-delimited set of Handler instances to lookup in your Registry."
             + " These handlers are added to the Jetty servlet context (for example, to add security)."
             + " Important: You can not use different handlers with different Jetty endpoints using the same port number."
             + " The handlers is associated to the port number. If you need different handlers, then use different port numbers.")
     private List<Handler> handlers;
-    @UriParam(label = "consumer,advanced", javaType = "java.lang.String", name = "filtersRef",
+    @UriParam(label = "consumer,advanced",
             description = "Allows using a custom filters which is putted into a list and can be find in the Registry."
             + " Multiple values can be separated by comma.")
     private List<Filter> filters;
     @UriParam(label = "consumer,advanced", prefix = "filter.", multiValue = true,
             description = "Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server.")
     private Map<String, String> filterInitParameters;
-
-//    @UriParam(label = "consumer,advanced",
-//            description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
-//            + " This allows you to get all responses regardless of the HTTP status code.")
-
     @UriParam(label = "consumer,advanced",
             description = "Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true.")
     private Filter multipartFilter;

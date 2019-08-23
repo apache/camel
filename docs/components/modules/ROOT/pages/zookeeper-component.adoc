@@ -71,13 +71,12 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (14 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *awaitExistence* (common) | *Deprecated* Not in use | true | boolean
 | *listChildren* (common) | Whether the children of the node should be listed | false | boolean
 | *timeout* (common) | The time interval to wait on connection before timing out. | 5000 | int
 | *backoff* (consumer) | The time interval to backoff for after an error before retrying. | 5000 | long
@@ -109,7 +108,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 57 options, which are listed below.
+The component supports 56 options, which are listed below.
 
 
 
@@ -172,7 +171,6 @@ The component supports 57 options, which are listed below.
 | *camel.component.zookeeper.service-registry.service-host* |  |  | String
 | *camel.component.zookeeper.service-registry.session-timeout* |  |  | Long
 | *camel.component.zookeeper.service-registry.session-timeout-unit* |  |  | TimeUnit
-| *camel.component.zookeeper.configuration.await-existence* | *Deprecated* Not in use | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

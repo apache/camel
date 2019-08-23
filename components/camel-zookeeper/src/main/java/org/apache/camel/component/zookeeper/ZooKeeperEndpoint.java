@@ -131,22 +131,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         getConfiguration().setBackoff(backoff);
     }
 
-    /**
-     * @deprecated The usage of this property has no effect at all.
-     */
-    @Deprecated
-    public boolean getAwaitExistence() {
-        return getConfiguration().shouldAwaitExistence();
-    }
-
-    /**
-     * @deprecated The usage of this property has no effect at all.
-     */
-    @Deprecated
-    public void setAwaitExistence(boolean awaitExistence) {
-        getConfiguration().setAwaitExistence(awaitExistence);
-    }
-
     @ManagedOperation
     public void addServer(String server) {
         getConfiguration().addZookeeperServer(server);

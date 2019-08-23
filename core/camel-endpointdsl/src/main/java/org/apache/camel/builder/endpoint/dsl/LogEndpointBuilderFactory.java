@@ -20,6 +20,7 @@ import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.spi.ExchangeFormatter;
 
 /**
  * The log component logs message exchanges to the underlying logging mechanism.
@@ -623,6 +624,32 @@ public interface LogEndpointBuilderFactory {
         default AdvancedLogEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom exchange formatter.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExchangeFormatter</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedLogEndpointBuilder exchangeFormatter(
+                ExchangeFormatter exchangeFormatter) {
+            setProperty("exchangeFormatter", exchangeFormatter);
+            return this;
+        }
+        /**
+         * To use a custom exchange formatter.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExchangeFormatter</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedLogEndpointBuilder exchangeFormatter(
+                String exchangeFormatter) {
+            setProperty("exchangeFormatter", exchangeFormatter);
             return this;
         }
         /**

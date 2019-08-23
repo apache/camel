@@ -88,7 +88,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (74 parameters):
+=== Query Parameters (71 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -133,7 +133,6 @@ with the following path and query parameters:
 | *useByteBuf* (producer) | If the useByteBuf is true, netty producer will turn the message body into ByteBuf before sending it out. | false | boolean
 | *allowSerializedHeaders* (advanced) | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *bootstrapConfiguration* (advanced) | To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint. |  | NettyServerBootstrap Configuration
 | *channelGroup* (advanced) | To use a explicit ChannelGroup. |  | ChannelGroup
 | *nativeTransport* (advanced) | Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms. You need to add the netty JAR for the host operating system you are using. See more details at: \http://netty.io/wiki/native-transports.html | false | boolean
 | *options* (advanced) | Allows to configure additional netty options using option. as prefix. For example option.child.keepAlive=false to set the netty option child.keepAlive=false. See the Netty documentation for possible options that can be used. |  | Map
@@ -147,12 +146,10 @@ with the following path and query parameters:
 | *workerGroup* (advanced) | To use a explicit EventLoopGroup as the boss thread pool. For example to share a thread pool with multiple consumers or producers. By default each consumer or producer has their own worker pool with 2 x cpu count core threads. |  | EventLoopGroup
 | *allowDefaultCodec* (codec) | The netty component installs a default codec if both, encoder/decoder is null and textline is false. Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain. | true | boolean
 | *autoAppendDelimiter* (codec) | Whether or not to auto append missing end delimiter when sending using the textline codec. | true | boolean
-| *decoder* (codec) | *Deprecated* A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. |  | ChannelHandler
 | *decoderMaxLineLength* (codec) | The max line length to use for the textline codec. | 1024 | int
-| *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | String
+| *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *delimiter* (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. | LINE | TextLineDelimiter
-| *encoder* (codec) | *Deprecated* A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads. |  | ChannelHandler
-| *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | String
+| *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *encoding* (codec) | The encoding (a charset name) to use for the textline codec. If not provided, Camel will use the JVM default Charset. |  | String
 | *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP. | false | boolean
 | *enabledProtocols* (security) | Which protocols to enable when using SSL | TLSv1,TLSv1.1,TLSv1.2 | String
@@ -206,12 +203,14 @@ The component supports 78 options, which are listed below.
 | *camel.component.netty.configuration.client-mode* | If the clientMode is true, netty consumer will connect the address as a TCP client. | false | Boolean
 | *camel.component.netty.configuration.connect-timeout* | Time to wait for a socket connection to be available. Value is in milliseconds. | 10000 | Integer
 | *camel.component.netty.configuration.correlation-manager* | To use a custom correlation manager to manage how request and reply messages are mapped when using request/reply with the netty producer. This should only be used if you have a way to map requests together with replies such as if there is correlation ids in both the request and reply messages. This can be used if you want to multiplex concurrent messages on the same channel (aka connection) in netty. When doing this you must have a way to correlate the request and reply messages so you can store the right reply on the inflight Camel Exchange before its continued routed. <p/> We recommend extending the {@link TimeoutCorrelationManagerSupport} when you build custom correlation managers. This provides support for timeout and other complexities you otherwise would need to implement as well. <p/> See also the <tt>producerPoolEnabled</tt> option for more details. |  | NettyCamelState CorrelationManager
+| *camel.component.netty.configuration.decoder* | A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. |  | ChannelHandler
 | *camel.component.netty.configuration.decoder-max-line-length* | The max line length to use for the textline codec. | 1024 | Integer
 | *camel.component.netty.configuration.decoders* | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *camel.component.netty.configuration.delimiter* | The delimiter to use for the textline codec. Possible values are LINE and NULL. |  | TextLineDelimiter
 | *camel.component.netty.configuration.disconnect* | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer. | false | Boolean
 | *camel.component.netty.configuration.disconnect-on-no-reply* | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back. | true | Boolean
 | *camel.component.netty.configuration.enabled-protocols* | Which protocols to enable when using SSL | TLSv1,TLSv1.1,TLSv1.2 | String
+| *camel.component.netty.configuration.encoder* | A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads. |  | ChannelHandler
 | *camel.component.netty.configuration.encoders* | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *camel.component.netty.configuration.encoding* | The encoding (a charset name) to use for the textline codec. If not provided, Camel will use the JVM default Charset. |  | String
 | *camel.component.netty.configuration.host* | The hostname. <p/> For the consumer the hostname is localhost or 0.0.0.0. For the producer the hostname is the remote host to connect to |  | String
@@ -266,8 +265,6 @@ The component supports 78 options, which are listed below.
 | *camel.component.netty.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.netty.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.component.netty.configuration.client-pipeline-factory* | *Deprecated*  |  | ClientInitializer Factory
-| *camel.component.netty.configuration.decoder* | *Deprecated* A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. |  | ChannelHandler
-| *camel.component.netty.configuration.encoder* | *Deprecated* A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads. |  | ChannelHandler
 | *camel.component.netty.configuration.key-store-file* | *Deprecated* Client side certificate keystore to be used for encryption |  | File
 | *camel.component.netty.configuration.server-pipeline-factory* | *Deprecated*  |  | ServerInitializer Factory
 | *camel.component.netty.configuration.trust-store-file* | *Deprecated* Server side certificate keystore to be used for encryption |  | File

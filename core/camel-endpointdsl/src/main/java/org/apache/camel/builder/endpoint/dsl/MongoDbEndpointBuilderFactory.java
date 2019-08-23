@@ -128,8 +128,7 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option is a:
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
@@ -143,8 +142,7 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
@@ -665,8 +663,7 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option is a:
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
@@ -680,8 +677,7 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
@@ -1133,8 +1129,7 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option is a:
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
@@ -1147,8 +1142,7 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>

@@ -107,8 +107,8 @@ with the following path and query parameters:
 | *defaultAwaitWrites* (common) | Default await setting for writes | false | boolean
 | *discoveryEndpointSuffix* (common) | A suffix for endpoint URI when discovering |  | String
 | *discoveryEndpointUri* (common) | An alternative discovery URI |  | String
-| *method* (common) | The method definition (see Method ID) |  | ExpandedNodeId
-| *node* (common) | The node definition (see Node ID) |  | ExpandedNodeId
+| *method* (common) | The method definition (see Method ID) |  | String
+| *node* (common) | The node definition (see Node ID) |  | String
 | *samplingInterval* (common) | The sampling interval in milliseconds |  | Double
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -124,7 +124,7 @@ with the following path and query parameters:
 | *keyPassword* (client) | The key password |  | String
 | *keyStorePassword* (client) | The keystore password |  | String
 | *keyStoreType* (client) | The key store type |  | String
-| *keyStoreUrl* (client) | The URL where the key should be loaded from |  | URL
+| *keyStoreUrl* (client) | The URL where the key should be loaded from |  | String
 | *maxPendingPublishRequests* (client) | The maximum number of pending publish requests |  | Long
 | *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
 | *overrideHost* (client) | Override the server reported endpoint host with the host from the endpoint URI. | false | boolean

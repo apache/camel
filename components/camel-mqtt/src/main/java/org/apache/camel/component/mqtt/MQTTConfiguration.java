@@ -33,7 +33,7 @@ import org.fusesource.mqtt.client.QoS;
 public class MQTTConfiguration extends MQTT {
     public static final String MQTT_SUBSCRIBE_TOPIC = "CamelMQTTSubscribeTopic";
     public static final String MQTT_PUBLISH_TOPIC = "CamelMQTTPublishTopic";
-    
+
     // inherited options from MQTT
     @UriParam(defaultValue = "tcp://127.0.0.1:1883")
     URI host;
@@ -78,7 +78,7 @@ public class MQTTConfiguration extends MQTT {
     @UriParam(enums = "AtMostOnce,AtLeastOnce,ExactlyOnce", defaultValue = "AtMostOnce")
     QoS willQos = QoS.AT_MOST_ONCE;
     @UriParam
-    QoS willRetain;
+    boolean willRetain;
     @UriParam(defaultValue = "3.1")
     String version;
     @UriParam(label = "producer,advanced", defaultValue = "true")
@@ -352,6 +352,11 @@ public class MQTTConfiguration extends MQTT {
     @Override
     public void setWillRetain(boolean willRetain) {
         super.setWillRetain(willRetain);
+    }
+
+    @Override
+    public boolean isWillRetain() {
+        return super.isWillRetain();
     }
 
     /**

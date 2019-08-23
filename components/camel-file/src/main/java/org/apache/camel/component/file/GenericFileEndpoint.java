@@ -661,6 +661,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return idempotent != null;
     }
 
+    public Boolean getIdempotent() {
+        return idempotent;
+    }
+
     /**
      * Option to use the Idempotent Consumer EIP pattern to let Camel skip already processed files.
      * Will by default use a memory based LRUCache that holds 1000 entries. If noop=true then idempotent will be enabled
@@ -1001,6 +1005,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setReadLockRemoveOnCommit(boolean readLockRemoveOnCommit) {
         this.readLockRemoveOnCommit = readLockRemoveOnCommit;
+    }
+
+    public int getReadLockIdempotentReleaseDelay() {
+        return readLockIdempotentReleaseDelay;
     }
 
     /**

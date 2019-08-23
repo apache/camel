@@ -128,37 +128,6 @@ public interface GridFsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the WriteConcern for write operations on MongoDB, passing in the
-         * bean ref to a custom WriteConcern which exists in the Registry. You
-         * can also use standard WriteConcerns by passing in their key. See the
-         * {link #setWriteConcern(String) setWriteConcern} method.
-         * 
-         * The option is a: <code>com.mongodb.WriteConcern</code> type.
-         * 
-         * Group: common
-         */
-        default GridFsEndpointConsumerBuilder writeConcernRef(
-                Object writeConcernRef) {
-            setProperty("writeConcernRef", writeConcernRef);
-            return this;
-        }
-        /**
-         * Set the WriteConcern for write operations on MongoDB, passing in the
-         * bean ref to a custom WriteConcern which exists in the Registry. You
-         * can also use standard WriteConcerns by passing in their key. See the
-         * {link #setWriteConcern(String) setWriteConcern} method.
-         * 
-         * The option will be converted to a
-         * <code>com.mongodb.WriteConcern</code> type.
-         * 
-         * Group: common
-         */
-        default GridFsEndpointConsumerBuilder writeConcernRef(
-                String writeConcernRef) {
-            setProperty("writeConcernRef", writeConcernRef);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -538,37 +507,6 @@ public interface GridFsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the WriteConcern for write operations on MongoDB, passing in the
-         * bean ref to a custom WriteConcern which exists in the Registry. You
-         * can also use standard WriteConcerns by passing in their key. See the
-         * {link #setWriteConcern(String) setWriteConcern} method.
-         * 
-         * The option is a: <code>com.mongodb.WriteConcern</code> type.
-         * 
-         * Group: common
-         */
-        default GridFsEndpointProducerBuilder writeConcernRef(
-                Object writeConcernRef) {
-            setProperty("writeConcernRef", writeConcernRef);
-            return this;
-        }
-        /**
-         * Set the WriteConcern for write operations on MongoDB, passing in the
-         * bean ref to a custom WriteConcern which exists in the Registry. You
-         * can also use standard WriteConcerns by passing in their key. See the
-         * {link #setWriteConcern(String) setWriteConcern} method.
-         * 
-         * The option will be converted to a
-         * <code>com.mongodb.WriteConcern</code> type.
-         * 
-         * Group: common
-         */
-        default GridFsEndpointProducerBuilder writeConcernRef(
-                String writeConcernRef) {
-            setProperty("writeConcernRef", writeConcernRef);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -775,35 +713,6 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointBuilder writeConcern(String writeConcern) {
             setProperty("writeConcern", writeConcern);
-            return this;
-        }
-        /**
-         * Set the WriteConcern for write operations on MongoDB, passing in the
-         * bean ref to a custom WriteConcern which exists in the Registry. You
-         * can also use standard WriteConcerns by passing in their key. See the
-         * {link #setWriteConcern(String) setWriteConcern} method.
-         * 
-         * The option is a: <code>com.mongodb.WriteConcern</code> type.
-         * 
-         * Group: common
-         */
-        default GridFsEndpointBuilder writeConcernRef(Object writeConcernRef) {
-            setProperty("writeConcernRef", writeConcernRef);
-            return this;
-        }
-        /**
-         * Set the WriteConcern for write operations on MongoDB, passing in the
-         * bean ref to a custom WriteConcern which exists in the Registry. You
-         * can also use standard WriteConcerns by passing in their key. See the
-         * {link #setWriteConcern(String) setWriteConcern} method.
-         * 
-         * The option will be converted to a
-         * <code>com.mongodb.WriteConcern</code> type.
-         * 
-         * Group: common
-         */
-        default GridFsEndpointBuilder writeConcernRef(String writeConcernRef) {
-            setProperty("writeConcernRef", writeConcernRef);
             return this;
         }
     }

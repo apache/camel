@@ -142,28 +142,15 @@ public interface AtomixSetEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the Atomix transport.
+         * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a:
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixSetEndpointConsumerBuilder transport(
-                Class<Object> transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Sets the Atomix transport.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default AtomixSetEndpointConsumerBuilder transport(String transport) {
-            setProperty("transport", transport);
+        default AtomixSetEndpointConsumerBuilder transportClassName(
+                String transportClassName) {
+            setProperty("transportClassName", transportClassName);
             return this;
         }
         /**
@@ -611,28 +598,15 @@ public interface AtomixSetEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the Atomix transport.
+         * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a:
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixSetEndpointProducerBuilder transport(
-                Class<Object> transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Sets the Atomix transport.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default AtomixSetEndpointProducerBuilder transport(String transport) {
-            setProperty("transport", transport);
+        default AtomixSetEndpointProducerBuilder transportClassName(
+                String transportClassName) {
+            setProperty("transportClassName", transportClassName);
             return this;
         }
         /**
@@ -1024,27 +998,15 @@ public interface AtomixSetEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the Atomix transport.
+         * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a:
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixSetEndpointBuilder transport(Class<Object> transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Sets the Atomix transport.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default AtomixSetEndpointBuilder transport(String transport) {
-            setProperty("transport", transport);
+        default AtomixSetEndpointBuilder transportClassName(
+                String transportClassName) {
+            setProperty("transportClassName", transportClassName);
             return this;
         }
         /**

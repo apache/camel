@@ -48,7 +48,7 @@ public class PubNubConsumer extends DefaultConsumer {
 
     private void initCommunication() throws Exception {
         endpoint.getPubnub().addListener(new PubNubCallback());
-        if (pubNubConfiguration.withPresence()) {
+        if (pubNubConfiguration.isWithPresence()) {
             endpoint.getPubnub().subscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).withPresence().execute();
         } else {
             endpoint.getPubnub().subscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).execute();

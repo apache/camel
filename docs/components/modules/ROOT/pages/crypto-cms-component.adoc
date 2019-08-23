@@ -79,7 +79,7 @@ with the following path and query parameters:
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *password* (decrypt) | Sets the password of the private keys. It is assumed that all private keys in the keystore have the same password. If not set then it is assumed that the password of the private keys is given by the keystore password given in the KeyStoreParameters. |  | Char[]
-| *fromBase64* (decrypt_verify) | If true then the CMS message is base 64 encoded and must be decoded during the processing. Default value is false. | false | Boolean
+| *fromBase64* (decrypt_verify) | If true then the CMS message is base 64 encoded and must be decoded during the processing. Default value is false. | false | boolean
 | *contentEncryptionAlgorithm* (encrypt) | Encryption algorithm, for example DESede/CBC/PKCS5Padding. Further possible values: DESede/CBC/PKCS5Padding, AES/CBC/PKCS5Padding, Camellia/CBC/PKCS5Padding, CAST5/CBC/PKCS5Padding. |  | String
 | *originatorInformation Provider* (encrypt) | Provider for the originator info. See \https://tools.ietf.org/html/rfc5652#section-6.1. The default value is null. |  | OriginatorInformation Provider
 | *recipient* (encrypt) | Recipient Info: reference to a bean which implements the interface org.apache.camel.component.crypto.cms.api.TransRecipientInfo |  | List
@@ -88,8 +88,8 @@ with the following path and query parameters:
 | *toBase64* (encrypt_sign) | Indicates whether the Signed Data or Enveloped Data instance shall be base 64 encoded. Default value is false. | false | Boolean
 | *includeContent* (sign) | Indicates whether the signed content should be included into the Signed Data instance. If false then a detached Signed Data instance is created in the header CamelCryptoCmsSignedData. | true | Boolean
 | *signer* (sign) | Signer information: reference to bean(s) which implements org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values can be separated by comma |  | String
-| *signedDataHeaderBase64* (verify) | Indicates whether the value in the header CamelCryptoCmsSignedData is base64 encoded. Default value is false. Only relevant for detached signatures. In the detached signature case, the header contains the Signed Data object. | false | Boolean
-| *verifySignaturesOfAll Signers* (verify) | If true then the signatures of all signers contained in the Signed Data object are verified. If false then only one signature whose signer info matches with one of the specified certificates is verified. Default value is true. | true | Boolean
+| *signedDataHeaderBase64* (verify) | Indicates whether the value in the header CamelCryptoCmsSignedData is base64 encoded. Default value is false. Only relevant for detached signatures. In the detached signature case, the header contains the Signed Data object. | false | boolean
+| *verifySignaturesOfAll Signers* (verify) | If true then the signatures of all signers contained in the Signed Data object are verified. If false then only one signature whose signer info matches with one of the specified certificates is verified. Default value is true. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START

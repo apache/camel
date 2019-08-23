@@ -14,35 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.component.cxf.jaxrs;
 
-import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
+import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
+import org.apache.cxf.jaxrs.client.Client;
 
-public final class ChainedCxfEndpointConfigurer implements CxfEndpointConfigurer {
-    private CxfEndpointConfigurer parent;
-    private CxfEndpointConfigurer child;
+public final class ChainedCxfRsConfigurer implements CxfRsConfigurer {
+    private CxfRsConfigurer parent;
+    private CxfRsConfigurer child;
 
-    private ChainedCxfEndpointConfigurer() {
+    private ChainedCxfRsConfigurer() {
     }
 
-    public static ChainedCxfEndpointConfigurer create(CxfEndpointConfigurer parent, CxfEndpointConfigurer child) {
-        ChainedCxfEndpointConfigurer result = new ChainedCxfEndpointConfigurer();
+    public static ChainedCxfRsConfigurer create(CxfRsConfigurer parent,
+                                                CxfRsConfigurer child) {
+        ChainedCxfRsConfigurer result = new ChainedCxfRsConfigurer();
         result.parent = parent;
         result.child = child;
         return result;
     }
 
-    public ChainedCxfEndpointConfigurer addChild(CxfEndpointConfigurer cxfEndpointConfigurer) {
-        ChainedCxfEndpointConfigurer result = new ChainedCxfEndpointConfigurer();
+    public ChainedCxfRsConfigurer addChild(CxfRsConfigurer cxfEndpointConfigurer) {
+        ChainedCxfRsConfigurer result = new ChainedCxfRsConfigurer();
         result.parent = this;
         result.child = cxfEndpointConfigurer;
         return result;
     }
 
     @Override
-    public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
+    public void configure(AbstractJAXRSFactoryBean factoryBean) {
         parent.configure(factoryBean);
         child.configure(factoryBean);
     }
@@ -59,10 +60,10 @@ public final class ChainedCxfEndpointConfigurer implements CxfEndpointConfigurer
         child.configureServer(server);
     }
 
-    public static class NullCxfEndpointConfigurer implements CxfEndpointConfigurer {
+    public static class NullCxfRsConfigurer implements CxfRsConfigurer {
 
         @Override
-        public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
+        public void configure(AbstractJAXRSFactoryBean factoryBean) {
         }
 
         @Override

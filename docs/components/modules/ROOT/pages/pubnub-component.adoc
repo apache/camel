@@ -92,7 +92,7 @@ with the following path and query parameters:
 | *pubnub* (advanced) | Reference to a Pubnub client in the registry. |  | PubNub
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *authKey* (security) | If Access Manager is utilized, client will use this authKey in all restricted requests. |  | String
-| *cipherKey* (security) | If cipher is passed, all communicatons to/from PubNub will be encrypted. |  | String
+| *cipherKey* (security) | If cipher is passed, all communications to/from PubNub will be encrypted. |  | String
 | *publishKey* (security) | The publish key obtained from your PubNub account. Required when publishing messages. |  | String
 | *secretKey* (security) | The secret key used for message signing. |  | String
 | *secure* (security) | Use SSL for secure transmission. | true | boolean

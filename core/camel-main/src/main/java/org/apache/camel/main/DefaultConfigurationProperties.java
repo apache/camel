@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.support.PatternHelper;
 
@@ -68,6 +69,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private String threadNamePattern;
     private String routeFilterIncludePattern;
     private String routeFilterExcludePattern;
+    private boolean beanIntrospectionExtendedStatistics;
+    private LoggingLevel beanIntrospectionLoggingLevel;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -677,6 +680,30 @@ public abstract class DefaultConfigurationProperties<T> {
         this.routeFilterExcludePattern = exclude;
     }
 
+    public boolean isBeanIntrospectionExtendedStatistics() {
+        return beanIntrospectionExtendedStatistics;
+    }
+
+    /**
+     * Sets whether bean introspection uses extended statistics.
+     * The default is false.
+     */
+    public void setBeanIntrospectionExtendedStatistics(boolean beanIntrospectionExtendedStatistics) {
+        this.beanIntrospectionExtendedStatistics = beanIntrospectionExtendedStatistics;
+    }
+
+    public LoggingLevel getBeanIntrospectionLoggingLevel() {
+        return beanIntrospectionLoggingLevel;
+    }
+
+    /**
+     * Sets the logging level used by bean introspection, logging activity of its usage.
+     * The default is TRACE.
+     */
+    public void setBeanIntrospectionLoggingLevel(LoggingLevel beanIntrospectionLoggingLevel) {
+        this.beanIntrospectionLoggingLevel = beanIntrospectionLoggingLevel;
+    }
+
     // fluent builders
     // --------------------------------------------------------------
 
@@ -1122,4 +1149,23 @@ public abstract class DefaultConfigurationProperties<T> {
         this.routeFilterExcludePattern = routeFilterExcludePattern;
         return (T) this;
     }
+
+    /**
+     * Sets whether bean introspection uses extended statistics.
+     * The default is false.
+     */
+    public T withBeanIntrospectionExtendedStatistics(boolean beanIntrospectionExtendedStatistics) {
+        this.beanIntrospectionExtendedStatistics = beanIntrospectionExtendedStatistics;
+        return (T) this;
+    }
+
+    /**
+     * Sets the logging level used by bean introspection, logging activity of its usage.
+     * The default is TRACE.
+     */
+    public T withBeanIntrospectionLoggingLevel(LoggingLevel beanIntrospectionLoggingLevel) {
+        this.beanIntrospectionLoggingLevel = beanIntrospectionLoggingLevel;
+        return (T) this;
+    }
+
 }

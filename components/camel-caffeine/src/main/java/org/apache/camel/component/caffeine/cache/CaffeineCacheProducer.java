@@ -33,8 +33,7 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
     private final Cache cache;
 
     public CaffeineCacheProducer(CaffeineCacheEndpoint endpoint, String cacheName, CaffeineConfiguration configuration, Cache cache) throws Exception {
-        super(endpoint, CaffeineConstants.ACTION, () -> configuration.getAction());
-
+        super(endpoint, CaffeineConstants.ACTION, configuration::getAction);
         this.configuration = configuration;
         this.cache = cache;
     }
@@ -59,7 +58,7 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CaffeineConstants.ACTION_PUT_ALL)
     public void onPutAll(Message message) throws Exception {
-        cache.putAll((Map)getValue(message, Map.class));
+        cache.putAll((Map)getValue(message, Map.class.getName()));
 
         setResult(message, true, null, null);
     }
@@ -97,7 +96,13 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
     // ****************************
 
     private Object getKey(final Message message) throws Exception {
-        Object value = message.getHeader(CaffeineConstants.KEY, configuration.getKeyType());
+        Object value;
+        if (configuration.getKeyType() != null) {
+            Class<?> clazz = getEndpoint().getCamelContext().getClassResolver().resolveClass(configuration.getKeyType());
+            value = message.getHeader(CaffeineConstants.KEY, clazz);
+        } else {
+            value = message.getHeader(CaffeineConstants.KEY);
+        }
         if (value == null) {
             value = configuration.getKey();
         }
@@ -109,10 +114,15 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
         return value;
     }
 
-    private Object getValue(final Message message, final Class<?> type) throws Exception {
-        Object value = message.getHeader(CaffeineConstants.VALUE, type);
+    private Object getValue(final Message message, final String type) throws Exception {
+        Object value = message.getHeader(CaffeineConstants.VALUE);
         if (value == null) {
-            value = message.getBody(type);
+            if (type != null) {
+                Class<?> clazz = getEndpoint().getCamelContext().getClassResolver().resolveClass(type);
+                value = message.getBody(clazz);
+            } else {
+                value = message.getBody();
+            }
         }
 
         if (value == null) {

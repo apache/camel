@@ -27,7 +27,6 @@ import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * The splunk component allows to publish or search for events in Splunk.
@@ -281,11 +280,11 @@ public interface SplunkEndpointBuilderFactory {
          * Sets streaming mode. Streaming mode sends exchanges as they are
          * received, rather than in a batch.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: consumer
          */
-        default SplunkEndpointConsumerBuilder streaming(Boolean streaming) {
+        default SplunkEndpointConsumerBuilder streaming(boolean streaming) {
             setProperty("streaming", streaming);
             return this;
         }
@@ -293,8 +292,7 @@ public interface SplunkEndpointBuilderFactory {
          * Sets streaming mode. Streaming mode sends exchanges as they are
          * received, rather than in a batch.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: consumer
          */
@@ -525,24 +523,7 @@ public interface SplunkEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default SplunkEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */

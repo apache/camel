@@ -79,7 +79,7 @@ public class SplunkConfiguration {
     @UriParam(label = "consumer")
     private String initEarliestTime;
     @UriParam(label = "consumer")
-    private Boolean streaming;
+    private boolean streaming;
 
     public String getName() {
         return name;
@@ -301,7 +301,7 @@ public class SplunkConfiguration {
     }
 
     public boolean isStreaming() {
-        return streaming != null ? streaming : false;
+        return streaming;
     }
 
     /**

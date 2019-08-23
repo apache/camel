@@ -46,8 +46,8 @@ public class NatsEndpoint extends DefaultEndpoint {
     public NatsEndpoint(String uri, NatsComponent component, NatsConfiguration config) {
         super(uri, component);
         this.configuration = config;
-    }    
-    
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         return new NatsProducer(this);
@@ -62,14 +62,14 @@ public class NatsEndpoint extends DefaultEndpoint {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "NatsTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
     }
     
-    public NatsConfiguration getNatsConfiguration() {
+    public NatsConfiguration getConfiguration() {
         return configuration;
     }
     
     public Connection getConnection() throws InterruptedException, IllegalArgumentException, GeneralSecurityException, IOException {
-        Builder builder = getNatsConfiguration().createOptions();
-        if (getNatsConfiguration().getSslContextParameters() != null && getNatsConfiguration().isSecure()) {
-            SSLContext sslCtx = getNatsConfiguration().getSslContextParameters().createSSLContext(getCamelContext()); 
+        Builder builder = getConfiguration().createOptions();
+        if (getConfiguration().getSslContextParameters() != null && getConfiguration().isSecure()) {
+            SSLContext sslCtx = getConfiguration().getSslContextParameters().createSSLContext(getCamelContext());
             builder.sslContext(sslCtx);
         }
         Options options = builder.build();

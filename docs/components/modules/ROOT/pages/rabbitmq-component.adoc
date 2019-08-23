@@ -133,7 +133,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *addresses* (common) | If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345, server2:12345 |  | Address[]
+| *addresses* (common) | If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345, server2:12345 |  | String
 | *autoDelete* (common) | If it is true, the exchange will be deleted when it is no longer in use | true | boolean
 | *automaticRecoveryEnabled* (common) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when existing connection has failures) | true | Boolean
 | *connectionFactory* (common) | To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used |  | ConnectionFactory

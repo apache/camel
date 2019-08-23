@@ -34,7 +34,16 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
 
         this.configuration = configuration;
         this.manager = endpoint.getManager();
-        this.cache = manager.getCache(cacheName, configuration.getKeyType(), configuration.getValueType());
+
+        Class<?> kt = null;
+        if (configuration.getKeyType() != null) {
+            kt = getEndpoint().getCamelContext().getClassResolver().resolveClass(configuration.getKeyType());
+        }
+        Class<?> vt = null;
+        if (configuration.getValueType() != null) {
+            vt = getEndpoint().getCamelContext().getClassResolver().resolveClass(configuration.getValueType());
+        }
+        this.cache = manager.getCache(cacheName, kt, vt);
     }
 
     @Override

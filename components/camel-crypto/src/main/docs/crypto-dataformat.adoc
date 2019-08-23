@@ -68,7 +68,7 @@ The component supports 33 options, which are listed below.
 | *camel.component.crypto.configuration.keystore* | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A {@link KeyStore} is typically used with an alias, either one supplied in the Route definition or dynamically via the message header "CamelSignatureKeyStoreAlias". If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStore
 | *camel.component.crypto.configuration.keystore-name* | Sets the reference name for a Keystore that can be found in the registry. |  | String
 | *camel.component.crypto.configuration.name* | The logical name of this operation. |  | String
-| *camel.component.crypto.configuration.password* | Sets the password used to access an aliased {@link PrivateKey} in the KeyStore. |  | Character[]
+| *camel.component.crypto.configuration.password* | Sets the password used to access an aliased {@link PrivateKey} in the KeyStore. |  | String
 | *camel.component.crypto.configuration.private-key* | Set the PrivateKey that should be used to sign the exchange |  | PrivateKey
 | *camel.component.crypto.configuration.private-key-name* | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
 | *camel.component.crypto.configuration.provider* | Set the id of the security provider that provides the configured {@link Signature} algorithm. |  | String

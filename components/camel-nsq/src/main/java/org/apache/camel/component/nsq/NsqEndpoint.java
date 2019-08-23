@@ -63,15 +63,15 @@ public class NsqEndpoint extends DefaultEndpoint {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "NsqTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
     }
 
-    public NsqConfiguration getNsqConfiguration() {
+    public NsqConfiguration getConfiguration() {
         return configuration;
     }
 
     public NSQConfig getNsqConfig() throws GeneralSecurityException, IOException {
         NSQConfig nsqConfig = new NSQConfig();
 
-        if (getNsqConfiguration().getSslContextParameters() != null && getNsqConfiguration().isSecure()) {
-            SslContext sslContext = new JdkSslContext(getNsqConfiguration().getSslContextParameters().createSSLContext(getCamelContext()), true, null);
+        if (getConfiguration().getSslContextParameters() != null && getConfiguration().isSecure()) {
+            SslContext sslContext = new JdkSslContext(getConfiguration().getSslContextParameters().createSSLContext(getCamelContext()), true, null);
             nsqConfig.setSslContext(sslContext);
         }
 

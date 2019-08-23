@@ -62,6 +62,10 @@ public class Web3jEndpoint extends DefaultEndpoint {
         this.web3j = buildService(remaining, configuration);
     }
 
+    public Web3jConfiguration getConfiguration() {
+        return configuration;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         return new Web3jProducer(this, configuration);

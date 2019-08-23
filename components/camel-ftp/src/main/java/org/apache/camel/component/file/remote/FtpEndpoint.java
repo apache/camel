@@ -255,11 +255,19 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         this.ftpClientConfig = ftpClientConfig;
     }
 
+    public Map<String, Object> getFtpClientParameters() {
+        return ftpClientParameters;
+    }
+
     /**
      * Used by FtpComponent to provide additional parameters for the FTPClient
      */
     void setFtpClientParameters(Map<String, Object> ftpClientParameters) {
         this.ftpClientParameters = ftpClientParameters;
+    }
+
+    public Map<String, Object> getFtpClientConfigParameters() {
+        return ftpClientConfigParameters;
     }
 
     /**

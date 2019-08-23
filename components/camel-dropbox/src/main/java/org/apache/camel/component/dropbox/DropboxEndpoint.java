@@ -55,6 +55,10 @@ public class DropboxEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    public DropboxConfiguration getConfiguration() {
+        return configuration;
+    }
+
     /**
      * Create one of the camel producer available based on the configuration
      * @return the camel producer

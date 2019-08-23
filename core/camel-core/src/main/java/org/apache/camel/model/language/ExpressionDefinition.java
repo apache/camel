@@ -36,6 +36,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.DefinitionPropertyPlaceholderConfigurer;
@@ -44,7 +45,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
@@ -336,7 +336,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
      */
     protected void setProperty(CamelContext camelContext, Object bean, String name, Object value) {
         try {
-            IntrospectionSupport.setProperty(camelContext, bean, name, value);
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, bean, name, value);
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
         }

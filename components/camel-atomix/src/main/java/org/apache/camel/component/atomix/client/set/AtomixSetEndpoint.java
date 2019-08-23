@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
     title = "Atomix Set",
     syntax = "atomix-set:resourceName",
     label = "clustering")
-final class AtomixSetEndpoint extends AbstractAtomixClientEndpoint<AtomixSetComponent, AtomixSetConfiguration> {
+public final class AtomixSetEndpoint extends AbstractAtomixClientEndpoint<AtomixSetComponent, AtomixSetConfiguration> {
     @UriParam
     private AtomixSetConfiguration configuration;
 

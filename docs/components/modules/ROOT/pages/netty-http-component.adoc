@@ -138,7 +138,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (81 parameters):
+=== Query Parameters (78 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -199,10 +199,8 @@ with the following path and query parameters:
 | *transferExchange* (advanced) | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
 | *workerCount* (advanced) | When netty works on nio mode, it uses default workerCount parameter from Netty, which is cpu_core_threads x 2. User can use this operation to override the default workerCount from Netty. |  | int
 | *workerGroup* (advanced) | To use a explicit EventLoopGroup as the boss thread pool. For example to share a thread pool with multiple consumers or producers. By default each consumer or producer has their own worker pool with 2 x cpu count core threads. |  | EventLoopGroup
-| *decoder* (codec) | *Deprecated* To use a single decoder. This options is deprecated use encoders instead. |  | ChannelHandler
-| *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | String
-| *encoder* (codec) | *Deprecated* To use a single encoder. This options is deprecated use encoders instead. |  | ChannelHandler
-| *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | String
+| *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
+| *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *enabledProtocols* (security) | Which protocols to enable when using SSL | TLSv1,TLSv1.1,TLSv1.2 | String
 | *keyStoreFile* (security) | Client side certificate keystore to be used for encryption |  | File
 | *keyStoreFormat* (security) | Keystore format to be used for payload encryption. Defaults to JKS if not set |  | String
@@ -223,7 +221,6 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *bootstrapConfiguration* (advanced) | To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint. |  | NettyServerBootstrap Configuration
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END

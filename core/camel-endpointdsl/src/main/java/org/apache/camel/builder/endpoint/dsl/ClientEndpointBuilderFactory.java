@@ -331,19 +331,19 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: data
          */
         default ClientEndpointConsumerBuilder causeSourceAddress(
-                boolean causeSourceAddress) {
+                byte causeSourceAddress) {
             setProperty("causeSourceAddress", causeSourceAddress);
             return this;
         }
         /**
          * Whether to include the source address.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: data
          */
@@ -857,19 +857,19 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: data
          */
         default ClientEndpointProducerBuilder causeSourceAddress(
-                boolean causeSourceAddress) {
+                byte causeSourceAddress) {
             setProperty("causeSourceAddress", causeSourceAddress);
             return this;
         }
         /**
          * Whether to include the source address.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: data
          */
@@ -1277,19 +1277,18 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: data
          */
-        default ClientEndpointBuilder causeSourceAddress(
-                boolean causeSourceAddress) {
+        default ClientEndpointBuilder causeSourceAddress(byte causeSourceAddress) {
             setProperty("causeSourceAddress", causeSourceAddress);
             return this;
         }
         /**
          * Whether to include the source address.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: data
          */

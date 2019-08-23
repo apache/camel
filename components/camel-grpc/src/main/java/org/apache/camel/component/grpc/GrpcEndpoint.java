@@ -51,6 +51,10 @@ public class GrpcEndpoint extends DefaultEndpoint {
         }
     }
 
+    public GrpcConfiguration getConfiguration() {
+        return configuration;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         GrpcProducer producer = new GrpcProducer(this, configuration);

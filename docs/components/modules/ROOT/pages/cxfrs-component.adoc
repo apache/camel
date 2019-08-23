@@ -103,7 +103,7 @@ with the following path and query parameters:
 | *publishedEndpointUrl* (consumer) | This option can override the endpointUrl that published from the WADL which can be accessed with resource address url plus _wadl |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *serviceBeans* (consumer) | The service beans which you want to export as REST service. Multiple beans can be separated by comma. |  | List
+| *serviceBeans* (consumer) | The service beans (the bean ids to lookup in the registry) which you want to export as REST service. Multiple beans can be separated by comma |  | String
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *hostnameVerifier* (producer) | The hostname verifier to be used. Use the # notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -116,7 +116,7 @@ with the following path and query parameters:
 | *binding* (advanced) | To use a custom CxfBinding to control the binding between Camel Message and CXF Message. |  | CxfRsBinding
 | *bus* (advanced) | To use a custom configured CXF Bus. |  | Bus
 | *continuationTimeout* (advanced) | This option is used to set the CXF continuation timeout which could be used in CxfConsumer by default when the CXF server is using Jetty or Servlet transport. | 30000 | long
-| *cxfRsEndpointConfigurer* (advanced) | This option could apply the implementation of org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer which supports to configure the CXF endpoint in programmatic way. User can configure the CXF server and client by implementing configure{Server/Client} method of CxfEndpointConfigurer. |  | CxfRsEndpoint Configurer
+| *cxfRsConfigurer* (advanced) | This option could apply the implementation of org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer which supports to configure the CXF endpoint in programmatic way. User can configure the CXF server and client by implementing configure{Server/Client} method of CxfEndpointConfigurer. |  | CxfRsConfigurer
 | *defaultBus* (advanced) | Will set the default bus when CXF endpoint create a bus by itself | false | boolean
 | *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *performInvocation* (advanced) | When the option is true, Camel will perform the invocation of the resource class instance and put the response object into the exchange for further processing. | false | boolean

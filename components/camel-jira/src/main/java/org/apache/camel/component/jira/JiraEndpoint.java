@@ -86,6 +86,10 @@ public class JiraEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    public JiraConfiguration getConfiguration() {
+        return configuration;
+    }
+
     @Override
     public void doStart() throws Exception {
         super.doStart();

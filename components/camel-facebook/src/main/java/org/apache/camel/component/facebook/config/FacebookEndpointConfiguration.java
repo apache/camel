@@ -425,7 +425,7 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.ids = ids;
     }
 
-    public Boolean isIncludeRead() {
+    public Boolean getIncludeRead() {
         return includeRead;
     }
 
@@ -920,7 +920,7 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.tabId = tabId;
     }
 
-    public Boolean isHidden() {
+    public Boolean getIsHidden() {
         return isHidden;
     }
 

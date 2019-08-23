@@ -100,7 +100,7 @@ public class CustomFiltersTest extends BaseJettyTest {
             public void configure() throws Exception {
 
                 // Test the filter list options
-                from("jetty://http://localhost:{{port}}/testFilters?filtersRef=myFilters&filterInit.keyWord=KEY").process(new Processor() {
+                from("jetty://http://localhost:{{port}}/testFilters?filters=myFilters&filterInit.keyWord=KEY").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         String request = in.getBody(String.class);

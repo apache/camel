@@ -94,12 +94,20 @@ public class XChangeConfiguration {
         return currency;
     }
 
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
     public void setCurrency(String curr) {
         this.currency = Currency.getInstanceNoCreate(curr);
     }
 
     public CurrencyPair getCurrencyPair() {
         return currencyPair;
+    }
+
+    public void setCurrencyPair(CurrencyPair currencyPair) {
+        this.currencyPair = currencyPair;
     }
 
     public void setCurrencyPair(String pair) {

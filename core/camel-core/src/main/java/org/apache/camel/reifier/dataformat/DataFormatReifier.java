@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -67,7 +68,6 @@ import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
@@ -238,9 +238,9 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
         try {
             String ref = value instanceof String ? value.toString() : null;
             if (isReferenceParameter(ref) && camelContext != null) {
-                IntrospectionSupport.setProperty(camelContext, camelContext.getTypeConverter(), bean, name, null, ref, true);
+                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, camelContext.getTypeConverter(), bean, name, null, ref, true);
             } else {
-                IntrospectionSupport.setProperty(camelContext, bean, name, value);
+                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, bean, name, value);
             }
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to set property: " + name + " on: " + bean + ". Reason: " + e, e);

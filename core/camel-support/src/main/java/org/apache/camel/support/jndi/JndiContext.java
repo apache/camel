@@ -441,6 +441,7 @@ public class JndiContext implements Context, Serializable {
         }
     }
 
+    @Deprecated
     protected static Object createBean(Class<?> type, Map<String, Object> properties, String prefix) throws Exception {
         Object value = ObjectHelper.newInstance(type);
         IntrospectionSupport.setProperties(value, properties, prefix);

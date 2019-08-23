@@ -46,13 +46,13 @@ public class MiloClientEndpoint extends DefaultEndpoint {
      * The node definition (see Node ID)
      */
     @UriParam
-    private ExpandedNodeId node;
+    private String node;
 
     /**
      * The method definition (see Method ID)
      */
     @UriParam
-    private ExpandedNodeId method;
+    private String method;
 
     /**
      * The sampling interval in milliseconds
@@ -64,7 +64,7 @@ public class MiloClientEndpoint extends DefaultEndpoint {
      * The client configuration
      */
     @UriParam
-    private MiloClientConfiguration client;
+    private MiloClientConfiguration configuration;
 
     /**
      * Default "await" setting for writes
@@ -86,6 +86,11 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
         this.component = component;
         this.connection = connection;
+        this.configuration = connection.getConfiguration();
+    }
+
+    public MiloClientConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override
@@ -120,44 +125,36 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
     // item configuration
 
-    public void setMethod(final String method) {
-        if (method == null) {
-            this.method = null;
-        } else {
-            this.method = ExpandedNodeId.parse(method);
-        }
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public String getMethod() {
-        if (this.method != null) {
-            return this.method.toParseableString();
-        } else {
-            return null;
-        }
+        return method;
     }
 
     public void setNode(final String node) {
-        if (node == null) {
-            this.node = null;
-        } else {
-            this.node = ExpandedNodeId.parse(node);
-        }
+        this.node = node;
     }
 
     public String getNode() {
+        return node;
+    }
+
+    ExpandedNodeId getNodeId() {
         if (this.node != null) {
-            return this.node.toParseableString();
+            return ExpandedNodeId.parse(this.node);
         } else {
             return null;
         }
     }
 
-    ExpandedNodeId getNodeId() {
-        return this.node;
-    }
-
     ExpandedNodeId getMethodId() {
-        return this.method;
+        if (this.method != null) {
+            return ExpandedNodeId.parse(this.method);
+        } else {
+            return null;
+        }
     }
 
     public Double getSamplingInterval() {

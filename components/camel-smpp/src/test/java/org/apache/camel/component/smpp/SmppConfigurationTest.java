@@ -70,7 +70,7 @@ public class SmppConfigurationTest {
         assertEquals("ISO-8859-1", configuration.getEncoding());
         assertEquals(0x00, configuration.getNumberingPlanIndicator());
         assertEquals(0x00, configuration.getTypeOfNumber());
-        assertEquals(false, configuration.getUsingSSL());
+        assertEquals(false, configuration.isUsingSSL());
         assertEquals(5000, configuration.getInitialReconnectDelay());
         assertEquals(5000, configuration.getReconnectDelay());
         assertEquals(null, configuration.getHttpProxyHost());
@@ -105,7 +105,7 @@ public class SmppConfigurationTest {
         assertEquals("UTF-8", configuration.getEncoding());
         assertEquals(0x08, configuration.getNumberingPlanIndicator());
         assertEquals(0x02, configuration.getTypeOfNumber());
-        assertEquals(true, configuration.getUsingSSL());
+        assertEquals(true, configuration.isUsingSSL());
         assertEquals(5001, configuration.getInitialReconnectDelay());
         assertEquals(5002, configuration.getReconnectDelay());
         assertEquals("127.0.0.1", configuration.getHttpProxyHost());
@@ -164,7 +164,7 @@ public class SmppConfigurationTest {
         assertEquals(config.getEncoding(), configuration.getEncoding());
         assertEquals(config.getNumberingPlanIndicator(), configuration.getNumberingPlanIndicator());
         assertEquals(config.getTypeOfNumber(), configuration.getTypeOfNumber());
-        assertEquals(config.getUsingSSL(), configuration.getUsingSSL());
+        assertEquals(config.isUsingSSL(), configuration.isUsingSSL());
         assertEquals(config.getInitialReconnectDelay(), configuration.getInitialReconnectDelay());
         assertEquals(config.getReconnectDelay(), configuration.getReconnectDelay());
         assertEquals(config.getHttpProxyHost(), configuration.getHttpProxyHost());

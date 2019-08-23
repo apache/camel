@@ -56,32 +56,28 @@ public final class CxfEndpointUtils {
 
     // only used by test currently
     public static QName getPortName(final CxfEndpoint endpoint) {
-        if (endpoint.getPortName() != null) {
-            return endpoint.getPortName();
-        } else {
+        QName answer = endpoint.getPortNameAsQName();
+        if (answer == null) {
             String portLocalName = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.PORT_LOCALNAME);
             String portNamespace = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.PORT_NAMESPACE);
             if (portLocalName != null) {
-                return new QName(portNamespace, portLocalName);
-            } else {
-                return null;
-            }           
+                answer = new QName(portNamespace, portLocalName);
+            }
         }
+        return answer;
     }
 
     // only used by test currently
     public static QName getServiceName(final CxfEndpoint endpoint) {
-        if (endpoint.getServiceName() != null) {
-            return endpoint.getServiceName();
-        } else {
+        QName answer = endpoint.getServiceNameAsQName();
+        if (answer == null) {
             String serviceLocalName = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.SERVICE_LOCALNAME);
             String serviceNamespace = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.SERVICE_NAMESPACE);
             if (serviceLocalName != null) {
-                return new QName(serviceNamespace, serviceLocalName);
-            } else {
-                return null;
+                answer = new QName(serviceNamespace, serviceLocalName);
             }
         }
+        return answer;
     }
 
     public static boolean hasWebServiceAnnotation(Class<?> cls) {

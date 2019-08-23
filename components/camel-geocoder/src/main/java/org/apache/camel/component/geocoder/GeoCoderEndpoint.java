@@ -147,8 +147,7 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         this.clientKey = clientKey;
     }
 
-
-    private String getApiKey() {
+    public String getApiKey() {
         return apiKey;
     }
 
@@ -157,6 +156,10 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
      */
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
     }
 
     /**

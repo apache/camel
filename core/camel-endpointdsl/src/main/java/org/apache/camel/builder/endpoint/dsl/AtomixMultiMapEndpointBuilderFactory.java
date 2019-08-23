@@ -162,27 +162,15 @@ public interface AtomixMultiMapEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the Atomix transport.
+         * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a:
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * 
-         * Group: consumer
-         */
-        default AtomixMultiMapEndpointBuilder transport(Class<Object> transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Sets the Atomix transport.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          */
-        default AtomixMultiMapEndpointBuilder transport(String transport) {
-            setProperty("transport", transport);
+        default AtomixMultiMapEndpointBuilder transportClassName(
+                String transportClassName) {
+            setProperty("transportClassName", transportClassName);
             return this;
         }
         /**

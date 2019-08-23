@@ -69,7 +69,7 @@ public class UriConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testFtpsExplicitConfigurationDefaults() {
-        FtpsEndpoint endpoint = context.getEndpoint("ftps://hostname:990?isImplicit=true", FtpsEndpoint.class);
+        FtpsEndpoint endpoint = context.getEndpoint("ftps://hostname:990?implicit=true", FtpsEndpoint.class);
         FtpsConfiguration config = endpoint.getFtpsConfiguration();
 
         assertEquals("ftps", config.getProtocol());
@@ -110,7 +110,7 @@ public class UriConfigurationTest extends CamelTestSupport {
     
     @Test
     public void testFtpsExplicitConfiguration() {
-        FtpsEndpoint endpoint = context.getEndpoint("ftps://user@hostname:1021/some/file?password=secret&binary=true&securityProtocol=SSL&isImplicit=true", FtpsEndpoint.class);
+        FtpsEndpoint endpoint = context.getEndpoint("ftps://user@hostname:1021/some/file?password=secret&binary=true&securityProtocol=SSL&implicit=true", FtpsEndpoint.class);
         FtpsConfiguration config = endpoint.getFtpsConfiguration();
 
         assertEquals("ftps", config.getProtocol());

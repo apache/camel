@@ -519,10 +519,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the compression type for the producer. Supported compression
-         * types are: NONE: No compression LZ4: Compress with LZ4 algorithm.
-         * Faster but lower compression than ZLib ZLI: Standard ZLib compression
-         * Default is NONE.
+         * Set the compression type for the producer.
          * 
          * The option is a:
          * <code>org.apache.pulsar.client.api.CompressionType</code> type.
@@ -535,10 +532,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the compression type for the producer. Supported compression
-         * types are: NONE: No compression LZ4: Compress with LZ4 algorithm.
-         * Faster but lower compression than ZLib ZLI: Standard ZLib compression
-         * Default is NONE.
+         * Set the compression type for the producer.
          * 
          * The option will be converted to a
          * <code>org.apache.pulsar.client.api.CompressionType</code> type.

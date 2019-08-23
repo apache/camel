@@ -35,7 +35,7 @@ import static org.apache.camel.component.atomix.client.messaging.AtomixMessaging
 import static org.apache.camel.component.atomix.client.messaging.AtomixMessaging.OPTIONS_BROADCAST_RANDOM;
 import static org.apache.camel.component.atomix.client.messaging.AtomixMessaging.OPTIONS_DIRECT;
 
-final class AtomixMessagingProducer extends AbstractAtomixClientProducer<AtomixMessagingEndpoint, DistributedGroup> {
+public final class AtomixMessagingProducer extends AbstractAtomixClientProducer<AtomixMessagingEndpoint, DistributedGroup> {
     private final AtomixMessagingConfiguration configuration;
 
     protected AtomixMessagingProducer(AtomixMessagingEndpoint endpoint) {

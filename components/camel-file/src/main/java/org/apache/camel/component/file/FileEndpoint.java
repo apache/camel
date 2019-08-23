@@ -411,7 +411,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
      * Specify the file permissions which is sent by the producer, the chmod value must be between 000 and 777;
      * If there is a leading digit like in 0755 we will ignore it.
      */
-    public void setChmod(String chmod) throws Exception {
+    public void setChmod(String chmod) {
         if (ObjectHelper.isNotEmpty(chmod) && chmodPermissionsAreValid(chmod)) {
             this.chmod = chmod.trim();
         } else {
@@ -472,7 +472,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
      * Specify the directory permissions used when the producer creates missing directories, the chmod value must be between 000 and 777;
      * If there is a leading digit like in 0755 we will ignore it.
      */
-    public void setChmodDirectory(String chmodDirectory) throws Exception {
+    public void setChmodDirectory(String chmodDirectory) {
         if (ObjectHelper.isNotEmpty(chmodDirectory) && chmodPermissionsAreValid(chmodDirectory)) {
             this.chmodDirectory = chmodDirectory.trim();
         } else {

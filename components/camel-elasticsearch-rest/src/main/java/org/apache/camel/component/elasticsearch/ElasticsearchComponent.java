@@ -106,7 +106,7 @@ public class ElasticsearchComponent extends DefaultComponent {
                 throw new IllegalArgumentException();
             }
             Integer port = split.length > 1 ? Integer.parseInt(split[1]) : ElasticsearchConstants.DEFAULT_PORT;
-            addressesTrAd.add(new HttpHost(hostname, port, config.getEnableSSL() ? "HTTPS" : "HTTP"));
+            addressesTrAd.add(new HttpHost(hostname, port, config.isEnableSSL() ? "HTTPS" : "HTTP"));
         }
         return addressesTrAd;
     }

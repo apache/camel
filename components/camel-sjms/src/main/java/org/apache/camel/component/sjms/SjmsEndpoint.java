@@ -359,10 +359,13 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     /**
      * Initializes the connectionResource for the endpoint, which takes precedence over the component's connectionResource, if any
      */
+    public void setConnectionResource(ConnectionResource connectionResource) {
+        this.connectionResource = connectionResource;
+    }
+
     public void setConnectionResource(String connectionResource) {
         this.connectionResource = EndpointHelper.resolveReferenceParameter(getCamelContext(), connectionResource, ConnectionResource.class);
     }
-
 
     @Override
     public boolean isSynchronous() {
@@ -677,6 +680,10 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     /**
      * Initializes the connectionFactory for the endpoint, which takes precedence over the component's connectionFactory, if any
      */
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
     public void setConnectionFactory(String connectionFactory) {
         this.connectionFactory = EndpointHelper.resolveReferenceParameter(getCamelContext(), connectionFactory, ConnectionFactory.class);
 

@@ -53,10 +53,10 @@ public class EhcacheConfiguration implements Cloneable {
     private CacheConfiguration configuration;
     @UriParam(label = "advanced")
     private Map<String, CacheConfiguration> configurations;
-    @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> keyType;
-    @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> valueType;
+    @UriParam(label = "advanced")
+    private String keyType;
+    @UriParam(label = "advanced")
+    private String valueType;
     @UriParam(label = "consumer", defaultValue = "ORDERED")
     private EventOrdering eventOrdering = EventOrdering.ORDERED;
     @UriParam(label = "consumer", defaultValue = "ASYNCHRONOUS")
@@ -260,25 +260,25 @@ public class EhcacheConfiguration implements Cloneable {
         this.configurations.putAll(configurations);
     }
 
-    public Class<?> getKeyType() {
+    public String getKeyType() {
         return keyType;
     }
 
     /**
      * The cache key type, default "java.lang.Object"
      */
-    public void setKeyType(Class<?> keyType) {
+    public void setKeyType(String keyType) {
         this.keyType = keyType;
     }
 
-    public Class<?> getValueType() {
+    public String getValueType() {
         return valueType;
     }
 
     /**
      * The cache value type, default "java.lang.Object"
      */
-    public void setValueType(Class<?> valueType) {
+    public void setValueType(String valueType) {
         this.valueType = valueType;
     }
 

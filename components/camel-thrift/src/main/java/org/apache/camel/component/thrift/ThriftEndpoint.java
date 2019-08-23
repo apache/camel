@@ -45,6 +45,10 @@ public class ThriftEndpoint extends DefaultEndpoint {
         servicePackage = ThriftUtils.extractServicePackage(configuration.getService());
     }
 
+    public ThriftConfiguration getConfiguration() {
+        return configuration;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         ThriftProducer producer = new ThriftProducer(this, configuration);

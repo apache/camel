@@ -384,33 +384,6 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of inbound payloads.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointConsumerBuilder decoder(Object decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of inbound payloads.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointConsumerBuilder decoder(String decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
          * The max line length to use for the textline codec.
          * 
          * The option is a: <code>int</code> type.
@@ -491,33 +464,6 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
-            return this;
-        }
-        /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of outbound payloads.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointConsumerBuilder encoder(Object encoder) {
-            setProperty("encoder", encoder);
-            return this;
-        }
-        /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of outbound payloads.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointConsumerBuilder encoder(String encoder) {
-            setProperty("encoder", encoder);
             return this;
         }
         /**
@@ -1252,32 +1198,6 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option is a: <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyEndpointConsumerBuilder bootstrapConfiguration(
-                Object bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyEndpointConsumerBuilder bootstrapConfiguration(
-                String bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
          * To use a explicit ChannelGroup.
          * 
          * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
@@ -1901,33 +1821,6 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of inbound payloads.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointProducerBuilder decoder(Object decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of inbound payloads.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointProducerBuilder decoder(String decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
          * The max line length to use for the textline codec.
          * 
          * The option is a: <code>int</code> type.
@@ -2008,33 +1901,6 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
-            return this;
-        }
-        /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of outbound payloads.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointProducerBuilder encoder(Object encoder) {
-            setProperty("encoder", encoder);
-            return this;
-        }
-        /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of outbound payloads.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointProducerBuilder encoder(String encoder) {
-            setProperty("encoder", encoder);
             return this;
         }
         /**
@@ -2707,32 +2573,6 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option is a: <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyEndpointProducerBuilder bootstrapConfiguration(
-                Object bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyEndpointProducerBuilder bootstrapConfiguration(
-                String bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
          * To use a explicit ChannelGroup.
          * 
          * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
@@ -3260,33 +3100,6 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of inbound payloads.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointBuilder decoder(Object decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of inbound payloads.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointBuilder decoder(String decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
          * The max line length to use for the textline codec.
          * 
          * The option is a: <code>int</code> type.
@@ -3366,33 +3179,6 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
-            return this;
-        }
-        /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of outbound payloads.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointBuilder encoder(Object encoder) {
-            setProperty("encoder", encoder);
-            return this;
-        }
-        /**
-         * A custom ChannelHandler class that can be used to perform special
-         * marshalling of outbound payloads.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyEndpointBuilder encoder(String encoder) {
-            setProperty("encoder", encoder);
             return this;
         }
         /**
@@ -3751,32 +3537,6 @@ public interface NettyEndpointBuilderFactory {
         default AdvancedNettyEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option is a: <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyEndpointBuilder bootstrapConfiguration(
-                Object bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyEndpointBuilder bootstrapConfiguration(
-                String bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
             return this;
         }
         /**

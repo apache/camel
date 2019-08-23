@@ -56,7 +56,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
         final SalesforceComponent component = endpoint.getComponent();
         session = component.getSession();
         httpClient = endpoint.getConfiguration().getHttpClient();
-        rawPayload = endpoint.getConfiguration().getRawPayload();
+        rawPayload = endpoint.getConfiguration().isRawPayload();
     }
 
     @Override

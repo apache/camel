@@ -160,7 +160,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         this.jobFromHeader = jobFromHeader;
     }
 
-    public boolean getJobFromHeader() {
+    public boolean isJobFromHeader() {
         return jobFromHeader;
     }
 

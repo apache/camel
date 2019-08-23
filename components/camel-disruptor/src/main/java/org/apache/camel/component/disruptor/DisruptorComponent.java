@@ -93,18 +93,21 @@ public class DisruptorComponent extends DefaultComponent {
             throw new IllegalArgumentException("The 'pollTimeout' argument is not supported by the Disruptor component");
         }
 
-        final DisruptorWaitStrategy waitStrategy = getAndRemoveParameter(parameters, "waitStrategy", DisruptorWaitStrategy.class, defaultWaitStrategy);
-        final DisruptorProducerType producerType = getAndRemoveParameter(parameters, "producerType", DisruptorProducerType.class, defaultProducerType);
-        final boolean multipleConsumers = getAndRemoveParameter(parameters, "multipleConsumers", boolean.class, defaultMultipleConsumers);
-        final boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", boolean.class, defaultBlockWhenFull);
+        DisruptorWaitStrategy waitStrategy = getAndRemoveParameter(parameters, "waitStrategy", DisruptorWaitStrategy.class, defaultWaitStrategy);
+        DisruptorProducerType producerType = getAndRemoveParameter(parameters, "producerType", DisruptorProducerType.class, defaultProducerType);
+        boolean multipleConsumers = getAndRemoveParameter(parameters, "multipleConsumers", boolean.class, defaultMultipleConsumers);
+        boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", boolean.class, defaultBlockWhenFull);
 
-        final DisruptorReference disruptorReference = getOrCreateDisruptor(uri, remaining, size, producerType, waitStrategy);
-        final DisruptorEndpoint disruptorEndpoint = new DisruptorEndpoint(uri, this, disruptorReference, concurrentConsumers, multipleConsumers, blockWhenFull);
-        disruptorEndpoint.setWaitStrategy(waitStrategy);
-        disruptorEndpoint.setProducerType(producerType);
-        disruptorEndpoint.configureProperties(parameters);
+        DisruptorReference disruptorReference = getOrCreateDisruptor(uri, remaining, size, producerType, waitStrategy);
+        DisruptorEndpoint answer = new DisruptorEndpoint(uri, this, disruptorReference);
+        answer.setConcurrentConsumers(concurrentConsumers);
+        answer.setMultipleConsumers(multipleConsumers);
+        answer.setBlockWhenFull(blockWhenFull);
+        answer.setWaitStrategy(waitStrategy);
+        answer.setProducerType(producerType);
+        answer.configureProperties(parameters);
 
-        return disruptorEndpoint;
+        return answer;
     }
 
     private DisruptorReference getOrCreateDisruptor(final String uri, final String name, final int size,

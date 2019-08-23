@@ -64,6 +64,14 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     }
 
     @Override
+    public FtpsConfiguration getConfiguration() {
+        if (configuration == null) {
+            configuration = new FtpsConfiguration();
+        }
+        return configuration;
+    }
+
+    @Override
     public String getScheme() {
         return getFtpsConfiguration().getProtocol();
     }
@@ -224,11 +232,19 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         return (FtpsConfiguration) getConfiguration();
     }
 
+    public Map<String, Object> getFtpClientKeyStoreParameters() {
+        return ftpClientKeyStoreParameters;
+    }
+
     /**
      * Set the key store parameters
      */
     public void setFtpClientKeyStoreParameters(Map<String, Object> param) {
         this.ftpClientKeyStoreParameters = param;
+    }
+
+    public Map<String, Object> getFtpClientTrustStoreParameters() {
+        return ftpClientTrustStoreParameters;
     }
 
     /**

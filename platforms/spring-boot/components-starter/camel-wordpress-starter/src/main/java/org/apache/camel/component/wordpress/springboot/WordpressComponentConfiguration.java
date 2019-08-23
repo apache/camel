@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.wordpress.springboot;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.component.wordpress.api.model.SearchCriteria;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -88,6 +89,10 @@ public class WordpressComponentConfiguration
          */
         private Integer id;
         /**
+         * The criteria to use with complex searches.
+         */
+        private Map criteria;
+        /**
          * Whether to bypass trash and force deletion.
          */
         private Boolean force = false;
@@ -134,6 +139,14 @@ public class WordpressComponentConfiguration
 
         public void setId(Integer id) {
             this.id = id;
+        }
+
+        public Map getCriteria() {
+            return criteria;
+        }
+
+        public void setCriteria(Map criteria) {
+            this.criteria = criteria;
         }
 
         public Boolean getForce() {

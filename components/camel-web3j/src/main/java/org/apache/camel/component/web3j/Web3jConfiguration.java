@@ -432,6 +432,20 @@ public class Web3jConfiguration implements Cloneable {
     /**
      * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
      */
+    public void setFromBlock(DefaultBlockParameter fromBlock) {
+        this.fromBlock = fromBlock;
+    }
+
+    /**
+     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
+     */
+    public void setToBlock(DefaultBlockParameter toBlock) {
+        this.toBlock = toBlock;
+    }
+
+    /**
+     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
+     */
     public void setToBlock(String block) {
         this.toBlock = toDefaultBlockParameter(block);
     }
@@ -459,6 +473,13 @@ public class Web3jConfiguration implements Cloneable {
 
     public DefaultBlockParameter getAtBlock() {
         return atBlock;
+    }
+
+    /**
+     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
+     */
+    public void setAtBlock(DefaultBlockParameter atBlock) {
+        this.atBlock = atBlock;
     }
 
     /**

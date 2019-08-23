@@ -38,14 +38,14 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 @UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets", syntax = "google-sheets:apiName/methodName", consumerPrefix = "consumer", label = "api,cloud,sheets")
 public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration> {
 
-    @UriParam(name = "configuration")
-    private GoogleSheetsConfiguration endpointConfiguration;
+    @UriParam
+    private GoogleSheetsConfiguration configuration;
 
     private Object apiProxy;
 
     public GoogleSheetsEndpoint(String uri, GoogleSheetsComponent component, GoogleSheetsApiName apiName, String methodName, GoogleSheetsConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, GoogleSheetsApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
-        this.endpointConfiguration = endpointConfiguration;
+        this.configuration = endpointConfiguration;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
     }
 
     public Sheets getClient() {
-        return ((GoogleSheetsComponent)getComponent()).getClient(endpointConfiguration);
+        return ((GoogleSheetsComponent)getComponent()).getClient(configuration);
     }
 
     @Override

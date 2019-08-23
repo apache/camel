@@ -93,12 +93,12 @@ with the following path and query parameters:
 | *inputDisplayValue* (producer) | True to set raw value of input fields (default: false) |  | Boolean
 | *key* (producer) | Set this parameter to true to return only scorecards for key indicators. |  | Boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *models* (producer) | Defines both request and response models |  | String
+| *models* (producer) | Defines both request and response models |  | Map
 | *perPage* (producer) | Enter the maximum number of scorecards each query can return. By default this value is 10, and the maximum is 100. | 10 | Integer
 | *release* (producer) | The ServiceNow release to target, default to Helsinki See \https://docs.servicenow.com | HELSINKI | ServiceNowRelease
-| *requestModels* (producer) | Defines the request model |  | String
+| *requestModels* (producer) | Defines the request model |  | Map
 | *resource* (producer) | The default resource, can be overridden by header CamelServiceNowResource |  | String
-| *responseModels* (producer) | Defines the response model |  | String
+| *responseModels* (producer) | Defines the response model |  | Map
 | *sortBy* (producer) | Specify the value to use when sorting results. By default, queries sort records by value. |  | String
 | *sortDir* (producer) | Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use sysparm_sortdir=asc to sort in ascending order. |  | String
 | *suppressAutoSysField* (producer) | True to suppress auto generation of system fields (default: false) |  | Boolean

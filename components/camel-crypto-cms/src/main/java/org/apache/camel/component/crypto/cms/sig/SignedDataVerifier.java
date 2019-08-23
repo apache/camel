@@ -170,7 +170,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
             Collection<X509CertificateHolder> certCollection = certStore.getMatches(signer.getSID());
 
             if (certCollection.isEmpty()) {
-                if (conf.isVerifySignaturesOfAllSigners(exchange)) {
+                if (conf.isVerifySignaturesOfAllSigners()) {
                     throw new CryptoCmsNoCertificateForSignerInfoException("KCS7/CMS signature verification failed. The public key for the signer information with"
                                                                            + signerInformationToString(signer) + " cannot be found in the configured certificates: "
                                                                            + certsToString(allowedVerifyCerts));
@@ -185,7 +185,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
                 if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(cert))) {
                     LOG.debug("Verification successful");
                     atLeastOneSignatureVerified = true;
-                    if (!conf.isVerifySignaturesOfAllSigners(exchange)) {
+                    if (!conf.isVerifySignaturesOfAllSigners()) {
                         return;
                     }
                 } else {

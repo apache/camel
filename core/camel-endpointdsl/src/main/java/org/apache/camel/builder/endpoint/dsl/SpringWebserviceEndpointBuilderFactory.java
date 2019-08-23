@@ -178,19 +178,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * The XPath expression to use when option type=xpathresult. Then this
-         * option is required to be configured.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default SpringWebserviceEndpointConsumerBuilder expression(
-                String expression) {
-            setProperty("expression", expression);
-            return this;
-        }
-        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -1036,6 +1023,10 @@ public interface SpringWebserviceEndpointBuilderFactory {
      * 
      * Path parameter: webServiceEndpointUri
      * The default Web Service endpoint uri to use for the producer.
+     * 
+     * Path parameter: expression
+     * The XPath expression to use when option type=xpathresult. Then this
+     * option is required to be configured.
      */
     default SpringWebserviceEndpointBuilder springWebservice(String path) {
         class SpringWebserviceEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringWebserviceEndpointBuilder, AdvancedSpringWebserviceEndpointBuilder {

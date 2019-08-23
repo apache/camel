@@ -90,9 +90,9 @@ with the following path and query parameters:
 | *statsCounter* (producer) | Set a specific Stats Counter for the cache stats |  | StatsCounter
 | *statsEnabled* (producer) | To enable stats on the cache | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *keyType* (advanced) | The cache key type, default java.lang.Object | java.lang.Object | String
+| *keyType* (advanced) | The cache key type, default java.lang.Object |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *valueType* (advanced) | The cache value type, default java.lang.Object | java.lang.Object | String
+| *valueType* (advanced) | The cache value type, default java.lang.Object |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
@@ -128,12 +128,12 @@ The component supports 17 options, which are listed below.
 | *camel.component.caffeine-cache.configuration.expire-after-write-time* | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | Integer
 | *camel.component.caffeine-cache.configuration.initial-capacity* | Set the initial Capacity for the cache | 10000 | Integer
 | *camel.component.caffeine-cache.configuration.key* | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
-| *camel.component.caffeine-cache.configuration.key-type* | The cache key type, default "java.lang.Object" |  | Class
+| *camel.component.caffeine-cache.configuration.key-type* | The cache key type, default "java.lang.Object" |  | String
 | *camel.component.caffeine-cache.configuration.maximum-size* | Set the maximum size for the cache | 10000 | Integer
 | *camel.component.caffeine-cache.configuration.removal-listener* | Set a specific removal Listener for the cache |  | RemovalListener
 | *camel.component.caffeine-cache.configuration.stats-counter* | Set a specific Stats Counter for the cache stats |  | StatsCounter
 | *camel.component.caffeine-cache.configuration.stats-enabled* | To enable stats on the cache | false | Boolean
-| *camel.component.caffeine-cache.configuration.value-type* | The cache value type, default "java.lang.Object" |  | Class
+| *camel.component.caffeine-cache.configuration.value-type* | The cache value type, default "java.lang.Object" |  | String
 | *camel.component.caffeine-cache.enabled* | Whether to enable auto configuration of the caffeine-cache component. This is enabled by default. |  | Boolean
 |===
 // spring-boot-auto-configure options: END

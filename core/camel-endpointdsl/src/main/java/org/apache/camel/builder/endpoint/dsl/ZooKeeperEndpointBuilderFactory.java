@@ -42,32 +42,6 @@ public interface ZooKeeperEndpointBuilderFactory {
             return (AdvancedZooKeeperEndpointConsumerBuilder) this;
         }
         /**
-         * Not in use.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointConsumerBuilder awaitExistence(
-                boolean awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
-        }
-        /**
-         * Not in use.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointConsumerBuilder awaitExistence(
-                String awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
-        }
-        /**
          * Whether the children of the node should be listed.
          * 
          * The option is a: <code>boolean</code> type.
@@ -351,32 +325,6 @@ public interface ZooKeeperEndpointBuilderFactory {
             return (AdvancedZooKeeperEndpointProducerBuilder) this;
         }
         /**
-         * Not in use.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointProducerBuilder awaitExistence(
-                boolean awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
-        }
-        /**
-         * Not in use.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointProducerBuilder awaitExistence(
-                String awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
-        }
-        /**
          * Whether the children of the node should be listed.
          * 
          * The option is a: <code>boolean</code> type.
@@ -568,30 +516,6 @@ public interface ZooKeeperEndpointBuilderFactory {
                 ZooKeeperEndpointConsumerBuilder, ZooKeeperEndpointProducerBuilder {
         default AdvancedZooKeeperEndpointBuilder advanced() {
             return (AdvancedZooKeeperEndpointBuilder) this;
-        }
-        /**
-         * Not in use.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointBuilder awaitExistence(boolean awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
-        }
-        /**
-         * Not in use.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointBuilder awaitExistence(String awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
         }
         /**
          * Whether the children of the node should be listed.

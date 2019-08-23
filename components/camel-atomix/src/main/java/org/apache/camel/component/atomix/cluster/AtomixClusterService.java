@@ -95,16 +95,16 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
         configuration.setNodes(nodes);
     }
 
-    public Class<? extends Transport> getTransport() {
-        return configuration.getTransport();
+    public String getTransport() {
+        return configuration.getTransportClassName();
     }
 
-    public void setTransport(Class<? extends Transport> transport) {
-        configuration.setTransport(transport);
+    public void setTransportClassName(String transport) {
+        configuration.setTransportClassName(transport);
     }
 
     public AtomixReplica getAtomix() {
-        return configuration.getAtomix();
+        return (AtomixReplica) configuration.getAtomix();
     }
 
     public void setAtomix(AtomixReplica atomix) {
@@ -165,7 +165,7 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
                 this.atomix.bootstrap(configuration.getNodes()).join();
                 log.debug("Bootstrap cluster done");
             } else {
-                log.debug("Bootstrap cluster on address {}", address, configuration.getNodes());
+                log.debug("Bootstrap cluster on address {}", address);
                 this.atomix.bootstrap().join();
                 log.debug("Bootstrap cluster done");
             }

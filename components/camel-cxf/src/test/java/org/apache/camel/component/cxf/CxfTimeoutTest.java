@@ -24,7 +24,6 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
@@ -72,7 +71,7 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
     
     @Test
     public void testInvokingJaxWsServerWithCxfEndpointWithConfigurer() throws Exception {
-        Exchange reply = sendJaxWsMessage("cxf://bean:springEndpoint?cxfEndpointConfigurer=#myConfigurer");
+        Exchange reply = sendJaxWsMessage("cxf://bean:springEndpoint?cxfConfigurer=#myConfigurer");
         // we don't expect the exception here
         assertFalse("We don't expect the exception here", reply.isFailed());
         assertEquals("Get a wrong response", "Greet Hello World!", reply.getOut().getBody(String.class));
@@ -113,7 +112,7 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/cxfConduitTimeOutContext.xml");
     }
     
-    public static class MyCxfEndpointConfigurer implements CxfEndpointConfigurer {
+    public static class MyCxfConfigurer implements CxfConfigurer {
 
         @Override
         public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {

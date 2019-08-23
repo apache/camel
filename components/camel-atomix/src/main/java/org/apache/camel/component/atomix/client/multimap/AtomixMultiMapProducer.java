@@ -33,7 +33,7 @@ import static org.apache.camel.component.atomix.client.AtomixClientConstants.RES
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_TTL;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_VALUE;
 
-final class AtomixMultiMapProducer extends AbstractAtomixClientProducer<AtomixMultiMapEndpoint, DistributedMultiMap> {
+public final class AtomixMultiMapProducer extends AbstractAtomixClientProducer<AtomixMultiMapEndpoint, DistributedMultiMap> {
     private final AtomixMultiMapConfiguration configuration;
 
     protected AtomixMultiMapProducer(AtomixMultiMapEndpoint endpoint) {

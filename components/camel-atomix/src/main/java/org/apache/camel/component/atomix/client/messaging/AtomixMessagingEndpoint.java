@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
     title = "Atomix Messaging",
     syntax = "atomix-messaging:resourceName",
     label = "clustering")
-final class AtomixMessagingEndpoint extends AbstractAtomixClientEndpoint<AtomixMessagingComponent, AtomixMessagingConfiguration> {
+public final class AtomixMessagingEndpoint extends AbstractAtomixClientEndpoint<AtomixMessagingComponent, AtomixMessagingConfiguration> {
     @UriParam
     private AtomixMessagingConfiguration configuration;
 

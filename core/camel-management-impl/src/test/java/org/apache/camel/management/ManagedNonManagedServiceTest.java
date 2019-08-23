@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 
-    private static final int SERVICES = 12;
+    private static final int SERVICES = 13;
 
     @Test
     public void testService() throws Exception {

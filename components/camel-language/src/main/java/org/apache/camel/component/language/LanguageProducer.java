@@ -22,6 +22,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
@@ -72,6 +73,9 @@ public class LanguageProducer extends DefaultProducer {
                 is = getEndpoint().getResourceAsInputStream();
             } else if (ResourceHelper.hasScheme(script)) {
                 is = ResourceHelper.resolveMandatoryResourceAsInputStream(getEndpoint().getCamelContext(), script);
+            } else if (EndpointHelper.isReferenceParameter(script)) {
+                String ref = "ref:" + script.substring(1);
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getEndpoint().getCamelContext(), ref);
             }
 
             if (is != null && !getEndpoint().isBinary()) {
