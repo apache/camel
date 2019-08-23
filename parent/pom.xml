@@ -639,7 +639,7 @@
         <velocity-bundle-version>1.7_6</velocity-bundle-version>
         <velocity-tools-version>2.0</velocity-tools-version>
         <velocity-version>2.0</velocity-version>
-        <vertx-version>3.8.0</vertx-version>
+        <vertx-version>3.8.1</vertx-version>
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
