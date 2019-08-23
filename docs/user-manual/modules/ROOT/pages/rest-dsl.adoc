@@ -19,7 +19,7 @@ others that has native REST integration.
 The following Camel components supports the Rest DSL. See the bottom of
 this page for how to integrate a component with the Rest DSL.
 
-* xref:components::rest-component.adoc[came-rest] *required* contains the base rest component needed by Rest DSL
+* xref:components::rest-component.adoc[camel-rest] *required* contains the base rest component needed by Rest DSL
 * xref:components::netty-http-component.adoc[camel-netty-http] (also
 supports Swagger Java)
 * xref:components::jetty-component.adoc[camel-jetty] (also
@@ -149,7 +149,7 @@ And using XML DSL it becomes:
 </rest>
 ----
 
-TIP:The REST DSL will take care of duplicate path separators when using base
+TIP: The REST DSL will take care of duplicate path separators when using base
 path and uri templates. In the example above the rest base path ends
 with a slash ( / ) and the verb starts with a slash ( / ). But Apache
 Camel will take care of this and remove the duplicated slash.
@@ -171,6 +171,15 @@ only. The example above can be defined as:
     <to uri="direct:customerNewOrder"/>
   </post>
 </rest>
+----
+
+TIP: You can combine path parameters to build complex expressions.
+For example:
+[source,java]
+----
+  rest("items/")
+      .get("{id}/{filename}.{content-type}")
+      .to("direct:item")
 ----
 
 == Using Dynamic To in Rest DSL
